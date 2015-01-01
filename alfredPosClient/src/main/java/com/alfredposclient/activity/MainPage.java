@@ -405,6 +405,7 @@ public class MainPage extends BaseActivity {
         });
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
         XMPP.getInstance().setCanCheckAppOrder(true);
+
     }
 
 

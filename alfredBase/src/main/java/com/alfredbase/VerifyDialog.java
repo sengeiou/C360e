@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.User;
 import com.alfredbase.utils.TextTypeFace;
@@ -89,6 +90,8 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 	public void onKeyBoardClick(String key) {
 		if (keyBuf.length() >= KEY_LENGTH)
 			return;
+
+		BugseeHelper.buttonClicked(key);
 		if (key.equals(context.getResources().getString(R.string.delete))) {
 			if (keyBuf.length() > 0) {
 				keyBuf.deleteCharAt(keyBuf.length() - 1);

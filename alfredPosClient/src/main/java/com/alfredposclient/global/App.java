@@ -31,6 +31,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.CashInOut;
@@ -353,6 +354,9 @@ public class App extends BaseApplication {
         super.onCreate();
 
         instance = this;
+
+        BugseeHelper.init(this, "9290f896-1a2e-4b70-b1fa-46823bb4398c");
+
         int train = SharedPreferencesHelper.getInt(this, SharedPreferencesHelper.TRAINING_MODE);
         if (train == 1) {
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
@@ -510,7 +514,6 @@ public class App extends BaseApplication {
                 mPresentation.show();
             }
         }
-
 
     }
 
@@ -3191,7 +3194,6 @@ public class App extends BaseApplication {
                 if (TextUtils.isEmpty(appOrder.getAddress())) {
                     userinfo = "";
                 } else {
-                    // appOrderId=getString(R.string.online_app_no)+" : " + appOrder.getId()+"\r\n";
 
                     if (TextUtils.isEmpty(appOrder.getContact())) {
                         name = "";

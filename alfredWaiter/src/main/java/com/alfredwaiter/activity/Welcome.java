@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.javabean.User;
@@ -60,6 +61,8 @@ public class Welcome extends BaseActivity {
 				}
 			}
 		}, 1300);
+
+		BugseeHelper.trace("APP", getString(R.string.app_name));
 		
 		downFilter = new IntentFilter();
 		downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);

@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.sql.OrderDetailSQL;
@@ -173,6 +174,7 @@ public class SetItemCountWindow implements OnClickListener, KeyBoardClickListene
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if ("Cancel".equals(key)) {
 			dismiss(false);
 		} else if ("Enter".equals(key)) {

@@ -23,6 +23,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemDetail;
@@ -868,6 +869,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 
     @Override
     public void onKeyBoardClick(String key) {
+        BugseeHelper.buttonClicked(key);
         if ("Cancel".equals(key)) {
             endAnimation();
         } else if ("Enter".equals(key)) {

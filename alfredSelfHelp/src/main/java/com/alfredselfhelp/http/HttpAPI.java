@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
@@ -271,6 +272,7 @@ public class HttpAPI {
 								DialogFactory.showUpdateVersionDialog(App.getTopActivity(), versionUpdate, new View.OnClickListener() {
 									@Override
 									public void onClick(View v) {
+										BugseeHelper.buttonClicked(v);
 										long posUpdateId = DownloadFactory.downloadApk(App.getTopActivity(), (DownloadManager) App.getTopActivity().getSystemService(Context.DOWNLOAD_SERVICE), versionUpdate.getKdsDownload(), Store.getLong(App.getTopActivity(), "posUpdateId"));
 										Store.putLong(App.getTopActivity(), "posUpdateId", posUpdateId);
 									}

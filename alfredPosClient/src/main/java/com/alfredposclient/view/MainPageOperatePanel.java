@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
@@ -197,6 +198,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_KICK_CASHDRAWER);
 				break;	
 			case R.id.rl_pax:
+				BugseeHelper.buttonClicked("Pax");
 				handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX,tv_pax.getText().toString()));
 				break;
 			case R.id.tv_take_away:

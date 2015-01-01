@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.User;
@@ -150,6 +151,7 @@ public class ClockInOROut extends BaseActivity implements KeyBoardClickListener 
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if (keyBuf.length() > KEY_LENGTH)
 			return;
 		if (key.equals("Delete")) {

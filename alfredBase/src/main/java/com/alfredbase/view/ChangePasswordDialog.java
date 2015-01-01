@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.R;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.User;
 import com.alfredbase.store.sql.UserSQL;
@@ -97,6 +98,8 @@ public class ChangePasswordDialog extends Dialog implements KeyBoardClickListene
 	public void onKeyBoardClick(String key) {
 		if (keyBuf.length() >= KEY_LENGTH)
 			return;
+
+		BugseeHelper.buttonClicked(key);
 		if (key.equals(context.getResources().getString(R.string.delete))) {
 			if (keyBuf.length() > 0) {
 				keyBuf.deleteCharAt(keyBuf.length() - 1);

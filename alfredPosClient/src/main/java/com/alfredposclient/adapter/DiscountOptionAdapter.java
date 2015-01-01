@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
@@ -75,6 +76,7 @@ public class DiscountOptionAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View arg0) {
+					BugseeHelper.buttonClicked((String)arg0.getTag());
 					if (keyBoardClickListener != null)
 						keyBoardClickListener.onKeyBoardClick((String)arg0.getTag());
 				}

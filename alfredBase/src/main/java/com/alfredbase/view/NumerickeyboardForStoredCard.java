@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseApplication;
 import com.alfredbase.R;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.TextTypeFace;
 
 public class NumerickeyboardForStoredCard extends LinearLayout {
@@ -48,6 +49,8 @@ public class NumerickeyboardForStoredCard extends LinearLayout {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+
+				BugseeHelper.buttonClicked(NUMERIC[arg2]);
 				if (keyBoardClickListener != null) {
 					keyBoardClickListener.onKeyBoardClick(NUMERIC[arg2]);
 				}

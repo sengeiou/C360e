@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.R;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
@@ -92,6 +93,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -102,6 +104,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(rightText);
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
                             }
@@ -151,6 +154,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -161,6 +165,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(rightText);
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
                             }
@@ -228,6 +233,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -237,6 +243,7 @@ public class DialogFactory {
 
                             @Override
                             public void onClick(View v) {
+                                BugseeHelper.buttonClicked(rightText);
                                 String num = editText.getText().toString();
                                 if (TextUtils.isEmpty(num)) {
                                     Toast toast = new Toast(activity);
@@ -302,6 +309,7 @@ public class DialogFactory {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        BugseeHelper.buttonClicked("back");
                         if (backListener != null)
                             backListener.onClick(v);
                     }
@@ -461,6 +469,7 @@ public class DialogFactory {
 
                             @Override
                             public void onClick(View v) {
+                                BugseeHelper.buttonClicked("Ok");
                                 oneButtonCompelDialog.dismiss();
                                 if (buttonListener != null)
                                     buttonListener.onClick(v);
@@ -510,6 +519,7 @@ public class DialogFactory {
 
                             @Override
                             public void onClick(View v) {
+                                BugseeHelper.buttonClicked(leftText);
                                 dialog.dismiss();
                                 if (leftListener != null)
                                     leftListener.onClick(v);
@@ -520,6 +530,7 @@ public class DialogFactory {
 
                             @Override
                             public void onClick(View v) {
+                                BugseeHelper.buttonClicked(rightText);
                                 dialog.dismiss();
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
@@ -571,6 +582,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(final View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 //  CommonUtil.hideSoftkeyBoard(activity);
                                 //   hintKeyBoard(activity);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
@@ -589,6 +601,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
 
+                                BugseeHelper.buttonClicked(rightText);
                                 String num = editText.getText().toString();
 
                                 if (balance) {
@@ -667,6 +680,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(final View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 CommonUtil.hideSoftkeyBoard(activity);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
@@ -683,7 +697,9 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
 
+                                BugseeHelper.buttonClicked(rightText);
                                 String num = editText.getText().toString();
+                                BugseeHelper.event("num : " + num);
 
                                 if (balance) {
                                     if (TextUtils.isEmpty(num)) {
@@ -743,6 +759,7 @@ public class DialogFactory {
             view.findViewById(R.id.btn_qrcode_print).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    BugseeHelper.buttonClicked(v);
                     printOnClickListener.onClick(v);
                     dialog.dismiss();
                 }
@@ -750,12 +767,14 @@ public class DialogFactory {
             view.findViewById(R.id.btn_qrcode_back).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    BugseeHelper.buttonClicked(v);
                     dialog.dismiss();
                 }
             });
             view.findViewById(R.id.btn_qrcode_save).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    BugseeHelper.buttonClicked(v);
                     String name = tableName;
                     if (TextUtils.isEmpty(tableName)) {
                         name = "Kiosk";
@@ -796,6 +815,7 @@ public class DialogFactory {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
+                    BugseeHelper.buttonClicked(v);
                     if (nextListener != null) {
                         nextListener.onClick(v);
                     }
@@ -843,6 +863,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(v);
                                 if (listener != null)
                                     listener.onClick(v);
                             }
@@ -914,6 +935,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(v);
                                 if (exitListener != null)
                                     exitListener.onClick(v);
                             }
@@ -964,6 +986,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(v);
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -974,6 +997,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(v);
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
                             }
@@ -1013,6 +1037,7 @@ public class DialogFactory {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (ButtonClickTimer.canClick()) {
+                        BugseeHelper.buttonClicked(view);
                         PrinterDevice printerDevice = list.get(position);
                         dialogCallBack.callBack(printerDevice);
                         dialog.dismiss();

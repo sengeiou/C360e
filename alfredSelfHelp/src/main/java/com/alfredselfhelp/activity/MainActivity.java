@@ -169,6 +169,8 @@ public class MainActivity extends BaseActivity {
         });
 //        VtintApiCentre.getInstance().init(context);
 //        VtintApiCentre.getInstance().SearchUsb();
+
+//        throw new NullPointerException("Test crash");
     }
 
 
