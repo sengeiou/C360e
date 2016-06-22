@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.alfredkds"
+    android:versionCode="28"
+    android:versionName="1.2.3" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="18" />
+
+    <!-- 往sdcard中写入数据的权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 在sdcard中创建/删除文件的权限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <application
+        android:name="com.alfredkds.global.App"
+        android:allowBackup="true"
+        android:icon="@drawable/logo_icon"
+        android:label="@string/app_name"
+        android:largeHeap="true" >
+        
+        <activity
+            android:name=".activity.Welcome"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/NullActivityTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.alfredkds.activity.ConnectPOS"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/NullActivityTheme" />
+        <activity
+            android:name="com.alfredkds.activity.EmployeeID"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/CentreOpenMainActivityTheme" />
+        <activity
+            android:name="com.alfredkds.activity.Login"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/CentreOpenMainActivityTheme" />
+        <activity
+            android:name="com.alfredkds.activity.KitchenOrder"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme" />
+        <activity
+            android:name="com.alfredkds.activity.SelectKitchen"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme" />
+        
+        <activity
+            android:name="com.alfredkds.activity.Setting"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme" />
+        
+        <activity
+            android:name="com.alfredkds.activity.KotHistory"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme" />
+        
+        <activity
+            android:name="com.alfredkds.activity.Summary"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme" />
+
+<!--           <receiver android:name="com.alfredkds.scheduler.AlfredAlarmReceiver"/>
+
+        <receiver android:name="com.alfredkds.scheduler.AlarmBootReceiver"
+                android:enabled="false">
+            <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
+                
+        <service android:name="com.alfredkds.scheduler.AlfredSchedulingService" /> -->      
+        <meta-data android:value="5434b1d6fd98c5d8c003fc95" android:name="UMENG_APPKEY"></meta-data>
+		<meta-data android:value="Umeng" android:name="UMENG_CHANNEL"/>  
+    </application>
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.INTERNET"/>
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+</manifest>

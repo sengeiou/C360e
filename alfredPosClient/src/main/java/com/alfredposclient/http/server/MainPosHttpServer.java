@@ -1,0 +1,1316 @@
+package com.alfredposclient.http.server;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.text.TextUtils;
+
+import com.alfredbase.APPConfig;
+import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
+import com.alfredbase.http.APIName;
+import com.alfredbase.http.AlfredHttpServer;
+import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
+import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.LocalDevice;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderBill;
+import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.javabean.model.KotNotification;
+import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.javabean.model.TableAndKotNotificationList;
+import com.alfredbase.javabean.model.WaiterDevice;
+import com.alfredbase.store.TableNames;
+import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.ItemDetailSQL;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
+import com.alfredbase.store.sql.KotNotificationSQL;
+import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.OrderBillSQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.UserRestaurantSQL;
+import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.OrderHelper;
+import com.alfredposclient.R;
+import com.alfredposclient.activity.MainPage;
+import com.alfredposclient.global.App;
+import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.global.UIHelp;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+public class MainPosHttpServer extends AlfredHttpServer {
+	private String TAG = MainPosHttpServer.class.getSimpleName();
+
+	public MainPosHttpServer() {
+		super(APPConfig.HTTP_SERVER_PORT);
+	}
+	
+	private Object lockObject = new Object();
+
+	@Override
+	public Response doPost(String apiName, Method mothod,
+			Map<String, String> params, String body) {
+		LogUtil.d(TAG, "apiName : " + apiName + " body : " + body);
+		JSONObject jsonObject;
+		try {
+			jsonObject = new JSONObject(body);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return this.getForbiddenResponse("");
+		}
+		String appVersion = jsonObject.optString("appVersion");
+		if (apiName == null || TextUtils.isEmpty(appVersion)) {
+			return this.getForbiddenResponse("");
+		}
+		if(!appVersion.endsWith(App.instance.VERSION)){
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put("resultCode", ResultCode.APP_VERSION_UNREAL);
+			result.put("posVersion", App.instance.VERSION);
+			return this.getJsonResponse(new Gson().toJson(result));
+		} else if (apiName.equals(APIName.LOGIN_LOGINVERIFY)) {// 厨房登录
+			return handlerLogin(body);
+		}else if (apiName.equals(APIName.GET_PRINTERS)) {// 厨房请求是否有新的数据
+			return handlerKitGetPrinters(body);
+		} else if (apiName.equals(APIName.EMPLOYEE_ID)) { // waiter请求配对
+			return hanlderWaiterGetRevenues(body);
+		}
+		if (apiName.equals(APIName.HAPPYHOUR_GETHAPPYHOUR)) {// 欢乐时间
+			return handlerHappyHourInfo();
+		} else if (apiName.equals(APIName.ITEM_GETITEM)) {// 菜的信息
+			return handlerItemInfo(body);
+		} else if (apiName.equals(APIName.ITEM_GETITEMCATEGORY)) {// 菜分类信息
+			return handlerItemCategoryInfo(body);
+		} else if (apiName.equals(APIName.ITEM_GETMODIFIER)) {// 配料信息
+			return handlerModifierInfo(body);
+		} else if (apiName.equals(APIName.RESTAURANT_GETPLACEINFO)) {// 位置信息
+			return handlerPlaceInfo(body);
+		} else if (apiName.equals(APIName.RESTAURANT_GETRESTAURANTINFO)) {// 餐厅信息
+			return handlerRestaurantInfo(body);
+		} else if (apiName.equals(APIName.TAX_GETTAX)) {// 税的信息
+			return handlerTaxInfo();
+		} else if (apiName.equals(APIName.USER_GETUSER)) {// 用户信息
+			return handlerUserInfo(body);
+		} else if (apiName.equals(APIName.PAIRING_COMPLETE)) {
+			return handlerPairingComplete(body);
+		} else {
+				String userKey = jsonObject.optString("userKey");
+				if (TextUtils.isEmpty(userKey)
+						|| App.instance.getUserByKey(userKey) == null) {
+					Map<String, Object> result = new HashMap<String, Object>();
+					result.put("resultCode", ResultCode.USER_NO_PERMIT);
+					return this.getJsonResponse(new Gson().toJson(result));
+				}
+			if (apiName.equals(APIName.LOGIN_LOGOUT)) {// 注销
+				return handlerLogout(body);
+			} else if (apiName.equals(APIName.SELECT_TABLES)) {// 选择桌子
+				return handlerSelectTables(body);
+			} else if (apiName.equals(APIName.GET_ORDERDETAILS)) {// 获取不是waiter点的
+																	// orderDetails
+				return handlerGetOrderDetails(body);
+			} else if (apiName.equals(APIName.COMMIT_ORDER)) {// Waiter提交订单信息
+				return handlerCommitOrder(body);
+			} else if (apiName.equals(APIName.KDS_IP_CHANGE)) {
+				return this.handlerKDSIpChange(body);
+			} else if (apiName.equals(APIName.KOT_ITEM_COMPLETE)) { // 厨房提交item做完数据
+				return handlerKOTItemComplete(body);
+			} else if (apiName.equals(APIName.CANCEL_COMPLETE)) {// 厨房取消做完的菜
+				return cancelComplete(body);
+			} else if (apiName.equals(APIName.COLLECT_KOT_ITEM)) { // waiter
+																	// 点击取菜
+				return handlerCollectKotItem(body);
+			} else if (apiName.equals(APIName.GET_KOT_NOTIFICATION)) {
+				return handlerGetKotNotifications();
+			} else if (apiName.equals(APIName.GET_BILL)) {
+				return handlerGetBill(body);
+			} else {
+				return this.getNotFoundResponse();
+			}
+		}
+	}
+
+	private Response handlerLogout(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		Gson gson = new Gson();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int deviceType = jsonObject.optInt("deviceType");
+			String device = jsonObject.optString("device");
+			if (!TextUtils.isEmpty(device)) {
+				if (deviceType == ParamConst.DEVICE_TYPE_WAITER) {
+					final WaiterDevice waiterDevice = gson.fromJson(device,
+							WaiterDevice.class);
+					App.instance.removeWaiterDevice(waiterDevice);
+					CoreData.getInstance().removeLocalDeviceByDeviceIdAndIP(waiterDevice.getWaiterId(),waiterDevice.getIP());
+					// Notify Waiter pairing complete
+					App.getTopActivity().runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							App.getTopActivity().httpRequestAction(
+									ParamConst.HTTP_REQ_REFRESH_WAITER_PAIRED,
+									waiterDevice);
+						}
+					});
+				} else if (deviceType == ParamConst.DEVICE_TYPE_KDS) {
+					final KDSDevice kdsDevice = gson.fromJson(device,
+							KDSDevice.class);
+					App.instance.removeKDSDevice(kdsDevice.getDevice_id());
+					CoreData.getInstance().removeLocalDeviceByDeviceIdAndIP(kdsDevice.getDevice_id(), kdsDevice.getIP());
+					// Notify KDS pairing complete
+					App.getTopActivity().runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							App.getTopActivity().httpRequestAction(
+									ParamConst.HTTP_REQ_REFRESH_KDS_PAIRED,null);
+						}
+					});
+				}
+				result.put("mainPosInfo", App.instance.getMainPosInfo());
+				result.put("resultCode", ResultCode.SUCCESS);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			} else {
+				resp = this.getInternalErrorResponse("Device is invalid");
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse("");
+		}
+		return resp;
+	}
+
+
+	private Response hanlderWaiterGetRevenues(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		Gson gson = new Gson();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int employeeId = jsonObject.optInt("employee_ID");
+			User user = CoreData.getInstance().getUserByEmpId(employeeId);
+			if (App.instance.isRevenueKiosk()) {
+				result.put("resultCode", ResultCode.USER_NO_PERMIT);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+				return resp;
+			}
+			if (user != null) {
+				RevenueCenter revenueCenter = App.instance.getRevenueCenter();
+				Boolean isPermitted = CoreData.getInstance()
+						.checkUserWaiterAccessInRevcenter(user.getId(),
+								revenueCenter.getRestaurantId(),
+								revenueCenter.getId());
+				if (isPermitted) {
+					List<RevenueCenter> revenueCenters = CoreData.getInstance()
+							.getRevenueCenters();
+					List<Integer> revenueCenterIds = UserRestaurantSQL
+							.getRevenueIdByUserId(user.getId());
+					result.put("revenueCenters", revenueCenters);
+					result.put("revenueCenterIds", revenueCenterIds);
+					result.put("user", user);
+					result.put("revenue", revenueCenter);
+					result.put("resultCode", ResultCode.SUCCESS);
+				} else {
+					result.put("resultCode", ResultCode.USER_NO_PERMIT);
+					result.put("printers", null);
+				}
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			} else {
+				result.put("resultCode", ResultCode.USER_NO_PERMIT);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+		return resp;
+	}
+
+	private Response handlerPairingComplete(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		Gson gson = new Gson();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int deviceType = jsonObject.optInt("deviceType");
+			String device = jsonObject.optString("device");
+			if (!TextUtils.isEmpty(device)) {
+				if (deviceType == ParamConst.DEVICE_TYPE_WAITER && 
+						!App.instance.isRevenueKiosk()) {
+					final WaiterDevice waiterDevice = gson.fromJson(device,
+							WaiterDevice.class);
+					if (App.instance.isWaiterLoginAllowed(waiterDevice)) {
+						App.instance.addWaiterDevice(waiterDevice);
+						LocalDevice localDevice = ObjectFactory
+								.getInstance()
+								.getLocalDevice("", "waiter", ParamConst.DEVICE_TYPE_WAITER,
+										waiterDevice.getWaiterId(),
+										waiterDevice.getIP(), waiterDevice.getMac());
+						CoreData.getInstance().addLocalDevice(localDevice);
+						// Notify Waiter pairing complete
+						App.getTopActivity().runOnUiThread(new Runnable() {
+	
+							@Override
+							public void run() {
+								App.getTopActivity().httpRequestAction(
+										ParamConst.HTTP_REQ_CALLBACK_WAITER_PAIRED,
+										waiterDevice);
+							}
+						});
+					} else {
+						result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
+						resp = this.getJsonResponse(new Gson().toJson(result));
+						return resp;
+					}
+				} else if (deviceType == ParamConst.DEVICE_TYPE_KDS) {
+					final KDSDevice kdsDevice = gson.fromJson(device,
+							KDSDevice.class);
+					App.instance.addKDSDevice(kdsDevice.getDevice_id(),
+							kdsDevice);
+					LocalDevice localDevice = ObjectFactory.getInstance()
+							.getLocalDevice(kdsDevice.getName(),"kds",
+									ParamConst.DEVICE_TYPE_KDS,
+									kdsDevice.getDevice_id(),
+									kdsDevice.getIP(), kdsDevice.getMac());
+					CoreData.getInstance().addLocalDevice(localDevice);
+					// Notify KDS pairing complete
+					App.getTopActivity().runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							App.getTopActivity().httpRequestAction(
+									ParamConst.HTTP_REQ_CALLBACK_KDS_PAIRED,
+									kdsDevice);
+						}
+					});
+				}
+				result.put("mainPosInfo", App.instance.getMainPosInfo());
+				result.put("resultCode", ResultCode.SUCCESS);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			} else {
+				resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.device_invalid));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse("");
+		}
+		return resp;
+	}
+
+	private Response handlerLogin(String params) {
+		Response resp = null;
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			String employee_ID = jsonObject.optString("employee_ID");
+			String password = jsonObject.optString("password");
+			Integer type = jsonObject.optInt("type");
+			User user = CoreData.getInstance().getUser(employee_ID, password);
+			Map<String, Object> result = new HashMap<String, Object>();
+			if (user != null) {
+				SessionStatus sessionStatus = App.instance.getSessionStatus();
+				if (sessionStatus == null) {
+					result.put("resultCode", ResultCode.SESSION_IS_CLOSED);
+					resp = this.getJsonResponse(new Gson().toJson(result));
+				} else {
+					String userKey = UUID.randomUUID().toString();
+
+					MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
+					App.instance.addActiveUser(userKey, user);
+
+					Gson gson = new Gson();
+					if (type == ParamConst.USER_TYPE_KOT) {
+
+						KDSDevice dev = (KDSDevice) gson.fromJson(jsonObject
+								.optJSONObject("device").toString(),
+								KDSDevice.class);
+						App.instance.addKDSDevice(dev.getDevice_id(), dev);
+						List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+						List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+						List<KotSummary> kotSummaryList = KotSummarySQL
+								.getUndoneKotSummaryByBusinessDateAndOrderUnfinish(App.instance
+										.getBusinessDate());
+						List<PrinterGroup> printerGroupList = CoreData
+								.getInstance().getPrinterGroupByPrinter(
+										dev.getDevice_id());
+
+						for (KotSummary kotSummary : kotSummaryList) {
+							for (PrinterGroup printerGroup : printerGroupList) {
+								kotItemDetails
+										.addAll(KotItemDetailSQL
+												.getKotItemDetailByKotSummaryAndPrinterGroup(
+														kotSummary.getId(),
+														printerGroup
+																.getPrinterGroupId()));
+							}
+						}
+						for (KotItemDetail kotItemDetail : kotItemDetails) {
+							kotItemModifiers
+									.addAll(KotItemModifierSQL
+											.getKotItemModifiersByKotItemDetail(kotItemDetail
+													.getId()));
+						}
+
+						result.put("kotSummaryList", kotSummaryList);
+						result.put("kotItemDetails", kotItemDetails);
+						result.put("kotItemModifiers", kotItemModifiers);
+						result.put("user", user);
+						result.put("resultCode", ResultCode.SUCCESS);
+						result.put("userKey", userKey);
+						result.put("mainPosInfo", mainPosInfo);
+						result.put("session", sessionStatus);
+						result.put("businessDate", App.instance.getBusinessDate());
+						resp = this.getJsonResponse(new Gson().toJson(result));
+						
+					} else if (type == ParamConst.USER_TYPE_WAITER && 
+								!App.instance.isRevenueKiosk()) {
+						
+							//no need waiter app in kiosk mode
+							WaiterDevice dev = (WaiterDevice) gson.fromJson(
+									jsonObject.optJSONObject("device").toString(),
+									WaiterDevice.class);
+							//waiter can login one device at one time
+							if (App.instance.isWaiterLoginAllowed(dev)) {
+								App.instance.addWaiterDevice(dev); 
+								result.put("user", user);
+								result.put("resultCode", ResultCode.SUCCESS);
+								result.put("userKey", userKey);
+								result.put("mainPosInfo", mainPosInfo);
+								result.put("session", sessionStatus);
+								result.put("businessDate", App.instance.getBusinessDate());	
+								result.put("currencySymbol", App.instance.getLocalRestaurantConfig().getCurrencySymbol());
+							} else {
+								result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
+							}
+							
+							resp = this.getJsonResponse(new Gson().toJson(result));
+					}
+				}
+			} else {
+				result.put("resultCode", ResultCode.USER_NO_PERMIT);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.login_failed));
+		}
+		return resp;
+	}
+
+	private Response handlerRestaurantInfo(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		if (!isValidUser(params)) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		} else {
+			result.put("revenueList", CoreData.getInstance()
+					.getRevenueCenters());
+			result.put("printerList", CoreData.getInstance().getPrinters());
+			result.put("restaurant", CoreData.getInstance().getRestaurant());
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		}
+		return resp;
+	}
+
+	private Response handlerUserInfo(String params) {
+		// if (!isValidUser()) {
+		// send404();
+		// return;
+		// }
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("userList", CoreData.getInstance().getUsers());
+		result.put("resultCode", ResultCode.SUCCESS);
+		resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	private Response handlerItemCategoryInfo(String params) {
+		// if (!isValidUser()) {
+		// send404();
+		// return;
+		// }
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("subCategoryList", CoreData.getInstance()
+				.getItemCategories());
+		result.put("mainCategoryList", CoreData.getInstance()
+				.getItemMainCategories());
+		result.put("resultCode", ResultCode.SUCCESS);
+		resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	private Response handlerItemInfo(String params) {
+		Response resp;
+		// if (!isValidUser()) {
+		// send404();
+		// return;
+		// }
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("itemList", CoreData.getInstance().getItemDetails());
+		result.put("resultCode", ResultCode.SUCCESS);
+		resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	private Response handlerModifierInfo(String params) {
+		Response resp;
+		// if (!isValidUser()) {
+		// send404();
+		// return;
+		// }
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("itemModifierList", CoreData.getInstance()
+				.getItemModifiers());
+		result.put("modifierList", CoreData.getInstance().getModifierList());
+		result.put("resultCode", ResultCode.SUCCESS);
+		resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	private Response handlerTaxInfo() {
+		Response resp;
+		// if (!isValidUser()) {
+		// send404();
+		// return;
+		// }
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("taxList", CoreData.getInstance().getTaxs());
+		result.put("taxCategoryList", CoreData.getInstance().getTaxCategories());
+		result.put("resultCode", ResultCode.SUCCESS);
+		resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	private Response handlerHappyHourInfo() {
+		// if (!isValidUser()) {
+		// send404();
+		// return;
+		// }
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("itemHappyHourList", CoreData.getInstance()
+				.getItemHappyHours());
+		result.put("happyHourWeekList", CoreData.getInstance()
+				.getHappyHourWeeks());
+		result.put("happyHourList", CoreData.getInstance().getHappyHours());
+		result.put("resultCode", ResultCode.SUCCESS);
+		resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	private Response handlerPlaceInfo(String params) {
+		Response resp;
+		// if (!isValidUser()) {
+		// send404();
+		// return;
+		// }
+		Integer revenueId = 0;
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		/*No waiter apps in kiosk mode */
+		if (App.instance.isRevenueKiosk()) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;			
+		}		
+		try {
+			revenueId = new JSONObject(params).optInt("revenueId");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		result.put("placeList", CoreData.getInstance().getPlaceList(revenueId));
+		result.put("tableList", CoreData.getInstance().getTableList(revenueId));
+		result.put("resultCode", ResultCode.SUCCESS);
+		resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	//Waiter Select Table from Waiter APP
+	private Response handlerSelectTables(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		/*No waiter apps in kiosk mode */
+		if (App.instance.isRevenueKiosk()) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;			
+		}
+		
+		if (!isValidUser(params)) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;
+		}
+
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			Gson gson = new Gson();
+			Tables tables = gson.fromJson(jsonObject.optJSONObject("tables")
+					.toString(), Tables.class);
+			String userKey = jsonObject.optString("userKey");
+			result.put("tempItems", ItemDetailSQL.getAllTempItemDetail());
+			if (CoreData.getInstance().getTables(tables.getId())
+					.getTableStatus() == ParamConst.TABLE_STATUS_IDLE) {
+				TablesSQL.updateTables(tables);
+				//clean all KOT summary and KotDetails if the table is EMPTY
+				KotSummary kotSummary = KotSummarySQL.getKotSummaryByTable(tables);
+				if(kotSummary != null){
+					List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
+					if(kotItemDetails != null)
+					for(KotItemDetail kotItemDetail : kotItemDetails){
+						kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+						KotItemDetailSQL.update(kotItemDetail);
+					}
+					kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
+					KotSummarySQL.update(kotSummary);
+				}
+			
+				CoreData.getInstance().setTableList(TablesSQL.getAllTables());
+				Order order = ObjectFactory.getInstance().getOrder(
+						ParamConst.ORDER_ORIGIN_WAITER, tables,
+						App.instance.getRevenueCenter(),
+						App.instance.getUserByKey(userKey),
+						App.instance.getSessionStatus(),
+						App.instance.getBusinessDate(),
+						App.instance.getIndexOfRevenueCenter(),
+						ParamConst.ORDER_STATUS_OPEN_IN_WAITER,
+						App.instance.getLocalRestaurantConfig()
+						.getIncludedTax().getTax());
+				// ArrayList<OrderDetail> orderDetails = OrderDetailSQL
+				// .getOrderDetailByOrderIdAndOrderOriginId(order.getId(),
+				// ParamConst.ORDER_ORIGIN_WAITER);
+				result.put("order", order);
+				result.put("resultCode", ResultCode.SUCCESS);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+				App.getTopActivity().httpRequestAction(
+						MainPage.REFRESH_TABLES_STATUS, tables);
+			} else {// 错误处理
+				// result.put("resultCode", ResultCode.UNKNOW_ERROR);
+				// send200(new Gson().toJson(result));
+
+				// 暂时也回复正常数据，便于测试
+				TablesSQL.updateTables(tables);
+				Order order = ObjectFactory.getInstance().getOrder(
+						ParamConst.ORDER_ORIGIN_WAITER, tables,
+						App.instance.getRevenueCenter(),
+						App.instance.getUserByKey(userKey),
+						App.instance.getSessionStatus(),
+						App.instance.getBusinessDate(),
+						App.instance.getIndexOfRevenueCenter(),
+						ParamConst.ORDER_STATUS_OPEN_IN_WAITER,
+						App.instance.getLocalRestaurantConfig()
+						.getIncludedTax().getTax());
+				ArrayList<OrderDetail> orderDetails = OrderDetailSQL
+						.getOrderDetails(order.getId());
+				result.put("order", order);
+				result.put("resultCode", ResultCode.SUCCESS);
+				result.put("orderDetails", orderDetails);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+		return resp;
+	}
+
+	private Response handlerGetOrderDetails(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		/*No waiter apps in kiosk mode */
+		if (App.instance.isRevenueKiosk()) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;			
+		}
+		
+		if (!isValidUser(params)) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;
+		}
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			Gson gson = new Gson();
+			Order order = gson.fromJson(jsonObject.optString("order"),
+					Order.class);
+			ArrayList<OrderDetail> orderDetails = OrderDetailSQL
+					.getOrderDetailByOrderIdAndOrderOriginId(order.getId(),
+							ParamConst.ORDER_ORIGIN_WAITER);
+			result.put("otherOrderDetails", orderDetails);
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		} catch (JSONException e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+		return resp;
+	}
+
+	private Response handlerCommitOrder(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		/*No waiter apps in kiosk mode */
+		if (App.instance.isRevenueKiosk()) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;			
+		}
+		
+		if (!isValidUser(params)) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;
+		}
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			Gson gson = new Gson();
+			Order order = gson.fromJson(jsonObject.optJSONObject("order")
+					.toString(), Order.class);
+			Order loadOrder = OrderSQL.getUnfinishedOrder(order.getId());
+			if (loadOrder == null) {
+				result.put("resultCode", ResultCode.ORDER_FINISHED);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+				return resp;
+			}
+			if((App.instance.orderInPayment != null && App.instance.orderInPayment.getId().intValue() == order.getId().intValue())){
+				result.put("resultCode", ResultCode.NONEXISTENT_ORDER);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+				return resp;
+			}
+			ArrayList<OrderDetail> waiterOrderDetails = gson.fromJson(
+					jsonObject.optString("orderDetails"),
+					new TypeToken<ArrayList<OrderDetail>>() {
+					}.getType());
+			ArrayList<OrderModifier> waiterOrderModifiers = gson.fromJson(
+					jsonObject.optString("orderModifiers"),
+					new TypeToken<ArrayList<OrderModifier>>() {
+					}.getType());
+			// 检测是否有 订单是已经完成的拆单中的
+			for(OrderDetail orderDetail : waiterOrderDetails){
+				OrderSplit loadOrderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
+				if(loadOrderSplit != null && loadOrderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED){
+					result.put("resultCode", ResultCode.ORDER_SPLIT_IS_SETTLED);
+					result.put("groupId", loadOrderSplit.getGroupId());
+					resp = this.getJsonResponse(new Gson().toJson(result));
+					return resp;
+				}
+			}
+			
+			// waiter 过来的数据 存到 pos的DB中 不带Id存储
+			for (OrderDetail orderDetail : waiterOrderDetails) {
+				synchronized (lockObject) {
+					OrderDetail orderDetailFromPOS = OrderDetailSQL
+							.getOrderDetailByCreateTime(
+									orderDetail.getCreateTime(),
+									orderDetail.getOrderId());
+					if (orderDetailFromPOS != null) {
+						continue;
+					} else {
+						
+						int orderDetailId = CommonSQL
+								.getNextSeq(TableNames.OrderDetail);
+						int oldOrderDetailId = orderDetail.getId();
+						orderDetail
+								.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+						orderDetail.setId(orderDetailId);
+						OrderDetailSQL.addOrderDetailETC(orderDetail);
+						if(orderDetail.getGroupId().intValue() > 0){
+							OrderSplit orderSplit = ObjectFactory.getInstance().getOrderSplit(order, orderDetail.getGroupId(),App.instance.getLocalRestaurantConfig()
+									.getIncludedTax().getTax());
+							OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
+							orderDetail.setOrderSplitId(orderSplit.getId());
+							OrderDetailSQL.updateOrderDetail(orderDetail);
+							OrderDetailTaxSQL.updateOrderSplitIdbyOrderDetail(orderDetail);
+						}
+						if (waiterOrderModifiers != null
+								&& !waiterOrderModifiers.isEmpty()) {
+							for (OrderModifier orderModifier : waiterOrderModifiers) {
+								if (orderModifier.getOrderDetailId().intValue() == oldOrderDetailId) {
+									orderModifier.setOrderDetailId(orderDetailId);
+									orderModifier.setId(CommonSQL
+											.getNextSeq(TableNames.OrderModifier));
+									OrderModifierSQL
+											.updateOrderModifier(orderModifier);
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
+			
+			//	当前Order未完成时更新状态
+			OrderSQL.updateUnFinishedOrderFromWaiter(order);
+			//	这边重新从数据中获取OrderDetail 不依赖于waiter过来的数据
+			List<OrderDetail> orderDetails = OrderDetailSQL
+					.getOrderDetails(order.getId());
+			if(!orderDetails.isEmpty()){
+				Order placedOrder = OrderSQL.getOrder(order.getId());
+				if(placedOrder.getOrderNo().intValue() == 0){
+					order.setOrderNo(OrderHelper.calculateOrderNo(order.getBusinessDate()));
+					OrderSQL.updateOrderNo(order);
+				}
+				OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+						order, App.instance.getRevenueCenter());
+				OrderBillSQL.add(orderBill);
+			}
+			
+//			RoundAmount roundAmount = ObjectFactory.getInstance()
+//					.getRoundAmount(order, orderBill, App.instance.getLocalRestaurantConfig().getRoundType());
+//			RoundAmountSQL.update(roundAmount);
+			String kotCommitStatus;
+			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummary(
+					CoreData.getInstance().getTables(order.getTableId()),
+					order, App.instance.getRevenueCenter(), App.instance.getBusinessDate());
+			List<Integer> orderDetailIds = new ArrayList<Integer>();
+			ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+			ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+			kotCommitStatus = ParamConst.JOB_NEW_KOT;
+			for (OrderDetail orderDetail : orderDetails) {
+				if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_PREPARED) {
+					continue;
+				}
+				if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+					kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+				} else {
+					KotItemDetail kotItemDetail = ObjectFactory
+							.getInstance()
+							.getKotItemDetail(
+									order,
+									orderDetail,
+									CoreData.getInstance().getItemDetailById(
+											orderDetail.getItemId()),
+									kotSummary, App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+					kotItemDetail.setItemNum(orderDetail.getItemNum());
+					if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
+						kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+						kotItemDetail
+								.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+					}
+					KotItemDetailSQL.update(kotItemDetail);
+					kotItemDetails.add(kotItemDetail);
+					orderDetailIds.add(orderDetail.getId());
+					ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+							.getOrderModifiers(order, orderDetail);
+					for (OrderModifier orderModifier : orderModifiers) {
+						KotItemModifier kotItemModifier = ObjectFactory
+								.getInstance().getKotItemModifier(
+										kotItemDetail,
+										orderModifier,
+										CoreData.getInstance().getModifier(
+												orderModifier.getModifierId()));
+						KotItemModifierSQL.update(kotItemModifier);
+						kotItemModifiers.add(kotItemModifier);
+					}
+				}
+			}
+			KotSummarySQL.update(kotSummary);
+			result.put("order", order);
+			result.put("orderDetails", OrderDetailSQL.getOrderDetails(order.getId()));
+			result.put("orderModifiers",
+					OrderModifierSQL.getAllOrderModifier(order));
+			result.put("orderDetailTaxs",
+					OrderDetailTaxSQL.getAllOrderDetailTax(order));
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			// App.getTopActivity().httpRequestAction(MainPage.WAITER_SEND_KDS,
+			// kotMap);
+			Map<String, Object> orderMap = new HashMap<String, Object>();
+			orderMap.put("orderId", order.getId());
+			orderMap.put("orderDetailIds", orderDetailIds);
+			App.instance.getKdsJobManager()
+					.tearDownKot(kotSummary, kotItemDetails, kotItemModifiers,
+							kotCommitStatus, orderMap);
+			 App.getTopActivity().httpRequestAction(
+					 MainPage.VIEW_EVENT_SET_DATA, order.getId());
+		} catch (JSONException e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+		return resp;
+	}
+
+	/*
+	 * Handle request from KDS
+	 */
+
+	private Response handlerKDSIpChange(String params) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			/*
+			 * {"device_id":220,
+			 *  "mac":"98:3b:16:18:5a:94",
+			 * "userKey":"f1b02b44-0a92-4c6c-a473-0534844067bc",
+				"appVersion":"1.0.9",
+				"ip":"192.168.0.8",
+				"name":"KDS 1 KITCHEN"}
+			*/
+			String ip_str = jsonObject.optString("ip");
+			int devideid = jsonObject.optInt("device_id");
+			String mac = jsonObject.optString("mac");
+			String devicename = jsonObject.optString("name");
+			
+
+			
+			KDSDevice device = new KDSDevice();
+			device.setDevice_id(devideid);
+			device.setIP(ip_str);
+			device.setMac(mac);
+			device.setName(devicename);
+
+			LocalDevice localDevice = ObjectFactory.getInstance()
+					.getLocalDevice(device.getName(),"kds",
+							ParamConst.DEVICE_TYPE_KDS,
+							device.getDevice_id(),
+							device.getIP(), device.getMac());
+			
+			CoreData.getInstance().addLocalDevice(localDevice);
+			
+			App.instance.addKDSDevice(devideid, device);
+
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		} catch (JSONException e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+		return resp;
+	}
+
+// Not used
+//	private Response handlerKotComplete(String params) {
+//		Response resp;
+//		Map<String, Object> result = new HashMap<String, Object>();
+//		try {
+//			JSONObject jsonObject = new JSONObject(params);
+//
+//			Gson gson = new Gson();
+//			List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+//			kotItemDetails = gson.fromJson(
+//					jsonObject.optJSONObject("kotItemDtails").toString(),
+//					new TypeToken<List<KotItemDetail>>() {
+//					}.getType());
+//
+//			List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+//			kotItemModifiers = gson.fromJson(
+//					jsonObject.optJSONObject("kotItemModifiers").toString(),
+//					new TypeToken<List<KotItemDetail>>() {
+//					}.getType());
+//
+//			KotSummary kotSummary = gson.fromJson(
+//					jsonObject.optJSONObject("kotSummary").toString(),
+//					KotSummary.class);
+//
+//			result.put("resultCode", ResultCode.SUCCESS);
+//			resp = this.getJsonResponse(new Gson().toJson(result));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			resp = this.getInternalErrorResponse("Internal Error");
+//		}
+//		return resp;
+//	}
+
+	private Response handlerKitGetPrinters(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int printerType = jsonObject.optInt("printerType");
+			int employeeId = jsonObject.optInt("employeeId");
+			// verify employee
+			User usr = CoreData.getInstance().getUserByEmpId(employeeId);
+			if (usr != null) {
+				RevenueCenter rc = App.instance.getRevenueCenter();
+				Boolean isPermitted = CoreData.getInstance()
+						.checkUserKDSAccessInRevcenter(usr.getId(),
+								rc.getRestaurantId(), rc.getId());
+				if (isPermitted) {
+					List<Printer> printers = PrinterSQL
+							.getAllPrinterByType(printerType);
+					LogUtil.i("http", PrinterSQL.getAllPrinter().toString());
+					result.put("printers", printers);
+					result.put("user", usr);
+					result.put("resultCode", ResultCode.SUCCESS);
+				} else {
+					result.put("resultCode", ResultCode.USER_NO_PERMIT);
+					result.put("printers", null);
+				}
+			} else {
+				result.put("resultCode", ResultCode.USER_NO_PERMIT);
+				result.put("printers", null);
+			}
+			resp = this.getJsonResponse(new Gson().toJson(result));
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+		return resp;
+	}
+
+	// private Response handlerKdsPairComplete(String params) {
+	// Response resp;
+	// Map<String, Object> result = new HashMap<String, Object>();
+	// Gson gson = new Gson();
+	// try {
+	// JSONObject jsonObject = new JSONObject(params);
+	// final KDSDevice kds = gson.fromJson(jsonObject.optJSONObject("kds")
+	// .toString(), KDSDevice.class);
+	// App.instance.addKDSDevice(kds.getDevice_id(), kds);
+	// MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
+	// result.put("resultCode", ResultCode.SUCCESS);
+	// result.put("mainpos", mainPosInfo);
+	// resp = this.getJsonResponse(new Gson().toJson(result));
+	//
+	// //Notify KDS pairing complete
+	// App.getTopActivity().runOnUiThread(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// App.getTopActivity().httpRequestAction(ParamConst.HTTP_REQ_CALLBACK_KDS_PAIRED,
+	// kds);
+	// }
+	// });
+	// } catch (JSONException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// resp = this.getInternalErrorResponse("Internal Error");
+	// }
+	// return resp;
+	// }
+
+	private Response handlerKOTItemComplete(String params) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		Gson gson = new Gson();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			
+			KotSummary kotSummary = gson.fromJson(
+					jsonObject.getString("kotSummary"), KotSummary.class);
+			List<KotNotification> kotNotifications = new ArrayList<KotNotification>();
+			ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
+					jsonObject.optString("kotItemDetails"),
+					new TypeToken<ArrayList<KotItemDetail>>() {
+					}.getType());
+			KotSummary localKotSummary = KotSummarySQL.getKotSummaryById(kotSummary.getId().intValue());
+			if(localKotSummary == null){
+				result.put("resultCode", ResultCode.KOTSUMMARY_IS_UNREAL);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+				return resp;
+			}
+			// Bob: fix bug: filter out old data that may be in KDS
+			ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
+			for (int i = 0; i < kotItemDetails.size(); i++) {
+				KotItemDetail kotItemDetail = kotItemDetails.get(i);
+				if (kotItemDetail.getOrderId().intValue() == kotSummary.getOrderId().intValue())
+					filteredKotItemDetails.add(kotItemDetail);
+			}
+			
+			List<KotItemDetail> resultKotItemDetails = new ArrayList<KotItemDetail>();
+			// end bug fix
+			
+			for (int i = 0; i < filteredKotItemDetails.size(); i++) {
+				KotItemDetail kotItemDetail = filteredKotItemDetails.get(i);
+
+				// Bob v1.0.4: if orderdetail is done, no need add notification
+				OrderDetailSQL.updateOrderDetailStatusById(
+						ParamConst.ORDERDETAIL_STATUS_PREPARED,
+						kotItemDetail.getOrderDetailId());
+
+				KotItemDetail lastSubKotItemDetail = KotItemDetailSQL.getLastKotItemDetailByOrderDetailId(kotItemDetail.getOrderDetailId());
+				if(lastSubKotItemDetail != null && lastSubKotItemDetail.getUnFinishQty() != (kotItemDetail.getUnFinishQty() + kotItemDetail.getFinishQty())){
+					result.put("resultCode", ResultCode.KOT_COMPLETE_USER_FAILED);
+					resp = this.getJsonResponse(new Gson().toJson(result));
+					return resp;
+				}
+				KotItemDetail subKotItemDetail = ObjectFactory.getInstance()
+						.getSubKotItemDetail(kotItemDetail);
+				resultKotItemDetails.add(subKotItemDetail);
+				KotNotification kotNotification = ObjectFactory.getInstance()
+						.getKotNotification(App.instance.getSessionStatus(),
+								kotSummary, subKotItemDetail);
+
+				kotNotifications.add(kotNotification);
+			}
+			if (filteredKotItemDetails.size() > 0) {
+				KotItemDetailSQL.addKotItemDetailList(filteredKotItemDetails);
+				KotNotificationSQL.addKotNotificationList(kotNotifications);
+				App.getTopActivity().httpRequestAction(
+						MainPage.VIEW_EVENT_SET_DATA, kotSummary.getOrderId());
+				result.put("resultCode", ResultCode.SUCCESS);
+				result.put("resultKotItemDetails", resultKotItemDetails);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+				
+				/* no waiter in kiosk mode*/
+				if (!App.instance.isRevenueKiosk())
+					App.getTopActivity().runOnUiThread(new Runnable() {
+	
+						@Override
+						public void run() {
+							SyncCentre.getInstance()
+									.notifyWaiterToGetNotifications(
+											App.getTopActivity(),
+											KotNotificationSQL
+													.getAllKotNotificationQty());
+						}
+					});
+			} else {
+				result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
+
+//not used
+//	private Response handlerKOTComplete(String params) {
+//		Map<String, Object> result = new HashMap<String, Object>();
+//		Response resp;
+//		Gson gson = new Gson();
+//		try {
+//			JSONObject jsonObject = new JSONObject(params);
+//			KotSummary kotSummary = gson.fromJson(
+//					jsonObject.getString("kotSummary"), KotSummary.class);
+//			KotSummarySQL.update(kotSummary);
+//			result.put("resultCode", ResultCode.SUCCESS);
+//			resp = this.getJsonResponse(new Gson().toJson(result));
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//			resp = this.getInternalErrorResponse("Internal Error");
+//		}
+//		return resp;
+//	}
+
+	private boolean isValidUser(String params) {
+		String userKey = null;
+		try {
+			userKey = new JSONObject(params).optString("userKey");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		if (CommonUtil.isNull(userKey)
+				|| App.instance.getUserByKey(userKey) == null) {
+			return false;
+		}
+		return true;
+	}
+
+	private Response handlerGetKotNotifications() {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();		
+		List<KotNotification> kotNotifications = KotNotificationSQL
+				.getAllKotNotification();
+		List<String> tableNames = KotNotificationSQL.getTableNameList();
+		List<TableAndKotNotificationList> notificationLists = new ArrayList<TableAndKotNotificationList>();
+		
+		/*No waiter apps in kiosk mode */
+		if (App.instance.isRevenueKiosk()) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;			
+		}
+		
+		for (String tableName : tableNames) {
+			TableAndKotNotificationList tableAndKotNotificationList = new TableAndKotNotificationList();
+			tableAndKotNotificationList.setTableName(tableName);
+			for (KotNotification kotNotification : kotNotifications) {
+				if (kotNotification.getTableName().equals(tableName)) {
+					tableAndKotNotificationList.getKotNotifications().add(
+							kotNotification);
+				}
+			}
+			notificationLists.add(tableAndKotNotificationList);
+		}
+
+		result.put("notificationLists", notificationLists);
+		result.put("resultCode", ResultCode.SUCCESS);
+		resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	private Response handlerCollectKotItem(String params) {
+		Response resp;
+		JSONObject jsonObject;
+		Map<String, Object> result = new HashMap<String, Object>();
+		Gson gson = new Gson();
+		/*No waiter apps in kiosk mode */
+		if (App.instance.isRevenueKiosk()) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;			
+		}
+		
+		try {
+			jsonObject = new JSONObject(params);
+			KotNotification kotNotification = gson.fromJson(jsonObject
+					.optJSONObject("kotNotification").toString(),
+					KotNotification.class);
+			kotNotification.setStatus(ParamConst.KOTNOTIFICATION_STATUS_DELETE);
+			KotNotificationSQL.update(kotNotification);
+			App.getTopActivity().runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					SyncCentre.getInstance().notifyWaiterToGetNotifications(
+							App.getTopActivity(),
+							KotNotificationSQL.getAllKotNotificationQty());
+				}
+			});
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		} catch (JSONException e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse("");
+		}
+		return resp;
+	}
+
+	private Response cancelComplete(String params) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		Gson gson = new Gson();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			KotSummary kotSummary = gson.fromJson(
+					jsonObject.getString("kotSummary"), KotSummary.class);
+			KotItemDetail kotItemDetail = gson.fromJson(
+					jsonObject.optString("kotItemDetail"),KotItemDetail.class);
+			List<KotItemDetail> newKotItemDetails = new ArrayList<KotItemDetail>();
+
+			if (kotItemDetail.getCategoryId().intValue() != ParamConst.KOTITEMDETAIL_CATEGORYID_SUB) {
+				resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+				return resp;
+			}
+			KotItemDetail kItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+			if (kItemDetail == null) {
+//				resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+				result.put("resultCode", ResultCode.KOT_COMPLETE_USER_FAILED);
+				return resp = this.getJsonResponse(new Gson().toJson(result));
+			}
+			
+			KotItemDetail localMainKotItemDetail = KotItemDetailSQL
+					.getMainKotItemDetailByOrderDetailId(kotItemDetail
+							.getOrderDetailId());
+			localMainKotItemDetail.setUnFinishQty(localMainKotItemDetail
+					.getUnFinishQty().intValue()
+					+ kotItemDetail.getFinishQty().intValue());
+			localMainKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
+			newKotItemDetails.add(localMainKotItemDetail);
+			
+			
+			List<KotItemDetail> localSubKotItemDetails = KotItemDetailSQL
+					.getOtherSubKotItemDetailsByOrderDetailId(kotItemDetail);
+			for (KotItemDetail localSubKotItemDetail : localSubKotItemDetails) {
+				localSubKotItemDetail.setUnFinishQty(localSubKotItemDetail
+						.getUnFinishQty().intValue()
+						+ kotItemDetail.getFinishQty().intValue());
+				newKotItemDetails.add(localSubKotItemDetail);
+			}
+			if (localMainKotItemDetail.getUnFinishQty().intValue() == localMainKotItemDetail.getItemNum().intValue()) {
+				OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD, kotItemDetail.getOrderDetailId());
+			}
+			
+			KotItemDetailSQL.deleteKotItemDetail(kotItemDetail);
+			KotItemDetailSQL.addKotItemDetailList(newKotItemDetails);
+			KotNotificationSQL.deleteAllKotNotificationsByKotItemDetail(kotItemDetail);
+			App.getTopActivity().httpRequestAction(
+					MainPage.VIEW_EVENT_SET_DATA, kotSummary.getOrderId());
+			result.put("resultCode", ResultCode.SUCCESS);
+			result.put("newKotItemDetails", newKotItemDetails);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			App.getTopActivity().runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					SyncCentre.getInstance().notifyWaiterToGetNotifications(
+							App.getTopActivity(),
+							KotNotificationSQL.getAllKotNotificationQty());
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
+
+	private Response handlerGetBill(String params) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		Gson gson = new Gson();
+		
+		/*No waiter apps in kiosk mode */
+		if (App.instance.isRevenueKiosk()) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;			
+		}
+		
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			Tables tables = gson.fromJson(jsonObject.getString("table"),
+					Tables.class);
+            //Table status in waiter APP is not same that of table in POS
+			//need get latest status on app.
+			Tables tabInPOS = TablesSQL.getTableById(tables.getId());
+			App.getTopActivity().httpRequestAction(
+					MainPage.VIEW_EVNT_GET_BILL_PRINT, tabInPOS);
+
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
+	
+}

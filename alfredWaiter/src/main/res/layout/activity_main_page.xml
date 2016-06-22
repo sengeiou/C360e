@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <include
+        android:id="@+id/titleBar"
+        layout="@layout/title_bar_view"/>
+       
+    <LinearLayout
+        android:id="@+id/ll_dish_total"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/list_text_color"
+        android:orientation="horizontal" >
+
+        <RelativeLayout 
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            
+            <ImageView
+                android:id="@+id/iv_person_index"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:src="@drawable/icon_waiter_people" />
+            
+            <TextView
+                android:id="@+id/tv_person_index" 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="-25dp"
+	            android:textColor="@color/white"
+	            android:gravity="center"
+	            android:layout_marginTop="8dp"
+	            android:background="@drawable/icon_message_number"
+	            android:layout_toRightOf="@+id/iv_person_index"
+	            android:text=""/>
+
+        </RelativeLayout>
+        <RelativeLayout 
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            
+
+	        <TextView
+	            android:id="@+id/tv_table_name" 
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:textColor="@color/white"
+	            android:gravity="center"
+	            android:layout_marginLeft="10dp"
+	            android:text=""/> 
+
+        </RelativeLayout>
+		<RelativeLayout 
+		    android:layout_width="0dp"
+		    android:layout_height="match_parent"
+		    android:layout_weight="1"
+		    android:gravity="center">
+		    <ImageView
+	            android:id="@+id/iv_tables_name"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textColor="@color/black"
+	            android:src="@drawable/icon_waiter_order"
+	            android:textSize="@dimen/text_size_m" />
+		    <ImageView 
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="10dp"
+		        android:layout_marginTop="-5dp"
+		        android:src="@drawable/icon_waiter_order_number"/>
+		</RelativeLayout>        
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ll_dish_total"
+        android:layout_below="@id/titleBar"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+		    
+            <ExpandableListView
+                android:id="@+id/expandedListViewEx"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:cacheColorHint="@android:color/transparent"
+                android:listSelector="@android:color/transparent"
+                android:choiceMode="singleChoice" />
+            <ImageView 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/shadow"
+                android:layout_alignParentTop="true"
+                android:scaleType="fitXY"/>
+            <Button
+                android:id="@+id/btn_slide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_slide"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,173 @@
+ package com.alfredbase.javabean;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.alfredbase.javabean.model.PrintOrderItem;
+
+public class PrinterTitle implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8078053033115807909L;
+	private String restaurantName;
+	private String addressDetail;
+	private String address;
+	private String tel;
+	private String email;
+	private String webAddress;
+	private String op;
+	private String pos;
+	private String date;
+	private ArrayList<PrintOrderItem> list = new ArrayList<PrintOrderItem>();
+	private String bill_NO;
+	private String time;
+	private String tableName;
+	private String logo;
+	private String bizDate;
+	private String options;//header options
+	private String footerOptions;// footer options
+	private Integer isTakeAway;
+	private String orderNo; //流水号
+
+
+	public String getOptions() {
+		return options;
+	}
+	public void setOptions(String options) {
+		if (options!=null)
+			options = options.trim();
+		this.options = options;
+	}
+	
+	public String getFooterOptions() {
+		return footerOptions;
+	}
+	
+	public void setFooterOptions(String options) {
+		if (options!=null)
+			footerOptions = options.trim();
+		this.footerOptions = options;
+	}
+
+	
+	public PrinterTitle(){
+	}
+	public String getRestaurantName() {
+		return restaurantName;
+	}
+	public void setRestaurantName(String restaurantName) {
+		this.restaurantName = restaurantName;
+	}
+	public String getAddressDetail() {
+		return addressDetail;
+	}
+	public void setAddressDetail(String addressDetail) {
+		this.addressDetail = addressDetail;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getTel() {
+		return tel;
+	}
+	public void setTel(String tel) {
+		this.tel = tel;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getWebAddress() {
+		return webAddress;
+	}
+	public void setWebAddress(String webAddress) {
+		this.webAddress = webAddress;
+	}
+	public String getOp() {
+		return op;
+	}
+	public void setOp(String op) {
+		this.op = op;
+	}
+	public String getPos() {
+		return pos;
+	}
+	public void setPos(String pos) {
+		this.pos = pos;
+	}
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public List<PrintOrderItem> getList() {
+		return list;
+	}
+	public void setList(ArrayList<PrintOrderItem> list) {
+		this.list = list;
+	}
+	public String getBill_NO() {
+		return bill_NO;
+	}
+	public void setBill_NO(String bill_NO) {
+		this.bill_NO = bill_NO;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+	
+	public String getTableName() {
+		return tableName;
+	}
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+	public String getLogo() {
+		return logo;
+	}
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+	public String getBizDate() {
+		return bizDate;
+	}
+	public void setBizDate(String bizDate) {
+		this.bizDate = bizDate;
+	}
+	public Integer getIsTakeAway() {
+		return isTakeAway;
+	}
+	public void setIsTakeAway(Integer isTakeAway) {
+		this.isTakeAway = isTakeAway;
+	}
+	public String getOrderNo() {
+		return orderNo;
+	}
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+	@Override
+	public String toString() {
+		return "PrinterTitle [restaurantName=" + restaurantName
+				+ ", addressDetail=" + addressDetail + ", address=" + address
+				+ ", tel=" + tel + ", email=" + email + ", webAddress="
+				+ webAddress + ", op=" + op + ", pos=" + pos + ", date=" + date
+				+ ", list=" + list + ", bill_NO=" + bill_NO + ", time=" + time
+				+ ", tableName=" + tableName + ", logo=" + logo + ", bizDate="
+				+ bizDate + ", options=" + options + ", footerOptions="
+				+ footerOptions + ", isTakeAway=" + isTakeAway + "]";
+	}
+
+}

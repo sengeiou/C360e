@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+	<!-- global -->
+    <string name="app_name">AlfredKDS</string>
+    <string name="action_settings">设置</string>
+    <string name="hello_world">Hello world!</string>
+	<string name="version">版本:</string>
+	<string name="exit_program">再按一次返回键退出程序</string>
+	<string name="revenue_center">收银中心</string>
+	<string name="loading">正在加载</string>
+	
+	<!-- before login -->
+	<string name="scanqr_tips">扫描收银机上的收银中心二维码。\n 或者向左滑动，手动输入收银机的IP地址</string>
+	<string name="ipaddr_tips">设置IP连接收银中心</string>
+	<string name="connect">连接</string>
+	<string name="check_ip">检查到的IP地址是不正确的</string>
+	<string name="pairing_fails">连接失败，没有权限</string>
+	<string name="employee_id">连接设备\n输入帐号</string>
+	<string name="select_kitchen">厨房显示设备配对成功,\n请选择该设备所在的厨房</string>
+	<string name="paired_failed">该厨房显示设备没有和收银机配对</string>
+	<string name="cashier_login_tips1">输入账号</string>
+    <string name="cashier_login_tips2">输入密码</string>
+    <string name="logining">正在登录</string>
+    
+    <!-- KitchOrder -->
+    <string name="send_failed">发送失败!</string>
+    <string name="other_pos_data">Other MainPos send data</string>
+    <string name="order_discarded">订单已被取消</string>
+    <string name="reconnect_pos">收银机断开连接.\n 重新连接?</string>
+    <string name="order_id_">订单号: </string>
+    <string name="table_">桌子 -  </string>
+    <string name="take_away">打包</string>
+    
+    <!-- Summary -->
+    <string name="summary">汇总</string>
+    <string name="item">菜名</string>
+    <string name="pos_id">收银机ID</string>
+    <string name="item_complete">完成</string>
+    <string name="kitchen_name">厨房名称</string>
+    <string name="reconnect_pos_">发送失败，请重新连接收银机</string>
+    <string name="kot_in_progress">正在进行中</string>
+    
+    <!-- KotHistory -->
+    <string name="kot_history">历史记录</string>
+    <string name="kot_revert">撤销</string>
+    <string name="kot_id">KotId</string>
+    <string name="order_id">订单号</string>
+    <string name="table">桌子</string>
+    <string name="pos">收银机</string>
+    <string name="data">日期</string>
+    <string name="time">时间</string>
+    <string name="dish">菜品</string>
+    <string name="undoing">正在撤销</string>
+    
+    <!-- Setting -->
+    <string name="reset">所有的数据都被清空, \n 你确定要重置厨房?</string>
+    <string name="cancel">取消</string>
+	<string name="ok">确定</string>
+    <string name="setting">设置</string>
+    <string name="reset_kds">重置厨房</string>
+    <string name="switch_account">切换用户</string>
+    <string name="kot_history_">历史记录</string>
+    
+    <!-- KdsHttpServer -->
+    <string name="transfer_table_failed">桌子交换失败</string>
+    <string name="kot_submit_failed">提交失败</string>
+    <string name="session_change">营业时段改变</string>
+    <string name="relogin_pos">收银机已经结束了当前时段营业.\n请在下个时段开始后重新登录</string>
+    
+    <!-- other -->
+    <string name="network_error">网络连接错误</string>
+    <string name="finished_items_number">请输入做完菜的数量</string>
+    <string name="max_number">最大数量是 </string>
+    <string name="no_finished">完成的数量</string>
+    <string name="sending">正在发送</string>
+    <string name="reconn_pos">你需要重新连接收银台!</string>
+    
+</resources>

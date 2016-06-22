@@ -1,0 +1,6 @@
+include ':alfredBase'
+include ':alfredTaskQueue'
+include ':alfredPosClient'
+include ':alfredKDS'
+include ':alfredRemotePrintService'
+include ':alfredWaiter'

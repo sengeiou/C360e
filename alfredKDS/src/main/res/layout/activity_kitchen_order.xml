@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:widget="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@color/white">
+
+    <com.alfredkds.view.TopBarView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:id="@+id/ll_progress_list"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal" >
+    </LinearLayout>
+    
+    <com.alfredkds.view.HorizontalListView 
+        android:id="@+id/ll_orders"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_title"
+        android:layout_marginTop="10dp"
+        android:divider="#e00"
+        android:fadingEdgeLength="5dp"
+        android:requiresFadingEdge="horizontal" 
+        android:background="@color/white"
+        widget:dividerWidth="3dp"        
+        android:layout_above="@+id/ll_progress_list">
+    </com.alfredkds.view.HorizontalListView>
+    
+    <ImageView 
+        android:id="@+id/iv_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/shadow"
+        android:scaleType="fitXY"
+        android:layout_below="@+id/tv_title"/>
+</RelativeLayout>

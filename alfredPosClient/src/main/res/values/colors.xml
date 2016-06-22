@@ -1,0 +1,23 @@
+<resources>
+
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_frame">#ff000000</color>
+    <color name="viewfinder_laser">#ffff0000</color>
+    <color name="viewfinder_mask">#60000000</color>
+	<color name="red">#f6FF1616</color>
+	
+	
+	<color name="light_gray">#CCCCCC</color>
+	<color name="brown">#967e53</color>
+	<color name="height_gray">#333434</color>
+	<color name="brownness">#987e54</color>
+	
+	<color name="bg_pos_setting">#3d4040</color>
+	<color name="pos_setting_title">#585959</color>
+	
+	<color name="menu_item_default">#dee2e5</color>
+	<color name="modifier_default">#dee2e5</color>
+	<color name="modifier_odd">#eff0f2</color>
+	<color name="bg_gray_line">#cbcbcb</color>
+</resources>

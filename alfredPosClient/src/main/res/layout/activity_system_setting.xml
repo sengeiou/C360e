@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <RelativeLayout
+        android:id="@+id/rl_setting_top"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true" >
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="15dp"
+            android:src="@drawable/icon_back" />
+
+        <TextView
+            android:id="@+id/tv_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/setting"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_xb" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_app_version"
+        android:layout_below="@+id/rl_setting_top"
+        android:overScrollMode="never"
+        android:scrollbars="none" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:orientation="vertical" />
+
+                <ScrollView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:overScrollMode="never"
+                    android:layout_marginTop="20dp"
+                    android:scrollbars="none" >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <LinearLayout
+                            android:id="@+id/ll_kot_print"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:background="@drawable/box_system_setting"
+                            android:orientation="vertical" >
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal" >
+
+                                <TextView
+                                    android:id="@+id/tv_kot_print"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/kot_print"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredbase.view.SlipButton
+                                    android:id="@+id/sb_kot_print"
+                                    android:layout_width="100dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal" >
+
+                                <TextView
+                                    android:id="@+id/tv_kot_print_together"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/kot_print_together"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredbase.view.SlipButton
+                                    android:id="@+id/sb_kot_print_together"
+                                    android:layout_width="100dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal" >
+
+                                <TextView
+                                    android:id="@+id/tv_kot_double_print"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/double_kot_print"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredbase.view.SlipButton
+                                    android:id="@+id/sb_kot_double_print"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_bill_print"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/ll_kot_print"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="30dp"
+                            android:background="@drawable/box_system_setting"
+                            android:orientation="vertical" >
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal" >
+
+                                <TextView
+                                    android:id="@+id/tv_double_print_bill"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/double_bill_prints"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredbase.view.SlipButton
+                                    android:id="@+id/sb_double_print_bill"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal" >
+
+                                <TextView
+                                    android:id="@+id/tv_double_close_bill_print"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/double_close_bill_prints"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredbase.view.SlipButton
+                                    android:id="@+id/sb_double_close_bill_print"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
+                                android:id="@+id/rl_order_summary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal" >
+
+                                <TextView
+                                    android:id="@+id/tv_order_summary_print"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/print_order_summary"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredbase.view.SlipButton
+                                    android:id="@+id/sb_order_summary_print"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+                            </RelativeLayout>
+                        </LinearLayout>
+                        <LinearLayout 
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/ll_bill_print"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="30dp"
+                            android:background="@drawable/box_system_setting"
+                            android:orientation="vertical"
+                            >
+	                        <RelativeLayout
+	                            android:id="@+id/ll_set_pwd"
+	                            android:layout_width="match_parent"
+	                            android:layout_height="60dp"
+	                            android:layout_gravity="center_horizontal" >
+	
+	                            <TextView
+	                                android:id="@+id/tv_change_pwd"
+	                                android:layout_width="wrap_content"
+	                                android:layout_height="wrap_content"
+	                                android:padding="12dp"
+	                                android:paddingLeft="10dp"
+	                                android:text="@string/change_employee_password"
+	                                android:layout_centerVertical="true"
+	                                android:textColor="@color/black"
+	                                android:textSize="@dimen/text_size_m" />
+	
+	                        </RelativeLayout>
+	                        <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+	                        <RelativeLayout
+	                            android:id="@+id/ll_sync_data"
+	                            android:layout_width="wrap_content"
+	                            android:layout_height="60dp">
+	
+	                            <TextView
+	                                android:id="@+id/tv_sync_data"
+	                                android:layout_width="wrap_content"
+	                                android:layout_height="wrap_content"
+	                                android:layout_centerVertical="true"
+	                                android:padding="12dp"
+	                                android:paddingLeft="10dp"
+	                                android:text="@string/sync_data"
+	                                android:textColor="@color/black"
+	                                android:textSize="@dimen/text_size_m" />
+	
+	                            <TextView
+	                                android:id="@+id/tv_syncdata_warn"
+	                                android:layout_width="wrap_content"
+	                                android:layout_height="wrap_content"
+	                                android:layout_centerVertical="true"
+	                                android:layout_toRightOf="@+id/tv_sync_data"
+	                                android:padding="15dp"
+	                                android:text="@string/update_msg"
+	                                android:textColor="@color/black"
+	                                android:textSize="@dimen/text_size_s" />
+	
+	                            <ImageView
+	                                android:id="@+id/iv_sync_data"
+	                                android:layout_width="wrap_content"
+	                                android:layout_height="wrap_content"
+	                                android:layout_alignParentRight="true"
+	                                android:layout_marginRight="10dp"
+	                                android:padding="15dp"
+	                                android:src="@drawable/icon_sync_refresh" />
+	                        </RelativeLayout>
+						</LinearLayout>
+                      </RelativeLayout>
+                </ScrollView>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_setting_top"
+        android:scaleType="fitXY"
+        android:src="@drawable/shadow_setting" />
+
+    <LinearLayout
+        android:id="@+id/ll_app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/logo_icon" />
+
+        <TextView
+            android:id="@+id/tv_app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Version:"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_s" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_above="@id/ll_app_version"
+        android:scaleType="fitXY"
+        android:src="@drawable/shadow_down" />
+
+</RelativeLayout>
