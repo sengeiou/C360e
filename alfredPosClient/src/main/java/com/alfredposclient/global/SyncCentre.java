@@ -1,11 +1,5 @@
 package com.alfredposclient.global;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.content.Context;
 import android.os.Handler;
 
@@ -26,6 +20,12 @@ import com.alfredposclient.http.HTTPWaiterRequest;
 import com.alfredposclient.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SyncCentre {
 
@@ -249,9 +249,8 @@ public class SyncCentre {
 		} else if (App.instance.isOpenLog) {
 			return "http://218.244.136.120:8080/alfred-api/" + relativeUrl;
 		} else {
-			if (App.instance.countryCode == ParamConst.CHINA)
-				return "http://121.40.168.178/alfred-api/" + relativeUrl;
-			return "http://52.74.14.226/alfred-api/" + relativeUrl;
+//			return "http://54.169.45.214/alfred-api/" + relativeUrl;
+			return "http://52.77.208.125/alfred-api/" + relativeUrl;
 		}
 	}
 

@@ -1,10 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -22,6 +17,11 @@ import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OrderDetailSQL {
 
@@ -692,14 +692,14 @@ public class OrderDetailSQL {
 	/**
 	 * 作为展示的时候调用的
 	 * 
-	 * @param order
+	 * @param orderId
 	 * @return
 	 */
 	public static ArrayList<OrderDetail> getOrderDetails(int orderId) {
 		ArrayList<OrderDetail> result = new ArrayList<OrderDetail>();
 		String sql = "select * from " + TableNames.OrderDetail
 				+ " where orderId = ? and orderDetailType <> "
-				+ ParamConst.ORDERDETAIL_TYPE_VOID + " order by groupId, id desc";
+				+ ParamConst.ORDERDETAIL_TYPE_VOID + " order by groupId, createTime desc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {

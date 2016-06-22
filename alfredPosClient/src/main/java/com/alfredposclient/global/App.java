@@ -89,7 +89,7 @@ public class App extends BaseApplication {
 	private RevenueCenter revenueCenter;
 	private MainPosInfo mainPosInfo;
 	public String VERSION = "1.0.8";
-	private static final int DATABASE_VERSION = 22;
+	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "com.alfredposclient";
 	/**
 	 * User: Current cashier logged in

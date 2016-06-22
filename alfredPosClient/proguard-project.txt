@@ -33,15 +33,15 @@
 
 -ignorewarnings
 -libraryjars libs/android-websockets.jar
--libraryjars ../AlfredBase/libs/slf4j-api-1.7.6.jar
--libraryjars ../AlfredBase/libs/mina-core-2.0.7.jar
--libraryjars ../AlfredBase/libs/slf4j-simple-1.7.6.jar
--libraryjars ../AlfredBase/libs/universal-image-loader-1.9.2.jar
--libraryjars ../AlfredBase/libs/commons-codec-1.9.jar
--libraryjars ../AlfredBase/libs/gson-2.2.4.jar
--libraryjars ../AlfredBase/libs/pinyin4j-2.5.0.jar
--libraryjars ../AlfredBase/libs/zxing.jar
--libraryjars ../AlfredBase/libs/umeng-analytics-v5.4.2.jar
+#-libraryjars ../AlfredBase/libs/slf4j-api-1.7.6.jar
+#-libraryjars ../AlfredBase/libs/mina-core-2.0.7.jar
+#-libraryjars ../AlfredBase/libs/slf4j-simple-1.7.6.jar
+#-libraryjars ../AlfredBase/libs/universal-image-loader-1.9.2.jar
+#-libraryjars ../AlfredBase/libs/commons-codec-1.9.jar
+#-libraryjars ../AlfredBase/libs/gson-2.2.4.jar
+#-libraryjars ../AlfredBase/libs/pinyin4j-2.5.0.jar
+#-libraryjars ../AlfredBase/libs/zxing.jar
+#-libraryjars ../AlfredBase/libs/umeng-analytics-v5.4.2.jar
 -libraryjars ../AlfredBase
 -libraryjars ../AlfredTaskQueue
 

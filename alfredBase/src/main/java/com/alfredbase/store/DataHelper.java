@@ -33,26 +33,6 @@ public class DataHelper {
 			db.beginTransaction();
 			try {
 				createTable(db);
-				onUpgradeForVersionTwo(db);
-				onUpgradeForVersionThree(db);
-				onUpgradeForVersionFour(db);
-				onUpgradeForVersionFive(db);
-				onUpgradeForVersionSix(db);
-				onUpgradeForVersionSeven(db);
-				onUpgradeForVersionEight(db);
-				onUpgradeForVersionNine(db);
-				onUpgradeForVersionTen(db);
-				onUpgradeForVersionEleven(db);
-				onUpgradeForVersionTwelve(db);
-				onUpgradeForVersionThirteen(db);
-				onUpgradeForVersionFourteen(db);
-				onUpgradeForVersionFifteen(db);
-				onUpgradeForVersionSixteen(db);
-				onUpgradeForVersion17(db);
-				onUpgradeForVersion19(db);
-				onUpgradeForVersion20(db);
-				onUpgradeForVersion21(db);
-				onUpgradeForVersion22(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -66,256 +46,7 @@ public class DataHelper {
 			db.beginTransaction();
 			try {
 				switch (oldVersion) {
-				case 1:
-					onUpgradeForVersionTwo(db);
-					onUpgradeForVersionThree(db);
-					onUpgradeForVersionFour(db);
-					onUpgradeForVersionFive(db);
-					onUpgradeForVersionSix(db);
-					onUpgradeForVersionSeven(db);
-					onUpgradeForVersionEight(db);
-					onUpgradeForVersionNine(db);
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 2:
-					onUpgradeForVersionThree(db);
-					onUpgradeForVersionFour(db);
-					onUpgradeForVersionFive(db);
-					onUpgradeForVersionSix(db);
-					onUpgradeForVersionSeven(db);
-					onUpgradeForVersionEight(db);
-					onUpgradeForVersionNine(db);
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);	
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 3:
-					onUpgradeForVersionFour(db);
-					onUpgradeForVersionFive(db);
-					onUpgradeForVersionSix(db);
-					onUpgradeForVersionSeven(db);
-					onUpgradeForVersionEight(db);
-					onUpgradeForVersionNine(db);
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 4:
-					onUpgradeForVersionFive(db);
-					onUpgradeForVersionSix(db);
-					onUpgradeForVersionSeven(db);
-					onUpgradeForVersionEight(db);
-					onUpgradeForVersionNine(db);
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 5:
-					onUpgradeForVersionSix(db);
-					onUpgradeForVersionSeven(db);
-					onUpgradeForVersionEight(db);
-					onUpgradeForVersionNine(db);
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 6:
-					onUpgradeForVersionSeven(db);
-					onUpgradeForVersionEight(db);
-					onUpgradeForVersionNine(db);
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 7:
-					onUpgradeForVersionEight(db);
-					onUpgradeForVersionNine(db);
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 8:
-					onUpgradeForVersionNine(db);
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 9:
-					onUpgradeForVersionTen(db);
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 10:
-					onUpgradeForVersionEleven(db);
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 11:
-					onUpgradeForVersionTwelve(db);
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 12:
-					onUpgradeForVersionThirteen(db);
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 13:
-					onUpgradeForVersionFourteen(db);
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 14:
-					onUpgradeForVersionFifteen(db);
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 15:
-					onUpgradeForVersionSixteen(db);
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 16:
-				case 17:
-					onUpgradeForVersion17(db);
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 18:
-					onUpgradeForVersion19(db);
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 19:
-					onUpgradeForVersion20(db);
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 20:
-					onUpgradeForVersion21(db);
-					onUpgradeForVersion22(db);
-					break;
-				case 21:
-					onUpgradeForVersion22(db);
+					case 1:
 					break;
 				default:
 					break;
@@ -487,9 +218,6 @@ public class DataHelper {
 					+ TableNames.LocalDevice
 					+ "(deviceId, deviceType, macAddress)");
 
-		}
-
-		private void onUpgradeForVersionTwo(SQLiteDatabase db) {
 			/**
 			 * 更新数据库ReportPluDayItem和ReportPluDayModifier
 			 */
@@ -504,9 +232,6 @@ public class DataHelper {
 
 			db.execSQL("ALTER TABLE " + TableNames.ReportPluDayModifier
 					+ " ADD COLUMN billFocCount INTEGER");
-		}
-		
-		private void onUpgradeForVersionThree(SQLiteDatabase db){
 			/*
 			 * 更新RevenueCenter的字段 
 			 */
@@ -526,9 +251,6 @@ public class DataHelper {
 			 */
 			db.execSQL("ALTER TABLE " + TableNames.OrderSplit
 					+ " ADD COLUMN groupId INTEGER");
-		}
-		
-		private void onUpgradeForVersionFour(SQLiteDatabase db){
 			/*
 			/*
 			 * OrderDetail 中添加一个orderSplitId
@@ -551,10 +273,7 @@ public class DataHelper {
 			 */
 			db.execSQL("ALTER TABLE " + TableNames.KotNotification
 					+ " ADD COLUMN unFinishQty INTEGER default 0");
-		}
-		
-		private void onUpgradeForVersionFive(SQLiteDatabase db){
-			
+
 			/*
 			 * KotItemDetail 中添加一个categoryId
 			 */
@@ -565,9 +284,6 @@ public class DataHelper {
 					+ " ADD COLUMN isKiosk INTEGER default 0");
 			db.execSQL("ALTER TABLE " + TableNames.KotNotification
 					+ " ADD COLUMN kotItemDetailId INTEGER");
-		}
-		
-		private void onUpgradeForVersionSix(SQLiteDatabase db) {
 
 			/*
 			 * Order 中添加一个discountPrice
@@ -618,23 +334,15 @@ public class DataHelper {
 			
 			db.execSQL("ALTER TABLE " + TableNames.KotNotification
 					+ " ADD COLUMN kotItemNum INTEGER ");
-		}
-		
-		private void onUpgradeForVersionSeven(SQLiteDatabase db) {
 			//Receipt header and footer
 			db.execSQL("ALTER TABLE " + TableNames.Restaurant
 					+ " ADD COLUMN options TEXT "); 
 			db.execSQL("ALTER TABLE " + TableNames.Restaurant
 					+ " ADD COLUMN footerOptions TEXT ");
-		}
-		
-		private void onUpgradeForVersionEight(SQLiteDatabase db) {
 			//Receipt header and footer
 			db.execSQL("ALTER TABLE " + TableNames.RoundAmount
 					+ " ADD COLUMN orderSplitId INTEGER default 0");
-		}
 
-		private void onUpgradeForVersionNine(SQLiteDatabase db) {
 			db.execSQL("ALTER TABLE " + TableNames.OrderDetail
 					+ " ADD COLUMN weight TEXT");
 			db.execSQL("ALTER TABLE " + TableNames.Order
@@ -659,9 +367,6 @@ public class DataHelper {
 			db.execSQL("CREATE TABLE " + TableNames.TempModifierDetail
 					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, orderDetailId INTEGER, itemId INTEGER, modifierName TEXT, modifierPrice TEXT)");
 			
-		}
-		
-		private void onUpgradeForVersionTen(SQLiteDatabase db){
 			db.execSQL("ALTER TABLE " + TableNames.ItemDetail
 					+ " ADD COLUMN isDiscount INTEGER default 1");
 			db.execSQL("ALTER TABLE " + TableNames.OrderDetail
@@ -674,9 +379,6 @@ public class DataHelper {
 					+ TableNames.AlipaySettlement
 					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT,paymentId INTEGER, paymentSettId INTEGER, billNo INTEGER, tradeNo TEXT, buyerEmail TEXT, createTime LONG, updateTime LONG, isActive INTEGER)");
 			
-		}
-		
-		private void onUpgradeForVersionEleven(SQLiteDatabase db){
 			db.execSQL("ALTER TABLE " + TableNames.Order
 					+ " ADD COLUMN appOrderId INTEGER default 0");
 			db.execSQL("ALTER TABLE " + TableNames.Modifier
@@ -689,19 +391,13 @@ public class DataHelper {
 					+ " ADD COLUMN paied INTEGER default 0");
 			db.execSQL("ALTER TABLE " + TableNames.TempModifierDetail
 					+ " ADD COLUMN modifierId INTEGER");
-		}
-
-		//bob: add takeaway option
-		private void onUpgradeForVersionTwelve(SQLiteDatabase db){
 			db.execSQL("ALTER TABLE " + TableNames.Order
 					+ " ADD COLUMN isTakeAway INTEGER default 0");
 			db.execSQL("ALTER TABLE "
 					+ TableNames.KotSummary
 					+ " ADD COLUMN isTakeAway INTEGER default 0");			
-		}	
-		
-		private void onUpgradeForVersionThirteen(SQLiteDatabase db){
-			db.execSQL("ALTER TABLE " 
+
+			db.execSQL("ALTER TABLE "
 					+ TableNames.OrderDetailTax
 					+ " ADD COLUMN indexId INTEGER default 0");
 			
@@ -718,23 +414,18 @@ public class DataHelper {
 					+ TableNames.ReportDaySales
 					+ " ADD COLUMN thirdPartyQty INTEGER");
 			
-		}
-		private void onUpgradeForVersionFourteen(SQLiteDatabase db){
-			db.execSQL("ALTER TABLE " 
+			db.execSQL("ALTER TABLE "
 					+ TableNames.Tables
 					+ " ADD COLUMN orders INTEGER default 0");
 
 			db.execSQL("ALTER TABLE " 
 					+ TableNames.ReportPluDayModifier
 					+ " ADD COLUMN comboItemId INTEGER default 0");
-		}		
-		private void onUpgradeForVersionFifteen(SQLiteDatabase db){
+
 			db.execSQL("CREATE TABLE "
 					+ TableNames.ReportPluDayComboModifier
 					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, reportNo INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, modifierCategoryId INTEGER, modifierCategoryName TEXT, modifierId INTEGER, modifierName TEXT, modifierPrice TEXT, modifierCount INTEGER, billVoidPrice TEXT, billVoidCount INTEGER, voidModifierPrice TEXT, voidModifierCount INTEGER, bohModifierPrice TEXT, bohModifierCount INTEGER, focModifierPrice TEXT,focModifierCount INTEGER, billFocPrice TEXT, billFocCount INTEGER, comboItemId INTEGER default 0, itemId INTEGER)");
 			
-		}
-		private void onUpgradeForVersionSixteen(SQLiteDatabase db){
 			//Print Queue
 			db.execSQL("CREATE TABLE "
 					+ TableNames.PrintQueue
@@ -744,23 +435,15 @@ public class DataHelper {
 					+ TableNames.ReportPluDayComboModifier
 					+ " ADD COLUMN itemName TEXT");
 
-		}		
-		private void onUpgradeForVersion17(SQLiteDatabase db){
-			
+
 			// KOT Summary,和order的流水保持一致，用于显示
 			db.execSQL("ALTER TABLE " 
 					+ TableNames.KotSummary
 					+ " ADD COLUMN orderNo INTEGER default 0");
 
-		}
-
-		private void onUpgradeForVersion19(SQLiteDatabase db) {
 			db.execSQL("update " + TableNames.ItemDetail + " set isActive = 1 where itemType = 2");
 
-		}
-		
-		private void onUpgradeForVersion20(SQLiteDatabase db) {
-			db.execSQL("ALTER TABLE " 
+			db.execSQL("ALTER TABLE "
 					+ TableNames.OrderDetailTax
 					+ " ADD COLUMN orderSplitId INTEGER default 0");
 			db.execSQL("ALTER TABLE " 
@@ -775,10 +458,7 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE " 
 					+ TableNames.ReportDaySales
 					+ " ADD COLUMN weixinpayQty INTEGER");
-		}
-		
-		private void onUpgradeForVersion21(SQLiteDatabase db){
-			db.execSQL("ALTER TABLE " 
+			db.execSQL("ALTER TABLE "
 					+ TableNames.OrderModifier
 					+ " ADD COLUMN modifierItemPrice TEXT default '0.00' ");
 			db.execSQL("ALTER TABLE " 
@@ -787,10 +467,7 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE " 
 					+ TableNames.ReportPluDayModifier
 					+ " ADD COLUMN modifierItemPrice TEXT default '0.00' ");
-		}
-		
-		private void onUpgradeForVersion22(SQLiteDatabase db) {
-			db.execSQL("ALTER TABLE " 
+			db.execSQL("ALTER TABLE "
 					+ TableNames.Modifier
 					+ " ADD COLUMN isSet INTEGER default 0");
 			db.execSQL("ALTER TABLE " 
