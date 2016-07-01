@@ -11,13 +11,21 @@ android {
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
         sourceCompatibility javaVersion
         targetCompatibility javaVersion
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -25,9 +33,9 @@ android {
         }
     }
 
-    packagingOptions {
-        exclude 'LICENSE.txt'
-    }
+//    packagingOptions {
+//        exclude 'LICENSE.txt'
+//    }
 }
 
 dependencies {

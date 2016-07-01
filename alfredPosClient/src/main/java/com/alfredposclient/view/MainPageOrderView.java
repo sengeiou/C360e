@@ -1,12 +1,5 @@
 package com.alfredposclient.view;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -65,6 +58,13 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainPageOrderView extends LinearLayout {
 	private MainPage parent;
@@ -146,7 +146,7 @@ public class MainPageOrderView extends LinearLayout {
 					public void run() {
 						Order placedOrder = OrderSQL.getOrder(order.getId());
 						List<OrderDetail> placedOrderDetails 
-									= OrderDetailSQL.getOrderDetails(placedOrder.getId());
+									= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
 						KotSummary kotSummary = ObjectFactory.getInstance()
 								.getKotSummary(
 										CoreData.getInstance().getTables(
