@@ -241,10 +241,21 @@ public class SyncCentre {
 		HttpAPI.updatePassword(context, getAbsoluteUrl(APIName.USER_UPDATEPASSWORD), httpClient, parameters, handler, user);
 	}
 
+	public void getAppOrderById(Context context,Map<String, Object> parameters, Handler handler){
+		HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), httpClient, parameters, handler);
+	}
+	public void getAllAppOrder(Context context,Map<String, Object> parameters, Handler handler){
+		parameters.put("appOrderId", 11);
+		HttpAPI.getAllAppOrder(context, getAbsoluteUrl(APIName.POSORDER_GETALLPAIEDAPPORDER), httpClient, parameters, handler);
+	}
+	public void updateAppOrderStatus(Context context,Map<String, Object> parameters, SyncMsg syncMsg){
+		HttpAPI.updateAppOrderStatus(context, getAbsoluteUrl(APIName.POSORDER_UPDATEAPPORDERSTATUS), syncHttpClient, parameters, syncMsg);
+	}
+
 	// Backend Server IP
 	private String getAbsoluteUrl(String relativeUrl) {
 		if (App.instance.isDebug) {
-			return "http://192.168.0.21:8080/alfred-api/" + relativeUrl;
+			return "http://192.168.1.131:8086/alfred-api/" + relativeUrl;
 //			return "http://192.168.0.120:8083/alfred-api/" + relativeUrl;
 		} else if (App.instance.isOpenLog) {
 			return "http://218.244.136.120:8080/alfred-api/" + relativeUrl;

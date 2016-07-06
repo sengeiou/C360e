@@ -1,10 +1,5 @@
 package com.alfredbase.utils;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
@@ -46,6 +41,9 @@ import com.alfredbase.javabean.model.KotNotification;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.javabean.temporaryforapp.AppOrder;
+import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
+import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
 import com.alfredbase.store.sql.BohHoldSettlementSQL;
@@ -73,6 +71,11 @@ import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectFactory {
 	private static ObjectFactory instance;
@@ -135,36 +138,106 @@ public class ObjectFactory {
 		return order;
 	}
 
+	public Order getOrderFromAppOrder(AppOrder appOrder, User user,
+									  SessionStatus sessionStatus, RevenueCenter revenueCenter,
+									  Tables tables, long businessDate, Restaurant restaurant) {
+		Order order = null;
+		if (appOrder != null) {
+			synchronized (lock_order) {
+				order = OrderSQL.getOrderByAppOrderId(appOrder
+						.getId().intValue());
+				if (order == null) {
+					order = new Order();
+					order.setId(CommonSQL.getNextSeq(TableNames.Order));
+					order.setOrderOriginId(ParamConst.ORDER_ORIGIN_APP);
+					order.setUserId(user.getId());
+					order.setPersons(4);
+					order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
+					order.setDiscountRate(ParamConst.DOUBLE_ZERO);
+					order.setSessionStatus(sessionStatus.getSession_status());
+					order.setRestId(restaurant.getId());
+					order.setRevenueId(revenueCenter.getId());
+					order.setPlaceId(tables.getPlacesId());
+					order.setTableId(tables.getId());
+					long time = System.currentTimeMillis();
+					order.setCreateTime(time);
+					order.setUpdateTime(time);
+					order.setBusinessDate(businessDate);
+					order.setOrderNo(OrderHelper.calculateOrderNo(businessDate));// 流水号
+					order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_NULL);
+					order.setAppOrderId(appOrder.getId().intValue());
+					order.setTotal(appOrder.getTotal());
+					order.setSubTotal(appOrder.getSubTotal());
+					OrderSQL.update(order);
+				}
+			}
+		}
+		return order;
+	}
+
+	Object lock_orderDetail = new Object();
 	public OrderDetail getOrderDetail(Order order, ItemDetail itemDetail,
 			int groupId) {
 		OrderDetail orderDetail = new OrderDetail();
-		long time = System.currentTimeMillis();
-		orderDetail.setCreateTime(time);
-		orderDetail.setUpdateTime(time);
-		orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
-		orderDetail.setOrderId(order.getId());
-		orderDetail.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
-		orderDetail.setUserId(order.getUserId());
-		orderDetail.setItemId(itemDetail.getId());
-		orderDetail.setItemName(itemDetail.getItemName());
-		orderDetail.setItemNum(1);
-		orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
-		orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_GENERAL);
-		orderDetail.setReason("");
-		orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
-		orderDetail.setItemPrice(itemDetail.getPrice());
-		orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
-		orderDetail.setFromOrderDetailId(0);
-		orderDetail.setIsFree(ParamConst.NOT_FREE);
-		orderDetail.setIsItemDiscount(itemDetail.getIsDiscount());
-		if (itemDetail.getItemType() == 2) {
-			orderDetail.setIsOpenItem(1);
+		synchronized (lock_orderDetail) {
+			long time = System.currentTimeMillis();
+			orderDetail.setCreateTime(time);
+			orderDetail.setUpdateTime(time);
+			orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+			orderDetail.setOrderId(order.getId());
+			orderDetail.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
+			orderDetail.setUserId(order.getUserId());
+			orderDetail.setItemId(itemDetail.getId());
+			orderDetail.setItemName(itemDetail.getItemName());
+			orderDetail.setItemNum(1);
+			orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+			orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_GENERAL);
+			orderDetail.setReason("");
+			orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
+			orderDetail.setItemPrice(itemDetail.getPrice());
+			orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
+			orderDetail.setFromOrderDetailId(0);
+			orderDetail.setIsFree(ParamConst.NOT_FREE);
+			orderDetail.setIsItemDiscount(itemDetail.getIsDiscount());
+			if (itemDetail.getItemType() == 2) {
+				orderDetail.setIsOpenItem(1);
+			}
+			orderDetail.setGroupId(groupId);
+			orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+			if (itemDetail.getItemType() == 3)
+				orderDetail.setIsSet(1);
 		}
-		orderDetail.setGroupId(groupId);
-		orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-		if(itemDetail.getItemType() == 3)
-		orderDetail.setIsSet(1);
+		return orderDetail;
+	}
 
+	public OrderDetail getOrderDetailFromTempAppOrderDetail(Order order,
+															AppOrderDetail appOrderDetail) {
+		OrderDetail orderDetail = new OrderDetail();
+		synchronized (lock_orderDetail) {
+			long time = System.currentTimeMillis();
+			orderDetail.setCreateTime(time);
+			orderDetail.setUpdateTime(time);
+			orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+			orderDetail.setOrderId(order.getId());
+			orderDetail.setOrderOriginId(ParamConst.ORDER_ORIGIN_APP);
+			orderDetail.setUserId(order.getUserId());
+			orderDetail.setItemId(appOrderDetail.getItemId().intValue());
+			orderDetail.setItemName(appOrderDetail.getItemName());
+			orderDetail.setItemNum(appOrderDetail.getItemNum().intValue());
+			orderDetail
+					.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+			orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_GENERAL);
+			orderDetail.setReason("");
+			orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
+			orderDetail.setItemPrice(appOrderDetail.getItemPrice());
+			orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
+			orderDetail.setFromOrderDetailId(0);
+			orderDetail.setIsFree(ParamConst.NOT_FREE);
+			orderDetail.setIsItemDiscount(1);
+			orderDetail.setRealPrice(appOrderDetail.getRealPrice());
+			orderDetail.setGroupId(0);
+			orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+		}
 		return orderDetail;
 	}
 
@@ -469,25 +542,57 @@ public class ObjectFactory {
 		return orderDetail;
 	}
 
+	Object lock_order_modifier = new Object();
 	//bob: only call from main POS. not need threadsafe
 	public OrderModifier getOrderModifier(Order order, OrderDetail orderDetail,
 			Modifier modifier, int printerId) {
 		OrderModifier orderModifier = new OrderModifier();
-		orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
-		orderModifier.setOrderId(order.getId());
-		orderModifier.setOrderDetailId(orderDetail.getId());
-		orderModifier.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
-		orderModifier.setUserId(order.getUserId());
-		orderModifier.setItemId(orderDetail.getItemId());
-		orderModifier.setModifierId(modifier.getId());
-		orderModifier.setModifierNum(modifier.getQty() * orderDetail.getItemNum().intValue());
-		orderModifier.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
-		orderModifier.setModifierPrice(BH.mul(BH.getBD(modifier.getPrice()), BH.getBD(modifier.getQty() * orderDetail.getItemNum().intValue()), false).toString());
-		long time = System.currentTimeMillis();
-		orderModifier.setCreateTime(time);
-		orderModifier.setUpdateTime(time);
-		orderModifier.setPrinterId(printerId);
-		orderModifier.setModifierItemPrice(modifier.getPrice());
+		synchronized (lock_order_modifier) {
+			orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+			orderModifier.setOrderId(order.getId());
+			orderModifier.setOrderDetailId(orderDetail.getId());
+			orderModifier.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
+			orderModifier.setUserId(order.getUserId());
+			orderModifier.setItemId(orderDetail.getItemId());
+			orderModifier.setModifierId(modifier.getId());
+			orderModifier.setModifierNum(modifier.getQty() * orderDetail.getItemNum().intValue());
+			orderModifier.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
+			orderModifier.setModifierPrice(BH.mul(BH.getBD(modifier.getPrice()), BH.getBD(modifier.getQty() * orderDetail.getItemNum().intValue()), false).toString());
+			long time = System.currentTimeMillis();
+			orderModifier.setCreateTime(time);
+			orderModifier.setUpdateTime(time);
+			orderModifier.setPrinterId(printerId);
+			orderModifier.setModifierItemPrice(modifier.getPrice());
+		}
+		return orderModifier;
+	}
+
+
+	public OrderModifier getOrderModifierFromTempAppOrderModifier(Order order,
+																  OrderDetail orderDetail, int printerId,
+																  AppOrderModifier appOrderModifier) {
+		OrderModifier orderModifier = new OrderModifier();
+		synchronized (lock_order_modifier) {
+			orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+			orderModifier.setOrderId(order.getId());
+			orderModifier.setOrderDetailId(orderDetail.getId());
+			orderModifier.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
+			orderModifier.setUserId(order.getUserId());
+			orderModifier.setItemId(orderDetail.getItemId());
+			orderModifier.setModifierId(appOrderModifier.getModifierId()
+					.intValue());
+			orderModifier.setModifierNum(appOrderModifier.getModifierNum()
+					.intValue());
+			orderModifier.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
+			orderModifier.setModifierPrice(appOrderModifier
+					.getModifierPrice());
+			long time = System.currentTimeMillis();
+			orderModifier.setCreateTime(time);
+			orderModifier.setUpdateTime(time);
+			orderModifier.setPrinterId(printerId);
+			orderModifier.setModifierItemPrice(appOrderModifier
+					.getModifierPrice());
+		}
 		return orderModifier;
 	}
 
@@ -1405,7 +1510,6 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	/**
 	 * 只有在添加OrderDetail的groupId的时候才调用
 	 * @param order
-	 * @param orderDetail
 	 * @return
 	 */
 	public OrderSplit getOrderSplit(Order order,  int groupId, Tax inclusiveTax){

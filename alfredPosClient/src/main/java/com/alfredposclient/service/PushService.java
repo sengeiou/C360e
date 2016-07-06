@@ -1,7 +1,5 @@
 package com.alfredposclient.service;
 
-import java.net.URI;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -20,6 +18,8 @@ import com.alfredposclient.global.App;
 import com.codebutler.android_websockets.WebSocketClient;
 import com.codebutler.android_websockets.WebSocketClient.Listener;
 import com.google.gson.Gson;
+
+import java.net.URI;
 
 public class PushService extends Service implements Listener {
 
@@ -136,14 +136,14 @@ public class PushService extends Service implements Listener {
 	
 	private String getPushServerIp(){
 		if(App.isDebug){
-			return "ws://192.168.0.21:8085/websocket";
+			return "ws://192.168.1.131:8085/websocket";
 		} else if (App.isOpenLog){
 			return "ws://218.244.136.120:8085/websocket";
 		} else {
 			if (App.instance.countryCode == ParamConst.CHINA)
 				return "ws://121.40.168.178:8085/websocket";
 			else
-				return "ws://52.74.14.226:8085/websocket";
+				return "ws://52.77.208.125:8085/websocket";
 		}
 	}
 

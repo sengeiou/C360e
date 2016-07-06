@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -18,6 +15,9 @@ import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderSQL {
 
@@ -691,7 +691,60 @@ public class OrderSQL {
 		}
 		return order;		
 	}
-	
+	public static Order getOrderByAppOrderId(int appOrderId) {
+		Order order = null;
+		String sql = "select * from " + TableNames.Order
+				+ " where appOrderId = ?";
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(
+					sql,
+					new String[] { appOrderId + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return order;
+			}
+			if (cursor.moveToFirst()) {
+				order = new Order();
+				order.setId(cursor.getInt(0));
+				order.setOrderOriginId(cursor.getInt(1));
+				order.setUserId(cursor.getInt(2));
+				order.setPersons(cursor.getInt(3));
+				order.setOrderStatus(cursor.getInt(4));
+				order.setSubTotal(cursor.getString(5));
+				order.setTaxAmount(cursor.getString(6));
+				order.setDiscountAmount(cursor.getString(7));
+				order.setTotal(cursor.getString(8));
+				order.setSessionStatus(cursor.getInt(9));
+				order.setRestId(cursor.getInt(10));
+				order.setRevenueId(cursor.getInt(11));
+				order.setPlaceId(cursor.getInt(12));
+				order.setTableId(cursor.getInt(13));
+				order.setCreateTime(cursor.getLong(14));
+				order.setUpdateTime(cursor.getLong(15));
+				order.setOrderNo(cursor.getInt(16));
+				order.setBusinessDate(cursor.getLong(17));
+				order.setDiscountRate(cursor.getString(18));
+				order.setDiscountType(cursor.getInt(19));
+				order.setDiscountPrice(cursor.getString(20));
+				order.setInclusiveTaxName(cursor.getString(21));
+				order.setInclusiveTaxPrice(cursor.getString(22));
+				order.setInclusiveTaxPercentage(cursor.getString(23));
+				order.setAppOrderId(cursor.getInt(24));
+				order.setIsTakeAway(cursor.getInt(25));
+				return order;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return order;
+	}
+
 	public static Order getUnfinishedOrderAtTable(Tables tables, Long bizDate) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order

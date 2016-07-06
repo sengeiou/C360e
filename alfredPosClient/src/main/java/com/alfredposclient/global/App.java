@@ -1,14 +1,5 @@
 package com.alfredposclient.global;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +18,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemCategory;
+import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
@@ -36,7 +28,12 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderBill;
+import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -63,12 +60,24 @@ import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
+import com.alfredbase.javabean.temporaryforapp.AppOrder;
+import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
+import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
+import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.CardsSettlementSQL;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
+import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.TablesSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
@@ -83,13 +92,22 @@ import com.alfredposclient.service.PushService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class App extends BaseApplication {
 
 	public static App instance;
 	private RevenueCenter revenueCenter;
 	private MainPosInfo mainPosInfo;
 	public String VERSION = "1.0.8";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "com.alfredposclient";
 	/**
 	 * User: Current cashier logged in
@@ -1283,6 +1301,140 @@ public class App extends BaseApplication {
 			No += 2;
 		}
 		return No + "";
+	}
+
+	public void appOrderTransforOrder(final AppOrder appOrder, final List<AppOrderDetail> appOrderDetailList, final List<AppOrderModifier> appOrderModifierList, List<AppOrderDetailTax> appOrderDetailTaxList){
+		synchronized (instance){
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+					Tables tables = TablesSQL.getAllUsedOneTables();
+					Order order = ObjectFactory.getInstance().getOrderFromAppOrder(appOrder, getUser(),
+							getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant());
+					tables.setTableStatus(ParamConst.TABLE_STATUS_DINING);
+					TablesSQL.updateTables(tables);
+					OrderSQL.update(order);
+					OrderBill orderBill = ObjectFactory.getInstance()
+							.getOrderBill(order, getRevenueCenter());
+					Payment payment = ObjectFactory.getInstance().getPayment(order, orderBill);
+					PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_CASH,payment.getPaymentAmount());
+					for(AppOrderDetail appOrderDetail : appOrderDetailList){
+						OrderDetail orderDetail = ObjectFactory
+								.getInstance()
+								.getOrderDetailFromTempAppOrderDetail(
+										order, appOrderDetail);
+						OrderDetailSQL.updateOrderDetail(orderDetail);
+						for (AppOrderModifier appOrderModifier : appOrderModifierList){
+							ItemDetail printItemDetail = CoreData
+									.getInstance()
+									.getItemDetailByTemplateId(
+											appOrderModifier
+													.getItemId());
+							int printId = 0;
+							if (printItemDetail != null) {
+								ArrayList<Printer> prints =
+										CoreData.getInstance().getPrintersInGroup(printItemDetail.getPrinterId().intValue());
+								if (prints.size() == 0) {
+									printId = 0;
+								} else {
+									printId = prints.get(0).getId().intValue();
+								}
+							}
+							OrderModifier orderModifier = ObjectFactory
+									.getInstance()
+									.getOrderModifierFromTempAppOrderModifier(
+											order, orderDetail, printId,
+											appOrderModifier);
+							OrderModifierSQL
+									.addOrderModifier(orderModifier);
+						}
+					}
+					List<OrderDetail> placedOrderDetails
+							= OrderDetailSQL.getOrderDetailsForPrint(order.getId());
+					KotSummary kotSummary = ObjectFactory.getInstance()
+							.getKotSummary(
+									CoreData.getInstance().getTables(
+											order.getTableId()), order,
+									App.instance.getRevenueCenter(),
+									App.instance.getBusinessDate());
+					ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+					List<Integer> orderDetailIds = new ArrayList<Integer>();
+					ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+					String kotCommitStatus = ParamConst.JOB_NEW_KOT;
+					for (OrderDetail orderDetail : placedOrderDetails) {
+						if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_PREPARED) {
+							continue;
+						}
+						if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+							kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+						} else {
+							KotItemDetail kotItemDetail = ObjectFactory
+									.getInstance()
+									.getKotItemDetail(
+											order,
+											orderDetail,
+											CoreData.getInstance()
+													.getItemDetailById(
+															orderDetail
+																	.getItemId()),
+											kotSummary,
+											App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+							kotItemDetail.setItemNum(orderDetail
+									.getItemNum());
+							if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
+								kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+								kotItemDetail
+										.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+							}
+							KotItemDetailSQL.update(kotItemDetail);
+							kotItemDetails.add(kotItemDetail);
+							orderDetailIds.add(orderDetail.getId());
+							ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+									.getOrderModifiers(order, orderDetail);
+							for (OrderModifier orderModifier : orderModifiers) {
+								if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
+									KotItemModifier kotItemModifier = ObjectFactory
+											.getInstance()
+											.getKotItemModifier(
+													kotItemDetail,
+													orderModifier,
+													CoreData.getInstance()
+															.getModifier(
+																	orderModifier
+																			.getModifierId()));
+									KotItemModifierSQL.update(kotItemModifier);
+									kotItemModifiers.add(kotItemModifier);
+								}
+							}
+						}
+					}
+					KotSummarySQL.update(kotSummary);
+					if (!kotItemDetails.isEmpty()) {
+
+						if(!isRevenueKiosk() && getSystemSettings().isOrderSummaryPrint()){
+							PrinterDevice printer = getCahierPrinter();
+							if (printer != null) {
+								remoteOrderSummaryPrint(printer, kotSummary, kotItemDetails, kotItemModifiers);
+							}
+						}
+						// check system has KDS or printer devices
+						if (getKDSDevices().size() == 0
+								&& getPrinterDevices().size() == 0) {
+							} else {
+							Map<String, Object> orderMap = new HashMap<String, Object>();
+							orderMap.put("orderId", order.getId());
+							orderMap.put("orderDetailIds", orderDetailIds);
+							getKdsJobManager().tearDownKot(
+									kotSummary, kotItemDetails,
+									kotItemModifiers, kotCommitStatus,
+									orderMap);
+						}
+						appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_KOTPRINTERD);
+						AppOrderSQL.addAppOrder(appOrder);
+					}
+//				}
+//			}).start();
+		}
 	}
 
 }

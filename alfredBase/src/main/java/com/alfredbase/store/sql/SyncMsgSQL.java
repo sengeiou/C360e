@@ -1,7 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -9,6 +7,8 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
 
 
 public class SyncMsgSQL {
@@ -19,15 +19,16 @@ public class SyncMsgSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.SyncMsg
-					+ "(id, orderId, msg_type, data, status, createTime, revenueId, businessDate, currCount)"
-					+ " values (?,?,?,?,?,?,?,?,?)";
+					+ "(id, orderId, msg_type, data, status, createTime, revenueId, businessDate, currCount, appOrderId, orderStatus)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { syncMsg.getId(), syncMsg.getOrderId(),
 							syncMsg.getMsgType(), syncMsg.getData(),
 							syncMsg.getStatus(), syncMsg.getCreateTime(),
 							syncMsg.getRevenueId(), syncMsg.getBusinessDate(),
-							syncMsg.getCurrCount()});
+							syncMsg.getCurrCount(), syncMsg.getAppOrderId(),
+							syncMsg.getOrderStatus()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,6 +58,8 @@ public class SyncMsgSQL {
 				syncMsg.setRevenueId(cursor.getInt(6));
 				syncMsg.setBusinessDate(cursor.getLong(7));
 				syncMsg.setCurrCount(cursor.getInt(8));
+				syncMsg.setAppOrderId(cursor.getInt(9));
+				syncMsg.setOrderStatus(cursor.getInt(10));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -98,6 +101,8 @@ public class SyncMsgSQL {
 				syncMsg.setRevenueId(cursor.getInt(6));
 				syncMsg.setBusinessDate(cursor.getLong(7));
 				syncMsg.setCurrCount(cursor.getInt(8));
+				syncMsg.setAppOrderId(cursor.getInt(9));
+				syncMsg.setOrderStatus(cursor.getInt(10));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -142,6 +147,8 @@ public class SyncMsgSQL {
 				syncMsg.setRevenueId(cursor.getInt(6));
 				syncMsg.setBusinessDate(cursor.getLong(7));
 				syncMsg.setCurrCount(cursor.getInt(8));
+				syncMsg.setAppOrderId(cursor.getInt(9));
+				syncMsg.setOrderStatus(cursor.getInt(10));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -179,6 +186,8 @@ public class SyncMsgSQL {
 				syncMsg.setRevenueId(cursor.getInt(6));
 				syncMsg.setBusinessDate(cursor.getLong(7));
 				syncMsg.setCurrCount(cursor.getInt(8));
+				syncMsg.setAppOrderId(cursor.getInt(9));
+				syncMsg.setOrderStatus(cursor.getInt(10));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -215,6 +224,8 @@ public class SyncMsgSQL {
 				syncMsg.setRevenueId(cursor.getInt(6));
 				syncMsg.setBusinessDate(cursor.getLong(7));
 				syncMsg.setCurrCount(cursor.getInt(8));
+				syncMsg.setAppOrderId(cursor.getInt(9));
+				syncMsg.setOrderStatus(cursor.getInt(10));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -225,8 +236,48 @@ public class SyncMsgSQL {
 			}
 		}
 		return syncMsg;
-	}	
-	
+	}
+
+
+	public static SyncMsg getSyncMsgByAppOrderId(int appOrderId, int orderStatus) {
+		SyncMsg syncMsg = null;
+		// 这边的11指的是同步到后台的log数据的类型  同pos里面 HttpApi的常量 LOG_DATA
+		String sql = "select * from " + TableNames.SyncMsg
+				+ " where appOrderId = ? and orderStatus = ?";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] { appOrderId + "", orderStatus + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return syncMsg;
+			}
+			if (cursor.moveToFirst()) {
+				syncMsg = new SyncMsg();
+				syncMsg.setId(cursor.getString(0));
+				syncMsg.setOrderId(cursor.getInt(1));
+				syncMsg.setMsgType(cursor.getInt(2));
+				syncMsg.setData(cursor.getString(3));
+				syncMsg.setStatus(cursor.getInt(4));
+				syncMsg.setCreateTime(cursor.getLong(5));
+				syncMsg.setRevenueId(cursor.getInt(6));
+				syncMsg.setBusinessDate(cursor.getLong(7));
+				syncMsg.setCurrCount(cursor.getInt(8));
+				syncMsg.setAppOrderId(cursor.getInt(9));
+				syncMsg.setOrderStatus(cursor.getInt(10));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return syncMsg;
+	}
+
+
 	public static SyncMsg getSyncMsgByOrderIdBizDateCurrCount(int orderId, long businessDate, int currCount) {
 		SyncMsg syncMsg = null;
 		// 这边的11指的是同步到后台的log数据的类型 同pos里面 HttpApi的常量 LOG_DATA
@@ -251,6 +302,8 @@ public class SyncMsgSQL {
 				syncMsg.setRevenueId(cursor.getInt(6));
 				syncMsg.setBusinessDate(cursor.getLong(7));
 				syncMsg.setCurrCount(cursor.getInt(8));
+				syncMsg.setAppOrderId(cursor.getInt(9));
+				syncMsg.setOrderStatus(cursor.getInt(10));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

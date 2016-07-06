@@ -1,0 +1,170 @@
+package com.alfredbase.javabean.temporaryforapp;
+
+public class AppOrder {
+    private Integer id;    //'主键id',
+    private Integer orderNo;    //'订单编号',
+    private Integer custId;    //'顾客id',
+    private Integer restId;        //'餐厅id',
+    private Integer revenueId;    //'收银中心id',
+    private Integer sourceType;    //'订单来源类型(0外部第三方应用，1手机APP，2微信，3外卖)',
+    private Integer tableId;    // '桌子id',
+    private Integer orderStatus;    //'订单状态(0未确认，1已确认, 已支付，2已下单到厨房，3已完成,)',
+    private String subTotal;    //'订单总金额',
+    private String taxAmount;    //'税收总金额',
+    private String discountAmount;    //'打折总金额',
+    private Integer discountType;    //'打折类型(0不打折、10主订单按照比率打折、11主订单直接减、12子订单打折)',
+    private String total;    //'实收金额=订单总金额+税收总金额-打折总金额',
+    private Integer orderCount;    //'订单数量',
+    private long createTime;    //'创建时间',
+    private long updateTime;    //'更新时间',
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(Integer orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public Integer getCustId() {
+        return custId;
+    }
+
+    public void setCustId(Integer custId) {
+        this.custId = custId;
+    }
+
+    public Integer getRestId() {
+        return restId;
+    }
+
+    public void setRestId(Integer restId) {
+        this.restId = restId;
+    }
+
+    public Integer getRevenueId() {
+        return revenueId;
+    }
+
+    public void setRevenueId(Integer revenueId) {
+        this.revenueId = revenueId;
+    }
+
+    public Integer getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(Integer sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    public Integer getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(Integer tableId) {
+        this.tableId = tableId;
+    }
+
+    public Integer getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(Integer orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(String subTotal) {
+        this.subTotal = subTotal;
+    }
+
+    public String getTaxAmount() {
+        return taxAmount;
+    }
+
+    public void setTaxAmount(String taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+
+    public String getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(String discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public Integer getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(Integer discountType) {
+        this.discountType = discountType;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+
+    public Integer getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(Integer orderCount) {
+        this.orderCount = orderCount;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "AppOrder{" +
+                "id=" + id +
+                ", orderNo=" + orderNo +
+                ", custId=" + custId +
+                ", restId=" + restId +
+                ", revenueId=" + revenueId +
+                ", sourceType=" + sourceType +
+                ", tableId=" + tableId +
+                ", orderStatus=" + orderStatus +
+                ", subTotal='" + subTotal + '\'' +
+                ", taxAmount='" + taxAmount + '\'' +
+                ", discountAmount='" + discountAmount + '\'' +
+                ", discountType=" + discountType +
+                ", total='" + total + '\'' +
+                ", orderCount=" + orderCount +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
+}

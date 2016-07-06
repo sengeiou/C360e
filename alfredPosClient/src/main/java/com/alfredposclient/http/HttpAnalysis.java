@@ -43,6 +43,10 @@ import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.javabean.temporaryforapp.AppOrder;
+import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
+import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
+import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
 import com.alfredbase.javabean.temporaryforapp.TempModifierDetail;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.javabean.temporaryforapp.TempOrderDetail;
@@ -75,6 +79,10 @@ import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderModifierSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
@@ -575,6 +583,78 @@ public class HttpAnalysis {
 			TempOrderSQL.addTempOrder(tempOrder);
 			TempOrderDetailSQL.addTempOrderDetailList(tempOrder,tempOrderDetails);
 			TempModifierDetailSQL.addTempModifierDetailList(tempModifierDetails);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void getAppOrderById(int statusCode, Header[] headers,
+									   byte[] responseBody){
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			AppOrder appOrder = gson.fromJson(object.getString("appOrder"), AppOrder.class);
+			List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>(){}.getType());
+			List<AppOrderDetailTax> appOrderDetailTaxList = new ArrayList<AppOrderDetailTax>();
+//					gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
+			List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>(){}.getType());
+			AppOrderSQL.addAppOrder(appOrder);
+			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
+			AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
+			AppOrderModifierSQL.addAppOrderModifierList(appOrderModifierList);
+			App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void getAllAppOrder(int statusCode, Header[] headers,
+									   byte[] responseBody){
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<AppOrder> appOrderList = gson.fromJson(object.getString("appOrderList"), new TypeToken<ArrayList<AppOrder>>(){}.getType());
+			List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>(){}.getType());
+			List<AppOrderDetailTax> appOrderDetailTaxList = new ArrayList<AppOrderDetailTax>();
+//					gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
+			List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>(){}.getType());
+//			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
+//			AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
+//			AppOrderModifierSQL.addAppOrderModifierlList(appOrderModifierList);
+			for (AppOrder appOrder : appOrderList) {
+				if (AppOrderSQL
+						.getAppOrderById(appOrder
+								.getId().intValue()) != null) {
+					continue;
+				}
+				AppOrderSQL.addAppOrder(appOrder);
+				List<AppOrderDetail> appOrderDetails = new ArrayList<AppOrderDetail>();
+				List<AppOrderModifier> appOrderModifiers = new ArrayList<AppOrderModifier>();
+				List<AppOrderDetailTax> appOrderDetailTaxes = new ArrayList<AppOrderDetailTax>();
+				for (AppOrderDetail appOrderDetail : appOrderDetailList) {
+					if (appOrderDetail.getOrderId().intValue() == appOrder
+							.getId().intValue()) {
+						AppOrderDetailSQL
+								.addAppOrderDetai(appOrderDetail);
+						appOrderDetails.add(appOrderDetail);
+						for (AppOrderModifier appOrderModifier : appOrderModifierList) {
+							if (appOrderModifier.getOrderDetailId()
+									.intValue() == appOrderDetail
+									.getId().intValue()) {
+								appOrderModifiers.add(appOrderModifier);
+								AppOrderModifierSQL
+										.addAppOrderModifier(appOrderModifier);
+							}
+						}
+						for (AppOrderDetailTax appOrderDetailTax : appOrderDetailTaxList) {
+							if(appOrderDetailTax.getOrderDetailId().intValue() == appOrderDetail.getId().intValue()){
+								appOrderDetailTaxes.add(appOrderDetailTax);
+								AppOrderDetailTaxSQL.addAppOrderDetailTax(appOrderDetailTax);
+							}
+						}
+					}
+				}
+				App.instance.appOrderTransforOrder(appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

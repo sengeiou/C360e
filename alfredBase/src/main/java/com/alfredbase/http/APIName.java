@@ -17,6 +17,9 @@ public class APIName {
 	public static final String RESTAURANT_BINDDEVICEID = "restaurant/bindDeviceId";
 	public static final String RESTAURANT_DAYSALES_REPORT = "reportDaySales/getReportDaySales";
 	public static final String POSORDER_GETORDERBYQRCODE = "order/getOrderByQrcode";
+	public static final String POSORDER_GETPAIEDAPPORDERBYID= "order/getPaiedAppOrderById";
+	public static final String POSORDER_GETALLPAIEDAPPORDER= "order/getAllPaiedAppOrder";
+	public static final String POSORDER_UPDATEAPPORDERSTATUS= "order/updateAppOrderStatus";
 	public static final String RESTAURANT_MONTHLY_SALE_REPORT = "reportDaySales/getMonthReportDaySales";
 	public static final String RESTAURANT_MONTHLY_PLU_REPORT = "reportPlu/getMonthReport";
 	public static final String USER_UPDATEPASSWORD = "user/updatePassword";

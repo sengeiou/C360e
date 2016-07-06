@@ -33,6 +33,7 @@ public class DataHelper {
 			db.beginTransaction();
 			try {
 				createTable(db);
+				onUpgradeForOldVersion1(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -47,6 +48,7 @@ public class DataHelper {
 			try {
 				switch (oldVersion) {
 					case 1:
+						onUpgradeForOldVersion1(db);
 					break;
 				default:
 					break;
@@ -485,6 +487,26 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE " 
 					+ TableNames.OrderDetail
 					+ " ADD COLUMN isSet INTEGER default 0");
+		}
+
+		private void onUpgradeForOldVersion1(SQLiteDatabase db) {
+			db.execSQL("CREATE TABLE "
+					+ TableNames.AppOrder
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderNo INTEGER, custId INTEGER, restId INTEGER, revenueId INTEGER, sourceType INTEGER, tableId INTEGER, orderStatus INTEGER, subTotal TEXT, taxAmount TEXT, discountAmount TEXT, discountType INTEGER, total TEXT, orderCount INTEGER, createTime LONG, updateTime LONG)");
+			db.execSQL("CREATE TABLE "
+					+ TableNames.AppOrderDetail
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, custId INTEGER, itemId INTEGER, itemName TEXT, itemNum INTEGER, itemPrice TEXT, taxPrice TEXT, discountPrice TEXT, discountRate TEXT, realPrice TEXT, orderDetailStatus INTEGER, discountType INTEGER, modifierPrice TEXT, specialInstractions TEXT, createTime LONG, updateTime LONG)");
+			db.execSQL("CREATE TABLE "
+					+ TableNames.AppOrderModifier
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, orderDetailId INTEGER, custId INTEGER, itemId INTEGER, modifierId INTEGER, modifierName TEXT, modifierNum INTEGER, status INTEGER, modifierPrice TEXT, createTime LONG, updateTime LONG)");
+			db.execSQL("CREATE TABLE "
+					+ TableNames.AppOrderDetailTax
+					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, orderDetailId INTEGER, taxId INTEGER, taxName TEXT, taxPercentage TEXT, taxPrice TEXT, taxType INTEGER, createTime LONG, updateTime LONG)");
+			db.execSQL("ALTER TABLE " + TableNames.SyncMsg
+					+ " ADD COLUMN appOrderId INTEGER");
+			db.execSQL("ALTER TABLE " + TableNames.SyncMsg
+					+ " ADD COLUMN orderStatus INTEGER");
+
 		}
 		
 	}

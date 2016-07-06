@@ -1,13 +1,5 @@
 package com.alfredposclient.http;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
-
 import android.content.Context;
 import android.os.Handler;
 
@@ -29,6 +21,7 @@ import com.alfredposclient.activity.BOHSettlementHtml;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.MonthlyPLUReportHtml;
 import com.alfredposclient.activity.MonthlySalesReportHtml;
+import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.XZReportHtml;
@@ -36,6 +29,14 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
+
+import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
+
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HttpAPI {
 
@@ -60,6 +61,12 @@ public class HttpAPI {
 	 * 同步开关餐厅开关session的记录数据
 	 */
 	public static final int OPEN_CLOSE_SESSION_RESTAURANT = 90;
+
+
+	/**
+	 * 用于更新网络订单状态
+	 */
+	public static final int NETWORK_ORDER_STATUS_UPDATE = 1001;
 
 	public static void login(Context context, Map<String, Object> parameters,
 			String url, AsyncHttpClient httpClient, final Handler handler) {
@@ -1083,6 +1090,108 @@ public class HttpAPI {
 									error);
 							handler.sendMessage(handler.obtainMessage(
 									ResultCode.CONNECTION_FAILED, error));
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void getAppOrderById(Context context, String url,
+									  AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler){
+		try {
+			httpClient.post(context, url,
+					HttpAssembling.encapsulateBaseInfo(parameters),
+					HttpAssembling.CONTENT_TYPE,
+					new AsyncHttpResponseHandlerEx() {
+						@Override
+						public void onSuccess(final int statusCode,
+											  final Header[] headers,
+											  final byte[] responseBody) {
+							super.onSuccess(statusCode, headers, responseBody);
+							if(resultCode == ResultCode.SUCCESS){
+								HttpAnalysis.getAppOrderById(statusCode, headers, responseBody);
+							}
+							if(handler != null)
+							handler.sendMessage(handler.obtainMessage(SystemSetting.UPDATE_PASSWORD_TAG, resultCode));
+						}
+
+						@Override
+						public void onFailure(int statusCode, Header[] headers,
+											  byte[] responseBody, Throwable error) {
+							super.onFailure(statusCode, headers, responseBody,
+									error);
+							if(handler != null)
+							handler.sendMessage(handler.obtainMessage(
+									ResultCode.CONNECTION_FAILED, error));
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void getAllAppOrder(Context context, String url,
+									   AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler){
+		try {
+			httpClient.post(context, url,
+					HttpAssembling.encapsulateBaseInfo(parameters),
+					HttpAssembling.CONTENT_TYPE,
+					new AsyncHttpResponseHandlerEx() {
+						@Override
+						public void onSuccess(final int statusCode,
+											  final Header[] headers,
+											  final byte[] responseBody) {
+							super.onSuccess(statusCode, headers, responseBody);
+							if(resultCode == ResultCode.SUCCESS){
+								HttpAnalysis.getAllAppOrder(statusCode, headers, responseBody);
+							}
+							if(handler != null)
+								handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.REFRESH_APPORDER_SUCCESS, resultCode));
+						}
+
+						@Override
+						public void onFailure(int statusCode, Header[] headers,
+											  byte[] responseBody, Throwable error) {
+							if(handler != null)
+								handler.sendMessage(handler.obtainMessage(
+										ResultCode.CONNECTION_FAILED, error));
+							super.onFailure(statusCode, headers, responseBody,
+									error);
+
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void updateAppOrderStatus(Context context, String url,
+									  AsyncHttpClient httpClient, final Map<String, Object> parameters, final SyncMsg syncMsg){
+		try {
+			httpClient.post(context, url,
+					HttpAssembling.encapsulateBaseInfo(parameters),
+					HttpAssembling.CONTENT_TYPE,
+					new AsyncHttpResponseHandlerEx() {
+						@Override
+						public void onSuccess(final int statusCode,
+											  final Header[] headers,
+											  final byte[] responseBody) {
+							super.onSuccess(statusCode, headers, responseBody);
+							if(resultCode == ResultCode.SUCCESS){
+								syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);
+								SyncMsgSQL.add(syncMsg);
+							}else{
+								syncMsg.setStatus(ParamConst.SYNC_MSG_MALDATA);
+								SyncMsgSQL.add(syncMsg);
+							}
+						}
+
+						@Override
+						public void onFailure(int statusCode, Header[] headers,
+											  byte[] responseBody, Throwable error) {
+							super.onFailure(statusCode, headers, responseBody,
+									error);
 						}
 					});
 		} catch (Exception e) {

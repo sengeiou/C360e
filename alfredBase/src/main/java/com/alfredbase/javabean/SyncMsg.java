@@ -9,6 +9,7 @@ public class SyncMsg {
 	private Long createTime;
 	private Integer revenueId;
 	private Long businessDate;
+
 	
 	/*
 	 *  只用做本地使用 默认为0 
@@ -17,6 +18,9 @@ public class SyncMsg {
 	 *  之后没修改一次 currCount + 1
 	 */
 	private int currCount;
+
+	private Integer appOrderId;
+	private Integer orderStatus;
 	public SyncMsg() {
 	}
 
@@ -106,13 +110,37 @@ public class SyncMsg {
 		this.currCount = currCount;
 	}
 
+	public Integer getAppOrderId() {
+		return appOrderId;
+	}
+
+	public void setAppOrderId(Integer appOrderId) {
+		this.appOrderId = appOrderId;
+	}
+
+	public Integer getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(Integer orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+
 	@Override
 	public String toString() {
-		return "SyncMsg [id=" + id + ", orderId=" + orderId + ", msgType="
-				+ msgType + ", data=" + data + ", status=" + status
-				+ ", createTime=" + createTime + ", revenueId=" + revenueId
-				+ ", businessDate=" + businessDate + ", currCount=" + currCount
-				+ "]";
+		return "SyncMsg{" +
+				"id='" + id + '\'' +
+				", orderId=" + orderId +
+				", msgType=" + msgType +
+				", data='" + data + '\'' +
+				", status=" + status +
+				", createTime=" + createTime +
+				", revenueId=" + revenueId +
+				", businessDate=" + businessDate +
+				", appOrderId=" + appOrderId +
+				", orderStatus=" + orderStatus +
+				", currCount=" + currCount +
+				'}';
 	}
 
 }

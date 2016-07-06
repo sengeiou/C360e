@@ -38,6 +38,7 @@ public class PushMessage {
 	private Integer restId;
 	private Integer revenueId;
 	private String content;
+	private Integer appOrderId;
 	
 	private String deviceId;
 	
@@ -84,7 +85,15 @@ public class PushMessage {
 	public void setRevenueId(Integer revenueId) {
 		this.revenueId = revenueId;
 	}
-	
+
+	public Integer getAppOrderId() {
+		return appOrderId;
+	}
+
+	public void setAppOrderId(Integer appOrderId) {
+		this.appOrderId = appOrderId;
+	}
+
 	public static String getPingMsg(int restId, int revenueId) {
 		PushMessage msg = new PushMessage();
 		msg.setType(-1);
@@ -116,9 +125,15 @@ public class PushMessage {
 
 	@Override
 	public String toString() {
-		return "PushMessage [msg=" + msg + ", type=" + type + ", restId="
-				+ restId + ", revenueId=" + revenueId + ", content=" + content
-				+ ", deviceId=" + deviceId + "]";
+		return "PushMessage{" +
+				"msg='" + msg + '\'' +
+				", type=" + type +
+				", restId=" + restId +
+				", revenueId=" + revenueId +
+				", content='" + content + '\'' +
+				", appOrderId=" + appOrderId +
+				", deviceId='" + deviceId + '\'' +
+				'}';
 	}
-	
+
 }

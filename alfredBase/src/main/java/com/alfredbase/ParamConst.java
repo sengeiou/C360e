@@ -22,7 +22,7 @@ public class ParamConst {
 	public static final int ORDER_STATUS_OPEN_IN_WAITER = 1;
 	public static final int ORDER_STATUS_OPEN_IN_POS = 10;
 	public static final int ORDER_STATUS_UNPAY = 11;
-	// public static final int ORDER_STATUS_PAYED = 12; //not used
+	 public static final int ORDER_STATUS_PAYED = 12; //not used
 	// public static final int ORDER_STATUS_BOH = 13;//not
 	public static final int ORDER_STATUS_UNPACK = 20; // split order
 	public static final int ORDER_STATUS_UNPACK_CLOSING = 21;
@@ -381,4 +381,9 @@ public class ParamConst {
 	 */
 	public static final int MODIFIER_MUST_DEFAULT_NORMAL = 0;
 	public static final int MODIFIER_MUST_DEFAULT_SELECT = 1;
+
+
+	public static final int APP_ORDER_STATUS_PAID = 1;
+	public static final int APP_ORDER_STATUS_KOTPRINTERD  = 2;
+	public static final int APP_ORDER_STATUS_FINISH = 3;
 }

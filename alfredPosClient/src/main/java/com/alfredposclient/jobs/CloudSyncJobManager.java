@@ -1,13 +1,5 @@
 package com.alfredposclient.jobs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import android.content.Context;
 
 import com.alfredbase.ParamConst;
@@ -22,6 +14,14 @@ import com.alfredposclient.http.HttpAPI;
 import com.google.gson.Gson;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class CloudSyncJobManager {
 	
@@ -222,6 +222,27 @@ public class CloudSyncJobManager {
 				0, bizDate,syncMsg.getCreateTime());
 		this.syncJobManager.addJobInBackground(syncXReportJob);
     }
+
+	public void checkAppOrderStatus(int revenueCenterId, int appOrderId, int orderStatus, String orderNo, String reason, int diningStatus, Long bizDate) {
+		if (SyncMsgSQL.getSyncMsgByAppOrderId(appOrderId, orderStatus) == null)  {
+			SyncMsg syncMsg = new SyncMsg();
+			String uuid = getDataUUID(revenueCenterId);
+			syncMsg.setId(uuid);
+			syncMsg.setOrderId(0);
+			syncMsg.setMsgType(HttpAPI.NETWORK_ORDER_STATUS_UPDATE);
+			syncMsg.setData(reason);
+			syncMsg.setCreateTime(System.currentTimeMillis());
+			syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
+			syncMsg.setRevenueId(revenueCenterId);
+			syncMsg.setCreateTime(System.currentTimeMillis());
+			syncMsg.setAppOrderId(appOrderId);
+			syncMsg.setOrderStatus(orderStatus);
+			syncMsg.setBusinessDate(bizDate);
+			SyncMsgSQL.add(syncMsg);
+			SyncMsgJob syncXReportJob = new SyncMsgJob(uuid, revenueCenterId, HttpAPI.NETWORK_ORDER_STATUS_UPDATE, appOrderId, orderStatus, bizDate);
+			this.syncJobManager.addJobInBackground(syncXReportJob);
+		}
+	}
     
     public void clear(){
     	this.syncJobManager.clear();

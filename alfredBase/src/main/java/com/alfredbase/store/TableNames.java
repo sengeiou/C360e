@@ -63,5 +63,9 @@ public class TableNames {
 	public static final String TempModifierDetail = "TempModifierDetail_";
 	public static final String ThirdpartyPayPushMsgDto = "ThirdpartyPayPushMsgDto_";
 	public static final String PrintQueue = "PrintQueue_";
-	
+	public static final String AppOrder = "AppOrder_";
+	public static final String AppOrderDetail = "AppOrderDetail_";
+	public static final String AppOrderDetailTax = "AppOrderDetailTax_";
+	public static final String AppOrderModifier = "AppOrderModifier_";
+
 }
