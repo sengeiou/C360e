@@ -1,7 +1,5 @@
 package com.alfredwaiter.global;
 
-import java.io.IOException;
-
 import com.alfredbase.BaseApplication;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.javabean.RevenueCenter;
@@ -15,10 +13,12 @@ import com.alfredbase.utils.VibrationUtil;
 import com.alfredwaiter.activity.Welcome;
 import com.alfredwaiter.http.server.WaiterHttpServer;
 
+import java.io.IOException;
+
 public class App extends BaseApplication {
 
 	public static final int VIEW_EVENT_SET_QTY = 10;
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 3;
 	private static final String DATABASE_NAME = "com.alfredwaiter";
 	public static App instance;
 	private RevenueCenter revenueCenter;

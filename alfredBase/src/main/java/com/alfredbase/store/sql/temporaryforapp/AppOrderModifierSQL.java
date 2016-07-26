@@ -139,4 +139,42 @@ public class AppOrderModifierSQL {
 		}
 		return result;
 	}
+
+	public static List<AppOrderModifier> getAppOrderModifierByAppOrderId(int appOrderId){
+		String sql = "select * from " + TableNames.AppOrderModifier + " where orderId = ?";
+		Cursor cursor = null;
+		List<AppOrderModifier> result = new ArrayList<AppOrderModifier>();
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			db.beginTransaction();
+			cursor = db.rawQuery(sql, new String[] {appOrderId + ""});
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				AppOrderModifier appOrderModifier = new AppOrderModifier();
+				appOrderModifier.setId(cursor.getInt(0));
+				appOrderModifier.setOrderId(cursor.getInt(1));
+				appOrderModifier.setOrderDetailId(cursor.getInt(2));
+				appOrderModifier.setCustId(cursor.getInt(3));
+				appOrderModifier.setItemId(cursor.getInt(4));
+				appOrderModifier.setModifierId(cursor.getInt(5));
+				appOrderModifier.setModifierName(cursor.getString(6));
+				appOrderModifier.setModifierNum(cursor.getInt(7));
+				appOrderModifier.setStatus(cursor.getInt(8));
+				appOrderModifier.setModifierPrice(cursor.getString(9));
+				appOrderModifier.setCreateTime(cursor.getLong(10));
+				appOrderModifier.setUpdateTime(cursor.getLong(11));
+				result.add(appOrderModifier);
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+			db.endTransaction();
+		}
+		return result;
+	}
 }

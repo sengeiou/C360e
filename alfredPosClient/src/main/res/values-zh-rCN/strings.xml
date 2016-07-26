@@ -340,6 +340,6 @@
 	<string name="online_order_type">订单类型</string>
 	<string name="online_order_status">订单状态</string>
 	<string name="online_order_time">订单时间</string>
-	
+    <string name="check">下单</string>
 	
 </resources>

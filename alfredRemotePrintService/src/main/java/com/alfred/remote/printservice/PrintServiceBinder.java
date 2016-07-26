@@ -1,17 +1,5 @@
 package com.alfred.remote.printservice;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
@@ -63,6 +51,18 @@ import com.epson.epsonio.IoStatus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.path.android.jobqueue.JobManager;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 	private String TAG = PrintServiceBinder.class.getSimpleName();
@@ -410,6 +410,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 				    	} else {
 				    		kot.setCharSize(48);
 				    	}
+						kot.addLineSpace(2);
 						kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
 						if(!TextUtils.isEmpty(kotsummary.getDescription())){
 							kot.addCenterLabel(kotsummary.getDescription(), kotFontSize);
@@ -436,9 +437,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										   || kotItemModifier.getPrinterId().intValue() == prtDevice.getDevice_id()){
 									   canPrint = true;
 									   if(!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1){
-										   kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(),kotFontSize);
+										   kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(),1);
 									   }else{
-										   kot.AddModifierItem(kotItemModifier.getModifierName(),kotFontSize);
+										   kot.AddModifierItem(kotItemModifier.getModifierName(),1);
 									   }
 									   
 									   
@@ -448,11 +449,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							   canPrint = true;
 							   List<String> mods = getModifierNameStr(modList);
 							   for (String mod : mods) {
-							       kot.AddModifierItem(mod,kotFontSize);
+							       kot.AddModifierItem(mod,1);
 							   }
 						   }
 							if (item.getSpecialInstractions() != null) {
-								kot.AddModifierItem(item.getSpecialInstractions(),kotFontSize);
+								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*",1);
 							}	
 							kot.addLineSpace(1);
 						}
@@ -500,20 +501,20 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					
 									kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
 									 if(!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1){
-										 kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), kotFontSize);
+										 kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
 									 } else{
-										 kot.AddModifierItem(kotItemModifier.getModifierName(), kotFontSize);
+										 kot.AddModifierItem(kotItemModifier.getModifierName(), 1);
 									 }
 									
 									for(KotItemModifier kotGeneralItemModifier : comboGeneralModifiers){
 										 if(!IntegerUtils.isEmptyOrZero(kotGeneralItemModifier.getModifierNum()) && kotGeneralItemModifier.getModifierNum().intValue() > 1){
-											 kot.AddModifierItem(kotGeneralItemModifier.getModifierName() + "x" + kotGeneralItemModifier.getModifierNum().intValue(), kotFontSize);
+											 kot.AddModifierItem(kotGeneralItemModifier.getModifierName() + "x" + kotGeneralItemModifier.getModifierNum().intValue(), 1);
 										 }else{
-											 kot.AddModifierItem(kotGeneralItemModifier.getModifierName(), kotFontSize);
+											 kot.AddModifierItem(kotGeneralItemModifier.getModifierName(), 1);
 										 }
 									}
 									if (item.getSpecialInstractions() != null) {
-										kot.AddModifierItem(item.getSpecialInstractions(), kotFontSize);
+										kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 									}
 									if (i==1) {
 								          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
@@ -553,10 +554,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
 							List<String> mods = getModifierNameStr(modList);
 							for (String mod : mods) {
-								kot.AddModifierItem(mod, kotFontSize);
+								kot.AddModifierItem(mod, 1);
 							}
 							if (item.getSpecialInstractions() != null) {
-								kot.AddModifierItem(item.getSpecialInstractions(), kotFontSize);
+								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 							}
 							if (i==1) {
 						          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
@@ -1207,9 +1208,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										   || kotItemModifier.getPrinterId().intValue() == prtDevice.getDevice_id()){
 									   canPrint = true;
 									   if(!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1){
-										   kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), kotFontSize);
+										   kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
 									   } else{
-										   kot.AddModifierItem(kotItemModifier.getModifierName(), kotFontSize);
+										   kot.AddModifierItem(kotItemModifier.getModifierName(), 1);
 									   }
 									   
 								   }
@@ -1218,11 +1219,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							   canPrint = true;
 							   List<String> mods = getModifierNameStr(modList);
 							   for (String mod : mods) {
-							       kot.AddModifierItem(mod, kotFontSize);
+							       kot.AddModifierItem(mod, 1);
 							   }
 						   }
 						   if (item.getSpecialInstractions() != null) {
-								kot.AddModifierItem(item.getSpecialInstractions(), kotFontSize);
+								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 							}
 						   kot.addLineSpace(1);
 						}
@@ -1273,21 +1274,21 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					
 									kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
 									if(!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1){
-										kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), kotFontSize);
+										kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
 									} else {
-										kot.AddModifierItem(kotItemModifier.getModifierName(), kotFontSize);
+										kot.AddModifierItem(kotItemModifier.getModifierName(), 1);
 									}
 									
 									for(KotItemModifier kotGeneralItemModifier : comboGeneralModifiers){
 										if(!IntegerUtils.isEmptyOrZero(kotGeneralItemModifier.getModifierNum()) && kotGeneralItemModifier.getModifierNum().intValue() > 1){
-											kot.AddModifierItem(kotGeneralItemModifier.getModifierName() + "x" + kotGeneralItemModifier.getModifierNum().intValue(), kotFontSize);
+											kot.AddModifierItem(kotGeneralItemModifier.getModifierName() + "x" + kotGeneralItemModifier.getModifierNum().intValue(), 1);
 										}else {
-											kot.AddModifierItem(kotGeneralItemModifier.getModifierName(), kotFontSize);
+											kot.AddModifierItem(kotGeneralItemModifier.getModifierName(), 1);
 										}
 										
 									}
 									if (item.getSpecialInstractions() != null) {
-										kot.AddModifierItem(item.getSpecialInstractions(), kotFontSize);
+										kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 									}
 									if (i==1) {
 								          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
@@ -1329,7 +1330,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								kot.AddModifierItem(mod);
 							}
 							if (item.getSpecialInstractions() != null) {
-								kot.AddModifierItem(item.getSpecialInstractions(), kotFontSize);
+								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 							}
 							if (i==1) {
 						          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
@@ -1657,11 +1658,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							   canPrint = true;
 							   List<String> mods = getModifierNameStr(modList);
 							   for (String mod : mods) {
-							       kot.AddModifierItem(mod,kotFontSize);
+							       kot.AddModifierItem(mod,1);
 							   }
 //						   }
 							if (item.getSpecialInstractions() != null) {
-								kot.AddModifierItem(item.getSpecialInstractions(),kotFontSize);
+								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*",1);
 							}	
 							kot.addLineSpace(1);
 						}

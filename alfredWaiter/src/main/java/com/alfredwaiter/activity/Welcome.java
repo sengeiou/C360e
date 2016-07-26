@@ -176,4 +176,9 @@ public class Welcome extends BaseActivity {
 		}
 	}
 
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(downReceiver);
+		super.onDestroy();
+	}
 }

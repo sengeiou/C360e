@@ -38,8 +38,8 @@ public class AppOrderSQL {
 			String sql = "replace into "
 					+ TableNames.AppOrder
 					+ " (id, orderNo, custId, restId, revenueId, sourceType, tableId, orderStatus, subTotal, taxAmount, "
-					+ " discountAmount, discountType, total, orderCount, createTime, updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { appOrder.getId(), appOrder.getOrderNo(),
@@ -49,7 +49,9 @@ public class AppOrderSQL {
 					appOrder.getSubTotal(), appOrder.getTaxAmount(),
 					appOrder.getDiscountAmount(), appOrder.getDiscountType(),
 					appOrder.getTotal(), appOrder.getOrderCount(),
-					appOrder.getCreateTime(), appOrder.getUpdateTime()});
+					appOrder.getCreateTime(), appOrder.getUpdateTime(),
+					appOrder.getTableType(), appOrder.getTableNo(),
+					appOrder.getBizType()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -64,8 +66,8 @@ public class AppOrderSQL {
 			String sql = "replace into "
 					+ TableNames.AppOrder
 					+ " (id, orderNo, custId, restId, revenueId, sourceType, tableId, orderStatus, subTotal, taxAmount, "
-					+ " discountAmount, discountType, total, orderCount, createTime, updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { appOrder.getId(), appOrder.getOrderNo(),
@@ -75,7 +77,9 @@ public class AppOrderSQL {
 							appOrder.getSubTotal(), appOrder.getTaxAmount(),
 							appOrder.getDiscountAmount(), appOrder.getDiscountType(),
 							appOrder.getTotal(), appOrder.getOrderCount(),
-							appOrder.getCreateTime(), appOrder.getUpdateTime()});
+							appOrder.getCreateTime(), appOrder.getUpdateTime(),
+							appOrder.getTableType(), appOrder.getTableNo(),
+							appOrder.getBizType()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -107,6 +111,9 @@ public class AppOrderSQL {
 				appOrder.setOrderCount(cursor.getInt(13));
 				appOrder.setCreateTime(cursor.getLong(14));
 				appOrder.setUpdateTime(cursor.getLong(15));
+				appOrder.setTableType(cursor.getInt(16));
+				appOrder.setTableNo(cursor.getString(17));
+				appOrder.setBizType(cursor.getInt(18));
 				result.add(appOrder);
 			}
 		} catch (Exception e) {
@@ -145,6 +152,9 @@ public class AppOrderSQL {
 				appOrder.setOrderCount(cursor.getInt(13));
 				appOrder.setCreateTime(cursor.getLong(14));
 				appOrder.setUpdateTime(cursor.getLong(15));
+				appOrder.setTableType(cursor.getInt(16));
+				appOrder.setTableNo(cursor.getString(17));
+				appOrder.setBizType(cursor.getInt(18));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,6 +168,11 @@ public class AppOrderSQL {
 	}
 	
 	public static void deleteTempOrder(){
-		
+		String sql = "delete from " + TableNames.AppOrder ;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] { });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

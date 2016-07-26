@@ -34,6 +34,9 @@ public class DataHelper {
 			try {
 				createTable(db);
 				onUpgradeForOldVersion1(db);
+				onUpgradeForOldVersion2(db);
+				onUpgradeForOldVersion3(db);
+
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -49,7 +52,16 @@ public class DataHelper {
 				switch (oldVersion) {
 					case 1:
 						onUpgradeForOldVersion1(db);
-					break;
+						onUpgradeForOldVersion2(db);
+						onUpgradeForOldVersion3(db);
+						break;
+					case 2:
+						onUpgradeForOldVersion2(db);
+						onUpgradeForOldVersion3(db);
+						break;
+					case 3:
+						onUpgradeForOldVersion3(db);
+						break;
 				default:
 					break;
 				}
@@ -508,6 +520,18 @@ public class DataHelper {
 					+ " ADD COLUMN orderStatus INTEGER");
 
 		}
-		
+		//tableType
+
+		private void onUpgradeForOldVersion2(SQLiteDatabase db) {
+			db.execSQL("ALTER TABLE " + TableNames.AppOrder
+					+ " ADD COLUMN tableType INTEGER");
+			db.execSQL("ALTER TABLE " + TableNames.AppOrder
+					+ " ADD COLUMN tableNo TEXT");
+		}
+		private void onUpgradeForOldVersion3(SQLiteDatabase db) {
+			db.execSQL("ALTER TABLE " + TableNames.AppOrder
+					+ " ADD COLUMN bizType INTEGER");
+		}
+
 	}
 }

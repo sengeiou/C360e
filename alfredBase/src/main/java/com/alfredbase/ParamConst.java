@@ -386,4 +386,9 @@ public class ParamConst {
 	public static final int APP_ORDER_STATUS_PAID = 1;
 	public static final int APP_ORDER_STATUS_KOTPRINTERD  = 2;
 	public static final int APP_ORDER_STATUS_FINISH = 3;
+
+	public static final int APP_ORDER_TABLE_STATUS_DEFAULT = 0;
+	public static final int APP_ORDER_TABLE_STATUS_NOT_USE = 1;
+	public static final int APP_ORDER_TABLE_STATUS_USED = -1;
+
 }

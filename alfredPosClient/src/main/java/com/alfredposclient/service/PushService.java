@@ -138,7 +138,7 @@ public class PushService extends Service implements Listener {
 		if(App.isDebug){
 			return "ws://192.168.1.131:8085/websocket";
 		} else if (App.isOpenLog){
-			return "ws://218.244.136.120:8085/websocket";
+			return "ws://139.224.17.126:8085/websocket";
 		} else {
 			if (App.instance.countryCode == ParamConst.CHINA)
 				return "ws://121.40.168.178:8085/websocket";

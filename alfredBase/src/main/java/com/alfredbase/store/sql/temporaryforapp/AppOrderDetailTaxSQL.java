@@ -1,5 +1,6 @@
 package com.alfredbase.store.sql.temporaryforapp;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
@@ -8,6 +9,7 @@ import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppOrderDetailTaxSQL {
@@ -95,8 +97,37 @@ public class AppOrderDetailTaxSQL {
 
 
 	
-	public static List<AppOrderDetailTax> getAppOrderDetailTaxBy(){
-		return null;
+	public static List<AppOrderDetailTax> getAppOrderDetailTaxByAppOrderId(int appOrderId){
+		String sql = "select * from " + TableNames.AppOrderDetailTax + " where orderId = ?";
+		Cursor cursor = null;
+		List<AppOrderDetailTax> result = new ArrayList<AppOrderDetailTax>();
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {appOrderId + ""});
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				AppOrderDetailTax appOrderDetailTax = new AppOrderDetailTax();
+				appOrderDetailTax.setId(cursor.getInt(0));
+				appOrderDetailTax.setOrderId(cursor.getInt(1));
+				appOrderDetailTax.setOrderDetailId(cursor.getInt(2));
+				appOrderDetailTax.setTaxId(cursor.getInt(3));
+				appOrderDetailTax.setTaxName(cursor.getString(4));
+				appOrderDetailTax.setTaxPercentage(cursor.getString(5));
+				appOrderDetailTax.setTaxPrice(cursor.getString(6));
+				appOrderDetailTax.setTaxType(cursor.getInt(7));
+				appOrderDetailTax.setCreateTime(cursor.getLong(8));
+				appOrderDetailTax.setUpdateTime(cursor.getLong(9));
+				result.add(appOrderDetailTax);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
 	}
 	
 	public static void deleteTempOrder(){

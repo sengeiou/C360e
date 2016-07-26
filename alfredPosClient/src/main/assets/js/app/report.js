@@ -309,7 +309,7 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         //数据封装
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">ItemSalse</div>';
+        liList+='<div class="col-md-6">ItemSales</div>';
         liList+='<div class="col-md-2">'+(getJson.itemSalesQty==''?'0':getJson.itemSalesQty)+'</div>';
         liList+='<div class="col-md-4">$'+((getJson.itemSales==''||getJson.itemSales=='0')?'0.00':getJson.itemSales)+'</div>';
         liList+='</div>';

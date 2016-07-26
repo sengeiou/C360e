@@ -18,19 +18,11 @@
 
 package com.loopj.android.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.zip.GZIPInputStream;
+import android.content.Context;
+import android.os.Looper;
+import android.util.Log;
+
+import com.alfredbase.utils.NetUtil;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -79,11 +71,19 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
-import android.content.Context;
-import android.os.Looper;
-import android.util.Log;
-
-import com.alfredbase.utils.NetUtil;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.zip.GZIPInputStream;
 
 
 /**
@@ -847,6 +847,7 @@ public class AsyncHttpClient {
      */
     public RequestHandle post(Context context, String url, HttpEntity entity, String contentType, ResponseHandlerInterface responseHandler) {
     	try {
+            Log.i(LOG_TAG, "url:" + url);
 			Log.i(LOG_TAG, NetUtil.ConvertStreamToString(entity.getContent()));
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block

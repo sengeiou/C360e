@@ -1,14 +1,5 @@
 package com.alfredkds.global;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import android.content.Context;
 import android.os.Handler;
 
 import com.alfredbase.BaseActivity;
@@ -37,6 +28,14 @@ import com.alfredkds.http.server.KdsHttpServer;
 import com.alfredkds.javabean.Kot;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public class App extends BaseApplication {
 
 	public static final int HANDLER_RECONNECT_POS = 10;
@@ -52,7 +51,7 @@ public class App extends BaseApplication {
 	public static final int HANDLER_NEW_KOT = 20;
 	public static final int HANDLER_UPDATE_KOT = 1;
 	public static final int HANDLER_DELETE_KOT = 2;
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 3;
 	private static final String DATABASE_NAME = "com.alfredkds";
 	public static App instance;
     //for pairing

@@ -1,10 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -17,6 +12,11 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OrderModifierSQL {
 
@@ -119,7 +119,7 @@ public class OrderModifierSQL {
 			String sql = "replace into "
 					+ TableNames.OrderModifier
 					+ "(id,orderId, orderDetailId, orderOriginId, userId, itemId, modifierId, modifierNum, status, modifierPrice, createTime, updateTime, printerId, modifierItemPrice)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { orderModifier.getId(),

@@ -1,13 +1,13 @@
 package com.alfred.printer;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-
 import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
 import com.path.android.jobqueue.Params;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 public class KOTPrint extends PrintJob{
 
@@ -180,7 +180,8 @@ public class KOTPrint extends PrintJob{
 		kot.setText(this.getTwoColContent(itemName, new Integer(qty).toString(), scale));
 		this.data.add(kot);
 	}
-	
+
+
 	public void AddModifierItem(String modifiers) {
 		AddModifierItem(modifiers, 2);
 	}

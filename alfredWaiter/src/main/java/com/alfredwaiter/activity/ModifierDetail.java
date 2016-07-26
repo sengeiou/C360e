@@ -1,8 +1,5 @@
 package com.alfredwaiter.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -13,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +30,9 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.viewpagerindicator.TabPageIndicator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModifierDetail extends BaseActivity {
 	private ItemDetail itemDetail;
@@ -214,14 +212,15 @@ public class ModifierDetail extends BaseActivity {
 				viewHolder.checkBox.setChecked(false);
 			}
 			viewHolder.checkBox.setTag(orderModifier);
-			viewHolder.checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				
+			viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
 				@Override
-				public void onCheckedChanged(final CompoundButton arg0, boolean arg1) {
-					new Thread(new Runnable() {
-						
-						@Override
-						public void run() {
+				public void onClick(View arg0) {
+
+//					new Thread(new Runnable() {
+//
+//						@Override
+//						public void run() {
+							CheckBox view = (CheckBox) arg0;
 							OrderModifier orderModifier = (OrderModifier) arg0.getTag();
 							if (orderModifier != null) {
 								if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
@@ -231,6 +230,7 @@ public class ModifierDetail extends BaseActivity {
 											.currentTimeMillis());
 									OrderModifierSQL
 											.updateOrderModifierForWaiter(orderModifier);
+									view.setChecked(false);
 								} else {
 									orderModifier.setUpdateTime(System
 											.currentTimeMillis());
@@ -238,6 +238,7 @@ public class ModifierDetail extends BaseActivity {
 											.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
 									OrderModifierSQL
 											.updateOrderModifierForWaiter(orderModifier);
+									view.setChecked(true);
 								}
 							} else {
 								orderModifier = new OrderModifier();
@@ -259,9 +260,11 @@ public class ModifierDetail extends BaseActivity {
 								orderModifier.setUpdateTime(time);
 								OrderModifierSQL.addOrderModifierForWaiter(orderModifier);
 								arg0.setTag(orderModifier);
+								orderModifiers.add(orderModifier);
+								view.setChecked(true);
 							}
-						}
-					}).start();
+//						}
+//					}).start();
 						
 				}
 			});

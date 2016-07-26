@@ -17,18 +17,24 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.PrinterLoadingDialog;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.Tables;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderModifierSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
+import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 
@@ -113,23 +119,36 @@ public class NetWorkOrderActivity extends BaseActivity {
 		super.handlerClickEvent(v);
 		switch (v.getId()) {
 		case R.id.btn_check:{
-//			final TempOrder tempOrder = (TempOrder) v.getTag();
-//			if (tempOrder == null){
-//				return;
-//			}
-//			if (tempOrder.getStatus() == ParamConst.TEMPORDER_STATUS_UN_ACTIVTY) {
-//				DialogFactory.showOneButtonCompelDialog(context, "警告", "当前订单已删除", null);
-//			} else if (tempOrder.getStatus() == ParamConst.TEMPORDER_STATUS_UN_CHECKED) {
-//				checkOrder(tempOrder);
-//			} else {
-//				DialogFactory.commonTwoBtnDialog(context, "警告", "当前订单已经下过单，确实继续下单?", "取消", "确定", null, new OnClickListener() {
-//
-//					@Override
-//					public void onClick(View arg0) {
-//						checkOrder(tempOrder);
-//					}
-//				});
-//			}
+			final AppOrder appOrder = (AppOrder)v.getTag();
+			Tables tables = CoreData.getInstance().getTables(appOrder.getTableId().intValue());
+			DialogFactory.commonTwoBtnDialog(this, "Warning", "Please confirm '" + tables.getTableName() + "' has been cleared?",
+					"No", "Yes", null, new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(context);
+							printerLoadingDialog.setTitle("Loading");
+							printerLoadingDialog.showByTime(3000);
+							new Thread(new Runnable() {
+								@Override
+								public void run() {
+									App.instance.appOrderTransforOrder(appOrder,
+											AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId().intValue()),
+											AppOrderModifierSQL.getAppOrderModifierByAppOrderId(appOrder.getId().intValue()),
+											AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(appOrder.getId().intValue()));
+								}
+							}).start();
+							handler.postDelayed(new Runnable() {
+								@Override
+								public void run() {
+									appOderAdapter.notifyDataSetChanged();
+									appOderDetailAdapter.notifyDataSetChanged();
+								}
+							}, 3001);
+						}
+					});
+
+
+
 		}
 			break;
 //		case R.id.btn_delete:{
@@ -231,10 +250,15 @@ public class NetWorkOrderActivity extends BaseActivity {
 				arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
 				btn_check.setTag(appOrder);
 				btn_delete.setTag(appOrder);
+				if(appOrder.getTableType().intValue() == ParamConst.APP_ORDER_TABLE_STATUS_USED){
+					btn_check.setVisibility(View.VISIBLE);
+				}else{
+					btn_check.setVisibility(View.INVISIBLE);
+				}
 			}else{
 				arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.gray));
 			}
-			holder.tv_order_id.setText(appOrder.getOrderNo() + "");
+			holder.tv_order_id.setText(appOrder.getId() + "");
 			String statusStr = "";
 			switch (appOrder.getOrderStatus().intValue()) {
 			case ParamConst.APP_ORDER_STATUS_PAID:

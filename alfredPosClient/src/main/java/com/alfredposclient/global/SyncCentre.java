@@ -258,7 +258,7 @@ public class SyncCentre {
 			return "http://192.168.1.131:8086/alfred-api/" + relativeUrl;
 //			return "http://192.168.0.120:8083/alfred-api/" + relativeUrl;
 		} else if (App.instance.isOpenLog) {
-			return "http://218.244.136.120:8080/alfred-api/" + relativeUrl;
+			return "http://139.224.17.126/alfred-api/" + relativeUrl;
 		} else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;
 			return "http://52.77.208.125/alfred-api/" + relativeUrl;

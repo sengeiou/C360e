@@ -195,7 +195,7 @@
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:layout_margin="10dp"
-                        android:text="@string/ok" />
+                        android:text="@string/check" />
 
                     <Button
                         android:id="@+id/btn_delete"

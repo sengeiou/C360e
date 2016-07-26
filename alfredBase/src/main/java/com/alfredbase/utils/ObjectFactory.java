@@ -140,7 +140,7 @@ public class ObjectFactory {
 
 	public Order getOrderFromAppOrder(AppOrder appOrder, User user,
 									  SessionStatus sessionStatus, RevenueCenter revenueCenter,
-									  Tables tables, long businessDate, Restaurant restaurant) {
+									  Tables tables, long businessDate, Restaurant restaurant, boolean isKiosk) {
 		Order order = null;
 		if (appOrder != null) {
 			synchronized (lock_order) {
@@ -152,7 +152,10 @@ public class ObjectFactory {
 					order.setOrderOriginId(ParamConst.ORDER_ORIGIN_APP);
 					order.setUserId(user.getId());
 					order.setPersons(4);
-					order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
+					if(isKiosk)
+						order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+					else
+						order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
 					order.setDiscountRate(ParamConst.DOUBLE_ZERO);
 					order.setSessionStatus(sessionStatus.getSession_status());
 					order.setRestId(restaurant.getId());

@@ -1,15 +1,8 @@
 package com.alfredposclient.http;
 
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.Header;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.alfredbase.ParamConst;
@@ -23,8 +16,8 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
-import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.javabean.MonthlyPLUReport;
+import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.javabean.Places;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
@@ -92,6 +85,14 @@ import com.alfredposclient.global.App;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HttpAnalysis {
 	public static final String TAG = HttpAnalysis.class.getSimpleName();
@@ -598,6 +599,15 @@ public class HttpAnalysis {
 			List<AppOrderDetailTax> appOrderDetailTaxList = new ArrayList<AppOrderDetailTax>();
 //					gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
 			List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>(){}.getType());
+			int tableId = 0;
+			if(!TextUtils.isEmpty(appOrder.getTableNo())){
+				try {
+					tableId = Integer.parseInt(appOrder.getTableNo());
+				} catch (NumberFormatException e) {
+
+				}
+			}
+			appOrder.setTableId(tableId);
 			AppOrderSQL.addAppOrder(appOrder);
 			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
 			AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
@@ -626,6 +636,15 @@ public class HttpAnalysis {
 								.getId().intValue()) != null) {
 					continue;
 				}
+				int tableId = 0;
+				if(!TextUtils.isEmpty(appOrder.getTableNo())){
+					try {
+						tableId = Integer.parseInt(appOrder.getTableNo());
+					} catch (NumberFormatException e) {
+
+					}
+				}
+				appOrder.setTableId(tableId);
 				AppOrderSQL.addAppOrder(appOrder);
 				List<AppOrderDetail> appOrderDetails = new ArrayList<AppOrderDetail>();
 				List<AppOrderModifier> appOrderModifiers = new ArrayList<AppOrderModifier>();
