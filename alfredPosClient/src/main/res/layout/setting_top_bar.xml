@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/title_bg" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/PX_45" >
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="@dimen/PX_38"
+            android:layout_height="@dimen/PX_45"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/PX_20"
+            android:background="@android:color/transparent"
+            android:paddingBottom="@dimen/PX_5"
+            android:paddingTop="@dimen/PX_5"
+            android:scaleType="fitXY"
+            android:src="@drawable/backbtn_icon" />
+
+        <TextView
+            android:id="@+id/tv_title_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/PX_30"
+            android:text="历史订单"
+            android:textColor="@color/white"
+            android:textSize="@dimen/PX_21" />
+
+        <LinearLayout
+            android:id="@+id/ll_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/PX_20"
+            android:layout_toLeftOf="@+id/ll_print"
+            android:paddingBottom="@dimen/PX_10"
+            android:paddingTop="@dimen/PX_10"
+            android:visibility="gone" >
+
+            <ImageView
+                android:id="@+id/iv_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/setting_edit_selector" />
+
+            <TextView
+                android:id="@+id/tv_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/PX_10"
+                android:text="反结账"
+                android:textColor="@color/text_white_lightgray_selector"
+                android:textSize="@dimen/PX_20" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_print"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/PX_20"
+            android:paddingBottom="@dimen/PX_10"
+            android:paddingTop="@dimen/PX_10" >
+
+            <ImageView
+                android:id="@+id/iv_print"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/setting_print_selector" />
+
+            <TextView
+                android:id="@+id/tv_print"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/PX_10"
+                android:text="打印账单"
+                android:textSize="@dimen/PX_20" 
+                android:textColor="@color/text_white_lightgray_selector" >
+
+            </TextView>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
