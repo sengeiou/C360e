@@ -146,7 +146,7 @@ public class ESCPOSPrinter {
 	 * Text should either be followed by a line-break, or feed() should be called
 	 * after this to clear the print buffer.
 	 *
-	 * @param string $str Text to print
+	 * @param data $str Text to print
 	 */    
     public void printText(String data) throws Exception{
     	boolean result = true;
