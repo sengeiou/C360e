@@ -11,7 +11,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.puscene.posclient.R;
+import com.alfredposclient.R;
+
 
 public class VoidOrFocAdapter extends BaseAdapter{
 
@@ -20,7 +21,7 @@ public class VoidOrFocAdapter extends BaseAdapter{
 	private List<String> items = new ArrayList<String>();
 	private List<String> canotClick = new ArrayList<String>();
 	private boolean[] voidOrFocChoosedFlag;
-	private int itemWidth = R.dimen.PX_160;
+	private int itemWidth = 160;
 	
 	public VoidOrFocAdapter(Context context,List<String> items, boolean[] voidOrFocChoosedFlag, List<String> canotClick) {
 		super();

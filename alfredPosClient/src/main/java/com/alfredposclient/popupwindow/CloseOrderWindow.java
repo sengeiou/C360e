@@ -82,6 +82,7 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.EditSettlementHtml;
+import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.OrderDetailAdapter;
@@ -555,7 +556,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	 */
 	private void initBillSummary() {
 		if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED
-				&& !(parent instanceof EditSettlementHtml)) {
+				&& !(parent instanceof EditSettlementPage)) {
 			settlementNum = BH.getBD(order.getTotal());
 			remainTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
 		} else {
@@ -617,7 +618,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 							BH.getBD(paymentSettlement.getPaidAmount()), true);
 //					((TextView) contentView.findViewById(R.id.tv_settlement_num))
 //							.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + settlementNum.toString());
-					if (!(parent instanceof EditSettlementHtml)) {
+					if (!(parent instanceof EditSettlementPage)) {
 						order.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
 					}
 					OrderSQL.update(order);
@@ -636,7 +637,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 						if(roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0){
 							order.setTotal(BH.sub(BH.getBD(order.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
 							OrderSQL.update(order);
-							if(parent instanceof EditSettlementHtml){
+							if(parent instanceof EditSettlementPage){
 								roundAmount.setRoundBalancePrice(0.00);
 								RoundAmountSQL.update(roundAmount);
 							}else{
@@ -655,7 +656,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 								.getCardsSettlementByPament(payment.getId(),
 										paymentSettlement.getId());
 						subPaymentSettlement = cardsSettlement;
-						if(parent instanceof EditSettlementHtml){
+						if(parent instanceof EditSettlementPage){
 							cardsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
 							CardsSettlementSQL.addCardsSettlement(cardsSettlement);
 						}else{
@@ -668,7 +669,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 										payment.getId(),
 										paymentSettlement.getId());
 						subPaymentSettlement = bohHoldSettlement;
-						if (parent instanceof EditSettlementHtml) {
+						if (parent instanceof EditSettlementPage) {
 							bohHoldSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
 							BohHoldSettlementSQL.addBohHoldSettlement(bohHoldSettlement);
 						} else {
@@ -688,7 +689,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 								.getVoidSettlementByPament(payment.getId(),
 										paymentSettlement.getId());
 						subPaymentSettlement = voidSettlement;
-						if (parent instanceof EditSettlementHtml) {
+						if (parent instanceof EditSettlementPage) {
 							voidSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
 							VoidSettlementSQL.addVoidSettlement(voidSettlement);
 						} else {
@@ -701,7 +702,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 								.getNonChargableSettlementByPaymentId(payment.getId(),
 										paymentSettlement.getId());
 						subPaymentSettlement = nonChargableSettlement;
-						if (parent instanceof EditSettlementHtml) {
+						if (parent instanceof EditSettlementPage) {
 							nonChargableSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
 							NonChargableSettlementSQL.addNonChargableSettlement(nonChargableSettlement);
 						} else {
@@ -714,7 +715,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 								.getNetsSettlementByPament(payment.getId(),
 										paymentSettlement.getId());
 						subPaymentSettlement = netsSettlement;
-						if (parent instanceof EditSettlementHtml) {
+						if (parent instanceof EditSettlementPage) {
 							netsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
 							NetsSettlementSQL.addNetsSettlement(netsSettlement);
 						} else {
@@ -726,7 +727,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 								.getAlipaySettlementByPament(payment.getId(),
 										paymentSettlement.getId());
 						subPaymentSettlement = alipaySettlement;
-						if (parent instanceof EditSettlementHtml) {
+						if (parent instanceof EditSettlementPage) {
 							alipaySettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
 							AlipaySettlementSQL.addAlipaySettlement(alipaySettlement);
 						} else {
@@ -738,7 +739,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 								.getWeixinSettlementByPament(payment.getId(),
 										paymentSettlement.getId());
 						subPaymentSettlement = weixinSettlement;
-						if (parent instanceof EditSettlementHtml) {
+						if (parent instanceof EditSettlementPage) {
 							weixinSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
 							WeixinSettlementSQL.addWeixinSettlement(weixinSettlement);
 						} else {
@@ -757,7 +758,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 								subPaymentSettlement);
 						oldPaymentMapList.add(paymentMap);
 					}
-					if (parent instanceof EditSettlementHtml) {
+					if (parent instanceof EditSettlementPage) {
 						paymentSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
 						PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 					} else {
@@ -929,7 +930,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		this.startX = startX;
 		tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
 		this.order = order;
-		if (parent instanceof EditSettlementHtml) {
+		if (parent instanceof EditSettlementPage) {
 			this.newPaymentMapList = new ArrayList<Map<String,Object>>();
 			this.oldPaymentMapList = new ArrayList<Map<String,Object>>();
 		}
@@ -1113,12 +1114,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			case R.id.btn_close_bill: {
 				// if (!(parent instanceof EditSettlementHtml)) {
 				closeWindowAction();
-				if (parent instanceof EditSettlementHtml && oldPaymentMapList != null) {
+				if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
 					Map<String, List<Map<String, Object>>> newAndOldPaymentSettlement = new HashMap<String, List<Map<String,Object>>>();
 					newAndOldPaymentSettlement.put("oldPaymentMapList", oldPaymentMapList);
 					newAndOldPaymentSettlement.put("newPaymentMapList", newPaymentMapList);
 					handler.sendMessage(handler.obtainMessage(
-							EditSettlementHtml.EDIT_SETTLEMENT_CLOSE_BILL,
+							EditSettlementPage.EDIT_SETTLEMENT_CLOSE_BILL,
 							newAndOldPaymentSettlement));
 				}
 				// }

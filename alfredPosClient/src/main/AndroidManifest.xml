@@ -84,7 +84,7 @@
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
         <activity
-            android:name="com.alfredposclient.activity.EditSettlementHtml"
+            android:name="com.alfredposclient.activity.EditSettlementPage"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />

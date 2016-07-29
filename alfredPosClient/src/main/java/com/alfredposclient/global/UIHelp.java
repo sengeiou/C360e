@@ -18,6 +18,7 @@ import com.alfredposclient.activity.DashboardHtml;
 import com.alfredposclient.activity.DevicesHtml;
 import com.alfredposclient.activity.EditOrderHtml;
 import com.alfredposclient.activity.EditSettlementHtml;
+import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.EntVoidReportHtml;
 import com.alfredposclient.activity.Login;
 import com.alfredposclient.activity.MainPage;
@@ -111,7 +112,7 @@ public class UIHelp {
 	}
 	
 	public static void startEditSettlementHtml(BaseActivity context) {
-		Intent intent = new Intent(context, EditSettlementHtml.class);
+		Intent intent = new Intent(context, EditSettlementPage.class);
 		context.startActivityForResult(intent, 0);
 //		context.overridePendingTransition(R.anim.slide_bottom_in,
 //				R.anim.centre_close_70);

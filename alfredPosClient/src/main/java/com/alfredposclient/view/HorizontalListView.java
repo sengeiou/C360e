@@ -49,7 +49,6 @@ import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -57,7 +56,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Scroller;
 
-import com.puscene.posclient.R;
+import com.alfredposclient.R;
 
 // @formatter:off
 /**

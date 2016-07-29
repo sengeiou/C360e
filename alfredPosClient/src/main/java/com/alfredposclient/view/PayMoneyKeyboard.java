@@ -7,7 +7,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.puscene.posclient.R;
+import com.alfredposclient.R;
+
 
 public class PayMoneyKeyboard extends LinearLayout implements OnClickListener {
 	private KeyBoardClickListener keyBoardClickListener;

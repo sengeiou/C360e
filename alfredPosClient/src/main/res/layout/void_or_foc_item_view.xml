@@ -5,15 +5,15 @@
 
     <TextView
         android:id="@+id/tv_item"
-        android:layout_width="@dimen/PX_180"
-        android:layout_height="@dimen/PX_60"
+        android:layout_width="180dp"
+        android:layout_height="60dp"
         android:layout_centerInParent="true"
-        android:padding="@dimen/PX_5"
+        android:padding="5dp"
         android:gravity="center"
         android:background="@drawable/discount_gridview_default_bg"
         android:singleLine="true"
         android:enabled="true"
         android:textColor="@color/text_light_black"
-        android:textSize="@dimen/PX_15" />
+        android:textSize="15dp" />
 
 </RelativeLayout>

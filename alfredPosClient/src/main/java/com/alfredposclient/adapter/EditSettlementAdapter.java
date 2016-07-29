@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.alfredbase.javabean.javabeanforhtml.EditSettlementInfo;
 import com.alfredbase.utils.BH;
-import com.puscene.posclient.R;
-import com.puscene.posclient.global.App;
+import com.alfredposclient.R;
+import com.alfredposclient.global.App;
 
 
 public class EditSettlementAdapter extends BaseAdapter {

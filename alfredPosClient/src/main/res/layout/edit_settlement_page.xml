@@ -10,7 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/other_pay_bg"
-        android:text="123" />
+        android:text="123"
+        android:visibility="gone"/>
 
     <include
         android:id="@+id/rl_titel"
@@ -36,44 +37,44 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/PX_50"
-                android:background="@color/dark_gray"
+                android:layout_height="50dp"
+                android:background="@color/light_gray"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingLeft="@dimen/PX_10" >
+                android:paddingLeft="10dp" >
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.9"
                     android:text="@string/bill_num"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/PX_20" />
+                    android:textSize="20dp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="合计"
+                    android:layout_weight="0.8"
+                    android:text="@string/sub_total"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/PX_20" />
+                    android:textSize="20dp" />
 
                 <TextView
                     android:id="@+id/tv_place_name_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.6"
                     android:text="@string/place_name"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/PX_20" />
+                    android:textSize="20dp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.7"
                     android:text="@string/cashier_name"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/PX_20" />
+                    android:textSize="20dp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -81,16 +82,16 @@
                     android:layout_weight="1"
                     android:text="@string/time"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/PX_20" />
+                    android:textSize="20dp" />
             </LinearLayout>
 
             <ListView
                 android:id="@+id/lv_payment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/light_gray"
+                android:background="@color/gray_bg"
                 android:divider="@color/white"
-                android:listSelector="@android:color/transparent" />
+                android:scrollbars="none"/>
         </LinearLayout>
 
         <View
