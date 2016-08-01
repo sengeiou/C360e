@@ -531,6 +531,12 @@ public class DataHelper {
 		private void onUpgradeForOldVersion3(SQLiteDatabase db) {
 			db.execSQL("ALTER TABLE " + TableNames.AppOrder
 					+ " ADD COLUMN bizType INTEGER");
+			db.execSQL("ALTER TABLE "
+					+ TableNames.ReportDaySales
+					+ " ADD COLUMN paypalpay TEXT");
+			db.execSQL("ALTER TABLE "
+					+ TableNames.ReportDaySales
+					+ " ADD COLUMN paypalpayQty INTEGER");
 		}
 
 	}

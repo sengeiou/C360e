@@ -46,18 +46,28 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 		iv_settlement_icon
 				.setImageResource(getImageResourceBySettlementType(paymentSettlement
 						.getPaymentTypeId().intValue()));
-		tv_settlement_delicon.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				viewResultCall.call(paymentSettlement);
-			}
-		});
+		int paymentTypeId = paymentSettlement.getPaymentTypeId()
+				.intValue();
+		if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL){
+			tv_settlement_delicon.setVisibility(View.INVISIBLE);
+			tv_settlement_delicon.setOnClickListener(null);
+		}else{
+			tv_settlement_delicon.setVisibility(View.VISIBLE);
+			tv_settlement_delicon.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					viewResultCall.call(paymentSettlement);
+				}
+			});
+		}
+
 	}
 	
 	private int getImageResourceBySettlementType(int paymentTypeId) {
 		switch (paymentTypeId) {
 		case ParamConst.SETTLEMENT_TYPE_CASH:
+		case ParamConst.SETTLEMENT_TYPE_PAYPAL:
 			return R.drawable.icon_settle_cash;
 		case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
 			return R.drawable.icon_master;

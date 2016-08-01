@@ -72,6 +72,9 @@
 #-dontwarn demo.**
 -dontwarn net.sourceforge.pinyin4j.**
 
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
+
 -keepattributes Signature
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application

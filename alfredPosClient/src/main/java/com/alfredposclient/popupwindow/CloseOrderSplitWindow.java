@@ -682,6 +682,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_ALIPAY){
 //						return;
 //					}
+					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL)
+						return;
 					remainTotal = BH.getBD(paymentSettlement.getTotalAmount());
 					settlementNum = BH.sub(settlementNum,
 							BH.getBD(paymentSettlement.getPaidAmount()), true);

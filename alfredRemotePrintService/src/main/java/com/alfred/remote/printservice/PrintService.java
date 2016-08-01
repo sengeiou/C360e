@@ -1,12 +1,5 @@
 package com.alfred.remote.printservice;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +10,13 @@ import com.alfred.print.jobs.PrintManager;
 import com.alfred.printer.ESCPrinter;
 import com.alfredbase.PrinterDeviceConfig;
 import com.alfredbase.store.Store;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PrintService extends Service {
 
@@ -74,7 +74,7 @@ public class PrintService extends Service {
 
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
+
 		Log.d(TAG, "Destroying Service");
 		//this.printJobMgr.clear();
 		//this.printJobMgr.stop();
@@ -82,6 +82,7 @@ public class PrintService extends Service {
         //close all sockets
 		this.pqMgr.stop();
         closeAllSockets();
+		super.onDestroy();
 		//this.printJobMgr = null;
 
 		

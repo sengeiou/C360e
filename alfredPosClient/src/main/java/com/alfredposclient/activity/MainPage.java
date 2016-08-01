@@ -1,13 +1,5 @@
 package com.alfredposclient.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.animation.ObjectAnimator;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -59,6 +51,7 @@ import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.TempModifierDetail;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.javabean.temporaryforapp.TempOrderDetail;
@@ -78,6 +71,7 @@ import com.alfredbase.store.sql.PlacesSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
@@ -120,6 +114,14 @@ import com.alfredposclient.view.SettingView;
 import com.alfredposclient.view.TopMenuView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainPage extends BaseActivity {
 	private String TAG = MainPage.class.getSimpleName();
@@ -706,9 +708,27 @@ public class MainPage extends BaseActivity {
 							cloudSync.syncOrderInfoForLog(paidOrder.getId(), 
 										App.instance.getRevenueCenter().getId(), 
 										App.instance.getBusinessDate(), 1);
+							if(currentOrder.getAppOrderId() != null && currentOrder.getAppOrderId().intValue() != 0) {
+								AppOrder appOrder = AppOrderSQL.getAppOrderById(currentOrder.getAppOrderId().intValue());
+								appOrder
+										.setOrderStatus(ParamConst.APP_ORDER_STATUS_FINISH);
+								AppOrderSQL.updateAppOrder(appOrder);
+								PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+										context);
+								printerLoadingDialog.setTitle(context.getResources().getString(
+										R.string.receipt_printing));
+								printerLoadingDialog.showByTime(3000);
+								App.instance.printerAppOrder(appOrder);
+								cloudSync.checkAppOrderStatus(
+										App.instance.getRevenueCenter().getId().intValue(),
+										appOrder.getId().intValue(),
+										appOrder.getOrderStatus().intValue(), "",
+										App.instance.getBusinessDate().longValue());
+							}
 						}
 					}
 				}).start();
+
 				break;
 			}
 			case VIEW_EVENT_CLOSE_SPLIT_BILL:{

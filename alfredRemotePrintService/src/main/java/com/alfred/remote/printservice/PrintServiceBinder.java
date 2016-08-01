@@ -792,6 +792,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							case ParamConst.SETTLEMENT_TYPE_WEIXIN:
 								paymentType = PrintService.instance.getResources().getString(R.string.weixin);
 								break;
+							case ParamConst.SETTLEMENT_TYPE_PAYPAL:
+								paymentType = PrintService.instance.getResources().getString(R.string.paypal);
+								break;
 							}
 							if (!TextUtils.isEmpty(paymentType)) {
 								stmt.put(paymentType,
@@ -1564,6 +1567,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								break;
 							case ParamConst.SETTLEMENT_TYPE_WEIXIN:
 								paymentType = PrintService.instance.getResources().getString(R.string.weixin);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_PAYPAL:
+								paymentType = PrintService.instance.getResources().getString(R.string.paypal);
 								break;
 							}
 							if (!TextUtils.isEmpty(paymentType)) {

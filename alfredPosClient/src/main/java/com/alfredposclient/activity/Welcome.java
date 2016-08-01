@@ -1,9 +1,5 @@
 package com.alfredposclient.activity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.animation.ObjectAnimator;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -52,6 +48,10 @@ import com.alfredposclient.global.UIHelp;
 import com.google.gson.Gson;
 import com.umeng.analytics.MobclickAgent;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Welcome extends BaseActivity {
 	private View rootView;
 	private IntentFilter downFilter;
@@ -84,12 +84,12 @@ public class Welcome extends BaseActivity {
 		rootView.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				if(!checkVersion()){
-					if(!updateData()){
+//				if(!checkVersion()){
+//					if(!updateData()){
 						startNextActivity();
-					}
-					
-				}
+//					}
+//
+//				}
 			}
 		}, 2000);
 		downFilter = new IntentFilter();

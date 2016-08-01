@@ -1,8 +1,8 @@
 package com.alfredbase.javabean;
 
-import java.io.Serializable;
-
 import com.alfredbase.utils.CommonUtil;
+
+import java.io.Serializable;
 
 public class ReportDaySales implements Serializable{
 
@@ -131,6 +131,9 @@ public class ReportDaySales implements Serializable{
 	private String varianceAmt;
 	
 	private String inclusiveTaxAmt;// 包含税
+
+	private String paypalpay;
+	private Integer paypalpayQty;
 	
 	public ReportDaySales() {
 
@@ -677,40 +680,99 @@ public class ReportDaySales implements Serializable{
 		this.thirdPartyQty = thirdPartyQty;
 	}
 
+	public String getPaypalpay() {
+		return paypalpay;
+	}
+
+	public void setPaypalpay(String paypalpay) {
+		if(paypalpay == null){
+			this.paypalpay = "0.00";
+		}else {
+			this.paypalpay = paypalpay;
+		}
+	}
+
+	public Integer getPaypalpayQty() {
+		return paypalpayQty;
+	}
+
+	public void setPaypalpayQty(Integer paypalpayQty) {
+		if(paypalpayQty == null){
+			this.paypalpayQty = 0;
+		}else {
+			this.paypalpayQty = paypalpayQty;
+		}
+	}
+
 	@Override
 	public String toString() {
-		return "ReportDaySales [id=" + id + ", restaurantId=" + restaurantId
-				+ ", restaurantName=" + restaurantName + ", revenueId="
-				+ revenueId + ", revenueName=" + revenueName
-				+ ", businessDate=" + businessDate + ", itemSales=" + itemSales
-				+ ", itemSalesQty=" + itemSalesQty + ", discountPer="
-				+ discountPer + ", discountPerQty=" + discountPerQty
-				+ ", discount=" + discount + ", discountQty=" + discountQty
-				+ ", discountAmt=" + discountAmt + ", focItem=" + focItem
-				+ ", focItemQty=" + focItemQty + ", focBill=" + focBill
-				+ ", focBillQty=" + focBillQty + ", totalSales=" + totalSales
-				+ ", cash=" + cash + ", cashQty=" + cashQty + ", nets=" + nets
-				+ ", netsQty=" + netsQty + ", visa=" + visa + ", visaQty="
-				+ visaQty + ", mc=" + mc + ", mcQty=" + mcQty + ", amex="
-				+ amex + ", amexQty=" + amexQty + ", jbl=" + jbl + ", jblQty="
-				+ jblQty + ", unionPay=" + unionPay + ", unionPayQty="
-				+ unionPayQty + ", diner=" + diner + ", dinerQty=" + dinerQty
-				+ ", holdld=" + holdld + ", holdldQty=" + holdldQty
-				+ ", alipay=" + alipay + ", alipayQty=" + alipayQty
-				+ ", weixinpay=" + weixinpay + ", weixinpayQty=" + weixinpayQty
-				+ ", thirdParty=" + thirdParty + ", thirdPartyQty="
-				+ thirdPartyQty + ", totalCard=" + totalCard
-				+ ", totalCardQty=" + totalCardQty + ", totalCash=" + totalCash
-				+ ", totalCashQty=" + totalCashQty + ", billVoid=" + billVoid
-				+ ", billVoidQty=" + billVoidQty + ", itemVoid=" + itemVoid
-				+ ", itemVoidQty=" + itemVoidQty + ", nettSales=" + nettSales
-				+ ", totalBills=" + totalBills + ", openCount=" + openCount
-				+ ", firstReceipt=" + firstReceipt + ", lastReceipt="
-				+ lastReceipt + ", totalTax=" + totalTax + ", orderQty="
-				+ orderQty + ", personQty=" + personQty
-				+ ", totalBalancePrice=" + totalBalancePrice + ", cashInAmt="
-				+ cashInAmt + ", cashOutAmt=" + cashOutAmt + ", varianceAmt="
-				+ varianceAmt + ", inclusiveTaxAmt=" + inclusiveTaxAmt + "]";
+		return "ReportDaySales{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", restaurantName='" + restaurantName + '\'' +
+				", revenueId=" + revenueId +
+				", revenueName='" + revenueName + '\'' +
+				", businessDate=" + businessDate +
+				", itemSales='" + itemSales + '\'' +
+				", itemSalesQty=" + itemSalesQty +
+				", discountPer='" + discountPer + '\'' +
+				", discountPerQty=" + discountPerQty +
+				", discount='" + discount + '\'' +
+				", discountQty=" + discountQty +
+				", discountAmt='" + discountAmt + '\'' +
+				", focItem='" + focItem + '\'' +
+				", focItemQty=" + focItemQty +
+				", focBill='" + focBill + '\'' +
+				", focBillQty=" + focBillQty +
+				", totalSales='" + totalSales + '\'' +
+				", cash='" + cash + '\'' +
+				", cashQty=" + cashQty +
+				", nets='" + nets + '\'' +
+				", netsQty=" + netsQty +
+				", visa='" + visa + '\'' +
+				", visaQty=" + visaQty +
+				", mc='" + mc + '\'' +
+				", mcQty=" + mcQty +
+				", amex='" + amex + '\'' +
+				", amexQty=" + amexQty +
+				", jbl='" + jbl + '\'' +
+				", jblQty=" + jblQty +
+				", unionPay='" + unionPay + '\'' +
+				", unionPayQty=" + unionPayQty +
+				", diner='" + diner + '\'' +
+				", dinerQty=" + dinerQty +
+				", holdld='" + holdld + '\'' +
+				", holdldQty=" + holdldQty +
+				", alipay='" + alipay + '\'' +
+				", alipayQty=" + alipayQty +
+				", weixinpay='" + weixinpay + '\'' +
+				", weixinpayQty=" + weixinpayQty +
+				", thirdParty='" + thirdParty + '\'' +
+				", thirdPartyQty=" + thirdPartyQty +
+				", totalCard='" + totalCard + '\'' +
+				", totalCardQty=" + totalCardQty +
+				", totalCash='" + totalCash + '\'' +
+				", totalCashQty=" + totalCashQty +
+				", billVoid='" + billVoid + '\'' +
+				", billVoidQty=" + billVoidQty +
+				", itemVoid='" + itemVoid + '\'' +
+				", itemVoidQty=" + itemVoidQty +
+				", nettSales='" + nettSales + '\'' +
+				", totalBills=" + totalBills +
+				", openCount=" + openCount +
+				", firstReceipt=" + firstReceipt +
+				", lastReceipt=" + lastReceipt +
+				", totalTax='" + totalTax + '\'' +
+				", orderQty=" + orderQty +
+				", personQty=" + personQty +
+				", totalBalancePrice='" + totalBalancePrice + '\'' +
+				", cashInAmt='" + cashInAmt + '\'' +
+				", cashOutAmt='" + cashOutAmt + '\'' +
+				", varianceAmt='" + varianceAmt + '\'' +
+				", inclusiveTaxAmt='" + inclusiveTaxAmt + '\'' +
+				", paypalpay='" + paypalpay + '\'' +
+				", paypalpayQty=" + paypalpayQty +
+				'}';
 	}
-	
+
 }

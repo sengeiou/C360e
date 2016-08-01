@@ -419,6 +419,13 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='</div>';
         liList+='</li>';
 
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">PYAPAL</div>';
+        liList+='<div class="col-md-2">'+(getJson.paypalpayQty==''?'0':getJson.paypalpayQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.paypalpay==''||getJson.paypalpay=='0')?'0.00':getJson.paypalpay)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
 
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';

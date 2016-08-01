@@ -1,15 +1,15 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReportDaySalesSQL {
 	public static void addReportDaySales(ReportDaySales reportDaySales) {
@@ -23,8 +23,8 @@ public class ReportDaySalesSQL {
 					+ " visaQty, mc, mcQty, amex, amexQty, jbl, jblQty, unionPay, unionPayQty, diner, dinerQty, holdld, holdldQty, totalCard, totalCardQty,"
 					+ " totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount, firstReceipt, lastReceipt,"
 					+ " totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt, alipay, alipayQty, thirdParty,"
-					+ " thirdPartyQty, weixinpay, weixinpayQty)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportDaySales.getId(),
@@ -89,7 +89,9 @@ public class ReportDaySalesSQL {
 							reportDaySales.getThirdParty() == null ? "0.00" : reportDaySales.getThirdParty(),
 							reportDaySales.getThirdPartyQty() == null ? 0 : reportDaySales.getThirdPartyQty(),
 							reportDaySales.getWeixinpay() == null ? "0.00" : reportDaySales.getWeixinpay(),
-							reportDaySales.getWeixinpayQty() == null ? 0 : reportDaySales.getWeixinpayQty()
+							reportDaySales.getWeixinpayQty() == null ? 0 : reportDaySales.getWeixinpayQty(),
+							reportDaySales.getPaypalpay() == null ? "0.00" : reportDaySales.getPaypalpay(),
+							reportDaySales.getPaypalpayQty() == null ? 0 : reportDaySales.getPaypalpayQty()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,8 +111,8 @@ public class ReportDaySalesSQL {
 					+ " visa, visaQty, mc, mcQty, amex, amexQty, jbl, jblQty, unionPay, unionPayQty, diner, dinerQty, holdld, holdldQty, totalCard,"
 					+ " totalCardQty, totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount,"
 					+ " firstReceipt, lastReceipt, totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt,"
-					+ " alipay, alipayQty, thirdParty, thirdPartyQty, weixinpay, weixinpayQty)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " alipay, alipayQty, thirdParty, thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] {reportDaySales.getRestaurantId(),
@@ -174,7 +176,9 @@ public class ReportDaySalesSQL {
 							reportDaySales.getThirdParty() == null ? "0.00" : reportDaySales.getThirdParty(),
 							reportDaySales.getThirdPartyQty() == null ? 0 : reportDaySales.getThirdPartyQty(),
 							reportDaySales.getWeixinpay() == null ? "0.00" : reportDaySales.getWeixinpay(),
-							reportDaySales.getWeixinpayQty() == null ? 0 : reportDaySales.getWeixinpayQty()
+							reportDaySales.getWeixinpayQty() == null ? 0 : reportDaySales.getWeixinpayQty(),
+							reportDaySales.getPaypalpay() == null ? "0.00" : reportDaySales.getPaypalpay(),
+							reportDaySales.getPaypalpayQty() == null ? 0 : reportDaySales.getPaypalpayQty()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -253,6 +257,8 @@ public class ReportDaySalesSQL {
 				reportDaySales.setThirdPartyQty(cursor.getInt(60));
 				reportDaySales.setWeixinpay(cursor.getString(61));
 				reportDaySales.setWeixinpayQty(cursor.getInt(62));
+				reportDaySales.setPaypalpay(cursor.getString(63));
+				reportDaySales.setPaypalpayQty(cursor.getInt(64));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -339,6 +345,8 @@ public class ReportDaySalesSQL {
 				reportDaySales.setThirdPartyQty(cursor.getInt(60));
 				reportDaySales.setWeixinpay(cursor.getString(61));
 				reportDaySales.setWeixinpayQty(cursor.getInt(62));
+				reportDaySales.setPaypalpay(cursor.getString(63));
+				reportDaySales.setPaypalpayQty(cursor.getInt(64));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -461,6 +469,8 @@ public class ReportDaySalesSQL {
 				reportDaySales.setThirdPartyQty(cursor.getInt(60));
 				reportDaySales.setWeixinpay(cursor.getString(61));
 				reportDaySales.setWeixinpayQty(cursor.getInt(62));
+				reportDaySales.setPaypalpay(cursor.getString(63));
+				reportDaySales.setPaypalpayQty(cursor.getInt(64));
 				result.add(reportDaySales);
 			}
 			db.setTransactionSuccessful();
@@ -557,6 +567,8 @@ public class ReportDaySalesSQL {
 				reportDaySales.setThirdPartyQty(cursor.getInt(60));
 				reportDaySales.setWeixinpay(cursor.getString(61));
 				reportDaySales.setWeixinpayQty(cursor.getInt(62));
+				reportDaySales.setPaypalpay(cursor.getString(63));
+				reportDaySales.setPaypalpayQty(cursor.getInt(64));
 				result.add(reportDaySales);
 			}
 			db.setTransactionSuccessful();

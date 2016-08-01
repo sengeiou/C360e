@@ -1,11 +1,5 @@
 package com.alfred.remote.printservice;
 
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import android.content.Context;
 import android.util.Log;
 
@@ -18,6 +12,12 @@ import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.google.gson.Gson;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.Params;
+
+import java.util.ArrayList;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class PrinterQueueManager {
 	
@@ -78,7 +78,7 @@ public class PrinterQueueManager {
     	PrintQueueMsgSQL.deleteSuccessedMsgs();
     }
     public void start() {
-       if (scheduler==null)
+       if (scheduler!=null)
 		 setupSyncScheduler();
     }
     public void stop(){

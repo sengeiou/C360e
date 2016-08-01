@@ -610,9 +610,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				public void call(PaymentSettlement paymentSettlement) {
 					int paymentTypeId = paymentSettlement.getPaymentTypeId()
 							.intValue();
-//					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_ALIPAY){
+//					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL)
 //						return;
 //					}
+					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL)
+						return;
 					remainTotal = BH.getBD(paymentSettlement.getTotalAmount());
 					settlementNum = BH.sub(settlementNum,
 							BH.getBD(paymentSettlement.getPaidAmount()), true);

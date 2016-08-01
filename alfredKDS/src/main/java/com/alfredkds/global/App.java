@@ -27,6 +27,7 @@ import com.alfredkds.activity.Welcome;
 import com.alfredkds.http.server.KdsHttpServer;
 import com.alfredkds.javabean.Kot;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class App extends BaseApplication {
 	public static final int HANDLER_NEW_KOT = 20;
 	public static final int HANDLER_UPDATE_KOT = 1;
 	public static final int HANDLER_DELETE_KOT = 2;
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	private static final String DATABASE_NAME = "com.alfredkds";
 	public static App instance;
     //for pairing
@@ -90,7 +91,8 @@ public class App extends BaseApplication {
 			kdssrv.stop();
 		}
 		UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);  
-        Thread.setDefaultUncaughtExceptionHandler(catchExcep); 
+        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+		CrashReport.initCrashReport(getApplicationContext(), "900043724", isOpenLog);
 	}
 	
 	public void setRing(){

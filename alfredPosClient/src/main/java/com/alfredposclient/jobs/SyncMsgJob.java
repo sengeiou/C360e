@@ -39,13 +39,14 @@ public class SyncMsgJob extends Job {
     }
 
     // 用作网络订单修改状态
-    public SyncMsgJob(String uuid, int revenueId, int msgType, int appOrderId, int orderStatus, Long bizDate){
+    public SyncMsgJob(String uuid, int revenueId, int msgType, int appOrderId, int orderStatus, Long bizDate, Long created){
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("net_order_"+bizDate.toString()));
         this.msgUUID = uuid;
         this.revenueId = revenueId;
         this.msgType = msgType;
         this.appOrderId = appOrderId;
         this.orderStatus = orderStatus;
+        this.created = created;
     }
 	
     @Override

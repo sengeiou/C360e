@@ -1,13 +1,5 @@
 package com.alfredposclient.global;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.CashInOut;
@@ -58,6 +50,14 @@ import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TimeUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ReportObjectFactory {
 	private static ReportObjectFactory instance;
@@ -156,6 +156,14 @@ public class ReportObjectFactory {
 		String weixinpay = BH.doubleFormat
 				.format(BH.getBD(weixinpayMap.get("sumAmount")));
 		String weixinpayQty = weixinpayMap.get("count");
+
+		Map<String, String> paypalpayMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_PAYPAL, businessDate);
+		String paypal = BH.doubleFormat
+				.format(BH.getBD(paypalpayMap.get("sumAmount")));
+		String paypalpayQty = paypalpayMap.get("count");
+
 		
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -418,6 +426,8 @@ public class ReportObjectFactory {
 		reportDaySales.setAlipayQty(Integer.parseInt(alipayQty));
 		reportDaySales.setWeixinpay(weixinpay);
 		reportDaySales.setWeixinpayQty(Integer.parseInt(weixinpayQty));
+		reportDaySales.setPaypalpay(paypal);
+		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
 		reportDaySales.setVisa(visa);
 		reportDaySales.setVisaQty(Integer.parseInt(visaQty));
 		reportDaySales.setMc(mc);
@@ -1481,6 +1491,13 @@ public class ReportObjectFactory {
 				.format(BH.getBD(weixinpayMap.get("sumAmount")));
 		String weixinpayQty = weixinpayMap.get("count");
 
+		Map<String, String> paypalpayMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate);
+		String paypalpay = BH.doubleFormat
+				.format(BH.getBD(paypalpayMap.get("sumAmount")));
+		String paypalpayQty = paypalpayMap.get("count");
+
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VISA, businessDate,
@@ -1746,6 +1763,8 @@ public class ReportObjectFactory {
 		reportDaySales.setAlipayQty(Integer.parseInt(alipayQty));
 		reportDaySales.setWeixinpay(weixinpay);
 		reportDaySales.setWeixinpayQty(Integer.parseInt(weixinpayQty));
+		reportDaySales.setWeixinpay(paypalpay);
+		reportDaySales.setWeixinpayQty(Integer.parseInt(paypalpayQty));
 		reportDaySales.setVisa(visa);
 		reportDaySales.setVisaQty(Integer.parseInt(visaQty));
 		reportDaySales.setMc(mc);

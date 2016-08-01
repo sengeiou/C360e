@@ -223,7 +223,7 @@ public class CloudSyncJobManager {
 		this.syncJobManager.addJobInBackground(syncXReportJob);
     }
 
-	public void checkAppOrderStatus(int revenueCenterId, int appOrderId, int orderStatus, String orderNo, String reason, int diningStatus, Long bizDate) {
+	public void checkAppOrderStatus(int revenueCenterId, int appOrderId, int orderStatus, String reason, Long bizDate) {
 		if (SyncMsgSQL.getSyncMsgByAppOrderId(appOrderId, orderStatus) == null)  {
 			SyncMsg syncMsg = new SyncMsg();
 			String uuid = getDataUUID(revenueCenterId);
@@ -239,7 +239,7 @@ public class CloudSyncJobManager {
 			syncMsg.setOrderStatus(orderStatus);
 			syncMsg.setBusinessDate(bizDate);
 			SyncMsgSQL.add(syncMsg);
-			SyncMsgJob syncXReportJob = new SyncMsgJob(uuid, revenueCenterId, HttpAPI.NETWORK_ORDER_STATUS_UPDATE, appOrderId, orderStatus, bizDate);
+			SyncMsgJob syncXReportJob = new SyncMsgJob(uuid, revenueCenterId, HttpAPI.NETWORK_ORDER_STATUS_UPDATE, appOrderId, orderStatus, bizDate,syncMsg.getCreateTime());
 			this.syncJobManager.addJobInBackground(syncXReportJob);
 		}
 	}

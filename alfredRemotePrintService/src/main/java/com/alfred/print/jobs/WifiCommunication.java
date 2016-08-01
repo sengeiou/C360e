@@ -1,17 +1,17 @@
 package com.alfred.print.jobs;
 
+import android.os.Handler;
+import android.text.TextUtils;
+
+import com.alfred.remote.printservice.App;
+import com.alfredbase.ParamConst;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-
-import android.os.Handler;
-import android.text.TextUtils;
-
-import com.alfred.remote.printservice.App;
-import com.alfredbase.ParamConst;
 
 public class WifiCommunication {
 	public static final int WFPRINTER_CONNECTED = 110;
@@ -66,20 +66,27 @@ public class WifiCommunication {
 	}
 
 	public void close() {
-		try {
-			if (socket != null) {
-				//socket.shutdownOutput();
-				socket.close();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (socket != null) {
+						//socket.shutdownOutput();
+
+								socket.close();
+
+					}
+					if(out != null){
+						out.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				socket = null;
+				out = null;
 			}
-			if(out != null){
-				out.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		socket = null;
-		out = null;
+		}).start();
 	}
 	
 	public boolean sndByte(byte[] data) {

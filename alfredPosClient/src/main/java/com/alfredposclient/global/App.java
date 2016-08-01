@@ -1,6 +1,5 @@
 package com.alfredposclient.global;
 
-import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,17 +8,13 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
 
 import com.alfred.remote.printservice.IAlfredRemotePrintService;
 import com.alfred.remote.printservice.RemotePrintServiceCallback;
@@ -28,7 +23,6 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.global.CoreData;
-import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
@@ -84,8 +78,12 @@ import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.PaymentSQL;
+import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TablesSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
@@ -103,6 +101,7 @@ import com.alfredposclient.jobs.KotJobManager;
 import com.alfredposclient.service.PushService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -122,7 +121,7 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "com.alfredposclient";
     /**
      * User: Current cashier logged in
@@ -252,6 +251,7 @@ public class App extends BaseApplication {
         VERSION = getAppVersionName();
         UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+        CrashReport.initCrashReport(getApplicationContext(), "900043720", isOpenLog);
     }
 
     // for APP data migration
@@ -1327,19 +1327,22 @@ public class App extends BaseApplication {
 //				@Override
 //				public void run() {
             Tables tables = null;
-            if (appOrder.getTableId().intValue() > 0) {
-                tables = TablesSQL.getTableById(appOrder.getTableId().intValue());
-            } else {
-                if (App.instance.isRevenueKiosk())
-                    tables = TablesSQL.getKioskTable();
-                else
+            if (App.instance.isRevenueKiosk())
+                tables = TablesSQL.getKioskTable();
+            else {
+                if (appOrder.getTableId().intValue() > 0) {
+                    tables = TablesSQL.getTableById(appOrder.getTableId().intValue());
+                } else {
                     tables = TablesSQL.getAllUsedOneTables();
+                }
+                if (tables == null || tables.getTableStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
+                    appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
+                    AppOrderSQL.updateAppOrder(appOrder);
+                    return;
+                }
             }
-            if (tables == null || tables.getTableStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
-                appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
-                AppOrderSQL.updateAppOrder(appOrder);
-                return;
-            }
+
+
             appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_NOT_USE);
             AppOrderSQL.updateAppOrder(appOrder);
 
@@ -1351,7 +1354,7 @@ public class App extends BaseApplication {
             OrderBill orderBill = ObjectFactory.getInstance()
                     .getOrderBill(order, getRevenueCenter());
             Payment payment = ObjectFactory.getInstance().getPayment(order, orderBill);
-            PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_CASH, payment.getPaymentAmount());
+            PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_PAYPAL, payment.getPaymentAmount());
             for (AppOrderDetail appOrderDetail : appOrderDetailList) {
                 if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue()) == null)
                     continue;
@@ -1361,6 +1364,9 @@ public class App extends BaseApplication {
                                 order, appOrderDetail);
                 OrderDetailSQL.updateOrderDetail(orderDetail);
                 for (AppOrderModifier appOrderModifier : appOrderModifierList) {
+                    if(appOrderModifier.getOrderDetailId().intValue() != appOrderDetail.getId().intValue())
+                        continue;
+
                     ItemDetail printItemDetail = CoreData
                             .getInstance()
                             .getItemDetailByTemplateId(
@@ -1467,10 +1473,55 @@ public class App extends BaseApplication {
                 }
                 appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_KOTPRINTERD);
                 AppOrderSQL.addAppOrder(appOrder);
+                getSyncJob().checkAppOrderStatus(
+                        App.instance.getRevenueCenter().getId().intValue(),
+                        appOrder.getId().intValue(),
+                        appOrder.getOrderStatus().intValue(), "",
+                        App.instance.getBusinessDate().longValue());
             }
         }
 //				}
 //			}).start();
+    }
+
+    public void printerAppOrder(final AppOrder appOrder) {
+        try {
+
+            Order paidOrder = OrderSQL.getOrderByAppOrderId(appOrder
+                    .getId().intValue());
+            PrinterDevice printer = App.instance.getCahierPrinter();
+            PrinterTitle title = ObjectFactory.getInstance().getPrinterTitle(
+                    App.instance.getRevenueCenter().getId(),
+                    paidOrder,
+                    App.instance.getUser().getFirstName()
+                            + App.instance.getUser().getLastName(),
+                    TablesSQL.getKioskTable().getTableName());
+
+            ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
+                    .getItemList(
+                            OrderDetailSQL.getOrderDetails(paidOrder.getId()));
+            List<Map<String, String>> taxMap = OrderDetailTaxSQL
+                    .getTaxPriceSUM(App.instance.getLocalRestaurantConfig()
+                            .getIncludedTax().getTax(), paidOrder);
+
+            ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                    .getInstance().getItemModifierList(paidOrder,
+                            OrderDetailSQL.getOrderDetails(paidOrder.getId()));
+            if (orderItems.size() > 0 && printer != null) {
+                List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
+                        .getAllPaymentSettlementByPaymentId(PaymentSQL
+                                .getPaymentByOrderId(
+                                        paidOrder.getId().intValue()).getId()
+                                .intValue());
+                RoundAmount roundAmount = RoundAmountSQL
+                        .getRoundAmount(paidOrder);
+                App.instance.remoteBillPrint(printer, title, paidOrder,
+                        orderItems, orderModifiers, taxMap, paymentSettlements,
+                        roundAmount);
+            }
+        } catch (Exception e) {
+            CrashReport.postCatchedException(e);
+        }
     }
 
     public void tryConnectRemotePrintService() {
@@ -1497,23 +1548,22 @@ public class App extends BaseApplication {
                 }
             }
         }
-
-        if (printVersionCode < posVersionCode) {
-            copyApkFromAssets(this, "alfredRemotePrintService-debug.apk", Environment
-                    .getExternalStorageDirectory().getAbsolutePath()
-                    + "/alfredRemotePrintService-debug.apk");
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setDataAndType(
-                    Uri.parse("file://"
-                            + Environment.getExternalStorageDirectory()
-                            .getAbsolutePath() + "/alfredRemotePrintService-debug.apk"),
-                    "application/vnd.android.package-archive");
-            intentFilter = new IntentFilter();
-            intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-            intentFilter.addDataScheme("package");
-            registerReceiver(receiver, intentFilter);
-            this.startActivity(intent);
+        boolean hasApk = copyApkFromAssets(this, "printServiceApk/alfredRemotePrintService-release.apk", Environment
+                .getExternalStorageDirectory().getAbsolutePath()
+                + "/alfredRemotePrintService-release.apk");
+        if (printVersionCode < posVersionCode && hasApk) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setDataAndType(
+                        Uri.parse("file://"
+                                + Environment.getExternalStorageDirectory()
+                                .getAbsolutePath() + "/alfredRemotePrintService-release.apk"),
+                        "application/vnd.android.package-archive");
+                intentFilter = new IntentFilter();
+                intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+                intentFilter.addDataScheme("package");
+                registerReceiver(receiver, intentFilter);
+                this.startActivity(intent);
         }else{
             connectRemotePrintService();
         }

@@ -167,6 +167,7 @@ public class ParamConst {
 	public static final int SETTLEMENT_TYPE_NETS = 1000;
 	public static final int SETTLEMENT_TYPE_ALIPAY = 1001;
 	public static final int SETTLEMENT_TYPE_WEIXIN = 1002;
+	public static final int SETTLEMENT_TYPE_PAYPAL = 1003;
 	public static final int SETTLEMENT_TYPE_BILL_ON_HOLD = 101;
 	public static final int SETTLEMENT_TYPE_COMPANY = 102;
 	public static final int SETTLEMENT_TYPE_HOURS_CHARGE = 103;

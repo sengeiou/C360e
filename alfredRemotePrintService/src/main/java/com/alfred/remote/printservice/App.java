@@ -3,12 +3,13 @@ package com.alfred.remote.printservice;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.utils.CommonUtil;
+import com.tencent.bugly.crashreport.CrashReport;
 
 public class App extends BaseApplication {
 //    public static App instance;
 //    private PrintJobManager printJobMgr;  
 	public final String VERSION = "1.0.6";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	
 	private static final String DATABASE_NAME = "com.alfred.fb.printerservice";
 	String oldIp;
@@ -19,6 +20,7 @@ public class App extends BaseApplication {
 		super.onCreate();
 		SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
 		oldIp = CommonUtil.getLocalIpAddress();
+		CrashReport.initCrashReport(getApplicationContext(), "900042907", isOpenLog);
 //		this.printJobMgr = new PrintJobManager(this);
 //		instance = this;
 	}

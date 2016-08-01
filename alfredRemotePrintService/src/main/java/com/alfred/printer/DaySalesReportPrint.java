@@ -1,9 +1,5 @@
 package com.alfred.printer;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
 import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
@@ -11,6 +7,10 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.utils.BH;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class DaySalesReportPrint extends ReportBasePrint{
 
@@ -195,6 +195,8 @@ public class DaySalesReportPrint extends ReportBasePrint{
 	                reportDaySales.getWeixinpay(), 1);
 		}
 		if(App.countryCode != ParamConst.CHINA){
+			this.addItem(PrintService.instance.getResources().getString(R.string.paypal), reportDaySales.getPaypalpayQty() == null ? "0" : reportDaySales.getPaypalpayQty().toString(),
+					BH.getBD(reportDaySales.getPaypalpay()).toString(), 1);
 			this.addItem(PrintService.instance.getResources().getString(R.string.nets), reportDaySales.getNetsQty().toString(), 
 	                reportDaySales.getNets(), 1);
 			this.addItem(PrintService.instance.getResources().getString(R.string.visa), reportDaySales.getVisaQty().toString(), 

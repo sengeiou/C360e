@@ -18,19 +18,15 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.Tables;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailSQL;
-import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderModifierSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
@@ -74,6 +70,12 @@ public class NetWorkOrderActivity extends BaseActivity {
 		appOderDetailAdapter = new AppOderDetailAdapter();
 		lv_orderdetail_list.setAdapter(appOderDetailAdapter);
 		btn_check = (Button) findViewById(R.id.btn_check);
+		if(App.instance.isRevenueKiosk()){
+			btn_check.setVisibility(View.VISIBLE);
+			btn_check.setText(getResources().getText(R.string.print_receipt));
+		}else{
+			btn_check.setVisibility(View.GONE);
+		}
 		btn_delete = (Button) findViewById(R.id.btn_delete);
 		btn_check.setOnClickListener(this);
 		btn_delete.setOnClickListener(this);
@@ -120,6 +122,38 @@ public class NetWorkOrderActivity extends BaseActivity {
 		switch (v.getId()) {
 		case R.id.btn_check:{
 			final AppOrder appOrder = (AppOrder)v.getTag();
+			if(App.instance.isRevenueKiosk()){
+				selectOrderItem = 0;
+				if (appOrder == null) {
+					return;
+				}
+				appOrder
+						.setOrderStatus(ParamConst.APP_ORDER_STATUS_FINISH);
+//				appOrder
+//						.setDiningStatus(ParamConst.TEMP_ORDER_DINING_STATUS_FINISH);
+				AppOrderSQL.updateAppOrder(appOrder);
+				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+						context);
+				printerLoadingDialog.setTitle(context.getResources().getString(
+						R.string.receipt_printing));
+				printerLoadingDialog.showByTime(3000);
+				App.instance.printerAppOrder(appOrder);
+				App.instance.getSyncJob().checkAppOrderStatus(
+						App.instance.getRevenueCenter().getId().intValue(),
+						appOrder.getId().intValue(),
+						appOrder.getOrderStatus().intValue(), "",
+						App.instance.getBusinessDate().longValue());
+				handler.postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						refreshView();
+					}
+				}, 3000);
+			}
+
+			/*
+			final AppOrder appOrder = (AppOrder)v.getTag();
 			Tables tables = CoreData.getInstance().getTables(appOrder.getTableId().intValue());
 			DialogFactory.commonTwoBtnDialog(this, "Warning", "Please confirm '" + tables.getTableName() + "' has been cleared?",
 					"No", "Yes", null, new View.OnClickListener() {
@@ -148,7 +182,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 					});
 
 
-
+*/
 		}
 			break;
 //		case R.id.btn_delete:{
@@ -250,11 +284,11 @@ public class NetWorkOrderActivity extends BaseActivity {
 				arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
 				btn_check.setTag(appOrder);
 				btn_delete.setTag(appOrder);
-				if(appOrder.getTableType().intValue() == ParamConst.APP_ORDER_TABLE_STATUS_USED){
-					btn_check.setVisibility(View.VISIBLE);
-				}else{
-					btn_check.setVisibility(View.INVISIBLE);
-				}
+//				if(appOrder.getTableType().intValue() == ParamConst.APP_ORDER_TABLE_STATUS_USED){
+//					btn_check.setVisibility(View.VISIBLE);
+//				}else{
+//					btn_check.setVisibility(View.INVISIBLE);
+//				}
 			}else{
 				arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.gray));
 			}
