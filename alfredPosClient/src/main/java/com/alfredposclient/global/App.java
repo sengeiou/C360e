@@ -89,11 +89,13 @@ import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
+import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.Welcome;
 import com.alfredposclient.http.server.MainPosHttpServer;
 import com.alfredposclient.jobs.CloudSyncJobManager;
@@ -1319,6 +1321,51 @@ public class App extends BaseApplication {
             No += 2;
         }
         return No + "";
+    }
+
+    public void appOrderShowDialog(final AppOrder appOrder, final List<AppOrderDetail> appOrderDetailList, final List<AppOrderModifier> appOrderModifierList, List<AppOrderDetailTax> appOrderDetailTaxList) throws Exception {
+        BaseActivity activity = getTopActivity();
+        if ((!(activity instanceof NetWorkOrderActivity)) && activity != null
+                && (!activity.isFinishing()))
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    netOrderDialogShow(appOrder);
+                }
+            });
+        appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+    }
+
+
+    private void netOrderDialogShow(final AppOrder appOrder) {
+        final BaseActivity context = App.getTopActivity();
+        DialogFactory.topDialogOrder(context, appOrder,
+                new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        if (ButtonClickTimer.canClick(v))
+                            if (!(context instanceof NetWorkOrderActivity)) {
+                                Intent intent = new Intent(context,
+                                        NetWorkOrderActivity.class);
+                                context.startActivity(intent);
+                            }
+                    }
+                }, new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        if (ButtonClickTimer.canClick(v))
+                            if (!(context instanceof NetWorkOrderActivity)) {
+                                Intent intent = new Intent(context,
+                                        NetWorkOrderActivity.class);
+                                intent.putExtra("appOrderId", appOrder
+                                        .getId().toString());
+                                context.startActivity(intent);
+                            }
+                    }
+                });
+
     }
 
     public void appOrderTransforOrder(final AppOrder appOrder, final List<AppOrderDetail> appOrderDetailList, final List<AppOrderModifier> appOrderModifierList, List<AppOrderDetailTax> appOrderDetailTaxList) {

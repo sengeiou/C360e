@@ -612,8 +612,8 @@ public class HttpAnalysis {
 			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
 			AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
 			AppOrderModifierSQL.addAppOrderModifierList(appOrderModifierList);
-			App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
-		} catch (JSONException e) {
+			App.instance.appOrderShowDialog(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -672,9 +672,9 @@ public class HttpAnalysis {
 						}
 					}
 				}
-				App.instance.appOrderTransforOrder(appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
+				App.instance.appOrderShowDialog(appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
 			}
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

@@ -17,7 +17,9 @@
     <string name="new_password_again">New password again</string>
     <string name="new_password_no_same">New passwords keyed in are not same, please try again.</string>
     <string name="change_employee_password">Change Employee Password</string>
-        
+    <string name="online_order">Online Order</string>
+    <string name="have_online_order">You have a new online order</string>
+
     <!-- ResultCode -->
     <string name="failed_connect_server">Failed to connect to </string> 
     <string name="try_later">,Please try later</string> 
@@ -51,4 +53,6 @@
     <string name="report_supper_sale">Supper Session</string>            
     <string name="report_day_sale">Day Sales</string>
     <string name="downloading">Downloading</string>
+    <string name="num">ItemNum:</string>
+    <string name="total">Total:</string>
 </resources>

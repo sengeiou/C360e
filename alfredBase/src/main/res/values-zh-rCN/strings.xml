@@ -17,6 +17,8 @@
     <string name="new_password_again">再一次输入新密码</string>
     <string name="new_password_no_same">两次输入的密码不一样, 请重新输入。</string>
     <string name="change_employee_password">修改员工密码</string>
+    <string name="online_order">新的网络订单</string>
+    <string name="have_online_order">你有一个新的网络订单,请注意查收</string>
     <!-- ResultCode -->
     <string name="failed_connect_server">连接失败至</string> 
     <string name="try_later">,请稍后在试</string> 
@@ -50,6 +52,8 @@
     <string name="report_dinner_sale">晚餐</string>
     <string name="report_supper_sale">夜宵</string>   
     <string name="report_day_sale">日报表</string>
-    
+    <string name="num">数量:</string>
+    <string name="total">金额:</string>
+
     <string name="downloading">下载中</string>
 </resources>

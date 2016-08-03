@@ -4,6 +4,7 @@ package com.alfredposclient.activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 	public static final int CHECK_REQUEST_CODE = 110;
 	private AppOderAdapter appOderAdapter;
 	private AppOderDetailAdapter appOderDetailAdapter;
+	private int appOrderId = 0;
 	@Override
 	protected void initView() {
 		super.initView();
@@ -92,7 +94,20 @@ public class NetWorkOrderActivity extends BaseActivity {
 				appOderDetailAdapter.notifyDataSetChanged();
 			}
 		});
-		
+		Intent intent = getIntent();
+		if (!TextUtils.isEmpty(intent.getStringExtra("appOrderId"))) {
+			appOrderId = Integer.parseInt(intent.getStringExtra("appOrderId"));
+		}
+		if (appOrderId != 0 ) {
+			for (AppOrder appOrder : appOrders) {
+				if (appOrder.getId().intValue() == appOrderId) {
+					selectOrderItem = appOrders
+							.indexOf(appOrder);
+					lv_order_list.setSelection(selectOrderItem);
+				}
+			}
+			appOrderId = 0;
+		}
 	}
 	
 	private void initData(){
