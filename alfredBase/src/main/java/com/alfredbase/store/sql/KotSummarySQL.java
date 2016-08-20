@@ -382,10 +382,10 @@ public class KotSummarySQL {
 		}
 	}
 
-	public static void updateKotSummaryStatusById(int kotSummayId){
-		String sql = "update " + TableNames.KotSummary + " set status = " + ParamConst.KOTS_STATUS_DONE + " where id = ?";
+	public static void updateKotSummaryStatusById(int status, int kotSummayId){
+		String sql = "update " + TableNames.KotSummary + " set status = ? where id = ?";
 		try {
-			SQLExe.getDB().execSQL(sql, new Object[] { kotSummayId});
+			SQLExe.getDB().execSQL(sql, new Object[] {status, kotSummayId});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

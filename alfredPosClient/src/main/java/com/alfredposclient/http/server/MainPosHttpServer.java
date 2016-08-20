@@ -1201,7 +1201,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getOrderNo().toString());
 				int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId());
 				if(count == 0){
-					KotSummarySQL.updateKotSummaryStatusById(kotSummary.getId());
+					KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE, kotSummary.getId());
 				}
 				resp = this.getJsonResponse(new Gson().toJson(result));
 				

@@ -1,10 +1,5 @@
 package com.alfredposclient.jobs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 
 import com.alfredbase.BaseActivity;
@@ -34,6 +29,11 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KotJobManager {
 
@@ -103,6 +103,10 @@ public class KotJobManager {
 				}
 				mods.put(items.getPrinterGroupId(), tmp);
 			}
+		}
+		if(printerGrougIds !=null && printerGrougIds.size() > 0){
+			kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
+			KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId().intValue());
 		}
 
 		// add job to send it to KDS

@@ -3,7 +3,6 @@ package com.alfredkds.http;
 import android.content.Context;
 import android.os.Handler;
 
-import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
@@ -12,7 +11,6 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
-import com.alfredkds.R;
 import com.alfredkds.activity.KotHistory;
 import com.alfredkds.activity.Login;
 import com.alfredkds.activity.SelectKitchen;
@@ -165,7 +163,7 @@ public class HttpAPI {
 							super.onSuccess(statusCode, headers, responseBody);
 							if (resultCode == ResultCode.SUCCESS) {
 							} else {
-								elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+//								elseResultCodeAction(resultCode, statusCode, headers, responseBody);
 							}
 						}
 						
@@ -173,7 +171,7 @@ public class HttpAPI {
 						public void onFailure(int statusCode, Header[] headers,
 								byte[] responseBody, Throwable error) {
 							error.printStackTrace();
-							UIHelp.showToast((BaseApplication)context, context.getResources().getString(R.string.network_error));
+//							UIHelp.showToast((BaseApplication)context, context.getResources().getString(R.string.network_error));
 						}						
 					});
 		} catch (Exception e) {

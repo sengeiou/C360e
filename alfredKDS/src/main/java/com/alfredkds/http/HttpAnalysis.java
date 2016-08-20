@@ -169,7 +169,7 @@ public class HttpAnalysis {
 				int id = object.getInt("kotSummaryId");
 				int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(id);
 				if(count == 0){
-					KotSummarySQL.updateKotSummaryStatusById(id);
+					KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE , id);
 				}
 			}
 		} catch (JSONException e) {
