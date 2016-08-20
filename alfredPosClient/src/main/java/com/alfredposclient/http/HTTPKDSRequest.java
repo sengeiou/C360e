@@ -1,11 +1,5 @@
 package com.alfredposclient.http;
 
-import java.net.ConnectException;
-import java.util.Map;
-
-import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
-
 import android.content.Context;
 import android.os.Handler;
 
@@ -17,6 +11,12 @@ import com.alfredposclient.global.App;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
+
+import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
+
+import java.net.ConnectException;
+import java.util.Map;
 
 public class HTTPKDSRequest {
 	
@@ -33,7 +33,7 @@ public class HTTPKDSRequest {
 									final byte[] responseBody) {
 								super.onSuccess(statusCode, headers, responseBody);
 								if(resultCode==ResultCode.INVALID_DEVICE) {
-									//Bob: if waiter device is invadate, POS need remove it.
+									// if kds device is invadate, POS need remove it.
 									App.instance.removeKDSDevice(kds.getDevice_id());
 								}
 							}

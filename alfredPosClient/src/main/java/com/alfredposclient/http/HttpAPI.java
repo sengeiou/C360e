@@ -28,6 +28,7 @@ import com.alfredposclient.activity.XZReportHtml;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
@@ -1167,8 +1168,12 @@ public class HttpAPI {
 	}
 
 	public static void updateAppOrderStatus(Context context, String url,
-									  AsyncHttpClient httpClient, final Map<String, Object> parameters, final SyncMsg syncMsg){
+									  AsyncHttpClient httpClient,  final SyncMsg syncMsg){
 		try {
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("appOrderId", syncMsg.getAppOrderId());
+			parameters.put("orderStatus", syncMsg.getOrderStatus());
+			parameters.put("orderNum", syncMsg.getOrderNum());
 			httpClient.post(context, url,
 					HttpAssembling.encapsulateBaseInfo(parameters),
 					HttpAssembling.CONTENT_TYPE,
@@ -1194,6 +1199,48 @@ public class HttpAPI {
 									error);
 						}
 					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void callAppNo(final Context context, String url,
+								 AsyncHttpClient httpClient, String num){
+		try {
+			RequestParams requestParams = new RequestParams();
+			requestParams.put("callnumber", num);
+			httpClient.get(context,url, requestParams,new AsyncHttpResponseHandlerEx(){
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+					super.onSuccess(statusCode, headers, responseBody);
+				}
+
+				@Override
+				public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+					super.onFailure(statusCode, headers, responseBody, error);
+//					UIHelp.showShortToast();
+				}
+			});
+//			httpClient.get(context, url,
+//					entity,
+//					HttpAssembling.CONTENT_TYPE,
+//					new AsyncHttpResponseHandlerEx() {
+//						@Override
+//						public void onSuccess(final int statusCode,
+//											  final Header[] headers,
+//											  final byte[] responseBody) {
+//							super.onSuccess(statusCode, headers, responseBody);
+//							if(resultCode == ResultCode.SUCCESS){
+//							}else{
+//							}
+//						}
+//
+//						@Override
+//						public void onFailure(int statusCode, Header[] headers,
+//											  byte[] responseBody, Throwable error) {
+//							super.onFailure(statusCode, headers, responseBody,
+//									error);
+//						}
+//					});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

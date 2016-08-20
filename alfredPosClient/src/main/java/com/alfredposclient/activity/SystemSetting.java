@@ -1,11 +1,9 @@
 package com.alfredposclient.activity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -26,9 +24,14 @@ import com.alfredbase.view.SlipButton;
 import com.alfredbase.view.SlipButton.OnChangedListener;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.popupwindow.SelectPrintWindow;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SystemSetting extends BaseActivity implements OnChangedListener,OnClickListener{
 
@@ -47,9 +50,9 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private TextTypeFace textTypeFace;
 	private boolean refreshSession = false;
 	private ChangePasswordDialog changePasswordDialog;
-
+	private SelectPrintWindow selectPrintWindow;
 	public static final int UPDATE_PASSWORD_TAG = 2000;
-	 
+	private TextView tv_callnum;
 	
 	@Override
 	protected void initView() {
@@ -60,11 +63,12 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		loadingDialog = new LoadingDialog(context);
 		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
 		iv_sync_data = (ImageView) findViewById(R.id.iv_sync_data);
+		selectPrintWindow = new SelectPrintWindow(context, findViewById(R.id.rl_root),handler);
 		tv_syncdata_warn = (TextView) findViewById(R.id.tv_syncdata_warn);
 		sb_kot_print = (SlipButton) findViewById(R.id.sb_kot_print);
 		sb_kot_print_together = (SlipButton) findViewById(R.id.sb_kot_print_together);
 		sb_kot_double_print = (SlipButton) findViewById(R.id.sb_kot_double_print);
-		
+		tv_callnum = (TextView)findViewById(R.id.tv_callnum);
 		sb_double_print_bill = (SlipButton) findViewById(R.id.sb_double_print_bill);
 		sb_double_close_bill_print = (SlipButton)findViewById(R.id.sb_double_close_bill_print);
 		sb_order_summary_print = (SlipButton)findViewById(R.id.sb_order_summary_print);
@@ -85,6 +89,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_double_print_bill.setOnChangedListener(this);
 		sb_double_close_bill_print.setOnChangedListener(this);
 		sb_order_summary_print.setOnChangedListener(this);
+		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.rl_order_summary).setVisibility(View.GONE);
@@ -125,6 +130,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			sb_order_summary_print.setChecked(true);
 		} else {
 			sb_order_summary_print.setChecked(false);
+		}
+		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
+			tv_callnum.setText(null);
+		}else{
+			tv_callnum.setText(App.instance.getCallAppIp());
 		}
 		changePasswordDialog = new ChangePasswordDialog(context, handler);
 	}
@@ -178,6 +188,9 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		case R.id.ll_set_pwd:
 			changePasswordDialog.show();
 			break;
+		case R.id.ll_set_callnum:
+			selectPrintWindow.show();
+			break;
 		default:
 			break;
 		}
@@ -221,8 +234,14 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 				default:
 					break;
 				}
-				break;
 			}
+				break;
+
+			case JavaConnectJS.ACTION_ASSIGN_PRINTER_DEVICE:
+				String ip = (String)msg.obj;
+				App.instance.setCallAppIp(ip);
+				tv_callnum.setText(ip);
+				break;
 			default:
 				break;
 			}

@@ -215,8 +215,8 @@ public class DaySalesReportPrint extends ReportBasePrint{
 	                reportDaySales.getHoldld(), 1);	
 		}
 		
-        this.addItem(PrintService.instance.getResources().getString(R.string.ent), reportDaySales.getFocBillQty().toString(), 
-                reportDaySales.getFocBill(), 1);
+//        this.addItem(PrintService.instance.getResources().getString(R.string.ent), reportDaySales.getFocBillQty().toString(),
+//                reportDaySales.getFocBill(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.total_card), reportDaySales.getTotalCardQty().toString(), 
                 reportDaySales.getTotalCard(), 1);
         if(App.countryCode != ParamConst.CHINA){
@@ -229,8 +229,8 @@ public class DaySalesReportPrint extends ReportBasePrint{
         
 	        this.addItem(PrintService.instance.getResources().getString(R.string.total_boh), reportDaySales.getHoldldQty().toString(), 
 	                reportDaySales.getHoldld(), 1);
-	        this.addItem(PrintService.instance.getResources().getString(R.string.total_ent), reportDaySales.getFocBillQty().toString(), 
-	                reportDaySales.getFocBill(), 1);
+//	        this.addItem(PrintService.instance.getResources().getString(R.string.total_ent), reportDaySales.getFocBillQty().toString(),
+//	                reportDaySales.getFocBill(), 1);
         }
 
 		this.addSectionHeader(PrintService.instance.getResources().getString(R.string.vr_summary));
@@ -267,14 +267,14 @@ public class DaySalesReportPrint extends ReportBasePrint{
 			}
         }
 
-		BigDecimal nettSales = BH.getBD("0.00");
-		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getTotalCard()),
-				false);
-		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getTotalCash()),
-				false);
-		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getHoldld()),
-				false);
-		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getNets()), true);
+//		BigDecimal nettSales = BH.getBD("0.00");
+//		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getTotalCard()),
+//				false);
+//		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getTotalCash()),
+//				false);
+//		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getHoldld()),
+//				false);
+//		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getNets()), true);
 		this.addBlankLine();
 		this.addItem(PrintService.instance.getResources().getString(R.string.cash_in), "-", reportDaySales.getCashInAmt(), 1);
 		this.addItem(PrintService.instance.getResources().getString(R.string.cash_out), "-", reportDaySales.getCashOutAmt(), 1);

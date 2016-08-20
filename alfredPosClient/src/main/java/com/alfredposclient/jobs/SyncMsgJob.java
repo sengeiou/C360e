@@ -11,9 +11,6 @@ import com.alfredposclient.http.HttpAPI;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class SyncMsgJob extends Job {
 	private String TAG = SyncMsgJob.class.getSimpleName();
     private long localId;
@@ -65,26 +62,26 @@ public class SyncMsgJob extends Job {
     	//LogUtil.d(TAG, payload);
     	BaseActivity context = App.getTopActivity();
     	try {
-    		SyncMsg content = SyncMsgSQL.getSyncMsgById(this.msgUUID, this.revenueId, this.created);
-    		if (content == null)
-    			return;
-    		
-    		if(this.msgType == HttpAPI.ORDER_DATA) {
-    			//sync order data
-    			SyncCentre.getInstance().cloudSyncUploadOrderInfo(context, content, null);    			
-    		}
-    		if(this.msgType == HttpAPI.REPORT_DATA) {
-    			SyncCentre.getInstance().cloudSyncUploadReportInfo(context,content, null);
-    		}
             if(this.msgType == HttpAPI.NETWORK_ORDER_STATUS_UPDATE){
                 SyncMsg syncMsg = SyncMsgSQL.getSyncMsgByAppOrderId(appOrderId, orderStatus);
-                Map<String, Object> parameters = new HashMap<String, Object>();
-                parameters.put("appOrderId", appOrderId);
-                parameters.put("orderStatus", orderStatus);
-                SyncCentre.getInstance().updateAppOrderStatus(context, parameters, syncMsg);
+                SyncCentre.getInstance().updateAppOrderStatus(context, syncMsg);
+                LogUtil.d(TAG, "updateAppOrderStatus start");
+            }else {
+                SyncMsg content = SyncMsgSQL.getSyncMsgById(this.msgUUID, this.revenueId, this.created);
+                if (content == null)
+                    return;
+
+                if (this.msgType == HttpAPI.ORDER_DATA) {
+                    //sync order data
+                    SyncCentre.getInstance().cloudSyncUploadOrderInfo(context, content, null);
+                }
+                if (this.msgType == HttpAPI.REPORT_DATA) {
+                    SyncCentre.getInstance().cloudSyncUploadReportInfo(context, content, null);
+                }
+                LogUtil.d(TAG, "Cloud MSG SYNC JOB Successful");
             }
 
-	    	LogUtil.d(TAG, "Cloud MSG SYNC JOB Successful");
+
     	}catch(Throwable e) {
     		LogUtil.d(TAG, "Cloud MSG SYNC:" + e.getMessage());
     		throw new RuntimeException("Cloud MSG SYNC failed");

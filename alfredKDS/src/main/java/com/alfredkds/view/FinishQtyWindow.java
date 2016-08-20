@@ -1,10 +1,5 @@
 package com.alfredkds.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -34,6 +29,11 @@ import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 import com.alfredkds.view.MoneyKeyboard.KeyBoardClickListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener{
 	private static final int DURATION_1 = 300;
@@ -171,11 +171,17 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener{
 				if (Integer.parseInt(itemnum) == 0 ) {
 					return;
 				}
+				/*
+				kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
+				kotItemDetail.setUnFinishQty(0);
+				kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+				KotItemDetailSQL.update(kotItemDetail);
+				 */
 				if (kotItemDetail != null && kotItemDetail.getKotStatus() < ParamConst.KOT_STATUS_DONE) {
 					loadingDialog.show();
 					if (itemnum.equals(str)) {
-						kotItemDetail.setUnFinishQty(Integer.parseInt(str)-Integer.parseInt(itemnum));
-						kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+Integer.parseInt(str));
+						kotItemDetail.setUnFinishQty(0);
+//						kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+Integer.parseInt(str));
 						kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
 						KotItemDetailSQL.update(kotItemDetail);
 						kotItemDetail.setFinishQty(Integer.parseInt(str));
@@ -189,7 +195,7 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener{
 								App.instance.getCurrentConnectedMainPos(),parameters, handler);
 					}else {
 						kotItemDetail.setUnFinishQty(Integer.parseInt(str)-Integer.parseInt(itemnum));
-						kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+Integer.parseInt(itemnum));
+//						kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+Integer.parseInt(itemnum));
 						KotItemDetailSQL.update(kotItemDetail);
 //						kotItemDetail.setUnFinishQty(kotItemDetail.getItemNum()-Integer.parseInt(itemnum));
 						kotItemDetail.setFinishQty(Integer.parseInt(itemnum));

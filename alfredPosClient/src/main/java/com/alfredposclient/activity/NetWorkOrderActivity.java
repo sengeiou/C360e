@@ -111,7 +111,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 	}
 	
 	private void initData(){
-		appOrders = AppOrderSQL.getAppOrderByOrderStatus(ParamConst.APP_ORDER_STATUS_PAID);
+		appOrders = AppOrderSQL.getAppOrderByOrderStatus(TimeUtil.getBeforeYesterday(App.instance.getBusinessDate()));
 		if(appOrders.size() > 0){
 			appOrderDetails = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrders.get(selectOrderItem).getId().intValue());
 		}
@@ -157,7 +157,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 						App.instance.getRevenueCenter().getId().intValue(),
 						appOrder.getId().intValue(),
 						appOrder.getOrderStatus().intValue(), "",
-						App.instance.getBusinessDate().longValue());
+						App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
 				handler.postDelayed(new Runnable() {
 
 					@Override
@@ -242,8 +242,17 @@ public class NetWorkOrderActivity extends BaseActivity {
 					break;
 				case REFRESH_APPORDER_FAILED:
 					dismissLoadingDialog();
+					initData();
+					appOderAdapter.notifyDataSetChanged();
+					appOderDetailAdapter.notifyDataSetChanged();
 					UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
 							(Throwable) msg.obj, context.getResources().getString(R.string.server)));
+					break;
+				case RESULT_OK:
+					initData();
+					appOderAdapter.notifyDataSetChanged();
+					appOderDetailAdapter.notifyDataSetChanged();
+					dismissLoadingDialog();
 					break;
 			}
 			super.handleMessage(msg);
@@ -255,7 +264,23 @@ public class NetWorkOrderActivity extends BaseActivity {
 		loadingDialog.show();
 		SyncCentre.getInstance().getAllAppOrder(this, new HashMap<String, Object>(), handler);
 	}
-	
+
+
+	@Override
+	public void httpRequestAction(int action, Object obj) {
+		if(action == RESULT_OK){
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					loadingDialog.show();
+				}
+			});
+			handler.sendEmptyMessage(RESULT_OK);
+		}
+		super.httpRequestAction(action, obj);
+
+	}
+
 	class AppOderAdapter extends BaseAdapter{
 		
 		@Override
@@ -311,13 +336,16 @@ public class NetWorkOrderActivity extends BaseActivity {
 			String statusStr = "";
 			switch (appOrder.getOrderStatus().intValue()) {
 			case ParamConst.APP_ORDER_STATUS_PAID:
-				statusStr = "PAID";
+				statusStr = getResources().getString(R.string.paid);
 				break;
 			case ParamConst.APP_ORDER_STATUS_KOTPRINTERD:
-				statusStr = "MAKING";
+				statusStr = getResources().getString(R.string.making);
+				break;
+			case ParamConst.APP_ORDER_STATUS_KOTFINISH:
+				statusStr = getResources().getString(R.string.completed);
 				break;
 			case ParamConst.APP_ORDER_STATUS_FINISH:
-				statusStr = "FINISH";
+				statusStr = getResources().getString(R.string.finish);
 				break;
 			default:
 				break;

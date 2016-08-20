@@ -14,7 +14,7 @@ public class AppOrderDetailTax {
     private String taxPrice;    //'税收金额',
     private Integer taxType;    //'税收类型(0消费税，1服务税)',
     private long createTime;    //'创建时间',
-    private long updateTime;    //'更新时间',
+    private long updateTime;    //'更新时间'
 
     public Integer getId() {
         return id;

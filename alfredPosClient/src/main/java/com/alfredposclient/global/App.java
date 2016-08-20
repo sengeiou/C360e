@@ -1,5 +1,6 @@
 package com.alfredposclient.global;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,6 +37,7 @@ import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
@@ -51,6 +53,8 @@ import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.Tax;
+import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.AlipayPushMsgDto;
@@ -123,8 +127,10 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "com.alfredposclient";
+
+    private String callAppIp;
     /**
      * User: Current cashier logged in
      */
@@ -340,6 +346,17 @@ public class App extends BaseApplication {
 
     public void setRevenueCenter(RevenueCenter revenueCenter) {
         this.revenueCenter = revenueCenter;
+    }
+
+    public String getCallAppIp() {
+        if(callAppIp == null)
+            callAppIp = Store.getString(this, Store.CALL_APP_IP);
+        return callAppIp;
+    }
+
+    public void setCallAppIp(String callAppIp) {
+        this.callAppIp = callAppIp;
+        Store.putString(this, Store.CALL_APP_IP, callAppIp);
     }
 
     /* Get all users currently connected to POS */
@@ -1326,13 +1343,14 @@ public class App extends BaseApplication {
     public void appOrderShowDialog(final AppOrder appOrder, final List<AppOrderDetail> appOrderDetailList, final List<AppOrderModifier> appOrderModifierList, List<AppOrderDetailTax> appOrderDetailTaxList) throws Exception {
         BaseActivity activity = getTopActivity();
         if ((!(activity instanceof NetWorkOrderActivity)) && activity != null
-                && (!activity.isFinishing()))
+                && (!activity.isFinishing())) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     netOrderDialogShow(appOrder);
                 }
             });
+        }
         appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
     }
 
@@ -1410,6 +1428,14 @@ public class App extends BaseApplication {
                         .getOrderDetailFromTempAppOrderDetail(
                                 order, appOrderDetail);
                 OrderDetailSQL.updateOrderDetail(orderDetail);
+                for (AppOrderDetailTax appOrderDetailTax : appOrderDetailTaxList){
+                     if(appOrderDetailTax.getOrderDetailId().intValue() != appOrderDetail.getId().intValue()){
+                         continue;
+                     }
+                    Tax tax = CoreData.getInstance().getTax(appOrderDetailTax.getTaxId().intValue());
+                    TaxCategory taxCategory = CoreData.getInstance().getTaxCategoryByTaxId(tax.getId().intValue());
+                    OrderDetailTax orderDetailTax = ObjectFactory.getInstance().getOrderDetailTaxByOnline(order, orderDetail, appOrderDetailTax, taxCategory.getIndex());
+                }
                 for (AppOrderModifier appOrderModifier : appOrderModifierList) {
                     if(appOrderModifier.getOrderDetailId().intValue() != appOrderDetail.getId().intValue())
                         continue;
@@ -1519,12 +1545,16 @@ public class App extends BaseApplication {
                             orderMap);
                 }
                 appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_KOTPRINTERD);
+                appOrder.setOrderNo(order.getOrderNo());
                 AppOrderSQL.addAppOrder(appOrder);
                 getSyncJob().checkAppOrderStatus(
                         App.instance.getRevenueCenter().getId().intValue(),
                         appOrder.getId().intValue(),
                         appOrder.getOrderStatus().intValue(), "",
-                        App.instance.getBusinessDate().longValue());
+                        App.instance.getBusinessDate().longValue(),appOrder.getOrderNo());
+                if(App.getTopActivity() instanceof NetWorkOrderActivity){
+                    App.getTopActivity().httpRequestAction(Activity.RESULT_OK, "");
+                }
             }
         }
 //				}

@@ -596,7 +596,7 @@ public class HttpAnalysis {
 			Gson gson = new Gson();
 			AppOrder appOrder = gson.fromJson(object.getString("appOrder"), AppOrder.class);
 			List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>(){}.getType());
-			List<AppOrderDetailTax> appOrderDetailTaxList = new ArrayList<AppOrderDetailTax>();
+			List<AppOrderDetailTax> appOrderDetailTaxList = gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
 //					gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
 			List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>(){}.getType());
 			int tableId = 0;
@@ -624,7 +624,7 @@ public class HttpAnalysis {
 			Gson gson = new Gson();
 			List<AppOrder> appOrderList = gson.fromJson(object.getString("appOrderList"), new TypeToken<ArrayList<AppOrder>>(){}.getType());
 			List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>(){}.getType());
-			List<AppOrderDetailTax> appOrderDetailTaxList = new ArrayList<AppOrderDetailTax>();
+			List<AppOrderDetailTax> appOrderDetailTaxList = gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
 //					gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
 			List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>(){}.getType());
 //			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);

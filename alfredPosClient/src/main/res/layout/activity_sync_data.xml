@@ -10,11 +10,21 @@
         android:layout_height="wrap_content"
         layout="@layout/title_bar_view" />
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ll_bottom"
+        android:layout_below="@id/title_bar"
+        android:layout_centerInParent="true"
+        android:fadingEdge="none"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:scrollbars="none" >
     <LinearLayout
         android:id="@+id/ll_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:orientation="vertical" 
         android:visibility="visible">
 
@@ -150,7 +160,7 @@
             android:textSize="@dimen/text_size_m" />
         
     </LinearLayout>
-
+</ScrollView>
     <LinearLayout
         android:id="@+id/ll_revenue_centre"
         android:layout_width="wrap_content"

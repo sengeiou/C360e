@@ -36,6 +36,7 @@ public class DataHelper {
 				onUpgradeForOldVersion1(db);
 				onUpgradeForOldVersion2(db);
 				onUpgradeForOldVersion3(db);
+				onUpgradeForOldVersion4(db);
 
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
@@ -54,13 +55,19 @@ public class DataHelper {
 						onUpgradeForOldVersion1(db);
 						onUpgradeForOldVersion2(db);
 						onUpgradeForOldVersion3(db);
+						onUpgradeForOldVersion4(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
 						onUpgradeForOldVersion3(db);
+						onUpgradeForOldVersion4(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
+						onUpgradeForOldVersion4(db);
+						break;
+					case 4:
+						onUpgradeForOldVersion4(db);
 						break;
 				default:
 					break;
@@ -537,6 +544,11 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE "
 					+ TableNames.ReportDaySales
 					+ " ADD COLUMN paypalpayQty INTEGER");
+		}
+		private void onUpgradeForOldVersion4(SQLiteDatabase db) {
+			db.execSQL("ALTER TABLE " + TableNames.SyncMsg
+					+ " ADD COLUMN orderNum INTEGER");
+
 		}
 
 	}

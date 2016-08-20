@@ -1,16 +1,11 @@
 package com.alfredwaiter.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +30,13 @@ import com.alfredwaiter.view.CountView;
 import com.alfredwaiter.view.CountView.onCountChange;
 import com.alfredwaiter.view.DeleteView;
 import com.alfredwaiter.view.DeleteView.DeleteListener;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class OrderDetailPage extends BaseActivity {
 	public static final int REFRESH_ORDER_DETAIL = 1;
@@ -121,13 +123,16 @@ public class OrderDetailPage extends BaseActivity {
 		currentGroupId = intent.getIntExtra("currentGroupId", 0);
 		orderModifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
 //		String inst = orderDetail.getSpecialInstractions();
+		ImageView iv_item_picture = (ImageView) findViewById(R.id.iv_item_picture);
+		ImageLoader imageLoader = ImageLoader.getInstance();
+		imageLoader.displayImage(itemDetail.getImgUrl(), iv_item_picture);
 		if (orderDetail == null || orderDetail.getSpecialInstractions() == null || 
 				orderDetail.getSpecialInstractions().equals("")) {
 			return;
 		}else {
 			instructions = arrayToList(orderDetail.getSpecialInstractions().split("#"));
 		}
-		
+
 	}
 	
 	private List<String> arrayToList(String[] arr){

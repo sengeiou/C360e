@@ -160,7 +160,7 @@ public class ReportObjectFactory {
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_PAYPAL, businessDate);
-		String paypal = BH.doubleFormat
+		String paypalpay = BH.doubleFormat
 				.format(BH.getBD(paypalpayMap.get("sumAmount")));
 		String paypalpayQty = paypalpayMap.get("count");
 
@@ -388,7 +388,12 @@ public class ReportObjectFactory {
 		BigDecimal nettSales = BH.getBD(ParamConst.DOUBLE_ZERO);
 		nettSales = BH.add(nettSales, totalCard, true);
 		nettSales = BH.add(nettSales, BH.getBD(totalCash), true);
-		nettSales = BH.add(nettSales, BH.getBD(focBill), true);
+		nettSales = BH.add(nettSales, BH.getBD(paypalpay), true);
+		nettSales = BH.add(nettSales, BH.getBD(weixinpay), true);
+		nettSales = BH.add(nettSales, BH.getBD(alipay), true);
+		nettSales = BH.add(nettSales, BH.getBD(nets), true);
+		nettSales = BH.add(nettSales, BH.getBD(holdld), true);
+//		nettSales = BH.add(nettSales, BH.getBD(focBill), true);
 
 		BigDecimal cashInAmt = BH
 				.getBD(CashInOutSQL.getCashInSUM(businessDate));
@@ -426,7 +431,7 @@ public class ReportObjectFactory {
 		reportDaySales.setAlipayQty(Integer.parseInt(alipayQty));
 		reportDaySales.setWeixinpay(weixinpay);
 		reportDaySales.setWeixinpayQty(Integer.parseInt(weixinpayQty));
-		reportDaySales.setPaypalpay(paypal);
+		reportDaySales.setPaypalpay(paypalpay);
 		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
 		reportDaySales.setVisa(visa);
 		reportDaySales.setVisaQty(Integer.parseInt(visaQty));
@@ -1724,7 +1729,12 @@ public class ReportObjectFactory {
 		BigDecimal nettSales = BH.getBD(ParamConst.DOUBLE_ZERO);
 		nettSales = BH.add(nettSales, totalCard, true);
 		nettSales = BH.add(nettSales, BH.getBD(totalCash), true);
-		nettSales = BH.add(nettSales, BH.getBD(focBill), true);
+		nettSales = BH.add(nettSales, BH.getBD(paypalpay), true);
+		nettSales = BH.add(nettSales, BH.getBD(weixinpay), true);
+		nettSales = BH.add(nettSales, BH.getBD(alipay), true);
+		nettSales = BH.add(nettSales, BH.getBD(nets), true);
+		nettSales = BH.add(nettSales, BH.getBD(holdld), true);
+//		nettSales = BH.add(nettSales, BH.getBD(focBill), true);
 
 		BigDecimal cashInAmt = BH
 				.getBD(CashInOutSQL.getCashInSUM(businessDate));
@@ -1763,8 +1773,8 @@ public class ReportObjectFactory {
 		reportDaySales.setAlipayQty(Integer.parseInt(alipayQty));
 		reportDaySales.setWeixinpay(weixinpay);
 		reportDaySales.setWeixinpayQty(Integer.parseInt(weixinpayQty));
-		reportDaySales.setWeixinpay(paypalpay);
-		reportDaySales.setWeixinpayQty(Integer.parseInt(paypalpayQty));
+		reportDaySales.setPaypalpay(paypalpay);
+		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
 		reportDaySales.setVisa(visa);
 		reportDaySales.setVisaQty(Integer.parseInt(visaQty));
 		reportDaySales.setMc(mc);

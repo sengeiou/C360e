@@ -1,13 +1,5 @@
 package com.alfredposclient.activity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -58,6 +50,7 @@ import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -81,6 +74,14 @@ import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private RelativeLayout rl_lunch_bg;
@@ -890,6 +891,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				.getAllItemCategory();
 		ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
 				.getAllItemMainCategory();
+//		List<Modifier> modifiers = ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue());
 		PrinterTitle title = ObjectFactory.getInstance()
 				.getPrinterTitleForReport(
 						App.instance.getRevenueCenter().getId(),
@@ -913,6 +915,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		App.instance.remotePrintDetailAnalysisReport(reportType,
 				cashierPrinter, title, null, filteredPluDayItems,
 				reportPluDayModifiers, null, itemMainCategorys, itemCategorys);
+
+		//modifier report
+//		App.instance.remotePrintModifierDetailAnalysisReport(reportType,
+//				cashierPrinter, title, reportPluDayModifiers, modifiers);
 
 		App.instance.remotePrintSummaryAnalysisReport(reportType,
 				cashierPrinter, title, filteredPluDayItems,
@@ -989,14 +995,18 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		App.instance.remotePrintDetailAnalysisReport(reportType,
 				cashierPrinter, title, reportDaySales, filteredPluDayItems,
 				reportPluDayModifiers, reportPluDayComboModifiers, itemMainCategorys, itemCategorys);
-		
+
 		App.instance.remotePrintSummaryAnalysisReport(reportType,
 				cashierPrinter, title, filteredPluDayItems,
 				reportPluDayModifiers, itemMainCategorys, itemCategorys);
 		// hourly sales
 		App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
 				reportHourlys);
-
+		if(reportPluDayModifiers != null && reportPluDayModifiers.size() > 0){
+			App.instance.remotePrintModifierDetailAnalysisReport(reportType,
+					cashierPrinter, title, reportPluDayModifiers,
+					ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue()));
+		}
 		if (reportVoidItems != null && reportVoidItems.size() > 0)
 			// Void PLU
 			App.instance.remotePrintVoidItemReport(reportType, cashierPrinter,

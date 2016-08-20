@@ -1,8 +1,5 @@
 package com.alfredkds.activity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
@@ -23,6 +20,9 @@ import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Login extends BaseActivity implements KeyBoardClickListener {
 	private static final int STATE_IN_ENTER_ID = 0;
@@ -150,7 +150,12 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		loadingDialog.setTitle(context.getResources().getString(R.string.logining));
 		loadingDialog.show();
 		if (currentOne != null) {
-		  SyncCentre.getInstance().login(context, currentOne.getIP(), parameters, handler);
+		  	SyncCentre.getInstance().login(context, currentOne.getIP(), parameters, handler);
+//			Map<String,Object> map = new HashMap<String, Object>();
+//			map.put("printerType", ParamConst.PRINTER_TYPE_UNGROUP);
+//			map.put("employeeId", old_employee_ID);
+//			//Verify employee and load all printers/KDS from POS
+//			SyncCentre.getInstance().getPrinters(context, App.instance.getPairingIp(),map, handler);
 		} else {
 			loadingDialog.dismiss();
 			UIHelp.showToast(context, context.getResources().getString(R.string.paired_failed));

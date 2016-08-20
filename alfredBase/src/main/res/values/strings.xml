@@ -15,6 +15,7 @@
     <string name="pwd_user_id">Employee ID</string>
     <string name="new_password">Key in a new password</string>
     <string name="new_password_again">New password again</string>
+    <string name="warning">Warning</string>
     <string name="new_password_no_same">New passwords keyed in are not same, please try again.</string>
     <string name="change_employee_password">Change Employee Password</string>
     <string name="online_order">Online Order</string>

@@ -347,4 +347,11 @@
     <string name="place_name">Place</string>
     <string name="cashier_name">Cashier</string>
     <string name="time">Time</string>
+    <string name="paid">PAID</string>
+    <string name="making">MAKING</string>
+    <string name="completed">COMPLETED</string>
+    <string name="finish">FINISH</string>
+
+
+
 </resources>

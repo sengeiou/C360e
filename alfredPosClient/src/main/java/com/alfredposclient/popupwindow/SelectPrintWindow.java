@@ -1,10 +1,5 @@
 package com.alfredposclient.popupwindow;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.text.InputType;
@@ -27,9 +22,15 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
 import com.alfredposclient.R;
+import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.UIHelp;
 import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SelectPrintWindow implements KeyBoardClickListener, OnFocusChangeListener{
 	private PopupWindow popupWindow;
@@ -131,10 +132,14 @@ public class SelectPrintWindow implements KeyBoardClickListener, OnFocusChangeLi
 				result.put("assignTo", assignToName);
 				result.put("js_callback", js_callback);
 				if (verifyIp(getInputedIP())) {
-					result.put("printerIp", getInputedIP());
-					Gson gson = new Gson();
-					String str = gson.toJson(result);
-					handler.sendMessage(handler.obtainMessage(JavaConnectJS.ACTION_ASSIGN_PRINTER_DEVICE,str));
+					if(context instanceof SystemSetting){
+						handler.sendMessage(handler.obtainMessage(JavaConnectJS.ACTION_ASSIGN_PRINTER_DEVICE,getInputedIP()));
+					}else{
+						result.put("printerIp", getInputedIP());
+						Gson gson = new Gson();
+						String str = gson.toJson(result);
+						handler.sendMessage(handler.obtainMessage(JavaConnectJS.ACTION_ASSIGN_PRINTER_DEVICE,str));
+					}
 					dismiss();
 				}else {
 					UIHelp.showToast(context, context.getResources().getString(R.string.invalid_ip));
@@ -158,6 +163,15 @@ public class SelectPrintWindow implements KeyBoardClickListener, OnFocusChangeLi
 		this.assignToName = assignToName;
 		init();
 		popupWindow.showAtLocation(parentView,Gravity.CENTER_HORIZONTAL |Gravity.CENTER_VERTICAL, 
+				0,0);
+	}
+
+	public void show() {
+		if(isShowing()){
+			return;
+		}
+		init();
+		popupWindow.showAtLocation(parentView,Gravity.CENTER_HORIZONTAL |Gravity.CENTER_VERTICAL,
 				0,0);
 	}
 

@@ -126,7 +126,6 @@ private long updateTime; 	//'更新时间',
         List<AppOrderDetail> result = new ArrayList<AppOrderDetail>();
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            db.beginTransaction();
             cursor = db.rawQuery(sql, new String[]{appOrderId + ""});
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
@@ -150,7 +149,6 @@ private long updateTime; 	//'更新时间',
                 appOrderDetail.setUpdateTime(cursor.getLong(16));
                 result.add(appOrderDetail);
             }
-            db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -158,7 +156,6 @@ private long updateTime; 	//'更新时间',
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            db.endTransaction();
         }
         return result;
     }

@@ -1,12 +1,5 @@
 package com.alfredkds.http;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.Header;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.os.Handler;
 
@@ -27,6 +20,13 @@ import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredkds.global.App;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /* Parsing data in HTTP response */
 public class HttpAnalysis {
@@ -165,6 +165,13 @@ public class HttpAnalysis {
 					new TypeToken<ArrayList<KotItemDetail>>(){
 					}.getType());
 			KotItemDetailSQL.addKotItemDetailList(subKotItemDetails);
+			if(object.has("kotSummaryId")){
+				int id = object.getInt("kotSummaryId");
+				int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(id);
+				if(count == 0){
+					KotSummarySQL.updateKotSummaryStatusById(id);
+				}
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

@@ -43,6 +43,7 @@ import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
+import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
@@ -157,6 +158,7 @@ public class ObjectFactory {
 					else
 						order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
 					order.setDiscountRate(ParamConst.DOUBLE_ZERO);
+					order.setTaxAmount(appOrder.getTaxAmount());
 					order.setSessionStatus(sessionStatus.getSession_status());
 					order.setRestId(restaurant.getId());
 					order.setRevenueId(revenueCenter.getId());
@@ -689,6 +691,35 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				orderDetailTax.setIsActive(ParamConst.ACTIVE_NOMAL);
 				OrderDetailTaxSQL.updateOrderDetailTax(orderDetailTax);
 			}
+		}
+		return orderDetailTax;
+	}
+
+	public OrderDetailTax getOrderDetailTaxByOnline(Order order,
+													OrderDetail orderDetail, AppOrderDetailTax appOrderDetailTax, int indexId) {
+		OrderDetailTax orderDetailTax = null;
+		synchronized (lock_get_order_detail_tax) {
+			orderDetailTax = OrderDetailTaxSQL.getOrderDetailTaxId(
+					order.getId(), orderDetail.getId(), appOrderDetailTax.getTaxId());
+			if (orderDetailTax == null) {
+				orderDetailTax = new OrderDetailTax();
+				orderDetailTax.setId(CommonSQL
+						.getNextSeq(TableNames.OrderDetailTax));
+			}
+				orderDetailTax.setOrderId(order.getId());
+				orderDetailTax.setOrderDetailId(orderDetail.getId());
+				orderDetailTax.setTaxId(appOrderDetailTax.getTaxId());
+				orderDetailTax.setTaxName(appOrderDetailTax.getTaxName());
+				orderDetailTax.setTaxPercentage(appOrderDetailTax.getTaxPercentage());
+				orderDetailTax.setTaxType(appOrderDetailTax.getTaxType());
+				long time = System.currentTimeMillis();
+				orderDetailTax.setCreateTime(time);
+				orderDetailTax.setUpdateTime(time);
+				orderDetailTax.setIndexId(indexId);
+				orderDetailTax.setOrderSplitId(orderDetail.getOrderSplitId());
+				orderDetailTax.setIsActive(ParamConst.ACTIVE_NOMAL);
+				orderDetailTax.setTaxPrice(appOrderDetailTax.getTaxPrice());
+				OrderDetailTaxSQL.updateOrderDetailTax(orderDetailTax);
 		}
 		return orderDetailTax;
 	}

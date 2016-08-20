@@ -1,14 +1,6 @@
 package com.alfredposclient.http.server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.app.Activity;
 import android.text.TextUtils;
 
 import com.alfredbase.APPConfig;
@@ -37,6 +29,7 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.javabean.model.WaiterDevice;
+import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
@@ -53,17 +46,28 @@ import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.TablesSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
+import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
-import com.alfredposclient.global.UIHelp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class MainPosHttpServer extends AlfredHttpServer {
 	private String TAG = MainPosHttpServer.class.getSimpleName();
@@ -73,6 +77,108 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	}
 	
 	private Object lockObject = new Object();
+
+	public static final String MIME_JAVASCRIPT = "text/javascript";
+	public static final String MIME_CSS = "text/css";
+	public static final String MIME_JPEG = "image/jpeg";
+	public static final String MIME_PNG = "image/png";
+	public static final String MIME_SVG = "image/svg+xml";
+	public static final String MIME_JSON = "application/json";
+
+	@Override
+	public Response doGet(String uri, Method mothod, final Map<String, String> params, String body){
+		return super.doGet(uri,mothod,params,body);
+//		return this.get
+				/*
+				boolean copyIsFinish = false;
+        try {
+            InputStream is = context.getAssets().open(fileName);
+            File file = new File(path);
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file);
+            byte[] temp = new byte[1024];
+            int i = 0;
+            while ((i = is.read(temp)) > 0) {
+                fos.write(temp, 0, i);
+            }
+            fos.close();
+            is.close();
+            copyIsFinish = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return copyIsFinish;
+				 */
+//		InputStream is = null;
+//		try {
+//			is = App.instance.getAssets().open("cashinout.html");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+/*
+//		return this.getHtmlrResponse("file:///android_asset/cashinout.html");
+		String path;
+		String mime_type = NanoHTTPD.MIME_HTML;
+		String num = "0";
+		boolean canCall = false;
+		if(uri.equals("/")){
+			path="/index.html";
+		}else{
+			path = uri;
+			try{
+
+				if(path.contains("?")){
+					canCall = true;
+					path = path.substring(0, path.indexOf('?') + 1);
+//					String keyValue =
+					System.out.print("=============================================" +
+							"=====================================" +
+							"=================");
+				}
+
+				if(path.endsWith(".js")){
+					mime_type = MIME_JAVASCRIPT;
+				}else if(path.endsWith(".css")){
+					mime_type = MIME_CSS;
+				}else if(path.endsWith(".html")){
+					mime_type = MIME_HTML;
+				}else if(path.endsWith(".jpeg")){
+					mime_type = MIME_JPEG;
+				}else if(path.endsWith(".png")){
+					mime_type = MIME_PNG;
+				}else if(path.endsWith(".jpg")){
+					mime_type = MIME_JPEG;
+				}else if(path.endsWith(".svg")){
+					mime_type = MIME_SVG;
+				}else if(path.endsWith(".json")){
+					mime_type = MIME_JSON;
+				}
+			}catch(Exception e){
+
+			}
+		}
+//		if(canCall){
+			if(params.containsKey("num")){
+				App.getTopActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						UIHelp.showShortToast(App.getTopActivity(),params.get("num"));
+					}
+				});
+
+			}
+
+//		}
+		InputStream descriptor = null;
+		try {
+			// Open file from SD Card
+			descriptor = App.instance.getAssets().open(path);
+
+		} catch(IOException ioe) {
+		}
+		return this.getHtmlrResponse(mime_type,descriptor);
+		*/
+	}
 
 	@Override
 	public Response doPost(String apiName, Method mothod,
@@ -354,9 +460,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						App.instance.addKDSDevice(dev.getDevice_id(), dev);
 						List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 						List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
-						List<KotSummary> kotSummaryList = KotSummarySQL
-								.getUndoneKotSummaryByBusinessDateAndOrderUnfinish(App.instance
-										.getBusinessDate());
+						List<KotSummary> kotSummaryList = new ArrayList<KotSummary>();
+						if(App.instance.isRevenueKiosk()){
+							kotSummaryList = KotSummarySQL.getUndoneKotSummaryByBusinessDateForKiosk(App.instance
+									.getBusinessDate());
+						}else{
+							kotSummaryList = KotSummarySQL
+									.getUndoneKotSummaryByBusinessDateAndOrderUnfinish(App.instance
+											.getBusinessDate());
+						}
+
 						List<PrinterGroup> printerGroupList = CoreData
 								.getInstance().getPrinterGroupByPrinter(
 										dev.getDevice_id());
@@ -1063,6 +1176,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					result.put("resultCode", ResultCode.KOT_COMPLETE_USER_FAILED);
 					resp = this.getJsonResponse(new Gson().toJson(result));
 					return resp;
+				}else if (kotItemDetail.getUnFinishQty() == 0){
+					kotItemDetail.setFinishQty(kotItemDetail.getItemNum());
+					kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
 				}
 				KotItemDetail subKotItemDetail = ObjectFactory.getInstance()
 						.getSubKotItemDetail(kotItemDetail);
@@ -1080,6 +1196,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						MainPage.VIEW_EVENT_SET_DATA, kotSummary.getOrderId());
 				result.put("resultCode", ResultCode.SUCCESS);
 				result.put("resultKotItemDetails", resultKotItemDetails);
+				result.put("kotSummaryId", kotSummary.getId());
+				if(!TextUtils.isEmpty(App.instance.getCallAppIp()))
+					SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getOrderNo().toString());
+				int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId());
+				if(count == 0){
+					KotSummarySQL.updateKotSummaryStatusById(kotSummary.getId());
+				}
 				resp = this.getJsonResponse(new Gson().toJson(result));
 				
 				/* no waiter in kiosk mode*/
@@ -1095,6 +1218,24 @@ public class MainPosHttpServer extends AlfredHttpServer {
 													.getAllKotNotificationQty());
 						}
 					});
+//				App.instance.c
+				if(count == 0){
+					Order order = OrderSQL.getOrder(kotSummary.getOrderId().intValue());
+					if(order != null && !IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
+						AppOrder appOrder = AppOrderSQL.getAppOrderById(order.getAppOrderId().intValue());
+						appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_KOTFINISH);
+						AppOrderSQL.updateAppOrder(appOrder);
+						App.instance.getSyncJob().checkAppOrderStatus(
+								App.instance.getRevenueCenter().getId().intValue(),
+								appOrder.getId().intValue(),
+								appOrder.getOrderStatus().intValue(), "",
+								App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+						if(App.getTopActivity() instanceof NetWorkOrderActivity){
+							App.getTopActivity().httpRequestAction(Activity.RESULT_OK, "");
+						}
+					}
+
+				}
 			} else {
 				result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);
 				resp = this.getJsonResponse(new Gson().toJson(result));

@@ -1,11 +1,11 @@
 package com.alfredbase.http;
 
+import com.alfredbase.utils.LogUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.alfredbase.utils.LogUtil;
 
 
 public class AlfredHttpServer extends NanoHTTPD implements AlfredHttpHandler{
@@ -33,7 +33,7 @@ public class AlfredHttpServer extends NanoHTTPD implements AlfredHttpHandler{
         if (Method.POST.equals(method)){
         	return this.doPost(apiName, method, params, body.get("postData"));
         }else if(Method.GET.equals(method)){
-        	
+            return this.doGet(apiName, method, params, body.get("getData"));
         }
         return new NanoHTTPD.Response("");
     }
@@ -57,7 +57,14 @@ public class AlfredHttpServer extends NanoHTTPD implements AlfredHttpHandler{
         return createResponse(Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT,
             "INTERNAL ERRROR: " + s);
     }
-    
+
+    protected Response getHtmlrResponse(String type, InputStream inputStream) {
+        return createResponse(Response.Status.OK, type,inputStream);
+    }
+    protected Response getHtmlrResponse(String patch) {
+        return createResponse(Response.Status.OK, NanoHTTPD.MIME_HTML,patch);
+    }
+
     // Announce that the file server accepts partial content requests
     private Response createResponse(Response.Status status, String mimeType, InputStream message) {
         Response res = new Response(status, mimeType, message);
@@ -81,7 +88,7 @@ public class AlfredHttpServer extends NanoHTTPD implements AlfredHttpHandler{
 
 	@Override
 	public Response doGet(String uri, Method mothod,
-			Map<String, String> params, String body) {
+			Map<String, String> params, String body){
 
 		return getForbiddenResponse("Not Support yet");
 	}

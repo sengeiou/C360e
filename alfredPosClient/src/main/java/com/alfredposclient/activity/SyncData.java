@@ -1,9 +1,5 @@
 package com.alfredposclient.activity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -40,6 +36,10 @@ import com.alfredposclient.adapter.RevenueCentreListAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SyncData extends BaseActivity {
 	public static final int HANDLER_LOGIN = 0;
@@ -83,6 +83,8 @@ public class SyncData extends BaseActivity {
 		iv_user_id = (ImageView) findViewById(R.id.iv_user_id);
 		iv_password = (ImageView) findViewById(R.id.iv_password);
 		iv_biz_id = (ImageView) findViewById(R.id.iv_biz_id);
+		et_user_id.requestFocus();
+		et_user_id.setFocusable(true);
 		syncDataCount = 0;
 		et_user_id.setOnFocusChangeListener(new OnFocusChangeListener() {
 			
@@ -130,6 +132,7 @@ public class SyncData extends BaseActivity {
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
 		initTextTypeFace();
 	}
+
 
 	@Override
 	public void handlerClickEvent(View v) {

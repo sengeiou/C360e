@@ -52,7 +52,7 @@ public class App extends BaseApplication {
 	public static final int HANDLER_NEW_KOT = 20;
 	public static final int HANDLER_UPDATE_KOT = 1;
 	public static final int HANDLER_DELETE_KOT = 2;
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 5;
 	private static final String DATABASE_NAME = "com.alfredkds";
 	public static App instance;
     //for pairing
@@ -110,6 +110,9 @@ public class App extends BaseApplication {
 	@Override
 	protected void onIPChanged() {
 		super.onIPChanged();
+		if(getCurrentConnectedMainPos() == null || Store.getObject(App.instance, Store.KDS_USER, User.class) == null){
+			return;
+		}
 		if(getKdsDevice() != null){
 			this.kdsDevice.setIP(CommonUtil.getLocalIpAddress());
 			this.setKdsDevice(kdsDevice);
@@ -231,7 +234,7 @@ public class App extends BaseApplication {
 		boolean flag = false;
 		List<KotSummary> kotSummaries = new ArrayList<KotSummary>();
 		List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
-		kotSummaries = KotSummarySQL.getAllKotSummary();
+		kotSummaries = KotSummarySQL.getUndoneKotSummary();
 		List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
 		for (int i = 0; i < kotSummaries.size(); i++) {
 			kot = new Kot();

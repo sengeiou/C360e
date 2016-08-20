@@ -1,10 +1,5 @@
 package com.alfredbase.global;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import android.content.Context;
 
 import com.alfredbase.ParamConst;
@@ -57,6 +52,11 @@ import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class CoreData {
 	private static CoreData instance;
@@ -367,6 +367,17 @@ public class CoreData {
 			return null;
 		for (TaxCategory taxCategory : getTaxCategories()) {
 			if (taxCategory.getId().intValue() == taxOnId.intValue()) {
+				return taxCategory;
+			}
+		}
+		return null;
+	}
+
+	public TaxCategory getTaxCategoryByTaxId(Integer taxId) {
+		if (taxId == null)
+			return null;
+		for (TaxCategory taxCategory : getTaxCategories()) {
+			if (taxCategory.getTaxId().intValue() == taxId.intValue()) {
 				return taxCategory;
 			}
 		}

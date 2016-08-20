@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -16,6 +13,9 @@ import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class KotItemDetailSQL {
 
 	public static void update(KotItemDetail kotItemDetail) {
@@ -25,7 +25,9 @@ public class KotItemDetailSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.KotItemDetail
-					+ "(id, restaurantId, revenueId, orderId, orderDetailId, printerGroupId, kotSummaryId, itemName,itemNum,finishQty,sessionStatus,kotStatus,specialInstractions ,version,createTime,updateTime, unFinishQty, categoryId,isTakeAway)"
+					+ "(id, restaurantId, revenueId, orderId, orderDetailId, printerGroupId, kotSummaryId, "
+					+ "itemName,itemNum,finishQty,sessionStatus,kotStatus,specialInstractions ,version,createTime,"
+					+ "updateTime, unFinishQty, categoryId,isTakeAway)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
@@ -62,8 +64,10 @@ public class KotItemDetailSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.KotItemDetail
-					+ "(id, restaurantId, revenueId, orderId, orderDetailId,  printerGroupId, kotSummaryId, itemName,itemNum,finishQty,sessionStatus,"
-					+ "kotStatus,specialInstractions ,version,createTime,updateTime, unFinishQty, categoryId,isTakeAway)"
+					+ "(id, restaurantId, revenueId, orderId, orderDetailId,  printerGroupId, kotSummaryId, "
+					+ "itemName,itemNum,finishQty,sessionStatus,"
+					+ "kotStatus,specialInstractions ,version," +
+					"createTime,updateTime, unFinishQty, categoryId,isTakeAway)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (KotItemDetail kotItemDetail : kotItemDetails) {
@@ -621,6 +625,30 @@ public class KotItemDetailSQL {
 				cursor.close();
 			}
 			db.endTransaction();
+		}
+		return result;
+	}
+
+	public static int getKotItemDetailCountBySummaryId(
+			int kotSummaryId) {
+		int result = 0;
+		String sql = "select * from " + TableNames.KotItemDetail
+				+ " where kotSummaryId = ? and unFinishQty > 0 and kotStatus < 3 and categoryId = 0";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] { kotSummaryId + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			result = cursor.getCount();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
 		}
 		return result;
 	}

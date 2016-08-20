@@ -245,11 +245,10 @@ public class SyncCentre {
 		HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), httpClient, parameters, handler);
 	}
 	public void getAllAppOrder(Context context,Map<String, Object> parameters, Handler handler){
-		parameters.put("appOrderId", 11);
 		HttpAPI.getAllAppOrder(context, getAbsoluteUrl(APIName.POSORDER_GETALLPAIEDAPPORDER), httpClient, parameters, handler);
 	}
-	public void updateAppOrderStatus(Context context,Map<String, Object> parameters, SyncMsg syncMsg){
-		HttpAPI.updateAppOrderStatus(context, getAbsoluteUrl(APIName.POSORDER_UPDATEAPPORDERSTATUS), syncHttpClient, parameters, syncMsg);
+	public void updateAppOrderStatus(Context context, SyncMsg syncMsg){
+		HttpAPI.updateAppOrderStatus(context, getAbsoluteUrl(APIName.POSORDER_UPDATEAPPORDERSTATUS), syncHttpClient, syncMsg);
 	}
 
 	// Backend Server IP
@@ -375,7 +374,18 @@ public class SyncCentre {
 		HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(),syncHttpClient);
 
 	}
-	
+
+	/**
+	 * for callNum App
+	 * @param context
+	 * @param num
+     */
+	public void callAppNo(final Context context, String num) {
+		String url ="http://" + App.instance.getCallAppIp() + ":8080";
+		HttpAPI.callAppNo(context, url, syncHttpClient, num);
+
+	}
+
 	//3rd party services
 	public String requestAlipayUrl(final Map<String, Object> parameters) {
 		//{restaurantKey:"h6s235",userKey:"19x6ljc",revenueId:27,orderId:123243,billNo:12312,amount:100}

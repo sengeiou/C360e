@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -14,6 +11,9 @@ import com.alfredbase.javabean.Tables;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KotSummarySQL {
 
@@ -222,6 +222,49 @@ public class KotSummarySQL {
 		}
 		return result;
 	}
+
+	public static ArrayList<KotSummary> getUndoneKotSummaryByBusinessDateForKiosk(long businessDate) {
+		ArrayList<KotSummary> result = new ArrayList<KotSummary>();
+		String sql = "select * from " + TableNames.KotSummary + " where status = " + ParamConst.KOTS_STATUS_UNDONE + " and orderId in ( select id from " + TableNames.Order + " where businessDate = ? )";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			db.beginTransaction();
+			cursor = db.rawQuery(sql, new String[] {businessDate+""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			KotSummary kotSummary = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				kotSummary = new KotSummary();
+				kotSummary.setId(cursor.getInt(0));
+				kotSummary.setOrderId(cursor.getInt(1));
+				kotSummary.setRevenueCenterId(cursor.getInt(2));
+				kotSummary.setTableId(cursor.getInt(3));
+				kotSummary.setTableName(cursor.getString(4));
+				kotSummary.setRevenueCenterName(cursor.getString(5));
+				kotSummary.setStatus(cursor.getInt(6));
+				kotSummary.setCreateTime(cursor.getLong(7));
+				kotSummary.setUpdateTime(cursor.getLong(8));
+				kotSummary.setBusinessDate(cursor.getLong(9));
+				kotSummary.setIsTakeAway(cursor.getInt(10));
+				kotSummary.setOrderNo(cursor.getInt(11));
+				result.add(kotSummary);
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+			db.endTransaction();
+		}
+		return result;
+	}
 	
 	public static KotSummary getKotSummary(int orderId) {
 		KotSummary kotSummary = null;
@@ -334,6 +377,15 @@ public class KotSummarySQL {
 				+ " where orderId = ?";
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] { order.getId() });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void updateKotSummaryStatusById(int kotSummayId){
+		String sql = "update " + TableNames.KotSummary + " set status = " + ParamConst.KOTS_STATUS_DONE + " where id = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] { kotSummayId});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

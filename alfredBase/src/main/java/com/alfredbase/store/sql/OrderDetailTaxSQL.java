@@ -1,10 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -22,6 +17,11 @@ import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OrderDetailTaxSQL {
 
@@ -362,6 +362,48 @@ public class OrderDetailTaxSQL {
 					sql,
 					new String[] { order.getId() + "",
 							orderDetail.getId() + "", tax.getId() + "" });
+
+			if (cursor.getCount() <= 0) {
+				return null;
+			}
+			OrderDetailTax orderDetailTax = null;
+			if (cursor.moveToFirst()) {
+				orderDetailTax = new OrderDetailTax();
+				orderDetailTax.setId(cursor.getInt(0));
+				orderDetailTax.setOrderId(cursor.getInt(1));
+				orderDetailTax.setOrderDetailId(cursor.getInt(2));
+				orderDetailTax.setTaxId(cursor.getInt(3));
+				orderDetailTax.setTaxName(cursor.getString(4));
+				orderDetailTax.setTaxPercentage(cursor.getString(5));
+				orderDetailTax.setTaxPrice(cursor.getString(6));
+				orderDetailTax.setTaxType(cursor.getInt(7));
+				orderDetailTax.setCreateTime(cursor.getLong(8));
+				orderDetailTax.setUpdateTime(cursor.getLong(9));
+				orderDetailTax.setIndexId(cursor.getInt(10));
+				orderDetailTax.setOrderSplitId(cursor.getInt(11));
+				orderDetailTax.setIsActive(cursor.getInt(12));
+				return orderDetailTax;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(cursor != null && !cursor.isClosed()){
+				cursor.close();
+			}
+		}
+		return null;
+	}
+
+	public static OrderDetailTax getOrderDetailTaxId(int orderId,
+												   int orderDetailId, int taxId) {
+		String sql = "select * from " + TableNames.OrderDetailTax
+				+ " where orderId = ? and orderDetailId = ? and taxId = ? and isActive = " + ParamConst.ACTIVE_NOMAL;
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(
+					sql,
+					new String[] { orderId + "",
+							orderDetailId + "", taxId + "" });
 
 			if (cursor.getCount() <= 0) {
 				return null;

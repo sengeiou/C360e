@@ -2,7 +2,7 @@ package com.alfredbase.javabean.temporaryforapp;
 
 public class AppOrder {
     private Integer id;    //'主键id',
-    private Integer orderNo;    //'订单编号',
+    private Integer orderNum;    //'订单编号'
     private Integer custId;    //'顾客id',
     private Integer restId;        //'餐厅id',
     private Integer revenueId;    //'收银中心id',
@@ -20,7 +20,6 @@ public class AppOrder {
     private Integer tableType = 0; // 桌子状态,只用于本地,0默认状态,1桌子可以使用,-1桌子已经占用中 等待分配桌子。
     private String tableNo;
     private Integer bizType = 0; // 业务类型, 0点菜,1预点单
-
     public Integer getId() {
         return id;
     }
@@ -30,11 +29,11 @@ public class AppOrder {
     }
 
     public Integer getOrderNo() {
-        return orderNo;
+        return orderNum;
     }
 
     public void setOrderNo(Integer orderNo) {
-        this.orderNo = orderNo;
+        this.orderNum = orderNo;
     }
 
     public Integer getCustId() {
@@ -177,7 +176,7 @@ public class AppOrder {
     public String toString() {
         return "AppOrder{" +
                 "id=" + id +
-                ", orderNo=" + orderNo +
+                ", orderNum=" + orderNum +
                 ", custId=" + custId +
                 ", restId=" + restId +
                 ", revenueId=" + revenueId +
@@ -195,6 +194,7 @@ public class AppOrder {
                 ", tableType=" + tableType +
                 ", tableNo='" + tableNo + '\'' +
                 ", bizType=" + bizType +
+                ", orderNum=" + orderNum +
                 '}';
     }
 }

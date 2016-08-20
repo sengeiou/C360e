@@ -89,6 +89,7 @@ import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
+import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.global.WebViewConfig;
 import com.alfredposclient.javabean.TablesStatusInfo;
@@ -712,6 +713,7 @@ public class MainPage extends BaseActivity {
 								AppOrder appOrder = AppOrderSQL.getAppOrderById(currentOrder.getAppOrderId().intValue());
 								appOrder
 										.setOrderStatus(ParamConst.APP_ORDER_STATUS_FINISH);
+								appOrder.setOrderNo(currentOrder.getOrderNo());
 								AppOrderSQL.updateAppOrder(appOrder);
 								PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 										context);
@@ -723,9 +725,11 @@ public class MainPage extends BaseActivity {
 										App.instance.getRevenueCenter().getId().intValue(),
 										appOrder.getId().intValue(),
 										appOrder.getOrderStatus().intValue(), "",
-										App.instance.getBusinessDate().longValue());
+										App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
 							}
 						}
+//						if(!TextUtils.isEmpty(App.instance.getCallAppIp()))
+//							SyncCentre.getInstance().callAppNo(App.instance, paidOrder.getOrderNo().toString());
 					}
 				}).start();
 

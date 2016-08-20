@@ -341,5 +341,8 @@
 	<string name="online_order_status">订单状态</string>
 	<string name="online_order_time">订单时间</string>
     <string name="check">下单</string>
-	
+    <string name="paid">已支付</string>
+    <string name="making">备餐中</string>
+    <string name="completed">已备餐</string>
+    <string name="finish">已完成</string>
 </resources>

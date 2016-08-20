@@ -24,7 +24,8 @@
     <string name="try_later">,请稍后在试</string> 
     <string name="conn_time_out">连接超时</string> 
     <string name="unknown_error">未知错误</string> 
-    <string name="param_empty">参数为空</string> 
+    <string name="param_empty">参数为空</string>
+    <string name="warning">警告</string>
     <string name="param_error">参数错误</string> 
     <string name="invalid_rest_key">企业ID无效</string> 
     <string name="no_user">用户不存在</string> 

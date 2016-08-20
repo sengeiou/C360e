@@ -1,13 +1,5 @@
 package com.alfredkds.http;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.os.Handler;
 
@@ -29,6 +21,14 @@ import com.alfredkds.global.App;
 import com.alfredkds.global.UIHelp;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
+
+import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
+import java.util.Map;
 
 /* KDS Requests main POS */
 public class HttpAPI {

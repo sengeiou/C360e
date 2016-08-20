@@ -21,6 +21,7 @@ public class SyncMsg {
 
 	private Integer appOrderId;
 	private Integer orderStatus;
+	private Integer orderNum;
 	public SyncMsg() {
 	}
 
@@ -37,6 +38,8 @@ public class SyncMsg {
 		this.businessDate = businessDate;
 		this.currCount = currCount;
 	}
+
+
 
 	public String getId() {
 		return id;
@@ -126,6 +129,14 @@ public class SyncMsg {
 		this.orderStatus = orderStatus;
 	}
 
+	public Integer getOrderNum() {
+		return orderNum;
+	}
+
+	public void setOrderNum(Integer orderNum) {
+		this.orderNum = orderNum;
+	}
+
 	@Override
 	public String toString() {
 		return "SyncMsg{" +
@@ -137,9 +148,10 @@ public class SyncMsg {
 				", createTime=" + createTime +
 				", revenueId=" + revenueId +
 				", businessDate=" + businessDate +
+				", currCount=" + currCount +
 				", appOrderId=" + appOrderId +
 				", orderStatus=" + orderStatus +
-				", currCount=" + currCount +
+				", orderNum=" + orderNum +
 				'}';
 	}
 

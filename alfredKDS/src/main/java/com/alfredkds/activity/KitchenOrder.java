@@ -1,14 +1,10 @@
 package com.alfredkds.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
@@ -24,10 +20,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.MainPosInfo;
-import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotItemDetailSQL;
-import com.alfredbase.store.sql.KotItemModifierSQL;
-import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
@@ -45,6 +38,11 @@ import com.alfredkds.view.PopItemListView;
 import com.alfredkds.view.PopItemListView.RemoveDirection;
 import com.alfredkds.view.PopItemListView.RemoveListener;
 import com.alfredkds.view.TopBarView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KitchenOrder extends BaseActivity {
 	public static final int HANDLER_TRANSFER_KOT = 3;
@@ -114,6 +112,7 @@ public class KitchenOrder extends BaseActivity {
 				UIHelp.showToast(context,context.getResources().getString(R.string.send_failed));
 				break;
 			case App.HANDLER_REFRESH_KOT:
+				dismissLoadingDialog();
 				refresh();
 				break;
 			case HANDLER_TRANSFER_KOT:
@@ -259,6 +258,7 @@ public class KitchenOrder extends BaseActivity {
 				adapter.setKots(kots);
 				adapter.notifyDataSetChanged();
 				itemPopupWindow.dismiss();
+//				refresh();
 			}
 			break;
 		case R.id.iv_back:
@@ -266,7 +266,38 @@ public class KitchenOrder extends BaseActivity {
 				adapter.notifyDataSetChanged();
 				itemPopupWindow.dismiss();
 			}
-			break;
+		break;
+		case R.id.ll_bottom: {
+			String title = getResources().getString(R.string.warning);
+			String content = getResources().getString(R.string.complete_all_item);
+			String left = getResources().getString(R.string.no);
+			String right = getResources().getString(R.string.yes);
+			DialogFactory.commonTwoBtnDialog(this, title, content, left, right, null, new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+					for(KotItemDetail kotItemDetail : App.instance.getKot(kotSummary).getKotItemDetails()){
+						kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
+						kotItemDetail.setUnFinishQty(0);
+						kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+						KotItemDetailSQL.update(kotItemDetail);
+						itemDetails.add(kotItemDetail);
+					}
+					Map<String, Object> parameters = new HashMap<String, Object>();
+					parameters.put("kotSummary", kotSummary);
+					parameters.put("kotItemDetails", itemDetails);
+					parameters.put("type", 1);
+					SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+							App.instance.getCurrentConnectedMainPos(),parameters, handler);
+					loadingDialog.show();
+				}
+			});
+
+
+
+
+		}
+		break;
 		default:
 			break;
 		}
@@ -281,6 +312,7 @@ public class KitchenOrder extends BaseActivity {
 		View view = getLayoutInflater().inflate(R.layout.kitche_order_item_popupwindow, null);
 		view.findViewById(R.id.iv_back).setOnClickListener(this);
 		view.findViewById(R.id.iv_complete).setOnClickListener(this);
+		view.findViewById(R.id.ll_bottom).setOnClickListener(this);
 		//kotTop
 		TextView kotId = (TextView) view.findViewById(R.id.tv_kot_id);
 		TextView orderId = (TextView) view.findViewById(R.id.tv_order_id);
@@ -320,6 +352,12 @@ public class KitchenOrder extends BaseActivity {
 			public void removeItem(RemoveDirection direction, int position) {
 				PopItemAdapter currentPopItems = (PopItemAdapter) popItemListView.getAdapter();
 				Kot popKot = currentPopItems.getKot();
+				/*
+				kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
+				kotItemDetail.setUnFinishQty(0);
+				kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+				KotItemDetailSQL.update(kotItemDetail);
+				 */
 				switch (direction) {
 				case LEFT:
 					if (position >= popKot.getKotItemDetails().size()) {

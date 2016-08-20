@@ -1,7 +1,5 @@
 package com.alfredbase.store;
 
-import java.lang.reflect.Type;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -9,12 +7,15 @@ import android.content.SharedPreferences.Editor;
 import com.alfredbase.utils.LogUtil;
 import com.google.gson.Gson;
 
+import java.lang.reflect.Type;
+
 public class Store {
 	private static final String TAG = Store.class.getSimpleName();
 
 	private static final String PACK_NAME = Store.class.getPackage().getName();
 
 	public static final String CURRENT_REVENUE_CENTER = "CURRENT_REVENUE_CENTER";
+	public static final String CALL_APP_IP = "CALL_APP_IP";
 	public static final String LOGIN_RESULT = "LOGIN_RESULT";
 	public static final String SESSION_STATUS = "SESSION_STATUS";
 	public static final String BUSINESS_DATE = "BUSINESS_DATE";
