@@ -131,7 +131,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 				}
 				//DON'T use reference 
 				Order placedOrder = OrderSQL.getOrder(order.getId());
-				
+
 				handler.sendMessage(handler
 						.obtainMessage(MainPage.VIEW_EVENT_PLACE_ORDER));
 				OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(

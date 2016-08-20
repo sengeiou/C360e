@@ -126,7 +126,7 @@ public class ObjectFactory {
 					order.setUpdateTime(time);
 					order.setBusinessDate(businessDate);
 //					order.setOrderNo(order.getId());
-					order.setOrderNo(0);//流水号					
+					order.setOrderNo(OrderHelper.calculateOrderNo(businessDate));//流水号
 					order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_NULL);
 					order.setAppOrderId(appOrderId);
 					if(inclusiveTax != null){
