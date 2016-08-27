@@ -146,7 +146,9 @@ public class PrintService extends Service {
 		synchronized(lock) {
 		  wfpHandler = PrintService.printerHandlers.get(ip);
 		  if (wfpHandler == null) {
-			  wfpHandler = new WIFIPrinterHandler(PrintService.instance.getMainLooper(), ip);
+//			  Looper.prepare();
+			  wfpHandler = new WIFIPrinterHandler(ip);
+//			  Looper.loop();
 			  PrintService.printerHandlers.put(ip, wfpHandler);
 		  }
 		}

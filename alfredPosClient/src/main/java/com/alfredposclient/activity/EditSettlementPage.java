@@ -1,18 +1,13 @@
 package com.alfredposclient.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
-import android.widget.TextView;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
@@ -70,6 +65,11 @@ import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.popupwindow.CloseOrderSplitWindow;
 import com.alfredposclient.popupwindow.CloseOrderWindow;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EditSettlementPage extends BaseActivity {
     private String TAG = EditSettlementPage.class.getSimpleName();
@@ -141,7 +141,7 @@ public class EditSettlementPage extends BaseActivity {
                             currentOrder.getTableId());
                     PrinterTitle title = ObjectFactory.getInstance()
                             .getPrinterTitle(
-                                    App.instance.getRevenueCenter().getId(),
+                                    App.instance.getRevenueCenter(),
                                     currentOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),

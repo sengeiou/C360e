@@ -772,6 +772,8 @@ public class AsyncHttpClient {
      * @return RequestHandle of future request process
      */
     public RequestHandle get(Context context, String url, RequestParams params, ResponseHandlerInterface responseHandler) {
+        Log.i(LOG_TAG, "url:" + url);
+        Log.i(LOG_TAG, params.getParamString());
         return sendRequest(httpClient, httpContext, new HttpGet(getUrlWithQueryString(isUrlEncodingEnabled, url, params)), null, responseHandler, context);
     }
 

@@ -1020,18 +1020,17 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		return netsSettlement;
 	}
 
-	public PrinterTitle getPrinterTitle(int revenueId, Order order,
+	public PrinterTitle getPrinterTitle(RevenueCenter revenue, Order order,
 			String userName, String tableName) {
 		PrinterTitle printerTitle = new PrinterTitle();
-		Restaurant restaurant = new Restaurant();
-		restaurant = RestaurantSQL.getRestaurant();
+		Restaurant restaurant = RestaurantSQL.getRestaurant();
 		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
 		printerTitle.setAddressDetail(restaurant.getAddressPrint());
 		printerTitle.setTel(restaurant.getTelNo());
 		printerTitle.setEmail(restaurant.getEmail());
 		printerTitle.setWebAddress(restaurant.getWebsite());
 		printerTitle.setOp(userName);
-		printerTitle.setPos(revenueId + "");
+		printerTitle.setPos(revenue.getId().intValue() + "");
 		printerTitle.setDate(TimeUtil.getPrintDate(order.getCreateTime()));
 		printerTitle.setBill_NO(ParamHelper.getPrintOrderBillNo(OrderBillSQL.getOrderBillByOrder(order).getBillNo()));
 		printerTitle.setTime(TimeUtil.getPrintTime(order.getCreateTime()));
@@ -1042,7 +1041,12 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		printerTitle.setFooterOptions(restaurant.getFooterOptions());
 		printerTitle.setIsTakeAway(order.getIsTakeAway());
 		printerTitle.setBizDate(order.getBusinessDate().toString());
-		printerTitle.setOrderNo(order.getOrderNo().toString());
+		if(revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
+			printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
+		}else{
+			printerTitle.setOrderNo(order.getOrderNo().toString());
+		}
+
 		return printerTitle;
 	}
 	
@@ -1214,6 +1218,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotSummary.setUpdateTime(time);
 				kotSummary.setBusinessDate(businessDate);
 				kotSummary.setIsTakeAway(order.getIsTakeAway());
+				kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
 				KotSummarySQL.update(kotSummary);
 			}
 		}

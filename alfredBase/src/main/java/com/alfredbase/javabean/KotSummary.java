@@ -26,6 +26,9 @@ public class KotSummary implements Serializable{
 	
 	//不存数据库 临时变量 
 	private String description;
+
+	// 用于储存收银中心的indexId
+	private Integer revenueCenterIndex = 1;
 	
 	public Integer getId() {
 		return id;
@@ -119,16 +122,6 @@ public class KotSummary implements Serializable{
 		this.description = description;
 	}
 
-	@Override
-	public String toString() {
-		return "KotSummary [id=" + id + ", orderId=" + orderId
-				+ ", revenueCenterId=" + revenueCenterId + ", tableId="
-				+ tableId + ", tableName=" + tableName + ", revenueCenterName="
-				+ revenueCenterName + ", status=" + status + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + ", businessDate="
-				+ businessDate + ", isTakeAway=" + isTakeAway
-				+ ", description=" + description + "]";
-	}
 	public Integer getOrderNo() {
 		return orderNo;
 	}
@@ -140,5 +133,32 @@ public class KotSummary implements Serializable{
 	public String getOrderNoString() {
 		return String.valueOf(this.orderNo);
 	}
-	
+
+	public Integer getRevenueCenterIndex() {
+		return revenueCenterIndex;
+	}
+
+	public void setRevenueCenterIndex(Integer revenueCenterIndex) {
+		this.revenueCenterIndex = revenueCenterIndex;
+	}
+
+	@Override
+	public String toString() {
+		return "KotSummary{" +
+				"id=" + id +
+				", orderId=" + orderId +
+				", revenueCenterId=" + revenueCenterId +
+				", tableId=" + tableId +
+				", tableName='" + tableName + '\'' +
+				", revenueCenterName='" + revenueCenterName + '\'' +
+				", status=" + status +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", businessDate=" + businessDate +
+				", isTakeAway=" + isTakeAway +
+				", orderNo=" + orderNo +
+				", description='" + description + '\'' +
+				", revenueCenterIndex=" + revenueCenterIndex +
+				'}';
+	}
 }

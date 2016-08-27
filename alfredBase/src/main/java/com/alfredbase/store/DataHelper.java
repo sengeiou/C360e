@@ -37,7 +37,7 @@ public class DataHelper {
 				onUpgradeForOldVersion2(db);
 				onUpgradeForOldVersion3(db);
 				onUpgradeForOldVersion4(db);
-
+				onUpgradeForOldVersion5(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -56,18 +56,25 @@ public class DataHelper {
 						onUpgradeForOldVersion2(db);
 						onUpgradeForOldVersion3(db);
 						onUpgradeForOldVersion4(db);
+						onUpgradeForOldVersion5(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
 						onUpgradeForOldVersion3(db);
 						onUpgradeForOldVersion4(db);
+						onUpgradeForOldVersion5(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
 						onUpgradeForOldVersion4(db);
+						onUpgradeForOldVersion5(db);
 						break;
 					case 4:
 						onUpgradeForOldVersion4(db);
+						onUpgradeForOldVersion5(db);
+						break;
+					case 5:
+						onUpgradeForOldVersion5(db);
 						break;
 				default:
 					break;
@@ -548,6 +555,12 @@ public class DataHelper {
 		private void onUpgradeForOldVersion4(SQLiteDatabase db) {
 			db.execSQL("ALTER TABLE " + TableNames.SyncMsg
 					+ " ADD COLUMN orderNum INTEGER");
+
+		}
+
+		private void onUpgradeForOldVersion5(SQLiteDatabase db) {
+			db.execSQL("ALTER TABLE " + TableNames.KotSummary
+					+ " ADD COLUMN revenueCenterIndex INTEGER default 1");
 
 		}
 

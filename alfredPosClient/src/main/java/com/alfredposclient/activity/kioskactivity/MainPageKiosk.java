@@ -1,13 +1,5 @@
 package com.alfredposclient.activity.kioskactivity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -107,6 +99,14 @@ import com.alfredposclient.view.viewkiosk.MainPageSearchViewKiosk;
 import com.alfredposclient.view.viewkiosk.TopMenuViewKiosk;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainPageKiosk extends BaseActivity {
 	private String TAG = MainPageKiosk.class.getSimpleName();
@@ -509,7 +509,7 @@ public class MainPageKiosk extends BaseActivity {
 					printerLoadingDialog.showByTime(3000);
 					PrinterTitle title = ObjectFactory.getInstance()
 							.getPrinterTitle(
-									App.instance.getRevenueCenter().getId(),
+									App.instance.getRevenueCenter(),
 									currentOrder,
 									App.instance.getUser().getFirstName()
 											+ App.instance.getUser()
@@ -557,7 +557,7 @@ public class MainPageKiosk extends BaseActivity {
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitle(
-								App.instance.getRevenueCenter().getId(),
+								App.instance.getRevenueCenter(),
 								paidOrder,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),

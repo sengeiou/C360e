@@ -197,7 +197,7 @@ public class EditSettlementHtml extends BaseActivity {
 						currentOrder.getTableId());
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitle(
-								App.instance.getRevenueCenter().getId(),
+								App.instance.getRevenueCenter(),
 								currentOrder,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),

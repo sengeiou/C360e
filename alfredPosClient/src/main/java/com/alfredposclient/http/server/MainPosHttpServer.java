@@ -1139,7 +1139,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		try {
 			JSONObject jsonObject = new JSONObject(params);
 			
-			KotSummary kotSummary = gson.fromJson(
+			final KotSummary kotSummary = gson.fromJson(
 					jsonObject.getString("kotSummary"), KotSummary.class);
 			List<KotNotification> kotNotifications = new ArrayList<KotNotification>();
 			ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
@@ -1197,8 +1197,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				result.put("resultCode", ResultCode.SUCCESS);
 				result.put("resultKotItemDetails", resultKotItemDetails);
 				result.put("kotSummaryId", kotSummary.getId());
-				if(!TextUtils.isEmpty(App.instance.getCallAppIp()))
+				if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
 					SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getOrderNo().toString());
+
+				}
 				int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId());
 				if(count == 0){
 					KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE, kotSummary.getId());

@@ -616,7 +616,7 @@ public class MainPage extends BaseActivity {
 						printerLoadingDialog.showByTime(3000);
 						PrinterTitle title = ObjectFactory.getInstance()
 								.getPrinterTitle(
-										App.instance.getRevenueCenter().getId(),
+										App.instance.getRevenueCenter(),
 										currentOrder,
 										App.instance.getUser().getFirstName()
 												+ App.instance.getUser()
@@ -664,7 +664,7 @@ public class MainPage extends BaseActivity {
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitle(
-								App.instance.getRevenueCenter().getId(),
+								App.instance.getRevenueCenter(),
 								paidOrder,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),

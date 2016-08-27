@@ -43,7 +43,7 @@
 #-libraryjars ../AlfredBase/libs/zxing.jar
 #-libraryjars ../AlfredBase/libs/umeng-analytics-v5.4.2.jar
 -libraryjars ../AlfredBase
--libraryjars ../AlfredTaskQueue
+#-libraryjars ../AlfredTaskQueue
 
 
 -dontwarn com.codebutler.android_websockets.**

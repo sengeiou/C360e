@@ -1,10 +1,5 @@
 package com.alfredposclient.popupwindow;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.view.Gravity;
@@ -56,6 +51,11 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.view.RingTextView;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class OrderSplitPrintWindow implements OnClickListener {
 	private PopupWindow popupWindow;
@@ -614,7 +614,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 			printerLoadingDialog.setTitle(context.getResources().getString(R.string.bill_printing));
 			printerLoadingDialog.showByTime(3000);
 			PrinterTitle title = ObjectFactory.getInstance().getPrinterTitle(
-					App.instance.getRevenueCenter().getId(),
+					App.instance.getRevenueCenter(),
 					order,
 					App.instance.getUser().getFirstName()
 							+ App.instance.getUser().getLastName(),

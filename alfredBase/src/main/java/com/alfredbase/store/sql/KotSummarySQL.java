@@ -24,8 +24,9 @@ public class KotSummarySQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.KotSummary
-					+ "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime, businessDate,isTakeAway,orderNo)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
+					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { kotSummary.getId(),
@@ -39,7 +40,8 @@ public class KotSummarySQL {
 							       kotSummary.getUpdateTime(),
 							       kotSummary.getBusinessDate(),
 							       kotSummary.getIsTakeAway(),
-							       kotSummary.getOrderNo()
+							       kotSummary.getOrderNo(),
+							       kotSummary.getRevenueCenterIndex()
 							 });
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,8 +57,9 @@ public class KotSummarySQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.KotSummary
-					+ "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime, businessDate,isTakeAway,orderNo)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
+					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (KotSummary kotSummary : kotSummarys) {
@@ -84,6 +87,8 @@ public class KotSummarySQL {
 							kotSummary.getIsTakeAway());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 12,
 							kotSummary.getOrderNo());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 13,
+							kotSummary.getRevenueCenterIndex());
 					sqLiteStatement.executeInsert();
 				}
 				db.setTransactionSuccessful();
@@ -122,6 +127,7 @@ public class KotSummarySQL {
 				kotSummary.setBusinessDate(cursor.getLong(9));
 				kotSummary.setIsTakeAway(cursor.getInt(10));
 				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				result.add(kotSummary);
 			}
 			db.setTransactionSuccessful();
@@ -165,6 +171,7 @@ public class KotSummarySQL {
 				kotSummary.setBusinessDate(cursor.getLong(9));
 				kotSummary.setIsTakeAway(cursor.getInt(10));
 				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				result.add(kotSummary);
 			}
 			db.setTransactionSuccessful();
@@ -208,6 +215,7 @@ public class KotSummarySQL {
 				kotSummary.setBusinessDate(cursor.getLong(9));
 				kotSummary.setIsTakeAway(cursor.getInt(10));
 				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				result.add(kotSummary);
 			}
 			db.setTransactionSuccessful();
@@ -251,6 +259,7 @@ public class KotSummarySQL {
 				kotSummary.setBusinessDate(cursor.getLong(9));
 				kotSummary.setIsTakeAway(cursor.getInt(10));
 				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				result.add(kotSummary);
 			}
 			db.setTransactionSuccessful();
@@ -286,6 +295,7 @@ public class KotSummarySQL {
 				kotSummary.setBusinessDate(cursor.getLong(9));
 				kotSummary.setIsTakeAway(cursor.getInt(10));
 				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -318,6 +328,7 @@ public class KotSummarySQL {
 				kotSummary.setBusinessDate(cursor.getLong(9));
 				kotSummary.setIsTakeAway(cursor.getInt(10));
 				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -350,6 +361,7 @@ public class KotSummarySQL {
 				kotSummary.setBusinessDate(cursor.getLong(9));
 				kotSummary.setIsTakeAway(cursor.getInt(10));
 				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -56,8 +56,10 @@ public class SyncCentre {
 			httpClient = new AsyncHttpClient();
 			httpClient.addHeader("Connection", "close");
 			httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
+			httpClient.setTimeout(20 * 1000);
 			syncHttpClient = new SyncHttpClient();
 			syncHttpClient.addHeader("Connection", "close");
+			syncHttpClient.setTimeout(20 * 1000);
 			syncHttpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
 		}
 	}
@@ -381,7 +383,7 @@ public class SyncCentre {
 	 * @param num
      */
 	public void callAppNo(final Context context, String num) {
-		String url ="http://" + App.instance.getCallAppIp() + ":8080";
+		String url ="http://" + App.instance.getCallAppIp() + ":8080/";
 		HttpAPI.callAppNo(context, url, syncHttpClient, num);
 
 	}

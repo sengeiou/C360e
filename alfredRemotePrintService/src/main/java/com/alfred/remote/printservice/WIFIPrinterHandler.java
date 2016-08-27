@@ -1,7 +1,6 @@
 package com.alfred.remote.printservice;
 
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,8 +15,8 @@ public class WIFIPrinterHandler extends Handler {
 	private ESCPrinter printer;
     static final String TAG = "WIFIPrinterHandler";
 	
-	public WIFIPrinterHandler(Looper looper, String ip) {
-		super(looper);
+	public WIFIPrinterHandler(String ip) {
+		super(PrintService.instance.getMainLooper());
 		this.ip = ip;
 	}
 

@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +21,7 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
@@ -329,8 +329,8 @@ public class KitchenOrder extends BaseActivity {
 			orderId.setVisibility(View.VISIBLE);
 		}
 		kotId.setText(kot.getKotSummary().getId()+"");
-		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderId()+"");
-		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderId() + "");
+		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo()+"");
+		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
 		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName()+"");
 		posName.setText(kot.getKotSummary().getRevenueCenterName()+"");
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));

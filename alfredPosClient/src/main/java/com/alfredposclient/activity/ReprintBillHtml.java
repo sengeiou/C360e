@@ -214,7 +214,7 @@ public class ReprintBillHtml extends BaseActivity {
 			App.instance.remoteBillPrint(
 					printer,
 					ObjectFactory.getInstance().getPrinterTitle(
-							App.instance.getRevenueCenter().getId(),
+							App.instance.getRevenueCenter(),
 							order,
 							App.instance.getUser().getFirstName()
 									+ App.instance.getUser().getLastName(),

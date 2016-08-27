@@ -30,7 +30,10 @@ android {
 }
 
 dependencies {
-    compile project(':alfredTaskQueue')
+//    compile project(':alfredTaskQueue')
+//    compile 'com.birbit:android-priority-jobqueue:2.0.0'
+    compile 'com.path:android-priority-jobqueue:1.1.2'
+    compile 'io.reactivex:rxjava:1.1.5'
     compile project(':alfredBase')
     compile rootProject.ext.libSupportV4
     compile files('libs/ePOS-Print.jar')

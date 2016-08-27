@@ -1,8 +1,5 @@
 package com.alfredkds.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -30,12 +27,16 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
 import com.alfredkds.javabean.Kot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * KOT信息，每桌菜品展示ScrollView
@@ -188,8 +189,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemDetails = kot.getKotItemDetails();
 		this.kotItemModifiers = kot.getKotItemModifiers();
 		kotId.setText(kot.getKotSummary().getId() + "");
-		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderId() + "");
-		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderId() + "";
+		orderId.setText(context.getResources().getString(R.string.order_id) + kot.getKotSummary().getOrderNo() + "");
+		String orderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
 		if(kot.getKotSummary() != null && kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.TAKE_AWAY){
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}

@@ -23,4 +23,14 @@ public class IntegerUtils {
 
 	    }
 	}
+
+	/**
+	 * 组合叫号
+	 * @param index
+	 * @param num
+     * @return
+     */
+	public static String fromat(int index,String num){
+		return index + String.format("%03d", Integer.parseInt(num));
+	}
 }

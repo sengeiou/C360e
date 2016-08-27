@@ -1,7 +1,5 @@
 package com.alfredkds.global;
 
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 
@@ -10,6 +8,8 @@ import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredkds.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
+
+import java.util.Map;
 
 /* Wrapper of all HTTP Requests (KDS -> Main POS) */
 public class SyncCentre {
@@ -35,6 +35,7 @@ public class SyncCentre {
 			httpClient = new AsyncHttpClient();
 			httpClient.addHeader("Connection", "close");
 			httpClient.setMaxRetriesAndTimeout(1, 5 * 1000);
+			httpClient.setTimeout(25 * 1000);
 		}
 	}
     public void setNetworkStatus(boolean connected) {

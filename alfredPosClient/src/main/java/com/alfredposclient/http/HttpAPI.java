@@ -16,6 +16,7 @@ import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.BOHSettlementHtml;
 import com.alfredposclient.activity.MainPage;
@@ -28,6 +29,7 @@ import com.alfredposclient.activity.XZReportHtml;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
@@ -1207,19 +1209,33 @@ public class HttpAPI {
 								 AsyncHttpClient httpClient, String num){
 		try {
 			RequestParams requestParams = new RequestParams();
-			requestParams.put("callnumber", num);
-			httpClient.get(context,url, requestParams,new AsyncHttpResponseHandlerEx(){
-				@Override
-				public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-					super.onSuccess(statusCode, headers, responseBody);
-				}
+			requestParams.put("callnumber", IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), num));
+			httpClient.get(context, url, requestParams, new AsyncHttpResponseHandler() {
+						@Override
+						public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+							System.out.print("192.168.20.102========onSuccess");
+						}
 
-				@Override
-				public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-					super.onFailure(statusCode, headers, responseBody, error);
-//					UIHelp.showShortToast();
-				}
-			});
+						@Override
+						public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+							System.out.print("192.168.20.102========onFailure:" + error.getMessage());
+						}
+					}
+//					new AsyncHttpResponseHandlerEx(){
+//				@Override
+//				public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//					System.out.print("192.168.20.102========onSuccess");
+//					super.onSuccess(statusCode, headers, responseBody);
+//				}
+//
+//				@Override
+//				public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//					System.out.print("192.168.20.102========onFailure:" + error.getMessage());
+//					super.onFailure(statusCode, headers, responseBody, error);
+////					UIHelp.showShortToast();
+//				}
+//			}
+			);
 //			httpClient.get(context, url,
 //					entity,
 //					HttpAssembling.CONTENT_TYPE,

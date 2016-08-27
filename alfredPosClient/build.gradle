@@ -40,8 +40,10 @@ android {
 
 dependencies {
     compile project(':alfredBase')
-    compile project(':alfredTaskQueue')
+//    compile project(':alfredTaskQueue')
     compile rootProject.ext.libSupportV4
+    compile 'com.path:android-priority-jobqueue:1.1.2'
+//    compile 'com.birbit:android-priority-jobqueue:2.0.0'
     compile files('libs/android-websockets.jar')
     compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
 }

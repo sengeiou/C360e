@@ -59,6 +59,7 @@ public class PrinterQueueManager {
 	    	    	Log.d(TAG, "PrintQueue run");
 	    	    	for (PrintQueueMsg msg:messages) {
 	    	             //add to print JOB
+						Log.d(TAG, "PrintQueue size " + messages.size() + " now index:" + messages.indexOf(msg));
 	    	    		PrintManager printMgr = ((PrintService)context).getPrintMgr();
 	    	    		JobManager printJobMgr = printMgr.configureJobManager(msg.getPrinterIp());
 	    	    		if (printJobMgr != null) {
@@ -66,7 +67,7 @@ public class PrinterQueueManager {
 	    	    		}
 	        	}	        	 
 	         }
-	      }, 0, 60, TimeUnit.SECONDS);	
+	      }, 0, 30, TimeUnit.SECONDS);
     	
     }
     

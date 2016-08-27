@@ -1,11 +1,5 @@
 package com.alfredkds.activity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
@@ -32,6 +26,7 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredkds.R;
@@ -44,6 +39,12 @@ import com.alfredkds.view.PopItemAdapter;
 import com.alfredkds.view.PopItemListView;
 import com.alfredkds.view.PopItemListView.RemoveDirection;
 import com.alfredkds.view.PopItemListView.RemoveListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 有多少桌点同样的菜，筛选出来
@@ -444,8 +445,8 @@ public class Summary extends BaseActivity {
 			orderId.setVisibility(View.VISIBLE);
 		}
 		kotId.setText(kot.getKotSummary().getId()+"");
-		orderId.setText(context.getResources().getString(R.string.order_id_)+kot.getKotSummary().getOrderId()+"");
-		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderId() + "");
+		orderId.setText(context.getResources().getString(R.string.order_id_)+kot.getKotSummary().getOrderNo()+"");
+		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
 		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName()+"");
 		posName.setText(kot.getKotSummary().getRevenueCenterName()+"");
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));

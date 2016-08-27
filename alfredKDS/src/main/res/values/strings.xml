@@ -28,7 +28,7 @@
     <string name="other_pos_data">Other MainPos send data</string>
     <string name="order_discarded">The order has been discarded by cashier.</string>
     <string name="reconnect_pos">Main POS disconnected.\n Reconnect it?</string>
-    <string name="order_id_">Order Id : </string>
+    <string name="order_id_">Order No : </string>
     <string name="table_">Table -  </string>
     <string name="take_away">Take away</string>
     
