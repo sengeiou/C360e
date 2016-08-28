@@ -1,7 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -9,6 +7,8 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PrintQueueMsg;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
 
 
 public class PrintQueueMsgSQL {
@@ -209,6 +209,15 @@ public class PrintQueueMsgSQL {
 			}
 		}
 		return prtMsg;
+	}
+
+	public static void updatePrintQueueMsgStatus(int status, String id, long created){
+		String sql = "update " + TableNames.PrintQueue + " set status = ? where msgUUID= ? and created = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] { status+"", id, created+"" });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 		
 	public static void deleteSuccessedMsgs() {

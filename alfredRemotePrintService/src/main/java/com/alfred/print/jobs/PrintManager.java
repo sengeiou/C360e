@@ -1,14 +1,5 @@
 package com.alfred.print.jobs;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +8,15 @@ import com.alfredbase.store.Store;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PrintManager {
 
@@ -114,19 +114,19 @@ public class PrintManager {
 		}
     }
     
-    public synchronized void addPingJob() {
-		if (!printJobManagers.isEmpty()) {
-			Set<String> key = printJobManagers.keySet();
-			for (Iterator<String> it = key.iterator(); it.hasNext();) {
-				String ip = it.next();
-				JobManager jobMgr =  printJobManagers.get(ip);
-				PingJob pjb = new PingJob();
-				pjb.setPrinterIp(ip);
-				//jobMgr.addJob(pjb);
-				this.addJob(ip, pjb);
-			}
-		}  	
-    }
+//    public synchronized void addPingJob() {
+//		if (!printJobManagers.isEmpty()) {
+//			Set<String> key = printJobManagers.keySet();
+//			for (Iterator<String> it = key.iterator(); it.hasNext();) {
+//				String ip = it.next();
+//				JobManager jobMgr =  printJobManagers.get(ip);
+//				PingJob pjb = new PingJob();
+//				pjb.setPrinterIp(ip);
+//				//jobMgr.addJob(pjb);
+//				this.addJob(ip, pjb);
+//			}
+//		}
+//    }
     
     private  Object joblock = new Object();
     public void addJob(String ip, Job job) {

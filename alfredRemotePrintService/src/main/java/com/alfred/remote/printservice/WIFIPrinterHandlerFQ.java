@@ -9,13 +9,13 @@ import com.alfred.print.jobs.WifiCommunication;
 import com.alfred.printer.ESCPrinter;
 
 
-public class WIFIPrinterHandler extends Handler {
+public class WIFIPrinterHandlerFQ extends Handler {
 	private String ip;
 	private WIFIPrintCallback printerCbk ;
 	private ESCPrinter printer;
     static final String TAG = "WIFIPrinterHandler";
 	
-	public WIFIPrinterHandler(String ip) {
+	public WIFIPrinterHandlerFQ(String ip) {
 		super(PrintService.instance.getMainLooper());
 		this.ip = ip;
 	}

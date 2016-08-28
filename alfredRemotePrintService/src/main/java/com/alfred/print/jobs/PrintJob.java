@@ -1,24 +1,22 @@
 package com.alfred.print.jobs;
 
-import java.util.ArrayList;
-
 import android.util.Log;
 
 import com.alfred.printer.ESCPrinter;
 import com.alfred.printer.PrintData;
 import com.alfred.printer.StringUtil;
 import com.alfred.remote.printservice.PrintService;
-import com.alfred.remote.printservice.WIFIPrinterHandler;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PrintQueueMsg;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.NetUtil;
-import com.epson.eposprint.Print;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
+
+import java.util.ArrayList;
 
 public class PrintJob  extends Job{
     private String printerIp;
@@ -93,67 +91,103 @@ public class PrintJob  extends Job{
 		 Log.d(TAG, "onAdded:"+this.printerIp);
 		 PrintQueueMsg content = PrintQueueMsgSQL.getUnsentMsgById(this.msgUUID, this.created);
 	     if (content != null) {
-	    	    this.printerIp = content.getPrinterIp().trim();
-	    		content.setStatus(ParamConst.PRINTQUEUE_MSG_QUEUED);
-	    		PrintQueueMsgSQL.add(content);
-	     }		 
+			 this.printerIp = content.getPrinterIp().trim();
+	     }
 	}
 
 	@Override
 	public void onRun() throws Throwable {
-        boolean result = false;
-        
-//        if (false) {
-        	//EPC/POS commands compatiable printer
+        boolean isPrintLink;
         boolean printed = false;
-        
+		boolean pingSuccess;
         Log.d(TAG, "onRun:"+this.printerIp);
-        //
+		Log.i(TAG, "onRun:this uuid is " + this.msgUUID + ", then this object is" + this);
         Gson gson = new Gson();
         PrintQueueMsg content = PrintQueueMsgSQL.getQueuedMsgById(this.msgUUID, this.created);
-        if (content == null)
-        	return ;
-        
-        this.data = gson.fromJson(content.getData(), new TypeToken<ArrayList<PrintData>>(){}.getType());
-        
-    	WIFIPrinterHandler hdl = ((PrintService)PrintService.instance).getPrinterHandler(this.printerIp);
-    	ESCPrinter printer = hdl.getPrinter();
-    	
-    	//ping printer first
-    	if (printer != null) {
-            result = printer.ping();
-        	if (result) {
-	    		if (!printer.isConnected()) {
-	    			//need reconnect
-	    			printer.reconnect();
-	    			result = false;
-	    		} else {
-	    			printer.setData(this.data);
-	    			result = printer.open();
-	    			if (result)
-	    			   printed = true;
-	    		}
-        	}else{
-        		printer.onSendFailed();
-        		//hdl.sendEmptyMessage(WifiCommunication.SEND_FAILED);
-        	}
-    	}else {
-    		//printer is null, need add new printer
-    		boolean networked = NetUtil.ping(printerIp); 
-    		if (networked) {
-	    	   ESCPrinter newPrinter = new ESCPrinter(((PrintService)PrintService.instance), Print.DEVTYPE_TCP, this.printerIp, "P80");
-	    	   hdl.setPrinter(newPrinter);
-    		}
-    	}
-
-		if (printed && result) {
-			content.setStatus(ParamConst.PRINTQUEUE_MSG_SUCCESS);
-			PrintQueueMsgSQL.add(content);		
+        if (content == null){
+			return ;
 		}
-		if (!result) {
+		PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_QUEUED, this.msgUUID, this.created);
+
+//		Subscriber<ESCPrinter> subscriber = new Subscriber<ESCPrinter>() {
+//			@Override
+//			public void onCompleted() {
+//
+//			}
+//
+//			@Override
+//			public void onError(Throwable e) {
+//
+//			}
+//
+//			@Override
+//			public void onNext(ESCPrinter escPrinter) {
+//				if(escPrinter != null){
+//
+//				}
+//			}
+//
+//		};
+//
+//		Observable.just(printerIp) // 输入类型 String
+//				.map(new Func1<String, ESCPrinter>() {
+//					@Override
+//					public ESCPrinter call(String ip) { // 参数类型 String
+//						return getESCPrinter(ip); // 返回类型 ESCPrinter
+//					}
+//				})
+//				.subscribe(subscriber);
+
+        this.data = gson.fromJson(content.getData(), new TypeToken<ArrayList<PrintData>>(){}.getType());
+    	ESCPrinter printer = PrintService.instance.getEscPrinterMap().get(this.printerIp);
+		//ping printer first
+		pingSuccess = NetUtil.ping(printerIp);
+    	if (pingSuccess) {
+			if(printer == null){
+				printer= new ESCPrinter(this.printerIp);
+				isPrintLink = printer.open();
+				PrintService.instance.putEscPrinterMap(this.printerIp, printer);
+			}else {
+				if (!printer.isConnected()) {
+					isPrintLink = printer.reconnect();
+				}else{
+					isPrintLink = true;
+				}
+			}
+			if(isPrintLink)
+				printed = printer.setData(this.data);
+		}else{
+			PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_UN_SEND, this.msgUUID, this.created);
+			printer.onSendFailed();
+			Log.e(TAG, "onRun: this ip is failing ping, waiting next check PrintQueueMsg");
+			return;
+		}
+		if (printed && isPrintLink && pingSuccess) {
+			PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_SUCCESS, this.msgUUID, this.created);
+		}
+		if(!isPrintLink) {
+			throw new RuntimeException("Printer unLink run next time");
+		}
+		if (!printed) {
 			throw new RuntimeException("Print Error");
 		}
 	}
+
+//	private ESCPrinter getESCPrinter(String ip){
+//		boolean isPrintLink = NetUtil.ping(printerIp);
+//		ESCPrinter printer = null;
+//		if (isPrintLink) {
+//			printer = PrintService.instance.getEscPrinterMap().get(ip);
+//			if(printer == null){
+//				printer = new ESCPrinter(this.printerIp);
+//				PrintService.instance.putEscPrinterMap(this.printerIp, printer);
+//			}else if (printer.isConnected()) {
+//				//need reconnect
+//				printer.reconnect();
+//			}
+//		}
+//		return printer;
+//	}
 
     @Override
     protected void onCancel() {

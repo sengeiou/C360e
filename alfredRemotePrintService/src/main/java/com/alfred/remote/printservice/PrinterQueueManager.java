@@ -45,7 +45,7 @@ public class PrinterQueueManager {
 	    	//ArrayList<PrintData> data =  gson.fromJson(msg.getData(), new TypeToken<ArrayList<PrintData>>(){}.getType());
 	    	job.setCharSize(msg.getCharSize());
 	    	job.setPrinterIp(msg.getPrinterIp());
-	    	job.setData(null);
+//	    	job.setData(null);
     	}
     	return job;
     }
@@ -63,6 +63,7 @@ public class PrinterQueueManager {
 	    	    		PrintManager printMgr = ((PrintService)context).getPrintMgr();
 	    	    		JobManager printJobMgr = printMgr.configureJobManager(msg.getPrinterIp());
 	    	    		if (printJobMgr != null) {
+							//TODO to test Create the same
 		    	    		printMgr.addJob(msg.getPrinterIp(), createJobFromQueue(msg));	    	    			
 	    	    		}
 	        	}	        	 

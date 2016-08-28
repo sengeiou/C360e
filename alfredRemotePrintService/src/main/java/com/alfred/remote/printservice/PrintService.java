@@ -12,11 +12,11 @@ import com.alfredbase.PrinterDeviceConfig;
 import com.alfredbase.store.Store;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PrintService extends Service {
 
@@ -41,8 +41,8 @@ public class PrintService extends Service {
     final List<IAlfredRemotePrintServiceCallback> mCallbacks = new ArrayList<IAlfredRemotePrintServiceCallback>();
     
     //IP Printer Handler
-    static Map<String, WIFIPrinterHandler> printerHandlers = new ConcurrentHashMap<String, WIFIPrinterHandler>();
-    
+//    static Map<String, WIFIPrinterHandler> printerHandlers = new ConcurrentHashMap<String, WIFIPrinterHandler>();
+    private Map<String, ESCPrinter> escPrinterMap = new HashMap<String, ESCPrinter>();
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -63,8 +63,8 @@ public class PrintService extends Service {
 		if (extras != null) {
 			if ("alfred.intent.action.bindPrintService".equals(intent.getAction()) &&
 					("fxxxkprinting").equals((String) extras.get("PRINTERKEY"))) {
-				if (this.printJobMgr!=null)
-					this.printJobMgr.addPingJob();
+//				if (this.printJobMgr!=null)
+//					this.printJobMgr.addPingJob();
 				
 				return new PrintServiceBinder(this);
 			}
@@ -77,7 +77,7 @@ public class PrintService extends Service {
 
 		Log.d(TAG, "Destroying Service");
 		//this.printJobMgr.clear();
-		//this.printJobMgr.stop();
+		this.printJobMgr.stop();
         this.mCallbacks.clear();
         //close all sockets
 		this.pqMgr.stop();
@@ -89,18 +89,21 @@ public class PrintService extends Service {
 	}
 
 	public void closeAllSockets() {
-		Set<String> key = printerHandlers.keySet();
-		for (Iterator it = key.iterator(); it.hasNext();) {
-			String ip = (String) it.next();
-			WIFIPrinterHandler wifiObj =  printerHandlers.get(ip);
-			if (wifiObj != null) {
-			   ESCPrinter escp = wifiObj.getPrinter();
-			   if (escp != null) {
-			      escp.setConnected(false);
-			      escp.close();
-			   }
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Set<String> key = escPrinterMap.keySet();
+				for (Iterator it = key.iterator(); it.hasNext();) {
+					String ip = (String) it.next();
+					ESCPrinter escp = escPrinterMap.get(ip);
+					if (escp != null) {
+						escp.setConnected(false);
+						escp.close();
+					}
+				}
 			}
-		} 		
+		}).start();
+
 	}
 	
 	public PrintManager getPrintMgr() {
@@ -137,23 +140,32 @@ public class PrintService extends Service {
 		Store.putInt(this, PrintService.PRINT_DOLLAR_SIGN_SETTING, dollarsign);
 	}
 	
-	public void removePrinterHandlerByIP(String ip) {
-		this.printerHandlers.remove(ip);
-	}
-	
-	public WIFIPrinterHandler getPrinterHandler(String ip) {
-		WIFIPrinterHandler wfpHandler = null;
-		synchronized(lock) {
-		  wfpHandler = PrintService.printerHandlers.get(ip);
-		  if (wfpHandler == null) {
-//			  Looper.prepare();
-			  wfpHandler = new WIFIPrinterHandler(ip);
-//			  Looper.loop();
-			  PrintService.printerHandlers.put(ip, wfpHandler);
-		  }
-		}
-		return wfpHandler;
+	public void removePrinterByIP(String ip) {
+		this.escPrinterMap.remove(ip);
 	}
 
+	
+//	public WIFIPrinterHandlerFQ getPrinterHandler(String ip) {
+//		WIFIPrinterHandlerFQ wfpHandler = null;
+//		synchronized(lock) {
+//		  wfpHandler = PrintService.printerHandlers.get(ip);
+//		  if (wfpHandler == null) {
+////			  Looper.prepare();
+//			  wfpHandler = new WIFIPrinterHandlerFQ(ip);
+////			  Looper.loop();
+//			  PrintService.printerHandlers.put(ip, wfpHandler);
+//		  }
+//		}
+//		return wfpHandler;
+//	}
+
+
+	public Map<String, ESCPrinter> getEscPrinterMap() {
+		return escPrinterMap;
+	}
+
+	public void putEscPrinterMap(String id, ESCPrinter eSCPrinter) {
+		this.escPrinterMap.put(id, eSCPrinter);
+	}
 
 }

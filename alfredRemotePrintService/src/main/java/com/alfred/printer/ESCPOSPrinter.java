@@ -1,11 +1,10 @@
 package com.alfred.printer;
 
 import android.content.Context;
-import android.os.Handler;
-import android.util.Log;
 
-import com.alfred.print.jobs.WifiCommunication;
 import com.alfred.remote.printservice.PrintService;
+
+import java.io.ByteArrayOutputStream;
 
 public class ESCPOSPrinter {
 	static private String TAG = "ESCPOSPrinter";
@@ -57,8 +56,8 @@ public class ESCPOSPrinter {
 	static public byte UNDERLINE_SINGLE = 1;
 	static public byte UNDERLINE_DOUBLE = 2;
 
-	
-	WifiCommunication wfComm = null;
+	private ByteArrayOutputStream out;
+
 	int  connFlag = 0;
 //	revMsgThread revThred = null;
 	Context mContext;
@@ -67,77 +66,30 @@ public class ESCPOSPrinter {
 	static int ALIGN_LEFT = -1;
 	static int ALIGN_CENTER = 0;
 	static int ALIGN_RIGHT = 1;
-	Handler parent = null;
 	private static final int WFPRINTER_REVMSG = 0x06;
 	
-	private   Handler mHandler;
-	private String ip = null;
-	
-    public ESCPOSPrinter(PrintService context,Handler parent) {
+
+    public ESCPOSPrinter(PrintService context) {
 		super();
 		this.mContext = context;
-		this.parent = parent;
+		out = new ByteArrayOutputStream();
     }
     
-    public void open(String ip, int port) {
-    	this.ip = ip;
-    	if (wfComm == null) {
-    	  wfComm = new WifiCommunication(this.parent);
-    	  wfComm.initSocket(ip,9100);
-    	}
-    }
-    public boolean isConnected() {
-    	boolean ret = false;
-    	if (wfComm != null) {
-    		ret = wfComm.isConnected();
-    	}
-    	return ret;
-    }
-    public void reset()  throws Exception{
-    	boolean result = true;
 
+    public void reset()  throws Exception{
     	byte[] tcmd = new byte[2];
         tcmd[0] = ESCPOSPrinter.ESC;
    	    tcmd[1] = 0x40;
-   	    result =  wfComm.sndByte(tcmd);
-    	if (result == false) {
-    		throw new RuntimeException("reset Failed"); 
-    	}   	    
+   	    out.write(tcmd);
     }
-    
-    //tested
-    public synchronized void close() {
-    	Log.d(TAG, "printer ("+ip+") close");
-    	if (wfComm !=null) {
-    	  wfComm.close();
-    	  wfComm = null;
-    	}
-    }
-    
-    
-    public  void checkStatus()  throws Exception{
-    	boolean result = true;
-		byte[] tcmd = new byte[3];
-		tcmd[0] = 0x10;
-		tcmd[1] = 0x04;
-		tcmd[2] = 0x04;  
-		result =   wfComm.sndByte(tcmd);  
-    	if (result == false) {
-    		throw new RuntimeException("Send Failed"); 
-    	}		
-    }
-    
+
     //tested
     public void setJustification (byte just) throws Exception{
-    	boolean result = true;
-    	byte[] cmd = new byte[3];        
+    	byte[] cmd = new byte[3];
 	    cmd[0] = ESCPOSPrinter.ESC;
 	    cmd[1] = 0x61;
 	    cmd[2] = just; 
-	    result =  wfComm.sndByte(cmd);
-    	if (result == false) {
-    		throw new RuntimeException("Send Failed"); 
-    	}	    
+	    out.write(cmd);
     }
     
 	/**
@@ -149,14 +101,13 @@ public class ESCPOSPrinter {
 	 * @param data $str Text to print
 	 */    
     public void printText(String data) throws Exception{
-    	boolean result = true;
-    	checkStatus();
+//    	boolean result = true;
+//    	checkStatus();
     	if (data!=null&& data.length()>0) {
-    		result = wfComm.sendMsg(data,"gbk");   
-    	}
-    	if (result == false) {
-    		throw new RuntimeException("Send Failed"); 
-    	}
+			byte[] byt = data.getBytes("gbk");
+			out.write(byt);
+		}
+
     }
     
     /*
@@ -166,10 +117,7 @@ public class ESCPOSPrinter {
         byte[] tail = new byte[2];
         tail[0] = 0x0A;
         tail[1] = 0x0D;
-        boolean result =  wfComm.sndByte(tail);     
-    	if (result == false) {
-    		throw new RuntimeException("Send Failed"); 
-    	}
+        out.write(tail);
     }
     
     /* tested
@@ -180,10 +128,7 @@ public class ESCPOSPrinter {
         tcmd[0] = ESCPOSPrinter.ESC;
    	    tcmd[1] = 0x4D;
    	    tcmd[2] = font;   //0.125mm line height
-   	    boolean result =  wfComm.sndByte(tcmd); 
-    	if (result == false) {
-    		throw new RuntimeException("Send Failed"); 
-    	}   	    
+   	    out.write(tcmd);
     }
     
     /*
@@ -199,30 +144,16 @@ public class ESCPOSPrinter {
 	    }else {
 	       cmd[2] = 0x00;
 	    }
-	    boolean result =  wfComm.sndByte(cmd);  
-    	if (result == false) {
-    		throw new RuntimeException("Set Font Size Failed"); 
-    	} 	    
+	   out.write(cmd);
     }
     
     //tested
     public  void setUnderline(byte underline) throws Exception {
-        byte[] tcmd = new byte[3];
-        tcmd[0] = ESCPOSPrinter.ESC;
-   	    tcmd[1] = 0x2D;
-   	    tcmd[2] = underline;   //0.125mm line height
-   	    boolean result = wfComm.sndByte(tcmd);   
-        
-   	    if (result) {
-	        byte[] chunderline = new byte[3];
-	        tcmd[0] = ESCPOSPrinter.FS;
-	   	    tcmd[1] = 0x21;
-	   	    tcmd[2] |= 0x80;   
-	   	    result = wfComm.sndByte(tcmd);  
-   	    }
-    	if (result == false) {
-    		throw new RuntimeException("Set Underline Failed"); 
-    	}   	    
+		byte[] tcmd = new byte[3];
+		tcmd[0] = ESCPOSPrinter.ESC;
+		tcmd[1] = 0x2D;
+		tcmd[2] = underline;   //0.125mm line height
+		out.write(tcmd);
     }
     
     public  void setBold(byte bold)  throws Exception{
@@ -230,29 +161,22 @@ public class ESCPOSPrinter {
         tcmd[0] = ESCPOSPrinter.ESC;
    	    tcmd[1] = 0x45;
    	    tcmd[2] = bold;   
-   	    boolean result = wfComm.sndByte(tcmd);    
-    	if (result == false) {
-    		throw new RuntimeException("Set Bold Text Failed"); 
-    	}    	    
+   	    out.write(tcmd);
     }
     
     //tested
     public  void feed(byte lines) throws Exception {
-    	boolean result = true;
     	if (lines <=1) {
 	         byte[] tcmd = new byte[1];
 	         tcmd[0] = ESCPOSPrinter.LF;
-	         result = wfComm.sndByte(tcmd);
+	         out.write(tcmd);
     	}else{
 	         byte[] tcmd = new byte[3];
 	         tcmd[0] = ESCPOSPrinter.ESC;
 	    	 tcmd[1] = 0x64;
 	    	 tcmd[2] = lines;   //0.125mm line height
-	    	 result =  wfComm.sndByte(tcmd);
+	    	 out.write(tcmd);
     	}
-    	if (result == false) {
-    		throw new RuntimeException("Feed Failed"); 
-    	}      	
     }
     
     //tested
@@ -261,7 +185,7 @@ public class ESCPOSPrinter {
 //	       tcmd[0] = ESCPOSPrinter.ESC;
 //	       tcmd[1] = 0x4A;
 //	       tcmd[2] = 0;   //0.125mm line height
-//	       //wfComm.sndByte(tcmd);
+//	       //out.write(tcmd);
 //	       return true;
 //    }
     
@@ -271,17 +195,9 @@ public class ESCPOSPrinter {
       cutcmd[0]=ESCPOSPrinter.GS;
       cutcmd[1]=0x56;
       cutcmd[2]=0x42;
-      cutcmd[3]=90;   
-      boolean result =  wfComm.sndByte(cutcmd);   	
-	      try {
-			this.feed((byte) 1);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	  	if (result == false) {
-			throw new RuntimeException("Cut Failed"); 
-		}         
+      cutcmd[3]=90;
+	  out.write(cutcmd);
+	  this.feed((byte) 1);
     }
     
     //tested
@@ -292,54 +208,55 @@ public class ESCPOSPrinter {
 		tcmd[2] = 0x00;     
 		tcmd[3] = 0x40;   
 		tcmd[4] = 0x50;   
-		boolean result =   wfComm.sndByte(tcmd); 
-	  	if (result == false) {
-			throw new RuntimeException("Kick Drawer Failed"); 
-		} 		
+		out.write(tcmd);
     }
-    
-	public  void printImage(int width, int height, byte[]bitmap) throws Exception {
-		byte[] sendData = null;
-    	int i = 0,s = 0,j = 0,index = 0,lines = 0;
-    	byte[] temp = new byte[(width / 8)*5];
-    	byte[] dHeader = new byte[8];
-    	boolean result = true;
-    	if(bitmap.length!=0){
-    		dHeader[0] = 0x1D;
-        	dHeader[1] = 0x76;
-        	dHeader[2] = 0x30;
-        	dHeader[3] = 0x00;
-        	dHeader[4] = (byte)(width/8);
-        	dHeader[5] = 0x00;
-        	dHeader[6] = (byte)(bitmap.length%256);
-        	dHeader[7] = (byte)(bitmap.length/256);
-        	result = wfComm.sndByte(dHeader); 	
-	    	for( i = 0 ; i < (bitmap.length/5)+1 ; i++ ){    
-	    		s = 0;
-	    		if( i < bitmap.length/5 ){
-	    			lines = 5;
-	    		}else{
-	    			lines = bitmap.length%5;
-	    		}
-	    		for( j = 0 ; j < lines*(width / 8) ; j++ ){
-	    			temp[s++] = sendData[index++];
-	    		}
-	    		result = wfComm.sndByte(temp); 
-	    		try {
-					Thread.sleep(60);                    
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-	    		for(j = 0 ; j <(width/8)*5 ; j++ ){         
-				    temp[j] = 0;
-			    }
-	    	}
-    	}
-	  	if (result == false) {
-			throw new RuntimeException("Print Image Failed"); 
-		} 
-    }
+
+	public ByteArrayOutputStream getOut() {
+		return out;
+	}
+
+	//	public  void printImage(int width, int height, byte[]bitmap) throws Exception {
+//		byte[] sendData = null;
+//    	int i = 0,s = 0,j = 0,index = 0,lines = 0;
+//    	byte[] temp = new byte[(width / 8)*5];
+//    	byte[] dHeader = new byte[8];
+//    	boolean result = true;
+//    	if(bitmap.length!=0){
+//    		dHeader[0] = 0x1D;
+//        	dHeader[1] = 0x76;
+//        	dHeader[2] = 0x30;
+//        	dHeader[3] = 0x00;
+//        	dHeader[4] = (byte)(width/8);
+//        	dHeader[5] = 0x00;
+//        	dHeader[6] = (byte)(bitmap.length%256);
+//        	dHeader[7] = (byte)(bitmap.length/256);
+//        	result = out.write(dHeader);
+//	    	for( i = 0 ; i < (bitmap.length/5)+1 ; i++ ){
+//	    		s = 0;
+//	    		if( i < bitmap.length/5 ){
+//	    			lines = 5;
+//	    		}else{
+//	    			lines = bitmap.length%5;
+//	    		}
+//	    		for( j = 0 ; j < lines*(width / 8) ; j++ ){
+//	    			temp[s++] = sendData[index++];
+//	    		}
+//	    		result = out.write(temp);
+//	    		try {
+//					Thread.sleep(60);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//	    		for(j = 0 ; j <(width/8)*5 ; j++ ){
+//				    temp[j] = 0;
+//			    }
+//	    	}
+//    	}
+//	  	if (result == false) {
+//			throw new RuntimeException("Print Image Failed");
+//		}
+//    }
 	
     //=
 //	class revMsgThread extends Thread {	
