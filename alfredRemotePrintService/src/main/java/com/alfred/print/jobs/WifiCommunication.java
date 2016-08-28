@@ -101,7 +101,26 @@ public class WifiCommunication {
 		}
 		try {
 			out.write(data);
-			Log.e("TESTTEST", in.read() + "");
+			out.flush();
+			result = true;
+		} catch (IOException e) {
+			result = false;
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public boolean checkStatus(byte[] data) {
+		boolean result;
+		if(data == null){
+			return false;
+		}
+		if (socket == null || out == null){
+			return false;
+		}
+		try {
+			out.write(data);
+			Log.e("Print", in.read() + "");
 			out.flush();
 			result = true;
 		} catch (IOException e) {

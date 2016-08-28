@@ -102,7 +102,7 @@ public class ESCPrinter implements WIFIPrintCallback{
 		tcmd[0] = 0x10;
 		tcmd[1] = 0x04;
 		tcmd[2] = 0x04;
-		boolean result = wfComm.sndByte(tcmd);
+		boolean result = wfComm.checkStatus(tcmd);
 		this.printer.getOut().reset();
 //		wfComm.close();
 		if (!result) {

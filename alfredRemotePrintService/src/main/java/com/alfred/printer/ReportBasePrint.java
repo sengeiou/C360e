@@ -6,7 +6,7 @@ import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
-import com.path.android.jobqueue.Params;
+import com.birbit.android.jobqueue.Params;
 
 public class ReportBasePrint extends PrintJob{
 

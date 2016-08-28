@@ -1,5 +1,7 @@
 package com.alfred.print.jobs;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.alfred.printer.ESCPrinter;
@@ -11,10 +13,12 @@ import com.alfredbase.javabean.PrintQueueMsg;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.NetUtil;
+import com.birbit.android.jobqueue.CancelReason;
+import com.birbit.android.jobqueue.RetryConstraint;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.path.android.jobqueue.Job;
-import com.path.android.jobqueue.Params;
+import com.birbit.android.jobqueue.Job;
+import com.birbit.android.jobqueue.Params;
 
 import java.util.ArrayList;
 
@@ -92,6 +96,7 @@ public class PrintJob  extends Job{
 		 PrintQueueMsg content = PrintQueueMsgSQL.getUnsentMsgById(this.msgUUID, this.created);
 	     if (content != null) {
 			 this.printerIp = content.getPrinterIp().trim();
+			 PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_QUEUED, this.msgUUID, this.created);
 	     }
 	}
 
@@ -107,8 +112,6 @@ public class PrintJob  extends Job{
         if (content == null){
 			return ;
 		}
-		PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_QUEUED, this.msgUUID, this.created);
-
 //		Subscriber<ESCPrinter> subscriber = new Subscriber<ESCPrinter>() {
 //			@Override
 //			public void onCompleted() {
@@ -157,8 +160,11 @@ public class PrintJob  extends Job{
 			if(isPrintLink)
 				printed = printer.setData(this.data);
 		}else{
-			PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_UN_SEND, this.msgUUID, this.created);
-			printer.onSendFailed();
+			onCancel(CancelReason.CANCELLED_WHILE_RUNNING, null);
+//			PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_UN_SEND, this.msgUUID, this.created);
+			if(printer != null)
+				printer.onSendFailed();
+
 			Log.e(TAG, "onRun: this ip is failing ping, waiting next check PrintQueueMsg");
 			return;
 		}
@@ -171,6 +177,17 @@ public class PrintJob  extends Job{
 		if (!printed) {
 			throw new RuntimeException("Print Error");
 		}
+	}
+
+	@Override
+	protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
+		LogUtil.d(TAG, "onCancel:"+this.printerIp);
+		PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.SYNC_MSG_UN_SEND, this.msgUUID, this.created);
+	}
+
+	@Override
+	protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
+		return RetryConstraint.RETRY;
 	}
 
 //	private ESCPrinter getESCPrinter(String ip){
@@ -189,22 +206,7 @@ public class PrintJob  extends Job{
 //		return printer;
 //	}
 
-    @Override
-    protected void onCancel() {
-    	LogUtil.d(TAG, "onCancel:"+this.printerIp);
-    	PrintQueueMsg content = PrintQueueMsgSQL.getQueuedMsgById(this.msgUUID, this.created);
-    	if (content != null) {
-    		content.setStatus(ParamConst.SYNC_MSG_UN_SEND);
-    		PrintQueueMsgSQL.add(content);
-    	}    	
-    }
-    
-	@Override
-	protected boolean shouldReRunOnThrowable(Throwable throwable) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-	
+
 	protected void AddCut() {
 		PrintData cut = new PrintData();
 		cut.setDataFormat(PrintData.FORMAT_CUT);

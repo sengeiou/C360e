@@ -1,13 +1,5 @@
 package com.alfred.printer;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.util.Base64;
 
 import com.alfred.print.jobs.PrintJob;
@@ -16,9 +8,17 @@ import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TimeUtil;
+import com.birbit.android.jobqueue.Params;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.path.android.jobqueue.Params;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BillPrint extends PrintJob{
 
@@ -99,10 +99,11 @@ public class BillPrint extends PrintJob{
 		
 		//流水号 NO
 		PrintData orderNoPrint = new PrintData();
-		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.swift_no_), this.FIXED_COL4_TOTAL-1);
-		String padorderNo = orderNoStr+":"+orderNo+"\r\n";
+		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL-1);
+		String padorderNo = orderNoStr + orderNo+"\r\n";
 		orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//		orderNoPrint.setFontsize(2);
 		orderNoPrint.setText(padorderNo);
 		this.data.add(orderNoPrint);
 		
@@ -177,7 +178,16 @@ public class BillPrint extends PrintJob{
 	
 	/*Kiosk uses only*/
 	public void AddKioskHeader(String table, int pax, String billNo,
-			String posNo, String cashier, String dateTime) {
+			String posNo, String cashier, String dateTime, String orderNo) {
+		//流水号 NO
+		PrintData orderNoPrint = new PrintData();
+		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL-1);
+		String padorderNo = orderNoStr + orderNo+"\r\n";
+		orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
+		orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
+		orderNoPrint.setFontsize(2);
+		orderNoPrint.setText(padorderNo);
+		this.data.add(orderNoPrint);
 
 		//Bill NO
 		PrintData billNoPrint = new PrintData();

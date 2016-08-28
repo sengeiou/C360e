@@ -10,8 +10,8 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PrintQueueMsg;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.google.gson.Gson;
-import com.path.android.jobqueue.JobManager;
-import com.path.android.jobqueue.Params;
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.Params;
 
 import java.util.ArrayList;
 import java.util.UUID;

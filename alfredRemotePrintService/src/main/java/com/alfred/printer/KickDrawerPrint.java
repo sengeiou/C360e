@@ -1,10 +1,10 @@
 package com.alfred.printer;
 
-import java.util.ArrayList;
-
 import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
-import com.path.android.jobqueue.Params;
+import com.birbit.android.jobqueue.Params;
+
+import java.util.ArrayList;
 
 public class KickDrawerPrint extends PrintJob{
 

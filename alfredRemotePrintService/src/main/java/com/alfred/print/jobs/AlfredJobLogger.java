@@ -2,7 +2,7 @@ package com.alfred.print.jobs;
 import android.util.Log;
 
 import com.alfred.remote.printservice.App;
-import com.path.android.jobqueue.log.CustomLogger;
+import com.birbit.android.jobqueue.log.CustomLogger;
 
 
 
@@ -33,5 +33,10 @@ public class AlfredJobLogger implements CustomLogger {
     @Override
     public void e(String text, Object... args) {
         Log.e(TAG, String.format(text, args));
+    }
+
+    @Override
+    public void v(String text, Object... args) {
+
     }
 }

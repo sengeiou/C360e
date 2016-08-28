@@ -1,9 +1,12 @@
 package com.alfred.print.jobs;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.path.android.jobqueue.Job;
-import com.path.android.jobqueue.Params;
+import com.birbit.android.jobqueue.Job;
+import com.birbit.android.jobqueue.Params;
+import com.birbit.android.jobqueue.RetryConstraint;
 
 public class PingJob  extends Job{
     private String printerIp;
@@ -60,14 +63,13 @@ public class PingJob  extends Job{
 	}
 
 	@Override
-	protected void onCancel() {
-		// TODO Auto-generated method stub
-		Log.d(TAG, "onRun:"+this.printerIp);
+	protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
+
 	}
 
 	@Override
-	protected boolean shouldReRunOnThrowable(Throwable throwable) {
-		// TODO Auto-generated method stub
-		return true;
+	protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
+		return RetryConstraint.RETRY;
 	}
+
 }

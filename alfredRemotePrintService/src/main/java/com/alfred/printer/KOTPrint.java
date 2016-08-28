@@ -4,7 +4,8 @@ import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
-import com.path.android.jobqueue.Params;
+import com.alfredbase.utils.IntegerUtils;
+import com.birbit.android.jobqueue.Params;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -42,20 +43,20 @@ public class KOTPrint extends PrintJob{
 		
 		addHortionalLine(this.charSize);
 	}
-	
+
 	public void AddHeader(int isTakeAway, String orderId) {
 		StringBuilder sbr = new StringBuilder();
 		if (isTakeAway==1) {
-			   sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
-			        .append("         "+PrintService.instance.getResources().getString(R.string.order_no_))
+			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
+					.append("         "+PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
 					.append(orderId)
-					.append("\r\n");		
+					.append("\r\n");
 		}else{
-		   sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
-				.append("\t")
-				.append(orderId)
-				.append("\r\n");
+			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
+					.append("\t")
+					.append(orderId)
+					.append("\r\n");
 		}
 
 		PrintData header = new PrintData();
@@ -63,9 +64,35 @@ public class KOTPrint extends PrintJob{
 		header.setTextAlign(PrintData.ALIGN_RIGHT);
 		header.setFontsize(2);
 		header.setText(sbr.toString());
-		this.data.add(header);	
-		
-		addHortionalLine(this.charSize);		
+		this.data.add(header);
+
+		addHortionalLine(this.charSize);
+	}
+
+
+	public void AddKioskHeader(int revenueIndex,int isTakeAway, String orderId) {
+		StringBuilder sbr = new StringBuilder();
+		if (isTakeAway==1) {
+			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
+					.append("  "+PrintService.instance.getResources().getString(R.string.order_no_))
+//					.append("\t")
+					.append(IntegerUtils.fromat(revenueIndex, orderId))
+					.append("\r\n");
+		}else{
+			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
+//				.append("\t")
+					.append(IntegerUtils.fromat(revenueIndex, orderId))
+					.append("\r\n");
+		}
+
+		PrintData header = new PrintData();
+		header.setDataFormat(PrintData.FORMAT_TXT);
+		header.setTextAlign(PrintData.ALIGN_RIGHT);
+		header.setFontsize(2);
+		header.setText(sbr.toString());
+		this.data.add(header);
+
+		addHortionalLine(this.charSize);
 	}
 	
 	public void addCenterLabel(String label) {

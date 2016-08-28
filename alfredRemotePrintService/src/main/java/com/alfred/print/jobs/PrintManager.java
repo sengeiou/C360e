@@ -5,9 +5,10 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alfredbase.store.Store;
-import com.path.android.jobqueue.Job;
-import com.path.android.jobqueue.JobManager;
-import com.path.android.jobqueue.config.Configuration;
+import com.birbit.android.jobqueue.Job;
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.JobStatus;
+import com.birbit.android.jobqueue.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,13 +44,13 @@ public class PrintManager {
 		    	if (jobManager == null) {
 			        Configuration printjobconfiguration = new Configuration.Builder(context)
 			        .customLogger(new AlfredJobLogger("PRINTER_JOBS_"+ip))
-			        .id("printer_jobs_"+ip)
+			        .id("printer_jobs_"+ip.replace('.', '_'))
 			        .minConsumerCount(1)     //always keep at least one consumer alive
 			        .maxConsumerCount(4)     //up to 3 consumers at a time
 			        .loadFactor(3)           //3 jobs per consumer
 			        .consumerKeepAlive(120)   //wait 2 minute
 			        .build();
-			        jobManager = new JobManager(this.context, printjobconfiguration);
+			        jobManager = new JobManager(printjobconfiguration);
 			        PrintManager.printJobManagers.put(ip.trim(),jobManager);
 			        addPrinterIpsInStore(ip);
 		    	}
@@ -147,8 +148,9 @@ public class PrintManager {
 //	    	   hdl.setPrinter(newPrinter);
 //			} 
 			synchronized(joblock) {
-	    	   Log.d(TAG, "addJob in to PRINT JOB ("+job+")into: printer_jobs_"+ip);
-			   jobManager.addJob(job);
+	    	   	Log.d(TAG, "addJob in to PRINT JOB ("+job+")into: printer_jobs_"+ip);
+				if(jobManager.getJobStatus(job.getId()) == JobStatus.UNKNOWN)
+			   		jobManager.addJob(job);
 			}
     	}
 }
