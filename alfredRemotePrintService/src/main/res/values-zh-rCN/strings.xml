@@ -113,6 +113,7 @@
     <string name="date_">时间: </string>
     <string name="void_">*** 退菜 ***</string>
     <string name="kot_copy">KOT副本</string>
+    <string name="table_name">牌号:</string>
     
     <!-- WIFI printer -->
     <string name="wifi_printer_connect_success">成功连接网络打印机</string>

@@ -137,6 +137,8 @@ public class Welcome extends BaseActivity {
 	private void startNextActivity(){
 		String str = Store.getString(
 				context, Store.SYNC_DATA_TAG);
+		App.instance.bindPushWebSocketService();
+		App.instance.connectRemotePrintService();
 		if (TextUtils.isEmpty(str)) {// 认为没有同步过服务器数据
 			UIHelp.startSyncData(context);
 			this.finish();

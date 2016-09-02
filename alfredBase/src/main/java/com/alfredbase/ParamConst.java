@@ -345,6 +345,9 @@ public class ParamConst {
 	 */
 	public final static int SALE_SESSION_TYPE = 100400;
 
+	/**  #####################   默认打折比例   ########################  */
+	public final static int SEND_FOOD_CARD_NUM = 1001900;
+
 	// 早中午餐(0全天、1早上、2午餐、3晚餐、4夜店)
 
 	public static final int SESSION_STATUS_ALL_DAY = 0;

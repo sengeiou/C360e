@@ -1,8 +1,5 @@
 package com.alfredposclient.view.viewkiosk;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -50,10 +47,15 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
+import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.ItemDetailAdapter;
+import com.alfredposclient.view.CustomNoteView;
 import com.alfredposclient.view.HorizontalScrollViewEx;
 import com.alfredposclient.view.ModifierView;
 import com.alfredposclient.view.SubMenuView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainPageMenuViewKiosk extends LinearLayout {
 	private static final int WIDTH = (int) (ScreenSizeUtil.width*(1 - (700+300)/ScreenSizeUtil.WIDTH_POS));
@@ -78,6 +80,8 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 	private TextTypeFace textTypeFace;
 	private int height;
 	private boolean flag;
+	private int allWidth; //Gridview的宽度
+	private CustomNoteView customNoteView;
 	private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
 			.getItemMainCategories();
 	
@@ -137,6 +141,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 				@SuppressLint("NewApi")
 				@Override
 				public void onGlobalLayout() {
+					allWidth = (int) Math.floor(gv_menu_detail.getWidth() - gv_menu_detail.getPaddingLeft() - gv_menu_detail.getPaddingRight());
 					int numColumns = (int)Math.floor(gv_menu_detail.getWidth()/(gv_menu_detail.getVerticalSpacing() + ScreenSizeUtil.dip2px(parent, ItemDetailAdapter.ITEM_WIDTH_HEIGHT)));
 					gv_menu_detail.setNumColumns(numColumns);
 				}
@@ -165,6 +170,8 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
+					if(!ButtonClickTimer.canClick(arg1))
+						return;
 					ItemDetail itemDetail = (ItemDetail) arg0
 							.getItemAtPosition(arg2);
 					OrderDetail orderDetail = ObjectFactory.getInstance()
@@ -419,6 +426,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 				height = ll_item_detail.getMeasuredHeight();
 			}
 		});
+		customNoteView = (CustomNoteView) findViewById(R.id.custom_note_view);
 		sv_sub_menu = (ScrollView) findViewById(R.id.sv_sub_menu);
 		iv_sub_menu_index = (ImageView) findViewById(R.id.iv_sub_menu_index);
 		ll_sub_menu = (LinearLayout) findViewById(R.id.ll_sub_menu);
@@ -668,7 +676,6 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 	 * 
 	 * @param hsv
 	 * @param index
-	 * @param itemWidth
 	 */
 	private void scrollToIndex(final HorizontalScrollViewEx hsv, final int index) {
 		if (index < 0
@@ -754,5 +761,98 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 		public static final int FLING_TO_RIGHT = 1;
 
 		void fling(int direction);
+	}
+
+
+	private void showCustomNoteView(){
+		if (AnimatorListenerImpl.isRunning) {
+			return;
+		}
+
+		TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0f,
+				Animation.RELATIVE_TO_SELF,0f,
+				Animation.RELATIVE_TO_SELF,-1f,
+				Animation.RELATIVE_TO_SELF,0f);
+		translateAnimation.setDuration(OPEN_DELAY);
+		translateAnimation.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				AnimatorListenerImpl.isRunning = true;
+				customNoteView.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				AnimatorListenerImpl.isRunning = true;
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				AnimatorListenerImpl.isRunning = false;
+			}
+		});
+		if (customNoteView.getVisibility() == View.GONE) {
+			customNoteView.setVisibility(View.VISIBLE);
+		}
+
+		customNoteView.startAnimation(translateAnimation);
+
+	}
+
+	public void checkToCloseCustomNoteView(){
+		if (customNoteView.isShow()) {
+			customNoteView.setShow(false);
+
+			Message controlHandler = handler.obtainMessage();
+			controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
+			controlHandler.obj = false;
+			handler.sendMessage(controlHandler);
+
+			closeCustomNoteView();
+		}
+	}
+
+
+
+	private void closeCustomNoteView(){
+		if (AnimatorListenerImpl.isRunning) {
+			return;
+		}
+		TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0f,
+				Animation.RELATIVE_TO_SELF,0f,
+				Animation.RELATIVE_TO_SELF,0f,
+				Animation.RELATIVE_TO_SELF,-1f);
+		translateAnimation.setDuration(OPEN_DELAY);
+		translateAnimation.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				AnimatorListenerImpl.isRunning = true;
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				AnimatorListenerImpl.isRunning = true;
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				AnimatorListenerImpl.isRunning = false;
+				customNoteView.setVisibility(View.INVISIBLE);
+			}
+		});
+		customNoteView.startAnimation(translateAnimation);
+	}
+
+	public void openCustomNoteView(){
+		if (!customNoteView.isShown()) {
+			Message controlHandler = handler.obtainMessage();
+			controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
+			controlHandler.obj = true;
+			handler.sendMessage(controlHandler);
+			showCustomNoteView();
+		}
+		customNoteView.setValue(parent, order, handler, allWidth);
 	}
 }

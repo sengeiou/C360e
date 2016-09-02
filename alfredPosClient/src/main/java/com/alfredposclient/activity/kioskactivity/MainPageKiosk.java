@@ -165,6 +165,8 @@ public class MainPageKiosk extends BaseActivity {
 	
 	public static final int VIEW_EVENT_TAKE_AWAY = 145;
 	public static final int VIEW_EVENT_SET_WEIGHT = 147;
+	public static final int CHECK_TO_CLOSE_CUSTOM_NOTE_VIEW = 148;
+	public static final int CONTROL_PAGE_ORDER_VIEW_MASK = 149;
 	
 	
 	
@@ -1233,6 +1235,12 @@ public class MainPageKiosk extends BaseActivity {
 				setWeightWindow.show(orderDetail);
 			}
 				break;
+			case CONTROL_PAGE_ORDER_VIEW_MASK:
+				orderView.showOrCloseMask((Boolean) msg.obj);
+				break;
+			case CHECK_TO_CLOSE_CUSTOM_NOTE_VIEW:
+				mainPageMenuView.checkToCloseCustomNoteView();
+				break;
 			default:
 				break;
 			}
@@ -1421,6 +1429,7 @@ public class MainPageKiosk extends BaseActivity {
 		initOrder(currentTable);
 		orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 		mainPageMenuView.setParam(currentOrder, handler);
+		mainPageMenuView.closeModifiers();
 		orderView.setParam(this, currentOrder, orderDetails, handler);
 		operatePanel.setParams(this, currentTable, currentOrder, orderDetails,
 				handler);
@@ -1596,6 +1605,10 @@ public class MainPageKiosk extends BaseActivity {
 		map.put("orderId", String.valueOf(currentOrder.getId()));
 		map.put("paymentId", String.valueOf(payment.getId().intValue()));
 		handler.sendMessage(handler.obtainMessage(VIEW_EVENT_CLOSE_BILL,map));
+	}
+
+	public void openCustomNoteView(){
+		mainPageMenuView.openCustomNoteView();
 	}
 
 	@Override

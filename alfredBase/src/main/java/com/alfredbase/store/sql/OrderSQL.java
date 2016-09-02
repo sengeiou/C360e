@@ -3,6 +3,7 @@ package com.alfredbase.store.sql;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
@@ -32,8 +33,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
 					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime," 
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getOrderOriginId(), order.getUserId(),
@@ -47,7 +48,8 @@ public class OrderSQL {
 							order.getDiscountRate(), order.getDiscountType(),
 							order.getDiscountPrice(),order.getInclusiveTaxName(),
 							order.getInclusiveTaxPrice(), order.getInclusiveTaxPercentage(),
-							order.getAppOrderId(),order.getIsTakeAway()});
+							order.getAppOrderId(),order.getIsTakeAway(),
+					        order.getTableName()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -93,8 +95,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -109,7 +111,7 @@ public class OrderSQL {
 							order.getDiscountType(), order.getDiscountPrice(),
 							order.getInclusiveTaxName(), order.getInclusiveTaxPrice(),
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
-							order.getIsTakeAway()});
+							order.getIsTakeAway(), order.getTableName()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -237,8 +239,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Order order : orderList) {
@@ -292,6 +294,8 @@ public class OrderSQL {
 							order.getAppOrderId());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 25,
 							order.getIsTakeAway());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 26,
+							order.getTableName());
 					sqLiteStatement.executeInsert();
 				}
 			db.setTransactionSuccessful();
@@ -344,6 +348,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -400,6 +405,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -456,7 +462,8 @@ public class OrderSQL {
 				order.setInclusiveTaxPrice(cursor.getString(22));
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
-				order.setIsTakeAway(cursor.getInt(25));				
+				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -516,6 +523,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -575,6 +583,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -679,6 +688,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				return order;
 			}
 		} catch (Exception e) {
@@ -732,6 +742,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				return order;
 			}
 		} catch (Exception e) {
@@ -787,6 +798,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				return order;
 			}
 		} catch (Exception e) {
@@ -842,6 +854,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				return order;
 			}
 		} catch (Exception e) {
@@ -898,6 +911,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -948,6 +962,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1008,6 +1023,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1064,6 +1080,7 @@ public class OrderSQL {
 				order.setInclusiveTaxPercentage(cursor.getString(23));
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1158,6 +1175,31 @@ public class OrderSQL {
 		return sumCount;
 	
 	}
+
+	/**
+	 * 获取所有已被占用的牌号
+	 *
+	 * @return
+	 */
+	public static List<String> getUsedTableNames() {
+		List<String> tableNames = new ArrayList<String>();
+		String sql = "select tableName from " + TableNames.Order
+				+ " where orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql, null);
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				if (!TextUtils.isEmpty(cursor.getString(0))) {
+					tableNames.add(cursor.getString(0));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return tableNames;
+	}
 	
 	public static void updateOrderStatus( int orderStatus, int id){
 
@@ -1180,7 +1222,19 @@ public class OrderSQL {
 		}
 	
 	}
-	
+
+
+	public static void updateOrderTableName( String tableName, int id){
+
+		String sql = "update " + TableNames.Order + " set tableName = ? where id = ?" ;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {tableName, id});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public static void deleteAllOrder(){
 
 		String sql = "delete from " + TableNames.Order ;

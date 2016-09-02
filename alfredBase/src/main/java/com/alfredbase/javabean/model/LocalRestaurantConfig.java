@@ -1,14 +1,18 @@
 package com.alfredbase.javabean.model;
 
+import android.text.TextUtils;
+
+import com.alfredbase.BaseApplication;
+import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.RestaurantConfig;
+import com.alfredbase.store.Store;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import android.text.TextUtils;
-
-import com.alfredbase.ParamConst;
-import com.alfredbase.javabean.RestaurantConfig;
 
 public class LocalRestaurantConfig {
 	private static LocalRestaurantConfig instance;
@@ -24,6 +28,8 @@ public class LocalRestaurantConfig {
 
 	private String[] discountOption = new String[] { "5", "10", "15", "20" };
 
+	private List<String> sendFoodCardNumList;
+
 	public static LocalRestaurantConfig getInstance() {
 		if (instance == null)
 			instance = new LocalRestaurantConfig();
@@ -38,6 +44,13 @@ public class LocalRestaurantConfig {
 		this.currencySymbol = "$";
 		this.roundType = ParamConst.ROUND_NONE;
 		this.includedTax = new IncludedTax();
+		this.sendFoodCardNumList = new ArrayList<String>();
+		for(int i = 1; i < 21; i++){
+			this.sendFoodCardNumList.add(i+"");
+		}
+		List<String> stringList = Store.getObject(BaseApplication.getTopActivity(), Store.SEND_TABLE_NAME_LIST, new TypeToken<List<String>>(){}.getType());
+		if(stringList != null)
+			this.sendFoodCardNumList.addAll(stringList);
 	}
 
 	public List<Integer> getSessionConfigType() {
@@ -129,4 +142,29 @@ public class LocalRestaurantConfig {
 
 	}
 
+	public List<String> getSendFoodCardNumList() {
+		return sendFoodCardNumList;
+	}
+
+	public void setSendFoodCardNumList(RestaurantConfig restaurantConfig) {
+		sendFoodCardNumList.clear();
+		try {
+			if(!TextUtils.isEmpty(restaurantConfig.getParaValue1()) && !TextUtils.isEmpty(restaurantConfig.getParaValue2())){
+				String[] ids = restaurantConfig.getParaValue2().split(ParamConst.PARA_VALUE_SPLIT);
+				String[] names = restaurantConfig.getParaValue1().split(ParamConst.PARA_VALUE_SPLIT);
+				for (String name: names) {
+					for (String id: ids) {
+						int idIndex = Integer.parseInt(id);
+						for(int i = 1; i < idIndex + 1; i++)
+							this.sendFoodCardNumList.add(name+i);
+					}
+				}
+			}
+			List<String> stringList = Store.getObject(BaseApplication.getTopActivity(), Store.SEND_TABLE_NAME_LIST, new TypeToken<List<String>>(){}.getType());
+			if(stringList != null)
+				this.sendFoodCardNumList.addAll(stringList);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,10 +1,5 @@
 package com.alfredkds.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
@@ -27,11 +22,17 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KotHistory extends BaseActivity{
 	
@@ -54,6 +55,12 @@ public class KotHistory extends BaseActivity{
 		tv_table_name = (TextView) findViewById(R.id.tv_table_name);
 		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
 			tv_table_name.setVisibility(View.GONE);
+		}
+		TextView tv_order_n = (TextView)findViewById(R.id.tv_order_n);
+		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+			tv_order_n.setText(getResources().getString(R.string.order_no));
+		}else{
+			tv_order_n.setText(getResources().getString(R.string.order_id));
 		}
 		initListView();
 	}
@@ -176,10 +183,11 @@ public class KotHistory extends BaseActivity{
 			final KotSummary kotSummary = (KotSummary) kotHistory.get(position)[0];
 			final KotItemDetail kotItemDetail = (KotItemDetail) kotHistory.get(position)[1];
 			holder.kotId.setText(kotSummary.getId()+"");
-			holder.orderId.setText(kotSummary.getOrderId()+"");
 			if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
 				holder.table.setVisibility(View.GONE);
+				holder.orderId.setText(IntegerUtils.fromat(kotSummary.getRevenueCenterIndex(), kotSummary.getOrderNoString()));
 			}else {
+				holder.orderId.setText(kotSummary.getOrderId()+"");
 				holder.table.setText(kotSummary.getTableName()+"");
 			}
 			holder.pos.setText(kotSummary.getRevenueCenterName()+"");

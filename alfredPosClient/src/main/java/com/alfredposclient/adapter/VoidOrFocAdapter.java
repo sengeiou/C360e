@@ -1,8 +1,5 @@
 package com.alfredposclient.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.alfredposclient.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class VoidOrFocAdapter extends BaseAdapter{
@@ -98,7 +98,6 @@ public class VoidOrFocAdapter extends BaseAdapter{
 		}
 				
 		for (String str : canotClick) {
-//			LogUtil.d("LXX", "str = "+ str);
 			if (str.equals(items.get(position))) {
 				holder.tv_item.setBackgroundResource(R.drawable.discount_gridview_selected_bg);
 				holder.tv_item.setTextColor(mContext.getResources().getColor(R.color.white));

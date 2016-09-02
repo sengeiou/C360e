@@ -115,7 +115,7 @@ public class EditSettlementPage extends BaseActivity {
         if (App.instance.isRevenueKiosk()) {
             findViewById(R.id.tv_place_name_title).setVisibility(View.GONE);
         }
-        ((TextView) findViewById(R.id.tv_title_name)).setText("修改支付");
+        ((TextView) findViewById(R.id.tv_title_name)).setText(getResources().getString(R.string.edit_settlement));
     }
 
     @Override

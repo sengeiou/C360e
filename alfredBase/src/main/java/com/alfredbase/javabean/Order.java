@@ -102,6 +102,8 @@ public class Order implements Serializable {
 
 	//默认不是takeaway
 	private Integer isTakeAway = 0;
+
+	private String tableName;
 	
 	public Order() {
 	}
@@ -374,24 +376,45 @@ public class Order implements Serializable {
 		this.appOrderId = appOrderId;
 	}
 
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", orderOriginId=" + orderOriginId
-				+ ", userId=" + userId + ", persons=" + persons
-				+ ", orderStatus=" + orderStatus + ", subTotal=" + subTotal
-				+ ", taxAmount=" + taxAmount + ", discountAmount="
-				+ discountAmount + ", discountPrice=" + discountPrice
-				+ ", discountRate=" + discountRate + ", discountType="
-				+ discountType + ", total=" + total + ", sessionStatus="
-				+ sessionStatus + ", restId=" + restId + ", revenueId="
-				+ revenueId + ", placeId=" + placeId + ", tableId=" + tableId
-				+ ", createTime=" + createTime + ", updateTime=" + updateTime
-				+ ", businessDate=" + businessDate + ", orderNo=" + orderNo
-				+ ", inclusiveTaxName=" + inclusiveTaxName
-				+ ", inclusiveTaxPrice=" + inclusiveTaxPrice
-				+ ", inclusiveTaxPercentage=" + inclusiveTaxPercentage
-				+ ", appOrderId=" + appOrderId + ", isTakeAway=" + isTakeAway
-				+ "]";
+		return "Order{" +
+				"id=" + id +
+				", orderOriginId=" + orderOriginId +
+				", userId=" + userId +
+				", persons=" + persons +
+				", orderStatus=" + orderStatus +
+				", subTotal='" + subTotal + '\'' +
+				", taxAmount='" + taxAmount + '\'' +
+				", discountAmount='" + discountAmount + '\'' +
+				", discountPrice='" + discountPrice + '\'' +
+				", discountRate='" + discountRate + '\'' +
+				", discountType=" + discountType +
+				", total='" + total + '\'' +
+				", sessionStatus=" + sessionStatus +
+				", restId=" + restId +
+				", revenueId=" + revenueId +
+				", placeId=" + placeId +
+				", tableId=" + tableId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", businessDate=" + businessDate +
+				", orderNo=" + orderNo +
+				", inclusiveTaxName='" + inclusiveTaxName + '\'' +
+				", inclusiveTaxPrice='" + inclusiveTaxPrice + '\'' +
+				", inclusiveTaxPercentage='" + inclusiveTaxPercentage + '\'' +
+				", appOrderId=" + appOrderId +
+				", isTakeAway=" + isTakeAway +
+				", tableName='" + tableName + '\'' +
+				'}';
 	}
 
 	public Integer getIsTakeAway() {

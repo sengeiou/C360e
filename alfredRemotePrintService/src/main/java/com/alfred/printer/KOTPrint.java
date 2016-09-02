@@ -1,9 +1,12 @@
 package com.alfred.printer;
 
+import android.text.TextUtils;
+
 import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
+import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.utils.IntegerUtils;
 import com.birbit.android.jobqueue.Params;
 
@@ -70,21 +73,29 @@ public class KOTPrint extends PrintJob{
 	}
 
 
-	public void AddKioskHeader(int revenueIndex,int isTakeAway, String orderId) {
+	public void AddKioskHeader(KotSummary kotSummary, String orderId) {
 		StringBuilder sbr = new StringBuilder();
-		if (isTakeAway==1) {
-			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
-					.append("  "+PrintService.instance.getResources().getString(R.string.order_no_))
-//					.append("\t")
-					.append(IntegerUtils.fromat(revenueIndex, orderId))
-					.append("\r\n");
-		}else{
-			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
-//				.append("\t")
-					.append(IntegerUtils.fromat(revenueIndex, orderId))
+		int revenueIndex = kotSummary.getRevenueCenterIndex();
+		int isTakeAway = kotSummary.getIsTakeAway();
+		String orderNo = PrintService.instance.getResources().getString(R.string.order_no_)
+				+IntegerUtils.fromat(revenueIndex, orderId);
+
+		String tableName =PrintService.instance.getResources().getString(R.string.table_name)
+				+kotSummary.getTableName();
+		if(!TextUtils.isEmpty(kotSummary.getTableName())){
+			sbr.append(tableName)
 					.append("\r\n");
 		}
-
+		if (isTakeAway==1) {
+			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
+					.append("  ")
+					.append(orderNo)
+					.append("\r\n");
+		}else{
+			sbr.append( "  ")
+					.append(orderNo)
+					.append("\r\n");
+		}
 		PrintData header = new PrintData();
 		header.setDataFormat(PrintData.FORMAT_TXT);
 		header.setTextAlign(PrintData.ALIGN_RIGHT);

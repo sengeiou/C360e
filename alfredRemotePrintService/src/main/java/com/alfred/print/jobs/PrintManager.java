@@ -7,7 +7,6 @@ import android.util.Log;
 import com.alfredbase.store.Store;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.JobManager;
-import com.birbit.android.jobqueue.JobStatus;
 import com.birbit.android.jobqueue.config.Configuration;
 
 import java.util.ArrayList;
@@ -149,8 +148,8 @@ public class PrintManager {
 //			} 
 			synchronized(joblock) {
 	    	   	Log.d(TAG, "addJob in to PRINT JOB ("+job+")into: printer_jobs_"+ip);
-				if(jobManager.getJobStatus(job.getId()) == JobStatus.UNKNOWN)
-			   		jobManager.addJob(job);
+//				if(jobManager.getJobStatus(job.getId()) == JobStatus.UNKNOWN)
+			   		jobManager.addJobInBackground(job);
 			}
     	}
 }

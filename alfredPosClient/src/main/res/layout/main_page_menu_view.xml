@@ -174,5 +174,10 @@
         android:src="@drawable/icon_right"
         android:scaleType="center"/>
     </RelativeLayout>
-    
+    <com.alfredposclient.view.CustomNoteView
+        android:id="@+id/custom_note_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+    </com.alfredposclient.view.CustomNoteView>
 </RelativeLayout>

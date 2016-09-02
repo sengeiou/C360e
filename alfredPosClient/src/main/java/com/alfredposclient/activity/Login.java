@@ -1,7 +1,5 @@
 package com.alfredposclient.activity;
 
-import java.util.ArrayList;
-
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -20,6 +18,8 @@ import com.alfredposclient.R;
 import com.alfredposclient.adapter.HomePageViewPagerAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
+
+import java.util.ArrayList;
 
 public class Login extends BaseActivity implements KeyBoardClickListener {
 
@@ -62,7 +62,8 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 
 		String title = getString(R.string.cashier_login_tips1);
 		Restaurant rest = CoreData.getInstance().getRestaurant();
-		((TextView)(login_view_2.findViewById(R.id.tv_rest_name))).setText(rest.getRestaurantName()+"");
+		if(rest != null)
+			((TextView)(login_view_2.findViewById(R.id.tv_rest_name))).setText(rest.getRestaurantName()+"");
 		((TextView) (login_view_2.findViewById(R.id.tv_login_tips))).setText(title);
 
 		numerickeyboard = (Numerickeyboard) login_view_2

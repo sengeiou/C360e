@@ -259,6 +259,19 @@
             android:visibility="gone"
             android:textSize="@dimen/text_size_small" />
 
+
+        <TextView
+            android:id="@+id/tv_table_name"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="@dimen/dp80"
+            android:background="@drawable/box_bill_selector"
+            android:gravity="center"
+            android:text="@string/table_name"
+            android:textColor="@color/text_color_selector"
+            android:textSize="@dimen/text_size_small" />
+
     </LinearLayout>
 
 </LinearLayout>

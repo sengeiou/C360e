@@ -1213,7 +1213,11 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotSummary.setOrderNo(order.getOrderNo());//流水号
 				kotSummary.setRevenueCenterId(revenueCenter.getId());
 				kotSummary.setRevenueCenterName(revenueCenter.getRevName());
-				kotSummary.setTableName(table.getTableName());
+				if(revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
+					kotSummary.setTableName(order.getTableName());
+				}else{
+					kotSummary.setTableName(table.getTableName());
+				}
 				kotSummary.setCreateTime(time);
 				kotSummary.setUpdateTime(time);
 				kotSummary.setBusinessDate(businessDate);

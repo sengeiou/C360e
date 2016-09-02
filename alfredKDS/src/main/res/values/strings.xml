@@ -46,6 +46,7 @@
     <string name="kot_revert">revert</string>
     <string name="kot_id">KotId</string>
     <string name="order_id">OrderId</string>
+    <string name="order_no">OrderNO</string>
     <string name="table">Table</string>
     <string name="pos">POS</string>
     <string name="data">Data</string>

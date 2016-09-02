@@ -73,7 +73,9 @@ public class Store {
 	public static final String PRINT_SETTING_ORDER_SUMMARY = "PRINT_SETTING_ORDER_SUMMARY"; // ORDER_SUMMARY
 
 	public static final String WAITER_INSTRUCTION_HISTORY = "WAITER_INSTRUCTION_HISTORY";
-	
+
+	public static final String SEND_TABLE_NAME_LIST = "SEND_TABLE_NAME_LIST";
+
 	public static final String KOT_PRINT = "KOT_PRINT";
 	private Store() {
 	};

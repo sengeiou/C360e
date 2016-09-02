@@ -1182,9 +1182,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 				    	
 						//kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
 				    	if (!TextUtils.isEmpty(orderNo))
-				    		kot.AddKioskHeader(kotsummary.getRevenueCenterIndex(), kotsummary.getIsTakeAway(), orderNo);
+				    		kot.AddKioskHeader(kotsummary, orderNo);
 				    	else
-				    		kot.AddKioskHeader(kotsummary.getRevenueCenterIndex(), kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+				    		kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
 				    	
 						kot.setPrinterIp(prtDevice.getIP());
 						if(!TextUtils.isEmpty(kotsummary.getDescription())){
@@ -1268,9 +1268,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										 kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
 									}
 							    	if (!TextUtils.isEmpty(orderNo))
-							    		kot.AddKioskHeader(kotsummary.getRevenueCenterIndex(), kotsummary.getIsTakeAway(), orderNo);
+							    		kot.AddKioskHeader(kotsummary, orderNo);
 							    	else
-							    		kot.AddKioskHeader(kotsummary.getRevenueCenterIndex(), kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+							    		kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
 									kot.setPrinterIp(prtDevice.getIP());
 									kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name), 
 											PrintService.instance.getResources().getString(R.string.qty));
@@ -1320,9 +1320,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								 kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
 							}
 					    	if (!TextUtils.isEmpty(orderNo))
-					    		kot.AddKioskHeader(kotsummary.getRevenueCenterIndex(), kotsummary.getIsTakeAway(), orderNo);
+					    		kot.AddKioskHeader(kotsummary, orderNo);
 					    	else
-					    		kot.AddKioskHeader(kotsummary.getRevenueCenterIndex(), kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+					    		kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
 							kot.setPrinterIp(prtDevice.getIP());
 							kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name), 
 									PrintService.instance.getResources().getString(R.string.qty));

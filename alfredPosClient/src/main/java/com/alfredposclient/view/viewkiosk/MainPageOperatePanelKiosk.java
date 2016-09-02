@@ -1,9 +1,5 @@
 package com.alfredposclient.view.viewkiosk;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +30,10 @@ import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MainPageOperatePanelKiosk extends LinearLayout implements
 		OnClickListener {
 //	private BaseActivity parent;
@@ -45,6 +45,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 	private List<OrderDetail> orderDetails;
 	private MainPageKiosk parent;
 	private Tables tables;
+
 	
 	public MainPageOperatePanelKiosk(Context context) {
 		super(context);
@@ -78,6 +79,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 //		findViewById(R.id.tv_transfer_table).setOnClickListener(this);
 		findViewById(R.id.tv_kick_cashdrawer).setOnClickListener(this);
 		findViewById(R.id.tv_take_away).setOnClickListener(this);
+		findViewById(R.id.tv_table_name).setOnClickListener(this);
 //		findViewById(R.id.rl_pax).setOnClickListener(this);
 		tv_order_no = (TextView) findViewById(R.id.tv_order_no);
 //		tv_pax = (TextView) findViewById(R.id.tv_pax);
@@ -93,6 +95,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_open_item));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_delete_order));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_take_away));
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_table_name));
 //		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_print_bill));
 //		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_transfer_table));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_kick_cashdrawer));
@@ -198,6 +201,9 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 //			case R.id.rl_pax:
 //				handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX,(String)tv_pax.getText().toString()));
 //				break;
+			case R.id.tv_table_name:
+				parent.openCustomNoteView();
+				break;
 			default:
 				break;
 			}

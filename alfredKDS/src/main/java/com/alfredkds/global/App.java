@@ -52,7 +52,7 @@ public class App extends BaseApplication {
 	public static final int HANDLER_NEW_KOT = 20;
 	public static final int HANDLER_UPDATE_KOT = 1;
 	public static final int HANDLER_DELETE_KOT = 2;
-	private static final int DATABASE_VERSION = 6;
+	private static final int DATABASE_VERSION = 7;
 	private static final String DATABASE_NAME = "com.alfredkds";
 	public static App instance;
     //for pairing

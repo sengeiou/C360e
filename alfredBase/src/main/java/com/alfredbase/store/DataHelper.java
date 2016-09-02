@@ -38,6 +38,7 @@ public class DataHelper {
 				onUpgradeForOldVersion3(db);
 				onUpgradeForOldVersion4(db);
 				onUpgradeForOldVersion5(db);
+				onUpgradeForOldVersion6(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -57,24 +58,32 @@ public class DataHelper {
 						onUpgradeForOldVersion3(db);
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
+						onUpgradeForOldVersion6(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
 						onUpgradeForOldVersion3(db);
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
+						onUpgradeForOldVersion6(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
+						onUpgradeForOldVersion6(db);
 						break;
 					case 4:
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
+						onUpgradeForOldVersion6(db);
 						break;
 					case 5:
 						onUpgradeForOldVersion5(db);
+						onUpgradeForOldVersion6(db);
+						break;
+					case 6:
+						onUpgradeForOldVersion6(db);
 						break;
 				default:
 					break;
@@ -564,5 +573,10 @@ public class DataHelper {
 
 		}
 
+		private void onUpgradeForOldVersion6(SQLiteDatabase db) {
+			db.execSQL("ALTER TABLE " + TableNames.Order
+					+ " ADD COLUMN tableName TEXT default '' ");
+
+		}
 	}
 }

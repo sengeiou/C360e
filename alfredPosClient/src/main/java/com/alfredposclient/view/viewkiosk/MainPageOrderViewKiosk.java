@@ -1,15 +1,9 @@
 package com.alfredposclient.view.viewkiosk;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +60,13 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.view.RingTextView;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MainPageOrderViewKiosk extends LinearLayout {
 	private MainPageKiosk parent;
 	private Context context;
@@ -84,6 +85,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 	private Button btn_place_order;
 	private String kotCommitStatus;
 	private TextTypeFace textTypeFace;
+	private TextView tv_page_order_mask;
 
 	public MainPageOrderViewKiosk(Context context) {
 		super(context);
@@ -113,7 +115,15 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 		tv_taxes = (TextView) findViewById(R.id.tv_taxes);
 		btn_place_order = (Button) findViewById(R.id.btn_place_order);
 		tv_grand_total = (TextView) findViewById(R.id.tv_grand_total);
-		
+		tv_page_order_mask = (TextView) findViewById(R.id.tv_page_order_mask);
+		tv_page_order_mask.setVisibility(View.GONE);
+		tv_page_order_mask.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				tv_page_order_mask.setVisibility(View.GONE);
+				closeAnimateView();
+			}
+		});
 		if (App.countryCode == ParamConst.CHINA && SystemUtil.isZh(context))
 		   btn_place_order.setBackgroundResource(R.drawable.kiosk_box_place_order_selector_zh);
 		
@@ -305,12 +315,17 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 			// }
 		}
 		String orderNoStr = "";
-		if(App.instance.countryCode == ParamConst.CHINA){
+		if(!TextUtils.isEmpty(order.getTableName())){
+			orderNoStr = "TableName:" + order.getTableName();
+		}else {
+			if (App.instance.countryCode == ParamConst.CHINA) {
 				orderNoStr = parent.getResources().getString(R.string.order_id) + App.instance.getPrintOrderNo(order.getId());
-		}else{
-			orderNoStr = parent.getResources().getString(R.string.order_id)
-					+ order.getOrderNo();
+			} else {
+				orderNoStr = parent.getResources().getString(R.string.order_id)
+						+ order.getOrderNo();
+			}
 		}
+
 		if(order.getIsTakeAway() == ParamConst.TAKE_AWAY){
 			orderNoStr = orderNoStr + "("+ parent.getResources().getString(R.string.take_away) + ")";
 		}
@@ -928,6 +943,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 									@Override
 									public void onClick(View arg0) {
 										OrderDetailSQL.deleteOrderDetail(tag);
+										KotItemDetailSQL.deleteKotItemDetail(tag);
 										OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
 										if(!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && ! IntegerUtils.isEmptyOrZero(tag.getGroupId())){
 											int count = OrderDetailSQL.getOrderDetailCountByGroupId(tag.getGroupId().intValue(), order.getId().intValue());
@@ -1033,6 +1049,18 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 				}
 			}
 
+		}
+	}
+
+	private void closeAnimateView(){
+		handler.sendMessage(handler.obtainMessage(MainPageKiosk.CHECK_TO_CLOSE_CUSTOM_NOTE_VIEW,""));
+	}
+
+	public void showOrCloseMask(boolean show){
+		if (show) {
+			tv_page_order_mask.setVisibility(View.VISIBLE);
+		}else{
+			tv_page_order_mask.setVisibility(View.GONE);
 		}
 	}
 
