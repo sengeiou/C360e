@@ -634,7 +634,7 @@ public class App extends BaseApplication {
                             modstr, this.systemSettings.isKotPrintTogether(),
                             this.systemSettings.isKotDoublePrint(), null, 3);
             } else {
-                int size = 3;
+                int size = 2;
                 if (countryCode == ParamConst.CHINA)
                     size = 2;
                 mRemoteService.printKOT(printstr, kotsumStr, kdlstr, modstr,

@@ -491,8 +491,8 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
 
         liList+='</div>';
         liList+='</li>';
-        bilvalue="￥"+getJson.totalBills==''?'￥0.00':""+getJson.totalBills;
-        totalOpenItem=getJson.openCount==''?'￥ 0.00':"￥"+getJson.openCount;
+        bilvalue=""+getJson.totalBills==''?'0':""+getJson.totalBills;
+        totalOpenItem=getJson.openCount==''?'0':""+getJson.openCount;
 
         $("#salesAnalysisli").html(liList);
         $("#totalBillValue").html(bilvalue);

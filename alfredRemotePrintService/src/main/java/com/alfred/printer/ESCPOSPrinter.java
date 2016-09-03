@@ -139,7 +139,13 @@ public class ESCPOSPrinter {
     	byte[] cmd = new byte[3];        
 	    cmd[0] = 0x1D;
 	    cmd[1] = 0x21;
-	    if (size>0&&size<definedSize.length) {
+//	    if (size == 2 ){
+//			cmd[2] = 0x10;
+//		}else
+//		if(size == 3) {
+//			cmd[2] = 0x12;
+//		}else
+		if (size>0&&size<definedSize.length){
 	       cmd[2] = definedSize[size-1];
 	    }else {
 	       cmd[2] = 0x00;

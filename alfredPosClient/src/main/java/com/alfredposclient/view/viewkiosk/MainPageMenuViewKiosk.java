@@ -508,6 +508,17 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 			}
 		});
 
+		customNoteView.setCloseCustomNoteView(new CustomNoteView.CloseCustomNoteView() {
+			@Override
+			public void onClose() {
+				customNoteView.setShow(false);
+				Message controlHandler = handler.obtainMessage();
+				controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
+				controlHandler.obj = false;
+				handler.sendMessage(controlHandler);
+				closeCustomNoteView();
+			}
+		});
 	}
 
 	public void opensubMenuDetail(final View view, int number) {

@@ -17,7 +17,7 @@ public class KOTPrint extends PrintJob{
 
 	public static int FIXED_COL2_SPACE = 2;
 	public static int FIXED_COL2_QTY = 10; //in case of 48 dots width, QTY col = 10dots
-	public static int COL2_ITEMNAME = 36; // Width = CharSize/scale - FIXED_COL2_SPACE - FIXED_COL2_QTY/scale 
+	public static int COL2_ITEMNAME = 36; // Width = CharSize/scale - FIXED_COL2_SPACE - FIXED_COL2_QTY/scale
 	
 	private int maxItemNameOnKot = 60;
 	
@@ -48,6 +48,7 @@ public class KOTPrint extends PrintJob{
 	}
 
 	public void AddHeader(int isTakeAway, String orderId) {
+		addFeed();
 		StringBuilder sbr = new StringBuilder();
 		if (isTakeAway==1) {
 			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
@@ -74,6 +75,7 @@ public class KOTPrint extends PrintJob{
 
 
 	public void AddKioskHeader(KotSummary kotSummary, String orderId) {
+		addFeed();
 		StringBuilder sbr = new StringBuilder();
 		int revenueIndex = kotSummary.getRevenueCenterIndex();
 		int isTakeAway = kotSummary.getIsTakeAway();
@@ -154,8 +156,13 @@ public class KOTPrint extends PrintJob{
 		int col1Lines = 1;
 	
 		int col2Lines = 1;
+
+//		int qtyLen = KOTPrint.FIXED_COL2_QTY;
+//		if(charScale > 1){
+		int	qtyLen = charScale*col2Content.length();
+//		}
 		
-		KOTPrint.COL2_ITEMNAME = this.charSize/charScale - KOTPrint.FIXED_COL2_QTY/charScale - KOTPrint.FIXED_COL2_SPACE;
+		KOTPrint.COL2_ITEMNAME = this.charSize/charScale - qtyLen/charScale - KOTPrint.FIXED_COL2_SPACE;
 		
 		//double ln1 = col1Content.length();
 		int ln1 = 1;
@@ -174,10 +181,10 @@ public class KOTPrint extends PrintJob{
 		//String col1PadContent = StringUtil.padRight(col1Content, col1Lines*KOTPrint.COL2_ITEMNAME);
 		//ArrayList<String> splittedCol1Content = StringUtil.splitEqually(col1PadContent, KOTPrint.COL2_ITEMNAME);
 		
-		double ln2 = (col2Content.length())/(KOTPrint.FIXED_COL2_QTY*1.0/charScale);
+		double ln2 = (col2Content.length())/(qtyLen*1.0/charScale);
 		col2Lines = StringUtil.nearestTen(ln2);
-		String col2PadContent = StringUtil.padRight(col2Content, col2Lines*KOTPrint.FIXED_COL2_QTY/charScale);
-		ArrayList<String> splittedCol2Content = StringUtil.splitEqually(col2PadContent, KOTPrint.FIXED_COL2_QTY/charScale);
+		String col2PadContent = StringUtil.padRight(col2Content, col2Lines*qtyLen/charScale);
+		ArrayList<String> splittedCol2Content = StringUtil.splitEqually(col2PadContent, qtyLen/charScale);
 
 		
 		for (int i=0; i< Math.max(col1Lines, col2Lines); i++) {
@@ -193,7 +200,7 @@ public class KOTPrint extends PrintJob{
 			if (i<col2Lines) {
 				result.append(splittedCol2Content.get(i));
 			}else {
-				result.append(StringUtil.padRight(" ", (KOTPrint.FIXED_COL2_QTY)/charScale));
+				result.append(StringUtil.padRight(" ", (qtyLen)/charScale));
 			}
 			
 			result.append("\r\n");
@@ -210,6 +217,7 @@ public class KOTPrint extends PrintJob{
 	}
 	
 	public void AddKotItem(String itemName, int qty, int scale) {
+		scale = 2;
 		PrintData kot = new PrintData();
 		kot.setDataFormat(PrintData.FORMAT_TXT);
 		kot.setFontsize(scale);
@@ -255,6 +263,12 @@ public class KOTPrint extends PrintJob{
 		AddCut();		
 	}
 
+	public void addFeed(){
+		PrintData kot = new PrintData();
+		kot.setDataFormat(PrintData.FORMAT_FEED);
+		kot.setMarginTop(3);
+		this.data.add(kot);
+	}
 	public void setData(ArrayList<PrintData> data) {
 		this.data = data;
 	}
