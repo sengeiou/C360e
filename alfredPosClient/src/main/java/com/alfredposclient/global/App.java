@@ -196,6 +196,7 @@ public class App extends BaseApplication {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mRemoteService = null;
+            autoConnectRemotePrintService();
         }
 
         @Override
@@ -1649,6 +1650,41 @@ public class App extends BaseApplication {
         }
 
     }
+
+
+    public void autoConnectRemotePrintService() {
+        int printVersionCode = 0;
+        int posVersionCode = 0;
+        try {
+            posVersionCode = instance.getPackageManager().getPackageInfo(instance.getPackageName(), 0).versionCode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<PackageInfo> packageinfo = this.getPackageManager()
+                .getInstalledPackages(0);
+
+        int count = packageinfo.size();
+        for (int i = 0; i < count; i++) {
+
+            PackageInfo pinfo = packageinfo.get(i);
+            ApplicationInfo appInfo = pinfo.applicationInfo;
+            if (!((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0)) {
+                String name = pinfo.applicationInfo.packageName;
+
+                if (name.equals("com.alfred.remote.printservice")) {
+                    printVersionCode = pinfo.versionCode;
+                }
+            }
+        }
+        if (printVersionCode < posVersionCode) {
+            printerDialog();
+        }else{
+            connectRemotePrintService();
+        }
+
+    }
+
+
 
     public boolean copyApkFromAssets(Context context, String fileName, String path) {
         boolean copyIsFinish = false;

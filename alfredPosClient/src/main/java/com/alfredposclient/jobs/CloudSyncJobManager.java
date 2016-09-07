@@ -8,6 +8,7 @@ import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UploadSQL;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.http.HttpAPI;
@@ -237,7 +238,7 @@ public class CloudSyncJobManager {
 			syncMsg.setCreateTime(System.currentTimeMillis());
 			syncMsg.setAppOrderId(appOrderId);
 			syncMsg.setOrderStatus(orderStatus);
-			syncMsg.setOrderNum(orderNum);
+			syncMsg.setOrderNum(IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), orderNum));
 			syncMsg.setBusinessDate(bizDate);
 			SyncMsgSQL.add(syncMsg);
 			SyncMsgJob syncXReportJob = new SyncMsgJob(uuid, revenueCenterId, HttpAPI.NETWORK_ORDER_STATUS_UPDATE, appOrderId, orderStatus, bizDate,syncMsg.getCreateTime());

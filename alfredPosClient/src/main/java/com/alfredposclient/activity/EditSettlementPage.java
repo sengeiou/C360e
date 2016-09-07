@@ -191,7 +191,8 @@ public class EditSettlementPage extends BaseActivity {
                     PrinterDevice printer = App.instance.getCahierPrinter();
                     PrinterTitle title = ObjectFactory.getInstance()
                             .getPrinterTitleByOrderSplit(
-                                    App.instance.getRevenueCenter().getId(),
+                                    App.instance.getRevenueCenter(),
+                                    currentOrder,
                                     orderSplit,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
@@ -519,6 +520,7 @@ public class EditSettlementPage extends BaseActivity {
                 Payment payment = PaymentSQL.getPayment(editSettlementInfo.getPaymentId());
                 if(payment.getOrderSplitId() != null && payment.getOrderSplitId().intValue() != 0){
                     orderSplit = OrderSplitSQL.get(payment.getOrderSplitId());
+                    currentOrder = OrderSQL.getOrder(editSettlementInfo.getOrderId());
                     closeOrderSplitWindow.show(OrderSQL.getOrder(payment.getOrderId()), orderSplit);
                 }
                 break;

@@ -664,7 +664,8 @@ public class MainPageKiosk extends BaseActivity {
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitleByOrderSplit(
-								App.instance.getRevenueCenter().getId(),
+								App.instance.getRevenueCenter(),
+								currentOrder,
 								paidOrderSplit,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),
@@ -692,6 +693,40 @@ public class MainPageKiosk extends BaseActivity {
 					RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
 					App.instance.remoteBillPrint(printer, title, temporaryOrder,
 							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+				}
+				//Sent to Kitchen after close bill in kiosk mode
+				String kotCommitStatus = ParamConst.JOB_NEW_KOT;
+				List<OrderDetail> placedOrderDetails  = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(paidOrderSplit);
+				List<Integer> orderDetailIds = new ArrayList<Integer>();
+				ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
+				ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+
+				KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrderSplit.getOrderId());
+				if (kotSummary != null) {
+					ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+					for (OrderDetail orderDetail : placedOrderDetails) {
+						orderDetailIds.add(orderDetail.getId());
+						KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(orderDetail.getId());
+						kotItemDetails.add(kotItemDetail);
+					}
+
+
+
+//					kotorderModifiers = OrderModifierSQL.getAllOrderModifierByOrderAndNormal(paidOrder);
+					for (KotItemDetail kot : kotItemDetails) {
+						ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
+								.getKotItemModifiersByKotItemDetail(kot.getId());
+						if (kotItemModifierObj != null)
+							kotItemModifiers.addAll(kotItemModifierObj);
+					}
+
+					Map<String, Object> orderMap = new HashMap<String, Object>();
+					orderMap.put("orderId", paidOrderSplit.getOrderId());
+					orderMap.put("orderDetailIds", orderDetailIds);
+					App.instance.getKdsJobManager().tearDownKot(
+							kotSummary, kotItemDetails,
+							kotItemModifiers, kotCommitStatus,
+							orderMap);
 				}
 				// remove get bill notification
 				removeNotificationTables();

@@ -260,6 +260,7 @@ public class EditSettlementHtml extends BaseActivity {
 //				}
 				Tables table = CoreData.getInstance().getTables(
 						orderSplit.getTableId());
+
 				OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(orderSplit, App.instance.getRevenueCenter());
 //				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 //						context);
@@ -268,7 +269,8 @@ public class EditSettlementHtml extends BaseActivity {
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitleByOrderSplit(
-								App.instance.getRevenueCenter().getId(),
+								App.instance.getRevenueCenter(),
+								currentOrder,
 								orderSplit,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),

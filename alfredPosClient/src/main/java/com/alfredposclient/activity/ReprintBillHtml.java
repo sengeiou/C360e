@@ -257,7 +257,8 @@ public class ReprintBillHtml extends BaseActivity {
 
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitleByOrderSplit(
-								App.instance.getRevenueCenter().getId(),
+								App.instance.getRevenueCenter(),
+								order,
 								orderSplit,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),

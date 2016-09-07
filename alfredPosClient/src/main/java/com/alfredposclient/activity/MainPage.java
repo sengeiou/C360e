@@ -754,7 +754,8 @@ public class MainPage extends BaseActivity {
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitleByOrderSplit(
-								App.instance.getRevenueCenter().getId(),
+								App.instance.getRevenueCenter(),
+								currentOrder,
 								paidOrderSplit,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),

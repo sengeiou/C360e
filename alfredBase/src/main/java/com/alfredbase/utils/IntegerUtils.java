@@ -33,4 +33,13 @@ public class IntegerUtils {
 	public static String fromat(int index,String num){
 		return index + String.format("%03d", Integer.parseInt(num));
 	}
+	/**
+	 * 组合叫号
+	 * @param index
+	 * @param num
+	 * @return
+	 */
+	public static int fromat(int index,int num){
+		return Integer.parseInt(index + String.format("%03d", num));
+	}
 }

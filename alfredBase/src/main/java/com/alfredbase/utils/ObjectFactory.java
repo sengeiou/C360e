@@ -1050,18 +1050,17 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		return printerTitle;
 	}
 	
-	public PrinterTitle getPrinterTitleByOrderSplit(int revenueId, OrderSplit orderSplit,
+	public PrinterTitle getPrinterTitleByOrderSplit(RevenueCenter revenue, Order order, OrderSplit orderSplit,
 			String userName, String tableName, OrderBill orderBill, String businessDate) {
 		PrinterTitle printerTitle = new PrinterTitle();
-		Restaurant restaurant = new Restaurant();
-		restaurant = RestaurantSQL.getRestaurant();
+		Restaurant restaurant = RestaurantSQL.getRestaurant();
 		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
 		printerTitle.setAddressDetail(restaurant.getAddressPrint());
 		printerTitle.setTel(restaurant.getTelNo());
 		printerTitle.setEmail(restaurant.getEmail());
 		printerTitle.setWebAddress(restaurant.getWebsite());
 		printerTitle.setOp(userName);
-		printerTitle.setPos(revenueId + "");
+		printerTitle.setPos(revenue.getId() + "");
 		printerTitle.setDate(TimeUtil.getPrintDate(orderSplit.getCreateTime()));
 		printerTitle.setBill_NO(ParamHelper.getPrintOrderBillNo(orderBill.getBillNo()));
 		printerTitle.setTime(TimeUtil.getPrintTime(orderSplit.getCreateTime()));
@@ -1071,7 +1070,12 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		printerTitle.setOptions(restaurant.getOptions());
 		printerTitle.setFooterOptions(restaurant.getFooterOptions());
 		printerTitle.setBizDate(businessDate);
-		printerTitle.setOrderNo(orderSplit.getOrderId().toString());
+//		printerTitle.setOrderNo(orderSplit.getOrderId().toString());
+		if(revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
+			printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
+		}else{
+			printerTitle.setOrderNo(order.getOrderNo().toString());
+		}
 		return printerTitle;
 	}
 

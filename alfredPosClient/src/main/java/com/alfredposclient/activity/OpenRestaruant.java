@@ -25,6 +25,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
 import com.alfredbase.PrinterLoadingDialog;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
@@ -74,6 +75,7 @@ import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
+import com.tencent.bugly.crashreport.BuglyLog;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -186,8 +188,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		rl_openbg.setOnClickListener(this);
 		filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_TIME_TICK);
-		registerReceiver(receiver, filter);
+
 		setDateView();
+		BuglyLog.d("OpenRestaruant", "RestaurantName" + CoreData.getInstance().getRestaurant().getRestaurantName());
 		rl_slideUnlockView.post(new Runnable() {
 			@Override
 			public void run() {
@@ -375,6 +378,19 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		});
 		// 系统初始化工作
 		App.instance.startHttpServer();
+	}
+
+	@Override
+	protected void onStart() {
+		setDateView();
+		registerReceiver(receiver, filter);
+		super.onStart();
+	}
+
+	@Override
+	protected void onPause() {
+		unregisterReceiver(receiver);
+		super.onPause();
 	}
 
 	private void intSessionView(){
@@ -1406,7 +1422,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(receiver);
+
 		super.onDestroy();
 	}
 
