@@ -109,6 +109,12 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+    <style name="StoredCardTheme" parent="android:Theme">
+        <item name="android:windowAnimationStyle">@style/MainActivityAnimation</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 
     <style name="SubActivityTheme" parent="android:Theme">
         <item name="android:windowAnimationStyle">@style/SubActivityAnimation</item>
@@ -158,14 +164,14 @@
         <item name="android:windowBackground">@color/bocop_dialog_bg</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@+android:style/Animation.Dialog</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
     </style>
     
     <style name="Dialog_transparent">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@+android:style/Animation.Dialog</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
     </style>
     
     <style name="pos_dialog_style" parent="android:Theme">

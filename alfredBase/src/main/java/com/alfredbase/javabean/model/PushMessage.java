@@ -1,5 +1,6 @@
 package com.alfredbase.javabean.model;
 
+import com.alfredbase.utils.LogUtil;
 import com.google.gson.Gson;
 
 public class PushMessage {
@@ -33,11 +34,11 @@ public class PushMessage {
 	
 	public final static String CONTENT_DELIMITER = ",";
 	
-	private String msg;
+	private String msg; // 事件类型
 	private int type;//  -2心跳, 0:register, 1: Data Update, 
 	private Integer restId;
 	private Integer revenueId;
-	private String content;
+	private String content; // json 数据
 	private Integer appOrderId;
 	
 	private String deviceId;
@@ -96,11 +97,12 @@ public class PushMessage {
 
 	public static String getPingMsg(int restId, int revenueId) {
 		PushMessage msg = new PushMessage();
-		msg.setType(-1);
+		msg.setType(-2);
 		msg.setMsg("PING");
 		msg.setRestId(restId);
 		msg.setRevenueId(revenueId);
 		String msgtxt = new Gson().toJson(msg);
+		LogUtil.v("PushMessage","sendPing==>" + msgtxt);
 		return msgtxt;
 	}
 	

@@ -168,9 +168,28 @@
                         android:background="@color/pos_setting_title" />
 
                     <LinearLayout
+                        android:id="@+id/ll_stored_card"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" >
+                        android:padding="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:id="@+id/iv_stored_card_setting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/stored_card" />
+
+                        <TextView
+                            android:id="@+id/tv_stored_card_setting"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_horizontal"
+                            android:paddingTop="4dp"
+                            android:text="@string/stored_card"
+                            android:textColor="@color/text_brownness_selector"
+                            android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -311,7 +330,7 @@
                             android:src="@drawable/xz_report_selector" />
 
                         <TextView
-                            android:id="@+id/tv_monthly_sale_report"
+                            android:id="@+id/tv_monthly_plu_report"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center_horizontal"

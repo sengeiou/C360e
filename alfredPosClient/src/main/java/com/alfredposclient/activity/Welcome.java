@@ -366,6 +366,9 @@ public class Welcome extends BaseActivity {
 			size = size + 1;
 			SyncCentre.getInstance().pushCommonData(context, key, handler);
 		}
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		map.put("revenueId", App.instance.getRevenueCenter().getId().intValue());
+//		SyncCentre.getInstance().getPlaceTable(context, map, handler);
 	}
 
 }

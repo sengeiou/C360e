@@ -1,13 +1,5 @@
 package com.alfredwaiter.http;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.Header;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Handler;
 
 import com.alfredbase.global.CoreData;
@@ -24,11 +16,11 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.Places;
+import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
@@ -48,11 +40,11 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.PlacesSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserSQL;
@@ -63,6 +55,14 @@ import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class HttpAnalysis {
 	public static void employeeId(int statusCode, Header[] headers,
@@ -185,19 +185,23 @@ public class HttpAnalysis {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
 
-			List<Places> places = gson.fromJson(object.getString("placeList"),
-					new TypeToken<ArrayList<Places>>() {
+			List<PlaceInfo> places = gson.fromJson(object.getString("placeList"),
+					new TypeToken<ArrayList<PlaceInfo>>() {
 					}.getType());
-			CoreData.getInstance().setPlaceList(places);
-			PlacesSQL.deleteAllPlaces();
-			PlacesSQL.addPlacesList(places);
+//			CoreData.getInstance().setPlaceList(places);
+//			PlacesSQL.deleteAllPlaces();
+//			PlacesSQL.addPlacesList(places);
+			PlaceInfoSQL.deleteAllPlaceInfo();
+			PlaceInfoSQL.addPlaceInfoList(places);
 
-			List<Tables> tables = gson.fromJson(object.getString("tableList"),
-					new TypeToken<ArrayList<Tables>>() {
+			List<TableInfo> tables = gson.fromJson(object.getString("tableList"),
+					new TypeToken<ArrayList<TableInfo>>() {
 					}.getType());
-			CoreData.getInstance().setTableList(tables);
-			TablesSQL.deleteAllTables();
-			TablesSQL.addTablesList(tables);
+//			CoreData.getInstance().setTableList(tables);
+//			TablesSQL.deleteAllTables();
+//			TablesSQL.addTablesList(tables);
+			TableInfoSQL.deleteAllTableInfo();
+			TableInfoSQL.addTablesList(tables);
 
 		} catch (JSONException e) {
 			e.printStackTrace();

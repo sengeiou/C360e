@@ -429,6 +429,14 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
 
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
+        liList+='<div class="col-md-6">Stored-Card</div>';
+        liList+='<div class="col-md-2">'+(getJson.storedCardQty==''?'0':getJson.storedCardQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.storedCard==''||getJson.storedCard=='0')?'0.00':getJson.storedCard)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
         liList+='<div class="col-md-6">NETS</div>';
         liList+='<div class="col-md-2">'+(getJson.netsQty==''?'0':getJson.netsQty)+'</div>';
         liList+='<div class="col-md-4">$'+((getJson.nets==''||getJson.nets=='0')?'0.00':getJson.nets)+'</div>';

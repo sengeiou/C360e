@@ -9,12 +9,12 @@ public class TableNames {
 	public static final String ItemModifier = "ItemModifier_";
 	public static final String Modifier = "Modifier_";
 	public static final String Permission = "Permission_";
-	public static final String Places = "Places_";
+//	public static final String Places = "Places_";
 	public static final String Printer = "Printer_";
 	public static final String PrinterGroup = "PrinterGroup_";
 	public static final String Restaurant = "Restaurant_";
 	public static final String RevenueCenter = "RevenueCenter_";
-	public static final String Tables = "Tables_";
+//	public static final String Tables = "Tables_";
 	public static final String Tax = "Tax_";
 	public static final String TaxCategory = "TaxCategory_";
 	public static final String User = "User_";
@@ -67,5 +67,8 @@ public class TableNames {
 	public static final String AppOrderDetail = "AppOrderDetail_";
 	public static final String AppOrderDetailTax = "AppOrderDetailTax_";
 	public static final String AppOrderModifier = "AppOrderModifier_";
+	public static final String TableInfo = "TableInfo_";
+	public static final String PlaceInfo = "PlaceInfo_";
+
 
 }

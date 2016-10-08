@@ -1,10 +1,5 @@
 package com.alfredwaiter.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -35,6 +30,7 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.VibrationUtil;
@@ -46,6 +42,11 @@ import com.alfredwaiter.popupwindow.SelectGroupWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.MoneyKeyboard;
 import com.alfredwaiter.view.MoneyKeyboard.KeyBoardClickListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickListener{
 	public static final int VIEW_EVENT_SELECT_GROUP = 0;
@@ -104,9 +105,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		tv_place_order.setOnClickListener(this);
 		tv_get_bill.setOnClickListener(this);
 		selectGroupWindow = new SelectGroupWindow(context, tv_group, handler);
-		((TextView) findViewById(R.id.tv_tables_name)).setText(CoreData
-				.getInstance().getTables(currentOrder.getTableId())
-				.getTableName());
+		((TextView) findViewById(R.id.tv_tables_name)).setText(TableInfoSQL.getTableById(currentOrder.getTableId())
+				.getName());
 		rl_content = (RelativeLayout) findViewById(R.id.rl_content);
 		rl_countKeyboard = (RelativeLayout) findViewById(R.id.rl_countKeyboard);
 		rl_countKeyboard.setVisibility(View.GONE);
@@ -278,7 +278,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters
 					.put("table",
-							CoreData.getInstance().getTables(
+							TableInfoSQL.getTableById(
 									currentOrder.getTableId()));
 			SyncCentre.getInstance().getBillPrint(context, parameters, handler);
 

@@ -1,6 +1,9 @@
 package com.alfredbase.javabean;
 
-public class OrderBill {
+import java.io.Serializable;
+
+public class OrderBill implements Serializable{
+
 	private Integer id;
 	private Integer billNo;
 	private Integer orderId;

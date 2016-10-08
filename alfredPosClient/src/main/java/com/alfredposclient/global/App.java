@@ -52,7 +52,7 @@ import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
@@ -88,7 +88,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
@@ -127,7 +127,7 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_NAME = "com.alfredposclient";
 
     private String callAppIp;
@@ -144,8 +144,8 @@ public class App extends BaseApplication {
 
     public Map<Integer, AlipayPushMsgDto> alipayPush = new HashMap<Integer, AlipayPushMsgDto>();
 
-    private List<Tables> notificationsOfGettingBill = Collections
-            .synchronizedList(new ArrayList<Tables>());
+    private List<TableInfo> notificationsOfGettingBill = Collections
+            .synchronizedList(new ArrayList<TableInfo>());
 
     // Job Manager
     private KotJobManager kdsJobManager;
@@ -1104,23 +1104,23 @@ public class App extends BaseApplication {
     }
 
     // Getting bill notification
-    public void addGettingBillNotification(Tables tables) {
+    public void addGettingBillNotification(TableInfo tables) {
         this.notificationsOfGettingBill.add(tables);
         Store.saveObject(instance, Store.NOTIFICATIONS_OF_GETTING_BILL,
                 notificationsOfGettingBill);
     }
 
-    public void removeGettingBillNotification(Tables tables) {
+    public void removeGettingBillNotification(TableInfo tables) {
         this.notificationsOfGettingBill.remove(tables);
         Store.saveObject(instance, Store.NOTIFICATIONS_OF_GETTING_BILL,
                 notificationsOfGettingBill);
     }
 
-    public List<Tables> getGetTingBillNotifications() {
+    public List<TableInfo> getGetTingBillNotifications() {
         if (notificationsOfGettingBill.isEmpty()) {
-            List<Tables> tabls = Store.getObject(instance,
+            List<TableInfo> tabls = Store.getObject(instance,
                     Store.NOTIFICATIONS_OF_GETTING_BILL,
-                    new TypeToken<List<Tables>>() {
+                    new TypeToken<List<TableInfo>>() {
                     }.getType());
             if (tabls != null) {
                 notificationsOfGettingBill = tabls;
@@ -1395,16 +1395,16 @@ public class App extends BaseApplication {
 //			new Thread(new Runnable() {
 //				@Override
 //				public void run() {
-            Tables tables = null;
+            TableInfo tables = null;
             if (App.instance.isRevenueKiosk())
-                tables = TablesSQL.getKioskTable();
+                tables = TableInfoSQL.getKioskTable();
             else {
                 if (appOrder.getTableId().intValue() > 0) {
-                    tables = TablesSQL.getTableById(appOrder.getTableId().intValue());
+                    tables = TableInfoSQL.getTableById(appOrder.getTableId().intValue());
                 } else {
-                    tables = TablesSQL.getAllUsedOneTables();
+                    tables = TableInfoSQL.getAllUsedOneTables();
                 }
-                if (tables == null || tables.getTableStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
+                if (tables == null || tables.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
                     appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
                     AppOrderSQL.updateAppOrder(appOrder);
                     return;
@@ -1417,8 +1417,9 @@ public class App extends BaseApplication {
 
             Order order = ObjectFactory.getInstance().getOrderFromAppOrder(appOrder, getUser(),
                     getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant(), App.instance.isRevenueKiosk());
-            tables.setTableStatus(ParamConst.TABLE_STATUS_DINING);
-            TablesSQL.updateTables(tables);
+            tables.setStatus(ParamConst.TABLE_STATUS_DINING);
+//            TablesSQL.updateTables(tables);
+            TableInfoSQL.updateTables(tables);
             OrderSQL.update(order);
             OrderBill orderBill = ObjectFactory.getInstance()
                     .getOrderBill(order, getRevenueCenter());
@@ -1472,8 +1473,8 @@ public class App extends BaseApplication {
                     = OrderDetailSQL.getOrderDetailsForPrint(order.getId());
             KotSummary kotSummary = ObjectFactory.getInstance()
                     .getKotSummary(
-                            CoreData.getInstance().getTables(
-                                    order.getTableId()), order,
+                            TableInfoSQL.getTableById(
+                                    order.getTableId()).getName(), order,
                             App.instance.getRevenueCenter(),
                             App.instance.getBusinessDate());
             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
@@ -1576,7 +1577,7 @@ public class App extends BaseApplication {
                     paidOrder,
                     getUser().getFirstName()
                             + getUser().getLastName(),
-                    TablesSQL.getKioskTable().getTableName());
+                    TableInfoSQL.getKioskTable().getName());
 
             ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
                     .getItemList(

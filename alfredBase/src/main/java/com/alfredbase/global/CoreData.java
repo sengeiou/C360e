@@ -15,14 +15,13 @@ import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.Places;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundRule;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
@@ -39,13 +38,12 @@ import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.ModifierSQL;
-import com.alfredbase.store.sql.PlacesSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
@@ -66,8 +64,9 @@ public class CoreData {
 	private List<User> users;
 	private List<RevenueCenter> revenueCenters;
 	private Restaurant restaurant;
-	private List<Tables> tableList;
-	private List<Places> placeList;
+//	private List<Tables> tableList;
+	private List<TableInfo> newTableList;
+//	private List<Places> placeList;
 	private List<ItemModifier> itemModifiers;
 	private List<ItemDetail> itemDetails;
 	private List<ItemCategory> itemCategories;
@@ -114,8 +113,9 @@ public class CoreData {
 		printers = PrinterSQL.getAllPrinter();
 		printerGroups = PrinterGroupSQL.getAllPrinterGroup();
 		restaurant = RestaurantSQL.getRestaurant();
-		tableList = TablesSQL.getAllTables();
-		placeList = PlacesSQL.getAllPlaces();
+//		tableList = TablesSQL.getAllTables();
+		newTableList = TableInfoSQL.getAllTables();
+//		placeList = PlacesSQL.getAllPlaces();
 		itemModifiers = ItemModifierSQL.getAllItemModifier();
 		itemDetails = ItemDetailSQL.getAllItemDetail();
 		itemCategories = ItemCategorySQL.getAllItemCategory();
@@ -432,51 +432,51 @@ public class CoreData {
 		return null;
 	}
 
-	public List<Places> getPlaceList(Integer revenueId) {
-		if (placeList == null)
-			return Collections.emptyList();
-		List<Places> result = new ArrayList<Places>();
-		for (Places places : placeList) {
-			if (places.getRevenueId().intValue() == revenueId.intValue()) {
-				result.add(places);
-			}
-		}
-		return result;
-	}
+//	public List<Places> getPlaceList(Integer revenueId) {
+//		if (placeList == null)
+//			return Collections.emptyList();
+//		List<Places> result = new ArrayList<Places>();
+//		for (Places places : placeList) {
+//			if (places.getRevenueId().intValue() == revenueId.intValue()) {
+//				result.add(places);
+//			}
+//		}
+//		return result;
+//	}
 	
-	public List<Tables> getTableList(Integer revenueId) {
-		if (tableList == null)
-			return Collections.emptyList();
-		List<Tables> result = new ArrayList<Tables>();
-		for (Tables tables : tableList) {
-			if (tables.getRevenueId().intValue() == revenueId.intValue()) {
-				result.add(tables);
-			}
-		}
-		return result;
-	}
+//	public List<Tables> getTableList(Integer revenueId) {
+//		if (tableList == null)
+//			return Collections.emptyList();
+//		List<Tables> result = new ArrayList<Tables>();
+//		for (Tables tables : tableList) {
+//			if (tables.getRevenueId().intValue() == revenueId.intValue()) {
+//				result.add(tables);
+//			}
+//		}
+//		return result;
+//	}
 
-	public List<Tables> getTableList(Integer revenueId, Integer placesId) {
-		if (tableList == null)
-			return Collections.emptyList();
-		List<Tables> result = new ArrayList<Tables>();
-		for (Tables tables : tableList) {
-			if (tables.getRevenueId().intValue() == revenueId.intValue()
-					&& tables.getPlacesId().intValue() == placesId.intValue()) {
-				result.add(tables);
-			}
-		}
-		return result;
-	}
+//	public List<Tables> getTableList(Integer revenueId, Integer placesId) {
+//		if (tableList == null)
+//			return Collections.emptyList();
+//		List<Tables> result = new ArrayList<Tables>();
+//		for (Tables tables : tableList) {
+//			if (tables.getRevenueId().intValue() == revenueId.intValue()
+//					&& tables.getPlacesId().intValue() == placesId.intValue()) {
+//				result.add(tables);
+//			}
+//		}
+//		return result;
+//	}
 
-	public Tables getTables(Integer tablesId) {
-		for (Tables tables : tableList) {
-			if (tables.getId().intValue() == tablesId.intValue()) {
-				return tables;
-			}
-		}
-		return null;
-	}
+//	public Tables getTables(Integer tablesId) {
+//		for (Tables tables : tableList) {
+//			if (tables.getId().intValue() == tablesId.intValue()) {
+//				return tables;
+//			}
+//		}
+//		return null;
+//	}
 	
 	public User getUser(String employee_ID, String password) {
 		if (CommonUtil.isNull(employee_ID) || CommonUtil.isNull(password))
@@ -674,25 +674,25 @@ public class CoreData {
 		this.restaurant = restaurant;
 	}
 
-	public List<Tables> getTableList() {
-		if (tableList == null)
-			return Collections.emptyList();
-		return tableList;
-	}
+//	public List<Tables> getTableList() {
+//		if (tableList == null)
+//			return Collections.emptyList();
+//		return tableList;
+//	}
 
-	public void setTableList(List<Tables> tableList) {
-		this.tableList = tableList;
-	}
+//	public void setTableList(List<Tables> tableList) {
+//		this.tableList = tableList;
+//	}
 
-	public List<Places> getPlaceList() {
-		if (placeList == null)
-			return Collections.emptyList();
-		return placeList;
-	}
+//	public List<Places> getPlaceList() {
+//		if (placeList == null)
+//			return Collections.emptyList();
+//		return placeList;
+//	}
 
-	public void setPlaceList(List<Places> placeList) {
-		this.placeList = placeList;
-	}
+//	public void setPlaceList(List<Places> placeList) {
+//		this.placeList = placeList;
+//	}
 
 	public List<ItemModifier> getItemModifiers() {
 		if (itemModifiers == null)
@@ -902,6 +902,16 @@ public class CoreData {
 			}
 		}
 		return taxCategoryList;
+	}
+
+	public  List<TableInfo> getNewTableListByPlace(int placeId){
+		List<TableInfo> newTables = new ArrayList<TableInfo>();
+		for(TableInfo newTable : newTableList){
+			if(newTable.getPlacesId().intValue() == placeId){
+				newTables.add(newTable);
+			}
+		}
+		return newTables;
 	}
 
 }

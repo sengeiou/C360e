@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.Tables;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
@@ -308,12 +307,12 @@ public class KotSummarySQL {
 		return kotSummary;
 	}
 	
-	public static KotSummary getKotSummaryByTable(Tables table) {
+	public static KotSummary getKotSummaryByTable(int tableId) {
 		KotSummary kotSummary = null;
 		String sql = "select * from " + TableNames.KotSummary + " where tableId = ? and status = " + ParamConst.KOTS_STATUS_UNDONE;
 		Cursor cursor = null;
 		try {
-			cursor = SQLExe.getDB().rawQuery(sql, new String[] {table.getId() + ""});
+			cursor = SQLExe.getDB().rawQuery(sql, new String[] {tableId + ""});
 			if (cursor.moveToFirst()) {
 				kotSummary = new KotSummary();
 				kotSummary.setId(cursor.getInt(0));

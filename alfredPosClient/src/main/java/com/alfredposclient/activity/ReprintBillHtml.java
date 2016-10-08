@@ -1,11 +1,5 @@
 package com.alfredposclient.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,14 +9,13 @@ import android.webkit.WebView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.PrintBill;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
@@ -32,9 +25,9 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
-import com.alfredbase.store.sql.PlacesSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.JSONUtil;
 import com.alfredbase.utils.ObjectFactory;
@@ -45,6 +38,12 @@ import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.WebViewConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ReprintBillHtml extends BaseActivity {
 	private WebView web;
@@ -143,10 +142,10 @@ public class ReprintBillHtml extends BaseActivity {
 				if(orderBill == null){
 					continue;
 				}
-				Tables tbl = CoreData.getInstance().getTables(order.getTableId());
-				printBills.add(new PrintBill(orderBill.getBillNo(), 
-								PlacesSQL.getPlacesById(order.getPlaceId()).getPlaceName(), 
-								tbl.getTableName(), 
+				TableInfo tbl = TableInfoSQL.getTableById(order.getTableId());
+				printBills.add(new PrintBill(orderBill.getBillNo(),
+						PlaceInfoSQL.getPlaceInfoById(order.getPlaceId()).getPlaceName(),
+								tbl.getName(),
 								order.getId(), 
 								order.getTotal(), 
 								App.instance.getUser().getUserName()));
@@ -218,9 +217,8 @@ public class ReprintBillHtml extends BaseActivity {
 							order,
 							App.instance.getUser().getFirstName()
 									+ App.instance.getUser().getLastName(),
-							CoreData.getInstance()
-									.getTables(order.getTableId())
-									.getTableName()),
+							TableInfoSQL.getTableById(order.getTableId())
+									.getName()),
 					order,
 					ObjectFactory.getInstance().getItemList(
 							OrderDetailSQL.getOrderDetails(order.getId())),
@@ -262,8 +260,8 @@ public class ReprintBillHtml extends BaseActivity {
 								orderSplit,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),
-								TablesSQL.getTableById(orderSplit.getTableId())
-										.getTableName(), orderBill, order.getBusinessDate().toString());
+								TableInfoSQL.getTableById(orderSplit.getTableId())
+										.getName(), orderBill, order.getBusinessDate().toString());
 				orderSplit
 						.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY);
 				OrderSplitSQL.update(orderSplit);

@@ -1,11 +1,6 @@
 
 package com.alfredposclient.jobs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -17,7 +12,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -25,7 +20,7 @@ import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.activity.MainPage;
@@ -33,6 +28,11 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KotJob extends Job {
 	private String TAG = KotJob.class.getSimpleName();
@@ -124,7 +124,7 @@ public class KotJob extends Job {
 		    		KotSummary toKotSummary = (KotSummary) data.get("toKotSummary");
 		    		Order oldOrder = (Order) kotMap.get("fromOrder");
 		    		OrderBill oldOrderBill = OrderBillSQL.getOrderBillByOrder(oldOrder);
-		    		Tables  currentTable = TablesSQL.getTableById((Integer)kotMap.get("currentTableId"));
+		    		TableInfo currentTable = TableInfoSQL.getTableById((Integer)kotMap.get("currentTableId"));
 					List<KotItemDetail> kotItemDetails = KotItemDetailSQL
 							.getKotItemDetailBySummaryId(fromKotSummary.getId());
 					for (KotItemDetail kotItemDetail : kotItemDetails) {
@@ -132,7 +132,7 @@ public class KotJob extends Job {
 						KotItemDetailSQL.update(kotItemDetail);
 					}
 					KotSummarySQL.deleteKotSummary(fromKotSummary);
-					Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable, oldOrder.getBusinessDate());
+					Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
 					OrderBill newOrderBill = ObjectFactory.getInstance().getOrderBill(newOrder, App.instance.getRevenueCenter());
 					List<OrderDetail> orderDetails = OrderDetailSQL
 							.getUnFreeOrderDetails(oldOrder);

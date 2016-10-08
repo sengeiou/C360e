@@ -26,12 +26,13 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.ReportDiscount;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
@@ -65,11 +66,13 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.ReportDiscountSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
 
@@ -92,35 +95,35 @@ public class ObjectFactory {
 	
 	Object lock_order = new Object();
 
-	public Order getOrder(Integer orderOriginId, Tables tables,
+	public Order getOrder(Integer orderOriginId, TableInfo tables,
 			RevenueCenter revenueCenter, User user,
 			SessionStatus sessionStatus, long businessDate, int orderNOTitle,
 			int orderStatus, Tax inclusiveTax){
 		return getOrder(orderOriginId, tables, revenueCenter, user, sessionStatus, businessDate, orderNOTitle, orderStatus, inclusiveTax, 0);
 	}
 	
-	public Order getOrder(Integer orderOriginId, Tables tables,
+	public Order getOrder(Integer orderOriginId, TableInfo tables,
 			RevenueCenter revenueCenter, User user,
 			SessionStatus sessionStatus, long businessDate, int orderNOTitle,
 			int orderStatus, Tax inclusiveTax, int appOrderId) {
 		
 		Order order = null;
 		synchronized (lock_order) {
-			order = OrderSQL.getUnfinishedOrderAtTable(tables, businessDate);
+			order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate);
 			if (order == null) {
 	
 					order = new Order();
 					order.setId(CommonSQL.getNextSeq(TableNames.Order));
 					order.setOrderOriginId(orderOriginId);
 					order.setUserId(user.getId());
-					order.setPersons(tables.getTablePacks());
+					order.setPersons(tables.getStatus());
 					order.setOrderStatus(orderStatus);
 					order.setDiscountRate(ParamConst.DOUBLE_ZERO);
 					order.setSessionStatus(sessionStatus.getSession_status());
 					order.setRestId(CoreData.getInstance().getRestaurant().getId());
 					order.setRevenueId(revenueCenter.getId());
 					order.setPlaceId(tables.getPlacesId());
-					order.setTableId(tables.getId());
+					order.setTableId(tables.getPosId());
 					long time = System.currentTimeMillis();
 					order.setCreateTime(time);
 					order.setUpdateTime(time);
@@ -141,7 +144,7 @@ public class ObjectFactory {
 
 	public Order getOrderFromAppOrder(AppOrder appOrder, User user,
 									  SessionStatus sessionStatus, RevenueCenter revenueCenter,
-									  Tables tables, long businessDate, Restaurant restaurant, boolean isKiosk) {
+									  TableInfo tables, long businessDate, Restaurant restaurant, boolean isKiosk) {
 		Order order = null;
 		if (appOrder != null) {
 			synchronized (lock_order) {
@@ -163,7 +166,7 @@ public class ObjectFactory {
 					order.setRestId(restaurant.getId());
 					order.setRevenueId(revenueCenter.getId());
 					order.setPlaceId(tables.getPlacesId());
-					order.setTableId(tables.getId());
+					order.setTableId(tables.getPosId());
 					long time = System.currentTimeMillis();
 					order.setCreateTime(time);
 					order.setUpdateTime(time);
@@ -311,6 +314,61 @@ public class ObjectFactory {
 		orderDetail.setGroupId(groupId);
 		orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 		return orderDetail;
+	}
+
+
+	Object lock_table = new Object();
+
+	public TableInfo addNewTable(String imageName, int restaurantId, int revenueId, int placeId, int width){
+		synchronized (lock_table){
+			TableInfo newTable = new TableInfo();
+			newTable.setPosId(CommonSQL.getNextSeq(TableNames.TableInfo));
+			newTable.setImageName(imageName);
+			newTable.setRestaurantId(restaurantId);
+			newTable.setRevenueId(revenueId);
+			newTable.setPlacesId(placeId);
+			newTable.setStatus(ParamConst.TABLE_STATUS_IDLE);
+			newTable.setShape(3);
+			newTable.setIsDecorate(0);
+			newTable.setUnionId(restaurantId + "_" + revenueId + "_" + newTable.getPosId());
+			newTable.setIsActive(ParamConst.ACTIVE_NOMAL);
+			newTable.setResolution(width);
+			newTable.setName("table" + newTable.getPosId().intValue());
+//			if(imageName.startsWith("table_1"))
+//				newTable.setPacks(1);
+//			else if(imageName.startsWith("table_2"))
+//				newTable.setPacks(2);
+//			else if(imageName.startsWith("table_4"))
+//				newTable.setPacks(4);
+//			else if(imageName.startsWith("table_6"))
+//				newTable.setPacks(6);
+//			else
+//				newTable.setPacks(8);
+
+			newTable.setRotate(0);
+			long time = System.currentTimeMillis();
+			newTable.setCreateTime(time);
+			newTable.setUpdateTime(time);
+			TableInfoSQL.addTables(newTable);
+			return newTable;
+		}
+	}
+
+	Object lock_place = new Object();
+
+	public PlaceInfo addNewPlace(int restaurantId, int revenueId, String placeName){
+		synchronized (lock_place){
+			PlaceInfo placeInfo = new PlaceInfo();
+			placeInfo.setId(CommonSQL.getNextSeq(TableNames.PlaceInfo));
+			placeInfo.setIsActive(ParamConst.ACTIVE_NOMAL);
+			placeInfo.setRestaurantId(restaurantId);
+			placeInfo.setRevenueId(revenueId);
+			placeInfo.setPlaceDescription("");
+			placeInfo.setPlaceName(placeName);
+			placeInfo.setUnionId(restaurantId+"_"+revenueId+"_"+placeInfo.getId());
+			PlaceInfoSQL.addPlaceInfo(placeInfo);
+			return placeInfo;
+		}
 	}
 
 	Object lock_getRoundAmount = new Object();
@@ -1203,7 +1261,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 
 	//bob add:thread safe
 	Object lock_getKotSummary = new Object();		
-	public KotSummary getKotSummary(Tables table, Order order,
+	public KotSummary getKotSummary(String tableName, Order order,
 			RevenueCenter revenueCenter, long businessDate) {
 		
 		KotSummary kotSummary = null;
@@ -1220,7 +1278,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				if(revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
 					kotSummary.setTableName(order.getTableName());
 				}else{
-					kotSummary.setTableName(table.getTableName());
+					kotSummary.setTableName(tableName);
 				}
 				kotSummary.setCreateTime(time);
 				kotSummary.setUpdateTime(time);
@@ -1387,7 +1445,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	//bob add:thread safe
 	Object lock_getReportDiscount = new Object();	
 	
-	public ReportDiscount getReportDiscount(Tables tables, Order order,
+	public ReportDiscount getReportDiscount(TableInfo tables, Order order,
 			User user, RevenueCenter revenueCenter, long businessDate) {
 		
 		ReportDiscount reportDiscount = null;
@@ -1407,8 +1465,8 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				reportDiscount.setRevenueName(revenueCenter.getRevName());
 				reportDiscount.setBusinessDate(businessDate);
 				// reportDiscount.setBillNumber(OrderBillSQL.getOrderBillByOrder(order).getBillNo());
-				reportDiscount.setTableId(tables.getId());
-				reportDiscount.setTableName(tables.getTableName());
+				reportDiscount.setTableId(tables.getPosId());
+				reportDiscount.setTableName(tables.getName());
 				reportDiscount.setActuallAmount("0");// TODO
 				reportDiscount.setDiscount("0.00");// TODO
 				reportDiscount.setGrandTotal("0.00");// TODO

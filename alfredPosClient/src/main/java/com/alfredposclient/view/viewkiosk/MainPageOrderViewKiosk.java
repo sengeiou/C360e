@@ -41,6 +41,7 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ColorUtils;
@@ -160,8 +161,8 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 									= OrderDetailSQL.getOrderDetails(placedOrder.getId());
 						KotSummary kotSummary = ObjectFactory.getInstance()
 								.getKotSummary(
-										CoreData.getInstance().getTables(
-												placedOrder.getTableId()), placedOrder,
+										TableInfoSQL.getTableById(
+												placedOrder.getTableId()).getName(), placedOrder,
 										App.instance.getRevenueCenter(),
 										App.instance.getBusinessDate());
 						ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();

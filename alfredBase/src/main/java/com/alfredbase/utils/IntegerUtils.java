@@ -10,6 +10,15 @@ public class IntegerUtils {
 			return false;
 		}
 	}
+
+	public static boolean isInteger(String value) {
+		try {
+			Integer.parseInt(value);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
 	
 	public static String ordinal(int i) {
 	    String[] sufixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };

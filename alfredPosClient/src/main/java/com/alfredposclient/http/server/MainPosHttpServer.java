@@ -21,7 +21,7 @@ import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.RevenueCenter;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.KotNotification;
@@ -43,8 +43,9 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.CommonUtil;
@@ -663,8 +664,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			e.printStackTrace();
 		}
 
-		result.put("placeList", CoreData.getInstance().getPlaceList(revenueId));
-		result.put("tableList", CoreData.getInstance().getTableList(revenueId));
+		result.put("placeList", PlaceInfoSQL.getAllPlaceInfo());
+		result.put("tableList", TableInfoSQL.getAllTables());
 		result.put("resultCode", ResultCode.SUCCESS);
 		resp = this.getJsonResponse(new Gson().toJson(result));
 		return resp;
@@ -691,15 +692,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		try {
 			JSONObject jsonObject = new JSONObject(params);
 			Gson gson = new Gson();
-			Tables tables = gson.fromJson(jsonObject.optJSONObject("tables")
-					.toString(), Tables.class);
+			TableInfo tables = gson.fromJson(jsonObject.optJSONObject("tables")
+					.toString(), TableInfo.class);
 			String userKey = jsonObject.optString("userKey");
 			result.put("tempItems", ItemDetailSQL.getAllTempItemDetail());
-			if (CoreData.getInstance().getTables(tables.getId())
-					.getTableStatus() == ParamConst.TABLE_STATUS_IDLE) {
-				TablesSQL.updateTables(tables);
+			if (TableInfoSQL.getTableById(tables.getPosId())
+					.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
+//				TablesSQL.updateTables(tables);
+				TableInfoSQL.updateTables(tables);
 				//clean all KOT summary and KotDetails if the table is EMPTY
-				KotSummary kotSummary = KotSummarySQL.getKotSummaryByTable(tables);
+				KotSummary kotSummary = KotSummarySQL.getKotSummaryByTable(tables.getPosId().intValue());
 				if(kotSummary != null){
 					List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
 					if(kotItemDetails != null)
@@ -711,7 +713,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					KotSummarySQL.update(kotSummary);
 				}
 			
-				CoreData.getInstance().setTableList(TablesSQL.getAllTables());
+//				CoreData.getInstance().setTableList(TablesSQL.getAllTables());
 				Order order = ObjectFactory.getInstance().getOrder(
 						ParamConst.ORDER_ORIGIN_WAITER, tables,
 						App.instance.getRevenueCenter(),
@@ -735,7 +737,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				// send200(new Gson().toJson(result));
 
 				// 暂时也回复正常数据，便于测试
-				TablesSQL.updateTables(tables);
+//				TablesSQL.updateTables(tables);
+				TableInfoSQL.updateTables(tables);
 				Order order = ObjectFactory.getInstance().getOrder(
 						ParamConst.ORDER_ORIGIN_WAITER, tables,
 						App.instance.getRevenueCenter(),
@@ -910,7 +913,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 //			RoundAmountSQL.update(roundAmount);
 			String kotCommitStatus;
 			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummary(
-					CoreData.getInstance().getTables(order.getTableId()),
+					TableInfoSQL.getTableById(order.getTableId()).getName(),
 					order, App.instance.getRevenueCenter(), App.instance.getBusinessDate());
 			List<Integer> orderDetailIds = new ArrayList<Integer>();
 			ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
@@ -1437,11 +1440,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		
 		try {
 			JSONObject jsonObject = new JSONObject(params);
-			Tables tables = gson.fromJson(jsonObject.getString("table"),
-					Tables.class);
+			TableInfo tables = gson.fromJson(jsonObject.getString("table"),
+					TableInfo.class);
             //Table status in waiter APP is not same that of table in POS
 			//need get latest status on app.
-			Tables tabInPOS = TablesSQL.getTableById(tables.getId());
+			TableInfo tabInPOS = TableInfoSQL.getTableById(tables.getPosId());
 			App.getTopActivity().httpRequestAction(
 					MainPage.VIEW_EVNT_GET_BILL_PRINT, tabInPOS);
 

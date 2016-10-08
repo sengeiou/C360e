@@ -1,13 +1,5 @@
 package com.alfredposclient.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,8 +11,8 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.Places;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.PlaceInfo;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.javabeanforhtml.EditOrderInfo;
 import com.alfredbase.store.sql.ItemDetailSQL;
@@ -28,8 +20,8 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
-import com.alfredbase.store.sql.PlacesSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.IntegerUtils;
@@ -44,6 +36,14 @@ import com.alfredposclient.popupwindow.ModifyQuantityWindow;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EditOrderHtml extends BaseActivity {
 	private String TAG = EditOrderHtml.class.getSimpleName();
@@ -145,11 +145,11 @@ public class EditOrderHtml extends BaseActivity {
 				App.instance.getLastBusinessDate());
 		List<EditOrderInfo> editOrders = new ArrayList<EditOrderInfo>();
 		for (Order orderitem : orders) {
-			Places place = PlacesSQL.getPlacesById(orderitem.getPlaceId());
+			PlaceInfo place = PlaceInfoSQL.getPlaceInfoById(orderitem.getPlaceId());
 			User waiter = UserSQL.getUserById(orderitem.getUserId());
-			Tables tab = TablesSQL.getTableById(orderitem.getTableId());
+			TableInfo tab = TableInfoSQL.getTableById(orderitem.getTableId());
 			EditOrderInfo mOrderInfo = new EditOrderInfo(orderitem.getOrderNo(), orderitem.getId(), 1,
-					place.getPlaceName(), tab.getTableName(), waiter.getFirstName()+' '+waiter.getLastName());
+					place.getPlaceName(), tab.getName(), waiter.getFirstName()+' '+waiter.getLastName());
 		}
 		String str = gson.toJson(editOrders);
 		return JSONUtil.getJSONFromEncode(str);

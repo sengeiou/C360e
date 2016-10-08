@@ -13,7 +13,7 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.Printer;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
@@ -23,7 +23,7 @@ import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
@@ -202,7 +202,7 @@ public class KotJobManager {
 
 			Order oldOrder = (Order) orderMap.get("fromOrder");
 
-			Tables currentTable = TablesSQL.getTableById((Integer) orderMap
+			TableInfo currentTable = TableInfoSQL.getTableById((Integer) orderMap
 					.get("currentTableId"));
 			kotItemDetails = KotItemDetailSQL
 					.getKotItemDetailBySummaryId(fromKotSummary.getId());
@@ -215,7 +215,7 @@ public class KotJobManager {
 								.getId()));
 			}
 			KotSummarySQL.deleteKotSummary(fromKotSummary);
-			Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable, oldOrder.getBusinessDate());
+			Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
 			OrderBill newOrderBill = ObjectFactory.getInstance().getOrderBill(
 					newOrder, App.instance.getRevenueCenter());
 			List<OrderDetail> orderDetails = OrderDetailSQL

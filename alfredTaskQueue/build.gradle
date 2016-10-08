@@ -25,5 +25,5 @@ android {
 }
 
 dependencies {
-    compile rootProject.ext.libSupportV4
+//    compile rootProject.ext.libSupportV4
 }

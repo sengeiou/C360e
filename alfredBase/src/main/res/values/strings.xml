@@ -56,4 +56,8 @@
     <string name="downloading">Downloading</string>
     <string name="num">ItemNum:</string>
     <string name="total">Total:</string>
+    <string name="stored_card_null">QRcode cannot be empty</string>
+    <string name="qrcode_error">Please scanning the correct QRcode</string>
+    <string name="customer_no_card">Please binding with the Stored-Card</string>
+    <string name="card_status_abnormal">User QRcode have abnormal</string>
 </resources>

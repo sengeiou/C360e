@@ -40,7 +40,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ColorUtils;
@@ -561,9 +561,9 @@ public class OrderSplitPrintWindow implements OnClickListener {
 									App.instance.getUser().getFirstName()
 											+ App.instance.getUser()
 													.getLastName(),
-									TablesSQL.getTableById(
+									TableInfoSQL.getTableById(
 											orderSplit.getTableId())
-											.getTableName(), orderBill, order.getBusinessDate().toString());
+											.getName(), orderBill, order.getBusinessDate().toString());
 					orderSplit
 							.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY);
 					OrderSplitSQL.update(orderSplit);
@@ -619,7 +619,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					order,
 					App.instance.getUser().getFirstName()
 							+ App.instance.getUser().getLastName(),
-					TablesSQL.getTableById(order.getTableId()).getTableName());
+					TableInfoSQL.getTableById(order.getTableId()).getName());
 			order.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
 			OrderSQL.update(order);
 			ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory

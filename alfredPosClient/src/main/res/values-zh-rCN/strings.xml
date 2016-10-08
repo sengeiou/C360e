@@ -143,6 +143,12 @@
     <string name="reprint_bill">打印账单</string>
     <string name="edit_settlement">修改支付</string>
     <string name="boh_settlement">赊账</string>
+    <string name="stored_card">储值卡</string>
+    <string name="top_up">充值</string>
+    <string name="binding">绑定</string>
+    <string name="card_loss">挂失</string>
+    <string name="fill_card">补卡</string>
+    <string name="scanner">请扫描储值卡二维码</string>
     <string name="dashboard">仪表盘</string>
     <string name="day_sales">日销售</string>
     <string name="ent_plu">免单报表</string>

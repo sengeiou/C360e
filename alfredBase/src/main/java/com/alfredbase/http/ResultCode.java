@@ -1,11 +1,11 @@
 package com.alfredbase.http;
 
-import java.net.SocketTimeoutException;
-
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.alfredbase.R;
+
+import java.net.SocketTimeoutException;
 
 /**
  * 
@@ -92,6 +92,37 @@ public class ResultCode {
 	 *	no  permission	  用户权限不足
 	 */
 	public static final int USER_NO_PERMIT = -3001;
+
+
+	/**
+	 * 会员卡二维码为空
+	 */
+	public static final int QRCODE_EMPTY = -4001;
+
+	/**
+	 * 会员卡二维码信息有误
+	 */
+	public static final int QRCODE_ERROR = -4002;
+
+	/**
+	 * 会员卡不存在
+	 */
+	public static final int QRCODE_NOT_EXISTS = -4003;
+
+	/**
+	 * 会员卡状态异常
+	 */
+	public static final int CARD_STATUS_ABNORMAL = -4004;
+
+	/**
+	 * 用户暂无绑定会员卡信息
+	 */
+	public static final int CUSTOMER_NO_CARD = -4005;
+
+	/**
+	 * 用户二维码失效
+	 */
+	public static final int CUSTOMER_QRCODE_INVALIDATE = -4006;
 	
 	
 	/**
@@ -142,6 +173,15 @@ public class ResultCode {
 			return context.getResources().getString(R.string.not_start_session);
 		case DEVICE_NO_PERMIT:
 			return context.getResources().getString(R.string.no_permissions);
+		case QRCODE_EMPTY:
+			return context.getResources().getString(R.string.stored_card_null);
+		case QRCODE_NOT_EXISTS:
+		case QRCODE_ERROR:
+			return context.getResources().getString(R.string.qrcode_error);
+		case CUSTOMER_NO_CARD:
+			return context.getResources().getString(R.string.customer_no_card);
+		case CARD_STATUS_ABNORMAL:
+			return context.getResources().getString(R.string.card_status_abnormal);
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);

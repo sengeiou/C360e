@@ -119,9 +119,10 @@ public class SyncCentre {
 			Handler handler) {
 		HttpAPI.getItem(context, getAbsoluteUrl(APIName.ITEM_GETITEM),
 				httpClient, handler, MODE_FIRST_SYNC);
-		HttpAPI.getPlaceInfo(context, parameters,
-				getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO), httpClient,
-				handler, MODE_FIRST_SYNC);
+//		HttpAPI.getPlaceInfo(context, parameters,
+//				getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO), httpClient,
+//				handler, MODE_FIRST_SYNC);
+		HttpAPI.getPlaceTable(context, getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFONEW), httpClient, parameters, handler);
 	}
 
 	public void getBindDeviceIdInfo(Context context,
@@ -222,9 +223,9 @@ public class SyncCentre {
 			RevenueCenter revenueCenter = App.instance.getRevenueCenter();
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("revenueCenter", revenueCenter);
-			HttpAPI.getPlaceInfo(context, parameters,
-					getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO),
-					httpClient, handler, MODE_PUSH_SYNC);
+//			HttpAPI.getPlaceTable(context, parameters,
+//					getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO),
+//					httpClient, handler);
 		} else if (type.equals(PushMessage.TAX)) {
 			HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX),
 					httpClient, handler, MODE_PUSH_SYNC);
@@ -253,10 +254,29 @@ public class SyncCentre {
 		HttpAPI.updateAppOrderStatus(context, getAbsoluteUrl(APIName.POSORDER_UPDATEAPPORDERSTATUS), syncHttpClient, syncMsg);
 	}
 
+	public void updatePlaceTable(Context context,Map<String, Object> parameters, Handler handler){
+		HttpAPI.updatePlaceTable(context,getAbsoluteUrl(APIName.RESTAURANT_CHANGEPLACE),httpClient, parameters, handler);
+	}
+	public void getPlaceTable(Context context,Map<String, Object> parameters, Handler handler){
+		HttpAPI.getPlaceTable(context,getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFONEW),httpClient, parameters, handler);
+	}
+	public void registStoredCard(Context context,Map<String, Object> parameters, Handler handler){
+		HttpAPI.registStoredCard(context,getAbsoluteUrl(APIName.MEMBERSHIP_ACTIVATECARD),httpClient, parameters, handler);
+	}
+	public void updateStoredCardValue(Context context,Map<String, Object> parameters, Handler handler){
+		HttpAPI.updateStoredCardValue(context,getAbsoluteUrl(APIName.MEMBERSHIP_OPERATEBALANCE),httpClient, parameters, handler);
+	}
+	public void closeStoredCard(Context context, Map<String, Object> parameters, Handler handler){
+		HttpAPI.closeStoredCardValue(context,getAbsoluteUrl(APIName.MEMBERSHIP_REPORTCARD),httpClient, parameters, handler);
+	}
+	public void changeStoredCard(Context context, Map<String, Object> parameters, Handler handler){
+		HttpAPI.changeStoredCardValue(context,getAbsoluteUrl(APIName.MEMBERSHIP_REATTENDCARD),httpClient, parameters, handler);
+	}
+
 	// Backend Server IP
 	private String getAbsoluteUrl(String relativeUrl) {
 		if (App.instance.isDebug) {
-			return "http://192.168.1.131:8086/alfred-api/" + relativeUrl;
+			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
 //			return "http://192.168.0.120:8083/alfred-api/" + relativeUrl;
 		} else if (App.instance.isOpenLog) {
 			return "http://139.224.17.126/alfred-api/" + relativeUrl;

@@ -72,9 +72,24 @@
 	    <WebView
 	        android:id="@+id/web_tables"
 	        android:layout_width="match_parent"
-	        android:layout_height="match_parent" />
+	        android:layout_height="match_parent"
+			android:visibility="gone"/>
+		<!--<fragment
+			android:id="@+id/fl_content"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:name="com.alfredposclient.popupwindow.CloseOrderWindow"/>-->
+		<fragment
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/f_tables"
+			android:name="com.alfredposclient.Fragment.TableLayoutFragment"
+			/>
+
+
 	    
 	</RelativeLayout>
+
 	</FrameLayout>
 	<com.alfredposclient.view.SettingView
 		    android:id="@+id/settingView"

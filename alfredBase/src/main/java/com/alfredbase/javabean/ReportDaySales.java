@@ -134,6 +134,9 @@ public class ReportDaySales implements Serializable{
 
 	private String paypalpay;
 	private Integer paypalpayQty;
+
+	private String storedCard;
+	private Integer storedCardQty;
 	
 	public ReportDaySales() {
 
@@ -704,6 +707,22 @@ public class ReportDaySales implements Serializable{
 		}
 	}
 
+	public String getStoredCard() {
+		return storedCard;
+	}
+
+	public void setStoredCard(String storedCard) {
+		this.storedCard = storedCard;
+	}
+
+	public Integer getStoredCardQty() {
+		return storedCardQty;
+	}
+
+	public void setStoredCardQty(Integer storedCardQty) {
+		this.storedCardQty = storedCardQty;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -772,7 +791,8 @@ public class ReportDaySales implements Serializable{
 				", inclusiveTaxAmt='" + inclusiveTaxAmt + '\'' +
 				", paypalpay='" + paypalpay + '\'' +
 				", paypalpayQty=" + paypalpayQty +
+				", storedCard='" + storedCard + '\'' +
+				", storedCardQty=" + storedCardQty +
 				'}';
 	}
-
 }

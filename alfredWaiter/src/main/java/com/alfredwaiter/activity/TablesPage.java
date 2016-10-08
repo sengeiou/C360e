@@ -1,10 +1,5 @@
 package com.alfredwaiter.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
@@ -20,14 +15,15 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.Places;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.PlaceInfo;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredwaiter.R;
 import com.alfredwaiter.adapter.TablesAdapter;
 import com.alfredwaiter.global.App;
@@ -35,6 +31,11 @@ import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.popupwindow.SetPAXWindow;
 import com.viewpagerindicator.TabPageIndicator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TablesPage extends BaseActivity {
 	public static final int VIEW_EVENT_SET_PAX = 0;
@@ -45,8 +46,8 @@ public class TablesPage extends BaseActivity {
 //	private static final String TITLE_NAME = "Table";
 //	private TitleBar titleBar;
 	private SetPAXWindow setPAXWindow;
-	private List<Places> placesList;
-	private Tables currenTables;
+	private List<PlaceInfo> placesList;
+	private TableInfo currenTables;
 	private TabPageIndicator indicator;
 	private ViewPager pager;
 	private Adapter adapter;
@@ -59,7 +60,8 @@ public class TablesPage extends BaseActivity {
 		setContentView(R.layout.activity_tables);
 		loadingDialog = new LoadingDialog(context);
 		initTitle();
-		placesList = CoreData.getInstance().getPlaceList();
+//		placesList = CoreData.getInstance().getPlaceList();
+		placesList = PlaceInfoSQL.getAllPlaceInfo();
 		setPAXWindow = new SetPAXWindow(this, findViewById(R.id.rl_root),
 				handler);
 		adapter = new Adapter(this);
@@ -89,8 +91,8 @@ public class TablesPage extends BaseActivity {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				currenTables.setTablePacks(persons);
-				currenTables.setTableStatus(ParamConst.TABLE_STATUS_DINING);
+				currenTables.setPacks(persons);
+				currenTables.setStatus(ParamConst.TABLE_STATUS_DINING);
 				Map<String, Object> parameters = new HashMap<String, Object>();
 				parameters.put("tables", currenTables);
 				loadingDialog.setTitle(context.getResources().getString(R.string.loading));
@@ -122,7 +124,7 @@ public class TablesPage extends BaseActivity {
 			}
 			case SelectRevenue.SYNC_DATA_TAG :
 				loadingDialog.dismiss();
-				placesList = CoreData.getInstance().getPlaceList();
+				placesList = PlaceInfoSQL.getAllPlaceInfo();
 				adapter.notifyDataSetChanged();
 				indicator.notifyDataSetChanged();
 				break;
@@ -191,14 +193,18 @@ public class TablesPage extends BaseActivity {
 			tablesAdapters = new ArrayList<TablesAdapter>();
 			View view = null;
 			for (int i = 0; i < placesList.size(); i++) {
-				Places places = placesList.get(i);
+				PlaceInfo places = placesList.get(i);
 				view = inflater.inflate(R.layout.item_table, null);
 				GridView gv_tables = (GridView) view
 						.findViewById(R.id.gv_tables);
-				TablesAdapter tablesAdapter = new TablesAdapter(context, CoreData
-						.getInstance().getTableList(
-								App.instance.getRevenueCenter().getId(),
-								places.getId()), places);
+				/**
+				 * CoreData
+				 .getInstance().getTableList(
+				 App.instance.getRevenueCenter().getId(),
+				 places.getId())
+				 */
+				TablesAdapter tablesAdapter = new TablesAdapter(context, TableInfoSQL
+						.getTableInfosBuyPlaces(places), places);
 				tablesAdapters.add(tablesAdapter);
 				gv_tables.setAdapter(tablesAdapter);
 				gv_tables.setOnItemClickListener(new OnItemClickListener() {
@@ -206,11 +212,11 @@ public class TablesPage extends BaseActivity {
 					public void onItemClick(AdapterView<?> arg0, View arg1,
 							int arg2, long arg3) {
 
-						currenTables = (Tables) arg0.getItemAtPosition(arg2);
+						currenTables = (TableInfo) arg0.getItemAtPosition(arg2);
 						if (currenTables != null
-								&& currenTables.getTableStatus() != ParamConst.TABLE_STATUS_IDLE) {
+								&& currenTables.getStatus() != ParamConst.TABLE_STATUS_IDLE) {
 							handler.sendMessage(handler.obtainMessage(
-									TablesPage.VIEW_EVENT_SET_PAX, currenTables.getTablePacks().toString()));
+									TablesPage.VIEW_EVENT_SET_PAX, currenTables.getPacks().toString()));
 						} else {
 							setPAXWindow.show();
 						}

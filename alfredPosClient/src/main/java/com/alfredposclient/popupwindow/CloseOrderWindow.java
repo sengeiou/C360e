@@ -1,11 +1,5 @@
 package com.alfredposclient.popupwindow;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -45,7 +39,7 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.VoidSettlement;
@@ -65,7 +59,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
@@ -81,9 +75,9 @@ import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
-import com.alfredposclient.activity.EditSettlementHtml;
 import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.MainPage;
+import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.OrderDetailAdapter;
 import com.alfredposclient.global.App;
@@ -95,6 +89,12 @@ import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
 import com.alfredposclient.view.SettlementDetailItemView;
 import com.alfredposclient.view.SettlementDetailItemView.ViewResultCall;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener {
 	private String TAG = CloseOrderWindow.class.getSimpleName();
@@ -144,7 +144,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	private TextView tv_rounding_num;
 //	private TextView tv_grand_total_bill_num;
 	private TextView tv_amount_due_num;
-	
+
 	private TextView tv_special_settlement_title;
 	private RelativeLayout rl_special_settlement_person;
 	private RelativeLayout rl_special_settlement_phone;
@@ -157,11 +157,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	private TextView tv_nets_amount_due_num;
 	private TextView tv_nets_ref_num;
 	private TextView tv_nets_amount_paid_num;
-	
+
 	private TextView tv_wechat_ali_ref_num;
 	private TextView tv_wechat_ali_amount_due_num;
 	private TextView tv_wechat_ali_amount_paid_num;
-	
+
 	private boolean isMenuClose = false;
 	private ImageView iv_card_img;
 	private LinearLayout ll_all_settlements;
@@ -172,7 +172,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	private float startX;
 	private LinearLayout ll_subtotal_layout;
 	private AlipayWebView web_alipay;
-	
+
 	private boolean isFirstClickCash = false;
 	private BigDecimal includTax;
 	public CloseOrderWindow(BaseActivity parent, View parentView,
@@ -211,13 +211,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				.findViewById(R.id.tv_cards_amount_paid_num);
 		tv_card_no_num = (TextView) contentView
 				.findViewById(R.id.tv_card_no_num);
-		
+
 		tv_total_amount_num = (TextView) contentView
 				.findViewById(R.id.tv_total_amount_num);
 		tv_change_action_num = (TextView) contentView
 				.findViewById(R.id.tv_change_action_num);
-		
-		
+
+
 //		tv_item_count_num = (TextView) contentView.findViewById(R.id.tv_item_count_num);
 		tv_sub_total_num = (TextView) contentView.findViewById(R.id.tv_sub_total_num);
 		tv_discount_num = (TextView) contentView.findViewById(R.id.tv_discount_num);
@@ -226,27 +226,27 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		tv_rounding_num = (TextView) contentView.findViewById(R.id.tv_rounding_num);
 //		tv_grand_total_bill_num = (TextView) contentView.findViewById(R.id.tv_grand_total_bill_num);
 //		tv_settled_num = (TextView) contentView.findViewById(R.id.tv_settled_num);
-		
-		
+
+
 		tv_special_settlement_title = (TextView) contentView
 				.findViewById(R.id.tv_special_settlement_title);
 		rl_special_settlement_person = (RelativeLayout) contentView
 				.findViewById(R.id.rl_special_settlement_person);
 		rl_special_settlement_phone = (RelativeLayout) contentView
 				.findViewById(R.id.rl_special_settlement_phone);
-		
+
 		ll_settlement_details = (LinearLayout) contentView.findViewById(R.id.ll_settlement_details);
 		ll_bill_summary = (LinearLayout) contentView.findViewById(R.id.ll_bill_summary);
 
 		tv_amount_due_num = (TextView) contentView.findViewById(R.id.tv_amount_due_num);
-		
+
 		tv_special_settlement_amount_due_num = (TextView) contentView
 				.findViewById(R.id.tv_special_settlement_amount_due_num);
 		tv_special_settlement_authorize_by_name = (TextView) contentView
 				.findViewById(R.id.tv_special_settlement_authorize_by_name);
 		et_special_settlement_remarks_text = (TextView) contentView
 				.findViewById(R.id.et_special_settlement_remarks_text);
-		
+
 		tv_nets_amount_paid_num = (TextView) contentView.findViewById(R.id.tv_nets_amount_paid_num);
 		tv_cards_name = (TextView) contentView.findViewById(R.id.tv_cards_name);
 		tv_cards_amount_due_num = (TextView) contentView.findViewById(R.id.tv_cards_amount_due_num);
@@ -257,27 +257,27 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		tv_nets_amount_due_num = (TextView) contentView.findViewById(R.id.tv_nets_amount_due_num);
 		tv_nets_ref_num = (TextView) contentView.findViewById(R.id.tv_nets_ref_num);
 		iv_card_img = (ImageView) contentView.findViewById(R.id.iv_card_img);
-		
+
 		//wechat and alipay
 		tv_wechat_ali_amount_due_num = (TextView) contentView.findViewById(R.id.tv_wechat_ali_amount_due_num);
 		tv_wechat_ali_ref_num = (TextView) contentView.findViewById(R.id.tv_wechat_ali_ref_num);
 		tv_wechat_ali_amount_paid_num = (TextView) contentView.findViewById(R.id.tv_wechat_ali_amount_paid_num);
-		
+
 		ll_all_settlements = (LinearLayout) contentView.findViewById(R.id.ll_all_settlements);
 //		iv_shadow_pop = (ImageView) contentView.findViewById(R.id.iv_shadow_pop);
 		moneyKeyboard = (CloseMoneyKeyboard) contentView
 				.findViewById(R.id.cashKeyboard);
 		moneyKeyboard.setKeyBoardClickListener(this);
 		moneyKeyboard.setVisibility(View.GONE);
-//		swipe = contentView.findViewById(R.id.swipe);
+//		swipe = findViewById(R.id.swipe);
 //		swipe.setOnClickListener(this);
-		
+
 		contentView.findViewById(R.id.tv_Others).setOnClickListener(this);
 		contentView.findViewById(R.id.iv_VISA).setOnClickListener(this);
 		contentView.findViewById(R.id.iv_UnionPay_CN).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_cash_200).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_cash_150).setOnClickListener(this);
-		contentView.findViewById(R.id.tv_cash_100).setOnClickListener(this); 
+		contentView.findViewById(R.id.tv_cash_100).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_cash_50).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_cash_20).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_cash_10).setOnClickListener(this);
@@ -293,10 +293,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		contentView.findViewById(R.id.tv_COMPANY).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_ENTERTAINMENT)
 				.setOnClickListener(this);
+		contentView.findViewById(R.id.tv_stored_card).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_HOUSE_CHARGE).setOnClickListener(this);
 		btn_close_bill.setOnClickListener(this);
 		btn_print_receipt.setOnClickListener(this);
-		
+
 		ImageView iv_alipay = (ImageView) contentView.findViewById(R.id.iv_alipay);
 		ImageView iv_wechatpay = (ImageView) contentView.findViewById(R.id.iv_wechatpay);
 		if(App.countryCode == ParamConst.CHINA){
@@ -307,11 +308,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			iv_wechatpay.setVisibility(View.VISIBLE);
 			iv_wechatpay.setOnClickListener(this);
 		}else{
-			
+
 			contentView.findViewById(R.id.media_keyboard_1).setVisibility(View.VISIBLE);
 			contentView.findViewById(R.id.media_keyboard_2).setVisibility(View.GONE);
 		}
-		
+
 		popupWindow.setContentView(contentView);
 		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		popupWindow.setFocusable(true);
@@ -320,9 +321,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		ListView lv_list = (ListView) contentView.findViewById(R.id.lv_list);
 		orderDetails = OrderDetailSQL.getOrderDetails(CommonSQL.getNextSeq(TableNames.Order) - 1);
 		orderDetailAdapter = new OrderDetailAdapter(parent, orderDetails);
-		lv_list.setAdapter(orderDetailAdapter);  
+		lv_list.setAdapter(orderDetailAdapter);
 	}
-	
+
 	private void init() {
 		Tax tax = App.instance.getLocalRestaurantConfig().getIncludedTax().getTax();
 		if(tax != null){
@@ -353,7 +354,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		initBillSummary();
 	}
 
-	
+
 	private void initTextTypeFace(View view) {
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod((TextView) view
@@ -551,8 +552,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 	/**
 	 * 现在还不确定设计稿的样式 先这样做
-	 * 
-	 * @param order
+	 *
 	 */
 	private void initBillSummary() {
 		if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED
@@ -570,8 +570,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			settlementNum = BH.getBD(sumPaidamount);
 		}
 		((TextView)contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + remainTotal.toString());
-		
-		
+
+
 //		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
 //		tv_item_count_num.setText(getItemNumSum() + "");
 		tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + order.getSubTotal());
@@ -625,11 +625,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					}
 					OrderSQL.update(order);
 					Object subPaymentSettlement = null;
-					
+
 					switch (paymentTypeId) {
 					case ParamConst.SETTLEMENT_TYPE_CASH:
 						parent.runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
@@ -751,7 +751,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					default:
 						break;
 					}
-					
+
 					if (oldPaymentMapList != null) {
 						Map<String, Object> paymentMap = new HashMap<String, Object>();
 						paymentMap.put("paymentSettlement",
@@ -766,7 +766,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					} else {
 						PaymentSettlementSQL.deletePaymentSettlement(paymentSettlement);
 					}
-					
+
 					initBillSummary();
 				}
 				});
@@ -817,10 +817,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		default:
 			break;
 		}
-		
+
 		tv_special_settlement_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotal));
 		tv_special_settlement_authorize_by_name.setText(user.getFirstName() + user.getLastName());
-		
+
 	}
 
 	private void initCardsSettlement(String cardsName) {
@@ -841,20 +841,20 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			iv_card_img.setImageResource(R.drawable.img_diners);
 		}
 		if (App.instance.countryCode == ParamConst.CHINA) {
-		   if (cardsName.equals("UNIONPAY")) 
+		   if (cardsName.equals("UNIONPAY"))
 			   tv_cards_name.setText("银联");
 		   else if (cardsName.equals("MASTERCARD"))
 			   tv_cards_name.setText("Master Card");
-		   else 
+		   else
 			   tv_cards_name.setText(cardsName);
 		}else {
 		  tv_cards_name.setText(cardsName);
 		}
-		
+
 		tv_card_no_num.setText("");
-		
+
 		tv_cards_cvv_num.setText("");
-		
+
 		tv_cards_expiration_date_num.setText("");
 		tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotal));
 		tv_cards_amount_paid_num.setText(BH.doubleFormat.format(remainTotal).toString());
@@ -889,7 +889,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		contentView.findViewById(R.id.rl_nets_amount_paid_num).setOnClickListener(this);
 		contentView.findViewById(R.id.rl_nets_ref_num).setOnClickListener(this);
 	}
-	
+
 	private void initWeChatAlipaySettlement(int payTypeId) {
 		initBillSummary();
 		ll_subtotal_layout.setVisibility(
@@ -911,7 +911,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		contentView.findViewById(R.id.rl_wechat_ali_amount_paid_num).setOnClickListener(this);
 		contentView.findViewById(R.id.rl_wechat_ali_ref_num).setOnClickListener(this);
 	}
-	
+
 	private int getItemNumSum() {
 		orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
 		int itemCount = 0;
@@ -923,7 +923,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		}
 		return itemCount;
 	}
-	
+
 	public void show(Order order, float startX, OrderBill orderBill) {
 		if (isShowing()) {
 			return;
@@ -966,17 +966,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		ll_bill_layout.setX(startX);
 		ll_bill_layout.setVisibility(View.INVISIBLE);
 		ll_bill_layout.postDelayed(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				ll_bill_layout.setVisibility(View.VISIBLE);
 			}
 		}, 100);
 		ll_bill_layout.postDelayed((new Runnable() {
-//			
+//
 			@Override
 			public void run() {
-				
+
 				AnimatorSet set = new AnimatorSet();
 
 				ObjectAnimator animator = ObjectAnimator.ofFloat(
@@ -991,7 +991,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					@Override
 					public void onAnimationStart(Animator animation) {
 						super.onAnimationStart(animation);
-						
+
 					}
 				});
 				set.start();
@@ -1036,9 +1036,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 	private void printReceiptAction(int tableId) {
 		if(!App.instance.isRevenueKiosk()){
-			Tables tables = TablesSQL.getTableById(tableId);
-			tables.setTableStatus(ParamConst.TABLE_STATUS_IDLE);
-			TablesSQL.updateTables(tables);
+			TableInfo tables = TableInfoSQL.getTableById(tableId);
+			tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
+			TableInfoSQL.updateTables(tables);
 		}
 		// }
 		AnimatorSet set = new AnimatorSet();
@@ -1074,32 +1074,32 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 					@Override
 					public void run() {
-						
+
 						//DONE all KOT SUMMARY and ITEM DETAILS
 						KotSummary kotSummary = KotSummarySQL
 								.getKotSummary(paidOrderId);
 						PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
 						if (!App.instance.isRevenueKiosk() && kotSummary != null) {
-							List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary); 
-							
-							if(kotItemDetails != null) 
-							for(KotItemDetail kotItemDetail : kotItemDetails){ 
-							    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE); 
-							    KotItemDetailSQL.update(kotItemDetail); 
+							List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
+
+							if(kotItemDetails != null)
+							for(KotItemDetail kotItemDetail : kotItemDetails){
+							    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+							    KotItemDetailSQL.update(kotItemDetail);
 							}
-							
+
 							kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
 							KotSummarySQL.update(kotSummary);
 						}
 						HashMap<String, String> map = new HashMap<String, String>();
-						
+
 						map.put("orderId", String.valueOf(paidOrderId));
 						map.put("paymentId", String.valueOf(payment.getId().intValue()));
 						// to print close receipt
 						handler.sendMessage(handler.obtainMessage(
 								MainPage.VIEW_EVENT_CLOSE_BILL, map));
 						parent.runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								// show table after settlement is done
@@ -1108,7 +1108,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 						});
 					}
 				}).start();
-				
+
 
 			}
 
@@ -1210,6 +1210,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				handler.sendMessage(handler
 						.obtainMessage(MainPage.VIEW_EVENT_SHOW_BILL_ON_HOLD));
 				break;
+			case R.id.tv_stored_card: {
+
+//				String value = ((TextView)findViewById(R.id.tv_residue_total_num)).getText().toString().substring(1);
+				if(BH.compare(remainTotal,BH.getBD(ParamConst.DOUBLE_ZERO))){
+					handler.sendMessage(handler.obtainMessage(StoredCardActivity.VIEW_EVENT_STORED_CARD_PAY, remainTotal.toString()));
+					viewTag = ParamConst.SETTLEMENT_TYPE_STORED_CARD;
+					paymentTypeId = ParamConst.SETTLEMENT_TYPE_STORED_CARD;
+				}
+
+			}
+			break;
 //			case R.id.iv_alipay:
 //				Map<Integer, AlipayPushMsgDto> alipayPush =  App.instance.getAlipayPushMessage();
 //				if (alipayPush.containsKey(orderBill.getBillNo())) {
@@ -1356,12 +1367,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					if(!TextUtils.isEmpty(trade_status) && (trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS")) && extraCommonArray[3].equals(orderBill.getBillNo().toString())){
 						alipayClickEnterAction(trade_no, buyer_email, remainTotal);
 						DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付成功", null);
-						
+
 					}else{
 						DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
 					}
 //					AlipayNotify.verify(localBundle, new AlipayNetWorkCallBack() {
-//						
+//
 //						@Override
 //						public void onSuccess() {
 //							String trade_status = localBundle.get("trade_status");
@@ -1369,37 +1380,37 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 //							final String buyer_email = localBundle.get("buyer_email");
 //							if(!TextUtils.isEmpty(trade_status) && (trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS"))){
 //								parent.runOnUiThread(new Runnable() {
-//									
+//
 //									@Override
 //									public void run() {
 //										alipayClickEnterAction(trade_no, buyer_email);
 //										DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付成功", null);
 //									}
 //								});
-//								
+//
 //							}else{
 //								parent.runOnUiThread(new Runnable() {
-//									
+//
 //									@Override
 //									public void run() {
 //										DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
 //									}
 //								});
-//								
+//
 //							}
 //						}
-//						
+//
 //						@Override
 //						public void onFailure() {
 //							DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
 //						}
 //					});
-					
+
 					web_alipay.setVisibility(View.GONE);
 				}
 				return super.shouldOverrideUrlLoading(view, url);
 			}
-			
+
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				super.onPageFinished(view, url);
@@ -1407,9 +1418,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			}
 		});
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param visibility
 	 * @param payTypeId
 	 *            为支付方式的ID 现在用临时 0， 1 代替 等拉取到数据改成静态参数
@@ -1650,7 +1661,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		}
 	}
 
-	private void clickEnterAction() {
+	public void clickEnterAction() {
 //		if (show.length() <= 0) {
 //			return;
 //		}
@@ -1747,6 +1758,25 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 		}
 			break;
+		case ParamConst.SETTLEMENT_TYPE_STORED_CARD: {
+//			String amount = ((TextView) findViewById(R.id.tv_residue_total))
+//					.getText().toString();
+			PaymentSQL.addPayment(payment);
+			PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+					.getPaymentSettlement(payment, paymentTypeId,
+							remainTotal.toString());
+			PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+			remainTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
+			payment_amount = remainTotal;
+			paymentType = viewTag;
+			if (newPaymentMapList != null) {
+				Map<String, Object> paymentMap = new HashMap<String, Object>();
+				paymentMap.put("newPaymentSettlement",
+						paymentSettlement);
+				newPaymentMapList.add(paymentMap);
+			}
+		}
+			break;
 		case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD: {
 
 			PaymentSQL.addPayment(payment);
@@ -1781,7 +1811,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				paymentMap.put("newSubPaymentSettlement",
 						bohHoldSettlement);
 				newPaymentMapList.add(paymentMap);
-				
+
 			}
 		}
 			break;
@@ -1880,7 +1910,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 											.getText().toString()),
 											paidBD.toString());
 					NetsSettlementSQL.addNetsSettlement(netsSettlement);
-		
+
 					payment_amount = remainTotal;
 					paymentType = viewTag;
 					if (newPaymentMapList != null) {
@@ -1922,7 +1952,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			}
 		}
 			break;
-			
+
 		case ParamConst.SETTLEMENT_TYPE_WEIXIN:{
 			BigDecimal paidBD = BH.getBD(tv_wechat_ali_amount_paid_num.getText().toString());
 			if(BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))){
@@ -1958,7 +1988,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		initBillSummary();
 		closeMoneyKeyboard();
 	}
-	
+
 	private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount){
 
 		PaymentSQL.addPayment(payment);
@@ -1988,7 +2018,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		switch (viewTag) {
 		case ParamConst.SETTLEMENT_TYPE_CASH: {
 			if(isFirstClickCash){
-				if (show.length() > 0) 
+				if (show.length() > 0)
 				show.delete(0, show.length());
 				show.append(key);
 				isFirstClickCash = false;
@@ -2015,7 +2045,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 						show.delete(show.length() - key.length(), show.length());
 					}
 				}
-				
+
 			}
 			if (selectView != null && selectView == tv_card_no_num) {
 				selectView.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -2132,12 +2162,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_NETS: {
-			((TextView) contentView.findViewById(R.id.tv_nets_ref_num))
+			((TextView) parent.findViewById(R.id.tv_nets_ref_num))
 					.setText("");
 		}
 			break;
 //		case ParamConst.SETTLEMENT_TYPE_ALIPAY: {
-//			((TextView) contentView.findViewById(R.id.tv_wechat_ali_ref_num))
+//			((TextView) findViewById(R.id.tv_wechat_ali_ref_num))
 //					.setText("");
 //		}
 //			break;

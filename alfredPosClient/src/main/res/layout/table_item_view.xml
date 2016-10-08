@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+    <ImageView
+        android:id="@+id/iv_copy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignTop="@+id/iv_table"
+        android:src="@drawable/table_copy"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/iv_table"
+        android:src="@drawable/table_delete"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/iv_rotate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/iv_table"
+        android:src="@drawable/table_rotate"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/iv_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_rotate"
+        android:layout_toRightOf="@+id/iv_table"
+        android:src="@drawable/table_more"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/iv_table"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_toRightOf="@+id/iv_copy" />
+
+
+    <EditText
+        android:id="@+id/et_item_table_name"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_toRightOf="@+id/iv_copy"
+        android:layout_toLeftOf="@+id/btn_table_name_ok"
+        android:layout_below="@+id/iv_more"
+        android:layout_marginTop="5dp"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:visibility="invisible"/>
+    <Button
+        android:id="@+id/btn_table_name_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ok"
+        android:layout_alignTop="@+id/et_item_table_name"
+        android:layout_alignBottom="@+id/et_item_table_name"
+        android:layout_toLeftOf="@+id/iv_delete"
+        android:visibility="invisible"
+        />
+
+    <LinearLayout
+        android:id="@+id/ll_table_more_action"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/et_item_table_name"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_table_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="small"
+            android:textSize="14sp"
+            android:background="@drawable/table_size_small_selector"
+            android:layout_marginRight="5dp"/>
+
+        <Button
+            android:id="@+id/btn_table_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="middle"
+            android:textSize="14sp"
+            android:background="@drawable/table_size_middle_selector"/>
+
+        <Button
+            android:id="@+id/btn_table_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="large"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/table_size_large_selector"/>
+
+    </LinearLayout>
+</RelativeLayout>

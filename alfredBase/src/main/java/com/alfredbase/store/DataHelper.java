@@ -39,6 +39,7 @@ public class DataHelper {
 				onUpgradeForOldVersion4(db);
 				onUpgradeForOldVersion5(db);
 				onUpgradeForOldVersion6(db);
+				onUpgradeForOldVersion7(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -59,6 +60,7 @@ public class DataHelper {
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
+						onUpgradeForOldVersion7(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
@@ -66,24 +68,32 @@ public class DataHelper {
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
+						onUpgradeForOldVersion7(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
+						onUpgradeForOldVersion7(db);
 						break;
 					case 4:
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
+						onUpgradeForOldVersion7(db);
 						break;
 					case 5:
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
+						onUpgradeForOldVersion7(db);
 						break;
 					case 6:
 						onUpgradeForOldVersion6(db);
+						onUpgradeForOldVersion7(db);
+						break;
+					case 7:
+						onUpgradeForOldVersion7(db);
 						break;
 				default:
 					break;
@@ -117,15 +127,15 @@ public class DataHelper {
 			db.execSQL("CREATE TABLE "
 					+ TableNames.PrinterGroup
 					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, printerGroupId INTEGER,  printerId INTEGER,companyId INTEGER,  restaurantId INTEGER)");
-			db.execSQL("CREATE TABLE "
-					+ TableNames.Places
-					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, placeName TEXT,placeDescription TEXT,restaurantId INTEGER,  revenueId INTEGER,  isActive INTEGER)");
+//			db.execSQL("CREATE TABLE "
+//					+ TableNames.Places
+//					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, placeName TEXT,placeDescription TEXT,restaurantId INTEGER,  revenueId INTEGER,  isActive INTEGER)");
 			db.execSQL("CREATE TABLE "
 					+ TableNames.Restaurant
 					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT,  companyId INTEGER,  restaurantName TEXT,type INTEGER,  status INTEGER,  description TEXT,  email TEXT,address1 TEXT,  address2 TEXT,  telNo TEXT,  country TEXT,state TEXT,  city TEXT,  postalCode TEXT,  createTime LONG,updateTime LONG, website TEXT, addressPrint TEXT, logoUrl TEXT, qrPayment INTEGER, restaurantPrint TEXT)");
-			db.execSQL("CREATE TABLE "
-					+ TableNames.Tables
-					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER,  revenueId INTEGER,placesId INTEGER,  tableName TEXT,  tablePacks INTEGER,isActive INTEGER, tableStatus INTEGER)");
+//			db.execSQL("CREATE TABLE "
+//					+ TableNames.Tables
+//					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER,  revenueId INTEGER,placesId INTEGER,  tableName TEXT,  tablePacks INTEGER,isActive INTEGER, tableStatus INTEGER)");
 			db.execSQL("CREATE TABLE "
 					+ TableNames.ItemDetail
 					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, itemTemplateId INTEGER, revenueId INTEGER, itemName TEXT, itemDesc TEXT, itemCode TEXT, imgUrl TEXT, price TEXT, itemType INTEGER, printerId INTEGER, isModifier INTEGER, itemMainCategoryId INTEGER, itemCategoryId INTEGER, isActive INTEGER, taxCategoryId INTEGER, isPack INTEGER, isTakeout INTEGER, happyHoursId INTEGER, userId INTEGER, createTime LONG, updateTime LONG)");
@@ -451,9 +461,9 @@ public class DataHelper {
 					+ TableNames.ReportDaySales
 					+ " ADD COLUMN thirdPartyQty INTEGER");
 			
-			db.execSQL("ALTER TABLE "
-					+ TableNames.Tables
-					+ " ADD COLUMN orders INTEGER default 0");
+//			db.execSQL("ALTER TABLE "
+//					+ TableNames.Tables
+//					+ " ADD COLUMN orders INTEGER default 0");
 
 			db.execSQL("ALTER TABLE " 
 					+ TableNames.ReportPluDayModifier
@@ -577,6 +587,38 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE " + TableNames.Order
 					+ " ADD COLUMN tableName TEXT default '' ");
 
+		}
+		private void onUpgradeForOldVersion7(SQLiteDatabase db) {
+			/*
+			idint(11) NOT NULL
+			namevarchar(20) NULL桌子名称
+			restaurant_idint(11) NOT NULL餐厅id
+			revenue_idint(11) NOT NULL收银中心id
+			x_axisint(11) NULLx轴
+			y_axisint(11) NULLy轴
+			places_idint(11) NOT NULL区域id
+			resolutionint(11) NULL分辨率
+			pos_idint(11) NOT NULLpos端id
+			shapeint(2) NULL大小
+			typeint(2) NULL类型
+			statusint(5) NOT NULL桌子状态(0空的，1、占用、2正在结账)
+			is_decorateint(1) NOT NULL是否装饰,0:否;1:是
+			union_idvarchar(50) NOT NULL唯一id restautId_revenueId_posId +
+			is_activeint(11) NULL是否可用(-1删除，0禁用，1正常)
+			create_timetimestamp NULL创建时间
+			update_timetimestamp NULL更新时间
+			 */
+			db.execSQL("CREATE TABLE "
+					+ TableNames.TableInfo
+					+ " (posId INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, imageName TEXT, restaurantId INTEGER, revenueId INTEGER, xAxis INTEGER, yAxis INTEGER, placesId INTEGER, resolution INTEGER, shape INTEGER, type INTEGER, status INTEGER, isDecorate INTEGER, unionId TEXT, isActive INTEGER, packs INTEGER, rotate INTEGER, createTime LONG, updateTime LONG, orders INTEGER, isKiosk INTEGER default 0)");
+			db.execSQL("CREATE TABLE "
+					+ TableNames.PlaceInfo
+					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, placeName TEXT,placeDescription TEXT,restaurantId INTEGER,  revenueId INTEGER, unionId INTEGER, isActive INTEGER, isKiosk INTEGER default 0)");
+			//TableNames.ReportDaySales
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN storedCard TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN storedCardQty INTEGER default 0");
 		}
 	}
 }
