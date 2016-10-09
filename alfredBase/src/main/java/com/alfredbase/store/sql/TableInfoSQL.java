@@ -337,12 +337,13 @@ public class TableInfoSQL {
     }
     public static TableInfo getKioskTable() {
         String sql = "select * from " + TableNames.TableInfo + " where isKiosk = ?";
-        TableInfo newTable = new TableInfo();
+        TableInfo newTable = null;
         Cursor cursor = null;
         try {
             cursor = SQLExe.getDB().rawQuery(sql, new String[] {String.valueOf(1)});
 
             if (cursor.moveToFirst()) {
+                newTable = new TableInfo();
                 newTable.setPosId(cursor.getInt(0));
                 newTable.setName(cursor.getString(1));
                 newTable.setImageName(cursor.getString(2));

@@ -177,6 +177,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			if(tableInfo == null){
 				tableInfo = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480);
 				tableInfo.setIsKiosk(1);
+				tableInfo.setPosId(0);
 				TableInfoSQL.addTables(tableInfo);
 			}
 		}

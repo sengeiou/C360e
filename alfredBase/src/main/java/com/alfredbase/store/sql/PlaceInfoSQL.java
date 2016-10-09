@@ -180,12 +180,13 @@ public class PlaceInfoSQL {
 		return places;
 	}
 	public static PlaceInfo getKioskPlaceInfo() {
-		PlaceInfo places = new PlaceInfo();
+		PlaceInfo places = null;
 		String sql = "select * from " + TableNames.PlaceInfo + " where isKiosk = ?";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql, new String[] {String.valueOf(1)});
 			if (cursor.moveToFirst()) {
+				places = new PlaceInfo();
 				places.setId(cursor.getInt(0));
 				places.setPlaceName(cursor.getString(1));
 				places.setPlaceDescription(cursor.getString(2));
