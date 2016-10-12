@@ -221,7 +221,7 @@ public class MainPageKiosk extends BaseActivity {
 	private Order oldOrder;
 	private List<OrderDetail> orderDetails;
 	private VerifyDialog verifyDialog;
-	public LoadingDialog loadingDialog;
+//	public LoadingDialog loadingDialog;
 
 	public PrinterLoadingDialog printerLoadingDialog;
 	
@@ -469,6 +469,7 @@ public class MainPageKiosk extends BaseActivity {
 			break;
 			case StoredCardActivity.PAID_STOREDCARD_SUCCEED:
 			{
+				dismissLoadingDialog();
 				if (closeOrderWindow.isShowing()) {
 					closeOrderWindow.clickEnterAction();
 				}
@@ -478,6 +479,7 @@ public class MainPageKiosk extends BaseActivity {
 			}
 				break;
 			case StoredCardActivity.HTTP_FAILURE:
+				dismissLoadingDialog();
 				UIHelp.showShortToast(context, ResultCode.getErrorResultStrByCode(context,
 						(Integer) msg.obj, context.getResources().getString(R.string.server)));
 				break;
@@ -1448,7 +1450,7 @@ public class MainPageKiosk extends BaseActivity {
 		if (orderBill != null && orderBill.getBillNo() != null) {
 			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);
 			if(orderSplits.isEmpty()){
-//				closeOrderWindow.show(currentOrder, operatePanel.getWidth(), orderBill);TODO
+				closeOrderWindow.show(currentOrder, operatePanel.getWidth(), orderBill);
 			}else{
 				int count = OrderDetailSQL.getOrderDetailCountByGroupId(0, currentOrder.getId());
 				if(count == 0){
@@ -1745,10 +1747,10 @@ public class MainPageKiosk extends BaseActivity {
 		}else if (requestCode == MainPage.CHECK_REQUEST_CODE){
 			if(resultCode == RESULT_OK){
 				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("qrCode", getIntent().getStringExtra("qrCode"));
-				map.put("revenueId", getIntent().getIntExtra("revenueId", 0));
-				map.put("consumeAmount", getIntent().getStringExtra("consumeAmount"));
-				map.put("operateType", getIntent().getIntExtra("operateType", -1));
+				map.put("qrCode", data.getStringExtra("qrCode"));
+				map.put("revenueId", data.getIntExtra("revenueId", 0));
+				map.put("consumeAmount", data.getStringExtra("consumeAmount"));
+				map.put("operateType", data.getIntExtra("operateType", -1));
 				SyncCentre.getInstance().updateStoredCardValue(context, map, handler);
 				loadingDialog.show();
 			}
