@@ -123,6 +123,11 @@ public class ResultCode {
 	 * 用户二维码失效
 	 */
 	public static final int CUSTOMER_QRCODE_INVALIDATE = -4006;
+
+	/**
+	 * 该会员卡绑定了手机.请使用手机支付
+	 */
+	public static final int QRCODE_TOBIND_PHONE_USE_PHONE_PAY = -2009;
 	
 	
 	/**
@@ -182,6 +187,8 @@ public class ResultCode {
 			return context.getResources().getString(R.string.customer_no_card);
 		case CARD_STATUS_ABNORMAL:
 			return context.getResources().getString(R.string.card_status_abnormal);
+		case QRCODE_TOBIND_PHONE_USE_PHONE_PAY:
+			return context.getResources().getString(R.string.card_binding_mobile);
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);

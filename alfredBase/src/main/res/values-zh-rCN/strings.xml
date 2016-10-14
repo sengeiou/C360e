@@ -61,4 +61,5 @@
     <string name="qrcode_error">请扫描正确的二维码</string>
     <string name="customer_no_card">请先绑定储值卡</string>
     <string name="card_status_abnormal">用户二维码异常</string>
+    <string name="card_binding_mobile">用户的储值卡已经绑定手机App,请扫描手机上的二维码</string>
 </resources>
