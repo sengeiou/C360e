@@ -1,9 +1,8 @@
 package com.alfredbase.utils;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.widget.TextView;
-
-import com.alfredbase.BaseActivity;
 
 public class TextTypeFace {
 	private Typeface myFont = null;
@@ -19,7 +18,7 @@ public class TextTypeFace {
 		}
 		return instance;
 	}
-	public void init(BaseActivity mActivity){
+	public void init(Context mActivity){
 		if (trajanProBlod == null) {
 			trajanProBlod = Typeface.createFromAsset(mActivity.getAssets(),
 					"fonts/TrajanProBold.otf");

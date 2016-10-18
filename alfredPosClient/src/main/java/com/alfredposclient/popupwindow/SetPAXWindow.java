@@ -186,7 +186,6 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 					}
 				}
 				Message msg = handler.obtainMessage();
-				msg = handler.obtainMessage();
 				msg.what = MainPage.VIEW_EVENT_SET_TABLE_PACKS;
 				msg.obj = tv_pax.getText().toString();
 				handler.sendMessage(msg);

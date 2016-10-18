@@ -97,18 +97,18 @@ public class ESCPrinter implements WIFIPrintCallback{
 		this.connected = true;
 	}
 
-	public  void checkStatus()  throws Exception{
-		byte[] tcmd = new byte[3];
-		tcmd[0] = 0x10;
-		tcmd[1] = 0x04;
-		tcmd[2] = 0x04;
-		boolean result = wfComm.checkStatus(tcmd);
-		this.printer.getOut().reset();
-//		wfComm.close();
-		if (!result) {
-			throw new RuntimeException("Print action Failed");
-		}
-	}
+//	public  void checkStatus()  throws Exception{
+//		byte[] tcmd = new byte[3];
+//		tcmd[0] = 0x10;
+//		tcmd[1] = 0x04;
+//		tcmd[2] = 0x04;
+//		boolean result = wfComm.checkStatus(tcmd);
+//		this.printer.getOut().reset();
+////		wfComm.close();
+//		if (!result) {
+//			throw new RuntimeException("Print action Failed");
+//		}
+//	}
 
 	public boolean setData(List<PrintData> data) {
 		boolean result = true;

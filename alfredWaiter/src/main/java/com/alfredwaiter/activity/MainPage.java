@@ -1,10 +1,5 @@
 package com.alfredwaiter.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
@@ -26,10 +21,11 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
@@ -44,6 +40,11 @@ import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.SelectPersonDialog;
 import com.alfredwaiter.view.SlidePanelView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainPage extends BaseActivity {
 	public static final int VIEW_EVENT_CLICK_MAIN_CATEGORY = 0;
@@ -107,9 +108,9 @@ public class MainPage extends BaseActivity {
 		}
 		table_name = (TextView)findViewById(R.id.tv_table_name);
 		//get table name
-		Tables currentTable = CoreData.getInstance().getTables(currentOrder.getTableId());
+		TableInfo currentTable = TableInfoSQL.getTableById(currentOrder.getTableId());
 		if (currentTable!=null)
-		  table_name.setText(currentTable.getTableName());
+		  table_name.setText(currentTable.getName());
 //		expandableListView.setOnChildClickListener(new OnChildClickListener() {
 //
 //			@Override

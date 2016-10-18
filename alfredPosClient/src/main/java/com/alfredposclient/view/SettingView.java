@@ -13,6 +13,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
@@ -54,6 +55,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				this);
 		findViewById(R.id.ll_boh_settlement).setOnClickListener(
 				this);
+		findViewById(R.id.ll_stored_card).setOnClickListener(this);
 		findViewById(R.id.ll_dashboard).setOnClickListener(this);
 		findViewById(R.id.ll_close).setOnClickListener(this);
 		findViewById(R.id.ll_xz_report).setOnClickListener(this);
@@ -106,6 +108,11 @@ public class SettingView extends LinearLayout implements OnClickListener {
 			}
 			case R.id.ll_boh_settlement: {
 				UIHelp.startBOHSettlementHtml(context);
+				break;
+			}
+			case R.id.ll_stored_card: {
+				RxBus.getInstance().post("showStoredCard", null);
+				mDrawerLayout.closeDrawer(Gravity.END);
 				break;
 			}
 			case R.id.ll_dashboard: {
@@ -172,6 +179,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_reprint_bill));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_edit_settlement));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_boh_settlement));
+		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_stored_card_setting));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_dashboard));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_xz_report));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_clock_select));

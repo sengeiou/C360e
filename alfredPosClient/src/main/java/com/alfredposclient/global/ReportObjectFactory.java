@@ -164,6 +164,13 @@ public class ReportObjectFactory {
 				.format(BH.getBD(paypalpayMap.get("sumAmount")));
 		String paypalpayQty = paypalpayMap.get("count");
 
+		Map<String, String> storedCardMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_STORED_CARD, businessDate);
+		String storedCard = BH.doubleFormat
+				.format(BH.getBD(storedCardMap.get("sumAmount")));
+		String storedCardQty = storedCardMap.get("count");
+
 		
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -389,6 +396,7 @@ public class ReportObjectFactory {
 		nettSales = BH.add(nettSales, totalCard, true);
 		nettSales = BH.add(nettSales, BH.getBD(totalCash), true);
 		nettSales = BH.add(nettSales, BH.getBD(paypalpay), true);
+		nettSales = BH.add(nettSales, BH.getBD(storedCard), true);
 		nettSales = BH.add(nettSales, BH.getBD(weixinpay), true);
 		nettSales = BH.add(nettSales, BH.getBD(alipay), true);
 		nettSales = BH.add(nettSales, BH.getBD(nets), true);
@@ -433,6 +441,8 @@ public class ReportObjectFactory {
 		reportDaySales.setWeixinpayQty(Integer.parseInt(weixinpayQty));
 		reportDaySales.setPaypalpay(paypalpay);
 		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
+		reportDaySales.setStoredCard(storedCard);
+		reportDaySales.setStoredCardQty(Integer.parseInt(storedCardQty));
 		reportDaySales.setVisa(visa);
 		reportDaySales.setVisaQty(Integer.parseInt(visaQty));
 		reportDaySales.setMc(mc);
@@ -1474,6 +1484,8 @@ public class ReportObjectFactory {
 				.get("sumAmount")));
 		String totalCashQty = cashMap.get("count");
 
+
+
 		Map<String, String> netsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_NETS, businessDate,
@@ -1484,24 +1496,35 @@ public class ReportObjectFactory {
 		
 		Map<String, String> alipayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_ALIPAY, businessDate);
+						ParamConst.SETTLEMENT_TYPE_ALIPAY, businessDate,
+						sessionStatus);
 		String alipay = BH.doubleFormat
 				.format(BH.getBD(alipayMap.get("sumAmount")));
 		String alipayQty = alipayMap.get("count");
 		
 		Map<String, String> weixinpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate);
+						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate,
+						sessionStatus);
 		String weixinpay = BH.doubleFormat
 				.format(BH.getBD(weixinpayMap.get("sumAmount")));
 		String weixinpayQty = weixinpayMap.get("count");
 
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate);
+						ParamConst.SETTLEMENT_TYPE_PAYPAL, businessDate,
+						sessionStatus);
 		String paypalpay = BH.doubleFormat
 				.format(BH.getBD(paypalpayMap.get("sumAmount")));
 		String paypalpayQty = paypalpayMap.get("count");
+
+		Map<String, String> storedCardMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_STORED_CARD, businessDate,
+						sessionStatus);
+		String storedCard = BH.doubleFormat
+				.format(BH.getBD(storedCardMap.get("sumAmount")));
+		String storedCardQty = storedCardMap.get("count");
 
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -1730,6 +1753,7 @@ public class ReportObjectFactory {
 		nettSales = BH.add(nettSales, totalCard, true);
 		nettSales = BH.add(nettSales, BH.getBD(totalCash), true);
 		nettSales = BH.add(nettSales, BH.getBD(paypalpay), true);
+		nettSales = BH.add(nettSales, BH.getBD(storedCard), true);
 		nettSales = BH.add(nettSales, BH.getBD(weixinpay), true);
 		nettSales = BH.add(nettSales, BH.getBD(alipay), true);
 		nettSales = BH.add(nettSales, BH.getBD(nets), true);
@@ -1775,6 +1799,8 @@ public class ReportObjectFactory {
 		reportDaySales.setWeixinpayQty(Integer.parseInt(weixinpayQty));
 		reportDaySales.setPaypalpay(paypalpay);
 		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
+		reportDaySales.setStoredCard(storedCard);
+		reportDaySales.setStoredCardQty(Integer.parseInt(storedCardQty));
 		reportDaySales.setVisa(visa);
 		reportDaySales.setVisaQty(Integer.parseInt(visaQty));
 		reportDaySales.setMc(mc);

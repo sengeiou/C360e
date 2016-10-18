@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.javabeanforhtml.DashboardTotalDetailInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
@@ -599,14 +599,14 @@ public class OrderSQL {
 		return result;
 	}
 
-	public static List<Tables> getAllTimeOutOrderByTime(long businessDate,SessionStatus sessionStatus,long time) {
-		List<Tables> result = new ArrayList<Tables>();
+	public static List<TableInfo> getAllTimeOutOrderByTime(long businessDate, SessionStatus sessionStatus, long time) {
+		List<TableInfo> result = new ArrayList<TableInfo>();
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		String sql = "select t.* from "
 				+ TableNames.Order+" od, "
-				+ TableNames.Tables+" t where od.tableId = t.id and od.businessDate = ? " 
-				+ " and od.sessionStatus = ? and od.createTime > ? and od.createTime < ? and t.tableStatus = " 
+				+ TableNames.TableInfo+" t where od.tableId = t.posId and od.businessDate = ? "
+				+ " and od.sessionStatus = ? and od.createTime > ? and od.createTime < ? and t.status = "
 				+ ParamConst.TABLE_STATUS_DINING
 				+ " and od.orderStatus <> " 
 				+ ParamConst.ORDER_STATUS_FINISHED
@@ -620,18 +620,31 @@ public class OrderSQL {
 			if (count < 1) {
 				return result;
 			}
-			Tables tables = null;
+			TableInfo tables = null;
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
-				tables = new Tables();
-				tables.setId(cursor.getInt(0));
-				tables.setRestaurantId(cursor.getInt(1));
-				tables.setRevenueId(cursor.getInt(2));
-				tables.setPlacesId(cursor.getInt(3));
-				tables.setTableName(cursor.getString(4));
-				tables.setTablePacks(cursor.getInt(5));
-				tables.setIsActive(cursor.getInt(6));
-				tables.setTableStatus(cursor.getInt(7));
+				tables = new TableInfo();
+				tables.setPosId(cursor.getInt(0));
+				tables.setName(cursor.getString(1));
+				tables.setImageName(cursor.getString(2));
+				tables.setRestaurantId(cursor.getInt(3));
+				tables.setRevenueId(cursor.getInt(4));
+				tables.setxAxis(cursor.getString(5));
+				tables.setyAxis(cursor.getString(6));
+				tables.setPlacesId(cursor.getInt(7));
+				tables.setResolution(cursor.getInt(8));
+				tables.setShape(cursor.getInt(9));
+				tables.setType(cursor.getInt(10));
+				tables.setStatus(cursor.getInt(11));
+				tables.setIsDecorate(cursor.getInt(12));
+				tables.setUnionId(cursor.getString(13));
+				tables.setIsActive(cursor.getInt(14));
+				tables.setPacks(cursor.getInt(15));
+				tables.setRotate(cursor.getInt(16));
+				tables.setCreateTime(cursor.getLong(17));
+				tables.setUpdateTime(cursor.getLong(18));
+				tables.setOrders(cursor.getInt(19));
+				tables.setIsKiosk(cursor.getInt(20));
 				result.add(tables);
 			}
 			db.setTransactionSuccessful();
@@ -647,7 +660,7 @@ public class OrderSQL {
 		return result;
 	}
 	
-	public static Order getLastOrderatTabel(Tables tables) {
+	public static Order getLastOrderatTabel(int tableId) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order
 				+ " where tableId = ? order by id DESC";
@@ -655,7 +668,7 @@ public class OrderSQL {
 		try {
 			cursor = SQLExe.getDB().rawQuery(
 					sql,
-					new String[] { tables.getId() + "" });
+					new String[] { tableId + "" });
 			int count = cursor.getCount();
 			if (count < 1) {
 				return order;
@@ -756,7 +769,7 @@ public class OrderSQL {
 		return order;
 	}
 
-	public static Order getUnfinishedOrderAtTable(Tables tables, Long bizDate) {
+	public static Order getUnfinishedOrderAtTable(int tableId, Long bizDate) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order
 				+ " where tableId = ? and orderStatus <> ? and businessDate = ? order by id DESC";
@@ -764,7 +777,7 @@ public class OrderSQL {
 		try {
 			cursor = SQLExe.getDB().rawQuery(
 					sql,
-					new String[] { tables.getId() + "",
+					new String[] { tableId + "",
 							ParamConst.ORDER_STATUS_FINISHED + "", String.valueOf(bizDate) });
 			int count = cursor.getCount();
 			if (count < 1) {

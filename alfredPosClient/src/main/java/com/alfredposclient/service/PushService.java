@@ -20,6 +20,7 @@ import com.codebutler.android_websockets.WebSocketClient.Listener;
 import com.google.gson.Gson;
 
 import java.net.URI;
+import java.util.Calendar;
 
 public class PushService extends Service implements Listener {
 
@@ -71,6 +72,8 @@ public class PushService extends Service implements Listener {
 
 		if (mClient != null && mClient.isConnected())
 			mClient.disconnect();
+
+		closeAlarm();
 	}
 
 	@Override
@@ -91,14 +94,15 @@ public class PushService extends Service implements Listener {
 					URI.create(getPushServerIp()), this, null,
 					clientlock);
 		}
-
+		LogUtil.e(TAG, "开始走服务");
 		if (!mClient.isConnected())
 			mClient.connect();
 
 		if (intent != null && App.instance.getRevenueCenter() != null) {
 			if (ACTION_PING.equals(intent.getAction())) {
+				LogUtil.e(TAG, "这是一个ping服务");
 				if (mClient.isConnected())
-					mClient.send(PushMessage.getPingMsg(App.instance.getRevenueCenter().getRestaurantId(),
+					sentMessage(PushMessage.getPingMsg(App.instance.getRevenueCenter().getRestaurantId(),
 							App.instance.getRevenueCenter().getId()));
 				// if(mClient.isConnected())
 				// mClient.send("{\"type\":0,\"restId\":19,\"revenueId\":1}");
@@ -108,23 +112,33 @@ public class PushService extends Service implements Listener {
 					mClient.disconnect();
 			}
 		}
-
-		if (intent == null || !intent.getAction().equals(ACTION_SHUT_DOWN)) {
-			AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-			PendingIntent operation = PendingIntent.getService(this, 0,
-					PushService.pingIntent(this), PendingIntent.FLAG_NO_CREATE);
-			if (operation == null) {
-				operation = PendingIntent.getService(this, 0,
-						PushService.pingIntent(this),
-						PendingIntent.FLAG_UPDATE_CURRENT);
-				am.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-						System.currentTimeMillis(),
-						AlarmManager.INTERVAL_FIFTEEN_MINUTES, operation);
-			}
-		}
-
+		refreshWaittingToStart();
 		wakelock.release();
 		return START_STICKY;
+	}
+
+
+	public void refreshWaittingToStart(){
+		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		PendingIntent operation = PendingIntent.getService(PushService.this, 0,
+				PushService.pingIntent(PushService.this), PendingIntent.FLAG_UPDATE_CURRENT);
+		Calendar calendar = Calendar.getInstance();
+		Long time = System.currentTimeMillis();
+		calendar.setTimeInMillis(time);
+		calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 1);
+		am.set(AlarmManager.RTC_WAKEUP,
+				calendar.getTimeInMillis(), operation);
+		LogUtil.e(TAG, "开启ping的闹钟");
+	}
+
+
+	private void closeAlarm(){
+		AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+		PendingIntent operation = PendingIntent.getService(PushService.this, 0, PushService.pingIntent(PushService.this), PendingIntent.FLAG_NO_CREATE);
+		if(operation != null){
+			am.cancel(operation);
+			operation.cancel();
+		}
 	}
 
 	public class Binder extends android.os.Binder {
@@ -212,7 +226,7 @@ public class PushService extends Service implements Listener {
 			pushMessage.setRestId(App.instance.getRevenueCenter()
 					.getRestaurantId());
 			pushMessage.setRevenueId(App.instance.getRevenueCenter().getId());
-			mClient.send(gson.toJson(pushMessage));
+			sentMessage(gson.toJson(pushMessage));
 			LogUtil.d(TAG, gson.toJson(pushMessage));
 		}
 		
@@ -233,7 +247,7 @@ public class PushService extends Service implements Listener {
 	}
 
 	public synchronized void sentMessage(String msg) {
-		if (mClient.isConnected()) {
+		if (mClient!= null && mClient.isConnected()) {
 			
 			mClient.send(msg);
 			LogUtil.d(TAG, "sentMessage" + msg);

@@ -19,7 +19,7 @@ import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
-import com.alfredbase.javabean.Places;
+import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.ReportDaySales;
@@ -31,7 +31,7 @@ import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SettingData;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
@@ -56,7 +56,7 @@ import com.alfredbase.store.sql.ItemHappyHourSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.ModifierSQL;
-import com.alfredbase.store.sql.PlacesSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
@@ -68,7 +68,7 @@ import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
@@ -249,30 +249,30 @@ public class HttpAnalysis {
 	}
 	
 
-	public static void getPlaceInfo(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-
-			List<Places> places = gson.fromJson(object.getString("placeList"),
-					new TypeToken<ArrayList<Places>>() {
-					}.getType());
-			CoreData.getInstance().setPlaceList(places);
-			PlacesSQL.deleteAllPlaces();
-			PlacesSQL.addPlacesList(places);
-
-			List<Tables> tables = gson.fromJson(object.getString("tableList"),
-					new TypeToken<ArrayList<Tables>>() {
-					}.getType());
-			CoreData.getInstance().setTableList(tables);
-			TablesSQL.deleteAllTables();
-			TablesSQL.addTablesList(tables);
-
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void getPlaceInfo(int statusCode, Header[] headers,
+//			byte[] responseBody) {
+//		try {
+//			JSONObject object = new JSONObject(new String(responseBody));
+//			Gson gson = new Gson();
+//
+//			List<Places> places = gson.fromJson(object.getString("placeList"),
+//					new TypeToken<ArrayList<Places>>() {
+//					}.getType());
+//			CoreData.getInstance().setPlaceList(places);
+//			PlacesSQL.deleteAllPlaces();
+//			PlacesSQL.addPlacesList(places);
+//
+//			List<Tables> tables = gson.fromJson(object.getString("tableList"),
+//					new TypeToken<ArrayList<Tables>>() {
+//					}.getType());
+//			CoreData.getInstance().setTableList(tables);
+//			TablesSQL.deleteAllTables();
+//			TablesSQL.addTablesList(tables);
+//
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public static void getItemCategory(int statusCode, Header[] headers,
 			byte[] responseBody) {
@@ -679,6 +679,20 @@ public class HttpAnalysis {
 				}
 				App.instance.appOrderShowDialog(appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void getPlaceTable(byte[] responseBody){
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<PlaceInfo> placeInfoList = gson.fromJson(object.getString("placeList"), new TypeToken<ArrayList<PlaceInfo>>(){}.getType());
+			List<TableInfo> tableInfoList = gson.fromJson(object.getString("tableList"), new TypeToken<ArrayList<TableInfo>>(){}.getType());
+			PlaceInfoSQL.deleteAllPlaceInfo();
+			TableInfoSQL.deleteAllTableInfo();
+			PlaceInfoSQL.addPlaceInfoList(placeInfoList);
+			TableInfoSQL.addTablesList(tableInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -31,6 +31,7 @@ import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -38,7 +39,7 @@ import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.ReportEntItem;
@@ -55,7 +56,8 @@ import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -163,6 +165,22 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_open_restaruant);
+		if(App.instance.isRevenueKiosk()) {
+			PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
+			if (placeInfo == null) {
+				placeInfo = ObjectFactory.getInstance().addNewPlace(App.instance.getRevenueCenter().getRestaurantId().intValue(),
+						App.instance.getRevenueCenter().getId().intValue(), "kiosk");
+				placeInfo.setIsKiosk(1);
+				PlaceInfoSQL.addPlaceInfo(placeInfo);
+			}
+			TableInfo tableInfo = TableInfoSQL.getKioskTable();
+			if(tableInfo == null){
+				tableInfo = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480);
+				tableInfo.setIsKiosk(1);
+				tableInfo.setPosId(0);
+				TableInfoSQL.addTables(tableInfo);
+			}
+		}
 		ButtonClickTimer.canClick();	
 		initDrawerLayout();
 		
@@ -840,10 +858,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 								}
 							}
 						} else {
-							List<Tables> tables = TablesSQL.getAllUsedTables();
-							for (Tables table : tables) {
+							List<TableInfo> tables = TableInfoSQL.getAllUsedTables();
+							for (TableInfo table : tables) {
 								Order order = OrderSQL
-										.getLastOrderatTabel(table);
+										.getLastOrderatTabel(table.getPosId().intValue());
 								if (order != null
 										&& order.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
 									List<OrderDetail> orderDetailsIncludeVoid = OrderDetailSQL
@@ -852,23 +870,26 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 										OrderSQL.deleteOrder(order);
 										OrderBillSQL
 												.deleteOrderBillByOrder(order);
-										table.setTableStatus(ParamConst.TABLE_STATUS_IDLE);
-										TablesSQL.updateTables(table);
+										table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//										TablesSQL.updateTables(table);
+										TableInfoSQL.updateTables(table);
 									} else {
 										List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
 												.getOrderDetails(order.getId());
 										if (orderDetailsUnIncludeVoid.isEmpty()) {
 											order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
 											OrderSQL.update(order);
-											table.setTableStatus(ParamConst.TABLE_STATUS_IDLE);
-											TablesSQL.updateTables(table);
+											table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//											TablesSQL.updateTables(table);
+											TableInfoSQL.updateTables(table);
 										} else {
 											canClose = false;
 										}
 									}
 								} else {
-									table.setTableStatus(ParamConst.TABLE_STATUS_IDLE);
-									TablesSQL.updateTables(table);
+									table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//									TablesSQL.updateTables(table);
+									TableInfoSQL.updateTables(table);
 								}
 							}
 						}
@@ -1635,7 +1656,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							KotSummarySQL.deleteAllKotSummary();
 							KotItemDetailSQL.deleteAllKotItemDetail();
 							KotNotificationSQL.deleteAllKotNotifications();
-							TablesSQL.setAllTableIdle();
+//							TablesSQL.setAllTableIdle();
+							TableInfoSQL.setAllTableIdle();
 							
 							//Alfred POS save data within 3 days
 							GeneralSQL.deleteDataInPosBeforeYesterday(TimeUtil

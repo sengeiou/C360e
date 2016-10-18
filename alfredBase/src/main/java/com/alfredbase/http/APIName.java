@@ -23,7 +23,13 @@ public class APIName {
 	public static final String RESTAURANT_MONTHLY_SALE_REPORT = "reportDaySales/getMonthReportDaySales";
 	public static final String RESTAURANT_MONTHLY_PLU_REPORT = "reportPlu/getMonthReport";
 	public static final String USER_UPDATEPASSWORD = "user/updatePassword";
-	
+	public static final String RESTAURANT_CHANGEPLACE = "restaurant/changePlace";
+	public static final String RESTAURANT_GETPLACEINFONEW = "restaurant/getPlaceInfoNew";
+	public static final String MEMBERSHIP_ACTIVATECARD = "membership/activateCard";
+	public static final String MEMBERSHIP_OPERATEBALANCE = "membership/operateBalance";
+	public static final String MEMBERSHIP_REPORTCARD = "membership/reportCard";
+	public static final String MEMBERSHIP_REATTENDCARD = "membership/reAttendCard";
+
 	//3rd-party Serivce
 	public static final String REQUEST_ALIPAY = "alipay/getAlipayUrl";
 	/**

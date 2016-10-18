@@ -26,5 +26,50 @@ public class BitmapUtil {
         // "RECREATE" THE NEW BITMAP
         Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
         return resizedBitmap;
-    } 
+    }
+
+    public static Bitmap rotate(int rotate, float scale, Bitmap img){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotate);
+        matrix.postScale(scale, scale);
+        int width = img.getWidth();
+        int height = img.getHeight();
+        img = Bitmap.createBitmap(img, 0, 0, width, height, matrix, true);
+        return img;
+    }
+
+    public static Bitmap getResizedBitmap(Bitmap bigimage, float scale){
+        // 获取这个图片的宽和高
+        int width = bigimage.getWidth();
+        int height = bigimage.getHeight();
+        // 创建操作图片用的matrix对象
+        Matrix matrix = new Matrix();
+        // 缩放图片动作
+        matrix.postScale(scale, scale);
+        Bitmap bitmap = Bitmap.createBitmap(bigimage, 0, 0, width, height,matrix, true);
+        return bitmap;
+    }
+
+
+    public static Bitmap getTableBitmap(int rotate, int scale, Bitmap img){
+        Matrix matrix = new Matrix();
+        if(rotate != 0)
+            matrix.postRotate(rotate);
+
+        switch (scale){
+            case 1:
+                matrix.postScale((float)(2.0/3), (float)(2.0/3));
+                break;
+            case 2:
+                matrix.postScale((float)(5.0/6), (float)(5.0/6));
+                break;
+            case 3:
+                matrix.postScale(1, 1);
+                break;
+        }
+        int width = img.getWidth();
+        int height = img.getHeight();
+        img = Bitmap.createBitmap(img, 0, 0, width, height, matrix, true);
+        return img;
+    }
 }

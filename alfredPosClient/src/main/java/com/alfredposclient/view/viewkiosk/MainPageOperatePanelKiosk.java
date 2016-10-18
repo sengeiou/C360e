@@ -15,7 +15,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.PaymentSettlement;
-import com.alfredbase.javabean.Tables;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
@@ -44,7 +43,6 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 	private Order order;
 	private List<OrderDetail> orderDetails;
 	private MainPageKiosk parent;
-	private Tables tables;
 
 	
 	public MainPageOperatePanelKiosk(Context context) {
@@ -57,10 +55,9 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 		init(context);
 	}
 
-	public void setParams(MainPageKiosk parent, Tables tables, Order order,
+	public void setParams(MainPageKiosk parent, Order order,
 			List<OrderDetail> orderDetails, Handler handler) {
 		this.parent = parent;
-		this.tables = tables;
 		this.handler = handler;
 		this.order = order;
 		this.orderDetails = orderDetails;

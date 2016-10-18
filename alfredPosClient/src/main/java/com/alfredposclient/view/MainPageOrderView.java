@@ -42,6 +42,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ColorUtils;
@@ -149,8 +150,8 @@ public class MainPageOrderView extends LinearLayout {
 									= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
 						KotSummary kotSummary = ObjectFactory.getInstance()
 								.getKotSummary(
-										CoreData.getInstance().getTables(
-												placedOrder.getTableId()), placedOrder,
+										TableInfoSQL.getTableById(
+												placedOrder.getTableId()).getName(), placedOrder,
 										App.instance.getRevenueCenter(),
 										App.instance.getBusinessDate());
 						ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
@@ -317,8 +318,8 @@ public class MainPageOrderView extends LinearLayout {
 		}
 		String orderNoStr = context.getResources().getString(R.string.table)
 				+ " - "
-				+ CoreData.getInstance().getTables(order.getTableId())
-						.getTableName();
+				+ TableInfoSQL.getTableById(order.getTableId())
+						.getName();
 		if(order.getIsTakeAway() == ParamConst.TAKE_AWAY){
 			orderNoStr = orderNoStr + "("+ parent.getResources().getString(R.string.take_away) + ")";
 		}

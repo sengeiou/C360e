@@ -1,8 +1,5 @@
 package com.alfredposclient.popupwindow;
 
-import java.util.Collections;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
@@ -17,9 +14,12 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
+
+import java.util.Collections;
+import java.util.List;
 
 public class SelectBillWindow {
 	private LayoutInflater inflater;
@@ -29,7 +29,7 @@ public class SelectBillWindow {
 	private View contentView;
 	private PopupWindow popupWindow;
 	private Handler handler;
-	private List<Tables> tableList = Collections.emptyList();
+	private List<TableInfo> tableList = Collections.emptyList();
 
 	public SelectBillWindow(Context context, View parentView, Handler handler) {
 		this.context = context;
@@ -61,7 +61,7 @@ public class SelectBillWindow {
 		popupWindow.setBackgroundDrawable(new BitmapDrawable());
 	}
 
-	public void show(List<Tables> tableList) {
+	public void show(List<TableInfo> tableList) {
 		if(isShowing()){
 			return;
 		}
@@ -112,7 +112,7 @@ public class SelectBillWindow {
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-				holder.tv_text.setText(tableList.get(position).getTableName());
+				holder.tv_text.setText(tableList.get(position).getName());
 			return convertView;
 		}
 

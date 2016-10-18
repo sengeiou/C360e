@@ -11,7 +11,12 @@ import android.widget.Toast;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.R;
 import com.alfredbase.utils.TextTypeFace;
+<<<<<<< HEAD
 import com.alfredposclient.activity.BOHSettlementActivity;
+=======
+import com.alfredposclient.activity.StoredCardActivity;
+import com.alfredposclient.activity.BOHSettlementHtml;
+>>>>>>> master
 import com.alfredposclient.activity.CashInOutHtml;
 import com.alfredposclient.activity.ClockInOROut;
 import com.alfredposclient.activity.DashboardHtml;
@@ -157,7 +162,22 @@ public class UIHelp {
 	public static void startMonthlyPLUReport(BaseActivity context){
 		Intent intent = new Intent(context,MonthlyPLUReportHtml.class);
 		context.startActivity(intent);
-	}	
+	}
+
+	public static void startSoredCardActivity(BaseActivity context, int requestCode){
+		Intent intent = new Intent(context,StoredCardActivity.class);
+		if(requestCode < 0){
+			context.startActivity(intent);
+		}else{
+			context.startActivityForResult(intent, requestCode);
+		}
+
+
+	}
+	public static void startSoredCardActivity(BaseActivity context){
+		startSoredCardActivity(context, -1);
+	}
+
 //	public static void showToast(BaseActivity context, String text) {
 //		Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 //	}

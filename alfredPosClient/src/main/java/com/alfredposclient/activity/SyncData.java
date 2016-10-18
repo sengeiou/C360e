@@ -21,10 +21,8 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
-import com.alfredbase.javabean.Places;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.RevenueCenter;
-import com.alfredbase.javabean.Tables;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.Store;
@@ -164,8 +162,11 @@ public class SyncData extends BaseActivity {
 			case HANDLER_GET_BINDDEVICEID_INFO: {
 				syncDataCount = 0;
 				SyncCentre.getInstance().syncCommonData(context, handler);
-				SyncCentre.getInstance().getPlaceInfo(context,
-						(Map<String, Object>) msg.obj, handler);
+				Map<String, Object> map = (Map<String, Object>) msg.obj;
+				Map<String, Object> param = new HashMap<String, Object>();
+				param.put("revenueId", ((RevenueCenter)(map.get("revenueCenter"))).getId().intValue());
+				SyncCentre.getInstance().getPlaceInfo(context, param
+						, handler);
 			}
 				break;
 			case HANDLER_GET_PLACE_INFO: {
@@ -179,17 +180,17 @@ public class SyncData extends BaseActivity {
 						List<ItemCategory> itemCategories = CoreData.getInstance().getItemCategories();
 						List<ItemDetail> itemDetails = CoreData.getInstance().getItemDetails();
 						List<Printer> printers = CoreData.getInstance().getPrinters();
-						List<Tables> tableList = CoreData.getInstance().getTableList();
-						List<Places> placeList = CoreData.getInstance().getPlaceList();
+//						List<Tables> tableList = CoreData.getInstance().getTableList();
+//						List<Places> placeList = CoreData.getInstance().getPlaceList();
 						if(users.isEmpty()){
 							warn.append(context.getResources().getString(R.string.users));
 						}
-						if(placeList.isEmpty() || tableList.isEmpty()){
-							if(warn.length() != 0){
-								warn.append(",");
-							}
-							warn.append(context.getResources().getString(R.string.tables));
-						}
+//						if(placeList.isEmpty() || tableList.isEmpty()){
+//							if(warn.length() != 0){
+//								warn.append(",");
+//							}
+//							warn.append(context.getResources().getString(R.string.tables));
+//						}
 						if(printers.isEmpty()){
 							if(warn.length() != 0){
 								warn.append(",");

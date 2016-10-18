@@ -1,10 +1,10 @@
 package com.alfredbase;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,11 +15,11 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.umeng.analytics.MobclickAgent;
 
-public class BaseActivity extends Activity implements OnClickListener {
+public class BaseActivity extends FragmentActivity implements OnClickListener {
 	protected BaseActivity context;
 	protected Dialog compelDialog;
 	protected Dialog oneButtonCompelDialog;
-	protected LoadingDialog loadingDialog;
+	public LoadingDialog loadingDialog;
 	protected NotificationManager mNotificationManager;
 	protected static DisplayImageOptions display = new DisplayImageOptions.Builder() // 圆角边处理的头像
 	.cacheInMemory(true) // 缓存到内存，设置true则缓存到内存
@@ -30,13 +30,34 @@ public class BaseActivity extends Activity implements OnClickListener {
 	.build();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+//		Window window = getWindow();
+//		WindowManager.LayoutParams params = window.getAttributes();
+//		params.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//				| View.SYSTEM_UI_FLAG_FULLSCREEN
+////				| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+//		window.setAttributes(params);
+//		//状态栏 @ 顶部
+//		window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);//A
+//		//导航栏 @ 底部
+//		window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);//B
 		super.onCreate(savedInstanceState);
 		BaseApplication.activitys.add(this);
 		context = this;
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		MobclickAgent.updateOnlineConfig(this);
 		initView();
+//		getWindow().peekDecorView().setSystemUiVisibility(
+//					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//							| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//							| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//							| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//							| View.SYSTEM_UI_FLAG_FULLSCREEN
+//							| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 	}
+
 
 	protected void initView() {
 
@@ -47,19 +68,19 @@ public class BaseActivity extends Activity implements OnClickListener {
 		super.onDestroy();
 		BaseApplication.activitys.remove(this);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		MobclickAgent.onResume(this);
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		MobclickAgent.onPause(this);
 	}
-	
+
 	public void dismissLoadingDialog(){
 		if(loadingDialog != null && loadingDialog.isShowing()){
 			loadingDialog.dismiss();
@@ -68,7 +89,7 @@ public class BaseActivity extends Activity implements OnClickListener {
 
 	/**
 	 * 1.对原始点击事件做了一层封装，在500毫秒内，不应该处理两次或者两次以上的点击
-	 * 
+	 *
 	 * 2.不应该复写这个方法，而是复写handlerClickEvent
 	 */
 	@Override
@@ -81,7 +102,7 @@ public class BaseActivity extends Activity implements OnClickListener {
 	protected void handlerClickEvent(View v) {
 
 	}
-	
+
 	/**
 	 * 服务器得到数据，非主线程
 	 * added by XieJF, 2014-7-23
@@ -89,10 +110,10 @@ public class BaseActivity extends Activity implements OnClickListener {
 	 * @param obj
 	 */
 	public void httpRequestAction(int action,Object obj){
-		
+
 	}
 	public void kotPrintStatus(int action, Object obj) {}
-	
+
 	/**
 	 * 特殊的dialog 屏蔽返回按钮
 	 * @param title
@@ -139,9 +160,9 @@ public class BaseActivity extends Activity implements OnClickListener {
 		if (context == null || context.isFinishing())
 			return;
 		compelDialog.show();
-	
+
 	}
-	
+
 	public void showOneButtonCompelDialog(String title, String content, final OnClickListener buttonListener) {
 
 		oneButtonCompelDialog = new Dialog(context, R.style.base_dialog);
@@ -166,9 +187,9 @@ public class BaseActivity extends Activity implements OnClickListener {
 		if (context == null || context.isFinishing())
 			return;
 		oneButtonCompelDialog.show();
-	
+
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		if(oneButtonCompelDialog != null && oneButtonCompelDialog.isShowing()){

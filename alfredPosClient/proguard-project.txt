@@ -75,6 +75,12 @@
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
 
+-dontwarn  okio.**
+-keep class okio.** {*;}
+
+-keep class rx.internal.**{*;}
+-dontwarn com.squareup.**
+
 -keepattributes Signature
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application

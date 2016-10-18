@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
-import com.alfredbase.global.CoreData;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -24,10 +24,10 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
-import com.alfredbase.javabean.Places;
+import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.VoidSettlement;
 import com.alfredbase.javabean.WeixinSettlement;
@@ -47,9 +47,10 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
-import com.alfredbase.store.sql.PlacesSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
@@ -61,6 +62,8 @@ import com.alfredposclient.R;
 import com.alfredposclient.adapter.EditSettlementAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
+import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.popupwindow.CloseOrderSplitWindow;
 import com.alfredposclient.popupwindow.CloseOrderWindow;
@@ -126,6 +129,29 @@ public class EditSettlementPage extends BaseActivity {
     private Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
+                case StoredCardActivity.VIEW_EVENT_STORED_CARD_PAY:{
+                    String amount = (String) msg.obj;
+                    Intent intent = new Intent(context,StoredCardActivity.class);
+                    intent.putExtra("amount", amount);
+                    intent.putExtra("isPayAction", true);
+//					UIHelp.startSoredCardActivity(context, MainPage.CHECK_REQUEST_CODE);
+                    context.startActivityForResult(intent, MainPage.CHECK_REQUEST_CODE);
+                }
+                break;
+                case StoredCardActivity.PAID_STOREDCARD_SUCCEED:
+                {
+                    if (closeOrderWindow.isShowing()) {
+                        closeOrderWindow.clickEnterAction();
+                    }
+                    if (closeOrderSplitWindow.isShowing()) {
+                        closeOrderSplitWindow.clickEnterAction();
+                    }
+                }
+                break;
+                case StoredCardActivity.HTTP_FAILURE:
+                    UIHelp.showShortToast(context, ResultCode.getErrorResultStrByCode(context,
+                            (Integer) msg.obj, context.getResources().getString(R.string.server)));
+                    break;
                 case JavaConnectJS.ACTION_CLICK_BACK:
                     EditSettlementPage.this.finish();
                     break;
@@ -137,7 +163,7 @@ public class EditSettlementPage extends BaseActivity {
                 case MainPage.VIEW_EVENT_CLOSE_BILL: {
                     Intent intentCloseBill = new Intent();
                     HashMap<String, String> map = (HashMap<String, String>) msg.obj;
-                    Tables table = CoreData.getInstance().getTables(
+                    TableInfo table = TableInfoSQL.getTableById(
                             currentOrder.getTableId());
                     PrinterTitle title = ObjectFactory.getInstance()
                             .getPrinterTitle(
@@ -145,7 +171,7 @@ public class EditSettlementPage extends BaseActivity {
                                     currentOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    table.getTableName());
+                                    table.getName());
                     ArrayList<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder
                             .getId());
                     ArrayList<PrintOrderItem> printOrderItems = ObjectFactory.getInstance().getItemList(orderDetails);
@@ -185,7 +211,7 @@ public class EditSettlementPage extends BaseActivity {
                     HashMap<String, String> paymentMap = (HashMap<String, String>) msg.obj;
                     List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
                             .getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
-                    Tables table = CoreData.getInstance().getTables(
+                    TableInfo table = TableInfoSQL.getTableById(
                             orderSplit.getTableId());
                     OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(orderSplit, App.instance.getRevenueCenter());
                     PrinterDevice printer = App.instance.getCahierPrinter();
@@ -196,7 +222,7 @@ public class EditSettlementPage extends BaseActivity {
                                     orderSplit,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    table.getTableName(), orderBill, App.instance.getBusinessDate().toString());
+                                    table.getName(), orderBill, App.instance.getBusinessDate().toString());
                     ArrayList<OrderDetail> orderSplitDetails = (ArrayList<OrderDetail>) OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(orderSplit);
 
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
@@ -493,7 +519,7 @@ public class EditSettlementPage extends BaseActivity {
         }
         for (Payment payment : payments) {
             Order order = OrderSQL.getOrder(payment.getOrderId());
-            Places place = PlacesSQL.getPlacesById(order.getPlaceId());
+            PlaceInfo place = PlaceInfoSQL.getPlaceInfoById(order.getPlaceId());
             User user = UserSQL.getUserById(payment.getUserId());
             EditSettlementInfo editSettlementInfo = new EditSettlementInfo(
                     payment.getId(), payment.getOrderId(), payment.getBillNo(),
@@ -527,5 +553,21 @@ public class EditSettlementPage extends BaseActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MainPage.CHECK_REQUEST_CODE){
+            if(resultCode == RESULT_OK){
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("qrCode", getIntent().getStringExtra("qrCode"));
+                map.put("revenueId", getIntent().getIntExtra("revenueId", 0));
+                map.put("consumeAmount", getIntent().getStringExtra("consumeAmount"));
+                map.put("operateType", getIntent().getIntExtra("operateType", -1));
+                SyncCentre.getInstance().updateStoredCardValue(context, map, mHandler);
+                loadingDialog.show();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

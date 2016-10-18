@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -33,10 +35,10 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
-import com.alfredbase.javabean.Places;
+import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
-import com.alfredbase.javabean.Tables;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
@@ -57,9 +59,9 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
-import com.alfredbase.store.sql.PlacesSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
-import com.alfredbase.store.sql.TablesSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
@@ -69,12 +71,15 @@ import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.JSONUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
+import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
+import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.TablesStatusInfo;
 import com.alfredposclient.jobs.CloudSyncJobManager;
@@ -107,6 +112,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class MainPageKiosk extends BaseActivity {
 	private String TAG = MainPageKiosk.class.getSimpleName();
@@ -181,6 +190,10 @@ public class MainPageKiosk extends BaseActivity {
 	private static final String HANDLER_MSG_OBJECT_TRANSFER_TABLE = "TRANSFERTABLE";
 	private static final String HANDLER_MSG_OBJECT_ITEM_QTY = "ITEM_QTY";
 	private static final String HANDLER_MSG_OBJECT_VOID_OR_FREE = "VOID_OR_FREE";
+
+	private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
+	private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
+	private static final String HANDLER_MSG_OBJECT_STORED_CARD_REPLACEMENT = "STORED_CARD_REPLACEMENT";
 	private TopMenuViewKiosk topMenuView;
 	private MainPageSearchViewKiosk mainPageSearchView;
 	public MainPageOrderViewKiosk orderView;
@@ -199,16 +212,16 @@ public class MainPageKiosk extends BaseActivity {
 	private boolean isShowTables = false;
 	private boolean isTableFirstShow = true;
 	private String tableShowAction = SHOW_TABLES;
-	private List<Places> places = new ArrayList<Places>();
-	private List<Tables> tables = new ArrayList<Tables>();
+	private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
+	private List<TableInfo> tables = new ArrayList<TableInfo>();
 	private List<TablesStatusInfo> tableStatusInfo = new ArrayList<TablesStatusInfo>();
-	private Tables currentTable;
-	private Tables oldTable;
+	private TableInfo currentTable;
+	private TableInfo oldTable;
 	private Order currentOrder;
 	private Order oldOrder;
 	private List<OrderDetail> orderDetails;
 	private VerifyDialog verifyDialog;
-	public LoadingDialog loadingDialog;
+//	public LoadingDialog loadingDialog;
 
 	public PrinterLoadingDialog printerLoadingDialog;
 	
@@ -222,7 +235,10 @@ public class MainPageKiosk extends BaseActivity {
 	private int activityRequestCode = 0;
 	
 	private int appOrderId;
-	
+	private FragmentManager fragmentManager;
+	private FragmentTransaction transaction;
+//	private StoredCardActivity f_stored_card;
+	private Observable<Object> observable;
 	private void initDrawerLayout() {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setScrimColor(Color.TRANSPARENT);//关闭阴影
@@ -235,6 +251,11 @@ public class MainPageKiosk extends BaseActivity {
 	protected void initView() {
 		setContentView(R.layout.activity_kiosk_main_page);
 		super.initView();
+//		findViewById(R.id.rl_stored_card_fragment_father).setOnClickListener(null);
+		fragmentManager = this.getSupportFragmentManager();
+//		f_stored_card = (StoredCardActivity) fragmentManager.findFragmentById(R.id.f_stored_card);
+//		f_stored_card.setMainPageHandler(handler);
+//		hideStoredCard();
 		initDrawerLayout();
 		ScreenSizeUtil.initScreenScale(context);
 		verifyDialog = new VerifyDialog(context, handler);
@@ -278,25 +299,49 @@ public class MainPageKiosk extends BaseActivity {
 				findViewById(R.id.lv_order), handler);
 		setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
 				handler);
-		currentTable = TablesSQL.getKioskTable();
+		currentTable = TableInfoSQL.getKioskTable();
 		setData();
+		observable = RxBus.getInstance().register("showStoredCard");
+		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+			@Override
+			public void call(Object object) {
+//				showStoredCard();
+				UIHelp.startSoredCardActivity(context);
+			}
+		});
 	}
+
+//	private void showStoredCard(){
+//		findViewById(R.id.rl_stored_card_fragment_father).setVisibility(View.VISIBLE);
+//		transaction = fragmentManager.beginTransaction();
+////        transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
+//		transaction.show(f_stored_card);
+//		transaction.commitAllowingStateLoss();
+//	}
+//
+//	private void hideStoredCard(){
+//		findViewById(R.id.rl_stored_card_fragment_father).setVisibility(View.GONE);
+//		transaction = fragmentManager.beginTransaction();
+////        transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
+//		transaction.hide(f_stored_card);
+//		transaction.commitAllowingStateLoss();
+//	}
 
 	private void setTablePacks(String tablePacks) {
 		if (currentTable != null) {
-			currentTable.setTablePacks(Integer.parseInt(tablePacks));
-			currentTable.setTableStatus(ParamConst.TABLE_STATUS_DINING);
-			TablesSQL.updateTables(currentTable);
+			currentTable.setPacks(Integer.parseInt(tablePacks));
+			currentTable.setStatus(ParamConst.TABLE_STATUS_DINING);
+			TableInfoSQL.updateTables(currentTable);
 		}
 	}
 
 	private void getPlaces() {
-		places = PlacesSQL.getAllPlaces();
+		places = PlaceInfoSQL.getAllKioskPlaceInfo();
 		getTables();
 	}
 
 	private void getTables() {
-		tables = TablesSQL.getAllTables();
+		tables = TableInfoSQL.getAllTables();
 		handler.sendEmptyMessage(GET_TABLESTATUSINFO_DATA);
 	}
 
@@ -306,7 +351,7 @@ public class MainPageKiosk extends BaseActivity {
 				.openModifiers(currentOrder, orderDetail, itemModifiers);
 	}
 
-	private void initOrder(Tables tables) {
+	private void initOrder(TableInfo tables) {
 		currentOrder = ObjectFactory.getInstance().getOrder(
 				ParamConst.ORDER_ORIGIN_POS, tables,
 				App.instance.getRevenueCenter(), App.instance.getUser(),
@@ -328,7 +373,7 @@ public class MainPageKiosk extends BaseActivity {
 				if (tables.get(j).getPlacesId() != id) {
 					continue;
 				}
-				int table_status = tables.get(j).getTableStatus();
+				int table_status = tables.get(j).getStatus();
 				switch (table_status) {
 				case ParamConst.TABLE_STATUS_IDLE:
 					idleNum++;
@@ -360,7 +405,7 @@ public class MainPageKiosk extends BaseActivity {
 		if (oldOrder == null) {
 			return;
 		}
-		Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable, oldOrder.getBusinessDate());
+		Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
 		List<OrderDetail> orderDetails = OrderDetailSQL
 				.getUnFreeOrderDetails(oldOrder);
 		if (!orderDetails.isEmpty()) {
@@ -404,6 +449,40 @@ public class MainPageKiosk extends BaseActivity {
 //						.println("javascript:JsConnectAndroid('RefreshTableStatus','"
 //								+ getRefreshTableStatusStr(table) + "')");
 //				break;
+
+//			case StoredCardActivity.VIEW_EVENT_STORED_CARD_PAY_RESULT: {
+//				loadingDialog.show();
+//				Map<String, Object> map = (Map<String, Object>) msg.obj;
+//
+//				SyncCentre.getInstance().updateStoredCardValue(context, map, handler);
+//
+//			}
+//				break;
+			case StoredCardActivity.VIEW_EVENT_STORED_CARD_PAY:{
+				String amount = (String) msg.obj;
+				Intent intent = new Intent(context,StoredCardActivity.class);
+				intent.putExtra("amount", amount);
+				intent.putExtra("isPayAction", true);
+//					UIHelp.startSoredCardActivity(context, MainPage.CHECK_REQUEST_CODE);
+				context.startActivityForResult(intent, MainPage.CHECK_REQUEST_CODE);
+			}
+			break;
+			case StoredCardActivity.PAID_STOREDCARD_SUCCEED:
+			{
+				dismissLoadingDialog();
+				if (closeOrderWindow.isShowing()) {
+					closeOrderWindow.clickEnterAction();
+				}
+				if (closeOrderSplitWindow.isShowing()) {
+					closeOrderSplitWindow.clickEnterAction();
+				}
+			}
+				break;
+			case StoredCardActivity.HTTP_FAILURE:
+				dismissLoadingDialog();
+				UIHelp.showShortToast(context, ResultCode.getErrorResultStrByCode(context,
+						(Integer) msg.obj, context.getResources().getString(R.string.server)));
+				break;
 			case GET_TABLESTATUSINFO_DATA:
 				getTableStatusInfo();
 				handler.sendEmptyMessage(JavaConnectJS.ACTION_CLICK_REFRESH);
@@ -516,7 +595,7 @@ public class MainPageKiosk extends BaseActivity {
 									App.instance.getUser().getFirstName()
 											+ App.instance.getUser()
 													.getLastName(),
-									currentTable.getTableName());
+									currentTable.getName());
 					currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
 					OrderSQL.update(currentOrder);
 					ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
@@ -532,8 +611,8 @@ public class MainPageKiosk extends BaseActivity {
 			}
 				break;
 			case VIEW_EVNT_GET_BILL_PRINT: {
-					Tables tables = (Tables) msg.obj;
-					if (tables.getTableStatus() != ParamConst.TABLE_STATUS_DINING)
+					TableInfo tables = (TableInfo) msg.obj;
+					if (tables.getStatus() != ParamConst.TABLE_STATUS_DINING)
 						return;
 					if (verifyTableRepeat(tables)) {
 						App.instance.addGettingBillNotification(tables);
@@ -563,7 +642,7 @@ public class MainPageKiosk extends BaseActivity {
 								paidOrder,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),
-								currentTable.getTableName());
+								currentTable.getName());
 
 
 
@@ -669,7 +748,7 @@ public class MainPageKiosk extends BaseActivity {
 								paidOrderSplit,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),
-								currentTable.getTableName(), orderBill, App.instance.getBusinessDate().toString());
+								currentTable.getName(), orderBill, App.instance.getBusinessDate().toString());
 				ArrayList<OrderDetail> orderSplitDetails = (ArrayList<OrderDetail>) OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(paidOrderSplit);
 				
 
@@ -786,18 +865,18 @@ public class MainPageKiosk extends BaseActivity {
 				try {
 					jsonject = new JSONObject(json);
 					currentTable = gson.fromJson(jsonject.getString("table"),
-							new TypeToken<Tables>() {
+							new TypeToken<TableInfo>() {
 							}.getType());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				if (currentTable != null) {
-					if (currentTable.getTableStatus() == ParamConst.TABLE_STATUS_IDLE) {
+					if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
 						new Thread(new Runnable() {
 							
 							@Override
 							public void run() {
-								KotSummary kotSummary = KotSummarySQL.getKotSummaryByTable(currentTable);
+								KotSummary kotSummary = KotSummarySQL.getKotSummaryByTable(currentTable.getPosId().intValue());
 								if(kotSummary != null){
 									List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
 									for(KotItemDetail kotItemDetail : kotItemDetails){
@@ -823,14 +902,14 @@ public class MainPageKiosk extends BaseActivity {
 				JSONObject jsonject;
 				try {
 					jsonject = new JSONObject(json);
-					final Tables newTable = gson.fromJson(
+					final TableInfo newTable = gson.fromJson(
 							jsonject.getString("table"),
-							new TypeToken<Tables>() {
+							new TypeToken<TableInfo>() {
 							}.getType());
-					if (newTable.getId().intValue() == oldTable.getId()
+					if (newTable.getPosId().intValue() == oldTable.getPosId()
 							.intValue()) {
 						currentTable = newTable;
-						if (currentTable.getTableStatus() == ParamConst.TABLE_STATUS_IDLE) {
+						if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
 							setPAXWindow.show(SetPAXWindow.GENERAL_ORDER);
 						} else {
 							handler.sendMessage(handler
@@ -841,9 +920,9 @@ public class MainPageKiosk extends BaseActivity {
 								context,
 								context.getResources().getString(R.string.table_transfer),
 								context.getResources().getString(R.string.transfer_) + 
-									oldTable.getTableName() + 
+									oldTable.getName() +
 								context.getResources().getString(R.string.to) + 
-									newTable.getTableName() + "?",  
+									newTable.getName() + "?",
 								context.getResources().getString(R.string.no),
 								context.getResources().getString(R.string.yes), null, new OnClickListener() {
 									@Override
@@ -862,30 +941,30 @@ public class MainPageKiosk extends BaseActivity {
 			}
 				break;
 			case ACTION_TRANSFER_TABLE: {
-				currentTable = (Tables) msg.obj;
+				currentTable = (TableInfo) msg.obj;
 				if (currentTable != null) {
 					new Thread(new Runnable() {
 
 						@Override
 						public void run() {
-							if (currentTable.getTableStatus() == ParamConst.TABLE_STATUS_IDLE) {
+							if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
 								OrderBill orderBill = OrderBillSQL
 										.getOrderBillByOrder(currentOrder);
 								if (orderBill != null
 										&& orderBill.getBillNo() != null) {
 									currentOrder.setTableId(currentTable
-											.getId());
+											.getPosId());
 									OrderSQL.update(currentOrder);
 									KotSummary fromKotSummary = KotSummarySQL
 											.getKotSummary(currentOrder.getId());
 									fromKotSummary.setTableName(currentTable
-											.getTableName());
+											.getName());
 									Map<String, Object> parameters = new HashMap<String, Object>();
 									parameters.put("fromOrder", currentOrder);
 									parameters.put("fromTableName",
-											oldTable.getTableName());
+											oldTable.getName());
 									parameters.put("toTableName",
-											currentTable.getTableName());
+											currentTable.getName());
 									parameters.put("action",
 											ParamConst.JOB_TRANSFER_KOT);
 									App.instance
@@ -895,7 +974,7 @@ public class MainPageKiosk extends BaseActivity {
 													null, fromKotSummary,
 													parameters);
 								} else {
-									transferOrder(currentTable.getId());
+									transferOrder(currentTable.getPosId());
 								}
 								handler.sendMessage(handler
 										.obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER));
@@ -912,7 +991,7 @@ public class MainPageKiosk extends BaseActivity {
 										toKotSummary = ObjectFactory
 												.getInstance()
 												.getKotSummary(
-														currentTable,
+														currentTable.getName(),
 														currentOrder,
 														App.instance
 																.getRevenueCenter(),
@@ -927,11 +1006,11 @@ public class MainPageKiosk extends BaseActivity {
 											ParamConst.JOB_MERGER_KOT);
 									parameters.put("fromOrder", oldOrder);
 									parameters.put("fromTableName",
-											oldTable.getTableName());
+											oldTable.getName());
 									parameters.put("toTableName",
-											currentTable.getTableName());
+											currentTable.getName());
 									parameters.put("currentTableId",
-											currentTable.getId());
+											currentTable.getPosId());
 									App.instance.getKdsJobManager()
 											.transferTableDownKot(
 													ParamConst.JOB_MERGER_KOT,
@@ -945,8 +1024,9 @@ public class MainPageKiosk extends BaseActivity {
 
 							}
 							if (oldTable != null) {
-								oldTable.setTableStatus(ParamConst.TABLE_STATUS_IDLE);
-								TablesSQL.updateTables(oldTable);
+								oldTable.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//								TablesSQL.updateTables(oldTable);
+								TableInfoSQL.updateTables(oldTable);
 							}
 						}
 					}).start();
@@ -973,9 +1053,9 @@ public class MainPageKiosk extends BaseActivity {
 				mainPageMenuView.closeModifiers();
 				break;
 			case VIEW_EVENT_SELECT_BILL:
-				currentTable = (Tables) msg.obj;
-				Tables tables = (Tables) msg.obj;
-				if (tables.getTableStatus() == ParamConst.TABLE_STATUS_IDLE) {
+				currentTable = (TableInfo) msg.obj;
+				TableInfo tables = (TableInfo) msg.obj;
+				if (tables.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
 					return;
 				}				
 				handler.sendMessage(handler
@@ -1345,10 +1425,10 @@ public class MainPageKiosk extends BaseActivity {
 		return JSONUtil.getJSONFromEncode(str);
 	}
 
-	private String getRefreshTableStatusStr(Tables table) {
+	private String getRefreshTableStatusStr(TableInfo table) {
 		int id = table.getPlacesId();
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<Tables> tables = new ArrayList<Tables>();
+		ArrayList<TableInfo> tables = new ArrayList<TableInfo>();
 		tables.add(table);
 		map.put("id", id);
 		map.put("tables", tables);
@@ -1466,7 +1546,7 @@ public class MainPageKiosk extends BaseActivity {
 		mainPageMenuView.setParam(currentOrder, handler);
 		mainPageMenuView.closeModifiers();
 		orderView.setParam(this, currentOrder, orderDetails, handler);
-		operatePanel.setParams(this, currentTable, currentOrder, orderDetails,
+		operatePanel.setParams(this, currentOrder, orderDetails,
 				handler);
 		loadingDialog.dismiss();
 		printerLoadingDialog.dismiss();
@@ -1477,7 +1557,7 @@ public class MainPageKiosk extends BaseActivity {
 		orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 		mainPageMenuView.setParam(currentOrder, handler);
 		orderView.setParam(this, currentOrder, orderDetails, handler);
-		operatePanel.setParams(this, currentTable, currentOrder, orderDetails,
+		operatePanel.setParams(this, currentOrder, orderDetails,
 				handler);
 		loadingDialog.dismiss();
 		printerLoadingDialog.dismiss();
@@ -1500,15 +1580,15 @@ public class MainPageKiosk extends BaseActivity {
 		}
 	}
 
-	private boolean verifyTableRepeat(Tables newTables) {
-		List<Tables> notificationTables = App.instance
+	private boolean verifyTableRepeat(TableInfo newTables) {
+		List<TableInfo> notificationTables = App.instance
 				.getGetTingBillNotifications();
 		if (notificationTables == null) {
 			return true;
 		} else {
 			for (int i = 0; i < notificationTables.size(); i++) {
-				if (notificationTables.get(i).getId().intValue() == newTables
-						.getId().intValue()) {
+				if (notificationTables.get(i).getPosId().intValue() == newTables
+						.getPosId().intValue()) {
 					return false;
 				}
 			}
@@ -1517,14 +1597,14 @@ public class MainPageKiosk extends BaseActivity {
 	}
 
 	private void removeNotificationTables() {
-		List<Tables> notificationTables = App.instance
+		List<TableInfo> notificationTables = App.instance
 				.getGetTingBillNotifications();
 		if (notificationTables == null) {
 			return;
 		}
 		for (int i = 0; i < notificationTables.size(); i++) {
-			if (notificationTables.get(i).getId().intValue() == currentTable
-					.getId().intValue()) {
+			if (notificationTables.get(i).getPosId().intValue() == currentTable
+					.getPosId().intValue()) {
 				App.instance.removeGettingBillNotification(notificationTables
 						.get(i));
 			}
@@ -1533,6 +1613,9 @@ public class MainPageKiosk extends BaseActivity {
 
 	@Override
 	protected void onDestroy() {
+		if(observable != null){
+			RxBus.getInstance().unregister("showStoredCard", observable);
+		}
 		super.onDestroy();
 	}
 
@@ -1552,13 +1635,13 @@ public class MainPageKiosk extends BaseActivity {
 			break;
 		case REFRESH_TABLES_STATUS:
 			if (isShowTables) {
-				Tables tables = (Tables) obj;
+				TableInfo tables = (TableInfo) obj;
 				handler.sendMessage(handler.obtainMessage(
 						REFRESH_TABLES_STATUS, tables));
 			}
 			break;
 		case VIEW_EVNT_GET_BILL_PRINT: {
-			Tables tables = (Tables) obj;
+			TableInfo tables = (TableInfo) obj;
 			handler.sendMessage(handler.obtainMessage(VIEW_EVNT_GET_BILL_PRINT,
 					tables));
 		}
@@ -1591,7 +1674,7 @@ public class MainPageKiosk extends BaseActivity {
 		}
 	};
 	
-	private void initAppOrder(final Tables tables) {
+	private void initAppOrder(final TableInfo tables) {
 		new Thread(new Runnable() {
 			
 			@Override
@@ -1660,6 +1743,16 @@ public class MainPageKiosk extends BaseActivity {
 			}else{
 				loadingDialog.show();
 				initAppOrder(currentTable);
+			}
+		}else if (requestCode == MainPage.CHECK_REQUEST_CODE){
+			if(resultCode == RESULT_OK){
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("qrCode", data.getStringExtra("qrCode"));
+				map.put("revenueId", data.getIntExtra("revenueId", 0));
+				map.put("consumeAmount", data.getStringExtra("consumeAmount"));
+				map.put("operateType", data.getIntExtra("operateType", -1));
+				SyncCentre.getInstance().updateStoredCardValue(context, map, handler);
+				loadingDialog.show();
 			}
 		}else{
 			activityRequestCode = 0;

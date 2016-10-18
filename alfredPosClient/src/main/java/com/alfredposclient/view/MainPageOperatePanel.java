@@ -1,9 +1,5 @@
 package com.alfredposclient.view;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -18,7 +14,6 @@ import com.alfredbase.ParamHelper;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
-import com.alfredbase.javabean.Tables;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.utils.BH;
@@ -30,6 +25,10 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MainPageOperatePanel extends LinearLayout implements
 		OnClickListener {
 //	private BaseActivity parent;
@@ -40,7 +39,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 	private Order order;
 	private List<OrderDetail> orderDetails;
 	private MainPage parent;
-	private Tables tables;
+//	private TableInfo tables;
 	
 	public MainPageOperatePanel(Context context) {
 		super(context);
@@ -52,10 +51,10 @@ public class MainPageOperatePanel extends LinearLayout implements
 		init(context);
 	}
 
-	public void setParams(MainPage parent, Tables tables, Order order,
-			List<OrderDetail> orderDetails, Handler handler) {
+	public void setParams(MainPage parent, Order order,
+						  List<OrderDetail> orderDetails, Handler handler) {
 		this.parent = parent;
-		this.tables = tables;
+//		this.tables = tables;
 		this.handler = handler;
 		this.order = order;
 		this.orderDetails = orderDetails;
