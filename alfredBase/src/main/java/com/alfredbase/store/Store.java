@@ -77,6 +77,9 @@ public class Store {
 	public static final String SEND_TABLE_NAME_LIST = "SEND_TABLE_NAME_LIST";
 
 	public static final String KOT_PRINT = "KOT_PRINT";
+
+	public static final String PRINT_REPORT_WHEN_CLOSE_SESSION = "PRINT_REPORT_WHEN_CLOSE_SESSION";
+
 	private Store() {
 	};
 	

@@ -7,6 +7,7 @@ import android.util.Base64;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.HappyHour;
 import com.alfredbase.javabean.HappyHourWeek;
 import com.alfredbase.javabean.ItemCategory;
@@ -405,16 +406,20 @@ public class HttpAnalysis {
 		}
 	}
 
-	public static String getBOHSettlement(int statusCode, Header[] headers,
+	public static List<BohHoldSettlement> getBOHSettlement(int statusCode, Header[] headers,
 			byte[] responseBody) {
 		String str = null;
+		List<BohHoldSettlement> bohHoldSettlementList = new ArrayList<BohHoldSettlement>();
 		try {
+			Gson gson = new Gson();
 			JSONObject object = new JSONObject(new String(responseBody));
+			bohHoldSettlementList = gson.fromJson(object.getString("bohUnpaidList"),
+					new TypeToken<List<BohHoldSettlement>>(){}.getType());
 			str = object.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return str;
+		return bohHoldSettlementList;
 	}
 
 	/**

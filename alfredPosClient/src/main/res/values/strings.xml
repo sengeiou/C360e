@@ -172,6 +172,7 @@
     <string name="no_update">No update</string>
     <string name="no_sync_date">Data cannot be synced when a session opens</string>
     <string name="change_employee_password">Change Employee Password</string>
+    <string name="print_report_when_session">换班时打印账单</string>
     <string name="password_update_successfully">Password update successfully.</string>
     <string name="employee_no_exist">The employee does not exist at backoffice.</string>
     
@@ -275,6 +276,9 @@
 	<string name="settlement_details">Settlement Details</string>
 	<string name="wechat_settlement">WeChat Settlement</string>
 	<string name="alipay_settlement">Alipay Settlement</string>
+    <string name="amount_auth_by">Amount Auth by</string>
+    <string name="due_days">Due Days</string>
+    <string name="bill_date">Bill Date</string>
 
     <!-- other - window -->
     <string name="switch_account">Switch account</string>

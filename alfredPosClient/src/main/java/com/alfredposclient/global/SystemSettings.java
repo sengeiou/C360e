@@ -13,6 +13,7 @@ public class SystemSettings {
 	private boolean doubleBillPrint = false; //double bill print
 	private boolean doubleReceiptPrint = false; //double closing receipt
 	private boolean orderSummaryPrint = false; //double closing receipt
+	private boolean printWhenCloseSession = true; // session close is report?
 	private int maxPrintOrderNo = 98;
     
 	public SystemSettings(Context context) {
@@ -21,7 +22,7 @@ public class SystemSettings {
 	}
 
 	public boolean isKotPrintTogether() {
-		Integer value = (Integer) Store.getInt(context,
+		Integer value = Store.getInt(context,
 				Store.PRINT_SETTING_KOT_MODE_TOGETHER);
 		if (value != null && value != Store.DEFAULT_INT_TYPE) {
 			if (value.intValue() == 1)
@@ -44,7 +45,7 @@ public class SystemSettings {
 	}
 	
 	public boolean isKotDoublePrint() {
-		Integer value = (Integer) Store.getInt(context,
+		Integer value = Store.getInt(context,
 				Store.PRINT_SETTING_KOT_MODE_DOUBLE);
 		if (value != null && value != Store.DEFAULT_INT_TYPE) {
 			if (value.intValue() == 1)
@@ -67,7 +68,7 @@ public class SystemSettings {
 	}
 	
 	public boolean isDoubleReceiptPrint() {
-		Integer value = (Integer) Store.getInt(context,
+		Integer value = Store.getInt(context,
 				Store.PRINT_SETTING_RECEIPT_MODE_DOUBLE);
 		if (value != null && value != Store.DEFAULT_INT_TYPE) {
 			if (value.intValue() == 1)
@@ -91,7 +92,7 @@ public class SystemSettings {
 
 	}
 	public boolean isOrderSummaryPrint() {
-		Integer value = (Integer) Store.getInt(context,
+		Integer value = Store.getInt(context,
 				Store.PRINT_SETTING_ORDER_SUMMARY);
 		if (value != null && value != Store.DEFAULT_INT_TYPE) {
 			if (value.intValue() == 1)
@@ -116,7 +117,7 @@ public class SystemSettings {
 	}
 	
 	public boolean isDoubleBillPrint() {
-		Integer value = (Integer) Store.getInt(context,
+		Integer value = Store.getInt(context,
 				Store.PRINT_SETTING_BILL_MODE_DOUBLE);
 		if (value != null && value != Store.DEFAULT_INT_TYPE) {
 			if (value.intValue() == 1)
@@ -138,6 +139,30 @@ public class SystemSettings {
 		else
 			this.doubleBillPrint = false;
 
+	}
+
+	public void setPrintWhenCloseSession(Integer printWhenCloseSession) {
+		Store.putInt(this.context, Store.PRINT_REPORT_WHEN_CLOSE_SESSION,
+				printWhenCloseSession);
+		if (printWhenCloseSession.intValue() == 1)
+			this.printWhenCloseSession = true;
+		else
+			this.printWhenCloseSession = false;
+	}
+
+	public boolean isPrintWhenCloseSession() {
+
+		Integer value = Store.getInt(context,
+				Store.PRINT_REPORT_WHEN_CLOSE_SESSION);
+		if (value != null && value != Store.DEFAULT_INT_TYPE) {
+			if (value.intValue() == 1)
+				this.printWhenCloseSession = true;
+			else
+				this.printWhenCloseSession = false;
+
+			return printWhenCloseSession;
+		}
+		return printWhenCloseSession;
 	}
 
 	public int getMaxPrintOrderNo() {

@@ -246,6 +246,11 @@ public class PrintJob  extends Job{
 		line.setText(sbr.toString());
 		this.data.add(line);		
 	}
+	protected void AddSing() {
+		PrintData sing = new PrintData();
+		sing.setDataFormat(PrintData.FORMAT_SING);
+		this.data.add(sing);
+	}
 
 	protected void addSingleLineCenteredText(int charSize, String txt,int height) {
 		StringBuilder sbr = new StringBuilder();

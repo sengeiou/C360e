@@ -11,13 +11,12 @@ import android.widget.Toast;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.R;
 import com.alfredbase.utils.TextTypeFace;
-import com.alfredposclient.activity.BOHSettlementHtml;
+import com.alfredposclient.activity.BOHSettlementActivity;
 import com.alfredposclient.activity.CashInOutHtml;
 import com.alfredposclient.activity.ClockInOROut;
 import com.alfredposclient.activity.DashboardHtml;
 import com.alfredposclient.activity.DevicesHtml;
 import com.alfredposclient.activity.EditOrderHtml;
-import com.alfredposclient.activity.EditSettlementHtml;
 import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.EntVoidReportHtml;
 import com.alfredposclient.activity.Login;
@@ -70,11 +69,17 @@ public class UIHelp {
 	}
 
 	public static void startBOHSettlementHtml(BaseActivity context) {
-		Intent intent = new Intent(context, BOHSettlementHtml.class);
+		Intent intent = new Intent(context, BOHSettlementActivity.class);
 		context.startActivity(intent);
 //		context.overridePendingTransition(R.anim.slide_bottom_in,
 //				R.anim.centre_close_70);
 	}
+//	public static void startBOHSettlementHtml(BaseActivity context) {
+//		Intent intent = new Intent(context, BOHSettlementHtml.class);
+//		context.startActivity(intent);
+////		context.overridePendingTransition(R.anim.slide_bottom_in,
+////				R.anim.centre_close_70);
+//	}
 
 	public static void startReprintBillHtml(BaseActivity context) {
 		Intent intent = new Intent(context, ReprintBillHtml.class);

@@ -184,6 +184,22 @@ public class ESCPOSPrinter {
 	    	 out.write(tcmd);
     	}
     }
+
+	public void sing() throws Exception {
+//		byte[] cutcmd = new byte[4];
+//		cutcmd[0]=ESCPOSPrinter.ESC;
+//		cutcmd[1]=0x42;
+//		cutcmd[2]=0x3;
+//		cutcmd[3]=0x5;
+//		out.write(cutcmd);
+		byte[] cutcmd = new byte[5];
+		cutcmd[0]=ESCPOSPrinter.ESC;
+		cutcmd[1]=0x43;
+		cutcmd[2]=0x10;
+		cutcmd[3]=0x10;
+		cutcmd[4]=0x2;
+		out.write(cutcmd);
+	}
     
     //tested
 //    public  boolean margin(byte mm) {

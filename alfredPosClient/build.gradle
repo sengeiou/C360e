@@ -52,4 +52,5 @@ dependencies {
 //    compile 'com.birbit:android-priority-jobqueue:2.0.0'
     compile files('libs/android-websockets.jar')
     compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }

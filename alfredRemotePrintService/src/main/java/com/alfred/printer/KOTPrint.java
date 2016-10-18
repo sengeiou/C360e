@@ -260,7 +260,9 @@ public class KOTPrint extends PrintJob{
 		addHortionalLine(this.charSize);
 		addSingleLineText(this.charSize,op, 0);
 		addHortionalLine(this.charSize);
-		AddCut();		
+		AddCut();
+		AddSing();
+
 	}
 
 	public void addFeed(){

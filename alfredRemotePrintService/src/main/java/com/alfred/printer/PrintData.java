@@ -17,6 +17,7 @@ public class PrintData  implements Serializable{
 	public static int FORMAT_CUT = 13;
 	public static int FORMAT_DRAWER = 14;
 	public static int FORMAT_FEED=15;
+	public static int FORMAT_SING=16;
 	
 	//alignment 
 	public static int ALIGN_LEFT=0;

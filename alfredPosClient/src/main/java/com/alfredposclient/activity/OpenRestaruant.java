@@ -734,6 +734,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					dismissPrinterLoadingDialog();
 					return;
 				}
+				if(App.instance.getSystemSettings().isPrintWhenCloseSession())
 				sendXPrintData(xReportInfo, bizDate,
 									CommonUtil.getReportType(context, sessionStatus.getSession_status()),
 									sessionStatus);

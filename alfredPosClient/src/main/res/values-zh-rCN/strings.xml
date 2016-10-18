@@ -168,6 +168,7 @@
     <string name="no_update">无更新</string>
     <string name="no_sync_date">当餐厅打开的时候数据不能被更新</string>
     <string name="change_employee_password">修改用户密码</string>
+    <string name="print_report_when_session">换班时打印账单</string>
     <string name="password_update_successfully">密码修改成功</string>
     <string name="employee_no_exist">当前员工不存在，请联系餐厅管理员</string>
     
@@ -273,6 +274,9 @@
 	<string name="alipay_settlement">支付宝支付</string>	
 	<string name="rounding">抹零</string>
 	<string name="cash_other">其他</string>
+    <string name="amount_auth_by">授权人</string>
+    <string name="due_days">时长</string>
+    <string name="bill_date">BOH时间</string>
 		    
     <!-- other - window -->
     <string name="switch_account">切换账户</string>

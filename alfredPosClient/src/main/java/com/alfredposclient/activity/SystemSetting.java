@@ -43,6 +43,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SlipButton sb_double_print_bill;
 	private SlipButton sb_double_close_bill_print;
 	private SlipButton sb_order_summary_print;
+	private SlipButton sb_session_report_print;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -72,7 +73,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_double_print_bill = (SlipButton) findViewById(R.id.sb_double_print_bill);
 		sb_double_close_bill_print = (SlipButton)findViewById(R.id.sb_double_close_bill_print);
 		sb_order_summary_print = (SlipButton)findViewById(R.id.sb_order_summary_print);
-		
+		sb_session_report_print = (SlipButton)findViewById(R.id.sb_session_report_print);
+
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
 			tv_syncdata_warn.setVisibility(View.GONE);
@@ -89,6 +91,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_double_print_bill.setOnChangedListener(this);
 		sb_double_close_bill_print.setOnChangedListener(this);
 		sb_order_summary_print.setOnChangedListener(this);
+		sb_session_report_print.setOnChangedListener(this);
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
 		if(App.instance.isRevenueKiosk()){
@@ -130,6 +133,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			sb_order_summary_print.setChecked(true);
 		} else {
 			sb_order_summary_print.setChecked(false);
+		}
+		if(settings.isPrintWhenCloseSession()){
+			sb_session_report_print.setChecked(true);
+		}else{
+			sb_session_report_print.setChecked(false);
 		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
@@ -315,6 +323,15 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			} else {
 				sb_order_summary_print.setChecked(false);
 				settings.setOrderSummaryPrint(ParamConst.ORDER_SUMMARY_PRINT_FALSE);
+			}
+			break;
+		case R.id.sb_session_report_print:
+			if(checkState){
+				sb_session_report_print.setChecked(true);
+				settings.setPrintWhenCloseSession(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_session_report_print.setChecked(false);
+				settings.setPrintWhenCloseSession(ParamConst.DEFAULT_FALSE);
 			}
 			break;
 		default:

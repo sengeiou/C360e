@@ -146,6 +146,10 @@ public class ESCPrinter implements WIFIPrintCallback{
 						this.printer.feed((byte) toPrint.getMarginTop());
 				}
 
+				if (toPrint.getDataFormat() == PrintData.FORMAT_SING) {
+					this.printer.sing();
+				}
+
 				//content
 				if (toPrint.getDataFormat() == PrintData.FORMAT_TXT) {
 					this.printer.printText(toPrint.getText());
