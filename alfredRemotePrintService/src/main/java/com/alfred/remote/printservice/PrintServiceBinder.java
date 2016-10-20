@@ -15,6 +15,7 @@ import com.alfred.printer.KOTPrint;
 import com.alfred.printer.KickDrawerPrint;
 import com.alfred.printer.ModifierDetailAnalysisReportPrint;
 import com.alfred.printer.MonthlySalesReportPrint;
+import com.alfred.printer.StoredCardPrint;
 import com.alfred.printer.SummaryAnalysisReportPrint;
 import com.alfred.printer.VoidItemReportPrint;
 import com.alfredbase.ParamConst;
@@ -1842,5 +1843,34 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			pqMgr.queuePrint(daPrint.getJobForQueue());
 			printMgr.addJob(prtDevice.getIP(),daPrint);
 		}
-	}		
+	}
+
+
+	@Override
+	public void printStoredCardConsume(String printer, String title, String time, String cardNo, String action, String actionAmount, String balance) throws RemoteException {
+		Gson gson = new Gson();
+		PrinterDevice prtDevice =  gson.fromJson(printer, PrinterDevice.class);
+		PrintManager printMgr = this.service.getPrintMgr();
+		JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
+		PrinterQueueManager pqMgr = this.service.getPqMgr();
+		if(printJobMgr != null) {
+			String uuid = pqMgr.getDataUUID(cardNo);
+			StoredCardPrint storedCardPrint = new StoredCardPrint(uuid, 0L);
+			String model = prtDevice.getModel();
+			//set page size
+			if (this.service.isTMU220(model)) {
+				storedCardPrint.setCharSize(33);
+			} else {
+				storedCardPrint.setCharSize(48);
+			}
+			storedCardPrint.AddTitle(title);
+			storedCardPrint.AddItem("Time:", time);
+			storedCardPrint.AddItem("Card no.", cardNo);
+			storedCardPrint.AddItem(action + " amount :", actionAmount);
+			storedCardPrint.AddItem("Balance amount :", actionAmount);
+			storedCardPrint.AddFooter("Powered by Alfred");
+			pqMgr.queuePrint(storedCardPrint.getJobForQueue());
+			printMgr.addJob(prtDevice.getIP(),storedCardPrint);
+		}
+	}
 }

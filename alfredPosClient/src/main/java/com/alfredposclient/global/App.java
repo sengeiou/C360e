@@ -102,6 +102,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.Welcome;
 import com.alfredposclient.http.server.MainPosHttpServer;
+import com.alfredposclient.javabean.ConsumingRecords;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
 import com.alfredposclient.service.PushService;
@@ -725,6 +726,28 @@ public class App extends BaseApplication {
     // e.printStackTrace();
     // }
     // }
+
+    public void remoteStoredCard(PrinterDevice printer, ConsumingRecords consumingRecords, String balance){
+        if(mRemoteService == null){
+            printerDialog();
+            return;
+        }
+        String action = "Top-up";
+        if(consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_TOP_UP){
+            action = "Top-up";
+        }else if(consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_PAY){
+            action = "Pay";
+        }else if(consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_REFUND){
+            action = "Refund";
+        }
+        try {
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            mRemoteService.printStoredCardConsume(prtStr, "StoredCard Amount", TimeUtil.getTimeFormat(consumingRecords.getConsumingTime()), consumingRecords.getCardId()+"", action, consumingRecords.getConsumingAmount(), balance);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
                                 Order order, ArrayList<PrintOrderItem> orderItems,

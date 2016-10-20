@@ -151,7 +151,9 @@
     <string name="stored_card">Stored-Card</string>
     <string name="top_up">Top-up</string>
     <string name="binding">Binding</string>
-    <string name="card_loss">Card Loss</string>
+    <string name="card_loss">Report Lost</string>
+    <string name="change_card">Change Card</string>
+
     <string name="fill_card">Fill card</string>
     <string name="scanner">Please scan the stored-card QRcode</string>
     <string name="dashboard">Dashboard</string>

@@ -21,7 +21,7 @@ public class PlaceInfoSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.PlaceInfo
-					+ "(id, placeName,placeDescription,restaurantId,revenueId,unionId,isActive,isKiosk)"
+					+ "(posId, placeName,placeDescription,restaurantId,revenueId,unionId,isActive,isKiosk)"
 					+ " values (?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
@@ -42,7 +42,7 @@ public class PlaceInfoSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.PlaceInfo
-					+ "(id, placeName,placeDescription,restaurantId,revenueId,unionId, isActive, isKiosk)"
+					+ "(posId, placeName,placeDescription,restaurantId,revenueId,unionId, isActive, isKiosk)"
 					+ " values (?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);

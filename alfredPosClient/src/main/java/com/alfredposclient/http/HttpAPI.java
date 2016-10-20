@@ -1336,6 +1336,7 @@ public class HttpAPI {
                                               final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.updateStoredCardValue(responseBody);
                                 handler.sendEmptyMessage(StoredCardActivity.PAID_STOREDCARD_SUCCEED);
                             } else {
                                 handler.sendMessage(handler.obtainMessage(StoredCardActivity.HTTP_FAILURE, resultCode));

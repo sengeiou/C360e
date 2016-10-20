@@ -213,6 +213,20 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
     }
 
+    private boolean canDelete(){
+            List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate());
+            if(!orderList.isEmpty()){
+                for (Order order : orderList) {
+                    List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+                            .getOrderDetails(order.getId());
+                    if (!orderDetailsUnIncludeVoid.isEmpty()){
+                        return false;
+                    }
+                }
+            }
+        return true;
+    }
+
     private void addTable(final TableInfo newTable){
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
@@ -222,16 +236,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.getImageResourceId(newTable.getStatus().intValue() > ParamConst.TABLE_STATUS_IDLE ? newTable.getImageName()+"used" : newTable.getImageName()));
         final EditText et_item_table_name = (EditText) selfView.findViewById(R.id.et_item_table_name);
         final Button btn_table_name_ok = (Button) selfView.findViewById(R.id.btn_table_name_ok);
-        btn_table_name_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(TextUtils.isEmpty(et_item_table_name.getText().toString().trim())){
-                    return ;
-                }
-                hideInput(et_item_table_name);
-                newTable.setName(et_item_table_name.getText().toString());
-            }
-        });
+
         final LinearLayout ll_table_more_action = (LinearLayout) selfView.findViewById(R.id.ll_table_more_action);
 //        imageView.setImageBitmap(BitmapUtil.getResizedBitmap(bitmap, newTable.getPosId()%2 == 0 ? (float)(2.0/3) : (float)(5.0/6)));
         Button btn_table_small = (Button) selfView.findViewById(R.id.btn_table_small);
@@ -245,6 +250,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     return;
                 switch (v.getId()){
                     case R.id.iv_delete:
+                        if(!canDelete()){
+                            UIHelp.showShortToast(mainPage, mainPage.getResources().getString(R.string.bill_not_closed));
+                            return;
+                        }
                         rl_tables.removeView(selfView);
                         newTables.remove(newTable);
                         TableInfoSQL.deleteTableInfo(newTable.getPosId().intValue());
@@ -300,7 +309,31 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         btn_table_small.setOnClickListener(onClickListener);
         btn_table_middle.setOnClickListener(onClickListener);
         btn_table_large.setOnClickListener(onClickListener);
-
+        btn_table_name_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(TextUtils.isEmpty(et_item_table_name.getText().toString().trim())){
+                    return ;
+                }
+                String name = et_item_table_name.getText().toString().trim();
+                TableInfo sqlTable = TableInfoSQL.getTableByName(name);
+                if(sqlTable != null){
+                    if(sqlTable.getPosId().intValue() != newTable.getPosId().intValue()) {
+                        UIHelp.showShortToast(mainPage, "Table Name already in use. Please use another name.");
+                        return;
+                    }
+                }
+                hideInput(et_item_table_name);
+                newTable.setName(name);
+                iv_more.setVisibility(View.INVISIBLE);
+                iv_rotate.setVisibility(View.INVISIBLE);
+                iv_delete.setVisibility(View.INVISIBLE);
+                iv_copy.setVisibility(View.INVISIBLE);
+                ll_table_more_action.setVisibility(View.INVISIBLE);
+                et_item_table_name.setVisibility(View.INVISIBLE);
+                btn_table_name_ok.setVisibility(View.INVISIBLE);
+            }
+        });
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -407,9 +440,8 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_table_edit:
-                canEdit = !canEdit;
-                changeLayoutStatus();
-                if(!canEdit){
+
+                if(canEdit){
                     saveTable();
                 }else{
                     List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate());
@@ -426,7 +458,8 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         }
                     }
                 }
-
+                canEdit = !canEdit;
+                changeLayoutStatus();
                 break;
             case R.id.iv_more_table:
                 RelativeLayout rl_table_list = (RelativeLayout) getView().findViewById(R.id.rl_table_list);
@@ -456,6 +489,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 case UPDATE_PLACE_TABLE_SUCCEED:
                     TableInfoSQL.addTablesList(newTables);
                     loadingDialog.dismiss();
+                    UIHelp.showShortToast(mainPage, "Save success");
                     break;
                 case UPDATE_PLACE_TABLE_FAILURE:
                     loadingDialog.dismiss();
@@ -615,6 +649,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         }
                             break;
                         case R.id.iv_place_delete: {
+                            if(!canDelete()){
+                                UIHelp.showShortToast(mainPage, mainPage.getResources().getString(R.string.bill_not_closed));
+                                return;
+                            }
                             DialogFactory.commonTwoBtnDialog(mainPage,
                                     mainPage.getResources().getString(R.string.warning),
                                     "Are you sure to delete this place?",

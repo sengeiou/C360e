@@ -83,6 +83,7 @@ import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
+import com.alfredposclient.javabean.ConsumingRecords;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -693,6 +694,18 @@ public class HttpAnalysis {
 			TableInfoSQL.deleteAllTableInfo();
 			PlaceInfoSQL.addPlaceInfoList(placeInfoList);
 			TableInfoSQL.addTablesList(tableInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void updateStoredCardValue(byte[] responseBody){
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			String balance = object.getString("balance");
+			String consuming = object.getString("records");
+			ConsumingRecords consumingRecords = gson.fromJson(consuming, ConsumingRecords.class);
+			App.instance.remoteStoredCard(App.instance.getCahierPrinter(), consumingRecords, balance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

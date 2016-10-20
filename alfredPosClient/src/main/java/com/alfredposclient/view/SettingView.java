@@ -112,7 +112,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 			}
 			case R.id.ll_stored_card: {
 				RxBus.getInstance().post("showStoredCard", null);
-				mDrawerLayout.closeDrawer(Gravity.END);
+//				mDrawerLayout.closeDrawer(Gravity.END);
 				break;
 			}
 			case R.id.ll_dashboard: {

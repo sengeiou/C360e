@@ -335,6 +335,47 @@ public class TableInfoSQL {
         }
         return newTable;
     }
+    public static TableInfo getTableByName(String name) {
+        String sql = "select * from " + TableNames.TableInfo + " where name = ?";
+        TableInfo newTable = null;
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql, new String[] {name});
+
+            if (cursor.moveToFirst()) {
+                newTable = new TableInfo();
+                newTable.setPosId(cursor.getInt(0));
+                newTable.setName(cursor.getString(1));
+                newTable.setImageName(cursor.getString(2));
+                newTable.setRestaurantId(cursor.getInt(3));
+                newTable.setRevenueId(cursor.getInt(4));
+                newTable.setxAxis(cursor.getString(5));
+                newTable.setyAxis(cursor.getString(6));
+                newTable.setPlacesId(cursor.getInt(7));
+                newTable.setResolution(cursor.getInt(8));
+                newTable.setShape(cursor.getInt(9));
+                newTable.setType(cursor.getInt(10));
+                newTable.setStatus(cursor.getInt(11));
+                newTable.setIsDecorate(cursor.getInt(12));
+                newTable.setUnionId(cursor.getString(13));
+                newTable.setIsActive(cursor.getInt(14));
+                newTable.setPacks(cursor.getInt(15));
+                newTable.setRotate(cursor.getInt(16));
+                newTable.setCreateTime(cursor.getLong(17));
+                newTable.setUpdateTime(cursor.getLong(18));
+                newTable.setOrders(cursor.getInt(19));
+                newTable.setIsKiosk(cursor.getInt(20));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return newTable;
+    }
     public static TableInfo getKioskTable() {
         String sql = "select * from " + TableNames.TableInfo + " where isKiosk = ?";
         TableInfo newTable = null;

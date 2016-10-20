@@ -613,7 +613,7 @@ public class DataHelper {
 					+ " (posId INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, imageName TEXT, restaurantId INTEGER, revenueId INTEGER, xAxis INTEGER, yAxis INTEGER, placesId INTEGER, resolution INTEGER, shape INTEGER, type INTEGER, status INTEGER, isDecorate INTEGER, unionId TEXT, isActive INTEGER, packs INTEGER, rotate INTEGER, createTime LONG, updateTime LONG, orders INTEGER, isKiosk INTEGER default 0)");
 			db.execSQL("CREATE TABLE "
 					+ TableNames.PlaceInfo
-					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, placeName TEXT,placeDescription TEXT,restaurantId INTEGER,  revenueId INTEGER, unionId INTEGER, isActive INTEGER, isKiosk INTEGER default 0)");
+					+ " (posId INTEGER PRIMARY KEY AUTOINCREMENT, placeName TEXT,placeDescription TEXT,restaurantId INTEGER,  revenueId INTEGER, unionId INTEGER, isActive INTEGER, isKiosk INTEGER default 0)");
 			//TableNames.ReportDaySales
 			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
 					+ " ADD COLUMN storedCard TEXT default '0.00'");

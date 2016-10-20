@@ -50,4 +50,5 @@ interface IAlfredRemotePrintService {
 	void printComboDetailAnalysisReport(String xzType, String printer, String title, String plu, String pluMod);
 	void printMonthlySaleReport(String printer, String title, int year, int month,String saleData);
 	void printMonthlyPLUReport(String printer, String title,  int year, int month, String plu);
+	void printStoredCardConsume(String printer, String title, String date, String cardNo, String action, String actionAmount, String balance);
 }

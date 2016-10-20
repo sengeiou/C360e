@@ -1958,6 +1958,14 @@ public class MainPage extends BaseActivity {
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+		if (mDrawerLayout.isDrawerOpen(settingView)) {
+			mDrawerLayout.closeDrawer(Gravity.END);
+		}
+	}
+
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		setData();
 		super.onActivityResult(requestCode, resultCode, data);
@@ -1979,15 +1987,15 @@ public class MainPage extends BaseActivity {
 			}
 		}else{
 			activityRequestCode = 0;
-			mDrawerLayout.postDelayed(new Runnable() {
-				
-				@Override
-				public void run() {
-					if (mDrawerLayout.isDrawerOpen(settingView)) {
-						mDrawerLayout.closeDrawer(Gravity.END);
-					}
-				}
-			}, 500);
+//			mDrawerLayout.postDelayed(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					if (mDrawerLayout.isDrawerOpen(settingView)) {
+//						mDrawerLayout.closeDrawer(Gravity.END);
+//					}
+//				}
+//			}, 500);
 		}
 	}
 }

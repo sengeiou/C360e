@@ -116,7 +116,7 @@ public class ObjectFactory {
 					order.setId(CommonSQL.getNextSeq(TableNames.Order));
 					order.setOrderOriginId(orderOriginId);
 					order.setUserId(user.getId());
-					order.setPersons(tables.getStatus());
+					order.setPersons(tables.getPacks());
 					order.setOrderStatus(orderStatus);
 					order.setDiscountRate(ParamConst.DOUBLE_ZERO);
 					order.setSessionStatus(sessionStatus.getSession_status());

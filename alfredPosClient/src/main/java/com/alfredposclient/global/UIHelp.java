@@ -11,12 +11,7 @@ import android.widget.Toast;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.R;
 import com.alfredbase.utils.TextTypeFace;
-<<<<<<< HEAD
 import com.alfredposclient.activity.BOHSettlementActivity;
-=======
-import com.alfredposclient.activity.StoredCardActivity;
-import com.alfredposclient.activity.BOHSettlementHtml;
->>>>>>> master
 import com.alfredposclient.activity.CashInOutHtml;
 import com.alfredposclient.activity.ClockInOROut;
 import com.alfredposclient.activity.DashboardHtml;
@@ -31,6 +26,7 @@ import com.alfredposclient.activity.MonthlySalesReportHtml;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.OpenRestaruant;
 import com.alfredposclient.activity.ReprintBillHtml;
+import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.XZReportHtml;

@@ -3,7 +3,7 @@ package com.alfredbase.javabean;
 import com.alfredbase.utils.CommonUtil;
 
 public class PlaceInfo {
-	private Integer id;
+	private Integer posId;
 
 	private String placeName;
 
@@ -25,10 +25,10 @@ public class PlaceInfo {
 	public PlaceInfo() {
 	}
 
-	public PlaceInfo(Integer id, String placeName, String placeDescription,
+	public PlaceInfo(Integer posId, String placeName, String placeDescription,
 					 Integer restaurantId, Integer revenueId, Integer isActive) {
 		super();
-		this.id = id;
+		this.posId = posId;
 		this.placeName = placeName;
 		this.placeDescription = placeDescription;
 		this.restaurantId = restaurantId;
@@ -37,13 +37,13 @@ public class PlaceInfo {
 	}
 
 	public Integer getId() {
-		if (CommonUtil.isNull(id))
+		if (CommonUtil.isNull(posId))
 			return 0;
-		return id;
+		return posId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setId(Integer posId) {
+		this.posId = posId;
 	}
 
 	public String getPlaceName() {
@@ -116,7 +116,7 @@ public class PlaceInfo {
 	@Override
 	public String toString() {
 		return "PlaceInfo{" +
-				"id=" + id +
+				"posId=" + posId +
 				", placeName='" + placeName + '\'' +
 				", placeDescription='" + placeDescription + '\'' +
 				", restaurantId=" + restaurantId +

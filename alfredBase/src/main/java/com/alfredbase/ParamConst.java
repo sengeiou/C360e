@@ -397,4 +397,8 @@ public class ParamConst {
 	public static final int APP_ORDER_TABLE_STATUS_NOT_USE = 1;
 	public static final int APP_ORDER_TABLE_STATUS_USED = -1;
 
+	public static final int STORED_CARD_ACTION_TOP_UP = 1;
+	public static final int STORED_CARD_ACTION_PAY = 2;
+	public static final int STORED_CARD_ACTION_REFUND = 3;
+
 }

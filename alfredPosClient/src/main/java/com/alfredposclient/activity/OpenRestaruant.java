@@ -65,6 +65,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
@@ -86,6 +87,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private RelativeLayout rl_lunch_bg;
@@ -142,6 +147,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private PrinterLoadingDialog zPrinterLoadingDialog;
 	private boolean doubleBackToExitPressedOnce = false;
 	private int size;
+	private Observable<Object> observable;
 	
 //	private RelativeLayout rl_view_bg1;
 //	private ImageView iv_view_icon1;
@@ -396,12 +402,23 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		});
 		// 系统初始化工作
 		App.instance.startHttpServer();
+		observable = RxBus.getInstance().register("showStoredCard");
+		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+			@Override
+			public void call(Object object) {
+				if(App.getTopActivity() instanceof OpenRestaruant && Store.getObject(
+						context, Store.SESSION_STATUS, SessionStatus.class) != null) {
+					UIHelp.startSoredCardActivity(context);
+				}
+			}
+		});
 	}
+
 
 	@Override
 	protected void onStart() {
-		setDateView();
-		registerReceiver(receiver, filter);
+//		setDateView();
+//		registerReceiver(receiver, filter);
 		super.onStart();
 	}
 
@@ -503,6 +520,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (mDrawerLayout.isDrawerOpen(mSettingView)) {
+			mDrawerLayout.closeDrawer(Gravity.END);
+		}
+		setDateView();
+		registerReceiver(receiver, filter);
 		Map<String, Integer> map = App.instance.getPushMsgMap();
 		if (!map.isEmpty()) {
 			int num = 0;
@@ -1444,8 +1466,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 	@Override
 	protected void onDestroy() {
-
 		super.onDestroy();
+		if(observable != null){
+			RxBus.getInstance().unregister("showStoredCard", observable);
+		}
 	}
 
 	@Override
