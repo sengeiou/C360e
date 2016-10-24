@@ -496,14 +496,14 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //                    DialogFactory.showOneButtonCompelDialog(mainPage, getActivity().getResources().getString(R.string.warning),
 //                            ResultCode.getErrorResultStrByCode(mainPage,(Integer)msg.obj, null)), new Onc);
                     DialogFactory.showOneButtonCompelDialog(mainPage, mainPage.getResources().getString(R.string.warning),
-                            ResultCode.getErrorResultStrByCode(mainPage, (Integer) msg.obj, null) + "\nTables will be updated the next time sync.", null);
+                            ResultCode.getErrorResultStrByCode(mainPage, (Integer) msg.obj, null) + "\nTables will be updated the next time save.", null);
                     TableInfoSQL.addTablesList(newTables);
                     break;
                 case ResultCode.CONNECTION_FAILED:
                     loadingDialog.dismiss();
                     DialogFactory.showOneButtonCompelDialog(mainPage, mainPage.getResources().getString(R.string.warning),
                             ResultCode.getErrorResultStr(mainPage,
-                                    (Throwable) msg.obj, mainPage.getResources().getString(R.string.server)) + "\nTables will be updated the next time sync.", null);
+                                    (Throwable) msg.obj, mainPage.getResources().getString(R.string.server)) + "\nTables will be updated the next time save.", null);
                     TableInfoSQL.addTablesList(newTables);
 
                     break;

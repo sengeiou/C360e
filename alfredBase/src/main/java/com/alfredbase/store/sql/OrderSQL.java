@@ -610,7 +610,7 @@ public class OrderSQL {
 				+ ParamConst.TABLE_STATUS_DINING
 				+ " and od.orderStatus <> " 
 				+ ParamConst.ORDER_STATUS_FINISHED
-				+ " group by t.id";
+				+ " group by t.posId";
 		try {
 			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate), 

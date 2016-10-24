@@ -1864,11 +1864,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 				storedCardPrint.setCharSize(48);
 			}
 			storedCardPrint.AddTitle(title);
-			storedCardPrint.AddItem("Time:", time);
-			storedCardPrint.AddItem("Card no.", cardNo);
-			storedCardPrint.AddItem(action + " amount :", actionAmount);
-			storedCardPrint.AddItem("Balance amount :", actionAmount);
+			storedCardPrint.AddItem("Time:     ", time);
+			storedCardPrint.AddItem("Card no.    ******", cardNo);
+			storedCardPrint.AddItem(action + " amount :   $", BH.getBD(actionAmount).toString());
+			storedCardPrint.AddItem("Balance amount :   $", BH.getBD(balance).toString());
 			storedCardPrint.AddFooter("Powered by Alfred");
+			storedCardPrint.setPrinterIp(prtDevice.getIP());
 			pqMgr.queuePrint(storedCardPrint.getJobForQueue());
 			printMgr.addJob(prtDevice.getIP(),storedCardPrint);
 		}

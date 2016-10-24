@@ -17,7 +17,7 @@ public class StoredCardPrint extends PrintJob {
 
     public void AddTitle(String titleName) {
         StringBuilder sbr = new StringBuilder();
-        sbr.append(titleName);
+        sbr.append(titleName + "\r\n");
 
         PrintData header = new PrintData();
         header.setDataFormat(PrintData.FORMAT_TXT);
@@ -38,9 +38,9 @@ public class StoredCardPrint extends PrintJob {
     public void AddItem(String name, String context){
         PrintData item = new PrintData();
         item.setDataFormat(PrintData.FORMAT_TXT);
-        item.setFontsize(2);
+        item.setFontsize(1);
         item.setTextAlign(PrintData.ALIGN_LEFT);
-        item.setText(getTwoColHeader(name, context));
+        item.setText(name+context + "\r\n");
         this.data.add(item);
     }
 
