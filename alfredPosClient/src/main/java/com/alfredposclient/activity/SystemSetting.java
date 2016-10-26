@@ -44,6 +44,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SlipButton sb_double_close_bill_print;
 	private SlipButton sb_order_summary_print;
 	private SlipButton sb_session_report_print;
+	private SlipButton sb_print_before_close;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -74,6 +75,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_double_close_bill_print = (SlipButton)findViewById(R.id.sb_double_close_bill_print);
 		sb_order_summary_print = (SlipButton)findViewById(R.id.sb_order_summary_print);
 		sb_session_report_print = (SlipButton)findViewById(R.id.sb_session_report_print);
+		sb_print_before_close = (SlipButton)findViewById(R.id.sb_print_before_close);
 
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -92,6 +94,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_double_close_bill_print.setOnChangedListener(this);
 		sb_order_summary_print.setOnChangedListener(this);
 		sb_session_report_print.setOnChangedListener(this);
+		sb_print_before_close.setOnChangedListener(this);
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
 		if(App.instance.isRevenueKiosk()){
@@ -138,6 +141,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			sb_session_report_print.setChecked(true);
 		}else{
 			sb_session_report_print.setChecked(false);
+		}
+		if(settings.isPrintBeforCloseBill()){
+			sb_print_before_close.setChecked(true);
+		}else{
+			sb_print_before_close.setChecked(false);
 		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
@@ -334,6 +342,15 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 				settings.setPrintWhenCloseSession(ParamConst.DEFAULT_FALSE);
 			}
 			break;
+		case R.id.sb_print_before_close:
+			if(checkState){
+				sb_print_before_close.setChecked(true);
+				settings.setPrintBeforCloseBill(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_print_before_close.setChecked(false);
+				settings.setPrintBeforCloseBill(ParamConst.DEFAULT_FALSE);
+			}
+			break;
 		default:
 			break;
 		}
@@ -351,6 +368,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_order_summary_print));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_change_pwd));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_sync_data));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_before_close));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_session_report_print));
 		textTypeFace.setTrajanProRegular(tv_syncdata_warn);
 	}
 }

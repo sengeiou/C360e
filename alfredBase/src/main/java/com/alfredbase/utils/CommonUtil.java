@@ -1,11 +1,18 @@
 package com.alfredbase.utils;
 
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
+import android.content.Context;
+import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.text.TextUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
+
+import com.alfredbase.BaseActivity;
+import com.alfredbase.R;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
@@ -16,15 +23,14 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 
 import org.apache.http.conn.util.InetAddressUtils;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
-
-import com.alfredbase.BaseActivity;
-import com.alfredbase.R;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 public class CommonUtil {
 	public static boolean isNull(String text) {
@@ -66,11 +72,104 @@ public class CommonUtil {
 	}
 
 	public static String getLocalMacAddress(Context context) {
-		WifiManager wifi = (WifiManager) context
-				.getSystemService(Context.WIFI_SERVICE);
-		WifiInfo wifiInfo = wifi.getConnectionInfo();
-		LogUtil.d("LocalMacAddress", wifiInfo.getMacAddress().toString());
-		return wifiInfo.getMacAddress().toString();
+		if (Build.VERSION.SDK_INT < 23) {
+			WifiManager wifi = (WifiManager) context
+					.getSystemService(Context.WIFI_SERVICE);
+			WifiInfo wifiInfo = wifi.getConnectionInfo();
+			LogUtil.d("LocalMacAddress", wifiInfo.getMacAddress().toString());
+			return wifiInfo.getMacAddress().toString();
+		}else{
+			return getLocalMacAddress1(context);
+		}
+	}
+
+	public static String getLocalMacAddress1(Context context){
+
+		String mac_s = "";
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(BaseActivity.CONNECTIVITY_SERVICE);
+		NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIMAX);
+		if (ni != null) {
+		}
+		try {
+			byte[] mac;
+			NetworkInterface ne = NetworkInterface.getByInetAddress(InetAddress
+					.getByName(getLocalIpAddress()));
+			mac = ne.getHardwareAddress();
+			mac_s = byte2hex(mac);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if(!TextUtils.isEmpty(mac_s)){
+			return mac_s.replace('%', ':').toUpperCase();
+		}
+		String result = "";
+		String Mac = "";
+		result = callCmd("busybox ifconfig","HWaddr");
+
+		//如果返回的result == null，则说明网络不可取
+		if(result==null){
+			result = "";
+//            return "网络出错，请检查网络";
+		}
+
+		//对该行数据进行解析
+		//例如：eth0      Link encap:Ethernet  HWaddr 00:16:E8:3E:DF:67
+		if(result.length()>0 && result.contains("HWaddr")==true){
+			Mac = result.substring(result.indexOf("HWaddr")+6, result.length()-1);
+			LogUtil.i("test","Mac:"+Mac+" Mac.length: "+Mac.length());
+
+            /*if(Mac.length()>1){
+                Mac = Mac.replaceAll(" ", "");
+                result = "";
+                String[] tmp = Mac.split(":");
+                for(int i = 0;i<tmp.length;++i){
+                    result +=tmp[i];
+                }
+            }*/
+			result = Mac;
+			LogUtil.i("test",result+" result.length: "+result.length());
+		}
+		return result.trim().toUpperCase();
+	}
+
+	public static String byte2hex(byte[] b) // 二行制转字符串
+	{
+		String hs = "";
+		String stmp = "";
+		for (int n = 0; n < b.length; n++) {
+			stmp = (java.lang.Integer.toHexString(b[n] & 0XFF));
+			if (stmp.length() == 1)
+				hs = hs + "0" + stmp;
+			else
+				hs = hs + stmp;
+			if (n < b.length - 1)
+				hs = hs + "%";
+		}
+		return hs.toUpperCase();
+	}
+
+	private static String callCmd(String cmd,String filter) {
+		String result = "";
+		String line = "";
+		try {
+			Process proc = Runtime.getRuntime().exec(cmd);
+			InputStreamReader is = new InputStreamReader(proc.getInputStream());
+			BufferedReader br = new BufferedReader(is);
+
+			//执行命令cmd，只取结果中含有filter的这一行
+			while ((line = br.readLine ()) != null && line.contains(filter)== false) {
+				//result += line;
+//                Log.i("test","line: "+line);
+			}
+
+			result = line;
+//            Log.i("test","result: "+result);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	public static String getLocalIpAddress() {

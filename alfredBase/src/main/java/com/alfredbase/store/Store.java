@@ -79,6 +79,7 @@ public class Store {
 	public static final String KOT_PRINT = "KOT_PRINT";
 
 	public static final String PRINT_REPORT_WHEN_CLOSE_SESSION = "PRINT_REPORT_WHEN_CLOSE_SESSION";
+	public static final String PRINT_BEFORE_CLOSE_BILL = "PRINT_BEFORE_CLOSE_BILL";
 
 	private Store() {
 	};

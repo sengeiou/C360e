@@ -1630,8 +1630,10 @@ public class MainPage extends BaseActivity {
 	private void showCloseBillWindow() {
 		OrderBill orderBill = OrderBillSQL.getOrderBillByOrder(currentOrder);
 		if (currentOrder.getOrderStatus().intValue() != ParamConst.ORDER_STATUS_UNPAY) {
-			UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_));
-			return;
+			if(App.instance.getSystemSettings().isPrintBeforCloseBill()) {
+				UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_));
+				return;
+			}
 		}
 		if (orderBill != null && orderBill.getBillNo() != null) {
 			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);

@@ -175,6 +175,7 @@
     <string name="no_sync_date">当餐厅打开的时候数据不能被更新</string>
     <string name="change_employee_password">修改用户密码</string>
     <string name="print_report_when_session">换班时打印账单</string>
+    <string name="print_before_close_bill">预结单打印</string>
     <string name="password_update_successfully">密码修改成功</string>
     <string name="employee_no_exist">当前员工不存在，请联系餐厅管理员</string>
     

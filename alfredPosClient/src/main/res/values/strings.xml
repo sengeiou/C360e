@@ -180,7 +180,8 @@
     <string name="no_update">No update</string>
     <string name="no_sync_date">Data cannot be synced when a session opens</string>
     <string name="change_employee_password">Change Employee Password</string>
-    <string name="print_report_when_session">换班时打印账单</string>
+    <string name="print_report_when_session">X Report</string>
+    <string name="print_before_close_bill">Print Check</string>
     <string name="password_update_successfully">Password update successfully.</string>
     <string name="employee_no_exist">The employee does not exist at backoffice.</string>
     

@@ -234,9 +234,13 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         selfView.setLayoutParams(layoutParams);
         final ImageView imageView = (ImageView) selfView.findViewById(R.id.iv_table);
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.getImageResourceId(newTable.getStatus().intValue() > ParamConst.TABLE_STATUS_IDLE ? newTable.getImageName()+"used" : newTable.getImageName()));
+        if(newTable.getStatus().intValue() > ParamConst.TABLE_STATUS_IDLE){
+
+        }
         final EditText et_item_table_name = (EditText) selfView.findViewById(R.id.et_item_table_name);
         final Button btn_table_name_ok = (Button) selfView.findViewById(R.id.btn_table_name_ok);
-
+        final TextView tv_table_name = (TextView) selfView.findViewById(R.id.tv_table_name);
+        tv_table_name.setText(newTable.getName());
         final LinearLayout ll_table_more_action = (LinearLayout) selfView.findViewById(R.id.ll_table_more_action);
 //        imageView.setImageBitmap(BitmapUtil.getResizedBitmap(bitmap, newTable.getPosId()%2 == 0 ? (float)(2.0/3) : (float)(5.0/6)));
         Button btn_table_small = (Button) selfView.findViewById(R.id.btn_table_small);
@@ -325,6 +329,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 }
                 hideInput(et_item_table_name);
                 newTable.setName(name);
+                tv_table_name.setText(newTable.getName());
                 iv_more.setVisibility(View.INVISIBLE);
                 iv_rotate.setVisibility(View.INVISIBLE);
                 iv_delete.setVisibility(View.INVISIBLE);
