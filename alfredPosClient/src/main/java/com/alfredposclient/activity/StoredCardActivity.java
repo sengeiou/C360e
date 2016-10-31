@@ -444,6 +444,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     @Override
     public void onDestroy() {
         if(inactivityTimer != null) {
+            inactivityTimer.onPause();
             inactivityTimer.shutdown();
             inactivityTimer = null;
         }

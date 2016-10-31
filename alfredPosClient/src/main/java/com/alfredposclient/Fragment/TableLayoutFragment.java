@@ -139,6 +139,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         App.instance.getRevenueCenter().getRestaurantId(),
                         App.instance.getRevenueCenter().getId(),
                         places.get(selectPlaceIndex).getId(), width);
+                newTables.add(newTable);
                 addTable(newTable);
             }
         });
@@ -230,7 +231,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private void addTable(final TableInfo newTable){
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+//        AbsoluteLayout.LayoutParams l = new AbsoluteLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         final View selfView = LayoutInflater.from(mainPage).inflate(R.layout.table_item_view, null, false);
+//        selfView.setX(Float.parseFloat(newTable.getxAxis()));
+//        selfView.setY(Float.parseFloat(newTable.getyAxis()));
         selfView.setLayoutParams(layoutParams);
         final ImageView imageView = (ImageView) selfView.findViewById(R.id.iv_table);
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.getImageResourceId(newTable.getStatus().intValue() > ParamConst.TABLE_STATUS_IDLE ? newTable.getImageName()+"used" : newTable.getImageName()));

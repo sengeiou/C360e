@@ -62,4 +62,5 @@
     <string name="customer_no_card">请先绑定储值卡</string>
     <string name="card_status_abnormal">用户二维码异常</string>
     <string name="card_binding_mobile">用户的储值卡已经绑定手机App,请扫描手机上的二维码</string>
+    <string name="qrcode_expire">用户二维码过期,请重新扫码</string>
 </resources>

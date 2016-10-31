@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -11,6 +8,9 @@ import com.alfredbase.javabean.EmpWorkLog;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmpWorkLogSQL {
 
@@ -74,6 +74,7 @@ public class EmpWorkLogSQL {
 				db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
 			db.endTransaction();
 		}
 	}

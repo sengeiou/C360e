@@ -750,6 +750,9 @@ public class CoreData {
 	}
 
 	public List<TaxCategory> getTaxCategories() {
+		if(taxCategories == null){
+			return new ArrayList<TaxCategory>();
+		}
 		return taxCategories;
 	}
 

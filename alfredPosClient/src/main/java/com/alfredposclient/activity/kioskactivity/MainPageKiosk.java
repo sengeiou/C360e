@@ -1544,7 +1544,7 @@ public class MainPageKiosk extends BaseActivity {
 		initOrder(currentTable);
 		orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 		mainPageMenuView.setParam(currentOrder, handler);
-		mainPageMenuView.closeModifiers();
+//		mainPageMenuView.closeModifiers();
 		orderView.setParam(this, currentOrder, orderDetails, handler);
 		operatePanel.setParams(this, currentOrder, orderDetails,
 				handler);

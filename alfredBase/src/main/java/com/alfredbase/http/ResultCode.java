@@ -189,6 +189,8 @@ public class ResultCode {
 			return context.getResources().getString(R.string.card_status_abnormal);
 		case QRCODE_TOBIND_PHONE_USE_PHONE_PAY:
 			return context.getResources().getString(R.string.card_binding_mobile);
+		case CUSTOMER_QRCODE_INVALIDATE:
+			return context.getResources().getString(R.string.qrcode_expire);
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);

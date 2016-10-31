@@ -185,7 +185,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 									map.put(PushMessage.ITEM, 1);
 									map.put(PushMessage.MODIFIER, 1);
 									map.put(PushMessage.USER, 1);
-									map.put(PushMessage.PLACE_TABLE, 1);
+//									map.put(PushMessage.PLACE_TABLE, 1);
 									map.put(PushMessage.TAX, 1);
 									syncDataAction(map);
 								}

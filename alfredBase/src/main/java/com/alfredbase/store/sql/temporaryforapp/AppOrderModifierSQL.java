@@ -32,9 +32,7 @@ public class AppOrderModifierSQL {
 		if (appOrderModifier == null) {
 			return;
 		}
-		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.AppOrderModifier
 					+ "(id, orderId, orderDetailId, custId, itemId, modifierId, modifierName, modifierNum, status, modifierPrice,"

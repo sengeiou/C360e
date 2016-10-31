@@ -587,7 +587,6 @@ public class KotItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { kotSummaryId + "" });
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -624,7 +623,6 @@ public class KotItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -661,7 +659,6 @@ public class KotItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { kotSummaryId + "", orderId +"" });
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -698,7 +695,6 @@ public class KotItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -711,7 +707,6 @@ public class KotItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { dishName + "" });
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -748,7 +743,6 @@ public class KotItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
