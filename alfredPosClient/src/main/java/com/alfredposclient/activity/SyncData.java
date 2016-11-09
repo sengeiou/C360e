@@ -322,7 +322,7 @@ public class SyncData extends BaseActivity {
 				parameters.put("revenueCenter", revenueCenter);
 				SyncCentre.getInstance().getBindDeviceIdInfo(context,
 						parameters, handler);
-				App.instance.bindPushWebSocketService();
+				App.instance.bindSyncService();
 			}
 		});
 	}

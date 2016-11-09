@@ -18,7 +18,7 @@ public void onReceive(Context context, Intent intent) {
 	    
 		if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
 	        Log.i("AlfredPushService", "connected");
-			context.startService(PushService.startIntent(context.getApplicationContext()));
+//			context.startService(PushService.startIntent(context.getApplicationContext()));
 	    } 
 	    else if(networkInfo != null){
 	    	NetworkInfo.DetailedState state = networkInfo.getDetailedState();
@@ -32,7 +32,7 @@ public void onReceive(Context context, Intent intent) {
 	        	am.cancel(operation);
 	        	operation.cancel();
 	        }
-	        context.startService(PushService.closeIntent(context));
+//	        context.startService(PushService.closeIntent(context));
 	    }
 	}
 }

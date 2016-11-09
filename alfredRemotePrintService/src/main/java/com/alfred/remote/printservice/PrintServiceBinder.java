@@ -1,5 +1,7 @@
 package com.alfred.remote.printservice;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
@@ -44,6 +46,7 @@ import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TimeUtil;
+import com.birbit.android.jobqueue.JobManager;
 import com.epson.epsonio.DevType;
 import com.epson.epsonio.EpsonIo;
 import com.epson.epsonio.EpsonIoException;
@@ -51,7 +54,6 @@ import com.epson.epsonio.Finder;
 import com.epson.epsonio.IoStatus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.birbit.android.jobqueue.JobManager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -60,6 +62,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -869,18 +872,35 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
         future = scheduler.scheduleWithFixedDelay(new Runnable(){
 			@Override
 			public void run() {
-		        String[] deviceList = null;
+		        List<String> deviceList = new ArrayList<String>();
 		        try{
-		            deviceList = Finder.getResult();
-		            if (deviceList != null && deviceList.length>0) {
+		            String[] devices = Finder.getResult();
+					if(devices != null && devices.length > 0){
+						deviceList.addAll(Arrays.asList(devices));
+					}
+					BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+					if(mBluetoothAdapter != null) {
+						String innerprinter_address = "00:11:22:33:44:55";
+						BluetoothDevice innerprinter_device = null;
+						Set<BluetoothDevice> bluetoothDevices = mBluetoothAdapter.getBondedDevices();
+						for (BluetoothDevice device : bluetoothDevices) {
+							if (device.getAddress().equals(innerprinter_address)) {
+								innerprinter_device = device;
+							}
+						}
+						if(innerprinter_device != null){
+							deviceList.add("127.0.0.1");
+						}
+					}
+		            if (deviceList != null && deviceList.size()>0) {
 
 		            	future.cancel(false);
 		                future = null;
 		                scheduler.shutdown();
 		                scheduler = null;
 		                Map<String, String> ret = new HashMap<String, String>();
-		                for (int i=0; i<deviceList.length; i++) {
-		                	ret.put(deviceList[i], getPrinterName(deviceList[i]));
+		                for (int i=0; i<deviceList.size(); i++) {
+		                	ret.put(deviceList.get(i), getPrinterName(deviceList.get(i)));
 		                }
 		                synchronized (service.mCallbacks) {
 		                	  for (IAlfredRemotePrintServiceCallback listener : service.mCallbacks) {
@@ -903,6 +923,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
     
     
     private String getPrinterName(String textIp) {
+		if("127.0.0.1".equals(textIp)){
+			return "Local Print";
+		}
         String fontName = null;
         String printerName = null;
         EpsonIo port = null;

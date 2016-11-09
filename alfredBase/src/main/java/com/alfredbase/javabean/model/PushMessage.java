@@ -1,6 +1,5 @@
 package com.alfredbase.javabean.model;
 
-import com.alfredbase.utils.LogUtil;
 import com.google.gson.Gson;
 
 public class PushMessage {
@@ -34,37 +33,25 @@ public class PushMessage {
 	
 	public final static String CONTENT_DELIMITER = ",";
 	
-	private String msg; // 事件类型
-	private int type;//  -2心跳, 0:register, 1: Data Update, 
+	private String push; // 事件类型
 	private Integer restId;
 	private Integer revenueId;
 	private String content; // json 数据
-	private Integer appOrderId;
-	
-	private String deviceId;
-	
+
+
 	public PushMessage() {
 	}
 
-	public PushMessage(int type, String msg) {
-		this.type = type;
-		this.msg = msg;
+	public PushMessage(int type, String push) {
+		this.push = push;
 	}
 
 	public String getMsg() {
-		return msg;
+		return push;
 	}
 
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
+	public void setMsg(String push) {
+		this.push = push;
 	}
 
 	
@@ -87,32 +74,8 @@ public class PushMessage {
 		this.revenueId = revenueId;
 	}
 
-	public Integer getAppOrderId() {
-		return appOrderId;
-	}
 
-	public void setAppOrderId(Integer appOrderId) {
-		this.appOrderId = appOrderId;
-	}
 
-	public static String getPingMsg(int restId, int revenueId) {
-		PushMessage msg = new PushMessage();
-		msg.setType(-2);
-		msg.setMsg("PING");
-		msg.setRestId(restId);
-		msg.setRevenueId(revenueId);
-		String msgtxt = new Gson().toJson(msg);
-		LogUtil.v("PushMessage","sendPing==>" + msgtxt);
-		return msgtxt;
-	}
-	
-	public static String registClient(int restId, int revenueId) {
-		PushMessage msg = new PushMessage();
-		msg.setType(MESSAGE_TYPE_REGISTER);
-		msg.setRestId(restId);
-		msg.setRevenueId(revenueId);
-		return new Gson().toJson(msg);
-	}
 	public static PushMessage deserializeList(String json){
 			return new Gson().fromJson(json, PushMessage.class);
 	}
@@ -128,13 +91,10 @@ public class PushMessage {
 	@Override
 	public String toString() {
 		return "PushMessage{" +
-				"msg='" + msg + '\'' +
-				", type=" + type +
+				"push='" + push + '\'' +
 				", restId=" + restId +
 				", revenueId=" + revenueId +
 				", content='" + content + '\'' +
-				", appOrderId=" + appOrderId +
-				", deviceId='" + deviceId + '\'' +
 				'}';
 	}
 

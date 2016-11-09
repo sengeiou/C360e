@@ -7,19 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.model.PushMessage;
+import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
 import com.codebutler.android_websockets.WebSocketClient;
 import com.codebutler.android_websockets.WebSocketClient.Listener;
-import com.google.gson.Gson;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 
-import java.net.URI;
 import java.util.Calendar;
 
 public class PushService extends Service implements Listener {
@@ -76,44 +74,114 @@ public class PushService extends Service implements Listener {
 		closeAlarm();
 	}
 
+	public Connection getConnection() throws Exception {
+		//定义连接工厂
+		ConnectionFactory factory = new ConnectionFactory();
+		//设置服务地址
+		factory.setHost("120.132.7.33");
+		//端口
+		factory.setPort(5672);
+		//设置账号信息，用户名、密码、vhost
+		factory.setVirtualHost("/alfred");
+		factory.setUsername("alfred_B_A");
+		factory.setPassword("alfrednew2016");
+		// 通过工程获取连接
+		Connection connection = factory.newConnection();
+		return connection;
+	}
+
+//	private Thread thread = new Thread(new Runnable() {
+//		@Override
+//		public void run() {
+//			try {
+//				//使用之前的设置，建立连接
+//				Connection connection = getConnection();
+//				connection.getExceptionHandler();
+//				//创建一个通道
+//				Channel channel = connection.createChannel();
+//				//声明队列，主要为了防止消息接收者先运行此程序，队列还不存在时创建队列。
+//				channel.queueDeclare(QUEUE_ANDROID, false, false, false, null);
+//				// 绑定队列到交换机
+//				channel.queueBind(QUEUE_ANDROID, EXCHANGE_NAME, "C.22");
+//				channel.basicQos(1);
+////				channel.add
+//				//创建消费者
+//				QueueingConsumer consumer = new QueueingConsumer(channel);
+//				channel.basicConsume(QUEUE_ANDROID, true, consumer);
+////                    String msg = "Hello World!";
+//				//发送消息
+////                    channel.basicPublish("", QUEUE_ANDROID , null , msg.getBytes());
+////                    channel.close();
+////                    connection.close();
+//				while (true) {
+//					connection.isOpen();
+//					QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+//					String message = new String(delivery.getBody());
+//					System.out.println("__________" + message);
+////                        从message池中获取msg对象更高效
+////                        Message msg = handler.obtainMessage();
+//					Bundle bundle = new Bundle();
+//					bundle.putString("msg", message);
+////                        msg.setData(bundle);
+////                        handler.sendMessage(msg);
+//				}
+//			} catch (InterruptedException e) {
+//				e.getStackTrace();
+//			} catch (Exception e1) {
+//				LogUtil.i("", "Connection broken: " + e1.getClass().getName());
+//				try {
+//					Thread.sleep(5000);
+//				} catch (InterruptedException e) {
+//					e.getStackTrace();
+//				}
+//			}
+//		}
+//	});
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		WakeLock wakelock = ((PowerManager) getSystemService(POWER_SERVICE))
-				.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AlfedPOS");
-		wakelock.acquire();
-		LogUtil.i(TAG, "PushService start command");
 
-		if (intent != null)
-			Log.i(TAG, intent.toUri(0));
-
-		mShutDown = false;
-		if (mClient == null) {
-			WakeLock clientlock = ((PowerManager) getSystemService(POWER_SERVICE))
-					.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AlfedPOS");
-			mClient = new WebSocketClient(
-					URI.create(getPushServerIp()), this, null,
-					clientlock);
+		if(!ButtonClickTimer.canLink()){
+			return START_STICKY;
 		}
-		LogUtil.e(TAG, "开始走服务");
-		if (!mClient.isConnected())
-			mClient.connect();
-
-		if (intent != null && App.instance.getRevenueCenter() != null) {
-			if (ACTION_PING.equals(intent.getAction())) {
-				LogUtil.e(TAG, "这是一个ping服务");
-				if (mClient.isConnected())
-					sentMessage(PushMessage.getPingMsg(App.instance.getRevenueCenter().getRestaurantId(),
-							App.instance.getRevenueCenter().getId()));
-				// if(mClient.isConnected())
-				// mClient.send("{\"type\":0,\"restId\":19,\"revenueId\":1}");
-			} else if (ACTION_SHUT_DOWN.equals(intent.getAction())) {
-				mShutDown = true;
-				if (mClient.isConnected())
-					mClient.disconnect();
-			}
-		}
-		refreshWaittingToStart();
-		wakelock.release();
+//		WakeLock wakelock = ((PowerManager) getSystemService(POWER_SERVICE))
+//				.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AlfedPOS");
+//		wakelock.acquire();
+//		LogUtil.i(TAG, "PushService start command");
+////		SyncCentre.getInstance().getAllAppOrder(this, new HashMap<String, Object>(), null);
+//		if (intent != null)
+//			Log.i(TAG, intent.toUri(0));
+//
+//		mShutDown = false;
+//		if (mClient == null) {
+//			WakeLock clientlock = ((PowerManager) getSystemService(POWER_SERVICE))
+//					.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AlfedPOS");
+//			mClient = new WebSocketClient(
+//					URI.create(getPushServerIp()), this, null,
+//					clientlock);
+//		}
+//		LogUtil.e(TAG, "开始走服务");
+//		if (!mClient.isConnected()) {
+//			LogUtil.e(TAG, "服务自动重连");
+//			mClient.connect();
+//		}
+//
+//		if (intent != null && App.instance.getRevenueCenter() != null) {
+//			if (ACTION_PING.equals(intent.getAction())) {
+//				LogUtil.e(TAG, "这是一个ping服务");
+//				if (mClient.isConnected())
+//					sentMessage(PushMessage.getPingMsg(App.instance.getRevenueCenter().getRestaurantId(),
+//							App.instance.getRevenueCenter().getId()));
+//				// if(mClient.isConnected())
+//				// mClient.send("{\"type\":0,\"restId\":19,\"revenueId\":1}");
+//			} else if (ACTION_SHUT_DOWN.equals(intent.getAction())) {
+//				mShutDown = true;
+//				if (mClient.isConnected())
+//					mClient.disconnect();
+//			}
+//		}
+//		refreshWaittingToStart();
+//		wakelock.release();
 		return START_STICKY;
 	}
 
@@ -125,7 +193,7 @@ public class PushService extends Service implements Listener {
 		Calendar calendar = Calendar.getInstance();
 		Long time = System.currentTimeMillis();
 		calendar.setTimeInMillis(time);
-		calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 1);
+		calendar.set(Calendar.SECOND, calendar.get(Calendar.SECOND) + 30);
 		am.set(AlarmManager.RTC_WAKEUP,
 				calendar.getTimeInMillis(), operation);
 		LogUtil.e(TAG, "开启ping的闹钟");
@@ -153,6 +221,7 @@ public class PushService extends Service implements Listener {
 			return "ws://192.168.1.131:8085/websocket";
 		} else if (App.isOpenLog){
 			return "ws://139.224.17.126:8085/websocket";
+//			return "ws://172.16.0.190:8085/websocket";
 		} else {
 			if (App.instance.countryCode == ParamConst.CHINA)
 				return "ws://121.40.168.178:8085/websocket";
@@ -214,30 +283,30 @@ public class PushService extends Service implements Listener {
 
 	@Override
 	public synchronized void onMessage(String msg) {
-		WakeLock wakelock = ((PowerManager) getSystemService(POWER_SERVICE))
-				.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AlfedPOS");
-		wakelock.acquire();
-		final PushMessage response = PushMessage.deserializeList(msg);
-		LogUtil.d(TAG, msg);
-		
-		PushMessage pushMessage = PushMessage.deserializeList(msg);
-		if (pushMessage != null && pushMessage.getType() == PING_TYPE) {
-			Gson gson = new Gson();
-			pushMessage.setRestId(App.instance.getRevenueCenter()
-					.getRestaurantId());
-			pushMessage.setRevenueId(App.instance.getRevenueCenter().getId());
-			sentMessage(gson.toJson(pushMessage));
-			LogUtil.d(TAG, gson.toJson(pushMessage));
-		}
-		
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (mListener != null)
-					mListener.onPushMessageReceived(response);
-			}
-		});
-		wakelock.release();
+//		WakeLock wakelock = ((PowerManager) getSystemService(POWER_SERVICE))
+//				.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AlfedPOS");
+//		wakelock.acquire();
+//		final PushMessage response = PushMessage.deserializeList(msg);
+//		LogUtil.d(TAG, msg);
+//
+//		PushMessage pushMessage = PushMessage.deserializeList(msg);
+//		if (pushMessage != null && pushMessage.getType() == PING_TYPE) {
+//			Gson gson = new Gson();
+//			pushMessage.setRestId(App.instance.getRevenueCenter()
+//					.getRestaurantId());
+//			pushMessage.setRevenueId(App.instance.getRevenueCenter().getId());
+//			sentMessage(gson.toJson(pushMessage));
+//			LogUtil.d(TAG, gson.toJson(pushMessage));
+//		}
+//
+//		mHandler.post(new Runnable() {
+//			@Override
+//			public void run() {
+//				if (mListener != null)
+//					mListener.onPushMessageReceived(response);
+//			}
+//		});
+//		wakelock.release();
 	}
 
 	@Override

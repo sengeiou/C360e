@@ -185,7 +185,7 @@ public class UIHelp {
 		tv_toast_view.setText(text);
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProRegular(tv_toast_view);
-		toast.setGravity(Gravity.BOTTOM, 0, 10);
+		toast.setGravity(Gravity.CENTER, 0, 10);
 		toast.setDuration(Toast.LENGTH_LONG);
 		toast.setView(view);
 		toast.show();
@@ -199,8 +199,8 @@ public class UIHelp {
 		tv_toast_view.setText(text);
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProRegular(tv_toast_view);
-		toast.setGravity(Gravity.BOTTOM, 0, 10);
-		toast.setDuration(Toast.LENGTH_SHORT);
+		toast.setGravity(Gravity.CENTER, 0, 10);
+		toast.setDuration(Toast.LENGTH_LONG);
 		toast.setView(view);
 		toast.show();
 	}

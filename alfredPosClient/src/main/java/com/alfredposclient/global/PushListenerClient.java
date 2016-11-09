@@ -32,10 +32,9 @@ public class PushListenerClient implements PushListener {
 	@Override
 	public void onPushMessageReceived(PushMessage msg) {
 		LogUtil.d(TAG, msg.toString());
-		switch (msg.getType()){
-		case PushMessage.MESSAGE_TYPE_HEART_BEAT:
-			break;
-		case PushMessage.MESSAGE_TYPE_UPDATE:
+		if (msg == null)
+			return;
+		if(msg.getRevenueId() == 0 || msg.getRevenueId() == App.instance.getRevenueCenter().getId().intValue()) {
 			if (msg != null && PushMessage.PUSH_ORDER.equals(msg.getMsg())
 					&& !TextUtils.isEmpty(msg.getContent())) {
 				try {
@@ -43,10 +42,10 @@ public class PushListenerClient implements PushListener {
 					int appOrderId = jsonObject.getInt("appOrderId");
 
 					AppOrder appOrder = AppOrderSQL.getAppOrderById(appOrderId);
-					if(appOrder == null){
+					if (appOrder == null) {
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("appOrderId", appOrderId);
-						SyncCentre.getInstance().getAppOrderById(context, map,null);
+						SyncCentre.getInstance().getAppOrderById(context, map, null);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -62,18 +61,18 @@ public class PushListenerClient implements PushListener {
 //					SyncCentre.getInstance().getOrderFromApp(App.instance.getTopActivity(), parameters);
 //				}
 			} else if (msg != null && PushMessage.ALIPAY_RESULT.equals(msg.getMsg())) {
-				if(!TextUtils.isEmpty(msg.getContent())){
+				if (!TextUtils.isEmpty(msg.getContent())) {
 					Gson gson = new Gson();
 					AlipayPushMsgDto alipayPushMsgDto = gson.fromJson(msg.getContent(), AlipayPushMsgDto.class);
 					App.instance.addAlipayPushMessage(alipayPushMsgDto);
 					LogUtil.d(TAG, alipayPushMsgDto.toString());
 				}
 			} else if (msg != null && PushMessage.THIRDPARTYPAY_RESULT.equals(msg.getMsg())) {
-				if(!TextUtils.isEmpty(msg.getContent())){
+				if (!TextUtils.isEmpty(msg.getContent())) {
 					Gson gson = new Gson();
 					ThirdpartyPayPushMsgDto thirdpartyPayPushMsgDto = gson.fromJson(msg.getContent(), ThirdpartyPayPushMsgDto.class);
 					TempOrder tempOrder = TempOrderSQL.getTempOrderByAppOrderId(Integer.parseInt(thirdpartyPayPushMsgDto.getSysOrderId()));
-					if(tempOrder == null)
+					if (tempOrder == null)
 						return;
 					tempOrder.setPaied(ParamConst.TEMPORDER_PAIED);
 					TempOrderSQL.updateTempOrder(tempOrder);
@@ -81,23 +80,20 @@ public class PushListenerClient implements PushListener {
 				}
 			} else {
 				Map<String, Integer> pushMsgMap = App.instance.getPushMsgMap();
-				if(pushMsgMap.containsKey(msg.getMsg())){
-					if(pushMsgMap.get(pushMsgMap) != null){
-						pushMsgMap.put(msg.getMsg(),  pushMsgMap.get(pushMsgMap) + 1);
-					}else{
+				if (pushMsgMap.containsKey(msg.getMsg())) {
+					if (pushMsgMap.get(pushMsgMap) != null) {
+						pushMsgMap.put(msg.getMsg(), pushMsgMap.get(pushMsgMap) + 1);
+					} else {
 						pushMsgMap.put(msg.getMsg(), 1);
 					}
-					
-				}else{
+
+				} else {
 					pushMsgMap.put(msg.getMsg(), 1);
 				}
 				App.instance.setPushMsgMap(pushMsgMap);
 				Store.saveObject(context, Store.PUSH_MESSAGE, App.instance.getPushMsgMap());
+			}
 		}
-			break;
-		
-		}
-		
 	}
 
 	@Override

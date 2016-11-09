@@ -320,7 +320,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 beepManager.close();
             if (inactivityTimer != null) {
                 inactivityTimer.onPause();
-                inactivityTimer.shutdown();
+//                inactivityTimer.shutdown();
                 inactivityTimer = null;
             }
             if (cameraManager != null) {
@@ -418,6 +418,14 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (inactivityTimer != null) {
+            inactivityTimer.onResume();
+        }
+    }
+
+    @Override
     public void onPause() {
         if(isShowedScaner) {
             if (captureActivityHandler != null) {
@@ -444,7 +452,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     @Override
     public void onDestroy() {
         if(inactivityTimer != null) {
-            inactivityTimer.onPause();
+//            inactivityTimer.onPause();
             inactivityTimer.shutdown();
             inactivityTimer = null;
         }

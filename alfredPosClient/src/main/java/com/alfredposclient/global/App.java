@@ -65,7 +65,6 @@ import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrintReceiptInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.model.SessionStatus;
@@ -105,7 +104,7 @@ import com.alfredposclient.http.server.MainPosHttpServer;
 import com.alfredposclient.javabean.ConsumingRecords;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
-import com.alfredposclient.service.PushService;
+import com.alfredposclient.service.RabbitMqPushService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -218,26 +217,41 @@ public class App extends BaseApplication {
     /*
      * Alfred PUSH Service
      */
-    private PushService pushService;
-    private ServiceConnection pushConnection = new ServiceConnection() {
+    private RabbitMqPushService rabbitMqPushService;
+    private ServiceConnection rabbitMqPushConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            rabbitMqPushService = ((RabbitMqPushService.Binder) service).getService();
+            rabbitMqPushService.setListener(new PushListenerClient(App.instance));
+
+        }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            pushService = null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            pushService = ((PushService.Binder) service).getService();
-            pushService.setListener(new PushListenerClient(App.instance));
-            if (revenueCenter != null) {
-                pushService
-                        .sentMessage(PushMessage.registClient(
-                                revenueCenter.getRestaurantId(),
-                                revenueCenter.getId()));
-            }
+            rabbitMqPushService = null;
         }
     };
+
+//    private PushService pushService;
+//    private ServiceConnection pushConnection = new ServiceConnection() {
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            pushService = null;
+//        }
+//
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            pushService = ((PushService.Binder) service).getService();
+//            pushService.setListener(new PushListenerClient(App.instance));
+//            if (revenueCenter != null) {
+//                pushService
+//                        .sentMessage(PushMessage.registClient(
+//                                revenueCenter.getRestaurantId(),
+//                                revenueCenter.getId()));
+//            }
+//        }
+//    };
     private IntentFilter intentFilter;
 
     @Override
@@ -255,7 +269,7 @@ public class App extends BaseApplication {
         // Init remote print service
         tryConnectRemotePrintService();
         if (getRevenueCenter() != null) {
-            bindPushWebSocketService();
+            bindSyncService();
             migration();
         }
         VERSION = getAppVersionName();
@@ -1112,19 +1126,32 @@ public class App extends BaseApplication {
     /**
      * WebSocket PUSH Service
      **/
-    public void bindPushWebSocketService() {
-        this.bindService(PushService.startIntent(this.getApplicationContext()),
-                this.pushConnection, Context.BIND_IMPORTANT);
-        this.startService(PushService.startIntent(this.getApplicationContext()));
+    public void bindSyncService() {
+//        this.bindService(PushService.startIntent(this.getApplicationContext()),
+//                this.pushConnection, Context.BIND_IMPORTANT);
+//        this.startService(PushService.startIntent(this.getApplicationContext()));
         syncJob = new CloudSyncJobManager(this);
     }
+    public void bindPushWebSocketService(int restId) {
+        this.bindService(RabbitMqPushService.startIntent(this.getApplicationContext(), restId),
+                this.rabbitMqPushConnection, Context.BIND_IMPORTANT);
+        this.startService(RabbitMqPushService.startIntent(this.getApplicationContext(), restId));
+    }
 
-    public void unBindPushWebSocketSerive() {
-        if (this.pushService != null) {
-            this.unbindService(this.pushConnection);
-            this.pushService = null;
+    public void unBindPushWebSocketService() {
+        if(this.rabbitMqPushService != null){
+            this.stopService(new Intent(this.getApplicationContext(), RabbitMqPushService.class));
+            this.unbindService(this.rabbitMqPushConnection);
+            this.rabbitMqPushService = null;
         }
     }
+
+//    public void unBindPushWebSocketSerive() {
+//        if (this.pushService != null) {
+//            this.unbindService(this.pushConnection);
+//            this.pushService = null;
+//        }
+//    }
 
     // Getting bill notification
     public void addGettingBillNotification(TableInfo tables) {

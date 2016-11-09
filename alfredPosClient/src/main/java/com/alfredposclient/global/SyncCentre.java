@@ -245,7 +245,7 @@ public class SyncCentre {
 	}
 
 	public void getAppOrderById(Context context,Map<String, Object> parameters, Handler handler){
-		HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), httpClient, parameters, handler);
+		HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), syncHttpClient, parameters, handler);
 	}
 	public void getAllAppOrder(Context context,Map<String, Object> parameters, Handler handler){
 		HttpAPI.getAllAppOrder(context, getAbsoluteUrl(APIName.POSORDER_GETALLPAIEDAPPORDER), httpClient, parameters, handler);

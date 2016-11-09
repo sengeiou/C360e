@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alfredposclient"
-    android:versionCode="9"
-    android:versionName="1.0.8" >
+    android:versionCode="10"
+    android:versionName="1.0.9" >
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -161,6 +161,8 @@
         </receiver>
 
         <service android:name="com.alfredposclient.service.PushService" >
+        </service>
+        <service android:name="com.alfredposclient.service.RabbitMqPushService" >
         </service>
 
         <meta-data

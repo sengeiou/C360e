@@ -387,7 +387,7 @@ public class MainPage extends BaseActivity {
 				UIHelp.startSoredCardActivity(context);
             }
         });
-
+		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
 	}
 
 //    private void showStoredCard(){
@@ -1877,6 +1877,7 @@ public class MainPage extends BaseActivity {
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(receiver);
+		App.instance.unBindPushWebSocketService();
 		if(observable != null){
 			RxBus.getInstance().unregister("showStoredCard", observable);
 		}
