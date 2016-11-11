@@ -33,9 +33,9 @@ public class KOTPrint extends PrintJob{
 	public void AddTitle(String revenueCenter, String tableName) {
 		StringBuilder sbr = new StringBuilder();
 		sbr.append(revenueCenter)
-				.append("\r\n")
+				.append(reNext)
 				.append(PrintService.instance.getResources().getString(R.string.table_)+ tableName)
-				.append("\r\n");
+				.append(reNext);
 
 		PrintData header = new PrintData();
 		header.setDataFormat(PrintData.FORMAT_TXT);
@@ -55,12 +55,12 @@ public class KOTPrint extends PrintJob{
 					.append("         "+PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
 					.append(orderId)
-					.append("\r\n");
+					.append(reNext);
 		}else{
 			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
 					.append(orderId)
-					.append("\r\n");
+					.append(reNext);
 		}
 
 		PrintData header = new PrintData();
@@ -86,17 +86,17 @@ public class KOTPrint extends PrintJob{
 				+kotSummary.getTableName();
 		if(!TextUtils.isEmpty(kotSummary.getTableName())){
 			sbr.append(tableName)
-					.append("\r\n");
+					.append(reNext);
 		}
 		if (isTakeAway==1) {
 			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
 					.append("  ")
 					.append(orderNo)
-					.append("\r\n");
+					.append(reNext);
 		}else{
 			sbr.append( "  ")
 					.append(orderNo)
-					.append("\r\n");
+					.append(reNext);
 		}
 		PrintData header = new PrintData();
 		header.setDataFormat(PrintData.FORMAT_TXT);
@@ -113,7 +113,7 @@ public class KOTPrint extends PrintJob{
 		header.setDataFormat(PrintData.FORMAT_TXT);
 		header.setTextAlign(PrintData.ALIGN_CENTRE);
 		header.setFontsize(2);
-		header.setText(label+"\r\n");
+		header.setText(label+reNext);
 		this.data.add(header);	
 		
 		addHortionalLine(this.charSize);		
@@ -142,7 +142,7 @@ public class KOTPrint extends PrintJob{
 
 		String title1 = StringUtil.padRight(col1Title, this.charSize-KOTPrint.FIXED_COL2_QTY);
 		String title2 = StringUtil.padRight(col2Title, KOTPrint.FIXED_COL2_QTY);
-		String result = title1.concat(title2).concat("\r\n");
+		String result = title1.concat(title2).concat(reNext);
 		return result;
 	}
 	
@@ -203,7 +203,7 @@ public class KOTPrint extends PrintJob{
 				result.append(StringUtil.padRight(" ", (qtyLen)/charScale));
 			}
 			
-			result.append("\r\n");
+			result.append(reNext);
 		}
 		return result.toString();
 	}
@@ -242,7 +242,7 @@ public class KOTPrint extends PrintJob{
 			kot.setLanguage(PrintData.LANG_CN);
 			kot.setTextAlign(PrintData.ALIGN_LEFT);
 			kot.setMarginTop(2);
-			modifiers = "  " + modifiers + "\r\n";
+			modifiers = "  " + modifiers + reNext;
 			kot.setText(modifiers);
 			this.data.add(kot);
 		}
@@ -252,7 +252,7 @@ public class KOTPrint extends PrintJob{
 		kot.setDataFormat(PrintData.FORMAT_TXT);
 		kot.setFontsize(1);
 		kot.setLanguage(PrintData.LANG_CN);
-		kot.setText("\r\n");
+		kot.setText(reNext);
 		this.data.add(kot);
 	}
 	

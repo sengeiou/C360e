@@ -172,6 +172,14 @@ public class ESCPOSPrinter {
     
     //tested
     public  void feed(byte lines) throws Exception {
+//		if(lines > 2){
+//			lines = (byte)(lines / 2);
+//		}
+//		byte[] result = new byte[lines];
+//		for (int i = 0; i < lines; i++) {
+//			result[i] = ESCPOSPrinter.LF;
+//		}
+//		out.write(result);
     	if (lines <=1) {
 	         byte[] tcmd = new byte[1];
 	         tcmd[0] = ESCPOSPrinter.LF;
@@ -183,6 +191,7 @@ public class ESCPOSPrinter {
 	    	 tcmd[2] = lines;   //0.125mm line height
 	    	 out.write(tcmd);
     	}
+
     }
 
 	public void sing() throws Exception {

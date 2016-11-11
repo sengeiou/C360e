@@ -91,7 +91,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		PrintData cashierPrint = new PrintData();
 		String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.item_sales),
 				this.FIXED_COL3_TOTAL);
-		String cashierStr = cashierLabel+":"+reportDaySales.getItemSales()+"\r\n";
+		String cashierStr = cashierLabel+":"+reportDaySales.getItemSales()+reNext;
 		cashierPrint.setDataFormat(PrintData.FORMAT_TXT);
 		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		cashierPrint.setText(cashierStr);
@@ -103,7 +103,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 		PrintData focPrint = new PrintData();
 		String focStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.total_ent), this.FIXED_COL3_TOTAL);
-		String padBillNo = focStr+":"+totalFOC+"\r\n";
+		String padBillNo = focStr+":"+totalFOC+reNext;
 		focPrint.setDataFormat(PrintData.FORMAT_TXT);
 		focPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		focPrint.setText(padBillNo);
@@ -115,7 +115,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 		PrintData ttvPrint = new PrintData();
 		String ttvLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.total_void), this.FIXED_COL3_TOTAL);
-		String ttvStr = ttvLabel+":"+totalVoid+"\r\n";
+		String ttvStr = ttvLabel+":"+totalVoid+reNext;
 		ttvPrint.setDataFormat(PrintData.FORMAT_TXT);
 		ttvPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		ttvPrint.setText(ttvStr);
@@ -127,7 +127,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 						BH.getBD(reportDaySales.getDiscount()), true));
 		PrintData discPrint = new PrintData();
 		String discLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.total_disc), this.FIXED_COL3_TOTAL);
-		String discvStr = discLabel+":"+totalDisc+"\r\n";
+		String discvStr = discLabel+":"+totalDisc+reNext;
 		discPrint.setDataFormat(PrintData.FORMAT_TXT);
 		discPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		discPrint.setText(discvStr);
@@ -136,7 +136,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		//net sale
 		PrintData netPrint = new PrintData();
 		String netLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.nett_sales), this.FIXED_COL3_TOTAL);
-		String netStr  = netLabel+":"+reportDaySales.getTotalSales()+"\r\n\r\n";
+		String netStr  = netLabel+":"+reportDaySales.getTotalSales()+reNext+reNext;
 		netPrint.setDataFormat(PrintData.FORMAT_TXT);
 		netPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		netPrint.setText(netStr);
@@ -145,7 +145,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		//Total Pax
 		PrintData paxPrint = new PrintData();
 		String paxLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.total_of_paxs), this.FIXED_COL3_TOTAL);
-		String paxStr  = paxLabel+":"+reportDaySales.getPersonQty()+"\r\n";
+		String paxStr  = paxLabel+":"+reportDaySales.getPersonQty()+reNext;
 		paxPrint.setDataFormat(PrintData.FORMAT_TXT);
 		paxPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		paxPrint.setText(paxStr);
@@ -162,7 +162,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 		PrintData paxAvgPrint = new PrintData();
 		String paxAvgLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.avg_paxs), this.FIXED_COL3_TOTAL);
-		String paxAvgStr  = paxAvgLabel+":"+vagPaxs.toString()+"\r\n";
+		String paxAvgStr  = paxAvgLabel+":"+vagPaxs.toString()+reNext;
 		paxAvgPrint.setDataFormat(PrintData.FORMAT_TXT);
 		paxAvgPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		paxAvgPrint.setText(paxAvgStr);
@@ -171,7 +171,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		//Total bill
 		PrintData tbPrint = new PrintData();
 		String tbLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.total_of_bills), this.FIXED_COL3_TOTAL);
-		String tbStr  = tbLabel+":"+reportDaySales.getTotalBills()+"\r\n";
+		String tbStr  = tbLabel+":"+reportDaySales.getTotalBills()+reNext;
 		tbPrint.setDataFormat(PrintData.FORMAT_TXT);
 		tbPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		tbPrint.setText(tbStr);
@@ -185,7 +185,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 		PrintData avgbPrint = new PrintData();
 		String avgbLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.avg_bills), this.FIXED_COL3_TOTAL);
-		String avgbStr  = avgbLabel+":"+avgBill+"\r\n";
+		String avgbStr  = avgbLabel+":"+avgBill+reNext;
 		avgbPrint.setDataFormat(PrintData.FORMAT_TXT);
 		avgbPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		avgbPrint.setText(avgbStr);
@@ -212,7 +212,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		String title2 = StringUtil.padRight(col2Title, BillPrint.FIXED_COL4_PRICE);
 		String title3 = StringUtil.padRight(col3Title, BillPrint.FIXED_COL4_QTY);
 		String title4 = StringUtil.padLeft(col4Title, BillPrint.FIXED_COL4_TOTAL);
-		ret.append(title1).append(title2).append(title3).append(title4).append("\r\n");
+		ret.append(title1).append(title2).append(title3).append(title4).append(reNext);
 
 		return ret.toString();
 	}
@@ -292,7 +292,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 			}else {
 				result.append(StringUtil.padLeft(" ", (BillPrint.FIXED_COL4_PRICE)/charScale));
 			}
-			result.append("\r\n");
+			result.append(reNext);
 		}
 		return result.toString();
 	}

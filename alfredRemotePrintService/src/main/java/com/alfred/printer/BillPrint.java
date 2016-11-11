@@ -58,7 +58,7 @@ public class BillPrint extends PrintJob{
 		rInfo.setDataFormat(PrintData.FORMAT_TXT);
 		rInfo.setFontsize(2);
 		rInfo.setTextAlign(PrintData.ALIGN_CENTRE);
-		rInfo.setText(rname.toString()+"\r\n");
+		rInfo.setText(rname.toString()+reNext);
 		this.data.add(rInfo);	
 
 		//address
@@ -70,7 +70,7 @@ public class BillPrint extends PrintJob{
 		radd.setFontsize(1);
 		radd.setMarginTop(10);
 		radd.setTextAlign(PrintData.ALIGN_CENTRE);
-		radd.setText(addbuf.toString()+"\r\n");
+		radd.setText(addbuf.toString()+reNext);
 		this.data.add(radd);
 		
 		////customized fields
@@ -78,7 +78,7 @@ public class BillPrint extends PrintJob{
 			StringBuilder ctbuf = new StringBuilder();
 			String[] options = customized.split(";",-1);
 			for (int i=0; i<options.length;i++) {
-				ctbuf.append(options[i]).append("\r\n");
+				ctbuf.append(options[i]).append(reNext);
 			}
 	
 			PrintData ctadd = new PrintData();
@@ -100,7 +100,7 @@ public class BillPrint extends PrintJob{
 		//流水号 NO
 		PrintData orderNoPrint = new PrintData();
 		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL-1);
-		String padorderNo = orderNoStr + orderNo+"\r\n";
+		String padorderNo = orderNoStr + orderNo+reNext;
 		orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 //		orderNoPrint.setFontsize(2);
@@ -120,7 +120,7 @@ public class BillPrint extends PrintJob{
 		//POS
 		PrintData posPrint = new PrintData();
 		String posLabel = StringUtil.padLeft(PrintService.instance.getResources().getString(R.string.pos), this.FIXED_COL4_TOTAL-1);
-		String posStr = posLabel+":"+posNo+"\r\n";
+		String posStr = posLabel+":"+posNo+reNext;
 		posPrint.setDataFormat(PrintData.FORMAT_TXT);
 		posPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		posPrint.setText(cashierStr+posStr);
@@ -134,7 +134,7 @@ public class BillPrint extends PrintJob{
 		//Bill NO
 		PrintData billNoPrint = new PrintData();
 		String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.bill_no_), this.FIXED_COL4_TOTAL-1);
-		String padBillNo = billNoStr+":"+billNo+"\r\n";
+		String padBillNo = billNoStr+":"+billNo+reNext;
 		billNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		billNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		billNoPrint.setText(dateStr+padBillNo);
@@ -162,7 +162,7 @@ public class BillPrint extends PrintJob{
 					.getResources().getString(R.string.pax),
 					this.FIXED_COL4_TOTAL / 2);
 			String paxStr = paxLabel + ":" + pax;
-			paxStr = StringUtil.padLeft(paxStr, padlen) + "\r\n";
+			paxStr = StringUtil.padLeft(paxStr, padlen) + reNext;
 			paxPrint.setDataFormat(PrintData.FORMAT_TXT);
 			paxPrint.setTextAlign(PrintData.ALIGN_LEFT);
 			paxPrint.setTextBold(1);
@@ -182,7 +182,7 @@ public class BillPrint extends PrintJob{
 		//流水号 NO
 		PrintData orderNoPrint = new PrintData();
 		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL-1);
-		String padorderNo = orderNoStr + orderNo+"\r\n";
+		String padorderNo = orderNoStr + orderNo+reNext;
 		orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		orderNoPrint.setFontsize(2);
@@ -192,7 +192,7 @@ public class BillPrint extends PrintJob{
 		//Bill NO
 		PrintData billNoPrint = new PrintData();
 		String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.bill_no_), this.FIXED_COL4_TOTAL);
-		String padBillNo = billNoStr+":"+billNo+"\r\n";
+		String padBillNo = billNoStr+":"+billNo+reNext;
 		billNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		billNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		billNoPrint.setText(padBillNo);
@@ -201,7 +201,7 @@ public class BillPrint extends PrintJob{
 		//cashier
 		PrintData cashierPrint = new PrintData();
 		String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.cashier), this.FIXED_COL4_TOTAL);
-		String cashierStr = cashierLabel+":"+cashier+"\r\n";
+		String cashierStr = cashierLabel+":"+cashier+reNext;
 		cashierPrint.setDataFormat(PrintData.FORMAT_TXT);
 		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		cashierPrint.setText(cashierStr);
@@ -210,7 +210,7 @@ public class BillPrint extends PrintJob{
 		//POS
 		PrintData posPrint = new PrintData();
 		String posLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.pos), this.FIXED_COL4_TOTAL);
-		String posStr = posLabel+":"+posNo+"\r\n";
+		String posStr = posLabel+":"+posNo+reNext;
 		posPrint.setDataFormat(PrintData.FORMAT_TXT);
 		posPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		posPrint.setText(posStr);
@@ -219,7 +219,7 @@ public class BillPrint extends PrintJob{
 		//Date
 		PrintData datePrint = new PrintData();
 		String dateLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.date), this.FIXED_COL4_TOTAL);
-		String dateStr = dateLabel+":"+dateTime+"\r\n";
+		String dateStr = dateLabel+":"+dateTime+reNext;
 		datePrint.setDataFormat(PrintData.FORMAT_TXT);
 		datePrint.setTextAlign(PrintData.ALIGN_LEFT);
 		datePrint.setText(dateStr);
@@ -241,7 +241,7 @@ public class BillPrint extends PrintJob{
 		String title2 = StringUtil.padRight(col2Title, BillPrint.FIXED_COL4_PRICE);
 		String title3 = StringUtil.padRight(col3Title, BillPrint.FIXED_COL4_QTY);
 		String title4 = StringUtil.padLeft(col4Title, BillPrint.FIXED_COL4_TOTAL);
-		ret.append(title1).append(title2).append(title3).append(title4).append("\r\n");
+		ret.append(title1).append(title2).append(title3).append(title4).append(reNext);
 
 		return ret.toString();
 	}
@@ -326,7 +326,7 @@ public class BillPrint extends PrintJob{
 			}else {
 				result.append(StringUtil.padLeft(" ", (BillPrint.FIXED_COL4_PRICE)/charScale));
 			}			
-			result.append("\r\n");
+			result.append(reNext);
 		}
 		return result.toString();
 	}
@@ -347,7 +347,7 @@ public class BillPrint extends PrintJob{
 			String ord = PrintService.instance.getResources().getString(R.string.order_no_) + orderNo;
 			sbr.replace(this.charSize/2-ord.length()*2-1, this.charSize/2-1, ord);
 			header.setTextAlign(PrintData.ALIGN_RIGHT);
-			header.setText(sbr.toString()+"\r\n");
+			header.setText(sbr.toString()+reNext);
 		}
 		this.data.add(header);
 	}
@@ -377,7 +377,7 @@ public class BillPrint extends PrintJob{
 		orderMod.setDataFormat(PrintData.FORMAT_TXT);
 		orderMod.setFontsize(scale);
 		orderMod.setLanguage(PrintData.LANG_CN);
-		orderMod.setText("  "+itemName+"\r\n");
+		orderMod.setText("  "+itemName+reNext);
 		orderMod.setTextAlign(PrintData.ALIGN_LEFT);
 		this.data.add(orderMod);	
 	}	
@@ -388,7 +388,7 @@ public class BillPrint extends PrintJob{
 		//subtotal
 		PrintData subTotalPrint = new PrintData();
 		String subTotal = StringUtil.padLeft(subtotal, this.FIXED_COL4_TOTAL);
-		String padSubtotal = PrintService.instance.getResources().getString(R.string.sub_total)+subTotal+"\r\n";
+		String padSubtotal = PrintService.instance.getResources().getString(R.string.sub_total)+subTotal+reNext;
 		subTotalPrint.setDataFormat(PrintData.FORMAT_TXT);
 		subTotalPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		subTotalPrint.setText(padSubtotal);
@@ -398,7 +398,7 @@ public class BillPrint extends PrintJob{
 		//discount
 		PrintData discPrint = new PrintData();
 		String discountStr = StringUtil.padLeft(discount, this.FIXED_COL4_TOTAL);
-		String padDiscount = PrintService.instance.getResources().getString(R.string.discount)+discountStr+"\r\n";
+		String padDiscount = PrintService.instance.getResources().getString(R.string.discount)+discountStr+reNext;
 		discPrint.setDataFormat(PrintData.FORMAT_TXT);
 		discPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		discPrint.setText(padDiscount);
@@ -416,7 +416,7 @@ public class BillPrint extends PrintJob{
 	            String padTax = map.get("taxName")
 							+ "("
 							+ (int) (Double.parseDouble(map.get("taxPercentage")) * 100)
-							+ "%) : $" + taxvalue +"\r\n"; 
+							+ "%) : $" + taxvalue +reNext;
 	                
 	            taxPrint.setDataFormat(PrintData.FORMAT_TXT);
 	            taxPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -449,7 +449,7 @@ public class BillPrint extends PrintJob{
 		PrintData totalPrint = new PrintData();
 		String totalStr = StringUtil.padLeft(roundMap.get("Total"),
 				this.FIXED_COL4_TOTAL);
-		String totaling = PrintService.instance.getResources().getString(R.string.total_) + totalStr + "\r\n";
+		String totaling = PrintService.instance.getResources().getString(R.string.total_) + totalStr + reNext;
 		totalPrint.setDataFormat(PrintData.FORMAT_TXT);
 		totalPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		totalPrint.setMarginTop(10);
@@ -459,7 +459,7 @@ public class BillPrint extends PrintJob{
 		PrintData roundingPrint = new PrintData();
 		String roundingStr = StringUtil.padLeft(roundMap.get("Rounding"),
 				this.FIXED_COL4_TOTAL);
-		String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + roundingStr + "\r\n";
+		String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + roundingStr + reNext;
 		roundingPrint.setDataFormat(PrintData.FORMAT_TXT);
 		roundingPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		roundingPrint.setText(padRounding);
@@ -468,7 +468,7 @@ public class BillPrint extends PrintJob{
 		//grand total
 		PrintData gtPrint = new PrintData();
 		String gtotalStr = StringUtil.padLeft(total, this.FIXED_COL4_TOTAL);
-		String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + gtotalStr+"\r\n";
+		String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + gtotalStr+reNext;
 		gtPrint.setDataFormat(PrintData.FORMAT_TXT);
 		gtPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		gtPrint.setMarginTop(10);
@@ -486,7 +486,7 @@ public class BillPrint extends PrintJob{
 			for (Map.Entry<String, String> entry : settlement.entrySet()) {
 				PrintData toPrint = new PrintData();
 				String lable = StringUtil.padLeft(entry.getValue(), this.FIXED_COL4_TOTAL);
-				String toPrintStr = entry.getKey()+" : $"+lable+"\r\n";
+				String toPrintStr = entry.getKey()+" : $"+lable+reNext;
 				toPrint.setDataFormat(PrintData.FORMAT_TXT);
 				toPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 				toPrint.setText(toPrintStr);
@@ -515,7 +515,7 @@ public class BillPrint extends PrintJob{
 			orderMod.setDataFormat(PrintData.FORMAT_TXT);
 			orderMod.setFontsize(1);
 			orderMod.setLanguage(PrintData.LANG_CN);
-			orderMod.setText(" * "+weight+"(" + PrintService.instance.getResources().getString(R.string.kg) + ")\r\n");
+			orderMod.setText(" * "+weight+"(" + PrintService.instance.getResources().getString(R.string.kg) + ")"+reNext);
 			orderMod.setTextAlign(PrintData.ALIGN_LEFT);
 			this.data.add(orderMod);
 		}
@@ -546,7 +546,7 @@ public class BillPrint extends PrintJob{
 			StringBuilder ctbuf = new StringBuilder();
 			String[] options = customized.split(";",-1);
 			for (int i=0; i<options.length;i++) {
-				ctbuf.append(options[i]).append("\r\n");
+				ctbuf.append(options[i]).append(reNext);
 			}
 
 			PrintData ctadd = new PrintData();
@@ -574,7 +574,7 @@ public class BillPrint extends PrintJob{
 	public void AddQRCode(String qr) {
 		PrintData qrCode = new PrintData();
 		qrCode.setDataFormat(PrintData.FORMAT_QR);
-		qrCode.setText(qr+"\r\n");
+		qrCode.setText(qr+reNext);
 		qrCode.setTextAlign(PrintData.ALIGN_CENTRE);
 		qrCode.setFontsize(2);
 		this.data.add(qrCode);		

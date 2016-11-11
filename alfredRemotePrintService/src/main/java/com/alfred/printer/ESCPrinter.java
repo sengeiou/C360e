@@ -41,6 +41,7 @@ public class ESCPrinter implements WIFIPrintCallback{
 
 	public static final int DEFAULT_PORT = 9100;
 
+
 	public ESCPrinter(String ip) {
 		
 //		hdl.setPrinterCbk(this);

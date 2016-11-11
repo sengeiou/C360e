@@ -1,15 +1,15 @@
 package com.alfred.printer;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.utils.BH;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class ModifierDetailAnalysisReportPrint extends ReportBasePrint{
 
@@ -61,7 +61,7 @@ public class ModifierDetailAnalysisReportPrint extends ReportBasePrint{
 		String title2 = StringUtil.padRight(col2Title, BillPrint.FIXED_COL4_PRICE);
 		String title3 = StringUtil.padRight(col3Title, BillPrint.FIXED_COL4_QTY);
 		String title4 = StringUtil.padLeft(col4Title, BillPrint.FIXED_COL4_TOTAL);
-		ret.append(title1).append(title2).append(title3).append(title4).append("\r\n");
+		ret.append(title1).append(title2).append(title3).append(title4).append(reNext);
 
 		return ret.toString();
 	}
@@ -141,7 +141,7 @@ public class ModifierDetailAnalysisReportPrint extends ReportBasePrint{
 			}else {
 				result.append(StringUtil.padLeft(" ", (BillPrint.FIXED_COL4_PRICE)/charScale));
 			}			
-			result.append("\r\n");
+			result.append(reNext);
 		}
 		return result.toString();
 	}

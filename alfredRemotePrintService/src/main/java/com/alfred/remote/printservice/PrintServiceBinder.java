@@ -873,6 +873,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			@Override
 			public void run() {
 		        List<String> deviceList = new ArrayList<String>();
+				boolean hasLocal = false;
 		        try{
 		            String[] devices = Finder.getResult();
 					if(devices != null && devices.length > 0){
@@ -890,14 +891,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 						}
 						if(innerprinter_device != null){
 							deviceList.add("127.0.0.1");
+							hasLocal = true;
 						}
 					}
 		            if (deviceList != null && deviceList.size()>0) {
-
-		            	future.cancel(false);
-		                future = null;
-		                scheduler.shutdown();
-		                scheduler = null;
+						if(!hasLocal || deviceList.size() > 1){
+							future.cancel(false);
+							future = null;
+							scheduler.shutdown();
+							scheduler = null;
+						}
 		                Map<String, String> ret = new HashMap<String, String>();
 		                for (int i=0; i<deviceList.size(); i++) {
 		                	ret.put(deviceList.get(i), getPrinterName(deviceList.get(i)));

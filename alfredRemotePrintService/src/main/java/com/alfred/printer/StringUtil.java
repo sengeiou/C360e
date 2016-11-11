@@ -1,5 +1,7 @@
 package com.alfred.printer;
 
+import com.alfred.print.jobs.PrintJob;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,7 +186,7 @@ public class StringUtil {
 	public static String getStr(String[] strs) {
 		StringBuffer str = new StringBuffer();
 		for (int i = 0; i < strs.length; i++) {
-			str.append(strs[i] + "\r\n");
+			str.append(strs[i] + PrintJob.reNext);
 		}
 		return str.toString();
 	}

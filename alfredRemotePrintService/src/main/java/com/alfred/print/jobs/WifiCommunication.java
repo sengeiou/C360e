@@ -1,18 +1,16 @@
 package com.alfred.print.jobs;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.text.TextUtils;
 
-import com.alfred.remote.printservice.App;
-import com.alfredbase.ParamConst;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-
-import android_serialport_api.SerialPort;
+import java.util.Set;
+import java.util.UUID;
 
 public class WifiCommunication {
 	public static final int WFPRINTER_CONNECTED = 110;
@@ -22,7 +20,8 @@ public class WifiCommunication {
 	public static final int WFPRINTER_CONNECTEDERR = -111;
 	public static final int DATA_EMPTY = -99;
 	private Socket socket;
-	private SerialPort mSerialPort;
+	private BluetoothSocket mSocket;
+//	private SerialPort mSerialPort;
 	private String localIPAddress = "127.0.0.1";
 	private OutputStream out;
 //	private DataOutputStream dos;
@@ -44,7 +43,7 @@ public class WifiCommunication {
 
 	private boolean clientStart() {
 		if (localIPAddress.equals(ipAddress)) {
-			return clientStartSerial();
+			return clientStartBluetooth();
 		}
 
 		return clientStartSocket();
@@ -77,16 +76,34 @@ public class WifiCommunication {
 		}
 		return isStart;
 	}
-	private boolean clientStartSerial(){
+	private boolean clientStartBluetooth(){
 		boolean isStart;
 
 		try {
 //			 mSerialPort = new SerialPort(new File("/dev/ttyS1"), 19200, 0,
 //			 true); // For leo
-			mSerialPort = new SerialPort(new File("/dev/ttyS1"), 115200, 0,
-					true);
-			out = mSerialPort.getOutputStream();
-			isStart = true;
+//			mSerialPort = new SerialPort(new File("/dev/ttyS1"), 115200, 0,
+//					true);
+//			out = mSerialPort.getOutputStream();
+			BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+			if(mBluetoothAdapter != null) {
+				String innerprinter_address = "00:11:22:33:44:55";
+				BluetoothDevice innerprinter_device = null;
+				Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
+				for (BluetoothDevice device : devices) {
+					if (device.getAddress().equals(innerprinter_address)) {
+						innerprinter_device = device;
+					}
+				}
+				UUID PRINTER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+				mSocket = innerprinter_device.createRfcommSocketToServiceRecord(PRINTER_UUID);
+				mSocket.connect();
+				out = mSocket.getOutputStream();
+				isStart = true;
+			}else{
+				isStart = false;
+			}
+
 		} catch (Exception e) {
 			isStart = false;
 			e.printStackTrace();
@@ -98,8 +115,9 @@ public class WifiCommunication {
 //		new Thread(new Runnable() {
 //			@Override
 //			public void run() {
-		if (localIPAddress.equals(ipAddress))
-			return;
+//		if (localIPAddress.equals(ipAddress)) {
+//			return;
+//		}
 				try {
 					if(in != null){
 						in.close();
@@ -111,23 +129,26 @@ public class WifiCommunication {
 						socket.close();
 
 					}
+					if(mSocket != null){
+						mSocket.close();
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				in = null;
 				out = null;
 				socket = null;
-
+				mSocket = null;
 //			}
 //		}).start();
 	}
 
-	private boolean sndByteSerial(byte[] data) {
-		boolean result = true;
+	private boolean sndByteBluetooth(byte[] data) {
+		boolean result;
 		if (data == null) {
 			return false;
 		}
-		if (mSerialPort == null || out == null) {
+		if (mSocket == null || out == null) {
 			return false;
 		}
 		try {
@@ -161,7 +182,7 @@ public class WifiCommunication {
 
 	public boolean sndByte(byte[] data) {
 		if (localIPAddress.equals(this.ipAddress))
-			return  sndByteSerial(data);
+			return  sndByteBluetooth(data);
 		else
 			return  sndByteSocket(data);
 	}
@@ -186,37 +207,35 @@ public class WifiCommunication {
 //		return result;
 //	}
 
-	public boolean sendMsg(String msg, String charset) {
-		boolean result = false;
-		if(TextUtils.isEmpty(msg)){
-//			handler.sendEmptyMessage(DATA_EMPTY);
+//	public boolean sendMsg(String msg, String charset) {
+//		boolean result = false;
+//		if(TextUtils.isEmpty(msg)){
+////			handler.sendEmptyMessage(DATA_EMPTY);
+//			return false;
+//		}
+//
+//		String msgData = msg;
+//		if(App.countryCode == ParamConst.CHINA)
+//			msgData = msg.replace("$", "￥");
+//		try {
+//			if(TextUtils.isEmpty(charset))
+//				charset = "gbk";
+//			byte[] data = msgData.getBytes(charset);
+//			result = sndByte(data);
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		}
+//		return result;
+//	}
+
+	private boolean isConnectedBluetooth() {
+		if (this.mSocket == null) {
 			return false;
 		}
-
-		String msgData = msg;
-		if(App.countryCode == ParamConst.CHINA)
-			msgData = msg.replace("$", "￥");
-		try {
-			if(TextUtils.isEmpty(charset))
-				charset = "gbk";
-			byte[] data = msgData.getBytes(charset);
-			result = sndByte(data);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	private boolean isConnectedSerial() {
-		boolean mbStatus = false;
-		if (mSerialPort != null) {
-			mbStatus = true;
-		}
-		return mbStatus;
+		return this.mSocket.isConnected();
 	}
 	
 	private boolean isConnectedSocket() {
-		boolean ret = false;
 		if (this.socket == null)
 			return false;
 		else
@@ -225,7 +244,7 @@ public class WifiCommunication {
 
 	public boolean isConnected() {
 		if (localIPAddress.equals(ipAddress)) {
-			return isConnectedSerial();
+			return isConnectedBluetooth();
 		} else {
 			return isConnectedSocket();
 		}

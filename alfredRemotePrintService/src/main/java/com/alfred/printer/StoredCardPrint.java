@@ -17,7 +17,7 @@ public class StoredCardPrint extends PrintJob {
 
     public void AddTitle(String titleName) {
         StringBuilder sbr = new StringBuilder();
-        sbr.append(titleName + "\r\n");
+        sbr.append(titleName + reNext);
 
         PrintData header = new PrintData();
         header.setDataFormat(PrintData.FORMAT_TXT);
@@ -31,7 +31,7 @@ public class StoredCardPrint extends PrintJob {
     private String getTwoColHeader(String col1Title, String col2Title) {
         String title1 = StringUtil.padRight(col1Title, this.charSize-KOTPrint.COL2_ITEMNAME);
         String title2 = StringUtil.padRight(col2Title, KOTPrint.COL2_ITEMNAME);
-        String result = title1.concat(title2).concat("\r\n");
+        String result = title1.concat(title2).concat(reNext);
         return result;
     }
 
@@ -40,7 +40,7 @@ public class StoredCardPrint extends PrintJob {
         item.setDataFormat(PrintData.FORMAT_TXT);
         item.setFontsize(1);
         item.setTextAlign(PrintData.ALIGN_LEFT);
-        item.setText(name+context + "\r\n");
+        item.setText(name+context + reNext);
         this.data.add(item);
     }
 

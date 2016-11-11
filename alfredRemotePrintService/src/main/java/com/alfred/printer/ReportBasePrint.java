@@ -38,7 +38,7 @@ public class ReportBasePrint extends PrintJob{
 		if (!TextUtils.isEmpty(reportType)) {
 			//X Reading / Z Reading
 			StringBuilder ctbuf = new StringBuilder();
-			ctbuf.append("\r\n").append(reportType);
+			ctbuf.append(reNext).append(reportType);
 			PrintData radd = new PrintData();
 			radd.setDataFormat(PrintData.FORMAT_TXT);
 			radd.setFontsize(1);
@@ -51,7 +51,7 @@ public class ReportBasePrint extends PrintJob{
 		if (!TextUtils.isEmpty(reportName)) {
 	        //report name
 			StringBuilder rpbuf = new StringBuilder();
-			rpbuf.append("\r\n").append(reportName).append("\r\n");
+			rpbuf.append(reNext).append(reportName).append(reNext);
 			PrintData reportNamePrint = new PrintData();
 			reportNamePrint.setDataFormat(PrintData.FORMAT_TXT);
 			reportNamePrint.setFontsize(1);
@@ -68,7 +68,7 @@ public class ReportBasePrint extends PrintJob{
 		PrintData cashierPrint = new PrintData();
 		String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.op),
 				this.FIXED_COL3_TOTAL);
-		String cashierStr = cashierLabel+":"+op+"\r\n";
+		String cashierStr = cashierLabel+":"+op+reNext;
 		cashierPrint.setDataFormat(PrintData.FORMAT_TXT);
 		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		cashierPrint.setText(cashierStr);
@@ -77,7 +77,7 @@ public class ReportBasePrint extends PrintJob{
 		//report NO
 		PrintData billNoPrint = new PrintData();
 		String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.report_no_), this.FIXED_COL3_TOTAL);
-		String padBillNo = billNoStr+":"+reportNo+"\r\n";
+		String padBillNo = billNoStr+":"+reportNo+reNext;
 		billNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		billNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		billNoPrint.setText(padBillNo);
@@ -86,7 +86,7 @@ public class ReportBasePrint extends PrintJob{
 		//Business Date
 		PrintData bizDatePrint = new PrintData();
 		String bdateLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.business_date), this.FIXED_COL3_TOTAL);
-		String bdateStr = bdateLabel+":"+bizDate+"\r\n";
+		String bdateStr = bdateLabel+":"+bizDate+reNext;
 		bizDatePrint.setDataFormat(PrintData.FORMAT_TXT);
 		bizDatePrint.setTextAlign(PrintData.ALIGN_LEFT);
 		bizDatePrint.setText(bdateStr);
@@ -112,7 +112,7 @@ public class ReportBasePrint extends PrintJob{
 		PrintData cashierPrint = new PrintData();
 		String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.op),
 				this.FIXED_COL3_TOTAL);
-		String cashierStr = cashierLabel+":"+op+"\r\n";
+		String cashierStr = cashierLabel+":"+op+reNext;
 		cashierPrint.setDataFormat(PrintData.FORMAT_TXT);
 		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		cashierPrint.setText(cashierStr);
@@ -121,7 +121,7 @@ public class ReportBasePrint extends PrintJob{
 		//report NO
 		PrintData billNoPrint = new PrintData();
 		String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.monthly_start_date), this.FIXED_COL3_TOTAL);
-		String padBillNo = billNoStr+":"+startDate+"\r\n";
+		String padBillNo = billNoStr+":"+startDate+reNext;
 		billNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		billNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		billNoPrint.setText(padBillNo);
@@ -130,7 +130,7 @@ public class ReportBasePrint extends PrintJob{
 		//Business Date
 		PrintData bizDatePrint = new PrintData();
 		String bdateLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.monthly_end_date), this.FIXED_COL3_TOTAL);
-		String bdateStr = bdateLabel+":"+endDate+"\r\n";
+		String bdateStr = bdateLabel+":"+endDate+reNext;
 		bizDatePrint.setDataFormat(PrintData.FORMAT_TXT);
 		bizDatePrint.setTextAlign(PrintData.ALIGN_LEFT);
 		bizDatePrint.setText(bdateStr);

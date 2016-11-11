@@ -26,6 +26,7 @@ public class PrintJob  extends Job{
     private String printerIp;
     private long localId;
     static final String TAG = "PrintJob";
+	public static String reNext = "\n";
     
 	protected int charSize = 33;  //tm81: 48 tm-u220:33  
     //Print Data
@@ -220,15 +221,16 @@ public class PrintJob  extends Job{
 	}
 	
 	protected void addHortionalLine(int charSize) {
-		String lstr = new String(new char[charSize]).replace('\0', '-').concat("\r\n");
+		String lstr = new String(new char[charSize]).replace('\0', '-').concat(reNext);
 		PrintData line = new PrintData();
 		line.setDataFormat(PrintData.FORMAT_TXT);
 		line.setMarginTop(10);
 		line.setText(lstr);
 		this.data.add(line);		
 	}
+
 	protected void addHortionaDoublelLine(int charSize) {
-		String lstr = new String(new char[charSize]).replace('\0', '=').concat("\r\n");
+		String lstr = new String(new char[charSize]).replace('\0', '=').concat(reNext);
 		PrintData line = new PrintData();
 		line.setDataFormat(PrintData.FORMAT_TXT);
 		line.setMarginTop(10);
@@ -239,7 +241,7 @@ public class PrintJob  extends Job{
 
 	protected void addBlankLine(){
 		StringBuilder sbr = new StringBuilder();
-		sbr.append("\r\n");
+		sbr.append(reNext);
 		PrintData line = new PrintData();
 		line.setDataFormat(PrintData.FORMAT_TXT);
 		line.setMarginTop(20);
@@ -254,7 +256,7 @@ public class PrintJob  extends Job{
 
 	protected void addSingleLineCenteredText(int charSize, String txt,int height) {
 		StringBuilder sbr = new StringBuilder();
-		sbr.append(txt).append("\r\n");
+		sbr.append(txt).append(reNext);
 		PrintData line = new PrintData();
 		line.setDataFormat(PrintData.FORMAT_TXT);
 		line.setTextAlign(PrintData.ALIGN_CENTRE);
@@ -265,7 +267,7 @@ public class PrintJob  extends Job{
 	
 	protected void addSingleLineCenteredTextPaddingWithDash(int charSize, String txt,int height) {
 		StringBuilder sbr = new StringBuilder();
-		sbr.append(StringUtil.padCenterWithDash(txt, charSize)).append("\r\n");
+		sbr.append(StringUtil.padCenterWithDash(txt, charSize)).append(reNext);
 		PrintData line = new PrintData();
 		line.setDataFormat(PrintData.FORMAT_TXT);
 		line.setTextAlign(PrintData.ALIGN_CENTRE);
@@ -276,7 +278,7 @@ public class PrintJob  extends Job{
 	
 	protected void addSingleLineText(int charSize, String txt,int height) {
 		StringBuilder sbr = new StringBuilder();
-		sbr.append(StringUtil.padLeft(txt, charSize)).append("\r\n");
+		sbr.append(StringUtil.padLeft(txt, charSize)).append(reNext);
 		PrintData line = new PrintData();
 		line.setDataFormat(PrintData.FORMAT_TXT);
 		line.setText(sbr.toString());

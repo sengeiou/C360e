@@ -1,11 +1,11 @@
 package com.alfred.printer;
 
+import com.alfredbase.javabean.ReportPluDayComboModifier;
+import com.alfredbase.javabean.model.ReportVoidItem;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.alfredbase.javabean.ReportPluDayComboModifier;
-import com.alfredbase.javabean.model.ReportVoidItem;
 
 public class VoidItemReportPrint extends ReportBasePrint{
 
@@ -47,7 +47,7 @@ public class VoidItemReportPrint extends ReportBasePrint{
 		String title1 = StringUtil.padRight(col1Title, VoidItemReportPrint.COL3_ITEMNAME);
 		String title2 = StringUtil.padRight(col2Title, VoidItemReportPrint.FIXED_COL3_QTY);
 		String title3 = StringUtil.padLeft(col3Title, VoidItemReportPrint.FIXED_COL3_TOTAL);
-		ret.append(title1).append(title2).append(title3).append("\r\n");
+		ret.append(title1).append(title2).append(title3).append(reNext);
 
 		return ret.toString();
 	}
@@ -112,7 +112,7 @@ public class VoidItemReportPrint extends ReportBasePrint{
 			}else {
 				result.append(StringUtil.padLeft(" ", (VoidItemReportPrint.FIXED_COL3_TOTAL)/charScale));
 			}			
-			result.append("\r\n");
+			result.append(reNext);
 		}
 		return result.toString();
 	}

@@ -1,14 +1,14 @@
 package com.alfred.printer;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
 import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TimeUtil;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class MonthlySalesReportPrint extends ReportBasePrint{
 
@@ -51,7 +51,7 @@ public class MonthlySalesReportPrint extends ReportBasePrint{
 		String title1 = StringUtil.padRight(col1Title, MonthlySalesReportPrint.COL3_ITEMNAME);
 		String title2 = StringUtil.padRight(col2Title, MonthlySalesReportPrint.FIXED_COL3_QTY);
 		String title3 = StringUtil.padLeft(col3Title, MonthlySalesReportPrint.FIXED_COL3_TOTAL);
-		ret.append(title1).append(title2).append(title3).append("\r\n");
+		ret.append(title1).append(title2).append(title3).append(reNext);
 
 		return ret.toString();
 	}
@@ -116,7 +116,7 @@ public class MonthlySalesReportPrint extends ReportBasePrint{
 			}else {
 				result.append(StringUtil.padLeft(" ", (MonthlySalesReportPrint.FIXED_COL3_TOTAL)/charScale));
 			}			
-			result.append("\r\n");
+			result.append(reNext);
 		}
 		return result.toString();
 	}
@@ -153,7 +153,7 @@ public class MonthlySalesReportPrint extends ReportBasePrint{
 		kot.setTextBold(1);
 		kot.setTextAlign(PrintData.ALIGN_CENTRE);
 		kot.setLanguage(PrintData.LANG_CN);
-		kot.setText(centerName+"\r\n");
+		kot.setText(centerName+reNext);
 		this.data.add(kot);
 	}	
 	/*

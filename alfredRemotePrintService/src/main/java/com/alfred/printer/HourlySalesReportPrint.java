@@ -1,9 +1,9 @@
 package com.alfred.printer;
 
+import com.alfredbase.javabean.ReportHourly;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-
-import com.alfredbase.javabean.ReportHourly;
 
 public class HourlySalesReportPrint extends ReportBasePrint{
 
@@ -45,7 +45,7 @@ public class HourlySalesReportPrint extends ReportBasePrint{
 		String title1 = StringUtil.padRight(col1Title, HourlySalesReportPrint.COL3_ITEMNAME);
 		String title2 = StringUtil.padRight(col2Title, HourlySalesReportPrint.FIXED_COL3_QTY);
 		String title3 = StringUtil.padLeft(col3Title, HourlySalesReportPrint.FIXED_COL3_TOTAL);
-		ret.append(title1).append(title2).append(title3).append("\r\n");
+		ret.append(title1).append(title2).append(title3).append(reNext);
 
 		return ret.toString();
 	}
@@ -110,7 +110,7 @@ public class HourlySalesReportPrint extends ReportBasePrint{
 			}else {
 				result.append(StringUtil.padLeft(" ", (HourlySalesReportPrint.FIXED_COL3_TOTAL)/charScale));
 			}			
-			result.append("\r\n");
+			result.append(reNext);
 		}
 		return result.toString();
 	}

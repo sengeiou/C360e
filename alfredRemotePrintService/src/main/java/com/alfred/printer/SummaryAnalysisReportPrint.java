@@ -1,9 +1,5 @@
 package com.alfred.printer;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
 import com.alfredbase.ParamConst;
@@ -12,6 +8,10 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.utils.BH;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class SummaryAnalysisReportPrint extends ReportBasePrint{
 
@@ -56,7 +56,7 @@ public class SummaryAnalysisReportPrint extends ReportBasePrint{
 		String title1 = StringUtil.padRight(col1Title, SummaryAnalysisReportPrint.COL3_ITEMNAME);
 		String title2 = StringUtil.padRight(col2Title, SummaryAnalysisReportPrint.FIXED_COL3_QTY);
 		String title3 = StringUtil.padLeft(col3Title, SummaryAnalysisReportPrint.FIXED_COL3_TOTAL);
-		ret.append(title1).append(title2).append(title3).append("\r\n");
+		ret.append(title1).append(title2).append(title3).append(reNext);
 
 		return ret.toString();
 	}
@@ -121,7 +121,7 @@ public class SummaryAnalysisReportPrint extends ReportBasePrint{
 			}else {
 				result.append(StringUtil.padLeft(" ", (SummaryAnalysisReportPrint.FIXED_COL3_TOTAL)/charScale));
 			}			
-			result.append("\r\n");
+			result.append(reNext);
 		}
 		return result.toString();
 	}
