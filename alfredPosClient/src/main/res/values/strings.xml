@@ -181,6 +181,7 @@
     <string name="no_sync_date">Data cannot be synced when a session opens</string>
     <string name="change_employee_password">Change Employee Password</string>
     <string name="print_report_when_session">X Report</string>
+    <string name="print_cash_close">Cash W Close Print</string>
     <string name="print_before_close_bill">Print Check</string>
     <string name="password_update_successfully">Password update successfully.</string>
     <string name="employee_no_exist">The employee does not exist at backoffice.</string>
@@ -332,6 +333,7 @@
     <!-- other -->
     <string name="clock_inout_">Clock In/Out</string>
     <string name="table_name">Table name</string>
+    <string name="close_cash">Close w Cash</string>
     <string name="bill_on_hold">BILL on HOLD</string>
     <string name="company">COMPANY</string>
     <string name="house_charge">HOUSE CHARGE</string>
@@ -365,6 +367,6 @@
     <string name="completed">COMPLETED</string>
     <string name="finish">FINISH</string>
 
-
-
+    <string name="index">Index</string>
+    <string name="welcome">Welcome</string>
 </resources>

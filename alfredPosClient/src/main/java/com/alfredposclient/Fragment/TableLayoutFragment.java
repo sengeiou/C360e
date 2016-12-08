@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -99,11 +98,12 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         rl_tables = (RelativeLayout) view.findViewById(R.id.rl_tables);
         rl_create_table = (RelativeLayout) view.findViewById(R.id.rl_create_table);
         rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
-        ViewTreeObserver vto = rl_table_area.getViewTreeObserver();
-        width = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(mainPage, 40.0f))*3/2;
+//        ViewTreeObserver vto = rl_table_area.getViewTreeObserver();
+//        width = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(mainPage, 40.0f))*3/2;
         LinearLayout.LayoutParams ps2 = new LinearLayout.LayoutParams(
-                (int) ScreenSizeUtil.width - width,
+                (int) ScreenSizeUtil.width / 5,
                 LinearLayout.LayoutParams.MATCH_PARENT);
+        width = (int) ScreenSizeUtil.width * 4 / 5;
         view.findViewById(R.id.ll_table_left).setLayoutParams(ps2);
 
 
@@ -485,7 +485,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("revenueId", App.instance.getRevenueCenter().getId().intValue());
         parameters.put("placeList", PlaceInfoSQL.getAllPlaceInfo());
-        parameters.put("tableList", TableInfoSQL.getAllTables());
+        parameters.put("tableList", newTables);
         SyncCentre.getInstance().updatePlaceTable(mainPage, parameters, handler);
         loadingDialog.show();
 

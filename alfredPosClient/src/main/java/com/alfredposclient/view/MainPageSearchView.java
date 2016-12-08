@@ -1,9 +1,5 @@
 package com.alfredposclient.view;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
@@ -14,12 +10,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -36,6 +31,10 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.adapter.ItemDetailAdapter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MainPageSearchView extends LinearLayout implements OnClickListener{
 	private static final String TAG = MainPageSearchView.class.getSimpleName();
@@ -165,6 +164,8 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 
 	private void search() {
 		String key = et_search.getText().toString();
+		if(handler == null || key == null)
+			return;
 		Message msg = handler.obtainMessage();
 		msg.what = MainPage.VIEW_EVENT_SEARCH;
 		msg.obj = key;

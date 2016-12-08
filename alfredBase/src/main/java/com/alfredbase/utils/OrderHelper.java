@@ -1,9 +1,5 @@
 package com.alfredbase.utils;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.HappyHourWeek;
@@ -24,6 +20,10 @@ import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderHelper {
 	/**
@@ -179,7 +179,7 @@ public class OrderHelper {
 		for (OrderModifier orderModifier : orderModifiers) {
 			if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
 				modifierPrice = BH.add(modifierPrice,
-						BH.getBD(orderModifier.getModifierItemPrice()), true);
+						BH.getBD(orderModifier.getModifierPrice()), true);
 			}
 		}
 		return modifierPrice;

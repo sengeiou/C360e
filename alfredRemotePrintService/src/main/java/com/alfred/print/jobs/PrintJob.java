@@ -209,9 +209,16 @@ public class PrintJob  extends Job{
 
 
 	protected void AddCut() {
-		PrintData cut = new PrintData();
-		cut.setDataFormat(PrintData.FORMAT_CUT);
-		this.data.add(cut);		
+		if(!WifiCommunication.localIPAddress.equals(printerIp)) {
+			PrintData cut = new PrintData();
+			cut.setDataFormat(PrintData.FORMAT_CUT);
+			this.data.add(cut);
+		}else{
+			PrintData cut = new PrintData();
+			cut.setDataFormat(PrintData.FORMAT_FEED);
+			cut.setMarginTop(2);
+			this.data.add(cut);
+		}
 	}
 	
 	protected void AddKickDrawer() {

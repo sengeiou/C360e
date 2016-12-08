@@ -316,6 +316,13 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='</li>';
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
+        liList+='<div class="col-md-6">储值卡销售</div>';
+        liList+='<div class="col-md-2">'+(getJson.topUpsQty==''?'0':getJson.topUpsQty)+'</div>';
+        liList+='<div class="col-md-4">￥'+((getJson.topUps==''||getJson.topUps=='0')?'0.00':getJson.topUps)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
         liList+='<div class="col-md-6">免费菜</div>';
         liList+='<div class="col-md-2">'+(getJson.focItemQty==''?'0':getJson.focItemQty)+'</div>';
         liList+='<div class="col-md-4">￥'+((getJson.focItem==''||getJson.focItem=='0')?'0.00':getJson.focItem)+'</div>';

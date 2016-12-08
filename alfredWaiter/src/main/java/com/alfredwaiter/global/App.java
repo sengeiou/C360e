@@ -19,7 +19,7 @@ import java.io.IOException;
 public class App extends BaseApplication {
 
 	public static final int VIEW_EVENT_SET_QTY = 10;
-	private static final int DATABASE_VERSION = 8;
+	private static final int DATABASE_VERSION = 9;
 	private static final String DATABASE_NAME = "com.alfredwaiter";
 	public static App instance;
 	private RevenueCenter revenueCenter;

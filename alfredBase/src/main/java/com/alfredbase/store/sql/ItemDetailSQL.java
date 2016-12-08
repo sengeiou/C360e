@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -12,6 +9,9 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemDetailSQL {
 
@@ -23,8 +23,8 @@ public class ItemDetailSQL {
 			String sql = "replace into "
 					+ TableNames.ItemDetail
 					+ "(id, restaurantId, itemTemplateId, revenueId, itemName, itemDesc, itemCode, imgUrl, price, itemType, printerId, isModifier, itemMainCategoryId, "
-					+ "itemCategoryId, isActive, taxCategoryId, isPack, isTakeout, happyHoursId, userId, createTime, updateTime, indexId, isDiscount)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "itemCategoryId, isActive, taxCategoryId, isPack, isTakeout, happyHoursId, userId, createTime, updateTime, indexId, isDiscount, barcode)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { itemDetail.getId(),
@@ -44,7 +44,7 @@ public class ItemDetailSQL {
 							itemDetail.getHappyHoursId(),
 							itemDetail.getUserId(), itemDetail.getCreateTime(),
 							itemDetail.getUpdateTime(), itemDetail.getIndexId(),
-							itemDetail.getIsDiscount()});
+							itemDetail.getIsDiscount(), itemDetail.getBarcode()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -58,8 +58,8 @@ public class ItemDetailSQL {
 			String sql = "insert into "
 					+ TableNames.ItemDetail
 					+ "(restaurantId, itemTemplateId, revenueId, itemName, itemDesc, itemCode, imgUrl, price, itemType, printerId, isModifier, itemMainCategoryId, "
-					+ "itemCategoryId, isActive, taxCategoryId, isPack, isTakeout, happyHoursId, userId, createTime, updateTime, indexId, isDiscount)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "itemCategoryId, isActive, taxCategoryId, isPack, isTakeout, happyHoursId, userId, createTime, updateTime, indexId, isDiscount, barcode)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { itemDetail.getRestaurantId(),
@@ -78,7 +78,7 @@ public class ItemDetailSQL {
 							itemDetail.getHappyHoursId(),
 							itemDetail.getUserId(), itemDetail.getCreateTime(),
 							itemDetail.getUpdateTime(),itemDetail.getIndexId(),
-							itemDetail.getIsDiscount()});
+							itemDetail.getIsDiscount(), itemDetail.getBarcode()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -94,8 +94,8 @@ public class ItemDetailSQL {
 			String sql = "replace into "
 					+ TableNames.ItemDetail
 					+ "(id, restaurantId, itemTemplateId, revenueId, itemName, itemDesc, itemCode, imgUrl, price, itemType, printerId, isModifier, itemMainCategoryId, "
-					+ "itemCategoryId, isActive, taxCategoryId, isPack, isTakeout, happyHoursId, userId, createTime, updateTime, indexId, isDiscount)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "itemCategoryId, isActive, taxCategoryId, isPack, isTakeout, happyHoursId, userId, createTime, updateTime, indexId, isDiscount, barcode)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (ItemDetail itemDetail : itemDetailList) {
@@ -147,6 +147,8 @@ public class ItemDetailSQL {
 							itemDetail.getIndexId());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 24,
 							itemDetail.getIsDiscount());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 25,
+							itemDetail.getBarcode());
 
 					sqLiteStatement.executeInsert();
 				}
@@ -198,6 +200,7 @@ public class ItemDetailSQL {
 				itemDetail.setUpdateTime(cursor.getLong(21));
 				itemDetail.setIndexId(cursor.getInt(22));
 				itemDetail.setIsDiscount(cursor.getInt(23));
+				itemDetail.setBarcode(cursor.getString(24));
 				result.add(itemDetail);
 			}
 			db.setTransactionSuccessful();
@@ -254,6 +257,7 @@ public class ItemDetailSQL {
 				itemDetail.setUpdateTime(cursor.getLong(21));
 				itemDetail.setIndexId(cursor.getInt(22));
 				itemDetail.setIsDiscount(cursor.getInt(23));
+				itemDetail.setBarcode(cursor.getString(24));
 				result.add(itemDetail);
 			}
 			db.setTransactionSuccessful();
@@ -311,6 +315,7 @@ public class ItemDetailSQL {
 				itemDetail.setUpdateTime(cursor.getLong(21));
 				itemDetail.setIndexId(cursor.getInt(22));
 				itemDetail.setIsDiscount(cursor.getInt(23));
+				itemDetail.setBarcode(cursor.getString(24));
 				result.add(itemDetail);
 			}
 			db.setTransactionSuccessful();
@@ -359,6 +364,7 @@ public class ItemDetailSQL {
 				itemDetail.setUpdateTime(cursor.getLong(21));
 				itemDetail.setIndexId(cursor.getInt(22));
 				itemDetail.setIsDiscount(cursor.getInt(23));
+				itemDetail.setBarcode(cursor.getString(24));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -370,6 +376,9 @@ public class ItemDetailSQL {
 		}
 		return itemDetail;
 	}
+
+
+
 	
 	public static int getAllTempItemDetailByTime(long time, long dayZero, int itemType) {
 		int count = 0 ;

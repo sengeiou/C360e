@@ -314,7 +314,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		}
 
 		popupWindow.setContentView(contentView);
-		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+//		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+		popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		popupWindow.setFocusable(true);
 //		popupWindow.setBackgroundDrawable(new BitmapDrawable());
 		initTextTypeFace(contentView);
@@ -1057,6 +1059,51 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		set.start();
 	}
 
+
+
+	private void printBill(){
+		final int paidOrderId = order.getId();
+		final int tabelId = order.getTableId();
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				//DONE all KOT SUMMARY and ITEM DETAILS
+				KotSummary kotSummary = KotSummarySQL
+						.getKotSummary(paidOrderId);
+				PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
+				if (!App.instance.isRevenueKiosk() && kotSummary != null) {
+					List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
+
+					if(kotItemDetails != null)
+						for(KotItemDetail kotItemDetail : kotItemDetails){
+							kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+							KotItemDetailSQL.update(kotItemDetail);
+						}
+
+					kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
+					KotSummarySQL.update(kotSummary);
+				}
+				HashMap<String, String> map = new HashMap<String, String>();
+
+				map.put("orderId", String.valueOf(paidOrderId));
+				map.put("paymentId", String.valueOf(payment.getId().intValue()));
+				// to print close receipt
+				handler.sendMessage(handler.obtainMessage(
+						MainPage.VIEW_EVENT_CLOSE_BILL, map));
+				parent.runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						// show table after settlement is done
+						printReceiptAction(tabelId);
+					}
+				});
+			}
+		}).start();
+	}
+
 	@Override
 	public void onClick(View v) {
 		if (ButtonClickTimer.canClick(v)) {
@@ -1068,47 +1115,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			case R.id.btn_print_receipt: {
 //				v.setVisibility(View.GONE);
 				// closeWindowAction();
-                final int paidOrderId = order.getId();
-                final int tabelId = order.getTableId();
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-
-						//DONE all KOT SUMMARY and ITEM DETAILS
-						KotSummary kotSummary = KotSummarySQL
-								.getKotSummary(paidOrderId);
-						PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
-						if (!App.instance.isRevenueKiosk() && kotSummary != null) {
-							List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
-
-							if(kotItemDetails != null)
-							for(KotItemDetail kotItemDetail : kotItemDetails){
-							    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-							    KotItemDetailSQL.update(kotItemDetail);
-							}
-
-							kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
-							KotSummarySQL.update(kotSummary);
-						}
-						HashMap<String, String> map = new HashMap<String, String>();
-
-						map.put("orderId", String.valueOf(paidOrderId));
-						map.put("paymentId", String.valueOf(payment.getId().intValue()));
-						// to print close receipt
-						handler.sendMessage(handler.obtainMessage(
-								MainPage.VIEW_EVENT_CLOSE_BILL, map));
-						parent.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								// show table after settlement is done
-								printReceiptAction(tabelId);
-							}
-						});
-					}
-				}).start();
-
+				printBill();
 
 			}
 
@@ -1775,6 +1782,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 						paymentSettlement);
 				newPaymentMapList.add(paymentMap);
 			}
+			handler.postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					if (isShowing())
+						printBill();
+				}
+			}, 100);
 		}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD: {
@@ -1986,7 +2001,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			break;
 		}
 		initBillSummary();
-		closeMoneyKeyboard();
+		if(viewTag != ParamConst.SETTLEMENT_TYPE_STORED_CARD)
+			closeMoneyKeyboard();
 	}
 
 	private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount){

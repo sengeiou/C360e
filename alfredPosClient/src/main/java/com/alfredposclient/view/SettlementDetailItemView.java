@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 
@@ -42,7 +43,7 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 
 	
 	public void setParams(final PaymentSettlement paymentSettlement, final ViewResultCall viewResultCall) {
-		tv_settlement_num.setText(paymentSettlement.getPaidAmount());
+		tv_settlement_num.setText(BH.getBD(paymentSettlement.getPaidAmount()).toString());
 		iv_settlement_icon
 				.setImageResource(getImageResourceBySettlementType(paymentSettlement
 						.getPaymentTypeId().intValue()));

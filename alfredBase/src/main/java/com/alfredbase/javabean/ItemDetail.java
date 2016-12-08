@@ -79,6 +79,8 @@ public class ItemDetail implements Serializable {
 	// 0不可以打折， 1可以打折
 	private int isDiscount = 1;
 
+	private String barcode;
+
 	public ItemDetail() {
 	}
 
@@ -308,21 +310,42 @@ public class ItemDetail implements Serializable {
 		this.isDiscount = isDiscount;
 	}
 
-	@Override
-	public String toString() {
-		return "ItemDetail [id=" + id + ", restaurantId=" + restaurantId
-				+ ", itemTemplateId=" + itemTemplateId + ", revenueId="
-				+ revenueId + ", itemName=" + itemName + ", itemDesc="
-				+ itemDesc + ", itemCode=" + itemCode + ", imgUrl=" + imgUrl
-				+ ", price=" + price + ", itemType=" + itemType
-				+ ", printerId=" + printerId + ", isModifier=" + isModifier
-				+ ", itemMainCategoryId=" + itemMainCategoryId
-				+ ", itemCategoryId=" + itemCategoryId + ", isActive="
-				+ isActive + ", taxCategoryId=" + taxCategoryId + ", isPack="
-				+ isPack + ", isTakeout=" + isTakeout + ", happyHoursId="
-				+ happyHoursId + ", userId=" + userId + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + ", indexId="
-				+ indexId + ", isDiscount=" + isDiscount + "]";
+	public String getBarcode() {
+		return barcode;
 	}
 
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
+	}
+
+	@Override
+	public String toString() {
+		return "ItemDetail{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", itemTemplateId=" + itemTemplateId +
+				", revenueId=" + revenueId +
+				", itemName='" + itemName + '\'' +
+				", itemDesc='" + itemDesc + '\'' +
+				", itemCode='" + itemCode + '\'' +
+				", imgUrl='" + imgUrl + '\'' +
+				", price='" + price + '\'' +
+				", itemType=" + itemType +
+				", printerId=" + printerId +
+				", isModifier=" + isModifier +
+				", itemMainCategoryId=" + itemMainCategoryId +
+				", itemCategoryId=" + itemCategoryId +
+				", isActive=" + isActive +
+				", taxCategoryId=" + taxCategoryId +
+				", isPack=" + isPack +
+				", isTakeout=" + isTakeout +
+				", happyHoursId=" + happyHoursId +
+				", userId=" + userId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", indexId=" + indexId +
+				", isDiscount=" + isDiscount +
+				", barcode='" + barcode + '\'' +
+				'}';
+	}
 }

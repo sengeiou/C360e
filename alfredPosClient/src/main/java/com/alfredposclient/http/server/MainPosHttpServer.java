@@ -458,6 +458,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						KDSDevice dev = (KDSDevice) gson.fromJson(jsonObject
 								.optJSONObject("device").toString(),
 								KDSDevice.class);
+						LocalDevice localDevice = ObjectFactory.getInstance()
+								.getLocalDevice(dev.getName(),"kds",
+										ParamConst.DEVICE_TYPE_KDS,
+										dev.getDevice_id(),
+										dev.getIP(), dev.getMac());
+
+						CoreData.getInstance().addLocalDevice(localDevice);
 						App.instance.addKDSDevice(dev.getDevice_id(), dev);
 						List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 						List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
@@ -507,12 +514,18 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								!App.instance.isRevenueKiosk()) {
 						
 							//no need waiter app in kiosk mode
-							WaiterDevice dev = (WaiterDevice) gson.fromJson(
+							WaiterDevice dev =  gson.fromJson(
 									jsonObject.optJSONObject("device").toString(),
 									WaiterDevice.class);
 							//waiter can login one device at one time
 							if (App.instance.isWaiterLoginAllowed(dev)) {
-								App.instance.addWaiterDevice(dev); 
+								App.instance.addWaiterDevice(dev);
+								LocalDevice localDevice = ObjectFactory
+										.getInstance()
+										.getLocalDevice("", "waiter", ParamConst.DEVICE_TYPE_WAITER,
+												dev.getWaiterId(),
+												dev.getIP(), dev.getMac());
+								CoreData.getInstance().addLocalDevice(localDevice);
 								result.put("user", user);
 								result.put("resultCode", ResultCode.SUCCESS);
 								result.put("userKey", userKey);

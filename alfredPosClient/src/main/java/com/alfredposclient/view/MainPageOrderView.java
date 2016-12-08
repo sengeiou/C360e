@@ -296,6 +296,7 @@ public class MainPageOrderView extends LinearLayout {
 		this.orderDetails = orderDetails;
 		this.handler = handler;
 		refresh();
+		App.instance.sendDataToSecondScreen(order, orderDetails);
 	}
 
 	private void refresh() {

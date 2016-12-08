@@ -18,9 +18,11 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
+import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.NumerickeyboardForStoredCard;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
@@ -112,11 +114,13 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     private Button btn_binding;
     private Button btn_clear;
     private Button btn_rebinding;
-
+    private TextTypeFace textTypeFace;
     @Override
     protected void initView() {
         mainPage = context;
         setContentView(R.layout.activity_stored_card);
+        textTypeFace = TextTypeFace.getInstance();
+        textTypeFace.init(context);
         loadingDialog = new LoadingDialog(mainPage);
         loadingDialog.setTitle("loading");
         hasSurface = false;
@@ -148,13 +152,17 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         btn_paid_refund.setOnClickListener(this);
         btn_clear.setOnClickListener(this);
         btn_rebinding.setOnClickListener(this);
+        TextView tv_refund = (TextView) findViewById(R.id.tv_refund);
+        TextView tv_paid = (TextView) findViewById(R.id.tv_paid);
+        textTypeFace.setTrajanProRegular(tv_refund);
+        textTypeFace.setTrajanProRegular(tv_paid);
         findViewById(R.id.iv_stored_card_scan).setOnClickListener(this);
         findViewById(R.id.btn_cancel_scan).setOnClickListener(this);
         findViewById(R.id.btn_change).setOnClickListener(this);
         findViewById(R.id.btn_binding_ok).setOnClickListener(this);
         findViewById(R.id.btn_clear_info).setOnClickListener(this);
-        findViewById(R.id.tv_refund).setOnClickListener(this);
-        findViewById(R.id.tv_paid).setOnClickListener(this);
+        tv_refund.setOnClickListener(this);
+        tv_paid.setOnClickListener(this);
         findViewById(R.id.btn_replacement_ok).setOnClickListener(this);
         findViewById(R.id.rl_loss_ok).setOnClickListener(this);
         beepManager = new BeepManager(mainPage);
@@ -591,7 +599,9 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     }
 
     @Override
-    public void onClick(View v) {
+    protected void handlerClickEvent(View v) {
+        if(!ButtonClickTimer.canClick())
+            return;
         switch (v.getId()){
             case R.id.btn_binding:
             case R.id.btn_paid_refund:
@@ -654,11 +664,11 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 SyncCentre.getInstance().registStoredCard(mainPage, map, handler);
 
             }
-                break;
+            break;
             case R.id.btn_clear_info: {
                 clearRegistInfo();
             }
-                break;
+            break;
             case R.id.tv_refund:
                 if(TextUtils.isEmpty(QRcodeString)){
                     UIHelp.showShortToast(mainPage, "Place scan user QRCode");
@@ -673,6 +683,14 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                     return;
                 }
                 String value = tv_store_card_value.getText().toString();
+                try {
+                    if(Integer.parseInt(value) > 200){
+                        UIHelp.showToast(context, "Top up limit of $200");
+                    }
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("qrCode", QRcodeString);
                 map.put("revenueId", App.instance.getRevenueCenter().getId().intValue());
@@ -681,7 +699,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 loadingDialog.show();
                 SyncCentre.getInstance().updateStoredCardValue(mainPage, map, handler);
             }
-                break;
+            break;
             case R.id.btn_replacement_ok: {
                 if(TextUtils.isEmpty(QRcodeString)){
                     UIHelp.showShortToast(mainPage, "Place scan user QRCode");
@@ -696,7 +714,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 //                mainPageHandler.sendEmptyMessage(VIEW_EVENT_STORED_CARD_REPLACEMEN);
                 storedCardReplacement();
             }
-                break;
+            break;
             case R.id.rl_loss_ok:{
                 String loss_phone = et_loss_phone.getText().toString().trim();
                 String loss_card_no = et_loss_card_no.getText().toString().trim();
@@ -708,7 +726,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 storedCardLoss();
             }
 
-                break;
+            break;
         }
     }
 

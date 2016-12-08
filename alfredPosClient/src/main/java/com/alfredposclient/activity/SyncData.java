@@ -344,6 +344,7 @@ public class SyncData extends BaseActivity {
 		parameters.put("userID", Integer.parseInt(userID));
 		parameters.put("password", password.trim());
 		parameters.put("bizID", bizID.trim());
+		parameters.put("machineType", 1);
 		SyncCentre.getInstance().login(context, parameters, handler);
 	}
 	

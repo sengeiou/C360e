@@ -1,6 +1,7 @@
 package com.alfredbase.global;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.HappyHour;
@@ -283,6 +284,16 @@ public class CoreData {
 			return null;
 		for (ItemDetail itemDetail : getItemDetails()) {
 			if (itemDetail.getId().intValue() == id.intValue()) {
+				return itemDetail;
+			}
+		}
+		return null;
+	}
+	public ItemDetail getItemDetailByBarCode(String barcode) {
+		if (TextUtils.isEmpty(barcode))
+			return null;
+		for (ItemDetail itemDetail : getItemDetails()) {
+			if (barcode.equals(itemDetail.getBarcode())) {
 				return itemDetail;
 			}
 		}

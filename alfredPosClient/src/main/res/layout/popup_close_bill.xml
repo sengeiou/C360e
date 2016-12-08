@@ -7,7 +7,6 @@
         android:id="@+id/ll_bill_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="25dp"
         android:orientation="horizontal" >
 
         <LinearLayout
@@ -270,7 +269,7 @@
                             android:id="@+id/rl_menu"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_weight="5"
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp"
                             android:visibility="visible" >
@@ -1224,7 +1223,7 @@
                             android:layout_height="0dp"
                             android:layout_marginLeft="10dp"
                             android:layout_marginRight="10dp"
-                            android:layout_weight="1"
+                            android:layout_weight="4"
                             android:orientation="vertical" >
 
                             <RelativeLayout
@@ -1364,7 +1363,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
+                android:layout_weight="5"
                 android:background="@color/white"
                 android:orientation="vertical" >
 

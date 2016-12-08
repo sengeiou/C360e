@@ -309,19 +309,20 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         //数据封装
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">ItemSales</div>';
+        liList+='<div class="col-md-6">Item Sales</div>';
         liList+='<div class="col-md-2">'+(getJson.itemSalesQty==''?'0':getJson.itemSalesQty)+'</div>';
         liList+='<div class="col-md-4">$'+((getJson.itemSales==''||getJson.itemSales=='0')?'0.00':getJson.itemSales)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">Total Tax$</div>';
-        liList+='<div class="col-md-2"></div>';
-        var taxTtl = Number(getJson.totalTax) + Number(getJson.inclusiveTaxAmt);
-        liList+='<div class="col-md-4">$'+taxTtl+'</div>';
+        liList+='<div class="col-md-6">Stored-Card Sales</div>';
+        liList+='<div class="col-md-2">'+(getJson.topUpsQty==''?'0':getJson.topUpsQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.topUps==''||getJson.topUps=='0')?'0.00':getJson.topUps)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">ENT Bills/$</div>';
@@ -329,6 +330,7 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="col-md-4">$'+((getJson.focBill==''||getJson.focBill=='0')?'0.00':getJson.focBill)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">ENT Items</div>';
@@ -344,6 +346,7 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="col-md-4">$'+((getJson.billVoid==''||getJson.billVoid=='0')?'0.00':getJson.billVoid)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">VOID/Items</div>';
@@ -351,6 +354,41 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="col-md-4">$'+((getJson.itemVoid==''||getJson.itemVoid=='0')?'0.00':getJson.itemVoid)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Discount on %</div>';
+        liList+='<div class="col-md-2">'+(getJson.discountPerQty==''?'0':getJson.discountPerQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.discountPer==''||getJson.discountPer=='0')?'0.00':getJson.discountPer)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Discount on $</div>';
+        liList+='<div class="col-md-2">'+(getJson.discountQty==''?'0':getJson.discountQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.discount==''||getJson.discount=='0')?'0.00':getJson.discount)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Exlusive Tax$</div>';
+        liList+='<div class="col-md-2"></div>';
+        var totalTax = Number(getJson.totalTax);
+        liList+='<div class="col-md-4">$'+totalTax+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Inclusive Tax$</div>';
+        liList+='<div class="col-md-2"></div>';
+        var inclusiveTaxAmt = Number(getJson.inclusiveTaxAmt);
+        liList+='<div class="col-md-4">$'+inclusiveTaxAmt+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">Total/Sales</div>';
@@ -363,6 +401,7 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='</li>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">VOID</div>';
@@ -421,7 +460,7 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
 
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">PYAPAL</div>';
+        liList+='<div class="col-md-6">Diner App</div>';
         liList+='<div class="col-md-2">'+(getJson.paypalpayQty==''?'0':getJson.paypalpayQty)+'</div>';
         liList+='<div class="col-md-4">$'+((getJson.paypalpay==''||getJson.paypalpay=='0')?'0.00':getJson.paypalpay)+'</div>';
         liList+='</div>';
@@ -429,9 +468,17 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
 
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">Stored-Card</div>';
+        liList+='<div class="col-md-6">Stored-Card Use</div>';
         liList+='<div class="col-md-2">'+(getJson.storedCardQty==''?'0':getJson.storedCardQty)+'</div>';
         liList+='<div class="col-md-4">$'+((getJson.storedCard==''||getJson.storedCard=='0')?'0.00':getJson.storedCard)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Stored-Card Charge</div>';
+        liList+='<div class="col-md-2">'+(getJson.topUpsQty==''?'0':getJson.topUpsQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.topUps==''||getJson.topUps=='0')?'0.00':getJson.topUps)+'</div>';
         liList+='</div>';
         liList+='</li>';
 

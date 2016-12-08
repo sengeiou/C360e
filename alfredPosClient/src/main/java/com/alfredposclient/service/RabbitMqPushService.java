@@ -32,6 +32,7 @@ public class RabbitMqPushService extends Service {
 	private static final String  EXCHANGE_NAME = BaseApplication.isOpenLog ? "ALFRED_EXCHANGES_TEXT" : "ALFRED_EXCHANGES";
 	private static final int PUSH_PORT = 5672;
 	private Thread pushThread;
+	private Runnable runnable;
 	private boolean stopThread = false;
 
 	public static Intent startIntent(Context context, int restId) {
@@ -64,7 +65,7 @@ public class RabbitMqPushService extends Service {
 	@Override
 	public void onDestroy() {
 		if(pushThread.isAlive()) {
-			pushThread.interrupt();
+			pushThread.currentThread().interrupt();
 			stopThread = true;
 		}
 		super.onDestroy();
@@ -75,8 +76,8 @@ public class RabbitMqPushService extends Service {
 	public int onStartCommand(final Intent intent, int flags, int startId) {
 		stopThread = false;
 		LogUtil.d(TAG, "开启服务 stopThread = " + stopThread);
-		if(pushThread == null){
-			pushThread = new Thread(new Runnable() {
+		if(runnable == null){
+			runnable = new Runnable() {
 				@Override
 				public void run() {
 					try {
@@ -87,11 +88,13 @@ public class RabbitMqPushService extends Service {
 						connect(intent.getStringExtra("rKey"));
 					} catch (InterruptedException e) {
 						e.printStackTrace();
+						Thread.currentThread().interrupt();
 					}
 				}
-			});
+			};
 		}
-		if(!pushThread.isAlive()) {
+		if(pushThread == null || !pushThread.isAlive()) {
+			pushThread = new Thread(runnable);
 			pushThread.start();
 		}
 		return START_STICKY;
@@ -142,12 +145,14 @@ public class RabbitMqPushService extends Service {
 					else
 						LogUtil.d(TAG, "回调是空的");
 				}catch(Exception e){
+					LogUtil.d(TAG, "设置监听出错");
 					e.printStackTrace();
 				}
 				Thread.sleep(500);
 
 			}
 		} catch (Exception e) {
+			LogUtil.d(TAG, "线程出错,可能是关闭");
 			e.printStackTrace();
 			if(stopThread) {
 				LogUtil.d(TAG, "退出线程 stopThread = " +stopThread);

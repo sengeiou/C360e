@@ -97,8 +97,8 @@
 
         <TextView
             android:id="@+id/tv_print_bill"
-            android:layout_width="@dimen/dp90"
-            android:layout_height="@dimen/dp100"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
             android:background="@drawable/box_bill_selector"
             android:layout_marginRight="5dp"
             android:gravity="center"
@@ -121,8 +121,8 @@
 
         <TextView
             android:id="@+id/tv_discount"
-            android:layout_width="190dp"
-            android:layout_height="@dimen/dp90"
+            android:layout_width="170dp"
+            android:layout_height="@dimen/dp80"
             android:layout_below="@+id/tv_print_bill"
             android:background="@drawable/box_bill_selector"
             android:gravity="center"
@@ -132,8 +132,8 @@
 
         <TextView
             android:id="@+id/tv_close_bill"
-            android:layout_width="@dimen/dp90"
-            android:layout_height="@dimen/dp100"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
             android:layout_toRightOf="@+id/tv_print_bill"
             android:background="@drawable/box_bill_selector"
             android:layout_marginLeft="5dp"
@@ -168,8 +168,8 @@
 
         <TextView
             android:id="@+id/tv_tables"
-            android:layout_width="@dimen/dp90"
-            android:layout_height="@dimen/dp100"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
             android:background="@drawable/box_bill_selector"
             android:layout_marginRight="5dp"
             android:gravity="center"
@@ -179,8 +179,8 @@
 
         <TextView
             android:id="@+id/tv_transfer_table"
-            android:layout_width="@dimen/dp90"
-            android:layout_height="@dimen/dp100"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
             android:layout_gravity="center"
             android:layout_toRightOf="@+id/tv_tables"
             android:background="@drawable/box_bill_selector"
@@ -216,8 +216,8 @@
 
         <TextView
             android:id="@+id/tv_open_item"
-            android:layout_width="@dimen/dp90"
-            android:layout_height="@dimen/dp100"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
             android:background="@drawable/box_bill_selector"
             android:layout_marginRight="5dp"
             android:gravity="center"
@@ -227,8 +227,8 @@
 
         <TextView
             android:id="@+id/tv_kick_cashdrawer"
-            android:layout_width="@dimen/dp90"
-            android:layout_height="@dimen/dp100"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
             android:layout_toRightOf="@+id/tv_open_item"
             android:background="@drawable/box_bill_selector"
             android:layout_marginLeft="5dp"
@@ -239,8 +239,8 @@
             android:visibility="gone"/>
         <TextView
             android:id="@+id/tv_take_away"
-            android:layout_width="@dimen/dp90"
-            android:layout_height="@dimen/dp100"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
             android:layout_gravity="center"
             android:layout_toRightOf="@+id/tv_open_item"
             android:background="@drawable/box_bill_selector"

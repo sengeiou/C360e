@@ -178,7 +178,16 @@
         <item name="android:windowEnterAnimation">@anim/centre_open</item>
         <item name="android:windowExitAnimation">@anim/anim_null</item>
     </style>
-        
+    <style name="dialogInOutAlpha">
+        <item name="android:windowEnterAnimation">@anim/dialog_alpha_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_alpha_out</item>
+    </style>
+    <style name="Dialog_sure">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@style/dialogInOutAlpha</item>
+    </style>
     <style name="Dialog_input">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>

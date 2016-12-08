@@ -40,6 +40,7 @@ public class DataHelper {
 				onUpgradeForOldVersion5(db);
 				onUpgradeForOldVersion6(db);
 				onUpgradeForOldVersion7(db);
+				onUpgradeForOldVersion8(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -61,6 +62,7 @@ public class DataHelper {
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
 						onUpgradeForOldVersion7(db);
+						onUpgradeForOldVersion8(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
@@ -69,6 +71,7 @@ public class DataHelper {
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
 						onUpgradeForOldVersion7(db);
+						onUpgradeForOldVersion8(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
@@ -76,24 +79,32 @@ public class DataHelper {
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
 						onUpgradeForOldVersion7(db);
+						onUpgradeForOldVersion8(db);
 						break;
 					case 4:
 						onUpgradeForOldVersion4(db);
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
 						onUpgradeForOldVersion7(db);
+						onUpgradeForOldVersion8(db);
 						break;
 					case 5:
 						onUpgradeForOldVersion5(db);
 						onUpgradeForOldVersion6(db);
 						onUpgradeForOldVersion7(db);
+						onUpgradeForOldVersion8(db);
 						break;
 					case 6:
 						onUpgradeForOldVersion6(db);
 						onUpgradeForOldVersion7(db);
+						onUpgradeForOldVersion8(db);
 						break;
 					case 7:
 						onUpgradeForOldVersion7(db);
+						onUpgradeForOldVersion8(db);
+						break;
+					case 8:
+						onUpgradeForOldVersion8(db);
 						break;
 				default:
 					break;
@@ -619,6 +630,34 @@ public class DataHelper {
 					+ " ADD COLUMN storedCard TEXT default '0.00'");
 			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
 					+ " ADD COLUMN storedCardQty INTEGER default 0");
+		}
+		private void onUpgradeForOldVersion8(SQLiteDatabase db) {
+			/**
+			 * private Integer cardId;
+
+			 private Integer restId;
+
+			 private Integer staffId;
+
+			 private Integer consumingType;
+
+			 private Integer fromType;
+
+			 private String consumingAmount;
+
+			 private long consumingTime;
+			 */
+			db.execSQL("CREATE TABLE "
+					+ TableNames.ConsumingRecords
+					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, cardId INTEGER, restId INTEGER, staffId INTEGER, consumingType INTEGER, fromType INTEGER, consumingAmount TEXT, consumingTime LONG, businessDate LONG)");
+			//TableNames.ReportDaySales
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN topUps TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN topUpsQty INTEGER default 0");
+			db.execSQL("ALTER TABLE " + TableNames.ItemDetail
+					+ " ADD COLUMN barcode TEXT");
+
 		}
 	}
 }

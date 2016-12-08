@@ -863,12 +863,17 @@ public class MainPage extends BaseActivity {
 										.setOrderStatus(ParamConst.APP_ORDER_STATUS_FINISH);
 								appOrder.setOrderNo(currentOrder.getOrderNo());
 								AppOrderSQL.updateAppOrder(appOrder);
-								PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-										context);
-								printerLoadingDialog.setTitle(context.getResources().getString(
-										R.string.receipt_printing));
-								printerLoadingDialog.showByTime(3000);
-								App.instance.printerAppOrder(appOrder);
+								runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+												context);
+										printerLoadingDialog.setTitle(context.getResources().getString(
+												R.string.receipt_printing));
+										printerLoadingDialog.showByTime(3000);
+									}
+								});
+//								App.instance.printerAppOrder(appOrder);
 								cloudSync.checkAppOrderStatus(
 										App.instance.getRevenueCenter().getId().intValue(),
 										appOrder.getId().intValue(),
@@ -880,7 +885,6 @@ public class MainPage extends BaseActivity {
 //							SyncCentre.getInstance().callAppNo(App.instance, paidOrder.getOrderNo().toString());
 					}
 				}).start();
-
 				break;
 			}
 			case VIEW_EVENT_CLOSE_SPLIT_BILL:{
@@ -1716,6 +1720,7 @@ public class MainPage extends BaseActivity {
         transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
         transaction.show(f_tables);
         transaction.commitAllowingStateLoss();
+		App.instance.showWelcomeToSecondScreen();
 	}
 
 	private void closeTables() {
@@ -1899,11 +1904,7 @@ public class MainPage extends BaseActivity {
 			}
 			break;
 		case REFRESH_TABLES_STATUS:
-			if (isShowTables) {
-				TableInfo tables = (TableInfo) obj;
-				handler.sendMessage(handler.obtainMessage(
-						REFRESH_TABLES_STATUS, tables));
-			}
+			handler.sendEmptyMessage(REFRESH_TABLES_STATUS);
 			break;
 		case VIEW_EVNT_GET_BILL_PRINT: {
 			TableInfo tables = (TableInfo) obj;

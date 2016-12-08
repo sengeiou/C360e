@@ -1,7 +1,5 @@
 package com.alfredwaiter.global;
 
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 
@@ -9,6 +7,8 @@ import com.alfredbase.APPConfig;
 import com.alfredbase.http.APIName;
 import com.alfredwaiter.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
+
+import java.util.Map;
 
 public class SyncCentre {
 	private String ip;
@@ -43,7 +43,7 @@ public class SyncCentre {
 
 	public void login(Context context, Map<String, Object> parameters,
 			Handler handler) {
-		HttpAPI.getItem(context, getAbsolutePOSUrlByIp(ip, APIName.ITEM_GETITEM),
+		HttpAPI.getItem(context, getAbsolutePOSUrlByIp(getIp(), APIName.ITEM_GETITEM),
 				parameters, httpClient);
 		HttpAPI.login(context, parameters,
 				getAbsoluteUrl(APIName.LOGIN_LOGINVERIFY), httpClient, handler);

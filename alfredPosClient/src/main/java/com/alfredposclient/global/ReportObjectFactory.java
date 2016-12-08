@@ -26,6 +26,7 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CashInOutSQL;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.ConsumingRecordsSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
@@ -171,6 +172,10 @@ public class ReportObjectFactory {
 				.format(BH.getBD(storedCardMap.get("sumAmount")));
 		String storedCardQty = storedCardMap.get("count");
 
+		Map<String, String> topUpsMap = ConsumingRecordsSQL.getSumTopUPAndRefoundByBusinessDate(businessDate);
+		String topUps = BH.doubleFormat
+				.format(BH.getBD(topUpsMap.get("sumAmount")));
+		String topUpsQty = topUpsMap.get("count");
 		
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -401,6 +406,7 @@ public class ReportObjectFactory {
 		nettSales = BH.add(nettSales, BH.getBD(alipay), true);
 		nettSales = BH.add(nettSales, BH.getBD(nets), true);
 		nettSales = BH.add(nettSales, BH.getBD(holdld), true);
+		nettSales = BH.add(nettSales, BH.getBD(topUps),true);
 //		nettSales = BH.add(nettSales, BH.getBD(focBill), true);
 
 		BigDecimal cashInAmt = BH
@@ -443,6 +449,8 @@ public class ReportObjectFactory {
 		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
 		reportDaySales.setStoredCard(storedCard);
 		reportDaySales.setStoredCardQty(Integer.parseInt(storedCardQty));
+		reportDaySales.setTopUps(topUps);
+		reportDaySales.setTopUpsQty(Integer.parseInt(topUpsQty));
 		reportDaySales.setVisa(visa);
 		reportDaySales.setVisaQty(Integer.parseInt(visaQty));
 		reportDaySales.setMc(mc);
@@ -1526,6 +1534,11 @@ public class ReportObjectFactory {
 				.format(BH.getBD(storedCardMap.get("sumAmount")));
 		String storedCardQty = storedCardMap.get("count");
 
+		Map<String, String> topUpsMap = ConsumingRecordsSQL.getSumTopUPAndRefoundBySession(businessDate, sessionStatus);
+		String topUps = BH.doubleFormat
+				.format(BH.getBD(topUpsMap.get("sumAmount")));
+		String topUpsQty = topUpsMap.get("count");
+
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VISA, businessDate,
@@ -1758,6 +1771,7 @@ public class ReportObjectFactory {
 		nettSales = BH.add(nettSales, BH.getBD(alipay), true);
 		nettSales = BH.add(nettSales, BH.getBD(nets), true);
 		nettSales = BH.add(nettSales, BH.getBD(holdld), true);
+		nettSales = BH.add(nettSales, BH.getBD(topUps),true);
 //		nettSales = BH.add(nettSales, BH.getBD(focBill), true);
 
 		BigDecimal cashInAmt = BH
@@ -1801,6 +1815,8 @@ public class ReportObjectFactory {
 		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
 		reportDaySales.setStoredCard(storedCard);
 		reportDaySales.setStoredCardQty(Integer.parseInt(storedCardQty));
+		reportDaySales.setTopUps(topUps);
+		reportDaySales.setTopUpsQty(Integer.parseInt(topUpsQty));
 		reportDaySales.setVisa(visa);
 		reportDaySales.setVisaQty(Integer.parseInt(visaQty));
 		reportDaySales.setMc(mc);

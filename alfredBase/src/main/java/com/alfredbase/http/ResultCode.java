@@ -88,6 +88,11 @@ public class ResultCode {
 	 * 已绑定，运行过程中被解绑
 	 */
 	public static final int DEVICE_NO_PERMIT = -2008;
+
+	/**
+	 * 同步的数据已经存在
+	 */
+	public static final int RECEIVE_MSG_EXIST = -2009;
 	/**
 	 *	no  permission	  用户权限不足
 	 */
@@ -127,8 +132,13 @@ public class ResultCode {
 	/**
 	 * 该会员卡绑定了手机.请使用手机支付
 	 */
-	public static final int QRCODE_TOBIND_PHONE_USE_PHONE_PAY = -2009;
-	
+	public static final int QRCODE_TOBIND_PHONE_USE_PHONE_PAY = -2011;
+
+
+	/**
+	 * 余额不足
+	 */
+	public static final int CARD_BALANCE_NOT_ENOUGH = -2012;
 	
 	/**
 	 * 用于POS作为服务器的时候，session还没有打开的错误提醒
@@ -191,6 +201,8 @@ public class ResultCode {
 			return context.getResources().getString(R.string.card_binding_mobile);
 		case CUSTOMER_QRCODE_INVALIDATE:
 			return context.getResources().getString(R.string.qrcode_expire);
+		case CARD_BALANCE_NOT_ENOUGH:
+			return "The stored card balance is not enough";
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);

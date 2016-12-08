@@ -80,6 +80,9 @@ public class Store {
 
 	public static final String PRINT_REPORT_WHEN_CLOSE_SESSION = "PRINT_REPORT_WHEN_CLOSE_SESSION";
 	public static final String PRINT_BEFORE_CLOSE_BILL = "PRINT_BEFORE_CLOSE_BILL";
+	public static final String PRINT_CASH_CLOSE = "PRINT_CASH_CLOSE";
+
+	public static final String WELCOME_IMAGE_ID = "WELCOME_IMAGE_ID";
 
 	private Store() {
 	};

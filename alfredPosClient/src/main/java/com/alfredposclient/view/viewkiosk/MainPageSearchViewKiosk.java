@@ -1,9 +1,5 @@
 package com.alfredposclient.view.viewkiosk;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
@@ -33,9 +29,12 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
-import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.ItemDetailAdapter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MainPageSearchViewKiosk extends LinearLayout implements OnClickListener{
 	private static final String TAG = MainPageSearchViewKiosk.class.getSimpleName();
@@ -169,6 +168,8 @@ public class MainPageSearchViewKiosk extends LinearLayout implements OnClickList
 	}
 
 	private void search() {
+		if(handler == null)
+			return;
 		String key = et_search.getText().toString();
 		Message msg = handler.obtainMessage();
 		msg.what = MainPageKiosk.VIEW_EVENT_SEARCH;

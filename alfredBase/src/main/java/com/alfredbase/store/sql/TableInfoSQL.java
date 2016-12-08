@@ -194,7 +194,7 @@ public class TableInfoSQL {
 
     public static List<TableInfo> getAllUsedTables() {
         List<TableInfo> result = new ArrayList<TableInfo>();
-        String sql = "select * from " + TableNames.TableInfo + " where status <> " + ParamConst.TABLE_STATUS_IDLE  + " where isKiosk <> 1";
+        String sql = "select * from " + TableNames.TableInfo + " where status <> " + ParamConst.TABLE_STATUS_IDLE  + " and isKiosk <> 1";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
@@ -246,7 +246,7 @@ public class TableInfoSQL {
 
 
     public static TableInfo getAllUsedOneTables() {
-        String sql = "select * from " + TableNames.TableInfo + " where status = " + ParamConst.TABLE_STATUS_IDLE  + " where isKiosk <> 1";
+        String sql = "select * from " + TableNames.TableInfo + " where status = " + ParamConst.TABLE_STATUS_IDLE  + " and isKiosk <> 1";
         Cursor cursor = null;
         TableInfo newTable = null;
         SQLiteDatabase db = SQLExe.getDB();

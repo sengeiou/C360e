@@ -15,6 +15,7 @@ public class SystemSettings {
 	private boolean orderSummaryPrint = false; //double closing receipt
 	private boolean printWhenCloseSession = true; // session close is report?
 	private boolean printBeforCloseBill = true; // bill close need print Bill?
+	private boolean cashClosePrint = true; // cash w close need print Bill?
 	private int maxPrintOrderNo = 98;
     
 	public SystemSettings(Context context) {
@@ -186,6 +187,28 @@ public class SystemSettings {
 			this.printBeforCloseBill = true;
 		else
 			this.printBeforCloseBill = false;
+	}
+
+	public void setCashClosePrint(Integer cashClosePrintBill) {
+		Store.putInt(this.context, Store.PRINT_CASH_CLOSE,
+				cashClosePrintBill);
+		if (cashClosePrintBill.intValue() == 1)
+			this.cashClosePrint = true;
+		else
+			this.cashClosePrint = false;
+	}
+
+	public boolean isCashClosePrint() {
+		Integer value = Store.getInt(context,
+				Store.PRINT_CASH_CLOSE);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1)
+				this.cashClosePrint = true;
+			else
+				this.cashClosePrint = false;
+			return  this.cashClosePrint;
+		}
+		return cashClosePrint;
 	}
 
 	public int getMaxPrintOrderNo() {

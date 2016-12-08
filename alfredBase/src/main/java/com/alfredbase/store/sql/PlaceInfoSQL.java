@@ -154,7 +154,7 @@ public class PlaceInfoSQL {
 
 	public static PlaceInfo getPlaceInfoById(int placeId) {
 		PlaceInfo places = new PlaceInfo();
-		String sql = "select * from " + TableNames.PlaceInfo + " where id = ?";
+		String sql = "select * from " + TableNames.PlaceInfo + " where posId = ?";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql, new String[] {String.valueOf(placeId)});
@@ -212,7 +212,7 @@ public class PlaceInfoSQL {
 
 
 	public static void updatePlaceInfo(PlaceInfo places) {
-		String sql = "update " + TableNames.PlaceInfo + " set placeName = ? where id = ?";
+		String sql = "update " + TableNames.PlaceInfo + " set placeName = ? where posId = ?";
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] {places.getPlaceName(), places.getId() });
 		} catch (Exception e) {
@@ -221,7 +221,7 @@ public class PlaceInfoSQL {
 	}
 
 	public static void deletePlaceInfo(PlaceInfo places) {
-		String sql = "delete from " + TableNames.PlaceInfo + " where id = ?";
+		String sql = "delete from " + TableNames.PlaceInfo + " where posId = ?";
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] { places.getId() });
 		} catch (Exception e) {

@@ -45,6 +45,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SlipButton sb_order_summary_print;
 	private SlipButton sb_session_report_print;
 	private SlipButton sb_print_before_close;
+	private SlipButton sb_cash_close_print;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -55,11 +56,19 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SelectPrintWindow selectPrintWindow;
 	public static final int UPDATE_PASSWORD_TAG = 2000;
 	private TextView tv_callnum;
-	
+
+
 	@Override
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_system_setting);
+		if(App.instance.isRevenueKiosk()){
+			findViewById(R.id.rl_cash_close_print).setVisibility(View.VISIBLE);
+			findViewById(R.id.view_cash_close_print).setVisibility(View.VISIBLE);
+		}else{
+			findViewById(R.id.rl_cash_close_print).setVisibility(View.GONE);
+			findViewById(R.id.view_cash_close_print).setVisibility(View.GONE);
+		}
 		syncMap = App.instance.getPushMsgMap();
 		settings = new SystemSettings(context);
 		loadingDialog = new LoadingDialog(context);
@@ -76,6 +85,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_order_summary_print = (SlipButton)findViewById(R.id.sb_order_summary_print);
 		sb_session_report_print = (SlipButton)findViewById(R.id.sb_session_report_print);
 		sb_print_before_close = (SlipButton)findViewById(R.id.sb_print_before_close);
+		sb_cash_close_print = (SlipButton)findViewById(R.id.sb_cash_close_print);
 
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -95,6 +105,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_order_summary_print.setOnChangedListener(this);
 		sb_session_report_print.setOnChangedListener(this);
 		sb_print_before_close.setOnChangedListener(this);
+		sb_cash_close_print.setOnChangedListener(this);
+
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
 		if(App.instance.isRevenueKiosk()){
@@ -146,6 +158,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			sb_print_before_close.setChecked(true);
 		}else{
 			sb_print_before_close.setChecked(false);
+		}
+		if(settings.isCashClosePrint()){
+			sb_cash_close_print.setChecked(true);
+		}else{
+			sb_cash_close_print.setChecked(false);
 		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
@@ -349,6 +366,15 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			}else{
 				sb_print_before_close.setChecked(false);
 				settings.setPrintBeforCloseBill(ParamConst.DEFAULT_FALSE);
+			}
+			break;
+		case R.id.sb_cash_close_print:
+			if(checkState){
+				sb_cash_close_print.setChecked(true);
+				settings.setCashClosePrint(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_cash_close_print.setChecked(false);
+				settings.setCashClosePrint(ParamConst.DEFAULT_FALSE);
 			}
 			break;
 		default:

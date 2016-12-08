@@ -79,7 +79,8 @@ public class HttpAPI {
             StringEntity entity = HttpAssembling.getLoginParam(
                     (Integer) parameters.get("userID"),
                     (String) parameters.get("password"),
-                    (String) parameters.get("bizID"));
+                    (String) parameters.get("bizID"),
+                    (Integer) parameters.get("machineType"));
             httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -789,7 +790,8 @@ public class HttpAPI {
                         public void onSuccess(int statusCode, Header[] headers,
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            if (resultCode == ResultCode.SUCCESS) {
+                            if (resultCode == ResultCode.SUCCESS
+                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
                                 syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);
                                 SyncMsgSQL.add(syncMsg);
                             } else {

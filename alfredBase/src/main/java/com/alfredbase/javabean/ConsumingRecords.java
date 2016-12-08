@@ -1,4 +1,4 @@
-package com.alfredposclient.javabean;
+package com.alfredbase.javabean;
 
 import java.io.Serializable;
 
@@ -21,6 +21,8 @@ public class ConsumingRecords implements Serializable{
     private String consumingAmount;
 
     private long consumingTime;
+
+    private long businessDate;
 
     public Integer getCardId() {
         return cardId;
@@ -78,6 +80,14 @@ public class ConsumingRecords implements Serializable{
         this.consumingTime = consumingTime;
     }
 
+    public long getBusinessDate() {
+        return businessDate;
+    }
+
+    public void setBusinessDate(long businessDate) {
+        this.businessDate = businessDate;
+    }
+
     @Override
     public String toString() {
         return "ConsumingRecords{" +
@@ -88,6 +98,7 @@ public class ConsumingRecords implements Serializable{
                 ", fromType=" + fromType +
                 ", consumingAmount='" + consumingAmount + '\'' +
                 ", consumingTime=" + consumingTime +
+                ", businessDate=" + businessDate +
                 '}';
     }
 }

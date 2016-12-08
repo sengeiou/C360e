@@ -1,11 +1,5 @@
 package com.alfredposclient.http;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.http.entity.StringEntity;
-
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.RevenueCenter;
@@ -15,6 +9,12 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
 
+import org.apache.http.entity.StringEntity;
+
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+
 public class HttpAssembling {
 	public static final String CONTENT_TYPE = "text/plain;charset=UTF-8";
 
@@ -22,6 +22,13 @@ public class HttpAssembling {
 			String bizID) throws UnsupportedEncodingException {
 		StringEntity entity = new StringEntity("{empId:" + userID
 				+ ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" +CommonUtil.getLocalMacAddress(App.instance) + "'}");
+		return entity;
+	}
+
+	public static StringEntity getLoginParam(int userID, String password,
+											 String bizID, int machineType) throws UnsupportedEncodingException {
+		StringEntity entity = new StringEntity("{empId:" + userID
+				+ ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" +CommonUtil.getLocalMacAddress(App.instance) + "', machineType : " + machineType + "}");
 		return entity;
 	}
 

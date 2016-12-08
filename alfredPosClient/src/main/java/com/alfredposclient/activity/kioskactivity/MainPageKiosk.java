@@ -167,18 +167,18 @@ public class MainPageKiosk extends BaseActivity {
 	public static final int VIEW_EVENT_CLOSE_SPLIT_BILL = 143;
 	public static final int VIEW_EVENT_SHOW_TABLES_AFTER_CLOSE_BILL = 144;
 	public static final int KIOSK_VIEW_EVENT_DELETE_ORDER = 1045;
-	
+
 	// KOT PRINT
 	public static final int KOT_PRINT_FAILED = 200;
 	public static final int KOT_PRINT_SUCCEED = 201;
-	
+
 	public static final int VIEW_EVENT_TAKE_AWAY = 145;
 	public static final int VIEW_EVENT_SET_WEIGHT = 147;
 	public static final int CHECK_TO_CLOSE_CUSTOM_NOTE_VIEW = 148;
 	public static final int CONTROL_PAGE_ORDER_VIEW_MASK = 149;
-	
-	
-	
+
+
+
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
 	public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
 	private static final String SHOW_TABLES = "SHOW_TABLES";
@@ -224,16 +224,16 @@ public class MainPageKiosk extends BaseActivity {
 //	public LoadingDialog loadingDialog;
 
 	public PrinterLoadingDialog printerLoadingDialog;
-	
+
 	public SelectOrderSplitDialog selectOrderSplitDialog;
 
 	private OrderSplitPrintWindow orderSplitPrintWindow;
-	
+
 	private DrawerLayout mDrawerLayout; // activity滑动布局
 	private SettingView settingView; // 右滑视图
-	
+
 	private int activityRequestCode = 0;
-	
+
 	private int appOrderId;
 	private FragmentManager fragmentManager;
 	private FragmentTransaction transaction;
@@ -246,7 +246,7 @@ public class MainPageKiosk extends BaseActivity {
 		settingView = (SettingView) findViewById(R.id.settingView);
 		settingView.setParams(this, mDrawerLayout);
 	}
-	
+
 	@Override
 	protected void initView() {
 		setContentView(R.layout.activity_kiosk_main_page);
@@ -264,7 +264,7 @@ public class MainPageKiosk extends BaseActivity {
 		printerLoadingDialog = new PrinterLoadingDialog(context);
 		printerLoadingDialog.setTitle("Sending to Kitchen");
 		selectOrderSplitDialog = new SelectOrderSplitDialog(context, handler);
-		
+
 		topMenuView = (TopMenuViewKiosk) findViewById(R.id.topMenuView);
 		topMenuView.setParams(this, handler,mDrawerLayout,settingView);
 		topMenuView.setGetBillNum(App.instance.getGetTingBillNotifications()
@@ -294,7 +294,7 @@ public class MainPageKiosk extends BaseActivity {
 				findViewById(R.id.rl_root));
 		specialInstractionsWindow = new SpecialInstractionsWindow(context,
 				findViewById(R.id.lv_order), handler);
-		
+
 		orderSplitPrintWindow = new OrderSplitPrintWindow(context,
 				findViewById(R.id.lv_order), handler);
 		setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
@@ -562,7 +562,7 @@ public class MainPageKiosk extends BaseActivity {
 				break;
 			case VIEW_EVENT_OPERATEPANEL: {
 				mainPageMenuView.closeModifiers();
-				
+
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				List<Map<String, String>> taxMap = OrderDetailTaxSQL
 						.getTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
@@ -627,61 +627,74 @@ public class MainPageKiosk extends BaseActivity {
 				final Order paidOrder = OrderSQL.getOrder(Integer.valueOf(paymentMap.get("orderId")));
 				List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
 						.getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
+				boolean isPrint = true;
+				if(paymentMap.containsKey("isPrint") && !TextUtils.isEmpty(paymentMap.get("isPrint"))){
+					isPrint = Boolean.valueOf(paymentMap.get("isPrint"));
+				}
 //				KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId());
 //				if(kotSummary != null){
 //					kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
 //					KotSummarySQL.update(kotSummary);
 //				}
-				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-						context);
-				printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-				printerLoadingDialog.showByTime(3000);
-				PrinterDevice printer = App.instance.getCahierPrinter();
-				PrinterTitle title = ObjectFactory.getInstance()
-						.getPrinterTitle(
-								App.instance.getRevenueCenter(),
-								paidOrder,
-								App.instance.getUser().getFirstName()
-										+ App.instance.getUser().getLastName(),
-								currentTable.getName());
+				if(isPrint) {
+					PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+							context);
+					printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+					printerLoadingDialog.showByTime(3000);
+					PrinterDevice printer = App.instance.getCahierPrinter();
+					PrinterTitle title = ObjectFactory.getInstance()
+							.getPrinterTitle(
+									App.instance.getRevenueCenter(),
+									paidOrder,
+									App.instance.getUser().getFirstName()
+											+ App.instance.getUser().getLastName(),
+									currentTable.getName());
 
 
 
-				ArrayList<PrintOrderItem> orderItems = ObjectFactory
-						.getInstance().getItemList(
-								OrderDetailSQL.getOrderDetails(paidOrder
-										.getId()));
-				List<Map<String, String>> taxMap = OrderDetailTaxSQL
-						.getTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrder);
+					ArrayList<PrintOrderItem> orderItems = ObjectFactory
+							.getInstance().getItemList(
+									OrderDetailSQL.getOrderDetails(paidOrder
+											.getId()));
+					List<Map<String, String>> taxMap = OrderDetailTaxSQL
+							.getTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrder);
 
-				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
-						.getInstance().getItemModifierList(paidOrder, OrderDetailSQL.getOrderDetails(paidOrder
-								.getId()));
+					ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+							.getInstance().getItemModifierList(paidOrder, OrderDetailSQL.getOrderDetails(paidOrder
+									.getId()));
 
 				// ArrayList<OrderModifier> orderModifiers =
 				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
-
-				if (orderItems.size() > 0 && printer != null) {
-					RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
-					App.instance.remoteBillPrint(printer, title, paidOrder,
-							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+					if (orderItems.size() > 0 && printer != null) {
+						RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
+						App.instance.remoteBillPrint(printer, title, paidOrder,
+								orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+					}
+				}else{
+					PrinterDevice printer = App.instance.getCahierPrinter();
+					if (printer == null) {
+						AlertToDeviceSetting.noKDSorPrinter(context,
+								context.getResources().getString(R.string.no_cashier_printer));
+					} else {
+						App.instance.kickOutCashDrawer(printer);
+					}
 				}
-				
+
 				//Sent to Kitchen after close bill in kiosk mode
 				String kotCommitStatus = ParamConst.JOB_NEW_KOT;
 				List<OrderDetail> placedOrderDetails  = OrderDetailSQL.getOrderDetails(paidOrder.getId());
 				List<Integer> orderDetailIds = new ArrayList<Integer>();
 				ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
-				ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>(); 
+				ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
 				for (OrderDetail orderDetail : placedOrderDetails) {
 					orderDetailIds.add(orderDetail.getId());
 				}
 
 				KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrder.getId());
 				if (kotSummary != null) {
-					ArrayList<KotItemDetail> kotItemDetails = 
+					ArrayList<KotItemDetail> kotItemDetails =
 							KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummary.getId(), paidOrder.getId());
-					
+
 					kotorderModifiers = OrderModifierSQL.getAllOrderModifierByOrderAndNormal(paidOrder);
 					for (KotItemDetail kot : kotItemDetails) {
 						ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
@@ -696,13 +709,13 @@ public class MainPageKiosk extends BaseActivity {
 					App.instance.getKdsJobManager().tearDownKot(
 							kotSummary, kotItemDetails,
 							kotItemModifiers, kotCommitStatus,
-							orderMap);					
+							orderMap);
 				}
 				//end KOT print
-				
 
 
-				               
+
+
 				// remove get bill notification
 				removeNotificationTables();
 				topMenuView.setGetBillNum(App.instance
@@ -711,14 +724,14 @@ public class MainPageKiosk extends BaseActivity {
 				 * 给后台发送log 信息
 				 */
 				new Thread(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 						if (cloudSync!=null) {
-							
-							cloudSync.syncOrderInfoForLog(paidOrder.getId(), 
-										App.instance.getRevenueCenter().getId(), 
+
+							cloudSync.syncOrderInfoForLog(paidOrder.getId(),
+										App.instance.getRevenueCenter().getId(),
 										App.instance.getBusinessDate(), 1);
 						}
 					}
@@ -751,7 +764,7 @@ public class MainPageKiosk extends BaseActivity {
 										+ App.instance.getUser().getLastName(),
 								currentTable.getName(), orderBill, App.instance.getBusinessDate().toString());
 				ArrayList<OrderDetail> orderSplitDetails = (ArrayList<OrderDetail>) OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(paidOrderSplit);
-				
+
 
 				ArrayList<PrintOrderItem> orderItems = ObjectFactory
 						.getInstance().getItemList(orderSplitDetails);
@@ -816,19 +829,19 @@ public class MainPageKiosk extends BaseActivity {
 				 * 给后台发送log 信息
 				 */
 				new Thread(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 						if (cloudSync!=null) {
-							
-							cloudSync.syncOrderInfoForLog(currentOrder.getId(), 
-										App.instance.getRevenueCenter().getId(), 
+
+							cloudSync.syncOrderInfoForLog(currentOrder.getId(),
+										App.instance.getRevenueCenter().getId(),
 										App.instance.getBusinessDate(), 1);
 						}
 					}
 				}).start();
-				
+
 			}
 				break;
 			case VIEW_EVENT_SHOW_DISCOUNT_WINDOW: {
@@ -874,7 +887,7 @@ public class MainPageKiosk extends BaseActivity {
 				if (currentTable != null) {
 					if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
 						new Thread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								KotSummary kotSummary = KotSummarySQL.getKotSummaryByTable(currentTable.getPosId().intValue());
@@ -920,9 +933,9 @@ public class MainPageKiosk extends BaseActivity {
 						DialogFactory.commonTwoBtnDialog(
 								context,
 								context.getResources().getString(R.string.table_transfer),
-								context.getResources().getString(R.string.transfer_) + 
+								context.getResources().getString(R.string.transfer_) +
 									oldTable.getName() +
-								context.getResources().getString(R.string.to) + 
+								context.getResources().getString(R.string.to) +
 									newTable.getName() + "?",
 								context.getResources().getString(R.string.no),
 								context.getResources().getString(R.string.yes), null, new OnClickListener() {
@@ -1058,7 +1071,7 @@ public class MainPageKiosk extends BaseActivity {
 				TableInfo tables = (TableInfo) msg.obj;
 				if (tables.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
 					return;
-				}				
+				}
 				handler.sendMessage(handler
 						.obtainMessage(MainPageKiosk.VIEW_EVENT_DISMISS_TABLES));
 				App.instance.removeGettingBillNotification(currentTable);
@@ -1090,7 +1103,7 @@ public class MainPageKiosk extends BaseActivity {
 							closeOrderSplitWindow.openMoneyKeyboard(View.GONE,
 									ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD);
 						}
-						
+
 					}
 				} else if (result.get("MsgObject").equals(
 						HANDLER_MSG_OBJECT_VOID)) {
@@ -1147,7 +1160,7 @@ public class MainPageKiosk extends BaseActivity {
 												.getId());
 								kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
 								KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-										.getOrderId()); 
+										.getOrderId());
 								KotItemDetailSQL.update(kotItemDetail);
 								ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 								kotItemDetails.add(kotItemDetail);
@@ -1164,7 +1177,7 @@ public class MainPageKiosk extends BaseActivity {
 									KotItemDetailSQL.update(freeKotItemDetail);
 									kotItemDetails.add(freeKotItemDetail);
 								}
-								
+
 								//Bob: fix issue: kot print no modifier showup
 								// look for kot modifiers
 								Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
@@ -1183,7 +1196,7 @@ public class MainPageKiosk extends BaseActivity {
 									}
 								}
 								//end fix
-								
+
 								Map<String, Object> orderMap = new HashMap<String, Object>();
 								ArrayList<Integer> orderDetailIds = new ArrayList<Integer>();
 								orderDetailIds.add(orderDetail.getId());
@@ -1316,7 +1329,7 @@ public class MainPageKiosk extends BaseActivity {
 					orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 					if(orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())){
 						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.take_away), ""));
-					} 
+					}
 				}
 				OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
 				OrderDetailSQL.updateOrderDetail(orderDetail);
@@ -1330,7 +1343,7 @@ public class MainPageKiosk extends BaseActivity {
 					kotItemDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
 					kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
 					KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-							.getOrderId()); 
+							.getOrderId());
 					KotItemDetailSQL.update(kotItemDetail);
 					ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 					kotItemDetails.add(kotItemDetail);
@@ -1345,7 +1358,7 @@ public class MainPageKiosk extends BaseActivity {
 							kotCommitStatus, orderMap);
 				}
 			}
-				break;	
+				break;
 			case VIEW_EVENT_SET_WEIGHT:{
 				OrderDetail orderDetail = (OrderDetail) msg.obj;
 				setWeightWindow.show(orderDetail);
@@ -1397,7 +1410,7 @@ public class MainPageKiosk extends BaseActivity {
 	public void finish() {
 		SessionStatus sessionStatus = Store.getObject(context,
 				Store.SESSION_STATUS, SessionStatus.class);
-//		List<Order> unPlayOrders = 
+//		List<Order> unPlayOrders =
 //		Order order = OrderSQL.getOrderByUnPlay(sessionStatus);
 
 //		if (order != null) {
@@ -1553,6 +1566,7 @@ public class MainPageKiosk extends BaseActivity {
 		printerLoadingDialog.dismiss();
 	}
 
+
 	private void mergerOrderSetData() {
 		// initOrder(currentTable);
 		orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
@@ -1675,10 +1689,10 @@ public class MainPageKiosk extends BaseActivity {
 			break;
 		}
 	};
-	
+
 	private void initAppOrder(final TableInfo tables) {
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				OrderSQL.deleteOrder(currentOrder);
@@ -1713,15 +1727,15 @@ public class MainPageKiosk extends BaseActivity {
 			}
 		}).start();
 	}
-	
+
 	private void TempOrderISPaied(){
 		Payment payment = ObjectFactory.getInstance().getPayment(currentOrder, ObjectFactory.getInstance().getOrderBill(currentOrder, App.instance.getRevenueCenter()));
 		ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_THIRDPARTY, currentOrder.getTotal());
 		currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
 		OrderSQL.update(currentOrder);
-		
+
 		HashMap<String, String> map = new HashMap<String, String>();
-		
+
 		map.put("orderId", String.valueOf(currentOrder.getId()));
 		map.put("paymentId", String.valueOf(payment.getId().intValue()));
 		handler.sendMessage(handler.obtainMessage(VIEW_EVENT_CLOSE_BILL,map));

@@ -84,7 +84,7 @@ public class SyncMsgJob extends Job {
 
     	}catch(Throwable e) {
     		LogUtil.d(TAG, "Cloud MSG SYNC:" + e.getMessage());
-    		throw new RuntimeException("Cloud MSG SYNC failed");
+    		throw new RuntimeException("Cloud MSG SYNC failed"+e.getMessage());
     	}
     }
 

@@ -35,8 +35,10 @@
     <string name="nets">NETS</string>
     <string name="alipay">支付宝</string>
     <string name="weixin">微信支付</string>
-    <string name="paypal">贝宝支付</string>
+    <string name="paypal">客户端支付</string>
+    <string name="stored_card_use">储值卡消费</string>
     <string name="stored_card">储值卡</string>
+    <string name="stored_card_charge">储值卡充值</string>
     <string name="card_no">卡号</string>
     <string name="check_closed"> 账单结算 </string>
     <string name="see_you">谢谢光临，欢迎惠顾!</string>
@@ -49,6 +51,7 @@
     <string name="qty_">数量</string>
     <string name="amount">合计</string>
     <string name="item_sales">销售毛额</string>
+    <string name="stored_card_sales">储值卡销售</string>
     <string name="ent_items">免费菜</string>
     <string name="ent_bills">免费单</string>
     <string name="void_items">退菜</string>

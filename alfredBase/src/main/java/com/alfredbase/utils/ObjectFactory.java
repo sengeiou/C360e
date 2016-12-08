@@ -56,6 +56,7 @@ import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.NonChargableSettlementSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
@@ -1499,17 +1500,24 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		CashInOutSQL.update(cashInOut);
 		return cashInOut;
 	}
-
+	Object lock_LocalDevice = new Object();
 	public LocalDevice getLocalDevice(String name, String model, int type, int deviceId,
 			String ip, String mac) {
-		LocalDevice localDevice = new LocalDevice();
-		localDevice.setDeviceName(name);
-		localDevice.setDeviceMode(model);
-		localDevice.setConnected(1);
-		localDevice.setDeviceType(type);
-		localDevice.setDeviceId(deviceId);
-		localDevice.setIp(ip);
-		localDevice.setMacAddress(mac);
+		LocalDevice localDevice = null;
+		synchronized (lock_LocalDevice) {
+			localDevice = LocalDeviceSQL.getLocalDeviceByDeviceId(deviceId);
+			if (localDevice == null) {
+				localDevice = new LocalDevice();
+				localDevice.setId(CommonSQL.getNextSeq(TableNames.LocalDevice));
+			}
+			localDevice.setDeviceName(name);
+			localDevice.setDeviceMode(model);
+			localDevice.setConnected(1);
+			localDevice.setDeviceType(type);
+			localDevice.setDeviceId(deviceId);
+			localDevice.setIp(ip);
+			localDevice.setMacAddress(mac);
+		}
 		return localDevice;
 	}
 

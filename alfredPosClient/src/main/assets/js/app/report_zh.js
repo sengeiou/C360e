@@ -314,13 +314,15 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="col-md-4">$'+((getJson.itemSales==''||getJson.itemSales=='0')?'0.00':getJson.itemSales)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">税收总额</div>';
-        liList+='<div class="col-md-2"></div>';
-        liList+='<div class="col-md-4">$'+((getJson.totalTax==''||getJson.totalTax=='0')?'0.00':getJson.totalTax)+'</div>';
+        liList+='<div class="col-md-6">储值卡销售</div>';
+        liList+='<div class="col-md-2">'+(getJson.topUpsQty==''?'0':getJson.topUpsQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.topUps==''||getJson.topUps=='0')?'0.00':getJson.topUps)+'</div>';
         liList+='</div>';
-        liList+='</li>';      
+        liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">免单</div>';
@@ -328,13 +330,15 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="col-md-4">$'+((getJson.focBill==''||getJson.focBill=='0')?'0.00':getJson.focBill)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">免费菜</div>';
         liList+='<div class="col-md-2">'+(getJson.focItemQty==''?'0':getJson.focItemQty)+'</div>';
         liList+='<div class="col-md-4">$'+((getJson.focItem==''||getJson.focItem=='0')?'0.00':getJson.focItem)+'</div>';
         liList+='</div>';
-        liList+='</li>';          
+        liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">退单</div>';
@@ -342,6 +346,7 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="col-md-4">$'+((getJson.billVoid==''||getJson.billVoid=='0')?'0.00':getJson.billVoid)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">退菜</div>';
@@ -349,6 +354,39 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="col-md-4">$'+((getJson.itemVoid==''||getJson.itemVoid=='0')?'0.00':getJson.itemVoid)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">百分比折扣</div>';
+        liList+='<div class="col-md-2">'+(getJson.discountPerQty==''?'0':getJson.discountPerQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.discountPer==''||getJson.discountPer=='0')?'0.00':getJson.discountPer)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">现金折扣</div>';
+        liList+='<div class="col-md-2">'+(getJson.discountQty==''?'0':getJson.discountQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.discount==''||getJson.discount=='0')?'0.00':getJson.discount)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">非包含税收总额</div>';
+        liList+='<div class="col-md-2"></div>';
+        liList+='<div class="col-md-4">$'+((getJson.totalTax==''||getJson.totalTax=='0')?'0.00':getJson.totalTax)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">包含税收总额</div>';
+        liList+='<div class="col-md-2"></div>';
+        liList+='<div class="col-md-4">$'+((getJson.inclusiveTaxAmt==''||getJson.inclusiveTaxAmt=='0')?'0.00':getJson.inclusiveTaxAmt)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
         liList+='<div class="col-md-6">总销售</div>';
@@ -414,6 +452,30 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="col-md-6">现金</div>';
         liList+='<div class="col-md-2">'+(getJson.cashQty==''?'0':getJson.cashQty)+'</div>';
         liList+='<div class="col-md-4">$'+((getJson.cash==''||getJson.cash=='0')?'0.00':getJson.cash)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Diner App</div>';
+        liList+='<div class="col-md-2">'+(getJson.paypalpayQty==''?'0':getJson.paypalpayQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.paypalpay==''||getJson.paypalpay=='0')?'0.00':getJson.paypalpay)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">储值卡消费</div>';
+        liList+='<div class="col-md-2">'+(getJson.storedCardQty==''?'0':getJson.storedCardQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.storedCard==''||getJson.storedCard=='0')?'0.00':getJson.storedCard)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">储值卡充值</div>';
+        liList+='<div class="col-md-2">'+(getJson.topUpsQty==''?'0':getJson.topUpsQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.topUps==''||getJson.topUps=='0')?'0.00':getJson.topUps)+'</div>';
         liList+='</div>';
         liList+='</li>';
 

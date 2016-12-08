@@ -805,7 +805,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							}
 							if (!TextUtils.isEmpty(paymentType)) {
 								stmt.put(paymentType,
-										printReceiptInfo.getPaidAmount());
+										BH.getBD(printReceiptInfo.getPaidAmount()).toString());
 							}
 							if (!TextUtils
 									.isEmpty(printReceiptInfo.getCardNo())) {

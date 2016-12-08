@@ -31,6 +31,7 @@ public class KOTPrint extends PrintJob{
     }
     
 	public void AddTitle(String revenueCenter, String tableName) {
+		addFeed();
 		StringBuilder sbr = new StringBuilder();
 		sbr.append(revenueCenter)
 				.append(reNext)
@@ -48,7 +49,6 @@ public class KOTPrint extends PrintJob{
 	}
 
 	public void AddHeader(int isTakeAway, String orderId) {
-		addFeed();
 		StringBuilder sbr = new StringBuilder();
 		if (isTakeAway==1) {
 			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))

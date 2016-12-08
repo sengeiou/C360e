@@ -1525,6 +1525,7 @@ public class OrderDetailSQL {
 				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
 			}
 		}
+		KotItemDetailSQL.deleteKotItemDetail(orderDetail);
 	}
 
 	public static void setOrderDetailToVoidOrFree(OrderDetail orderDetail,

@@ -520,6 +520,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		App.instance.showWelcomeToSecondScreen();
 		if (mDrawerLayout.isDrawerOpen(mSettingView)) {
 			mDrawerLayout.closeDrawer(Gravity.END);
 		}

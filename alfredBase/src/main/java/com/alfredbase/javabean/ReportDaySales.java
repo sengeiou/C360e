@@ -137,6 +137,9 @@ public class ReportDaySales implements Serializable{
 
 	private String storedCard;
 	private Integer storedCardQty;
+
+	private String topUps;
+	private Integer topUpsQty;
 	
 	public ReportDaySales() {
 
@@ -723,6 +726,22 @@ public class ReportDaySales implements Serializable{
 		this.storedCardQty = storedCardQty;
 	}
 
+	public String getTopUps() {
+		return topUps;
+	}
+
+	public void setTopUps(String topUps) {
+		this.topUps = topUps;
+	}
+
+	public Integer getTopUpsQty() {
+		return topUpsQty;
+	}
+
+	public void setTopUpsQty(Integer topUpsQty) {
+		this.topUpsQty = topUpsQty;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -793,6 +812,8 @@ public class ReportDaySales implements Serializable{
 				", paypalpayQty=" + paypalpayQty +
 				", storedCard='" + storedCard + '\'' +
 				", storedCardQty=" + storedCardQty +
+				", topUps='" + topUps + '\'' +
+				", topUpsQty=" + topUpsQty +
 				'}';
 	}
 }

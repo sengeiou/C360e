@@ -22,7 +22,7 @@ public class WifiCommunication {
 	private Socket socket;
 	private BluetoothSocket mSocket;
 //	private SerialPort mSerialPort;
-	private String localIPAddress = "127.0.0.1";
+	public static final String localIPAddress = "127.0.0.1";
 	private OutputStream out;
 //	private DataOutputStream dos;
 	private InputStream in;
