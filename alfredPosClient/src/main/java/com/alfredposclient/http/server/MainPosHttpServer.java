@@ -1213,47 +1213,51 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				result.put("resultCode", ResultCode.SUCCESS);
 				result.put("resultKotItemDetails", resultKotItemDetails);
 				result.put("kotSummaryId", kotSummary.getId());
-				if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-					SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getOrderNo().toString());
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
+							SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getOrderNo().toString());
 
-				}
-				int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId());
-				if(count == 0){
-					KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE, kotSummary.getId());
-				}
-				resp = this.getJsonResponse(new Gson().toJson(result));
-				
-				/* no waiter in kiosk mode*/
-				if (!App.instance.isRevenueKiosk())
-					App.getTopActivity().runOnUiThread(new Runnable() {
-	
-						@Override
-						public void run() {
-							SyncCentre.getInstance()
-									.notifyWaiterToGetNotifications(
-											App.getTopActivity(),
-											KotNotificationSQL
-													.getAllKotNotificationQty());
 						}
-					});
-//				App.instance.c
-				if(count == 0){
-					Order order = OrderSQL.getOrder(kotSummary.getOrderId().intValue());
-					if(order != null && !IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
-						AppOrder appOrder = AppOrderSQL.getAppOrderById(order.getAppOrderId().intValue());
-						appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_KOTFINISH);
-						AppOrderSQL.updateAppOrder(appOrder);
-						App.instance.getSyncJob().checkAppOrderStatus(
-								App.instance.getRevenueCenter().getId().intValue(),
-								appOrder.getId().intValue(),
-								appOrder.getOrderStatus().intValue(), "",
-								App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
-						if(App.getTopActivity() instanceof NetWorkOrderActivity){
-							App.getTopActivity().httpRequestAction(Activity.RESULT_OK, "");
+						int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId());
+						if(count == 0){
+							KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE, kotSummary.getId());
+						}
+
+							/* no waiter in kiosk mode*/
+						if (!App.instance.isRevenueKiosk())
+							App.getTopActivity().runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									SyncCentre.getInstance()
+											.notifyWaiterToGetNotifications(
+													App.getTopActivity(),
+													KotNotificationSQL
+															.getAllKotNotificationQty());
+								}
+							});
+						if(count == 0){
+							Order order = OrderSQL.getOrder(kotSummary.getOrderId().intValue());
+							if(order != null && !IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
+								AppOrder appOrder = AppOrderSQL.getAppOrderById(order.getAppOrderId().intValue());
+								appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_KOTFINISH);
+								AppOrderSQL.updateAppOrder(appOrder);
+								App.instance.getSyncJob().checkAppOrderStatus(
+										App.instance.getRevenueCenter().getId().intValue(),
+										appOrder.getId().intValue(),
+										appOrder.getOrderStatus().intValue(), "",
+										App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+								if(App.getTopActivity() instanceof NetWorkOrderActivity){
+									App.getTopActivity().httpRequestAction(Activity.RESULT_OK, "");
+								}
+							}
+
 						}
 					}
-
-				}
+				}).start();
+				resp = this.getJsonResponse(new Gson().toJson(result));
 			} else {
 				result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);
 				resp = this.getJsonResponse(new Gson().toJson(result));
@@ -1373,6 +1377,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		Map<String, Object> result = new HashMap<String, Object>();
 		Response resp;
 		Gson gson = new Gson();
+		LogUtil.e(TAG, "cancelComplete1");
 		try {
 			JSONObject jsonObject = new JSONObject(params);
 			KotSummary kotSummary = gson.fromJson(
@@ -1385,6 +1390,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
 				return resp;
 			}
+			LogUtil.e(TAG, "cancelComplete2");
 			KotItemDetail kItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
 			if (kItemDetail == null) {
 //				resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
@@ -1400,8 +1406,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					+ kotItemDetail.getFinishQty().intValue());
 			localMainKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
 			newKotItemDetails.add(localMainKotItemDetail);
-			
-			
+
+			LogUtil.e(TAG, "cancelComplete3");
 			List<KotItemDetail> localSubKotItemDetails = KotItemDetailSQL
 					.getOtherSubKotItemDetailsByOrderDetailId(kotItemDetail);
 			for (KotItemDetail localSubKotItemDetail : localSubKotItemDetails) {
@@ -1413,7 +1419,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			if (localMainKotItemDetail.getUnFinishQty().intValue() == localMainKotItemDetail.getItemNum().intValue()) {
 				OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD, kotItemDetail.getOrderDetailId());
 			}
-			
+			LogUtil.e(TAG, "cancelComplete4");
 			KotItemDetailSQL.deleteKotItemDetail(kotItemDetail);
 			KotItemDetailSQL.addKotItemDetailList(newKotItemDetails);
 			KotNotificationSQL.deleteAllKotNotificationsByKotItemDetail(kotItemDetail);
@@ -1421,6 +1427,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					MainPage.VIEW_EVENT_SET_DATA, kotSummary.getOrderId());
 			result.put("resultCode", ResultCode.SUCCESS);
 			result.put("newKotItemDetails", newKotItemDetails);
+			LogUtil.e(TAG, "cancelComplete5");
 			resp = this.getJsonResponse(new Gson().toJson(result));
 			App.getTopActivity().runOnUiThread(new Runnable() {
 
@@ -1431,11 +1438,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							KotNotificationSQL.getAllKotNotificationQty());
 				}
 			});
+			LogUtil.e(TAG, "cancelComplete6");
 		} catch (Exception e) {
 			e.printStackTrace();
 			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
 		}
-
+		LogUtil.e(TAG, "cancelComplete7");
 		return resp;
 	}
 

@@ -10,6 +10,7 @@ import java.net.SocketTimeoutException;
 /**
  * 
  * @author 冯小卫 2014-5-15
+ * @author Alex 2014-10-12
  * 
  */
 public class ResultCode {
@@ -93,6 +94,25 @@ public class ResultCode {
 	 * 同步的数据已经存在
 	 */
 	public static final int RECEIVE_MSG_EXIST = -2009;
+
+	/**
+	 * 用户储值卡没有绑定该餐厅
+	 */
+	public static final int CARD_BALANCE_NOT_BIDING = -2010;
+
+	/**
+	 * 该会员卡绑定了手机.请使用手机支付
+	 */
+	public static final int QRCODE_TOBIND_PHONE_USE_PHONE_PAY = -2011;
+
+
+	/**
+	 * 余额不足
+	 */
+	public static final int CARD_BALANCE_NOT_ENOUGH = -2012;
+
+
+
 	/**
 	 *	no  permission	  用户权限不足
 	 */
@@ -130,15 +150,23 @@ public class ResultCode {
 	public static final int CUSTOMER_QRCODE_INVALIDATE = -4006;
 
 	/**
-	 * 该会员卡绑定了手机.请使用手机支付
+	 *查询卡余额失败
 	 */
-	public static final int QRCODE_TOBIND_PHONE_USE_PHONE_PAY = -2011;
-
-
+	public static final int CARD_QUERY_FAIL = -4007;
 	/**
-	 * 余额不足
+	 *	卡过期
 	 */
-	public static final int CARD_BALANCE_NOT_ENOUGH = -2012;
+	public static final int CARD_PAST_DUE = -4008;
+	/**
+	 *	餐厅不能使用储值卡
+	 */
+	public static final int RESTAURANT_CANNOT_USE_CARD = -4012;
+	/**
+	 *	企业不能使用储值卡
+	 */
+	public static final int COMPANY_CANNOT_USE_CARD = -4013;
+
+
 	
 	/**
 	 * 用于POS作为服务器的时候，session还没有打开的错误提醒
@@ -203,6 +231,12 @@ public class ResultCode {
 			return context.getResources().getString(R.string.qrcode_expire);
 		case CARD_BALANCE_NOT_ENOUGH:
 			return "The stored card balance is not enough";
+		case CARD_PAST_DUE:
+			return "The stored card has past due";
+		case RESTAURANT_CANNOT_USE_CARD:
+			return "Your restaurant can not use stored card";
+		case COMPANY_CANNOT_USE_CARD :
+			return "You can not use stored card";
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);
