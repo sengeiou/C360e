@@ -98,6 +98,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.NetWorkOrderActivity;
@@ -110,6 +111,7 @@ import com.alfredposclient.jobs.KotJobManager;
 import com.alfredposclient.service.RabbitMqPushService;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
+import com.alfredposclient.view.ReloginDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -126,6 +128,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import sunmi.ds.DSKernel;
 import sunmi.ds.callback.IConnectionCallback;
 import sunmi.ds.callback.ISendCallback;
@@ -269,7 +274,7 @@ public class App extends BaseApplication {
 //    };
     private IntentFilter intentFilter;
 
-
+    private Observable<Object> observable;
 
     @Override
     public void onCreate() {
@@ -335,6 +340,22 @@ public class App extends BaseApplication {
 //                }
 //            });
         }
+        observable = RxBus.getInstance().register("showRelogin");
+        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object object) {
+                ReloginDialog reloginDialog = new ReloginDialog(getTopActivity());
+                reloginDialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void onTerminate() {
+        if(observable != null){
+            RxBus.getInstance().unregister("showRelogin", observable);
+        }
+        super.onTerminate();
     }
 
     // for APP data migration

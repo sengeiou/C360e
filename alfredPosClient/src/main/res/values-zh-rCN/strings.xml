@@ -23,6 +23,7 @@
     <string name="cashier_login_tips1">\n收银员员工ID</string>
     <string name="cashier_login_tips2">\n收银员员工密码</string>
     <string name="login">登录</string>
+    <string name="logout">退出</string>
     <string name="sync_tips">该设备还没有从云端初始化餐厅数据. \n 请提供以下账户信息后同步数据</string>
 	<string name="category_select">选择</string>
 	<string name="enter_employee_id">输入员工 ID</string>

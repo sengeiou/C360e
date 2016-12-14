@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -66,7 +67,6 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		BaseApplication.activitys.remove(this);
 	}
 
 	@Override
@@ -113,6 +113,14 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 
 	}
 	public void kotPrintStatus(int action, Object obj) {}
+
+
+
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		BaseApplication.instance.startAD();
+		return super.dispatchTouchEvent(ev);
+	}
 
 	/**
 	 * 特殊的dialog 屏蔽返回按钮

@@ -87,6 +87,9 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 		initTextTypeFace();
 	}
 
+	public void refreshUserName(){
+		tv_manage.setText(App.instance.getUser().getFirstName());
+	}
 	private void initTextTypeFace() {
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_name));

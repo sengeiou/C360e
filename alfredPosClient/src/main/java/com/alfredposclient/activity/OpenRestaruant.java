@@ -147,7 +147,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private PrinterLoadingDialog zPrinterLoadingDialog;
 	private boolean doubleBackToExitPressedOnce = false;
 	private int size;
-	private Observable<Object> observable;
+	private Observable<Integer> observable;
 	
 //	private RelativeLayout rl_view_bg1;
 //	private ImageView iv_view_icon1;
@@ -403,13 +403,21 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		// 系统初始化工作
 		App.instance.startHttpServer();
 		observable = RxBus.getInstance().register("showStoredCard");
-		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
 			@Override
-			public void call(Object object) {
-				if(App.getTopActivity() instanceof OpenRestaruant && Store.getObject(
-						context, Store.SESSION_STATUS, SessionStatus.class) != null) {
-					UIHelp.startSoredCardActivity(context);
-				}
+			public void call(Integer object) {
+				if(object != null){
+					if(object.intValue() == 1){
+						((TextView) findViewById(R.id.tv_userName)).setText(App.instance
+								.getUser().getFirstName()
+								+ "."
+								+ App.instance.getUser().getLastName());
+					}
+				}else
+					if(App.getTopActivity() instanceof OpenRestaruant && Store.getObject(
+							context, Store.SESSION_STATUS, SessionStatus.class) != null) {
+						UIHelp.startSoredCardActivity(context);
+					}
 			}
 		});
 	}

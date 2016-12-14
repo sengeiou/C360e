@@ -257,7 +257,7 @@ public class MainPage extends BaseActivity {
 //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
 	private TableLayoutFragment f_tables;
-    private Observable<Object> observable;
+    private Observable<Integer> observable;
 	private void initDrawerLayout() {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setScrimColor(Color.TRANSPARENT);//关闭阴影
@@ -380,11 +380,16 @@ public class MainPage extends BaseActivity {
 		filter.addAction(Intent.ACTION_TIME_TICK);
 		registerReceiver(receiver, filter);
         observable = RxBus.getInstance().register("showStoredCard");
-        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
-            public void call(Object object) {
+            public void call(Integer object) {
 //                showStoredCard();
-				UIHelp.startSoredCardActivity(context);
+				if(object != null){
+					if(object.intValue() == 1)
+						topMenuView.refreshUserName();
+				}else {
+					UIHelp.startSoredCardActivity(context);
+				}
             }
         });
 		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());

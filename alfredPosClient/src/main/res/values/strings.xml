@@ -23,6 +23,7 @@
     <string name="cashier_login_tips1">Enter Cashier Employee ID</string>
     <string name="cashier_login_tips2">Enter Cashier Password</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="sync_tips">This device is not yet initialized with your restaurant data at Alfred\ncloud.Please provide the following account information to sync\nwith Alfred cloud</string>
 	<string name="category_select">select</string>
 	<string name="enter_employee_id">Enter Employee ID</string>

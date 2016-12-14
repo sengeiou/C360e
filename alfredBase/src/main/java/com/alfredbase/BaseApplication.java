@@ -12,6 +12,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 
+import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.RxBus;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -35,8 +37,11 @@ public class BaseApplication extends Application {
 	 */
 
 	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = false;	//	release 时设置为false
+	public static boolean isOpenLog = true;	//	release 时设置为false
 
+
+
+	private Handler reLoginHandler = new Handler();
 	/**
 	 * 国家电话代码
 	 * 用于区别不通过的代码逻辑
@@ -91,7 +96,27 @@ public class BaseApplication extends Application {
 	    	MobclickAgent.setCatchUncaughtExceptions(!isOpenLog);
 	    
 	}
-	
+
+	private Runnable runnable = new Runnable() {
+		@Override
+		public void run() {
+			LogUtil.d("BaseActivity", "show");
+			RxBus.getInstance().post("showRelogin", null);
+		}
+	};
+	public void startAD() {
+		LogUtil.d("BaseActivity", "Remove");
+		reLoginHandler.removeCallbacks(runnable);
+		LogUtil.d("BaseActivity", "Start");
+		reLoginHandler.postDelayed(runnable, 1*30*1000);
+	}
+
+	@Override
+	public void onTerminate() {
+		reLoginHandler.removeCallbacks(runnable);
+		super.onTerminate();
+	}
+
 	public String getAppVersionName() {
   		PackageInfo info;
 		String version = "";

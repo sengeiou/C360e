@@ -238,7 +238,7 @@ public class MainPageKiosk extends BaseActivity {
 	private FragmentManager fragmentManager;
 	private FragmentTransaction transaction;
 //	private StoredCardActivity f_stored_card;
-	private Observable<Object> observable;
+	private Observable<Integer> observable;
 	private void initDrawerLayout() {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setScrimColor(Color.TRANSPARENT);//关闭阴影
@@ -302,10 +302,14 @@ public class MainPageKiosk extends BaseActivity {
 		currentTable = TableInfoSQL.getKioskTable();
 		setData();
 		observable = RxBus.getInstance().register("showStoredCard");
-		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
 			@Override
-			public void call(Object object) {
+			public void call(Integer object) {
 //				showStoredCard();
+				if(object != null){
+					if(object.intValue() == 1)
+						topMenuView.refreshUserName();
+				}
 				UIHelp.startSoredCardActivity(context);
 			}
 		});

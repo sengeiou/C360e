@@ -5,19 +5,15 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.javabean.User;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
@@ -84,6 +80,10 @@ public class TopMenuView extends LinearLayout implements OnClickListener {
 		ll_net_order.setOnClickListener(this);
 		findViewById(R.id.tv_search).setOnClickListener(this);
 		initTextTypeFace();
+	}
+
+	public void refreshUserName(){
+		tv_manage.setText(App.instance.getUser().getFirstName());
 	}
 
 	private void initTextTypeFace() {
