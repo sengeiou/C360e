@@ -111,6 +111,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.rl_order_summary).setVisibility(View.GONE);
+			findViewById(R.id.view_order_summary_print).setVisibility(View.GONE);
 		}
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
 		

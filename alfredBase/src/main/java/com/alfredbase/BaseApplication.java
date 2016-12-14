@@ -37,7 +37,7 @@ public class BaseApplication extends Application {
 	 */
 
 	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = true;	//	release 时设置为false
+	public static boolean isOpenLog = false;	//	release 时设置为false
 
 
 
@@ -108,7 +108,7 @@ public class BaseApplication extends Application {
 		LogUtil.d("BaseActivity", "Remove");
 		reLoginHandler.removeCallbacks(runnable);
 		LogUtil.d("BaseActivity", "Start");
-		reLoginHandler.postDelayed(runnable, 1*30*1000);
+		reLoginHandler.postDelayed(runnable, 5*60*1000);
 	}
 
 	@Override

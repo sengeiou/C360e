@@ -248,6 +248,7 @@
                                     android:layout_marginRight="10dp" />
                             </RelativeLayout>
                             <View
+                                android:id="@+id/view_order_summary_print"
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/black" />
