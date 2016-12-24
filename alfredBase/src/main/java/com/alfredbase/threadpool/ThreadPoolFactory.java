@@ -1,5 +1,7 @@
 package com.alfredbase.threadpool;
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -29,7 +31,7 @@ public class ThreadPoolFactory {
 	 * @param config
 	 * @return
 	 */
-	public static ThreadPoolFactory getInstance(ThreadPoolConfig config) {
+	public static ThreadPoolFactory getInstance(@NonNull ThreadPoolConfig config) {
 		if (factory == null) {
 			factory = new ThreadPoolFactory();
 		}

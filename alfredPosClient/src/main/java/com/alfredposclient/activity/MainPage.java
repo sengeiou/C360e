@@ -849,6 +849,7 @@ public class MainPage extends BaseActivity {
 				removeNotificationTables();
 				topMenuView.setGetBillNum(App.instance
 						.getGetTingBillNotifications().size());
+//				final Order sendOrder = currentOrder;
 				/**
 				 * 给后台发送log 信息
 				 */
@@ -862,11 +863,11 @@ public class MainPage extends BaseActivity {
 							cloudSync.syncOrderInfoForLog(paidOrder.getId(), 
 										App.instance.getRevenueCenter().getId(), 
 										App.instance.getBusinessDate(), 1);
-							if(currentOrder.getAppOrderId() != null && currentOrder.getAppOrderId().intValue() != 0) {
-								AppOrder appOrder = AppOrderSQL.getAppOrderById(currentOrder.getAppOrderId().intValue());
+							if(paidOrder.getAppOrderId() != null && paidOrder.getAppOrderId().intValue() != 0) {
+								AppOrder appOrder = AppOrderSQL.getAppOrderById(paidOrder.getAppOrderId().intValue());
 								appOrder
 										.setOrderStatus(ParamConst.APP_ORDER_STATUS_FINISH);
-								appOrder.setOrderNo(currentOrder.getOrderNo());
+								appOrder.setOrderNo(paidOrder.getOrderNo());
 								AppOrderSQL.updateAppOrder(appOrder);
 								runOnUiThread(new Runnable() {
 									@Override

@@ -1,9 +1,5 @@
 package com.alfredkds.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.os.Handler;
 import android.widget.TextView;
 
@@ -21,6 +17,10 @@ import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 //	public static final int GET_PRINTER_OK = 1;
@@ -80,7 +80,7 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 				ArrayList<Printer> printers = (ArrayList<Printer>) msg.obj;
 				ArrayList<Printer> printerList = new ArrayList<Printer>();
 				for (Printer printer:printers) {//为cashier时不显示
-					if (!printer.getPrinterName().trim().equals("cashier")) {
+					if (!(printer.getIsCashdrawer().intValue() == 1)) {
 						printerList.add(printer);
 					}
 				}

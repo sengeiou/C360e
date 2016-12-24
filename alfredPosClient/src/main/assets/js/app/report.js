@@ -625,6 +625,7 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='<div class="row">';
         liList+='<div class="col-md-6">Total Tax</div>';
         liList+='<div class="col-md-2"></div>';
+        var taxTtl = totalTax + inclusiveTaxAmt;
         liList+='<div class="col-md-4">$'+taxTtl+'</div>';
         liList+='</div>';
         liList+='</li>';                

@@ -1,8 +1,5 @@
 package com.alfredbase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Handler;
@@ -15,6 +12,9 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.ToastUtils;
 import com.alfredbase.view.NumerickeyboardOne;
 import com.alfredbase.view.NumerickeyboardOne.KeyBoardClickListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 
@@ -103,10 +103,41 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 			if (state == STATE_IN_ENTER_ID) {
 				((TextView) (findViewById(R.id.tv_title)))
 						.setText(context.getResources().getString(R.string.password_));
-				state = STATE_IN_ENTER_PASSWORD; 
+//				state = STATE_IN_ENTER_PASSWORD;
 				employee_ID = keyBuf.toString();
 				keyBuf.delete(0, key_len);
 				setPassword(keyBuf.length());
+				int id = Integer.parseInt(employee_ID);
+				User user = CoreData.getInstance().getUserByEmpId(id);
+				Map<String, Object> resultObject = new HashMap<String, Object>();
+				resultObject.put("MsgObject", msgObject);
+				resultObject.put("Object", obj);
+
+				if (user == null) {
+					ToastUtils.showToast((BaseActivity)context, context.getResources().getString(R.string.name_pwd_error));
+					((TextView) (findViewById(R.id.tv_title)))
+							.setText(context.getResources().getString(R.string.manager_id));
+					state = STATE_IN_ENTER_ID;
+					employee_ID = null;
+					password = null;
+				}else {
+					if (user.getType() != ParamConst.USER_TYPE_MANAGER) {
+						ToastUtils.showToast((BaseActivity)context, context.getResources().getString(R.string.permission_insuff));
+						((TextView) (findViewById(R.id.tv_title))).setText(context.getResources().getString(R.string.manager_id));
+						state = STATE_IN_ENTER_ID;
+						employee_ID = null;
+						password = null;
+					} else {
+						((TextView) (findViewById(R.id.tv_title)))
+								.setText(context.getResources().getString(R.string.manager_id));
+						state = STATE_IN_ENTER_ID;
+						employee_ID = null;
+						password = null;
+						resultObject.put("User", user);
+						handler.sendMessage(handler.obtainMessage(DIALOG_RESPONSE, resultObject));
+						this.dismiss();
+					}
+				}
 			} else if (state == STATE_IN_ENTER_PASSWORD) {
 				password = keyBuf.toString();
 				User user = CoreData.getInstance().getUser(employee_ID,

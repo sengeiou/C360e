@@ -27,18 +27,22 @@ ext {
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
         classpath 'com.tencent.bugly:symtabfileuploader:latest.release'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
     }
-}println "In pos, gradle id is " +gradle.hashCode()
+}
+println "In pos, gradle id is " +gradle.hashCode()
 println "Home Dir:" + gradle.gradleHomeDir
 println "User Home Dir:" + gradle.gradleUserHomeDir
 println "Parent: " + gradle.parent

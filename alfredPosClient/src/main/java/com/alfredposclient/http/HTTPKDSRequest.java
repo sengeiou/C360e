@@ -34,7 +34,7 @@ public class HTTPKDSRequest {
 								super.onSuccess(statusCode, headers, responseBody);
 								if(resultCode==ResultCode.INVALID_DEVICE) {
 									// if kds device is invadate, POS need remove it.
-									App.instance.removeKDSDevice(kds.getDevice_id());
+//									App.instance.removeKDSDevice(kds.getDevice_id());
 								}
 							}
 							@Override

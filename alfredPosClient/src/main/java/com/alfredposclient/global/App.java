@@ -114,6 +114,11 @@ import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.moonearly.model.GoodsModel;
+import com.moonearly.model.OrderModel;
+import com.moonearly.utils.service.TcpSendCallBack;
+import com.moonearly.utils.service.TcpUdpFactory;
+import com.moonearly.utils.service.UdpSendCallBack;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
@@ -348,6 +353,19 @@ public class App extends BaseApplication {
                 reloginDialog.show();
             }
         });
+        TcpUdpFactory.startUdpServer(1);
+        TcpUdpFactory.getServiceIp(5, new UdpSendCallBack() {
+            @Override
+            public void call(boolean isSucceed) {
+
+            }
+        });
+//        TcpUdpFactory.tcpSend(5, "{}", new TcpSendCallBack() {
+//            @Override
+//            public void call(boolean isSucceed) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -355,6 +373,7 @@ public class App extends BaseApplication {
         if(observable != null){
             RxBus.getInstance().unregister("showRelogin", observable);
         }
+        TcpUdpFactory.stopUdpServer();
         super.onTerminate();
     }
 
@@ -377,48 +396,66 @@ public class App extends BaseApplication {
     }
 
     public void  showWelcomeToSecondScreen(){
+        if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
+            long id = Store.getLong(App.instance, Store.WELCOME_IMAGE_ID);
+            if(id != Store.DEFAULT_LONG_TYPE){
+                showImg(id);
+            }else{
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String path = Environment
+                                .getExternalStorageDirectory().getAbsolutePath() + "/welcome.png";
+                        File file = new File(path);
+                        if (!file.exists()) {
+    //                        UIHelp.showToast(getTopActivity(), "文件不存在");
+                            boolean isOK = copyApkFromAssets(instance, "sunmiImage/welcome.png", path);
+    //                        if(!isOK){
+    //                            UIHelp.showToast(getTopActivity(), "文件拷贝失败");
+    //                            return;
+    //                        }else{
+    //                            UIHelp.showToast(getTopActivity(), "文件拷贝成功" + (new File(path)).exists());
+    //                        }
+                        }
+                        sendImageToSecondScreen(path, new ISendCallback() {
+                            @Override
+                            public void onSendSuccess(long taskId) {
+                                Store.putLong(App.instance, Store.WELCOME_IMAGE_ID, taskId);
+                                showImg(taskId);
+                            }
 
-        long id = Store.getLong(App.instance, Store.WELCOME_IMAGE_ID);
-        if(id != Store.DEFAULT_LONG_TYPE){
-            showImg(id);
-        }else{
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String path = Environment
-                            .getExternalStorageDirectory().getAbsolutePath() + "/welcome.png";
-                    File file = new File(path);
-                    if (!file.exists()) {
-//                        UIHelp.showToast(getTopActivity(), "文件不存在");
-                        boolean isOK = copyApkFromAssets(instance, "sunmiImage/welcome.png", path);
-//                        if(!isOK){
-//                            UIHelp.showToast(getTopActivity(), "文件拷贝失败");
-//                            return;
-//                        }else{
-//                            UIHelp.showToast(getTopActivity(), "文件拷贝成功" + (new File(path)).exists());
-//                        }
+                            @Override
+                            public void onSendFail(int errorId, String errorInfo) {
+
+                            }
+
+                            @Override
+                            public void onSendProcess(long totle, long sended) {
+
+                            }
+                        });
                     }
-                    sendImageToSecondScreen(path, new ISendCallback() {
-                        @Override
-                        public void onSendSuccess(long taskId) {
-                            Store.putLong(App.instance, Store.WELCOME_IMAGE_ID, taskId);
-                            showImg(taskId);
-                        }
+                }).start();
 
-                        @Override
-                        public void onSendFail(int errorId, String errorInfo) {
-
-                        }
-
-                        @Override
-                        public void onSendProcess(long totle, long sended) {
-
-                        }
-                    });
-                }
-            }).start();
-
+            }
+        }else{
+            sendImageToSecondScreenByMoonearly();
         }
+    }
+
+    private void sendImageToSecondScreenByMoonearly(){
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("type", 0);
+        Gson gson = new Gson();
+        String json = gson.toJson(map);
+        TcpUdpFactory.tcpSend(5, json, new TcpSendCallBack() {
+            @Override
+            public void call(boolean isSucceed) {
+                if(!isSucceed){
+                    LogUtil.d(TAG, "请确认 副屏已经连接上了");
+                }
+            }
+        });
     }
 
     private  void sendImageToSecondScreen(String path, ISendCallback iSendCallback){
@@ -440,72 +477,110 @@ public class App extends BaseApplication {
 
     public void sendDataToSecondScreen(Order order, List<OrderDetail> orderDetails){
         if(orderDetails != null  && order != null && orderDetails.size() > 0) {
-            if (App.instance.isHasSecondScreen()) {
+            if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
                 if(isDebug)
                     UIHelp.showToast(App.getTopActivity(), "准备发送数据:" + App.instance.getConnState());
-                if (App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
-
-                    String title = "Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName();
-                    SecondScreenBean secondScreenDataHead = new SecondScreenBean();
-                    List<SecondScreenBean> secondScreenBeans = new ArrayList<SecondScreenBean>();
-                    for (int i = 0; i < orderDetails.size(); i++) {
-                        OrderDetail orderDetail = orderDetails.get(i);
-                        secondScreenBeans.add(
-                                new SecondScreenBean(
-                                        (i + 1)+"",
-                                        orderDetail.getItemName(),
-                                        getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString(),
-                                        orderDetail.getItemNum() + "",
-                                        getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()).toString()));
-                    }
-                    List<SecondScreenTotal> secondScreenTotals = new ArrayList<SecondScreenTotal>();
-                    secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.sub_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString()));
-                    secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.discount), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString()));
-                    secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.taxes), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString()));
-                    secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.grand_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString()));
-
-                    Map<String, Object> map = new HashMap<String, Object>();
-                    map.put("KVPList", secondScreenTotals);
-                    map.put("list", secondScreenBeans);
-                    map.put("head", secondScreenDataHead);
-                    map.put("title", title);
-//                    SecondScreenData secondScreenData = new SecondScreenData(title, secondScreenDataHead, secondScreenBeans, secondScreenTotals);
-                    Gson gson = new Gson();
-                    final String jsonStr = gson.toJson(map);
-                    if(isDebug)
-                        UIHelp.showToast(App.getTopActivity(), "开始发送数据:。。。" +jsonStr);
-                    DataPacket dsPacket = UPacketFactory.buildShowText(DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
-                        @Override
-                        public void onSendSuccess(long taskId) {
-                            if(isDebug)
-                                UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
-                        }
-
-                        @Override
-                        public void onSendFail(int errorId, String errorInfo) {
-                            if(isDebug)
-                                UIHelp.showToast(App.getTopActivity(), "发送数据:失败,\n失败信息" + errorInfo);
-                        }
-
-                        @Override
-                        public void onSendProcess(long totle, long sended) {
-                            if(isDebug)
-                                UIHelp.showToast(App.getTopActivity(), "发送数据:中"+jsonStr);
-                        }
-                    });
-                    App.instance.getmDSKernel().sendData(dsPacket);
+                String title = "Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName();
+                SecondScreenBean secondScreenDataHead = new SecondScreenBean();
+                List<SecondScreenBean> secondScreenBeans = new ArrayList<SecondScreenBean>();
+                for (int i = 0; i < orderDetails.size(); i++) {
+                    OrderDetail orderDetail = orderDetails.get(i);
+                    secondScreenBeans.add(
+                            new SecondScreenBean(
+                                    (orderDetails.size() - 1)+"",
+                                    orderDetail.getItemName(),
+                                    getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString(),
+                                    orderDetail.getItemNum() + "",
+                                    getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()).toString()));
                 }
+                List<SecondScreenTotal> secondScreenTotals = new ArrayList<SecondScreenTotal>();
+                secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.sub_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString()));
+                secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.discount), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString()));
+                secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.taxes), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString()));
+                secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.grand_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString()));
+
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("KVPList", secondScreenTotals);
+                map.put("list", secondScreenBeans);
+                map.put("head", secondScreenDataHead);
+                map.put("title", title);
+    //                    SecondScreenData secondScreenData = new SecondScreenData(title, secondScreenDataHead, secondScreenBeans, secondScreenTotals);
+                Gson gson = new Gson();
+                final String jsonStr = gson.toJson(map);
+                if(isDebug)
+                    UIHelp.showToast(App.getTopActivity(), "开始发送数据:。。。" +jsonStr);
+                DataPacket dsPacket = UPacketFactory.buildShowText(DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
+                    @Override
+                    public void onSendSuccess(long taskId) {
+                        if(isDebug)
+                            UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
+                    }
+
+                    @Override
+                    public void onSendFail(int errorId, String errorInfo) {
+                        if(isDebug)
+                            UIHelp.showToast(App.getTopActivity(), "发送数据:失败,\n失败信息" + errorInfo);
+                    }
+
+                    @Override
+                    public void onSendProcess(long totle, long sended) {
+                        if(isDebug)
+                            UIHelp.showToast(App.getTopActivity(), "发送数据:中"+jsonStr);
+                    }
+                });
+                App.instance.getmDSKernel().sendData(dsPacket);
+            }else{
+                GoodsModel goodsModelTitle = new GoodsModel();
+                goodsModelTitle.setIndex(getResources().getString(R.string.index));
+                goodsModelTitle.setName(getResources().getString(R.string.name));
+                goodsModelTitle.setPrice(App.instance.getResources().getString(R.string.price));
+                goodsModelTitle.setQty(App.instance.getResources().getString(R.string.qty));
+                goodsModelTitle.setTotal(App.instance.getResources().getString(R.string.total));
+
+                List<GoodsModel> goodsModels = new ArrayList<GoodsModel>();
+                for (int i = 0; i < orderDetails.size(); i++) {
+                    OrderDetail orderDetail = orderDetails.get(i);
+                    GoodsModel goodsModel = new GoodsModel();
+                    goodsModel.setIndex((orderDetails.size() - i)+"");
+                    goodsModel.setName(orderDetail.getItemName());
+                    goodsModel.setPrice(getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString());
+                    goodsModel.setQty(orderDetail.getItemNum() + "");
+                    goodsModel.setTotal(getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()).toString());
+                    goodsModels.add(goodsModel);
+                }
+
+                OrderModel orderModel = new OrderModel();
+                orderModel.setRestaurantName("Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName());
+                orderModel.setSubTotal(App.instance.getResources().getString(R.string.sub_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString());
+                orderModel.setDiscount(App.instance.getResources().getString(R.string.discount) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString());
+                orderModel.setTaxes(App.instance.getResources().getString(R.string.taxes) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString());
+                orderModel.setGrandTotal(App.instance.getResources().getString(R.string.grand_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
+                orderModel.setGoodsModel(goodsModelTitle);
+                orderModel.setGoodsModelList(goodsModels);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("type", 1);
+                map.put("orderModel",orderModel);
+                TcpUdpFactory.tcpSend(5, new Gson().toJson(map), new TcpSendCallBack() {
+                    @Override
+                    public void call(boolean isSucceed) {
+                        if(!isSucceed){
+                            LogUtil.d(TAG, "请确认 副屏已经连接上了");
+                        }
+                    }
+                });
             }
         }else{
-            if (App.instance.isHasSecondScreen()) {
-                if (isDebug)
-                    UIHelp.showToast(App.getTopActivity(), "准备发送数据:" + App.instance.getConnState());
-                if (App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
+            if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
+                    if (isDebug)
+                        UIHelp.showToast(App.getTopActivity(), "准备发送数据:" + App.instance.getConnState());
                     showWelcomeToSecondScreen();
-                }
+                }else{
+                sendImageToSecondScreenByMoonearly();
             }
         }
     }
+
+
 
     @Override
     protected void onIPChanged() {

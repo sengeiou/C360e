@@ -7,6 +7,7 @@ public class VersionCheck {
 	private String posUrl;
 	private boolean force;
 	private boolean updateData;
+	private int down;
 	public String getAppVersion() {
 		return appVersion;
 	}
@@ -44,7 +45,15 @@ public class VersionCheck {
 	public void setUpdateData(boolean updateData) {
 		this.updateData = updateData;
 	}
-	
+
+	public int getDown() {
+		return down;
+	}
+
+	public void setDown(int down) {
+		this.down = down;
+	}
+
 	@Override
 	public String toString() {
 		return "VersionCheck [appVersion=" + appVersion + ", status=" + status

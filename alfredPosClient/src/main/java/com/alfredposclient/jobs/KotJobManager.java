@@ -24,6 +24,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
@@ -61,7 +62,7 @@ public class KotJobManager {
 	public void tearDownKot(KotSummary kotSummary,
 			ArrayList<KotItemDetail> kot, ArrayList<KotItemModifier> modifiers,
 			String method, Map<String, Object> orderMap) {
-
+		LogUtil.d("开始时间","时间");
 		ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
 		// map printergroudId to Kot: Group ID --> Details
 		Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<Integer, ArrayList<KotItemDetail>>();
@@ -145,6 +146,7 @@ public class KotJobManager {
 								}
 							}
 							OrderDetailSQL.addOrderDetailList(orderDetails);
+							LogUtil.e("成功时间","时间");
 							context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED,
 									orderMap.get("orderId"));
 						}

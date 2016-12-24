@@ -197,7 +197,13 @@ public class KdsHttpServer extends AlfredHttpServer {
 								orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
 							}
 						}
-						App.getTopActivity().httpRequestAction(App.HANDLER_UPDATE_KOT,null);
+						App.getTopActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								App.getTopActivity().httpRequestAction(App.HANDLER_UPDATE_KOT,null);
+							}
+						});
+
 					}
 				}).start();
 				result.put("resultCode", ResultCode.SUCCESS);
@@ -281,8 +287,8 @@ public class KdsHttpServer extends AlfredHttpServer {
 			if (pos == null)
 				return true;
 			if (connectedPos != null &&
-					pos.getRestId() ==  connectedPos.getRestId() 
-					&& pos.getRevenueId() == connectedPos.getRevenueId()) {
+					pos.getRestId().intValue() ==  connectedPos.getRestId().intValue()
+					&& pos.getRevenueId().intValue() == connectedPos.getRevenueId().intValue()) {
 				ret = true;
 			}
 		} catch (JSONException e) {

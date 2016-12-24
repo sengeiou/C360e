@@ -175,9 +175,9 @@ public class RabbitMqPushService extends Service {
 	
 	private String getPushServerIp(){
 		if(App.isDebug){
-			return "120.132.7.33";
+			return "60.205.181.250";
 		} else if (App.isOpenLog){
-			return "120.132.7.33";
+			return "60.205.181.250";
 //			return "ws://172.16.0.190:8085/websocket";
 		} else {
 			if (App.instance.countryCode == ParamConst.CHINA)

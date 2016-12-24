@@ -41,7 +41,7 @@ public class BillPrint extends PrintJob{
 	}
 	
 	public void AddRestaurantInfo(String logo, String name, String address, String customized) {
-		
+
 		if (logo!=null && logo.length()>0) {
 			PrintData logoimg = new PrintData();
 			logoimg.setDataFormat(PrintData.FORMAT_IMG);

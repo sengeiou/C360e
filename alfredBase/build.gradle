@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -24,6 +24,10 @@ android {
     }
 }
 
+greendao {
+    schemaVersion 1
+}
+
 dependencies {
     compile  rootProject.ext.libSupportV4
     compile 'com.google.code.gson:gson:2.2.4'
@@ -38,4 +42,7 @@ dependencies {
     compile files('libs/core-3.2.1.jar')
     compile 'io.reactivex:rxjava:1.1.5'
     compile 'io.reactivex:rxandroid:1.2.0'
+    compile 'com.moonearly.utils:app:1.0.13'
+    compile 'org.greenrobot:greendao:3.2.0'
+    compile 'org.greenrobot:greendao-generator:3.2.0'
 }

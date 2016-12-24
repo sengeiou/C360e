@@ -398,24 +398,32 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						return resp;
 					}
 				} else if (deviceType == ParamConst.DEVICE_TYPE_KDS) {
-					final KDSDevice kdsDevice = gson.fromJson(device,
+					KDSDevice kdsDevice = new KDSDevice();
+					kdsDevice = gson.fromJson(device,
 							KDSDevice.class);
+
 					App.instance.addKDSDevice(kdsDevice.getDevice_id(),
 							kdsDevice);
-					LocalDevice localDevice = ObjectFactory.getInstance()
+					final LocalDevice localDevice = ObjectFactory.getInstance()
 							.getLocalDevice(kdsDevice.getName(),"kds",
 									ParamConst.DEVICE_TYPE_KDS,
 									kdsDevice.getDevice_id(),
 									kdsDevice.getIP(), kdsDevice.getMac());
 					CoreData.getInstance().addLocalDevice(localDevice);
+					final String kdsStr = kdsDevice == null ? "空的" : kdsDevice.toString();
+					final String localStr = localDevice == null ? "空的" : localDevice.toString();
+
 					// Notify KDS pairing complete
+					final KDSDevice finalKdsDevice = kdsDevice;
 					App.getTopActivity().runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
+//							UIHelp.showToast(App.getTopActivity(), kdsStr);
+//							UIHelp.showToast(App.getTopActivity(), localStr);
 							App.getTopActivity().httpRequestAction(
 									ParamConst.HTTP_REQ_CALLBACK_KDS_PAIRED,
-									kdsDevice);
+									finalKdsDevice);
 						}
 					});
 				}
@@ -454,8 +462,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 					Gson gson = new Gson();
 					if (type == ParamConst.USER_TYPE_KOT) {
-
-						KDSDevice dev = (KDSDevice) gson.fromJson(jsonObject
+						KDSDevice dev = gson.fromJson(jsonObject
 								.optJSONObject("device").toString(),
 								KDSDevice.class);
 						LocalDevice localDevice = ObjectFactory.getInstance()

@@ -52,7 +52,7 @@ public class PrintService extends Service {
 
 		this.printJobMgr.start();
         this.pqMgr.start();
-        
+
 		Log.d(TAG, "Creating Service");
 	}
 	

@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="ok">OK</string>
-    <string name="no_network">No Network Connection!</string>
+    <string name="no_network">This print timeout!</string>
     <string name="name_pwd_error">The user name or password is wrong</string>
     <string name="permission_insuff">Insufficient permissions</string>
     <string name="manager_id">Manager ID</string>

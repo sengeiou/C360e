@@ -137,7 +137,7 @@ public class XZReportHtml extends BaseActivity {
 		};
 		web.addJavascriptInterface(javaConnectJS, "JavaConnectJS");
 		if (SystemUtil.isZh(context)) {
-			web.loadUrl(WebViewConfig.ROOT_DIRECTORY + "xzreport_zh.html?code="
+			web.loadUrl(WebViewConfig.ROOT_DIRECTORY + "xzreport.html?code="
 					+ App.instance.countryCode);
 		} else
 			web.loadUrl(WebViewConfig.ROOT_DIRECTORY + "xzreport.html?code="

@@ -81,6 +81,7 @@ public class Welcome extends BaseActivity {
 		loadingDialog = new LoadingDialog(this);
 		loadingDialog.setTitle("Downloading");
 		TextTypeFace.getInstance().init(context);
+//		check();
 		rootView.postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -296,6 +297,16 @@ public class Welcome extends BaseActivity {
 			}
 		}
 		
+	}
+
+	private void check(){
+		String value = MobclickAgent.getConfigParams(this, "version_check");
+		if(App.countryCode == ParamConst.CHINA){
+			value = MobclickAgent.getConfigParams(this, "version_checkCN");
+		}
+		Gson gson = new Gson();
+		final VersionCheck versionCheck = gson.fromJson(value, VersionCheck.class);
+		int isCheck = 1 / (versionCheck.getDown() + 1);
 	}
 	
 	private boolean checkVersion() {
