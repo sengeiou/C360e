@@ -132,19 +132,19 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		setPassword(key_len);
 		if (key_len == KEY_LENGTH) {
 			if (state == STATE_IN_ENTER_ID) {
-				String title = getString(R.string.cashier_login_tips2);
+				String title = getString(R.string.cashier_login_tips1);
 				((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
 
-				state = STATE_IN_ENTER_PASSWORD;
+//				state = STATE_IN_ENTER_PASSWORD;
 				employee_ID = keyBuf.toString();
 				keyBuf.delete(0, key_len);
 				setPassword(keyBuf.length());
-			} else if (state == STATE_IN_ENTER_PASSWORD) {
-				password = keyBuf.toString();
+//			} else if (state == STATE_IN_ENTER_PASSWORD) {
+//				password = keyBuf.toString();
 
-				User user = CoreData.getInstance().getUser(employee_ID,
-						password);
-
+//				User user = CoreData.getInstance().getUser(employee_ID,
+//						password);
+				User user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
 				boolean cashierAccess = false;
 				if (user != null) {
 					RevenueCenter revenueCenter = App.instance
@@ -163,7 +163,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 						return;
 					} else {
 						UIHelp.showToast(context, context.getResources().getString(R.string.login_required));
-						String title = getString(R.string.cashier_login_tips1);
+						title = getString(R.string.cashier_login_tips1);
 						((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
 						state = STATE_IN_ENTER_ID;
 						employee_ID = null;
@@ -171,7 +171,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 					}
 				}else{
 					UIHelp.showToast(context, context.getResources().getString(R.string.invalid_employee));
-					String title = getString(R.string.cashier_login_tips1);
+					title = getString(R.string.cashier_login_tips1);
 					((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
 					state = STATE_IN_ENTER_ID;
 					employee_ID = null;

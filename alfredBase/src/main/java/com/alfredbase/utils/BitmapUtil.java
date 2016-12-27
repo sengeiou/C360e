@@ -2,8 +2,11 @@ package com.alfredbase.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.view.View;
+
+import com.google.zxing.common.BitMatrix;
 
 public class BitmapUtil {
 	public static Bitmap convertViewToBitmap(View view) {
@@ -71,5 +74,24 @@ public class BitmapUtil {
         int height = img.getHeight();
         img = Bitmap.createBitmap(img, 0, 0, width, height, matrix, true);
         return img;
+    }
+
+    public static Bitmap bitMatrix2Bitmap(BitMatrix matrix) {
+        int w = matrix.getWidth();
+        int h = matrix.getHeight();
+        int[] rawData = new int[w * h];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                int color = Color.WHITE;
+                if (matrix.get(i, j)) {
+                    color = Color.BLACK;
+                }
+                rawData[i + (j * w)] = color;
+            }
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        bitmap.setPixels(rawData, 0, w, 0, 0, w, h);
+        return bitmap;
     }
 }

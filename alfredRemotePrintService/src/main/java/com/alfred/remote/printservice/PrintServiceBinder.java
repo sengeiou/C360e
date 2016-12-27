@@ -19,6 +19,7 @@ import com.alfred.printer.ModifierDetailAnalysisReportPrint;
 import com.alfred.printer.MonthlySalesReportPrint;
 import com.alfred.printer.StoredCardPrint;
 import com.alfred.printer.SummaryAnalysisReportPrint;
+import com.alfred.printer.TableQRCodePrint;
 import com.alfred.printer.VoidItemReportPrint;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemCategory;
@@ -1898,6 +1899,34 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			storedCardPrint.setPrinterIp(prtDevice.getIP());
 			pqMgr.queuePrint(storedCardPrint.getJobForQueue());
 			printMgr.addJob(prtDevice.getIP(),storedCardPrint);
+		}
+	}
+
+	@Override
+	public void printTableQRCode(String printer, String tableId, String title, String qrCodeText) throws RemoteException {
+		Gson gson = new Gson();
+		PrinterDevice prtDevice =  gson.fromJson(printer, PrinterDevice.class);
+		PrintManager printMgr = this.service.getPrintMgr();
+		JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
+		PrinterQueueManager pqMgr = this.service.getPqMgr();
+		if(printJobMgr != null) {
+			PrinterTitle prtTitle =  gson.fromJson(title, PrinterTitle.class);
+			String uuid = pqMgr.getDataUUID("TableQRCode"+tableId);
+			TableQRCodePrint tableQRCodePrint = new TableQRCodePrint(uuid, 0l);
+			String model = prtDevice.getModel();
+			//set page size
+			if (this.service.isTMU220(model)) {
+				tableQRCodePrint.setCharSize(33);
+			} else {
+				tableQRCodePrint.setCharSize(48);
+			}
+			tableQRCodePrint.AddRestaurantInfo(prtTitle.getLogo(),prtTitle.getRestaurantName(),"", TimeUtil.getTime());
+			tableQRCodePrint.AddTitle("Scan QR_code by ServedByAlfred to \nselect and send order by yourself");
+			tableQRCodePrint.AddQRCode("Tabel:" + prtTitle.getTableName(),qrCodeText);
+			tableQRCodePrint.AddFooter("Powered by Alfred");
+			tableQRCodePrint.setPrinterIp(prtDevice.getIP());
+			pqMgr.queuePrint(tableQRCodePrint.getJobForQueue());
+			printMgr.addJob(prtDevice.getIP(), tableQRCodePrint);
 		}
 	}
 }

@@ -40,7 +40,7 @@ public class ButtonClickTimer {
 	public static long lastLinkTime;
 	public static boolean canLink() {
 		long currentTimeMillis = System.currentTimeMillis();
-		if (currentTimeMillis - lastLinkTime > 20000) {
+		if (currentTimeMillis - lastLinkTime > 5000) {
 			lastLinkTime = currentTimeMillis;
 			return true;
 		} else {

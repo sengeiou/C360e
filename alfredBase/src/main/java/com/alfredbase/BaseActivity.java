@@ -118,7 +118,8 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		BaseApplication.instance.startAD();
+		if(ButtonClickTimer.canLink())
+			BaseApplication.instance.startAD();
 		return super.dispatchTouchEvent(ev);
 	}
 

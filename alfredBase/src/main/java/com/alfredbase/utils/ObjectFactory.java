@@ -1192,6 +1192,27 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		return list;
 	}
 
+
+
+	public PrinterTitle getPrinterTitleForQRCode(RevenueCenter revenue,
+										String userName, String tableName) {
+		PrinterTitle printerTitle = new PrinterTitle();
+		Restaurant restaurant = RestaurantSQL.getRestaurant();
+		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
+		printerTitle.setAddressDetail(restaurant.getAddressPrint());
+		printerTitle.setTel(restaurant.getTelNo());
+		printerTitle.setEmail(restaurant.getEmail());
+		printerTitle.setWebAddress(restaurant.getWebsite());
+		printerTitle.setOp(userName);
+		printerTitle.setPos(revenue.getId().intValue() + "");
+		printerTitle.setTableName(tableName);
+		printerTitle.setLogo(SettingDataSQL.getSettingDataByUrl(
+				restaurant.getLogoUrl()).getLogoString());
+		printerTitle.setOptions(restaurant.getOptions());
+		printerTitle.setFooterOptions(restaurant.getFooterOptions());
+		return printerTitle;
+	}
+
 	/* get order modifiers for print */
 	public ArrayList<PrintOrderModifier> getItemModifierList(Order order, ArrayList<OrderDetail> orderDetails) {
 

@@ -1,6 +1,7 @@
 package com.alfred.printer;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.alfred.remote.printservice.PrintService;
 
@@ -313,5 +314,101 @@ public class ESCPOSPrinter {
 //			}
 //		}
 //	}
+
+//	public void printBitmap( Bitmap bm) throws IOException {
+//		int width = bm.getWidth();
+//		int height = bm.getHeight();
+//		int bytesWidth = width / 8;
+//		byte[] var11 = new byte[bytesWidth * height];
+//
+//		for(int command = 0; command < height; ++command) {
+//			for(int x = 0; x < bytesWidth; ++x) {
+//				byte b = 0;
+//
+//				for(int i = 0; i < 8; ++i) {
+//					int color = bm.getPixel(x * 8 + i, command);
+//					if((color & 16777215) < 11312284 && (color & 16777215) > 0) {
+//						b = (byte)(b | 1 << 7 - i);
+//					}
+//				}
+//
+//				var11[command * bytesWidth + x] = b;
+//			}
+//		}
+//
+//		byte[] var12 = new byte[]{(byte)29, (byte)118, (byte)48, (byte)0, (byte)(width >> 3), (byte)(width >> 11), (byte)height, (byte)(height >> 8)};
+//		out.write(var12);
+//		out.write(var11);
+//	}
+
+
+	public void printBitmap(Bitmap bm) throws Exception{
+		int width = bm.getWidth();
+		int height = bm.getHeight();
+		byte[] pixels = null;
+		final int bytesWidth = width / 8;// x方向压缩
+		pixels = new byte[bytesWidth * height];// 压缩后图像缓存
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < bytesWidth; x++) {
+
+				// x方向压缩8:1
+				byte b = 0;
+				for (int i = 0; i < 8; i++) {
+					int color = bm.getPixel(x * 8 + i, y);
+					if ((color & 0xffffff) < 0xac9c9c && (color & 0xffffff)  > 0/* matrix.get(x, y*8+i) */) {
+//					if ((color & 0xffffff) == 0) {
+						b |= 1 << (7 - i);// 使用大端
+					}
+				}
+				pixels[y * bytesWidth + x] = b;
+			}
+		}
+		byte[] command = new byte[8];
+		command[0] = 0x1d;
+		command[1] = 0x76;
+		command[2] = 0x30;
+		command[3] = 0x00;
+		command[4] = (byte) (width >> 3);// xL
+		command[5] = (byte) (width >> 11);// xH
+		command[6] = (byte) (height);// yL
+		command[7] = (byte) (height >> 8);// yH
+		out.write(command);
+		out.write(pixels);
+		feed((byte)1);
+	}
+
+	public void printQRBitmap(Bitmap bm) throws Exception{
+		int width = bm.getWidth();
+		int height = bm.getHeight();
+		byte[] pixels = null;
+		final int bytesWidth = width / 8;// x方向压缩
+		pixels = new byte[bytesWidth * height];// 压缩后图像缓存
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < bytesWidth; x++) {
+
+				// x方向压缩8:1
+				byte b = 0;
+				for (int i = 0; i < 8; i++) {
+					int color = bm.getPixel(x * 8 + i, y);
+//					if ((color & 0xffffff) < 0xac9c9c && (color & 0xffffff)  > 0/* matrix.get(x, y*8+i) */) {
+					if ((color & 0xffffff) == 0) {
+						b |= 1 << (7 - i);// 使用大端
+					}
+				}
+				pixels[y * bytesWidth + x] = b;
+			}
+		}
+		byte[] command = new byte[8];
+		command[0] = 0x1d;
+		command[1] = 0x76;
+		command[2] = 0x30;
+		command[3] = 0x00;
+		command[4] = (byte) (width >> 3);// xL
+		command[5] = (byte) (width >> 11);// xH
+		command[6] = (byte) (height);// yL
+		command[7] = (byte) (height >> 8);// yH
+		out.write(command);
+		out.write(pixels);
+	}
 }
 

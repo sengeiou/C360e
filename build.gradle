@@ -27,19 +27,19 @@ ext {
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
+//        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
         classpath 'com.tencent.bugly:symtabfileuploader:latest.release'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
+//        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
-        mavenCentral()
+//        mavenCentral()
     }
 }
 println "In pos, gradle id is " +gradle.hashCode()

@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -96,6 +97,7 @@ import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
@@ -1173,6 +1175,24 @@ public class App extends BaseApplication {
         }
     }
 
+
+    public void remitePrintTableQRCode(PrinterDevice printer, PrinterTitle title,String tableId, String qrCodeText){
+        if(!TextUtils.isEmpty(tableId) && IntegerUtils.isInteger(tableId)){
+            if(mRemoteService == null){
+                printerDialog();
+                return;
+            }
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            String prtTitle = gson.toJson(title);
+            try {
+                mRemoteService.printTableQRCode(prtStr,tableId+"",prtTitle, qrCodeText);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /*
      * Discover all physical printer devices Result is retured from callback
      * Param: Handler: callback when printers are found
@@ -1323,6 +1343,8 @@ public class App extends BaseApplication {
         }
 
     }
+
+
 
 
     public void remotePrintModifierDetailAnalysisReport(String xzType,
@@ -1692,16 +1714,16 @@ public class App extends BaseApplication {
         return No + "";
     }
 
-    public void appOrderShowDialog(final AppOrder appOrder, final List<AppOrderDetail> appOrderDetailList, final List<AppOrderModifier> appOrderModifierList, List<AppOrderDetailTax> appOrderDetailTaxList) throws Exception {
+    public void appOrderShowDialog(boolean isPush, final AppOrder appOrder, final List<AppOrderDetail> appOrderDetailList, final List<AppOrderModifier> appOrderModifierList, List<AppOrderDetailTax> appOrderDetailTaxList) throws Exception {
         BaseActivity activity = getTopActivity();
         if ((!(activity instanceof NetWorkOrderActivity)) && activity != null
                 && (!activity.isFinishing())) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    netOrderDialogShow(appOrder);
-                }
-            });
+//            activity.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    netOrderDialogShow(appOrder);
+//                }
+//            });
         }
         appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
     }

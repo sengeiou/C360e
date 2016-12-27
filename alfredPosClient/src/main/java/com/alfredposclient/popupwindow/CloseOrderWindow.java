@@ -40,7 +40,6 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.TableInfo;
-import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.VoidSettlement;
 import com.alfredbase.javabean.WeixinSettlement;
@@ -54,7 +53,6 @@ import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.NonChargableSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
@@ -174,7 +172,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	private AlipayWebView web_alipay;
 
 	private boolean isFirstClickCash = false;
-	private BigDecimal includTax;
+//	private BigDecimal includTax;
 	public CloseOrderWindow(BaseActivity parent, View parentView,
 			Handler handler) {
 		this.parent = parent;
@@ -327,12 +325,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	}
 
 	private void init() {
-		Tax tax = App.instance.getLocalRestaurantConfig().getIncludedTax().getTax();
-		if(tax != null){
-			includTax = BH.mul(BH.getBD(tax.getTaxPercentage()), BH.div(BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(order.getDiscountAmount()), false), BH.add(BH.getBD(1), BH.getBD(tax.getTaxPercentage()), false), false), true);
-		} else {
-			includTax = BH.getBD(ParamConst.DOUBLE_ZERO);
-		}
+//		Tax tax = App.instance.getLocalRestaurantConfig().getIncludedTax().getTax();
+//		if(tax != null){
+//			includTax = BH.mul(BH.getBD(tax.getTaxPercentage()), BH.div(BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(order.getDiscountAmount()), false), BH.add(BH.getBD(1), BH.getBD(tax.getTaxPercentage()), false), false), true);
+//		} else {
+//			includTax = BH.getBD(ParamConst.DOUBLE_ZERO);
+//		}
 		cash_num = null;
 		change_num = null;
 		cardNo = null;
@@ -801,7 +799,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		switch (type) {
 		case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
 			tv_special_settlement_title.setText("ENTERTAINMENT");
-			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
+//			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
 			rl_special_settlement_person.setVisibility(View.VISIBLE);
 			rl_special_settlement_phone.setVisibility(View.GONE);
 			break;
@@ -812,7 +810,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			break;
 		case ParamConst.SETTLEMENT_TYPE_VOID:
 			tv_special_settlement_title.setText("VOID");
-			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
+//			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
 			rl_special_settlement_person.setVisibility(View.GONE);
 			rl_special_settlement_phone.setVisibility(View.GONE);
 			break;
@@ -2244,20 +2242,20 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	}
 	
 	private void addVoidOrEntTax(){
-		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrder(ParamConst.ACTIVE_NOMAL, order.getId().intValue());
-		order.setTotal(BH.add(BH.getBDNoFormat(order.getTotal()), BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true).toString());
-		payment.setPaymentAmount(order.getTotal());
-		remainTotal = BH.getBD(order.getTotal());
-		settlementNum = BH.getBD(ParamConst.DOUBLE_ZERO);
-		OrderSQL.update(order);
-		PaymentSQL.addPayment(payment);
+//		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrder(ParamConst.ACTIVE_NOMAL, order.getId().intValue());
+//		order.setTotal(BH.add(BH.getBDNoFormat(order.getTotal()), BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true).toString());
+//		payment.setPaymentAmount(order.getTotal());
+//		remainTotal = BH.getBD(order.getTotal());
+//		settlementNum = BH.getBD(ParamConst.DOUBLE_ZERO);
+//		OrderSQL.update(order);
+//		PaymentSQL.addPayment(payment);
 	}
 	
 	private void deleteVoidOrEntTax(){
-		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrder(ParamConst.ACTIVE_DELETE, order.getId().intValue());
-		order.setTotal(BH.sub(BH.getBD(order.getTotal()), BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true).toString());
-		payment.setPaymentAmount(order.getTotal());
-		OrderSQL.update(order);
-		PaymentSQL.addPayment(payment);
+//		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrder(ParamConst.ACTIVE_DELETE, order.getId().intValue());
+//		order.setTotal(BH.sub(BH.getBD(order.getTotal()), BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true).toString());
+//		payment.setPaymentAmount(order.getTotal());
+//		OrderSQL.update(order);
+//		PaymentSQL.addPayment(payment);
 	}
 }

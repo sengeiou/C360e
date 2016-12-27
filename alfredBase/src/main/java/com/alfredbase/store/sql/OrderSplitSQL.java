@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -15,6 +12,9 @@ import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderSplitSQL {
 
@@ -356,11 +356,11 @@ public class OrderSplitSQL {
 				+ TableNames.OrderSplit
 				+ " os, "
 				+ TableNames.Payment
-				+ " p,  where os.id = p.orderSplitId  and os.orderId = ? AND NOT EXISTS ( SELECT 0 FROM " 
+				+ " p,  where os.id = p.orderSplitId  and os.orderId = ? AND NOT EXISTS ( SELECT 0 FROM "
 				+  TableNames.PaymentSettlement
 				+ " ps where ps.paymentId = p.id and (ps.paymentTypeId = "
 				+ ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT
-				+ " and ps.paymentTypeId = " 
+				+ " or ps.paymentTypeId = "
 				+ ParamConst.SETTLEMENT_TYPE_VOID
 				+ " ))";
 		Cursor cursor = null;

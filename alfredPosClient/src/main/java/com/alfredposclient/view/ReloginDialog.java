@@ -39,7 +39,7 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
     /**
      * 当前键盘输入对应的状态，0表示输入的员工ID，1表示输入的密码
      */
-    private int state = STATE_IN_ENTER_PASSWORD;
+    private int state = STATE_IN_ENTER_ID;
     public BaseActivity parent;
     public View contentView;
     private Dialog dialog;
@@ -136,18 +136,19 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
         setPassword(key_len);
         if (key_len == KEY_LENGTH) {
             if (state == STATE_IN_ENTER_ID) {
-                String title = parent.getString(R.string.cashier_login_tips2);
+                String title = parent.getString(R.string.cashier_login_tips1);
                 ((TextView) (contentView.findViewById(R.id.tv_login_tips))).setText(title);
 
-                state = STATE_IN_ENTER_PASSWORD;
+//                state = STATE_IN_ENTER_PASSWORD;
                 employee_ID = keyBuf.toString();
                 keyBuf.delete(0, key_len);
                 setPassword(keyBuf.length());
-            } else if (state == STATE_IN_ENTER_PASSWORD) {
+//            } else if (state == STATE_IN_ENTER_PASSWORD) {
                 password = keyBuf.toString();
                 if(user == null) {
-                     user = CoreData.getInstance().getUser(employee_ID,
-                            password);
+//                     user = CoreData.getInstance().getUser(employee_ID,
+//                            password);
+                    user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
                 }
                 boolean cashierAccess = false;
                 if (user != null) {

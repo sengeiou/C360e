@@ -17,6 +17,7 @@ public class PrintData  implements Serializable{
 	public static int FORMAT_DRAWER = 14;
 	public static int FORMAT_FEED=15;
 	public static int FORMAT_SING=16;
+	public static int FORMAT_MIN_QR = 17;
 	
 	//alignment 
 	public static int ALIGN_LEFT=0;
@@ -39,6 +40,7 @@ public class PrintData  implements Serializable{
 	private byte[] image;
 	private int img_w;
 	private int img_h;
+	private String qrCode;
 	
 
 	public PrintData() {
@@ -163,4 +165,11 @@ public class PrintData  implements Serializable{
 		this.underline = underline;
 	}
 
+	public String getQrCode() {
+		return qrCode;
+	}
+
+	public void setQrCode(String qrCode) {
+		this.qrCode = qrCode;
+	}
 }

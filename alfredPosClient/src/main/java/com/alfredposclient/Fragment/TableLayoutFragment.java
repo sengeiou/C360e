@@ -31,10 +31,12 @@ import android.widget.TextView;
 
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PlaceInfo;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -44,6 +46,7 @@ import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.ViewTouchUtil;
@@ -53,6 +56,7 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.utils.ImageUtils;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -441,6 +445,40 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             newTable.setyAxis(selfView.getRotationY()+"");
 
         }
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(!canEdit){
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put("companyId", CoreData.getInstance().getRestaurant().getCompanyId().intValue() + "");
+                    map.put("restaurantId", CoreData.getInstance().getRestaurant().getId().intValue() + "");
+                    map.put("tableId", newTable.getPosId().intValue() + "");
+                    map.put("tableName", newTable.getName());
+                    map.put("type", "1");
+                    final String content = new Gson().toJson(map);
+                    DialogFactory.showQrCodeDialog(mainPage,content,newTable.getName(),
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    PrinterTitle title = ObjectFactory.getInstance()
+                                            .getPrinterTitleForQRCode(
+                                                    App.instance.getRevenueCenter(),
+                                                    App.instance.getUser().getFirstName()
+                                                            + App.instance.getUser().getLastName(),
+                                                    newTable.getName());
+                                    App.instance.remitePrintTableQRCode(App.instance.getCahierPrinter(),
+                                            title, newTable.getPosId().intValue() + "", content);
+                                    LogUtil.d(TAG, "打印二维码");
+                                }
+                            });
+
+                    return true;
+                }else{
+
+                }
+                return false;
+            }
+        });
 
         rl_tables.addView(selfView);
     }

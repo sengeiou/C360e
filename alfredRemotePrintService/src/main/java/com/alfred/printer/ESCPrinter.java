@@ -8,7 +8,12 @@ import android.util.Log;
 import com.alfred.print.jobs.WifiCommunication;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.WIFIPrintCallback;
+import com.alfredbase.utils.BitmapUtil;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,10 +163,16 @@ public class ESCPrinter implements WIFIPrintCallback{
 				}else if(toPrint.getDataFormat() == PrintData.FORMAT_IMG) {
 					byte bitmapBytes[] = toPrint.getImage();
 					Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+					this.printer.printBitmap(bitmap);
 				}else if (toPrint.getDataFormat() == PrintData.FORMAT_CUT) {
 					this.printer.cut();
 				}else if (toPrint.getDataFormat() == PrintData.FORMAT_QR) {
-
+					String qrCode = toPrint.getQrCode();
+					qrCode = URLEncoder.encode(qrCode, "UTF-8");
+					QRCodeWriter writer = new QRCodeWriter();
+					BitMatrix matrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500);
+					Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
+					this.printer.printQRBitmap(bitmap);
 				}else if(toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {
 					this.printer.kickDrawer();
 					isKickDrawer = true;
