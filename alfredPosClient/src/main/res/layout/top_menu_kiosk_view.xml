@@ -182,6 +182,29 @@
                     android:text="@string/online_order"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s" />
+                <RelativeLayout
+                    android:id="@+id/rl_app_num"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="top"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/circle_shape" />
+
+                    <TextView
+                        android:id="@+id/tv_app_num"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="999"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textSize="20sp" />
+                </RelativeLayout>
             </LinearLayout>
 
             <View

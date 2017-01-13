@@ -173,7 +173,6 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 				UIHelp.showToast(parent, parent.getResources().getString(R.string.enter_people));
 			}else if (type == APP_ORDER) {
 				Message msg = handler.obtainMessage();
-				msg = handler.obtainMessage();
 				msg.what = MainPage.VIEW_EVENT_SET_APPORDER_TABLE_PACKS;
 				msg.obj = tv_pax.getText().toString();
 				handler.sendMessage(msg);

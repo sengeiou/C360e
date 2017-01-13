@@ -10,10 +10,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.javabean.User;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
@@ -34,10 +34,12 @@ public class TopMenuView extends LinearLayout implements OnClickListener {
 	private LinearLayout ll_get_bill;
 	private LinearLayout ll_net_order;
 	private TextView tv_manage;
-	
+	private RelativeLayout rl_app_num;
+	private TextView tv_app_num;
+
 	private DrawerLayout mDrawerLayout; // activity滑动布局
 	private SettingView mSettingView; // 右滑视图
-	
+
 	public TopMenuView(Context context) {
 		super(context);
 		init(context);
@@ -80,6 +82,18 @@ public class TopMenuView extends LinearLayout implements OnClickListener {
 		ll_net_order.setOnClickListener(this);
 		findViewById(R.id.tv_search).setOnClickListener(this);
 		initTextTypeFace();
+		rl_app_num = (RelativeLayout) findViewById(R.id.rl_app_num);
+		tv_app_num = (TextView) findViewById(R.id.tv_app_num);
+		showAppOrderReciving();
+	}
+
+	public void showAppOrderReciving(){
+		if(App.instance.getAppOrderNum() > 0){
+			rl_app_num.setVisibility(View.VISIBLE);
+			tv_app_num.setText(App.instance.getAppOrderNum() + "");
+		}else{
+			rl_app_num.setVisibility(View.INVISIBLE);
+		}
 	}
 
 	public void refreshUserName(){

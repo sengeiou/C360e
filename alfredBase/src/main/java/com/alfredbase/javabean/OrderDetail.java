@@ -104,6 +104,8 @@ public class OrderDetail implements Serializable {
 	 * 只用于本地计算，方便计算 
 	 */
 	private int isSet = 0;
+
+	private int appOrderDetailId = 0;
 	
 	public OrderDetail() {
 		// set openItem False
@@ -350,26 +352,49 @@ public class OrderDetail implements Serializable {
 		this.isSet = isSet;
 	}
 
+	public int getAppOrderDetailId() {
+		return appOrderDetailId;
+	}
+
+	public void setAppOrderDetailId(int appOrderDetailId) {
+		this.appOrderDetailId = appOrderDetailId;
+	}
+
 	@Override
 	public String toString() {
-		return "OrderDetail [id=" + id + ", orderId=" + orderId
-				+ ", orderOriginId=" + orderOriginId + ", userId=" + userId
-				+ ", itemId=" + itemId + ", itemName=" + itemName
-				+ ", itemNum=" + itemNum + ", orderDetailStatus="
-				+ orderDetailStatus + ", orderDetailType=" + orderDetailType
-				+ ", reason=" + reason + ", printStatus=" + printStatus
-				+ ", itemPrice=" + itemPrice + ", taxPrice=" + taxPrice
-				+ ", discountPrice=" + discountPrice + ", discountRate="
-				+ discountRate + ", discountType=" + discountType
-				+ ", modifierPrice=" + modifierPrice + ", realPrice="
-				+ realPrice + ", createTime=" + createTime + ", updateTime="
-				+ updateTime + ", fromOrderDetailId=" + fromOrderDetailId
-				+ ", isFree=" + isFree + ", groupId=" + groupId
-				+ ", isOpenItem=" + isOpenItem + ", specialInstractions="
-				+ specialInstractions + ", orderSplitId=" + orderSplitId
-				+ ", isTakeAway=" + isTakeAway + ", weight=" + weight
-				+ ", isItemDiscount=" + isItemDiscount + ", isSet=" + isSet
-				+ "]";
+		return "OrderDetail{" +
+				"id=" + id +
+				", orderId=" + orderId +
+				", orderOriginId=" + orderOriginId +
+				", userId=" + userId +
+				", itemId=" + itemId +
+				", itemName='" + itemName + '\'' +
+				", itemNum=" + itemNum +
+				", orderDetailStatus=" + orderDetailStatus +
+				", orderDetailType=" + orderDetailType +
+				", reason='" + reason + '\'' +
+				", printStatus=" + printStatus +
+				", itemPrice='" + itemPrice + '\'' +
+				", taxPrice='" + taxPrice + '\'' +
+				", discountPrice='" + discountPrice + '\'' +
+				", discountRate='" + discountRate + '\'' +
+				", discountType=" + discountType +
+				", modifierPrice='" + modifierPrice + '\'' +
+				", realPrice='" + realPrice + '\'' +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", fromOrderDetailId=" + fromOrderDetailId +
+				", isFree=" + isFree +
+				", groupId=" + groupId +
+				", isOpenItem=" + isOpenItem +
+				", specialInstractions='" + specialInstractions + '\'' +
+				", orderSplitId=" + orderSplitId +
+				", isTakeAway=" + isTakeAway +
+				", weight='" + weight + '\'' +
+				", isItemDiscount=" + isItemDiscount +
+				", isSet=" + isSet +
+				", appOrderDetailId=" + appOrderDetailId +
+				'}';
 	}
-	
+
 }

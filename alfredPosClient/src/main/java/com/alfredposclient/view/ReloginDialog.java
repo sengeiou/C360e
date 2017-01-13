@@ -164,7 +164,7 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
                         App.instance.setUser(user);
                         if(appUser != null){
                             if(appUser.getId().intValue() != user.getId().intValue()){
-                                RxBus.getInstance().post("showStoredCard", new Integer(1));
+                                RxBus.getInstance().post(RxBus.RX_MSG_1, new Integer(1));
                             }
                         }
 

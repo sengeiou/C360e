@@ -121,5 +121,5 @@ public class PaymentSettlement {
 				+ updateTime + ", cashChange=" + cashChange + ", isActive="
 				+ isActive + "]";
 	}
-	
+
 }

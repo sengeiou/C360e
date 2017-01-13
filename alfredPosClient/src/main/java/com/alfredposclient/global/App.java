@@ -75,6 +75,7 @@ import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
+import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.CardsSettlementSQL;
@@ -103,6 +104,7 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
+import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.Welcome;
 import com.alfredposclient.http.server.MainPosHttpServer;
@@ -111,6 +113,7 @@ import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
 import com.alfredposclient.service.RabbitMqPushService;
+import com.alfredposclient.thread.PushThread;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
@@ -149,10 +152,12 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     private static final String DATABASE_NAME = "com.alfredposclient";
 
     private String callAppIp;
+
+    private int appOrderNum;
     /**
      * User: Current cashier logged in
      */
@@ -195,6 +200,8 @@ public class App extends BaseApplication {
 
     // price include tax;
     // public int taxIncluded = 0;
+
+    private PushThread pushThread;
 
     public boolean kot_print;
 
@@ -249,7 +256,7 @@ public class App extends BaseApplication {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             rabbitMqPushService = ((RabbitMqPushService.Binder) service).getService();
-            rabbitMqPushService.setListener(new PushListenerClient(App.instance));
+//            rabbitMqPushService.setListener(new PushListenerClient(App.instance));
 
         }
 
@@ -368,6 +375,13 @@ public class App extends BaseApplication {
 //
 //            }
 //        });
+
+        pushThread = new PushThread();
+        pushThread.start();
+    }
+
+    public PushThread getPushThread() {
+        return pushThread;
     }
 
     @Override
@@ -1212,7 +1226,7 @@ public class App extends BaseApplication {
 
     public void remotePrintDaySalesReport(String xzType, PrinterDevice printer,
                                           PrinterTitle title, ReportDaySales reportData,
-                                          List<ReportDayTax> taxData) {
+                                          List<ReportDayTax> taxData, List<ReportUserOpenDrawer> reportUserOpenDrawers) {
         if (mRemoteService == null) {
             printerDialog();
             return;
@@ -1223,8 +1237,9 @@ public class App extends BaseApplication {
             String prtTitle = gson.toJson(title);
             String report = gson.toJson(reportData);
             String tax = gson.toJson(taxData);
+            String useropen = gson.toJson(reportUserOpenDrawers);
             mRemoteService.printDaySalesReport(xzType, prtStr, prtTitle,
-                    report, tax);
+                    report, tax, useropen);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -1760,6 +1775,8 @@ public class App extends BaseApplication {
 
     }
 
+
+
     public void appOrderTransforOrder(final AppOrder appOrder, final List<AppOrderDetail> appOrderDetailList, final List<AppOrderModifier> appOrderModifierList, List<AppOrderDetailTax> appOrderDetailTaxList) {
         synchronized (instance) {
 //			new Thread(new Runnable() {
@@ -1772,18 +1789,22 @@ public class App extends BaseApplication {
                 if (appOrder.getTableId().intValue() > 0) {
                     tables = TableInfoSQL.getTableById(appOrder.getTableId().intValue());
                 } else {
-                    tables = TableInfoSQL.getAllUsedOneTables();
-                }
-                if (tables == null || tables.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
-                    appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
-                    AppOrderSQL.updateAppOrder(appOrder);
+//                    tables = TableInfoSQL.getAllUsedOneTables();
                     return;
+                }
+                if (tables != null && tables.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
+//                    appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
+//                    AppOrderSQL.updateAppOrder(appOrder);
+                    Order order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), getBusinessDate());
+                    if(OrderDetailSQL.getOrderDetails(order.getId().intValue()).size() > 0){
+                        return;
+                    }
                 }
             }
 
 
-            appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_NOT_USE);
-            AppOrderSQL.updateAppOrder(appOrder);
+//            appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_NOT_USE);
+//            AppOrderSQL.updateAppOrder(appOrder);
 
             Order order = ObjectFactory.getInstance().getOrderFromAppOrder(appOrder, getUser(),
                     getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant(), App.instance.isRevenueKiosk());
@@ -1919,7 +1940,7 @@ public class App extends BaseApplication {
                             kotItemModifiers, kotCommitStatus,
                             orderMap);
                 }
-                appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_KOTPRINTERD);
+                appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARING);
                 appOrder.setOrderNo(order.getOrderNo());
                 AppOrderSQL.addAppOrder(appOrder);
                 getSyncJob().checkAppOrderStatus(
@@ -1931,6 +1952,15 @@ public class App extends BaseApplication {
                     App.getTopActivity().httpRequestAction(Activity.RESULT_OK, "");
                 }
             }
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+            }
+        }).start();
+        if(getTopActivity() instanceof MainPage){
+            getTopActivity().httpRequestAction(MainPage.REFRESH_TABLES_STATUS, null);
         }
 //				}
 //			}).start();
@@ -1953,7 +1983,7 @@ public class App extends BaseApplication {
                     .getItemList(
                             OrderDetailSQL.getOrderDetails(paidOrder.getId()));
             List<Map<String, String>> taxMap = OrderDetailTaxSQL
-                    .getTaxPriceSUM(App.instance.getLocalRestaurantConfig()
+                    .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig()
                             .getIncludedTax().getTax(), paidOrder);
 
             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
@@ -2091,5 +2121,14 @@ public class App extends BaseApplication {
             }
         }
     };
+
+    public int getAppOrderNum() {
+        return appOrderNum;
+    }
+
+    public void setAppOrderNum(int appOrderNum) {
+        this.appOrderNum = appOrderNum;
+        RxBus.getInstance().post(RxBus.RX_MSG_1, 2);
+    }
 
 }

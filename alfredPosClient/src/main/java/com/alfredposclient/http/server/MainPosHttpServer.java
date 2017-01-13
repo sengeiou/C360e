@@ -1249,7 +1249,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							Order order = OrderSQL.getOrder(kotSummary.getOrderId().intValue());
 							if(order != null && !IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
 								AppOrder appOrder = AppOrderSQL.getAppOrderById(order.getAppOrderId().intValue());
-								appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_KOTFINISH);
+								appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARED);
 								AppOrderSQL.updateAppOrder(appOrder);
 								App.instance.getSyncJob().checkAppOrderStatus(
 										App.instance.getRevenueCenter().getId().intValue(),

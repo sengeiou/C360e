@@ -35,6 +35,7 @@ import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.VoidSettlement;
 import com.alfredbase.javabean.WeixinSettlement;
@@ -74,8 +75,10 @@ import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -177,6 +180,12 @@ public class ObjectFactory {
 					order.setAppOrderId(appOrder.getId().intValue());
 					order.setTotal(appOrder.getTotal());
 					order.setSubTotal(appOrder.getSubTotal());
+					order.setOrderRemark(appOrder.getOrderRemark());
+					if(appOrder.getEatType() == ParamConst.APP_ORDER_TAKE_AWAY){
+						order.setIsTakeAway(ParamConst.TAKE_AWAY);
+					}else{
+						order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+					}
 					OrderSQL.update(order);
 				}
 			}
@@ -208,6 +217,7 @@ public class ObjectFactory {
 			orderDetail.setFromOrderDetailId(0);
 			orderDetail.setIsFree(ParamConst.NOT_FREE);
 			orderDetail.setIsItemDiscount(itemDetail.getIsDiscount());
+			orderDetail.setAppOrderDetailId(0);
 			if (itemDetail.getItemType() == 2) {
 				orderDetail.setIsOpenItem(1);
 			}
@@ -239,13 +249,15 @@ public class ObjectFactory {
 			orderDetail.setReason("");
 			orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
 			orderDetail.setItemPrice(appOrderDetail.getItemPrice());
-			orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
+			String taxPrice = AppOrderDetailTaxSQL.getAppOrderDetailTaxSumByAppOrderDetailId(appOrderDetail.getId().intValue());
+			orderDetail.setTaxPrice(taxPrice);
 			orderDetail.setFromOrderDetailId(0);
 			orderDetail.setIsFree(ParamConst.NOT_FREE);
 			orderDetail.setIsItemDiscount(1);
-			orderDetail.setRealPrice(appOrderDetail.getRealPrice());
+			orderDetail.setRealPrice(appOrderDetail.getTotalItemPrice());
 			orderDetail.setGroupId(0);
 			orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+			orderDetail.setAppOrderDetailId(appOrderDetail.getId());
 		}
 		return orderDetail;
 	}
@@ -278,6 +290,7 @@ public class ObjectFactory {
 		orderDetail.setGroupId(ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID);
 		orderDetail.setIsTakeAway(oldOrderDetail.getIsTakeAway());
 		orderDetail.setIsItemDiscount(oldOrderDetail.getIsItemDiscount());
+		orderDetail.setAppOrderDetailId(oldOrderDetail.getId());
 		return orderDetail;
 	}
 
@@ -314,6 +327,7 @@ public class ObjectFactory {
 		}
 		orderDetail.setGroupId(groupId);
 		orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+		orderDetail.setAppOrderDetailId(0);
 		return orderDetail;
 	}
 
@@ -542,6 +556,7 @@ public class ObjectFactory {
 				orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
 				orderDetail.setOrderSplitId(null);
 				orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+				orderDetail.setAppOrderDetailId(0);
 			} else {
 				orderDetail.setItemNum(itemHappyHour.getFreeNum()
 						* fromOrderDetail.getItemNum());
@@ -597,6 +612,7 @@ public class ObjectFactory {
 				orderDetail.setModifierPrice(ParamConst.DOUBLE_ZERO);
 				orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
 				orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+				orderDetail.setAppOrderDetailId(0);
 			} else {
 				orderDetail.setItemNum(itemHappyHour.getFreeNum()
 						* fromOrderDetail.getItemNum());
@@ -1039,6 +1055,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				voidSettlement.setCreateTime(time);
 				voidSettlement.setUpdateTime(time);
 				voidSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
+				voidSettlement.setType(mVoidSettlement.getType());
 				VoidSettlementSQL.addVoidSettlement(voidSettlement);
 			}
 		}
@@ -1307,6 +1324,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotSummary.setBusinessDate(businessDate);
 				kotSummary.setIsTakeAway(order.getIsTakeAway());
 				kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
+				kotSummary.setOrderRemark(order.getOrderRemark());
 				KotSummarySQL.update(kotSummary);
 			}
 		}
@@ -1676,5 +1694,19 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			}
 		}
 		return orderSplit;
+	}
+
+	public UserOpenDrawerRecord getUserOpenDrawerRecord(int restaurantId, int revenueCenterId, User openUser, int loginUserId, int sessionStatus){
+		UserOpenDrawerRecord userOpenDrawerRecord = new UserOpenDrawerRecord();
+		userOpenDrawerRecord.setId(CommonSQL.getNextSeq(TableNames.UserOpenDrawerRecord));
+		userOpenDrawerRecord.setRestaurantId(restaurantId);
+		userOpenDrawerRecord.setRevenueCenterId(revenueCenterId);
+		userOpenDrawerRecord.setSessionStatus(sessionStatus);
+		userOpenDrawerRecord.setUserId(openUser.getId().intValue());
+		userOpenDrawerRecord.setUserName(openUser.getFirstName() + openUser.getLastName());
+		userOpenDrawerRecord.setLoginUserId(loginUserId);
+		userOpenDrawerRecord.setOpenTime(System.currentTimeMillis());
+		UserOpenDrawerRecordSQL.addUserOpenDrawerRecord(userOpenDrawerRecord);
+		return userOpenDrawerRecord;
 	}
 }

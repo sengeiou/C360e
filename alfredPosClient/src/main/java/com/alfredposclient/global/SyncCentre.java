@@ -247,11 +247,20 @@ public class SyncCentre {
 	public void getAppOrderById(Context context,Map<String, Object> parameters, Handler handler){
 		HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), syncHttpClient, parameters, handler);
 	}
+	public void appOrderRefund(Context context, int appOrderId, Handler handler){
+		HttpAPI.appOrderRefund(context, getAbsoluteUrl(APIName.APP_ORDER_REFUND), httpClient, appOrderId, handler);
+	}
+	public void updateTableStatusForApp(Context context, int tableId, Handler handler){
+		HttpAPI.updateTableStatusForApp(context, getAbsoluteUrl(APIName.TABLE_UPDATETABLESTATUS), httpClient, tableId, handler);
+	}
 	public void getAllAppOrder(Context context,Map<String, Object> parameters, Handler handler){
 		HttpAPI.getAllAppOrder(context, getAbsoluteUrl(APIName.POSORDER_GETALLPAIEDAPPORDER), httpClient, parameters, handler);
 	}
 	public void updateAppOrderStatus(Context context, SyncMsg syncMsg){
 		HttpAPI.updateAppOrderStatus(context, getAbsoluteUrl(APIName.POSORDER_UPDATEAPPORDERSTATUS), syncHttpClient, syncMsg);
+	}
+	public void recevingAppOrderStatus(Context context, int appOrderId, Handler handler){
+		HttpAPI.recevingAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
 	}
 
 	public void updatePlaceTable(Context context,Map<String, Object> parameters, Handler handler){

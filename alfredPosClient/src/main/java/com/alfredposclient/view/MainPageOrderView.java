@@ -447,6 +447,9 @@ public class MainPageOrderView extends LinearLayout {
 					if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
 						return;
 					}
+					if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+						return;
+					}
 					// else if (orderDetail.getOrderDetailStatus() >=
 					// ParamConst.ORDERDETAIL_STATUS_PREPARED) {
 					// handler.sendMessage(handler.obtainMessage(
@@ -504,6 +507,9 @@ public class MainPageOrderView extends LinearLayout {
 					if (tag.getIsFree().intValue() == ParamConst.FREE) {
 						return;
 					} else if (tag.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+						return;
+					}
+					if(!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())){
 						return;
 					}
 					final TextView textView = (TextView) arg0;
@@ -649,6 +655,9 @@ public class MainPageOrderView extends LinearLayout {
 					final OrderDetail tag = (OrderDetail) v.getTag();
 					if (tag.getIsFree().intValue() == ParamConst.FREE || tag.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT) {
 						UIHelp.showToast(parent, parent.getResources().getString(R.string.order_first));
+						return;
+					}
+					if(!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())){
 						return;
 					}
 					final TextView textView = (TextView) v;
@@ -927,6 +936,8 @@ public class MainPageOrderView extends LinearLayout {
 					final OrderDetail orderDetail = (OrderDetail) view.getTag();
 					if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
 						return;
+					}else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+						return;
 					} else if (orderDetail.getOrderDetailStatus() <= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						handler.sendMessage(handler
 								.obtainMessage(
@@ -940,7 +951,9 @@ public class MainPageOrderView extends LinearLayout {
 					final OrderDetail tag = (OrderDetail) view.getTag();
 					if (tag.getIsFree().intValue() == ParamConst.FREE) {
 						return;
-					} else if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+					} else if(!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())){
+						return;
+					}else if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),
 								parent.getResources().getString(R.string.remove_item), 
 								parent.getResources().getString(R.string.no), 
@@ -969,6 +982,8 @@ public class MainPageOrderView extends LinearLayout {
 					OrderDetail orderDetail = (OrderDetail) view.getTag();
 					if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
 						return;
+					} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+						return;
 					} else if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("orderDetail", orderDetail);
@@ -988,6 +1003,8 @@ public class MainPageOrderView extends LinearLayout {
 					OrderDetail orderDetail = (OrderDetail) view.getTag();
 					if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
 						return;
+					} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+						return;
 					} else if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_ADDED) {
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("orderDetail", orderDetail);
@@ -1006,6 +1023,9 @@ public class MainPageOrderView extends LinearLayout {
 				case R.id.ll_takeaway:{
 					final OrderDetail orderDetail = (OrderDetail) view.getTag();
 					if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
+						return;
+					}
+					if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 						return;
 					}
 					if (orderDetail.getOrderDetailStatus() > ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
@@ -1037,6 +1057,8 @@ public class MainPageOrderView extends LinearLayout {
 				case R.id.ll_weight:{
 					OrderDetail orderDetail = (OrderDetail) view.getTag();
 					if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
+						return;
+					} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 						return;
 					} else if (orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						handler.sendMessage(handler

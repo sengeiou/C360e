@@ -89,6 +89,8 @@
 
 	<string name="free">免费</string>
 	<string name="take_away_">打包</string>
+    <string name="app_take_away">打包</string>
+    <string name="app_dine_in">堂吃</string>
 	<string name="transfer">转移</string>
 	<string name="weight">重量</string>
 	<string name="weight_">重量(千克)</string>
@@ -180,7 +182,7 @@
     <string name="print_before_close_bill">预结单打印</string>
     <string name="password_update_successfully">密码修改成功</string>
     <string name="employee_no_exist">当前员工不存在，请联系餐厅管理员</string>
-    
+    <string name="table_dining">当前桌子已经被占用</string>
     <!-- syncdate -->
     <string name="binding_to_already">改收银中心已经绑定了其他收银设备. 如果需要使用该设备，请先到云后台收银中心管理解除已经绑定的设备再试.</string>
     <string name="be_bound_already">该设备已经应用在其他收银中心。如果需要使用该设备，请先到云后台收银中心管理中解除改设备.</string>
@@ -224,6 +226,7 @@
     <string name="to">与</string><!-- 待定 -->
     <string name="no_set_kds_printer">厨房未配置打印机或者显示设备</string>
     <string name="place_order_failed">下单失败</string>
+    <string name="no_set_item_print">菜品 : *%s* 没有设置打印机</string>
     <string name="print_bill_">请打印账单</string>
     <string name="assign_items">请把 ? 标记的项目分配到某个组.</string>
     <string name="not_complete_order">订单还没有完成</string>
@@ -359,6 +362,10 @@
     <string name="making">备餐中</string>
     <string name="completed">已备餐</string>
     <string name="finish">已完成</string>
+    <string name="new_order">新单</string>
+    <string name="preparing_order">备餐中</string>
+    <string name="completed_order">已完成</string>
+    <string name="receving_order">接单</string>
 
     <string name="welcome">欢迎光临</string>
 </resources>

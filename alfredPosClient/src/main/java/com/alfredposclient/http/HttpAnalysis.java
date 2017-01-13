@@ -602,6 +602,9 @@ public class HttpAnalysis {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
 			AppOrder appOrder = gson.fromJson(object.getString("appOrder"), AppOrder.class);
+			if(appOrder.getPayStatus() == 0 ){
+				return;
+			}
 			List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>(){}.getType());
 			List<AppOrderDetailTax> appOrderDetailTaxList = gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
 //					gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
@@ -619,7 +622,10 @@ public class HttpAnalysis {
 			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
 			AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
 			AppOrderModifierSQL.addAppOrderModifierList(appOrderModifierList);
-			App.instance.appOrderShowDialog(true, appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+			if(!App.instance.isRevenueKiosk()) {
+				App.instance.appOrderShowDialog(true, appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+			}
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -641,6 +647,9 @@ public class HttpAnalysis {
 				if (AppOrderSQL
 						.getAppOrderById(appOrder
 								.getId().intValue()) != null) {
+					continue;
+				}
+				if(appOrder.getPayStatus() == 0 ){
 					continue;
 				}
 				int tableId = 0;
@@ -679,7 +688,8 @@ public class HttpAnalysis {
 						}
 					}
 				}
-				App.instance.appOrderShowDialog(false, appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
+//				App.instance.appOrderShowDialog(false, appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
+				App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

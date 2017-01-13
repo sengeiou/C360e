@@ -16,6 +16,7 @@ import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.Fragment.TableLayoutFragment;
@@ -37,6 +38,8 @@ import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -1137,10 +1140,95 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+    public static void appOrderRefund(Context context, String url,
+                                      AsyncHttpClient httpClient, final int appOrderId, final Handler handler) {
+        try {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("appOrderId", appOrderId);
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
+                                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+                                handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.CANCEL_APPORDER_SUCCESS, resultCode));
+                                return;
+                            }else if(resultCode == ResultCode.APP_REFUND_FAILD){
+                                try {
+                                    JSONObject jsonObject = new JSONObject(new String(responseBody));
+                                    String content = jsonObject.getString(resultCode+"");
+                                    handler.sendMessage(handler.obtainMessage(ResultCode.APP_REFUND_FAILD, content));
+                                    return;
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            handler.sendMessage(handler.obtainMessage(
+                                    NetWorkOrderActivity.RESULT_FAILED, resultCode));
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void getAllAppOrder(Context context, String url,
                                       AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler) {
         try {
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.getAllAppOrder(statusCode, headers, responseBody);
+                            }
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.REFRESH_APPORDER_SUCCESS, resultCode));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void updateTableStatusForApp(Context context, String url,
+                                      AsyncHttpClient httpClient, int tableId, final Handler handler) {
+        try {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("tableId", tableId);
             httpClient.post(context, url,
                     HttpAssembling.encapsulateBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
@@ -1203,6 +1291,46 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void recevingAppOrder(Context context, String url,
+                                        AsyncHttpClient httpClient, final int appOrderId, final Handler handler) {
+        try {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("appOrderId", appOrderId);
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.RECEVING_APP_ORDER_SUCCESS, appOrderId));
+                            } else {
+                                if(resultCode == ResultCode.APP_ORDER_REFUND){
+                                    AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
+                                }
+                                handler.sendMessage(handler.obtainMessage(
+                                        NetWorkOrderActivity.RESULT_FAILED, resultCode));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(
+                                        NetWorkOrderActivity.HTTP_FAILED, error));
                         }
                     });
         } catch (Exception e) {

@@ -256,8 +256,12 @@ public class KOTPrint extends PrintJob{
 		this.data.add(kot);
 	}
 	
-	public void AddFooter(String op) {
+	public void AddFooter(String op, String remark) {
 		addHortionalLine(this.charSize);
+		if (!TextUtils.isEmpty(remark)) {
+			addSingleLineText(0, "Order remark:" + remark, 0);
+			addLineSpace(1);
+		}
 		addSingleLineText(this.charSize,op, 0);
 		addHortionalLine(this.charSize);
 		AddCut();

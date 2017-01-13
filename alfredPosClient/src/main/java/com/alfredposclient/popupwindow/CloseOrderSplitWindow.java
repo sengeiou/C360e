@@ -48,6 +48,7 @@ import com.alfredbase.store.sql.CardsSettlementSQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.NonChargableSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSQL;
@@ -175,7 +176,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 	private OrderBill orderBill;
 	private WebView web_alipay;
 	private boolean isFirstClickCash = false;
-	private BigDecimal includTax;
 	public CloseOrderSplitWindow(BaseActivity parent, View parentView,
 			Handler handler) {
 		this.parent = parent;
@@ -754,7 +754,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					case ParamConst.SETTLEMENT_TYPE_HOURS_CHARGE:
 						// TODO
 						break;
-					case ParamConst.SETTLEMENT_TYPE_VOID:
+					case ParamConst.SETTLEMENT_TYPE_VOID: {
 						addVoidOrEntTax();
 						VoidSettlement voidSettlement = VoidSettlementSQL
 								.getVoidSettlementByPament(payment.getId(),
@@ -766,6 +766,21 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 						} else {
 							VoidSettlementSQL.deleteVoidSettlement(voidSettlement);
 						}
+					}
+						break;
+					case ParamConst.SETTLEMENT_TYPE_REFUND: {
+						addVoidOrEntTax();
+						VoidSettlement voidSettlement = VoidSettlementSQL
+								.getVoidSettlementByPament(payment.getId(),
+										paymentSettlement.getId());
+						subPaymentSettlement = voidSettlement;
+						if (parent instanceof EditSettlementPage) {
+							voidSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
+							VoidSettlementSQL.addVoidSettlement(voidSettlement);
+						} else {
+							VoidSettlementSQL.deleteVoidSettlement(voidSettlement);
+						}
+					}
 						break;
 					case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
 						addVoidOrEntTax();
@@ -981,6 +996,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			break;
 		case ParamConst.SETTLEMENT_TYPE_VOID:
 			tv_special_settlement_title.setText("VOID");
+//			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
+			rl_special_settlement_person.setVisibility(View.GONE);
+			rl_special_settlement_phone.setVisibility(View.GONE);
+			break;
+		case ParamConst.SETTLEMENT_TYPE_REFUND:
+			tv_special_settlement_title.setText("Refund");
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
 			rl_special_settlement_person.setVisibility(View.GONE);
 			rl_special_settlement_phone.setVisibility(View.GONE);
@@ -1718,6 +1739,16 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		});
 	}
 
+	public void openMoneyKeyboardByVoidRefund(){
+		if(parent instanceof EditSettlementPage){
+			openMoneyKeyboard(View.GONE,
+					ParamConst.SETTLEMENT_TYPE_REFUND);
+		}else{
+			openMoneyKeyboard(View.GONE,
+					ParamConst.SETTLEMENT_TYPE_VOID);
+		}
+	}
+
 	/**
 	 *
 	 * @param visibility
@@ -1792,6 +1823,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			break;
 		case ParamConst.SETTLEMENT_TYPE_VOID:
 			initSpecialSettlement(user, ParamConst.SETTLEMENT_TYPE_VOID);
+			contentView.findViewById(R.id.ll_special_settlement).setVisibility(
+					View.VISIBLE);
+			show.append(0);
+			break;
+		case ParamConst.SETTLEMENT_TYPE_REFUND:
+			initSpecialSettlement(user, ParamConst.SETTLEMENT_TYPE_REFUND);
 			contentView.findViewById(R.id.ll_special_settlement).setVisibility(
 					View.VISIBLE);
 			show.append(0);
@@ -1873,6 +1910,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					View.GONE);
 			break;
 		case ParamConst.SETTLEMENT_TYPE_VOID:
+		case ParamConst.SETTLEMENT_TYPE_REFUND:
 			contentView.findViewById(R.id.ll_special_settlement).setVisibility(
 					View.GONE);
 			break;
@@ -2216,6 +2254,40 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					.getText().toString());
 			mVoidSettlement.setAuthorizedUserId(user.getId());
 			mVoidSettlement.setAmount(orderSplit.getTotal());
+			mVoidSettlement.setType(0);
+			VoidSettlement voidSettlement = ObjectFactory.getInstance()
+					.getVoidSettlementByPayment(payment, paymentSettlement,
+							mVoidSettlement);
+			VoidSettlementSQL.addVoidSettlement(voidSettlement);
+			payment_amount = remainTotal;
+			paymentType = viewTag;
+			orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+			OrderSplitSQL.update(orderSplit);
+			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+			if(upDoneOrderSplitCount == 0){
+				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
+			}
+			if (newPaymentMapList != null) {
+				Map<String, Object> paymentMap = new HashMap<String, Object>();
+				paymentMap.put("newPaymentSettlement", paymentSettlement);
+				paymentMap.put("newSubPaymentSettlement", voidSettlement);
+				newPaymentMapList.add(paymentMap);
+			}
+		}
+			break;
+		case ParamConst.SETTLEMENT_TYPE_REFUND: {
+			refundTax();
+			PaymentSQL.addPayment(payment);
+			PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+					.getPaymentSettlement(payment, paymentTypeId,
+							orderSplit.getTotal());
+			PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+			VoidSettlement mVoidSettlement = new VoidSettlement();
+			mVoidSettlement.setReason(et_special_settlement_remarks_text
+					.getText().toString());
+			mVoidSettlement.setAuthorizedUserId(user.getId());
+			mVoidSettlement.setAmount(orderSplit.getTotal());
+			mVoidSettlement.setType(1);
 			VoidSettlement voidSettlement = ObjectFactory.getInstance()
 					.getVoidSettlementByPayment(payment, paymentSettlement,
 							mVoidSettlement);
@@ -2592,21 +2664,29 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 	}
 	
 	private void addVoidOrEntTax(){
-//		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrderSplit(ParamConst.ACTIVE_NOMAL, orderSplit.getId().intValue());
-//		orderSplit.setTotal(BH.add(BH.getBDNoFormat(orderSplit.getTotal()), BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true).toString());
-//		payment.setPaymentAmount(orderSplit.getTotal());
-//		remainTotal = BH.getBD(orderSplit.getTotal());
-//		settlementNum = BH.getBD(ParamConst.DOUBLE_ZERO);
-//		OrderSplitSQL.update(orderSplit);
-//		PaymentSQL.addPayment(payment);
+		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrderSplit(ParamConst.ACTIVE_NOMAL, orderSplit.getId().intValue());
+		orderSplit.setTotal(BH.add(BH.getBDNoFormat(orderSplit.getTotal()), BH.getBD(orderSplit.getTaxAmount()), true).toString());
+		payment.setPaymentAmount(orderSplit.getTotal());
+		remainTotal = BH.getBD(orderSplit.getTotal());
+		settlementNum = BH.getBD(ParamConst.DOUBLE_ZERO);
+		OrderSplitSQL.update(orderSplit);
+		PaymentSQL.addPayment(payment);
 	}
 	
 	private void deleteVoidOrEntTax(){
-//		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrderSplit(ParamConst.ACTIVE_DELETE, orderSplit.getId().intValue());
-//		orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true).toString());
-//		payment.setPaymentAmount(orderSplit.getTotal());
-//		OrderSplitSQL.update(orderSplit);
-//		PaymentSQL.addPayment(payment);
+		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrderSplit(ParamConst.ACTIVE_DELETE, orderSplit.getId().intValue());
+		orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(orderSplit.getTaxAmount()), true).toString());
+		payment.setPaymentAmount(orderSplit.getTotal());
+		OrderSplitSQL.update(orderSplit);
+		PaymentSQL.addPayment(payment);
 	}
-	
+
+	private void refundTax(){
+		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrderSplit(ParamConst.ACTIVE_REFUND, orderSplit.getId().intValue());
+		payment.setPaymentAmount(orderSplit.getTotal());
+		remainTotal = BH.getBD(orderSplit.getTotal());
+		settlementNum = BH.getBD(ParamConst.DOUBLE_ZERO);
+		OrderSplitSQL.update(orderSplit);
+		PaymentSQL.addPayment(payment);
+	}
 }

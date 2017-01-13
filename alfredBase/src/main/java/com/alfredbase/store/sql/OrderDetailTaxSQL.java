@@ -131,13 +131,13 @@ public class OrderDetailTaxSQL {
 		}
 	}
 
-	public static List<Map<String, String>> getTaxPriceSUM(Tax tax, Order order) {
+	public static List<Map<String, String>> getTaxPriceSUMForPrint(Tax tax, Order order) {
 		ArrayList<String> taxPriceSum = new ArrayList<String>();
 		ArrayList<String> taxNames = new ArrayList<String>();
 		ArrayList<String> taxPercentages = new ArrayList<String>();
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 //		String sql ="select sum(ot.taxPrice), ot.taxName, ot.taxPercentage from " + TableNames.OrderDetailTax + " ot, " + TableNames.TaxCategory + " tc" + " where ot.orderId = ? and ot.taxId = tc.taxId and tc.status = 1 group by ot.taxId order by tc.indexId";
-		String sql ="select sum(ot.taxPrice), ot.taxName, ot.taxPercentage from " + TableNames.OrderDetailTax + " ot where ot.orderId = ? and ot.isActive = " + ParamConst.ACTIVE_NOMAL + " and  ot.taxId in ( select taxId from " + TableNames.TaxCategory + " where status = 1) group by ot.taxId order by ot.indexId";
+		String sql ="select sum(ot.taxPrice), ot.taxName, ot.taxPercentage from " + TableNames.OrderDetailTax + " ot where ot.orderId = ? and ot.isActive <> " + ParamConst.ACTIVE_DELETE + " and  ot.taxId in ( select taxId from " + TableNames.TaxCategory + " where status = 1) group by ot.taxId order by ot.indexId";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -178,7 +178,7 @@ public class OrderDetailTaxSQL {
 	}
 	
 	
-	public static List<Map<String, String>> getOrderSplitTaxPriceSUM(Tax tax, OrderSplit orderSplit) {
+	public static List<Map<String, String>> getOrderSplitTaxPriceSUMForPrint(Tax tax, OrderSplit orderSplit) {
 		ArrayList<String> taxPriceSum = new ArrayList<String>();
 		ArrayList<String> taxNames = new ArrayList<String>();
 		ArrayList<String> taxPercentages = new ArrayList<String>();
@@ -187,7 +187,7 @@ public class OrderDetailTaxSQL {
 				+ TableNames.OrderDetailTax
 				+ " t, "
 				+ TableNames.OrderDetail
-				+ " o where o.id = t.orderDetailId and o.orderSplitId = ? and t.isActive = " + ParamConst.ACTIVE_NOMAL + " and o.orderId = ? and  t.taxId in ( select taxId from " 
+				+ " o where o.id = t.orderDetailId and o.orderSplitId = ? and t.isActive <> " + ParamConst.ACTIVE_DELETE + " and o.orderId = ? and  t.taxId in ( select taxId from "
 				+ TableNames.TaxCategory 
 				+ " where status = 1) group by t.taxId order by t.indexId";
 		Cursor cursor = null;
@@ -229,6 +229,30 @@ public class OrderDetailTaxSQL {
 		return result;
 	}
 
+	public static String getRefundTax(long businessDate){
+		String result = "";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			String sql = "select sum(odt.taxPrice) from "
+					+ TableNames.OrderDetailTax
+					+ " odt,"
+					+ TableNames.Order
+					+ " o where odt.orderId = o.id and o.businessDate = ? and odt.isActive = "
+					+ ParamConst.ACTIVE_REFUND;
+			cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate) });
+			if (cursor.moveToFirst()) {
+				result = cursor.getString(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(cursor != null && !cursor.isClosed()){
+				cursor.close();
+			}
+		}
+		return result;
+	}
 
 	public static Map<String, Object> getTaxDetail(long businessDate) {
 		ArrayList<String> taxPriceSum = new ArrayList<String>();
@@ -240,6 +264,11 @@ public class OrderDetailTaxSQL {
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
 			db.beginTransaction();
+			String sql = "select sum(taxPrice), taxName, taxPercentage, taxId, count(*) from "
+					+ TableNames.Order
+					+ " o,"
+					+ TableNames.OrderDetail
+					+ " od";
 			cursor = db.query(TableNames.OrderDetailTax,
 					new String[] { "sum(taxPrice), taxName, taxPercentage, taxId, count(*)" },
 					" isActive = " + ParamConst.ACTIVE_NOMAL + " and orderId in ( select id from " + TableNames.Order + "  where businessDate = ?) ", new String[] { String.valueOf(businessDate) },
@@ -269,7 +298,32 @@ public class OrderDetailTaxSQL {
 		map.put("taxCounts", taxCounts);
 		return map;
 	}
-	
+
+	public static String getRefundTax(long businessDate, SessionStatus sessionStatus){
+		String result = "";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			String sql = "select sum(odt.taxPrice) from "
+					+ TableNames.OrderDetailTax
+					+ " odt, "
+					+ TableNames.Order
+					+ " o where odt.orderId = o.id and o.businessDate = ? and o.sessionStatus = ? and o.createTime > ? and odt.isActive = "
+					+ ParamConst.ACTIVE_REFUND;
+			cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()) });
+			if (cursor.moveToFirst()) {
+				result = cursor.getString(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(cursor != null && !cursor.isClosed()){
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static Map<String, Object> getTaxDetail(long businessDate, SessionStatus sessionStatus) {
 		ArrayList<String> taxPriceSum = new ArrayList<String>();
 		ArrayList<String> taxNames = new ArrayList<String>();
@@ -279,7 +333,6 @@ public class OrderDetailTaxSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.query(TableNames.OrderDetailTax,
 					new String[] { "sum(taxPrice), taxName, taxPercentage, taxId, count(*)" },
 					" isActive = " + ParamConst.ACTIVE_NOMAL + " and orderId in ( select id from " + TableNames.Order + "  where businessDate = ? and sessionStatus = ? and createTime > ?) ", new String[] { String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()) },
@@ -292,14 +345,12 @@ public class OrderDetailTaxSQL {
 				taxIds.add(cursor.getInt(3));
 				taxCounts.add(cursor.getInt(4));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if(cursor != null && !cursor.isClosed()){
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("taxPriceSum", taxPriceSum);
@@ -437,8 +488,10 @@ public class OrderDetailTaxSQL {
 	}
 	
 	public static void updateOrderDetailTaxActiveByOrder(int isActive, int orderId){
-
 		String sql = "update " + TableNames.OrderDetailTax + " set isActive = ? where orderId = ?" ;
+		if(isActive == ParamConst.ACTIVE_REFUND){
+			sql = "update " + TableNames.OrderDetailTax + " set isActive = ? where orderId = ? and isActive <> " + ParamConst.ACTIVE_DELETE;
+		}
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] {isActive, orderId});
 		} catch (Exception e) {
@@ -448,8 +501,10 @@ public class OrderDetailTaxSQL {
 	}
 	
 	public static void updateOrderDetailTaxActiveByOrderSplit(int isActive, int orderSplitId){
-
 		String sql = "update " + TableNames.OrderDetailTax + " set isActive = ? where orderSplitId = ?" ;
+		if(isActive == ParamConst.ACTIVE_REFUND){
+			sql = "update " + TableNames.OrderDetailTax + " set isActive = ? where orderSplitId = ? and isActive <> " + ParamConst.ACTIVE_DELETE;
+		}
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] {isActive, orderSplitId});
 		} catch (Exception e) {

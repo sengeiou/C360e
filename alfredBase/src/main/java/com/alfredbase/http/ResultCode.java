@@ -57,6 +57,9 @@ public class ResultCode {
 	 * 更新失败
 	 */
 	public static final int UPDATE_FAILED = -1006;
+
+
+	public static final int APP_REFUND_FAILD = -1008;
 	
 	
 	/**
@@ -113,10 +116,15 @@ public class ResultCode {
 
 
 
+	public static final int APP_ORDER_STATUS_ERROR = -2015;
 	/**
 	 *	no  permission	  用户权限不足
 	 */
 	public static final int USER_NO_PERMIT = -3001;
+
+
+
+	public static final int APP_ORDER_REFUND = -1007;
 
 
 	/**
@@ -237,6 +245,10 @@ public class ResultCode {
 			return "Your restaurant can not use stored card";
 		case COMPANY_CANNOT_USE_CARD :
 			return "You can not use stored card";
+		case APP_ORDER_STATUS_ERROR:
+			return "The App Order status is error";
+		case APP_ORDER_REFUND:
+			return "The App Order have been cancelled!";
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);
@@ -247,6 +259,7 @@ public class ResultCode {
 			
 		}
 		return "";
+
 	}
 	
 	public static final String getErrorResultStr(Context context, Throwable error, String server){

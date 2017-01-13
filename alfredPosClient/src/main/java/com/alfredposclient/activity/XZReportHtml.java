@@ -29,11 +29,14 @@ import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
+import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.JSONUtil;
@@ -457,7 +460,12 @@ public class XZReportHtml extends BaseActivity {
 						bizDate);
 
 		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
-
+		List<ReportUserOpenDrawer> reportUserOpenDrawers = new ArrayList<ReportUserOpenDrawer>();
+		if(zPrint){
+			reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawer(session.getSession_status(), bzDate);
+		}else{
+			reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawerByTime(businessDate);
+		}
 		if (cashierPrinter == null) {
 			AlertToDeviceSetting.noKDSorPrinter(context, context.getResources()
 					.getString(R.string.no_printer_devices));
@@ -466,7 +474,7 @@ public class XZReportHtml extends BaseActivity {
 
 				// sales report
 				App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-						title, reportDaySales, reportDayTaxs);
+						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers);
 				// detail analysis
 				App.instance.remotePrintDetailAnalysisReport(rptType,
 						cashierPrinter, title, reportDaySales,
@@ -486,7 +494,7 @@ public class XZReportHtml extends BaseActivity {
 			if (type == XZReportHtml.REPORT_PRINT_SALES) {
 				// sales report
 				App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-						title, reportDaySales, reportDayTaxs);
+						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers);
 			}
 			if (type == XZReportHtml.REPORT_PRINT_DETAILS) {
 				if (zPrint)

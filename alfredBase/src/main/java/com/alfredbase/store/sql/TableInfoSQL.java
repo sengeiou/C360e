@@ -400,7 +400,7 @@ public class TableInfoSQL {
                 newTable.setIsDecorate(cursor.getInt(12));
                 newTable.setUnionId(cursor.getString(13));
                 newTable.setIsActive(cursor.getInt(14));
-                newTable.setPacks(cursor.getInt(15));
+                newTable.setPacks(4);
                 newTable.setRotate(cursor.getInt(16));
                 newTable.setCreateTime(cursor.getLong(17));
                 newTable.setUpdateTime(cursor.getLong(18));

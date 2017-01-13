@@ -59,6 +59,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
@@ -402,7 +403,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		});
 		// 系统初始化工作
 		App.instance.startHttpServer();
-		observable = RxBus.getInstance().register("showStoredCard");
+		observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
 		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
 			@Override
 			public void call(Integer object) {
@@ -978,7 +979,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 		// sales report
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-				title, reportDaySales, reportDayTaxs);
+				title, reportDaySales, reportDayTaxs, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus));
 
 		// detail analysis
 		App.instance.remotePrintDetailAnalysisReport(reportType,
@@ -1058,7 +1059,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 		// sales report
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-				title, reportDaySales, reportDayTaxs);
+				title, reportDaySales, reportDayTaxs, ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate));
 
 		// detail analysis
 		App.instance.remotePrintDetailAnalysisReport(reportType,
@@ -1337,6 +1338,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		case R.id.rl_dinner_session_bg:
 		case R.id.rl_supper_session_bg:
 			mSettingView.initOptionsSessionOpen();
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
 			if (App.instance.isRevenueKiosk()) {
 				UIHelp.startMainPageKiosk(context);
 			} else {
@@ -1456,6 +1458,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							
 						}
 					}).start();
+					App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
 					if (App.instance.isRevenueKiosk()) {
 						UIHelp.startMainPageKiosk(context);
 					} else {
@@ -1477,7 +1480,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	protected void onDestroy() {
 		super.onDestroy();
 		if(observable != null){
-			RxBus.getInstance().unregister("showStoredCard", observable);
+			RxBus.getInstance().unregister(RxBus.RX_MSG_1, observable);
 		}
 	}
 
@@ -1527,6 +1530,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 					@Override
 					public void onClick(View arg0) {
+						App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
 						if (App.instance.isRevenueKiosk()) {
 							UIHelp.startMainPageKiosk(context);
 						} else {

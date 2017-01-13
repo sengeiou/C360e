@@ -19,6 +19,7 @@ public class AppOrderDetail {
 	private String specialInstractions; 	//'手动存入的指令，如饭前上餐前酒、饭后上水果等',
 	private long createTime; 	//'创建时间',
 	private long updateTime; 	//'更新时间',
+	private String totalItemPrice;
 
 	public Integer getId() {
 		return id;
@@ -156,6 +157,14 @@ public class AppOrderDetail {
 		this.updateTime = updateTime;
 	}
 
+	public String getTotalItemPrice() {
+		return totalItemPrice;
+	}
+
+	public void setTotalItemPrice(String totalItemPrice) {
+		this.totalItemPrice = totalItemPrice;
+	}
+
 	@Override
 	public String toString() {
 		return "AppOrderDetail{" +
@@ -176,6 +185,7 @@ public class AppOrderDetail {
 				", specialInstractions='" + specialInstractions + '\'' +
 				", createTime=" + createTime +
 				", updateTime=" + updateTime +
+				", totalItemPrice='" + totalItemPrice + '\'' +
 				'}';
 	}
 }

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
@@ -93,8 +94,27 @@ public class AppOrderDetailTaxSQL {
 			db.endTransaction();
 		}
 	}
-	
 
+	public static String getAppOrderDetailTaxSumByAppOrderDetailId(int orderDetailId){
+		String sql = "select sum(taxPrice) from " + TableNames.AppOrderDetailTax + " where orderDetailId = ?";
+		Cursor cursor = null;
+		String result = "0.00";
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {orderDetailId + ""});
+			if (cursor.moveToFirst()) {
+				result = BH.getBD(cursor.getString(0)).toString();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
 
 	
 	public static List<AppOrderDetailTax> getAppOrderDetailTaxByAppOrderId(int appOrderId){

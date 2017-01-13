@@ -89,6 +89,8 @@
 	<string name="void_">Void</string>
 	<string name="free">Free</string>
 	<string name="take_away_">Takeaway</string>
+	<string name="app_take_away">Take Away</string>
+	<string name="app_dine_in">Dine In</string>
 	<string name="transfer">Transfer</string>
 	<string name="weight">Weight</string>
 	<string name="weight_">Weight(KG)</string>
@@ -228,6 +230,7 @@
     <string name="to">to</string>
     <string name="no_set_kds_printer">No KDS or Printer Devices are set for Kitchens</string>
     <string name="place_order_failed">Place Order Failed</string>
+    <string name="no_set_item_print">Menu : *%s* not set printer</string>
     <string name="print_bill_">Please print bill</string>
     <string name="assign_items">Plese assign ? items to a group.</string>
     <string name="not_complete_order">Not complete the order.</string>
@@ -238,6 +241,7 @@
     <string name="no_pax">No. of Pax</string>
     <string name="online_order">Online Order</string>
     <string name="the_most_selections">%d selections at most</string>
+    <string name="table_dining">The table has been occupied</string>
     
     
     <!-- html -->
@@ -282,7 +286,7 @@
 	<string name="cvv">CVV</string>
 	<string name="entertainment">Entertainment</string>
 	<string name="authorize_by">Authorize By</string>
-	<string name="remarks_">Remarks:</string>
+	<string name="remarks_">Remarks :</string>
 	<string name="net_settlement">NET Settlement</string>
 	<string name="settlement_details">Settlement Details</string>
 	<string name="wechat_settlement">WeChat Settlement</string>
@@ -367,6 +371,10 @@
     <string name="making">MAKING</string>
     <string name="completed">COMPLETED</string>
     <string name="finish">FINISH</string>
+    <string name="new_order">New Order</string>
+    <string name="preparing_order">Preparing</string>
+    <string name="completed_order">Completed</string>
+    <string name="receving_order">Receving</string>
 
     <string name="index">Index</string>
     <string name="welcome">Welcome</string>

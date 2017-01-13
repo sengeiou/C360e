@@ -18,6 +18,8 @@ public class VoidSettlement {
 	 * 是否可用(-1删除，0正常)
 	 */
 	private int isActive;
+
+	private int type;
 	
 	public Integer getId() {
 		return id;
@@ -104,16 +106,33 @@ public class VoidSettlement {
 	public void setIsActive(int isActive) {
 		this.isActive = isActive;
 	}
-	
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 	@Override
 	public String toString() {
-		return "VoidSettlement [id=" + id + ", orderId=" + orderId
-				+ ", billNo=" + billNo + ", paymentId=" + paymentId
-				+ ", paymentSettId=" + paymentSettId + ", reason=" + reason
-				+ ", authorizedUserId=" + authorizedUserId + ", amount="
-				+ amount + ", restaurantId=" + restaurantId + ", revenueId="
-				+ revenueId + ", userId=" + userId + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + ", isActive="
-				+ isActive + "]";
+		return "VoidSettlement{" +
+				"id=" + id +
+				", orderId=" + orderId +
+				", billNo=" + billNo +
+				", paymentId=" + paymentId +
+				", paymentSettId=" + paymentSettId +
+				", reason='" + reason + '\'' +
+				", authorizedUserId=" + authorizedUserId +
+				", amount='" + amount + '\'' +
+				", restaurantId=" + restaurantId +
+				", revenueId=" + revenueId +
+				", userId=" + userId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", isActive=" + isActive +
+				", type=" + type +
+				'}';
 	}
 }

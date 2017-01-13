@@ -23,8 +23,8 @@ public class ReportDaySalesSQL {
 					+ " visaQty, mc, mcQty, amex, amexQty, jbl, jblQty, unionPay, unionPayQty, diner, dinerQty, holdld, holdldQty, totalCard, totalCardQty,"
 					+ " totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount, firstReceipt, lastReceipt,"
 					+ " totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt, alipay, alipayQty, thirdParty,"
-					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty, refundTax)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportDaySales.getId(),
@@ -95,7 +95,10 @@ public class ReportDaySalesSQL {
 							reportDaySales.getStoredCard() == null ? "0.00" : reportDaySales.getStoredCard(),
 							reportDaySales.getStoredCardQty() == null ? 0 : reportDaySales.getStoredCardQty(),
 							reportDaySales.getTopUps() == null ? "0.00" : reportDaySales.getTopUps(),
-							reportDaySales.getTopUpsQty() == null ? 0 : reportDaySales.getTopUpsQty()
+							reportDaySales.getTopUpsQty() == null ? 0 : reportDaySales.getTopUpsQty(),
+							reportDaySales.getBillRefund() == null ? "0.00" : reportDaySales.getBillRefund(),
+							reportDaySales.getBillRefundQty() == null ? 0 : reportDaySales.getBillRefundQty(),
+							reportDaySales.getRefundTax() == null ? "0.00" : reportDaySales.getRefundTax()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -115,8 +118,9 @@ public class ReportDaySalesSQL {
 					+ " visa, visaQty, mc, mcQty, amex, amexQty, jbl, jblQty, unionPay, unionPayQty, diner, dinerQty, holdld, holdldQty, totalCard,"
 					+ " totalCardQty, totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount,"
 					+ " firstReceipt, lastReceipt, totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt,"
-					+ " alipay, alipayQty, thirdParty, thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " alipay, alipayQty, thirdParty, thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty,"
+					+ " billRefund, billRefundQty, refundTax)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] {reportDaySales.getRestaurantId(),
@@ -186,7 +190,10 @@ public class ReportDaySalesSQL {
 							reportDaySales.getStoredCard() == null ? "0.00" : reportDaySales.getStoredCard(),
 							reportDaySales.getStoredCardQty() == null ? 0 : reportDaySales.getStoredCardQty(),
 							reportDaySales.getTopUps() == null ? "0.00" : reportDaySales.getTopUps(),
-							reportDaySales.getTopUpsQty() == null ? 0 : reportDaySales.getTopUpsQty()
+							reportDaySales.getTopUpsQty() == null ? 0 : reportDaySales.getTopUpsQty(),
+							reportDaySales.getBillRefund() == null ? "0.00" : reportDaySales.getBillRefund(),
+							reportDaySales.getBillRefundQty() == null ? 0 : reportDaySales.getBillRefundQty(),
+							reportDaySales.getRefundTax() == null ? "0.00" : reportDaySales.getRefundTax()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -271,6 +278,9 @@ public class ReportDaySalesSQL {
 				reportDaySales.setStoredCardQty(cursor.getInt(66));
 				reportDaySales.setTopUps(cursor.getString(67));
 				reportDaySales.setTopUpsQty(cursor.getInt(68));
+				reportDaySales.setBillRefund(cursor.getString(69));
+				reportDaySales.setBillRefundQty(cursor.getInt(70));
+				reportDaySales.setRefundTax(cursor.getString(71));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -363,6 +373,9 @@ public class ReportDaySalesSQL {
 				reportDaySales.setStoredCardQty(cursor.getInt(66));
 				reportDaySales.setTopUps(cursor.getString(67));
 				reportDaySales.setTopUpsQty(cursor.getInt(68));
+				reportDaySales.setBillRefund(cursor.getString(69));
+				reportDaySales.setBillRefundQty(cursor.getInt(70));
+				reportDaySales.setRefundTax(cursor.getString(71));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -491,6 +504,9 @@ public class ReportDaySalesSQL {
 				reportDaySales.setStoredCardQty(cursor.getInt(66));
 				reportDaySales.setTopUps(cursor.getString(67));
 				reportDaySales.setTopUpsQty(cursor.getInt(68));
+				reportDaySales.setBillRefund(cursor.getString(69));
+				reportDaySales.setBillRefundQty(cursor.getInt(70));
+				reportDaySales.setRefundTax(cursor.getString(71));
 				result.add(reportDaySales);
 			}
 			db.setTransactionSuccessful();
@@ -593,6 +609,9 @@ public class ReportDaySalesSQL {
 				reportDaySales.setStoredCardQty(cursor.getInt(66));
 				reportDaySales.setTopUps(cursor.getString(67));
 				reportDaySales.setTopUpsQty(cursor.getInt(68));
+				reportDaySales.setBillRefund(cursor.getString(69));
+				reportDaySales.setBillRefundQty(cursor.getInt(70));
+				reportDaySales.setRefundTax(cursor.getString(71));
 				result.add(reportDaySales);
 			}
 			db.setTransactionSuccessful();

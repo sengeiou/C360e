@@ -18,11 +18,13 @@ import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.javabeanforhtml.DashboardTotalDetailInfo;
 import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CashInOutSQL;
 import com.alfredbase.store.sql.CommonSQL;
@@ -45,6 +47,7 @@ import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
 import com.alfredbase.store.sql.ReportPluDayItemSQL;
 import com.alfredbase.store.sql.ReportPluDayModifierSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
+import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
@@ -94,6 +97,7 @@ public class ReportObjectFactory {
 		}
 		Map<String, Object> taxPriceSumMap = OrderDetailTaxSQL
 				.getTaxDetail(businessDate);
+		String refundTax = BH.getBD(OrderDetailTaxSQL.getRefundTax(businessDate)).toString();
 		ArrayList<String> taxPriceSum = new ArrayList<String>();
 		BigDecimal totalTax = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if (taxPriceSumMap != null) {
@@ -129,6 +133,13 @@ public class ReportObjectFactory {
 		String billVoid = BH.doubleFormat.format(BH.getBD(voidBillsMap
 				.get("sumAmount")));
 		String billVoidQty = voidBillsMap.get("count");
+
+		Map<String, String> refundBillsMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_VOID, businessDate);
+		String billRefund = BH.sub(BH.getBD(refundBillsMap
+				.get("sumAmount")), BH.getBD(refundTax),true).toString();
+		String billRefundQty = refundBillsMap.get("count");
 
 		Map<String, String> cashMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -393,6 +404,7 @@ public class ReportObjectFactory {
 		totalSales = BH.sub(totalSales, BH.getBD(focBill), true);
 		totalSales = BH.sub(totalSales, BH.getBD(focItem), true);
 		totalSales = BH.sub(totalSales, BH.getBD(billVoid), true);
+		totalSales = BH.sub(totalSales, BH.getBD(billRefund), true);
 		totalSales = BH.sub(totalSales, BH.getBD(itemVoid), true);
 		totalSales = BH.add(totalSales, totalBalancePrice, true);
 		totalSales = BH.add(totalSales, totalTax, true);
@@ -486,6 +498,9 @@ public class ReportObjectFactory {
 		// reportDaySales.setVarianceAmt(varianceAmt.toString());
 		reportDaySales.setVarianceAmt("0.00");
 		reportDaySales.setInclusiveTaxAmt(inclusiveTaxAmt.toString());
+		reportDaySales.setBillRefund(billRefund);
+		reportDaySales.setBillRefundQty(Integer.parseInt(billRefundQty));
+		reportDaySales.setRefundTax(refundTax);
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 		return reportDaySales;
 	}
@@ -1446,6 +1461,8 @@ public class ReportObjectFactory {
 		// }
 		Map<String, Object> taxPriceSumMap = OrderDetailTaxSQL.getTaxDetail(
 				businessDate, sessionStatus);
+		String refundTax = BH.getBD(OrderDetailTaxSQL.getRefundTax(businessDate, sessionStatus)).toString();
+
 		ArrayList<String> taxPriceSum = new ArrayList<String>();
 		BigDecimal totalTax = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if (taxPriceSumMap != null) {
@@ -1483,6 +1500,14 @@ public class ReportObjectFactory {
 		String billVoid = BH.doubleFormat.format(BH.getBD(voidBillsMap
 				.get("sumAmount")));
 		String billVoidQty = voidBillsMap.get("count");
+
+		Map<String, String> refundBillsMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_REFUND, businessDate,
+						sessionStatus);
+		String billRefund = BH.sub(BH.getBD(refundBillsMap
+				.get("sumAmount")), BH.getBD(refundTax), true).toString();
+		String billRefundQty = refundBillsMap.get("count");
 
 		Map<String, String> cashMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -1730,7 +1755,8 @@ public class ReportObjectFactory {
 				PaymentSettlement paymentSettlement = PaymentSettlementSQL.getPaymentSettlementsByOrderId(order.getId());
 				if(paymentSettlement != null 
 						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT 
-						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_VOID )
+						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_VOID
+						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_REFUND )
 				inclusiveTaxAmt = BH.add(BH.getBD(order.getInclusiveTaxPrice()), inclusiveTaxAmt, true);
 				billNoQty++;
 			}
@@ -1758,6 +1784,7 @@ public class ReportObjectFactory {
 		totalSales = BH.sub(totalSales, BH.getBD(focBill), true);
 		totalSales = BH.sub(totalSales, BH.getBD(focItem), true);
 		totalSales = BH.sub(totalSales, BH.getBD(billVoid), true);
+		totalSales = BH.sub(totalSales, BH.getBD(billRefund), true);
 		totalSales = BH.sub(totalSales, BH.getBD(itemVoid), true);
 		totalSales = BH.add(totalSales, totalBalancePrice, true);
 		totalSales = BH.add(totalSales, totalTax, true);
@@ -1852,6 +1879,9 @@ public class ReportObjectFactory {
 		// reportDaySales.setVarianceAmt(varianceAmt.toString());
 		reportDaySales.setVarianceAmt("0.00");
 		reportDaySales.setInclusiveTaxAmt(inclusiveTaxAmt.toString());
+		reportDaySales.setBillRefund(billRefund);
+		reportDaySales.setBillRefundQty(Integer.parseInt(billRefundQty));
+		reportDaySales.setRefundTax(refundTax);
 		// ReportDaySalesSQL.addReportDaySales(reportDaySales);
 		return reportDaySales;
 	}
@@ -2388,6 +2418,13 @@ public class ReportObjectFactory {
 		return reportHourlys;
 	}
 
+	public List<ReportUserOpenDrawer> loadXReportUserOpenDrawerbySessionStatus(long businessDate, SessionStatus sessionStatus){
+			return UserOpenDrawerRecordSQL.getReportUserOpenDrawer(sessionStatus.getSession_status(), businessDate);
+	}
+	public List<ReportUserOpenDrawer> loadReportUserOpenDrawerbyBusinessDate(long businessDate){
+			return UserOpenDrawerRecordSQL.getReportUserOpenDrawerByTime(businessDate);
+	}
+
 	public Map<String, Object> getXReportInfo(long businessDate,
 			SessionStatus sessionStatus) {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -2399,6 +2436,7 @@ public class ReportObjectFactory {
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
 		ArrayList<ReportHourly> reportHourlys = new ArrayList<ReportHourly>();
 		ArrayList<ReportPluDayComboModifier>reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>();
+		List<UserOpenDrawerRecord> userOpenDrawerRecords = UserOpenDrawerRecordSQL.getAllUserOpenDrawerRecord(sessionStatus.getSession_status(),businessDate);
 		// ArrayList<UserTimeSheet> userTimeSheets = new
 		// ArrayList<UserTimeSheet>();
 		// reportDaySales = loadXReportDaySales(businessDate, sessionStatus);
@@ -2418,10 +2456,12 @@ public class ReportObjectFactory {
 		map.put("reportHourlys", reportHourlys);
 		map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
 		map.put("sessionStatus", sessionStatus);
+		map.put("userOpenDrawerRecords", userOpenDrawerRecords);
 		// map.put("userTimeSheets", userTimeSheets);
 		return map;
 	}
-	
+
+
 	/*Filter void/ENT item in PLUDayItem*/
 	public ArrayList<ReportPluDayItem> getPLUItemWithoutVoidEnt(ArrayList<ReportPluDayItem> reportPluDayItems) {
 		ArrayList<ReportPluDayItem> filteredPluDayItems = new ArrayList<ReportPluDayItem>();

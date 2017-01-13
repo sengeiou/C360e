@@ -20,6 +20,10 @@ public class AppOrder {
     private Integer tableType = 0; // 桌子状态,只用于本地,0默认状态,1桌子可以使用,-1桌子已经占用中 等待分配桌子。
     private String tableNo;
     private Integer bizType = 0; // 业务类型, 0点菜,1预点单
+    private String orderRemark;
+    private int eatType; // 0 堂吃, 1 打包
+    private int payStatus;
+
     public Integer getId() {
         return id;
     }
@@ -172,6 +176,38 @@ public class AppOrder {
         this.bizType = bizType;
     }
 
+    public String getOrderRemark() {
+        return orderRemark;
+    }
+
+    public void setOrderRemark(String orderRemark) {
+        this.orderRemark = orderRemark;
+    }
+
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public int getEatType() {
+        return eatType;
+    }
+
+    public void setEatType(int eatType) {
+        this.eatType = eatType;
+    }
+
+    public int getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(int payStatus) {
+        this.payStatus = payStatus;
+    }
+
     @Override
     public String toString() {
         return "AppOrder{" +
@@ -194,7 +230,9 @@ public class AppOrder {
                 ", tableType=" + tableType +
                 ", tableNo='" + tableNo + '\'' +
                 ", bizType=" + bizType +
-                ", orderNum=" + orderNum +
+                ", orderRemark='" + orderRemark + '\'' +
+                ", eatType=" + eatType +
+                ", payStatus=" + payStatus +
                 '}';
     }
 }

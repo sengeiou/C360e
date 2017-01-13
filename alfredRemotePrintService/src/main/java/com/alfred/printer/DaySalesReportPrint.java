@@ -6,11 +6,13 @@ import com.alfred.remote.printservice.R;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
+import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.utils.BH;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DaySalesReportPrint extends ReportBasePrint{
 
@@ -23,7 +25,7 @@ public class DaySalesReportPrint extends ReportBasePrint{
 
 	private ReportDaySales reportDaySales;
 	private ArrayList<ReportDayTax> reportDayTaxs;
-
+	private List<ReportUserOpenDrawer> reportUserOpenDrawerList;
 	
 	private String OP;
 	private String reportNo;
@@ -37,9 +39,10 @@ public class DaySalesReportPrint extends ReportBasePrint{
 		return data;
 	}
 	
-	public void print(ReportDaySales reportData, ArrayList<ReportDayTax> taxData ) {
+	public void print(ReportDaySales reportData, ArrayList<ReportDayTax> taxData, List<ReportUserOpenDrawer> reportUserOpenDrawers ) {
 		this.reportDaySales = reportData;
 		this.reportDayTaxs = taxData;
+		this.reportUserOpenDrawerList = reportUserOpenDrawers;
 		GetReportDaySalesText();
 	}
 
@@ -176,6 +179,10 @@ public class DaySalesReportPrint extends ReportBasePrint{
 				  reportDaySales.getItemVoid(), 1);
 		this.addItem(PrintService.instance.getResources().getString(R.string.void_bills), reportDaySales.getBillVoidQty().toString(),
 				  reportDaySales.getBillVoid(), 1);
+		this.addItem(PrintService.instance.getResources().getString(R.string.refund_bills), reportDaySales.getBillRefundQty().toString(),
+				  reportDaySales.getBillRefund(), 1);
+		this.addItem(PrintService.instance.getResources().getString(R.string.refund_taxes), "",
+				  reportDaySales.getRefundTax(), 1);
 		this.addItem(PrintService.instance.getResources().getString(R.string.discount_on_per), reportDaySales.getDiscountPerQty().toString(),
 				  reportDaySales.getDiscountPer(), 1);
 		this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
@@ -248,6 +255,13 @@ public class DaySalesReportPrint extends ReportBasePrint{
 				String.valueOf(reportDaySales.getItemVoidQty()+ reportDaySales.getBillVoidQty()), 
 				String.valueOf(BH.add(BH.getBD(reportDaySales.getItemVoid()),
 						BH.getBD(reportDaySales.getBillVoid()), true)), 1);
+		this.addItem(PrintService.instance.getResources().getString(R.string.refund_bills), reportDaySales.getBillRefundQty().toString(),
+				reportDaySales.getBillRefund(), 1);
+		this.addItem(PrintService.instance.getResources().getString(R.string.refund_taxes), "",
+				reportDaySales.getRefundTax(), 1);
+		this.addItem(PrintService.instance.getResources().getString(R.string.total_refund), "",
+				BH.add(BH.getBD(reportDaySales.getBillRefund()), BH.getBD(reportDaySales.getRefundTax()), true).toString(), 1);
+
 		
         this.addSectionHeader(PrintService.instance.getResources().getString(R.string.disc_summary));				
         this.addItem(PrintService.instance.getResources().getString(R.string.discount_on_per), reportDaySales.getDiscountPerQty().toString(), 
@@ -272,7 +286,13 @@ public class DaySalesReportPrint extends ReportBasePrint{
 				this.addItem(PrintService.instance.getResources().getString(R.string.total_taxsvc),"", taxSvc.toString(), 1);
 			}
         }
-
+		if(reportUserOpenDrawerList != null && reportUserOpenDrawerList.size() > 0){
+			this.addSectionHeader(PrintService.instance.getResources().getString(R.string.open_drawer));
+			for(int i = 0; i < reportUserOpenDrawerList.size(); i++){
+				ReportUserOpenDrawer reportUserOpenDrawer = reportUserOpenDrawerList.get(i);
+				this.addItem(reportUserOpenDrawer.getUserName(), "", reportUserOpenDrawer.getTimes()+"", 1);
+			}
+		}
 //		BigDecimal nettSales = BH.getBD("0.00");
 //		nettSales = BH.add(nettSales, BH.getBD(reportDaySales.getTotalCard()),
 //				false);

@@ -78,6 +78,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 	private LayoutInflater inflater;
 	private OrderAdapter orderAdapter;
 	private TextView tv_table_name_ontop;
+	private TextView tv_pax;
 	private TextView tv_item_count;
 	private TextView tv_sub_total;
 	private TextView tv_discount;
@@ -110,6 +111,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 		lv_order.setAdapter(orderAdapter);
 
 		tv_table_name_ontop = (TextView) findViewById(R.id.tv_table_name_ontop);
+		tv_pax = (TextView) findViewById(R.id.tv_pax);
 		tv_item_count = (TextView) findViewById(R.id.tv_item_count);
 		tv_sub_total = (TextView) findViewById(R.id.tv_sub_total);
 		tv_discount = (TextView) findViewById(R.id.tv_discount);
@@ -127,7 +129,12 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 		});
 		if (App.countryCode == ParamConst.CHINA && SystemUtil.isZh(context))
 		   btn_place_order.setBackgroundResource(R.drawable.kiosk_box_place_order_selector_zh);
-		
+		tv_pax.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX,(String)tv_pax.getText().toString()));
+			}
+		});
 		btn_place_order.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -260,6 +267,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 	private void initTextTypeFace() {
 		textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod(tv_table_name_ontop);
+		textTypeFace.setTrajanProBlod(tv_pax);
 		textTypeFace
 				.setTrajanProRegular((TextView) findViewById(R.id.tv_name_title));
 		textTypeFace
@@ -332,6 +340,11 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 			orderNoStr = orderNoStr + "("+ parent.getResources().getString(R.string.take_away) + ")";
 		}
 		tv_table_name_ontop.setText(orderNoStr);
+		if(!IntegerUtils.isEmptyOrZero(order.getPersons())){
+			tv_pax.setText(parent.getString(R.string.pax) + " " + order.getPersons().intValue());
+		}else{
+			tv_pax.setText(parent.getString(R.string.pax) + " 4");
+		}
 		tv_item_count.setText("" + itemCount);
 		tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()));
 		tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()));

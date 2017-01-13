@@ -222,7 +222,7 @@ public class ReprintBillHtml extends BaseActivity {
 					order,
 					ObjectFactory.getInstance().getItemList(
 							OrderDetailSQL.getOrderDetails(order.getId())),
-					orderModifiers, OrderDetailTaxSQL.getTaxPriceSUM(
+					orderModifiers, OrderDetailTaxSQL.getTaxPriceSUMForPrint(
 							App.instance.getLocalRestaurantConfig()
 									.getIncludedTax().getTax(), order), null,
 					roundAmount);
@@ -247,7 +247,7 @@ public class ReprintBillHtml extends BaseActivity {
 //				OrderHelper.setOrderSplitTotalAlfterRound(orderSplit,
 //						orderSplitRoundAmount);
 				List<Map<String, String>> taxMap = OrderDetailTaxSQL
-						.getOrderSplitTaxPriceSUM(App.instance
+						.getOrderSplitTaxPriceSUMForPrint(App.instance
 								.getLocalRestaurantConfig().getIncludedTax()
 								.getTax(), orderSplit);
 				ArrayList<PrintOrderItem> orderItems = ObjectFactory

@@ -185,7 +185,7 @@ public class EditSettlementPage extends BaseActivity {
                             title,
                             currentOrder,
                             printOrderItems, orderModifiers,
-                            OrderDetailTaxSQL.getTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder), PaymentSettlementSQL
+                            OrderDetailTaxSQL.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder), PaymentSettlementSQL
                                     .getAllPaymentSettlementByPaymentId(Integer.valueOf(map.get("paymentId"))), roundAmount);
                     /**
                      * 给后台发送log 信息
@@ -228,7 +228,7 @@ public class EditSettlementPage extends BaseActivity {
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
                             .getInstance().getItemList(orderSplitDetails);
                     List<Map<String, String>> taxMap = OrderDetailTaxSQL
-                            .getOrderSplitTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), orderSplit);
+                            .getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), orderSplit);
 
                     ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                             .getInstance().getItemModifierList(OrderSQL.getOrder(orderSplit.getOrderId()), orderSplitDetails);
@@ -326,7 +326,7 @@ public class EditSettlementPage extends BaseActivity {
                                             .addNonChargableSettlement(oldNonChargableSettlement);
                                 }
                                 break;
-                            case ParamConst.SETTLEMENT_TYPE_VOID:
+                            case ParamConst.SETTLEMENT_TYPE_VOID: {
                                 VoidSettlement oldVoidSettlement = (VoidSettlement) paymentMap
                                         .get("subPaymentSettlement");
                                 if (oldVoidSettlement != null) {
@@ -334,6 +334,17 @@ public class EditSettlementPage extends BaseActivity {
                                     VoidSettlementSQL
                                             .addVoidSettlement(oldVoidSettlement);
                                 }
+                            }
+                                break;
+                            case ParamConst.SETTLEMENT_TYPE_REFUND: {
+                                VoidSettlement oldVoidSettlement = (VoidSettlement) paymentMap
+                                        .get("subPaymentSettlement");
+                                if (oldVoidSettlement != null) {
+                                    oldVoidSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
+                                    VoidSettlementSQL
+                                            .addVoidSettlement(oldVoidSettlement);
+                                }
+                            }
                                 break;
                             case ParamConst.SETTLEMENT_TYPE_NETS:
                                 NetsSettlement oldNetsSettlement = (NetsSettlement) paymentMap
@@ -402,13 +413,23 @@ public class EditSettlementPage extends BaseActivity {
                                             .deleteNonChargableSettlement(newNonChargableSettlement);
                                 }
                                 break;
-                            case ParamConst.SETTLEMENT_TYPE_VOID:
+                            case ParamConst.SETTLEMENT_TYPE_VOID: {
                                 VoidSettlement newVoidSettlement = (VoidSettlement) newPaymentMap
                                         .get("newSubPaymentSettlement");
                                 if (newVoidSettlement != null) {
                                     VoidSettlementSQL
                                             .deleteVoidSettlement(newVoidSettlement);
                                 }
+                            }
+                                break;
+                            case ParamConst.SETTLEMENT_TYPE_REFUND: {
+                                VoidSettlement newVoidSettlement = (VoidSettlement) newPaymentMap
+                                        .get("newSubPaymentSettlement");
+                                if (newVoidSettlement != null) {
+                                    VoidSettlementSQL
+                                            .deleteVoidSettlement(newVoidSettlement);
+                                }
+                            }
                                 break;
                             case ParamConst.SETTLEMENT_TYPE_NETS:
                                 NetsSettlement newNetsSettlement = (NetsSettlement) newPaymentMap
@@ -473,11 +494,11 @@ public class EditSettlementPage extends BaseActivity {
                             if (closeOrderWindow.isShowing()) {
                                 closeOrderWindow.setUser(user);
                                 closeOrderWindow.openMoneyKeyboard(View.GONE,
-                                        ParamConst.SETTLEMENT_TYPE_VOID);
+                                        ParamConst.SETTLEMENT_TYPE_REFUND);
                             } else if (closeOrderSplitWindow.isShowing()) {
                                 closeOrderSplitWindow.setUser(user);
                                 closeOrderSplitWindow.openMoneyKeyboard(View.GONE,
-                                        ParamConst.SETTLEMENT_TYPE_VOID);
+                                        ParamConst.SETTLEMENT_TYPE_REFUND);
                             }
                         }
                     } else if (result.get("MsgObject").equals(

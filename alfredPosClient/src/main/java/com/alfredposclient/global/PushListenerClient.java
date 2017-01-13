@@ -12,6 +12,7 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.LogUtil;
+import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.service.PushService.PushListener;
 import com.google.gson.Gson;
 
@@ -39,13 +40,25 @@ public class PushListenerClient implements PushListener {
 					&& !TextUtils.isEmpty(msg.getContent())) {
 				try {
 					JSONObject jsonObject = new JSONObject(msg.getContent());
+					int type = 0;
+					if(jsonObject.has("refundType")){
+						type = jsonObject.getInt("refundType");
+					}
 					int appOrderId = jsonObject.getInt("appOrderId");
 
-					AppOrder appOrder = AppOrderSQL.getAppOrderById(appOrderId);
-					if (appOrder == null) {
-						Map<String, Object> map = new HashMap<String, Object>();
-						map.put("appOrderId", appOrderId);
-						SyncCentre.getInstance().getAppOrderById(context, map, null);
+					if(type == -2016){
+						AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
+						App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+						if(App.getTopActivity() instanceof NetWorkOrderActivity){
+							App.getTopActivity().httpRequestAction(type, null);
+						}
+					}else {
+						AppOrder appOrder = AppOrderSQL.getAppOrderById(appOrderId);
+						if (appOrder == null) {
+							Map<String, Object> map = new HashMap<String, Object>();
+							map.put("appOrderId", appOrderId);
+							SyncCentre.getInstance().getAppOrderById(context, map, null);
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

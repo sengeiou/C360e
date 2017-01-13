@@ -68,9 +68,14 @@ public class KotJobManager {
 		Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<Integer, ArrayList<KotItemDetail>>();
 		// map printerGroudId to Modifiers
 		Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<Integer, ArrayList<KotItemModifier>>();
-
+		BaseActivity context = App.getTopActivity();
 		for (KotItemDetail items : kot) {
 			Integer pgid = items.getPrinterGroupId();
+			if(pgid.intValue() == 0){
+				context.kotPrintStatus(MainPage.KOT_ITEM_PRINT_NULL,
+						items.getItemName());
+				return;
+			}
 			int kotItemDetailId = items.getId().intValue();
 
 			// Get all Group ids that KOT blongs to
@@ -105,10 +110,13 @@ public class KotJobManager {
 				mods.put(items.getPrinterGroupId(), tmp);
 			}
 		}
+
 		if(printerGrougIds !=null && printerGrougIds.size() > 0){
 			kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
 			KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId().intValue());
 		}
+
+
 
 		// add job to send it to KDS
 		for (Integer prgid : printerGrougIds) {
@@ -117,19 +125,22 @@ public class KotJobManager {
 			for (Printer prnt : printers) {
 				// KDS device
 				KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
+				// physical printer
+				PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
+						.getId());
+				if(kds1 == null && prntd == null){
+					context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
+					return;
+				}
 				if (kds1 != null) {
 					KotJob kotjob = new KotJob(kds1, kotSummary,
 							kots.get(prgid), mods.get(prgid), method, orderMap);
 					kotJobManager.addJob(kotjob);
 				}
-				// physical printer
-				PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
-						.getId());
 				if(prntd != null){
 					prntd.setGroupId(prgid.intValue());
 					boolean printed = App.instance.remoteKotPrint(prntd,
 							kotSummary, kots.get(prgid), mods.get(prgid));
-					BaseActivity context = App.getTopActivity();
 					if (printed) {
 						List<Integer> orderDetailIds = (List<Integer>) orderMap
 								.get("orderDetailIds");

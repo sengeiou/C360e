@@ -19,7 +19,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="@string/back" />
+            android:text="@string/back"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btn_refresh"
@@ -32,6 +33,7 @@
             android:layout_marginRight="20dp"
             android:text="@string/refresh" />
     </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,9 +51,59 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp"
+                android:paddingRight="40dp" >
+
+
+                <TextView
+                    android:id="@+id/tv_new_order"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/new_order"
+                    android:textColor="@color/text_light_black"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_preparing_order"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/preparing_order"
+                    android:textColor="@color/text_light_black"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_completed_order"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/completed_order"
+                    android:textColor="@color/text_light_black"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_line_bg"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="10dp" >
+                android:padding="20dp" >
 
                 <TextView
                     android:id="@+id/tv_order_no"
@@ -111,7 +163,7 @@
                 android:id="@+id/lv_order_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/gray"
+                android:background="@color/white"
                 android:divider="@color/white"
                 android:dividerHeight="1dp"
                 android:listSelector="@null"
@@ -129,7 +181,47 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical" >
-
+            <TextView
+                android:id="@+id/tv_eat_type"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_line_bg"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:minHeight="50dp">
+                <TextView
+                    android:id="@+id/tv_app_remarks_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remarks_"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_s_small"/>
+                <TextView
+                    android:id="@+id/tv_app_remarks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remarks_"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_s_small"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_line_bg"
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -140,10 +232,11 @@
                     android:id="@+id/tv_item_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
+                    android:layout_weight="1"
                     android:ellipsize="end"
-                    android:gravity="left|center_vertical"
+                    android:gravity="center"
                     android:singleLine="true"
+                    android:layout_gravity="center"
                     android:text="@string/name"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s_small" />
@@ -155,6 +248,7 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:gravity="center"
+                    android:layout_gravity="center"
                     android:singleLine="true"
                     android:text="@string/qty"
                     android:textColor="@color/black"
@@ -198,12 +292,13 @@
                         android:text="@string/check" />
 
                     <Button
-                        android:id="@+id/btn_delete"
+                        android:id="@+id/btn_cancel"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         android:visibility="gone"
+                        android:layout_margin="10dp"
                         android:text="@string/delete" />
                 </LinearLayout>
             </RelativeLayout>
@@ -237,5 +332,12 @@
         android:layout_below="@id/ll_top"
         android:scaleType="fitXY"
         android:src="@drawable/shadow" />
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/f_tables"
+        android:name="com.alfredposclient.Fragment.TableLayoutFragment"
+        />
 
 </RelativeLayout>

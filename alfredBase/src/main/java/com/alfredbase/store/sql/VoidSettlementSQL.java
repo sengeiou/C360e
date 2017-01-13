@@ -1,9 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -13,6 +9,10 @@ import com.alfredbase.javabean.VoidSettlement;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class VoidSettlementSQL {
 
 	public static void addVoidSettlement(VoidSettlement voidSettlement) {
@@ -21,11 +21,13 @@ public class VoidSettlementSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.VoidSettlement
-					+ " (id, orderId, billNo, paymentId, paymentSettId, reason, authorizedUserId, amount, restaurantId, revenueId, userId, createTime, updateTime, isActive)"
-					+ " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					+ " (id, orderId, billNo, paymentId, paymentSettId, reason, authorizedUserId, amount, restaurantId, revenueId,"
+					+ " userId, createTime, updateTime, isActive, type)"
+					+ " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			SQLExe.getDB().execSQL(
 					sql,
-					new Object[] { voidSettlement.getId(),
+					new Object[] {
+							voidSettlement.getId(),
 							voidSettlement.getOrderId(),
 							voidSettlement.getBillNo(),
 							voidSettlement.getPaymentId(),
@@ -38,7 +40,9 @@ public class VoidSettlementSQL {
 							voidSettlement.getUserId(),
 							voidSettlement.getCreateTime(),
 							voidSettlement.getUpdateTime(),
-							voidSettlement.getIsActive()});
+							voidSettlement.getIsActive(),
+							voidSettlement.getType()
+							});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -68,6 +72,7 @@ public class VoidSettlementSQL {
 				voidSettlement.setCreateTime(cursor.getLong(11));
 				voidSettlement.setUpdateTime(cursor.getLong(12));
 				voidSettlement.setIsActive(cursor.getInt(13));
+				voidSettlement.setType(cursor.getInt(14));
 				return voidSettlement;
 			}
 		} catch (Exception e) {
@@ -107,6 +112,7 @@ public class VoidSettlementSQL {
 				voidSettlement.setCreateTime(cursor.getLong(11));
 				voidSettlement.setUpdateTime(cursor.getLong(12));
 				voidSettlement.setIsActive(cursor.getInt(13));
+				voidSettlement.setType(cursor.getInt(14));
 				return voidSettlement;
 			}
 			db.setTransactionSuccessful();
@@ -149,6 +155,7 @@ public class VoidSettlementSQL {
 				voidSettlement.setCreateTime(cursor.getLong(11));
 				voidSettlement.setUpdateTime(cursor.getLong(12));
 				voidSettlement.setIsActive(cursor.getInt(13));
+				voidSettlement.setType(cursor.getInt(14));
 				voidSettlements.add(voidSettlement);
 			}
 			db.setTransactionSuccessful();
@@ -193,6 +200,7 @@ public class VoidSettlementSQL {
 				voidSettlement.setUserId(cursor.getInt(10));
 				voidSettlement.setCreateTime(cursor.getLong(11));
 				voidSettlement.setUpdateTime(cursor.getLong(12));
+				voidSettlement.setType(cursor.getInt(14));
 				result.add(voidSettlement);
 			}
 			db.setTransactionSuccessful();

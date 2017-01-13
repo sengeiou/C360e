@@ -8,6 +8,7 @@
     <TextView
         android:id="@+id/tv_order_id"
         android:layout_width="0dp"
+        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"

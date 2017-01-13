@@ -100,6 +100,7 @@ public class ReportDaySales implements Serializable{
 	 * voidBill结算后退单数量
 	 */
 	private Integer billVoidQty;
+
 	/**
 	 * voidItem结算前退单金额
 	 */
@@ -140,6 +141,12 @@ public class ReportDaySales implements Serializable{
 
 	private String topUps;
 	private Integer topUpsQty;
+
+	private String billRefund;
+
+	private Integer billRefundQty;
+
+	private String refundTax;
 	
 	public ReportDaySales() {
 
@@ -742,6 +749,30 @@ public class ReportDaySales implements Serializable{
 		this.topUpsQty = topUpsQty;
 	}
 
+	public String getBillRefund() {
+		return billRefund;
+	}
+
+	public void setBillRefund(String billRefund) {
+		this.billRefund = billRefund;
+	}
+
+	public Integer getBillRefundQty() {
+		return billRefundQty;
+	}
+
+	public void setBillRefundQty(Integer billRefundQty) {
+		this.billRefundQty = billRefundQty;
+	}
+
+	public String getRefundTax() {
+		return refundTax;
+	}
+
+	public void setRefundTax(String refundTax) {
+		this.refundTax = refundTax;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -814,6 +845,9 @@ public class ReportDaySales implements Serializable{
 				", storedCardQty=" + storedCardQty +
 				", topUps='" + topUps + '\'' +
 				", topUpsQty=" + topUpsQty +
+				", billRefund='" + billRefund + '\'' +
+				", billRefundQty=" + billRefundQty +
+				", refundTax='" + refundTax + '\'' +
 				'}';
 	}
 }

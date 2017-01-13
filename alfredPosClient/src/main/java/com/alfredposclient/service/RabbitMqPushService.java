@@ -49,56 +49,72 @@ public class RabbitMqPushService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mHandler = new Handler();
-		LogUtil.d(TAG, "Creating Alfred Push Service " + this.toString());
-		if (factory == null) {
-			factory = new ConnectionFactory();
-		}
-		factory.setHost(getPushServerIp());
-		factory.setPort(PUSH_PORT);
-		factory.setUsername(PUSH_USERNAME);
-		factory.setPassword(PUSH_PASSWORD);
-		factory.setVirtualHost(PUSH_VIRTUAL_HOST);
-		PushMessage pushMessage = new PushMessage();
+//		mHandler = new Handler();
+//		mListener = new PushListenerClient(App.instance);
+//		LogUtil.d(TAG, "Creating Alfred Push Service " + this.toString());
+//		if (factory == null) {
+//			factory = new ConnectionFactory();
+//		}
+//		factory.setHost(getPushServerIp());
+//		factory.setPort(PUSH_PORT);
+//		factory.setUsername(PUSH_USERNAME);
+//		factory.setPassword(PUSH_PASSWORD);
+//		factory.setVirtualHost(PUSH_VIRTUAL_HOST);
+//		PushMessage pushMessage = new PushMessage();
 	}
 
 	@Override
 	public void onDestroy() {
+//		stopThread();
+//		pushThread = null;
+		App.instance.getPushThread().setStopThread(true);
+		super.onDestroy();
+		LogUtil.d(TAG, "Destroying Alfred Push Service " + this.toString() + "stopThread = " + stopThread);
+	}
+
+	public void stopThread(){
 		if(pushThread.isAlive()) {
 			pushThread.currentThread().interrupt();
 			stopThread = true;
 		}
-		super.onDestroy();
-		LogUtil.d(TAG, "Destroying Alfred Push Service " + this.toString());
 	}
 
 	@Override
 	public int onStartCommand(final Intent intent, int flags, int startId) {
-		stopThread = false;
-		LogUtil.d(TAG, "开启服务 stopThread = " + stopThread);
-		if(runnable == null){
-			runnable = new Runnable() {
-				@Override
-				public void run() {
-					try {
-						if(intent == null){
-							stopThread = true;
-							return;
-						}
-						connect(intent.getStringExtra("rKey"));
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-						Thread.currentThread().interrupt();
-					}
-				}
-			};
+		if(intent == null){
+			App.instance.getPushThread().setStopThread(true);
+		}else{
+			App.instance.getPushThread().start(intent.getStringExtra("rKey"));
+			App.instance.getPushThread().setStopThread(false);
 		}
-		if(pushThread == null || !pushThread.isAlive()) {
-			pushThread = new Thread(runnable);
-			pushThread.start();
-		}
+//		stopThread = false;
+//		LogUtil.d(TAG, "开启服务 stopThread = " + stopThread);
+//		if(runnable == null){
+//			runnable = new Runnable() {
+//				@Override
+//				public void run() {
+//					try {
+//						if(intent == null){
+//							stopThread = true;
+//							return;
+//						}
+//						connect(intent.getStringExtra("rKey"));
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//						Thread.currentThread().interrupt();
+//					}
+//				}
+//			};
+//		}
+//		if(pushThread == null) {
+//			pushThread = new Thread(runnable);
+//			pushThread.start();
+//		}else{
+//			pushThread.currentThread().start();
+//		}
 		return START_STICKY;
 	}
+
 
 
 	public void connect(String rKey) throws InterruptedException {
@@ -119,6 +135,9 @@ public class RabbitMqPushService extends Service {
 			channel.basicConsume(QUEUE_ANDROID + "_" + rKey, false, consumer);
 			while (true) {
 				if(stopThread) {
+					if(autorecoveringConnection.isOpen()){
+						autorecoveringConnection.close();
+					}
 					LogUtil.d(TAG, "退出线程 stopThread = " +stopThread);
 					return;
 				}
@@ -137,16 +156,18 @@ public class RabbitMqPushService extends Service {
 //				bundle.putString("msg", message);
 //				msg.setData(bundle);
 //				mHandler.sendMessage(msg);
-				try {
-					Gson gson = new Gson();
-					PushMessage pushMessage = gson.fromJson(message, PushMessage.class);
-					if(mListener != null)
-						mListener.onPushMessageReceived(pushMessage);
-					else
-						LogUtil.d(TAG, "回调是空的");
-				}catch(Exception e){
-					LogUtil.d(TAG, "设置监听出错");
-					e.printStackTrace();
+				if(!"\"LinkStatus\"".equals(message)) {
+					try {
+						Gson gson = new Gson();
+						PushMessage pushMessage = gson.fromJson(message, PushMessage.class);
+						if (mListener != null)
+							mListener.onPushMessageReceived(pushMessage);
+						else
+							LogUtil.d(TAG, "回调是空的");
+					} catch (Exception e) {
+						LogUtil.d(TAG, "设置监听出错");
+						e.printStackTrace();
+					}
 				}
 				Thread.sleep(500);
 

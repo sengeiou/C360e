@@ -29,6 +29,8 @@ public class KotSummary implements Serializable{
 
 	// 用于储存收银中心的indexId
 	private Integer revenueCenterIndex = 1;
+
+	private String orderRemark;// order 里面的备注
 	
 	public Integer getId() {
 		return id;
@@ -142,6 +144,14 @@ public class KotSummary implements Serializable{
 		this.revenueCenterIndex = revenueCenterIndex;
 	}
 
+	public String getOrderRemark() {
+		return orderRemark;
+	}
+
+	public void setOrderRemark(String orderRemark) {
+		this.orderRemark = orderRemark;
+	}
+
 	@Override
 	public String toString() {
 		return "KotSummary{" +
@@ -159,6 +169,7 @@ public class KotSummary implements Serializable{
 				", orderNo=" + orderNo +
 				", description='" + description + '\'' +
 				", revenueCenterIndex=" + revenueCenterIndex +
+				", orderRemark='" + orderRemark + '\'' +
 				'}';
 	}
 }

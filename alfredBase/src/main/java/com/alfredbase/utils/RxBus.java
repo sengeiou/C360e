@@ -14,6 +14,7 @@ import rx.subjects.Subject;
 
 public class RxBus {
 
+    public static final String RX_MSG_1 = "RX_MSG_1";
     private static RxBus instance;
     private ConcurrentHashMap<Object, List<Subject>> maps = new ConcurrentHashMap<Object, List<Subject>>();
 

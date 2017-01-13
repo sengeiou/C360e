@@ -67,8 +67,9 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 	
 	private int getImageResourceBySettlementType(int paymentTypeId) {
 		switch (paymentTypeId) {
-		case ParamConst.SETTLEMENT_TYPE_CASH:
 		case ParamConst.SETTLEMENT_TYPE_PAYPAL:
+			return R.drawable.icon_diner;
+		case ParamConst.SETTLEMENT_TYPE_CASH:
 		case ParamConst.SETTLEMENT_TYPE_STORED_CARD:
 			return R.drawable.icon_settle_cash;
 		case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
@@ -92,6 +93,7 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 		case ParamConst.SETTLEMENT_TYPE_HOURS_CHARGE:
 			return R.drawable.settle_hc;
 		case ParamConst.SETTLEMENT_TYPE_VOID:
+		case ParamConst.SETTLEMENT_TYPE_REFUND:
 			return R.drawable.settle_void;
 		case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
 			return R.drawable.settle_ent;

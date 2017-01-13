@@ -171,12 +171,13 @@ public class MainPageKiosk extends BaseActivity {
 	// KOT PRINT
 	public static final int KOT_PRINT_FAILED = 200;
 	public static final int KOT_PRINT_SUCCEED = 201;
+	public static final int KOT_PRINT_NULL = 202;
+	public static final int KOT_ITEM_PRINT_NULL = 203;
 
 	public static final int VIEW_EVENT_TAKE_AWAY = 145;
 	public static final int VIEW_EVENT_SET_WEIGHT = 147;
 	public static final int CHECK_TO_CLOSE_CUSTOM_NOTE_VIEW = 148;
 	public static final int CONTROL_PAGE_ORDER_VIEW_MASK = 149;
-
 
 
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
@@ -239,6 +240,7 @@ public class MainPageKiosk extends BaseActivity {
 	private FragmentTransaction transaction;
 //	private StoredCardActivity f_stored_card;
 	private Observable<Integer> observable;
+	private Observable<Object> observable1;
 	private void initDrawerLayout() {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setScrimColor(Color.TRANSPARENT);//关闭阴影
@@ -301,7 +303,8 @@ public class MainPageKiosk extends BaseActivity {
 				handler);
 		currentTable = TableInfoSQL.getKioskTable();
 		setData();
-		observable = RxBus.getInstance().register("showStoredCard");
+		observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
+		observable1 = RxBus.getInstance().register("open_drawer");
 		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
 			@Override
 			public void call(Integer object) {
@@ -309,8 +312,18 @@ public class MainPageKiosk extends BaseActivity {
 				if(object != null){
 					if(object.intValue() == 1)
 						topMenuView.refreshUserName();
+					else if (object.intValue() == 2){
+						topMenuView.showAppOrderReciving();
+					}
+				}else {
+					UIHelp.startSoredCardActivity(context);
 				}
-				UIHelp.startSoredCardActivity(context);
+			}
+		});
+		observable1.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+			@Override
+			public void call(Object object) {
+				verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER, null);
 			}
 		});
 		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
@@ -509,8 +522,9 @@ public class MainPageKiosk extends BaseActivity {
 				// toKotSummary, fromKotSummary);
 				break;
 			case VIEW_EVENT_SET_TABLE_PACKS:
-				setTablePacks((String) msg.obj);
-				handler.sendEmptyMessage(VIEW_EVENT_DISMISS_TABLES);
+				setData();
+//				setTablePacks((String) msg.obj);
+//				handler.sendEmptyMessage(VIEW_EVENT_DISMISS_TABLES);
 				break;
 			// Open settlement window
 			case VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW:
@@ -569,7 +583,7 @@ public class MainPageKiosk extends BaseActivity {
 
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				List<Map<String, String>> taxMap = OrderDetailTaxSQL
-						.getTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
+						.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
 
 				ArrayList<PrintOrderItem> orderItems = ObjectFactory
 						.getInstance().getItemList(
@@ -661,7 +675,7 @@ public class MainPageKiosk extends BaseActivity {
 									OrderDetailSQL.getOrderDetails(paidOrder
 											.getId()));
 					List<Map<String, String>> taxMap = OrderDetailTaxSQL
-							.getTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrder);
+							.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrder);
 
 					ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 							.getInstance().getItemModifierList(paidOrder, OrderDetailSQL.getOrderDetails(paidOrder
@@ -773,7 +787,7 @@ public class MainPageKiosk extends BaseActivity {
 				ArrayList<PrintOrderItem> orderItems = ObjectFactory
 						.getInstance().getItemList(orderSplitDetails);
 				List<Map<String, String>> taxMap = OrderDetailTaxSQL
-						.getOrderSplitTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
+						.getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
 
 				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 						.getInstance().getItemModifierList(currentOrder, orderSplitDetails);
@@ -1114,12 +1128,10 @@ public class MainPageKiosk extends BaseActivity {
 					if (!verifyDialog.isShowing()) {
 						if(closeOrderWindow.isShowing()){
 							closeOrderWindow.setUser(user);
-							closeOrderWindow.openMoneyKeyboard(View.GONE,
-									ParamConst.SETTLEMENT_TYPE_VOID);
+							closeOrderWindow.openMoneyKeyboardByVoidRefund();
 						} else if (closeOrderSplitWindow.isShowing()) {
 							closeOrderSplitWindow.setUser(user);
-							closeOrderSplitWindow.openMoneyKeyboard(View.GONE,
-									ParamConst.SETTLEMENT_TYPE_VOID);
+							closeOrderSplitWindow.openMoneyKeyboardByVoidRefund();
 						}
 					}
 				} else if (result.get("MsgObject").equals(
@@ -1225,6 +1237,14 @@ public class MainPageKiosk extends BaseActivity {
 							}
 						}).start();
 					}
+				}else if(result.get("MsgObject").equals(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER)){
+					User openUser = user;
+					ObjectFactory.getInstance().getUserOpenDrawerRecord(App.instance.getRevenueCenter().getRestaurantId().intValue(),
+							App.instance.getRevenueCenter().getId().intValue(),
+							openUser,
+							App.instance.getUser().getId().intValue(),
+							App.instance.getSessionStatus().getSession_status());
+					settingView.openDrawer();
 				}
 			}
 				break;
@@ -1258,6 +1278,17 @@ public class MainPageKiosk extends BaseActivity {
 				UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
 						(Throwable) msg.obj, context.getResources().getString(R.string.server)));
 				break;
+			case KOT_PRINT_NULL:
+				loadingDialog.dismiss();
+				printerLoadingDialog.dismiss();
+				UIHelp.showToast(context, context.getResources().getString(R.string.no_set_kds_printer));
+				break;
+			case KOT_ITEM_PRINT_NULL: {
+				String itemName = (String) msg.obj;
+				loadingDialog.dismiss();
+				printerLoadingDialog.dismiss();
+				UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+			}
 			// kot Print status
 			case KOT_PRINT_FAILED:
 				loadingDialog.dismiss();
@@ -1633,7 +1664,10 @@ public class MainPageKiosk extends BaseActivity {
 	@Override
 	protected void onDestroy() {
 		if(observable != null){
-			RxBus.getInstance().unregister("showStoredCard", observable);
+			RxBus.getInstance().unregister(RxBus.RX_MSG_1, observable);
+		}
+		if(observable1 != null){
+			RxBus.getInstance().unregister("open_drawer", observable1);
 		}
 		App.instance.unBindPushWebSocketService();
 		super.onDestroy();
@@ -1688,6 +1722,12 @@ public class MainPageKiosk extends BaseActivity {
 			break;
 		case ParamConst.JOB_TYPE_POS_MERGER_TABLE:
 			handler.sendEmptyMessage(VIEW_EVENT_DISMISS_TABLES);
+			break;
+		case KOT_PRINT_NULL:
+			handler.sendEmptyMessage(action);
+			break;
+		case KOT_ITEM_PRINT_NULL:
+			handler.sendMessage(handler.obtainMessage(action, obj));
 			break;
 		default:
 			break;

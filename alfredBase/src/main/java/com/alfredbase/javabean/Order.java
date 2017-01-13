@@ -104,6 +104,11 @@ public class Order implements Serializable {
 	private Integer isTakeAway = 0;
 
 	private String tableName;
+
+	/**
+	 * 订单备注
+	 */
+	private String orderRemark;
 	
 	public Order() {
 	}
@@ -384,6 +389,23 @@ public class Order implements Serializable {
 		this.tableName = tableName;
 	}
 
+
+	public Integer getIsTakeAway() {
+		return isTakeAway;
+	}
+
+	public void setIsTakeAway(Integer isTakeAway) {
+		this.isTakeAway = isTakeAway;
+	}
+
+	public String getOrderRemark() {
+		return orderRemark;
+	}
+
+	public void setOrderRemark(String orderRemark) {
+		this.orderRemark = orderRemark;
+	}
+
 	@Override
 	public String toString() {
 		return "Order{" +
@@ -414,17 +436,7 @@ public class Order implements Serializable {
 				", appOrderId=" + appOrderId +
 				", isTakeAway=" + isTakeAway +
 				", tableName='" + tableName + '\'' +
+				", orderRemark='" + orderRemark + '\'' +
 				'}';
 	}
-
-	public Integer getIsTakeAway() {
-		return isTakeAway;
-	}
-
-	public void setIsTakeAway(Integer isTakeAway) {
-		this.isTakeAway = isTakeAway;
-	}
-
-
-
 }

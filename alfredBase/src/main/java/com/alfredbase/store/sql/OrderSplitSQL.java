@@ -352,17 +352,32 @@ public class OrderSplitSQL {
 	}
 	
 	public static String getSumOrderSplitInclusiveTaxPrice(Order order) {
-		String sql = "select sum(os.inclusiveTaxPrice) from " 
+//		String sql = "select sum(os.inclusiveTaxPrice) from "
+//				+ TableNames.OrderSplit
+//				+ " os, "
+//				+ TableNames.Payment
+//				+ " p,  where os.id = p.orderSplitId  and os.orderId = ? AND NOT EXISTS ( SELECT 0 FROM "
+//				+  TableNames.PaymentSettlement
+//				+ " ps where ps.paymentId = p.id and (ps.paymentTypeId = "
+//				+ ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT
+//				+ " or ps.paymentTypeId = "
+//				+ ParamConst.SETTLEMENT_TYPE_VOID
+//				+ " or ps.paymentTypeId = "
+//				+ ParamConst.SETTLEMENT_TYPE_REFUND
+//				+ " ))";
+		String sql = "select sum(os.inclusiveTaxPrice) from "
 				+ TableNames.OrderSplit
 				+ " os, "
 				+ TableNames.Payment
-				+ " p,  where os.id = p.orderSplitId  and os.orderId = ? AND NOT EXISTS ( SELECT 0 FROM "
+				+ " p, "
 				+  TableNames.PaymentSettlement
-				+ " ps where ps.paymentId = p.id and (ps.paymentTypeId = "
+				+ " ps  where os.orderId = ? and os.id = p.orderSplitId and ps.paymentId = p.id and ps.paymentTypeId <> "
 				+ ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT
-				+ " or ps.paymentTypeId = "
+				+ " and ps.paymentTypeId <> "
 				+ ParamConst.SETTLEMENT_TYPE_VOID
-				+ " ))";
+				+ " and ps.paymentTypeId <> "
+				+ ParamConst.SETTLEMENT_TYPE_REFUND
+				+ " group by os.id";
 		Cursor cursor = null;
 		String result = ParamConst.DOUBLE_ZERO;
 		SQLiteDatabase db = SQLExe.getDB();

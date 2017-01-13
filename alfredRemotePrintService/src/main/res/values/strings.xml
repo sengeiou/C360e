@@ -32,6 +32,7 @@
     <string name="com_credits">Company Credits</string>
     <string name="house_charge">House Charge</string>
     <string name="_void">Void</string>
+    <string name="_refund">Refund</string>
     <string name="ent">ENT</string>
     <string name="nets">NETS</string>
     <string name="alipay">ALIPAY</string>
@@ -57,6 +58,9 @@
     <string name="ent_bills">ENT Bills</string>
     <string name="void_items">Void Items</string>
     <string name="void_bills">Void Bills</string>
+    <string name="refund_bills">Refund Bills</string>
+    <string name="refund_taxes">Refund Taxes</string>
+    <string name="total_refund">Total Refund</string>
     <string name="discount_on_per">Discount on %</string>
     <string name="discount_on_pri">Discount on $</string>
     <string name="total_tax">Exlusive Tax</string>
@@ -79,6 +83,7 @@
     <string name="disc_summary">DISCOUNTS SUMMARY</string>
     <string name="total_disc">Total Discount</string>
     <string name="tax_svc">TAX/SVC</string>
+    <string name="open_drawer">OPEN DRAWER</string>
     <string name="inclusive_tax">Inclusive Tax</string>
     <string name="total_taxsvc">Total TAX/SVC</string>
     <string name="cash_in">Cash In</string>
@@ -91,7 +96,7 @@
     <string name="total_open_items">Total Open Items</string>
     <string name="monthly_sales">Monthly Sale Report</string>
     <string name="monthly_plu">Monthly PLU Report</string>
-            
+
     <!-- Detail Analysis -->
     <string name="detail_analysis">Detail Analysis</string>
     <string name="modifier_analysis">Modifier Analysis</string>

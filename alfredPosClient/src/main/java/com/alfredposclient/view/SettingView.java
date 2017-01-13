@@ -11,14 +11,23 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.utils.AlertToDeviceSetting;
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SettingView extends LinearLayout implements OnClickListener {
 
@@ -69,10 +78,16 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		findViewById(R.id.ll_setting_title).setOnClickListener(null);	
 		findViewById(R.id.ll_monthly_sale_report).setOnClickListener(this);
 		findViewById(R.id.ll_monthly_plu_report).setOnClickListener(this);
+		findViewById(R.id.ll_printer_qr_code).setOnClickListener(this);
 
 		if (App.instance.countryCode != ParamConst.CHINA) {
         	findViewById(R.id.monthly_sale_report_container).setVisibility(View.GONE);
         }
+		if(App.instance.isRevenueKiosk()){
+			findViewById(R.id.ll_printer_qr_code).setVisibility(View.VISIBLE);
+		}else{
+			findViewById(R.id.ll_printer_qr_code).setVisibility(View.VISIBLE);
+		}
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
 		initTextTypeFace();
 	}
@@ -111,7 +126,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				break;
 			}
 			case R.id.ll_stored_card: {
-				RxBus.getInstance().post("showStoredCard", null);
+				RxBus.getInstance().post(RxBus.RX_MSG_1, null);
 //				mDrawerLayout.closeDrawer(Gravity.END);
 				break;
 			}
@@ -153,7 +168,8 @@ public class SettingView extends LinearLayout implements OnClickListener {
 					AlertToDeviceSetting.noKDSorPrinter(context,
 							context.getResources().getString(R.string.no_cashier_printer));
 				} else {
-					App.instance.kickOutCashDrawer(printer);
+//					App.instance.kickOutCashDrawer(printer);
+					RxBus.getInstance().post("open_drawer", null);
 				}
 				break;
 			case R.id.iv_setting_close:
@@ -164,12 +180,44 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				break;				
 			case R.id.ll_monthly_plu_report:
 				UIHelp.startMonthlyPLUReport(context);
-				break;	
+				break;
+			case R.id.ll_printer_qr_code: {
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("companyId", CoreData.getInstance().getRestaurant().getCompanyId().intValue() + "");
+				map.put("restaurantId", CoreData.getInstance().getRestaurant().getId().intValue() + "");
+				map.put("tableId", "0");
+				map.put("tableName", "");
+				map.put("type", "2");
+				mDrawerLayout.closeDrawer(Gravity.END);
+				final String content = new Gson().toJson(map);
+				DialogFactory.showQrCodeDialog(context, content, "",
+						new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								PrinterTitle title = ObjectFactory.getInstance()
+										.getPrinterTitleForQRCode(
+												App.instance.getRevenueCenter(),
+												App.instance.getUser().getFirstName()
+														+ App.instance.getUser().getLastName(),
+												"");
+								App.instance.remitePrintTableQRCode(App.instance.getCahierPrinter(),
+										title, 0 + "", content);
+								LogUtil.d("SettingView", "打印二维码");
+							}
+						});
+
+			}
+				break;
 			default:
 				break;
 			}
 		}
 	}
+
+	public void openDrawer(){
+		App.instance.kickOutCashDrawer(App.instance.getCahierPrinter());
+	}
+
 	 private void initTextTypeFace() {
 		 TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		 textTypeFace.setTrajanProBlod((TextView)findViewById(R.id.tv_setting));
@@ -187,6 +235,8 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_devices));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_system));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_close));
+		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_opendrawer));
+		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_printer_qr_code));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_version));
 	}
 }

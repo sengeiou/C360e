@@ -39,8 +39,9 @@ public class AppOrderSQL {
 			String sql = "replace into "
 					+ TableNames.AppOrder
 					+ " (id, orderNo, custId, restId, revenueId, sourceType, tableId, orderStatus, subTotal, taxAmount, "
-					+ " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType,"
+					+ " orderRemark, eatType, payStatus)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { appOrder.getId(), appOrder.getOrderNo(),
@@ -52,7 +53,8 @@ public class AppOrderSQL {
 					appOrder.getTotal(), appOrder.getOrderCount(),
 					appOrder.getCreateTime(), appOrder.getUpdateTime(),
 					appOrder.getTableType(), appOrder.getTableNo(),
-					appOrder.getBizType()});
+					appOrder.getBizType(), appOrder.getOrderRemark(),
+					appOrder.getEatType(), appOrder.getPayStatus()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,8 +69,9 @@ public class AppOrderSQL {
 			String sql = "replace into "
 					+ TableNames.AppOrder
 					+ " (id, orderNo, custId, restId, revenueId, sourceType, tableId, orderStatus, subTotal, taxAmount, "
-					+ " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType,"
+					+ " orderRemark, eatType, payStatus)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { appOrder.getId(), appOrder.getOrderNo(),
@@ -80,20 +83,22 @@ public class AppOrderSQL {
 							appOrder.getTotal(), appOrder.getOrderCount(),
 							appOrder.getCreateTime(), appOrder.getUpdateTime(),
 							appOrder.getTableType(), appOrder.getTableNo(),
-							appOrder.getBizType()});
+							appOrder.getBizType(), appOrder.getOrderRemark(),
+							appOrder.getEatType(), appOrder.getPayStatus()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+
 	
-		public static List<AppOrder> getAppOrderByOrderStatus(long time){
-		String sql = "select * from " + TableNames.AppOrder + " where orderStatus <> ? and createTime > ? order by orderStatus, id desc ";
-		String sql1 = "select * from " + TableNames.AppOrder + " where orderStatus = ? and createTime > ? order by id desc";
+		public static List<AppOrder> getAppOrderByOrderStatus(int orderStatus, long time){
+		String sql = "select * from " + TableNames.AppOrder + " where orderStatus = ? and createTime > ? order by id desc ";
 		Cursor cursor = null;
 		List<AppOrder> result = new ArrayList<AppOrder>();
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			cursor = db.rawQuery(sql, new String[] {ParamConst.APP_ORDER_STATUS_FINISH + "", time + ""});
+			cursor = db.rawQuery(sql, new String[] {orderStatus + "", time + ""});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
 				AppOrder appOrder = new AppOrder();
@@ -116,6 +121,9 @@ public class AppOrderSQL {
 				appOrder.setTableType(cursor.getInt(16));
 				appOrder.setTableNo(cursor.getString(17));
 				appOrder.setBizType(cursor.getInt(18));
+				appOrder.setOrderRemark(cursor.getString(19));
+				appOrder.setEatType(cursor.getInt(20));
+				appOrder.setPayStatus(cursor.getInt(21));
 				result.add(appOrder);
 			}
 		} catch (Exception e) {
@@ -126,8 +134,15 @@ public class AppOrderSQL {
 				cursor.close();
 			}
 		}
+		return result;
+	}
+		public static List<AppOrder> getNewAppOrder(long time){
+		String sql = "select * from " + TableNames.AppOrder + " where orderStatus = " + ParamConst.APP_ORDER_STATUS_PAID + " or orderStatus = " + ParamConst.APP_ORDER_STATUS_ACCEPTED + " and createTime > ? order by orderStatus desc, id desc ";
+		Cursor cursor = null;
+		List<AppOrder> result = new ArrayList<AppOrder>();
+		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			cursor = db.rawQuery(sql1, new String[] {ParamConst.APP_ORDER_STATUS_FINISH + "", time + ""});
+			cursor = db.rawQuery(sql, new String[] {time + ""});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
 				AppOrder appOrder = new AppOrder();
@@ -150,6 +165,9 @@ public class AppOrderSQL {
 				appOrder.setTableType(cursor.getInt(16));
 				appOrder.setTableNo(cursor.getString(17));
 				appOrder.setBizType(cursor.getInt(18));
+				appOrder.setOrderRemark(cursor.getString(19));
+				appOrder.setEatType(cursor.getInt(20));
+				appOrder.setPayStatus(cursor.getInt(21));
 				result.add(appOrder);
 			}
 		} catch (Exception e) {
@@ -191,6 +209,9 @@ public class AppOrderSQL {
 				appOrder.setTableType(cursor.getInt(16));
 				appOrder.setTableNo(cursor.getString(17));
 				appOrder.setBizType(cursor.getInt(18));
+				appOrder.setOrderRemark(cursor.getString(19));
+				appOrder.setEatType(cursor.getInt(20));
+				appOrder.setPayStatus(cursor.getInt(21));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -201,6 +222,37 @@ public class AppOrderSQL {
 			}
 		}
 		return appOrder;
+	}
+
+	public static int getNewAppOrderCountByTime(long time){
+		String sql = "select count(*) from " + TableNames.AppOrder + " where orderStatus = " + ParamConst.APP_ORDER_STATUS_PAID + " and createTime > ? ";
+		Cursor cursor = null;
+		int count = 0;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {time + ""});
+			if (cursor.moveToFirst()) {
+				count = cursor.getInt(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return count;
+	}
+
+
+	public static void updateAppOrderStatusById(int appOrderId, int appOrderStatus){
+		String sql = "update " + TableNames.AppOrder + " set orderStatus = ? where id = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {appOrderStatus, appOrderId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void deleteTempOrder(){

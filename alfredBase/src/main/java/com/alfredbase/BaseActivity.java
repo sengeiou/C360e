@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
@@ -67,6 +68,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		BaseApplication.activitys.remove(this);
 	}
 
 	@Override
@@ -100,6 +102,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 	}
 
 	protected void handlerClickEvent(View v) {
+
+	}
+
+	public void selectTable(TableInfo tableInfo){
 
 	}
 

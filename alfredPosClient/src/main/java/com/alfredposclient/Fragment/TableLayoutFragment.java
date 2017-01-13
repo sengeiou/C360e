@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -84,13 +85,13 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private TextView tv_table_edit;
     private List<TableInfo> newTables = new ArrayList<TableInfo>();
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
-    private MainPage mainPage;
+    private BaseActivity mainPage;
     private LoadingDialog loadingDialog;
     private RelativeLayout rl_table_area;
     private int width;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mainPage = (MainPage)getActivity();
+        mainPage = (BaseActivity) getActivity();
         loadingDialog = new LoadingDialog(mainPage);
         loadingDialog.setTitle("loading");
         Log.e(TAG, "onCreateView");
@@ -367,7 +368,21 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     }
                 }else{
                     if(ButtonClickTimer.canClick(v)){
-                        mainPage.tableAction(newTable);
+                        if(mainPage instanceof MainPage) {
+                            ((MainPage) mainPage).tableAction(newTable);
+                        } else {
+                            if(newTable.getStatus().intValue() == ParamConst.TABLE_STATUS_IDLE) {
+                                mainPage.selectTable(newTable);
+                            } else{
+                                Order order = OrderSQL.getUnfinishedOrderAtTable(newTable.getPosId(), App.instance.getBusinessDate());
+                                if(OrderDetailSQL.getOrderDetails(order.getId().intValue()).size() > 0){
+                                    UIHelp.showToast(mainPage, mainPage.getResources().getString(R.string.table_dining));
+                                }else{
+                                    mainPage.selectTable(newTable);
+                                }
+                            }
+
+                        }
                     }
                 }
 

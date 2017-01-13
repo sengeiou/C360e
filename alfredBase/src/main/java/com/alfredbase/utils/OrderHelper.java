@@ -334,9 +334,15 @@ public class OrderHelper {
 		BigDecimal tax = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if (orderDetails.size() > 0) {
 			for (OrderDetail orderDetail : orderDetails) {
-				tax = BH.add(tax,
-						OrderHelper.getOrderDetailTax(order, orderDetail),
-						false);
+				if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+					tax = BH.add(tax,
+							BH.getBD(orderDetail.getTaxPrice()),
+							false);
+				}else {
+					tax = BH.add(tax,
+							OrderHelper.getOrderDetailTax(order, orderDetail),
+							false);
+				}
 			}
 		}
 		order.setTaxAmount(BH.doubleFormat.format(tax));

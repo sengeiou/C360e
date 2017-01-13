@@ -549,7 +549,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 //					OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, orderSplitRoundAmount);
 //					orderRoundBalancePrice = BH.add(orderRoundBalancePrice, BH.getBD(orderSplitRoundAmount.getRoundBalancePrice()), true);
 					List<Map<String, String>> taxMap = OrderDetailTaxSQL
-							.getOrderSplitTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), orderSplit);
+							.getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), orderSplit);
 					ArrayList<PrintOrderItem> orderItems = ObjectFactory
 							.getInstance().getItemList(orderDetails);
 
@@ -606,7 +606,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 //			OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
 			PrinterDevice printer = App.instance.getCahierPrinter();
 			List<Map<String, String>> taxMap = OrderDetailTaxSQL
-					.getTaxPriceSUM(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
+					.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
 
 			ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
 					.getItemList(OrderDetailSQL.getOrderDetails(order.getId()));

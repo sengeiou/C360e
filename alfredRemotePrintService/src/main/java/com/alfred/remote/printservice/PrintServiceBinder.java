@@ -44,6 +44,7 @@ import com.alfredbase.javabean.model.PrintReceiptInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportVoidItem;
+import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TimeUtil;
@@ -140,15 +141,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 	}
 	
 	@Override
-	public void printDaySalesReport(String xzType, String printer,String title, String report, String tax) 
+	public void printDaySalesReport(String xzType, String printer,String title, String report, String tax, String useropen)
 			throws RemoteException{
 		Gson gson = new Gson();
 		PrinterDevice prtDevice =  gson.fromJson(printer, PrinterDevice.class);
 		PrinterTitle prtTitle =  gson.fromJson(title, PrinterTitle.class);
 		ReportDaySales reportData =  gson.fromJson(report, ReportDaySales.class);
 		ArrayList<ReportDayTax> taxData = gson.fromJson(tax, new TypeToken<ArrayList<ReportDayTax>>(){}.getType());
-
-		PrintManager printMgr = this.service.getPrintMgr();
+		List<ReportUserOpenDrawer> reportUserOpenDrawers = gson.fromJson(useropen, new TypeToken<List<ReportUserOpenDrawer>>(){}.getType());
+ 		PrintManager printMgr = this.service.getPrintMgr();
 		JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
 		PrinterQueueManager pqMgr = this.service.getPqMgr();
 		
@@ -173,7 +174,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					PrintService.instance.getResources().getString(R.string.qty_), 
 					PrintService.instance.getResources().getString(R.string.amount));
 			salesPrint.setPrinterIp(prtDevice.getIP());
-			salesPrint.print(reportData, taxData);
+			salesPrint.print(reportData, taxData, reportUserOpenDrawers);
 			salesPrint.AddFooter(prtTitle.getDate()+" "+prtTitle.getTime());
 			
 			pqMgr.queuePrint(salesPrint.getJobForQueue());
@@ -464,9 +465,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 						}
 
 						if (i==1) {
-				          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
+				          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy), kotsummary.getOrderRemark());
 						} else {
-					      kot.AddFooter(TimeUtil.getTime());
+					      kot.AddFooter(TimeUtil.getTime(), kotsummary.getOrderRemark());
 						}
 						if (canPrint) {
 							pqMgr.queuePrint(kot.getJobForQueue());
@@ -522,9 +523,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 									}
 									if (i==1) {
-								          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
+								          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy), kotsummary.getOrderRemark());
 									} else {
-									      kot.AddFooter(TimeUtil.getTime());
+									      kot.AddFooter(TimeUtil.getTime(), kotsummary.getOrderRemark());
 									}
 									pqMgr.queuePrint(kot.getJobForQueue());
 									printMgr.addJob(prtDevice.getIP(),kot);
@@ -565,9 +566,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 							}
 							if (i==1) {
-						          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
+						          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy), kotsummary.getOrderRemark());
 							} else {
-							      kot.AddFooter(TimeUtil.getTime());
+							      kot.AddFooter(TimeUtil.getTime(), kotsummary.getOrderRemark());
 							}
 							pqMgr.queuePrint(kot.getJobForQueue());
 							printMgr.addJob(prtDevice.getIP(),kot);
@@ -784,6 +785,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								break;
 							case ParamConst.SETTLEMENT_TYPE_VOID:
 								paymentType = PrintService.instance.getResources().getString(R.string._void);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_REFUND:
+								paymentType = PrintService.instance.getResources().getString(R.string._refund);
 								break;
 							case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
 								paymentType = PrintService.instance.getResources().getString(R.string.ent);
@@ -1263,9 +1267,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 						}
 
 						if (i==1) {
-				          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
+				          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy), kotsummary.getOrderRemark());
 						} else {
-					      kot.AddFooter(TimeUtil.getTime());	
+					      kot.AddFooter(TimeUtil.getTime(), kotsummary.getOrderRemark());
 						}
 						if (canPrint) {
 							pqMgr.queuePrint(kot.getJobForQueue());
@@ -1325,9 +1329,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 									}
 									if (i==1) {
-								          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
+								          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy), kotsummary.getOrderRemark());
 									} else {
-									      kot.AddFooter(TimeUtil.getTime());	
+									      kot.AddFooter(TimeUtil.getTime(), kotsummary.getOrderRemark());
 									}
 									pqMgr.queuePrint(kot.getJobForQueue());
 									printJobMgr.addJob(prtDevice.getIP(),kot);
@@ -1367,9 +1371,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 							}
 							if (i==1) {
-						          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy));
+						          kot.AddFooter(PrintService.instance.getResources().getString(R.string.kot_copy), kotsummary.getOrderRemark());
 							} else {
-							      kot.AddFooter(TimeUtil.getTime());	
+							      kot.AddFooter(TimeUtil.getTime(), kotsummary.getOrderRemark());
 							}
 							pqMgr.queuePrint(kot.getJobForQueue());
 							printJobMgr.addJob(prtDevice.getIP(),kot);
@@ -1587,6 +1591,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							case ParamConst.SETTLEMENT_TYPE_VOID:
 								paymentType = PrintService.instance.getResources().getString(R.string._void);
 								break;
+							case ParamConst.SETTLEMENT_TYPE_REFUND:
+								paymentType = PrintService.instance.getResources().getString(R.string._refund);
+								break;
 							case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
 								paymentType = PrintService.instance.getResources().getString(R.string.ent);
 								break;
@@ -1608,7 +1615,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							}
 							if (!TextUtils.isEmpty(paymentType)) {
 								stmt.put(paymentType,
-										printReceiptInfo.getPaidAmount());
+										BH.getBD(printReceiptInfo.getPaidAmount()).toString());
 							}
 							if (!TextUtils
 									.isEmpty(printReceiptInfo.getCardNo())) {
@@ -1707,7 +1714,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							kot.addLineSpace(1);
 						}
 
-					    kot.AddFooter(TimeUtil.getTime());	
+					    kot.AddFooter(TimeUtil.getTime(), kotsummary.getOrderRemark());
 						if (canPrint) {
 				            pqMgr.queuePrint(kot.getJobForQueue());
 							printMgr.addJob(prtDevice.getIP(), kot);
@@ -1922,7 +1929,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			}
 			tableQRCodePrint.AddRestaurantInfo(prtTitle.getLogo(),prtTitle.getRestaurantName(),"", TimeUtil.getTime());
 			tableQRCodePrint.AddTitle("Scan QR_code by ServedByAlfred to \nselect and send order by yourself");
-			tableQRCodePrint.AddQRCode("Tabel:" + prtTitle.getTableName(),qrCodeText);
+			String table = "";
+			if(!TextUtils.isEmpty(prtTitle.getTableName())){
+				table = "Tabel:" + prtTitle.getTableName();
+			}
+			tableQRCodePrint.AddQRCode(table,qrCodeText);
 			tableQRCodePrint.AddFooter("Powered by Alfred");
 			tableQRCodePrint.setPrinterIp(prtDevice.getIP());
 			pqMgr.queuePrint(tableQRCodePrint.getJobForQueue());

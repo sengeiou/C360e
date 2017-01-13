@@ -173,6 +173,7 @@ public class ParamConst {
 	public static final int SETTLEMENT_TYPE_COMPANY = 102;
 	public static final int SETTLEMENT_TYPE_HOURS_CHARGE = 103;
 	public static final int SETTLEMENT_TYPE_VOID = 2000;
+	public static final int SETTLEMENT_TYPE_REFUND = 2001;
 	public static final int SETTLEMENT_TYPE_ENTERTAINMENT = 105;
 	public static final int SETTLEMENT_TYPE_THIRDPARTY = 106;
 	
@@ -280,6 +281,7 @@ public class ParamConst {
 	public static final int ACTIVE_DISABLE = 0;
 	public static final int ACTIVE_DELETE = -1;
 
+	public static final int ACTIVE_REFUND = -2;
 	/**
 	 * 精确小数点后两位四舍五入
 	 */
@@ -388,10 +390,13 @@ public class ParamConst {
 	public static final int MODIFIER_MUST_DEFAULT_SELECT = 1;
 
 
-	public static final int APP_ORDER_STATUS_PAID = 1;
-	public static final int APP_ORDER_STATUS_KOTPRINTERD  = 2;
-	public static final int APP_ORDER_STATUS_KOTFINISH = 3;
-	public static final int APP_ORDER_STATUS_FINISH = 4;
+	public static final int APP_ORDER_STATUS_PAID = 0;
+	public static final int APP_ORDER_STATUS_ACCEPTED = 1;
+	public static final int APP_ORDER_STATUS_PREPARING = 2;
+	public static final int APP_ORDER_STATUS_PREPARED = 3;
+	public static final int APP_ORDER_STATUS_COMPLETED = 4;
+	public static final int APP_ORDER_STATUS_REFUND = -2;
+
 
 	public static final int APP_ORDER_TABLE_STATUS_DEFAULT = 0;
 	public static final int APP_ORDER_TABLE_STATUS_NOT_USE = 1;
@@ -400,5 +405,10 @@ public class ParamConst {
 	public static final int STORED_CARD_ACTION_TOP_UP = 1;
 	public static final int STORED_CARD_ACTION_PAY = 2;
 	public static final int STORED_CARD_ACTION_REFUND = 3;
+
+
+	public static final int APP_ORDER_EAT_IN = 1;
+	public static final int APP_ORDER_TAKE_AWAY = 2;
+
 
 }

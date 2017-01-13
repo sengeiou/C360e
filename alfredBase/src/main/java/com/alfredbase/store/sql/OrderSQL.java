@@ -14,6 +14,7 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
@@ -33,8 +34,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
 					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime," 
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getOrderOriginId(), order.getUserId(),
@@ -49,7 +50,7 @@ public class OrderSQL {
 							order.getDiscountPrice(),order.getInclusiveTaxName(),
 							order.getInclusiveTaxPrice(), order.getInclusiveTaxPercentage(),
 							order.getAppOrderId(),order.getIsTakeAway(),
-					        order.getTableName()});
+					        order.getTableName(), order.getOrderRemark()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -95,8 +96,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -111,7 +112,8 @@ public class OrderSQL {
 							order.getDiscountType(), order.getDiscountPrice(),
 							order.getInclusiveTaxName(), order.getInclusiveTaxPrice(),
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
-							order.getIsTakeAway(), order.getTableName()});
+							order.getIsTakeAway(), order.getTableName(),
+							order.getOrderRemark()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -192,6 +194,9 @@ public class OrderSQL {
 				if(orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT){
 					continue;
 				}
+				if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+					continue;
+				}
 				if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
 						&& orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
 					orderDetail.setDiscountRate(order.getDiscountRate());
@@ -212,6 +217,9 @@ public class OrderSQL {
 						continue;
 					}
 					if(orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT){
+						continue;
+					}
+					if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 						continue;
 					}
 					if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
@@ -239,8 +247,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Order order : orderList) {
@@ -296,6 +304,8 @@ public class OrderSQL {
 							order.getIsTakeAway());
 					SQLiteStatementHelper.bindString(sqLiteStatement, 26,
 							order.getTableName());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 27,
+							order.getOrderRemark());
 					sqLiteStatement.executeInsert();
 				}
 			db.setTransactionSuccessful();
@@ -349,6 +359,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -406,6 +417,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -464,6 +476,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -524,6 +537,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -584,6 +598,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -702,6 +717,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				return order;
 			}
 		} catch (Exception e) {
@@ -756,6 +772,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				return order;
 			}
 		} catch (Exception e) {
@@ -812,6 +829,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				return order;
 			}
 		} catch (Exception e) {
@@ -868,6 +886,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				return order;
 			}
 		} catch (Exception e) {
@@ -925,6 +944,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -976,6 +996,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1037,6 +1058,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1094,6 +1116,7 @@ public class OrderSQL {
 				order.setAppOrderId(cursor.getInt(24));
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
 				result.add(order);
 			}
 		} catch (Exception e) {

@@ -109,7 +109,7 @@ public class PrinterLoadingDialog extends Dialog {
 	
 	public void showTime(){
 		show();
-		handler.sendEmptyMessageDelayed(CHANGE_LONG_TIME_OUT,12000);
+		handler.sendEmptyMessageDelayed(CHANGE_LONG_TIME_OUT,15000);
 	}
 
 	@Override
