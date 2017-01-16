@@ -82,7 +82,8 @@ public class PushThread extends Thread {
     }
 
     private void newConnection() throws Exception {
-        autorecoveringConnection = factory.newConnection();
+        if(autorecoveringConnection == null)
+            autorecoveringConnection = factory.newConnection();
         // 创建一个通道
         channel = autorecoveringConnection.createChannel();
         // 声明队列，主要为了防止消息接收者先运行此程序，队列还不存在时创建队列。
@@ -142,7 +143,7 @@ public class PushThread extends Thread {
                             pushMessage.setRestId(jsonObject.getInt("restId"));
                         }
                         if(jsonObject.has("revenueId")){
-                            pushMessage.setRestId(jsonObject.getInt("revenueId"));
+                            pushMessage.setRevenueId(jsonObject.getInt("revenueId"));
                         }
                         if(!TextUtils.isEmpty(pushMessage.getMsg())){
                             if (mListener != null)
@@ -167,7 +168,12 @@ public class PushThread extends Thread {
             }
             LogUtil.i(TAG, "断线30s后重连");
             Thread.sleep(30000);
-            connect();
+            try {
+                connect();
+            } catch (Exception e1){
+                e1.printStackTrace();
+            }
+
         }
     }
 }

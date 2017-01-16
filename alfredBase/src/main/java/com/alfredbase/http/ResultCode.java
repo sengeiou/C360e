@@ -174,7 +174,7 @@ public class ResultCode {
 	 */
 	public static final int COMPANY_CANNOT_USE_CARD = -4013;
 
-
+	public static final int PHONE_HAS_USED = -4017;
 	
 	/**
 	 * 用于POS作为服务器的时候，session还没有打开的错误提醒
@@ -249,6 +249,8 @@ public class ResultCode {
 			return "The App Order status is error";
 		case APP_ORDER_REFUND:
 			return "The App Order have been cancelled!";
+		case PHONE_HAS_USED:
+			return "The mobile phone number has been registered!";
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);

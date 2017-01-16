@@ -209,6 +209,9 @@ public class NetWorkOrderActivity extends BaseActivity {
 		}
 		if(appOrders.size() > 0){
 			ll_orderdetail_layout.setVisibility(View.VISIBLE);
+			if(selectOrderItem > appOrders.size() -1){
+				selectOrderItem = 0;
+			}
 			AppOrder appOrder = appOrders.get(selectOrderItem);
 			TextView tv_eat_type = (TextView)findViewById(R.id.tv_eat_type);
 			TextView tv_app_remarks = (TextView)findViewById(R.id.tv_app_remarks);
@@ -438,7 +441,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 					break;
 				case ResultCode.APP_REFUND_FAILD:
 					dismissLoadingDialog();
-					UIHelp.showToast(context, (String)msg.obj);
+					UIHelp.showToast(context, "Refund Error " + msg.obj);
 					break;
 			}
 			super.handleMessage(msg);
