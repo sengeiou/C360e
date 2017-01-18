@@ -360,10 +360,11 @@
     <string name="check">下单</string>
     <string name="paid">已支付</string>
     <string name="making">备餐中</string>
-    <string name="completed">已备餐</string>
+    <string name="prepared">已备餐</string>
+    <string name="preparing">备餐中</string>
     <string name="finish">已完成</string>
     <string name="new_order">新单</string>
-    <string name="preparing_order">备餐中</string>
+    <string name="preparing_order">备餐中/已备餐</string>
     <string name="completed_order">已完成</string>
     <string name="receving_order">接单</string>
 

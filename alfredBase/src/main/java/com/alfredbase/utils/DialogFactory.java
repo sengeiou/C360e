@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +20,16 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.R;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DialogFactory {
 
@@ -182,12 +187,14 @@ public class DialogFactory {
 		
 	}
 
-	public static void showQrCodeDialog(BaseActivity activity, String qrCodeText, String tableName, final OnClickListener printOnClickListener){
+	public static void showQrCodeDialog(final BaseActivity activity, String qrCodeText, final String tableName, final OnClickListener printOnClickListener){
 		try {
 			String content = URLEncoder.encode(qrCodeText, "UTF-8");
 			QRCodeWriter writer = new QRCodeWriter();
-			BitMatrix matrix = writer.encode(content, BarcodeFormat.QR_CODE, 400, 400);
-			Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
+			Map<EncodeHintType, ErrorCorrectionLevel> map = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
+			map.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+			BitMatrix matrix = writer.encode(content, BarcodeFormat.QR_CODE, 400, 400, map);
+			final Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
 			final Dialog dialog = new Dialog(activity, R.style.qrcode_dialog);
 			View view = LayoutInflater.from(activity).inflate(
 					R.layout.dialog_qrcode, null);
@@ -207,6 +214,16 @@ public class DialogFactory {
 				@Override
 				public void onClick(View v) {
 					dialog.dismiss();
+				}
+			});
+			view.findViewById(R.id.btn_qrcode_save).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					String name = tableName;
+					if(TextUtils.isEmpty(tableName)){
+						name = "Kiosk";
+					}
+					BitmapUtil.saveImageToGallery(name, activity, bitmap);
 				}
 			});
 			dialog.show();

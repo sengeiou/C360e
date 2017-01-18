@@ -326,7 +326,8 @@ public class MainPageKiosk extends BaseActivity {
 				verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER, null);
 			}
 		});
-		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
+//		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
+		App.instance.getPushServer().setCanCheckAppOrder(true);
 	}
 
 //	private void showStoredCard(){
@@ -1669,7 +1670,8 @@ public class MainPageKiosk extends BaseActivity {
 		if(observable1 != null){
 			RxBus.getInstance().unregister("open_drawer", observable1);
 		}
-		App.instance.unBindPushWebSocketService();
+//		App.instance.unBindPushWebSocketService();
+		App.instance.getPushServer().setCanCheckAppOrder(false);
 		super.onDestroy();
 	}
 

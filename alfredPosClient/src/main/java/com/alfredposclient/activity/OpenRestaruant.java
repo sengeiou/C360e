@@ -213,7 +213,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		rl_openbg.setOnClickListener(this);
 		filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_TIME_TICK);
-
+		App.instance.startPushServer("B." + App.instance.getRevenueCenter().getRestaurantId().intValue());
 		setDateView();
 		BuglyLog.d("OpenRestaruant", "RestaurantName" + CoreData.getInstance().getRestaurant().getRestaurantName());
 		rl_slideUnlockView.post(new Runnable() {
@@ -421,6 +421,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					}
 			}
 		});
+
+
 	}
 
 

@@ -125,10 +125,11 @@ public class HttpAnalysis {
 
 	public static List<Printer> getPrinterList(int statusCode,
 			Header[] headers, byte[] responseBody) {
+		List<Printer> printers = new ArrayList<Printer>();
 		try {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
-			List<Printer> printers = gson.fromJson(
+			printers = gson.fromJson(
 					object.getString("printers"),
 					new TypeToken<ArrayList<Printer>>() {
 					}.getType());
@@ -138,7 +139,7 @@ public class HttpAnalysis {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return printers;
 	}
 
 	public static void getMainPosInfo(int statusCode, Header[] headers,

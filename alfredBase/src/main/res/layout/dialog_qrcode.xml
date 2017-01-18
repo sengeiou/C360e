@@ -38,6 +38,14 @@
         android:layout_marginRight="20dp"
         android:gravity="center"
         android:text="Print QR Code" />
+    <Button
+        android:id="@+id/btn_qrcode_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:gravity="center"
+        android:text="Save QR Code" />
 
     <Button
         android:id="@+id/btn_qrcode_back"

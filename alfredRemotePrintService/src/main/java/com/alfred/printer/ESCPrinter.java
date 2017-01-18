@@ -10,12 +10,16 @@ import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.WIFIPrintCallback;
 import com.alfredbase.utils.BitmapUtil;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -169,8 +173,10 @@ public class ESCPrinter implements WIFIPrintCallback{
 				}else if (toPrint.getDataFormat() == PrintData.FORMAT_QR) {
 					String qrCode = toPrint.getQrCode();
 					qrCode = URLEncoder.encode(qrCode, "UTF-8");
+					Map<EncodeHintType, ErrorCorrectionLevel> map = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
+					map.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
 					QRCodeWriter writer = new QRCodeWriter();
-					BitMatrix matrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500);
+					BitMatrix matrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500, map);
 					Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
 					this.printer.printQRBitmap(bitmap);
 				}else if(toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {

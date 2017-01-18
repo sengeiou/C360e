@@ -1,4 +1,4 @@
-package com.alfredposclient.global;
+package com.alfredposclient.push;
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -13,7 +13,8 @@ import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.activity.NetWorkOrderActivity;
-import com.alfredposclient.service.PushService.PushListener;
+import com.alfredposclient.global.App;
+import com.alfredposclient.global.SyncCentre;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -21,7 +22,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PushListenerClient implements PushListener {
+public class PushListenerClient implements PushServer.PushListener {
 	private String TAG = PushListenerClient.class.getSimpleName();
 	Context context;
 	
@@ -31,7 +32,7 @@ public class PushListenerClient implements PushListener {
 	}
 	
 	@Override
-	public void onPushMessageReceived(PushMessage msg) {
+	public void onPushMessageReceived(PushMessage msg, boolean canCheck) {
 		LogUtil.d(TAG, msg.toString());
 		if (msg == null)
 			return;
@@ -57,7 +58,7 @@ public class PushListenerClient implements PushListener {
 						if (appOrder == null) {
 							Map<String, Object> map = new HashMap<String, Object>();
 							map.put("appOrderId", appOrderId);
-							SyncCentre.getInstance().getAppOrderById(context, map, null);
+							SyncCentre.getInstance().getAppOrderById(context, map, null, canCheck);
 						}
 					}
 				} catch (Exception e) {

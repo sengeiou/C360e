@@ -597,7 +597,7 @@ public class HttpAnalysis {
 	}
 
 	public static void getAppOrderById(int statusCode, Header[] headers,
-									   byte[] responseBody){
+									   byte[] responseBody, boolean canCheck){
 		try {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
@@ -622,6 +622,7 @@ public class HttpAnalysis {
 			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
 			AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
 			AppOrderModifierSQL.addAppOrderModifierList(appOrderModifierList);
+			if(canCheck)
 			if(!App.instance.isRevenueKiosk()) {
 				App.instance.appOrderShowDialog(true, appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
 			}

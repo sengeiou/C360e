@@ -1108,7 +1108,7 @@ public class HttpAPI {
     }
 
     public static void getAppOrderById(Context context, String url,
-                                       AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler) {
+                                       AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler, final boolean canCheck) {
         try {
             httpClient.post(context, url,
                     HttpAssembling.encapsulateBaseInfo(parameters),
@@ -1120,7 +1120,7 @@ public class HttpAPI {
                                               final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
-                                HttpAnalysis.getAppOrderById(statusCode, headers, responseBody);
+                                HttpAnalysis.getAppOrderById(statusCode, headers, responseBody, canCheck);
                             }
                             if (handler != null)
                                 handler.sendMessage(handler.obtainMessage(SystemSetting.UPDATE_PASSWORD_TAG, resultCode));
@@ -1149,6 +1149,7 @@ public class HttpAPI {
                     HttpAssembling.encapsulateBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
+
                         @Override
                         public void onSuccess(final int statusCode,
                                               final Header[] headers,

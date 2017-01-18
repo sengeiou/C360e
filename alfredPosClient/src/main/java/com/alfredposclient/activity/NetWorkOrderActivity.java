@@ -189,7 +189,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 			case R.id.tv_preparing_order:
 				tv_preparing_order.setBackgroundColor(getResources().getColor(R.color.brownness));
 				tv_preparing_order.setTextColor(getResources().getColor(R.color.white));
-				appOrders = AppOrderSQL.getAppOrderByOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARING, App.instance.getBusinessDate());
+				appOrders = AppOrderSQL.getPreparAppOrder(App.instance.getBusinessDate());
 				btn_check.setText(getResources().getText(R.string.completed_order));
 				if(!App.instance.isRevenueKiosk()){
 					btn_check.setVisibility(View.INVISIBLE);
@@ -510,6 +510,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 				textTypeFace.setTrajanProRegular(holder.tv_order_id);
 				textTypeFace.setTrajanProRegular(holder.tv_order_type);
 				textTypeFace.setTrajanProRegular(holder.tv_place_time);
+				textTypeFace.setTrajanProRegular(holder.tv_order_status);
 				arg1.setTag(holder);
 			} else {
 				holder = (HolderView) arg1.getTag();
@@ -546,9 +547,12 @@ public class NetWorkOrderActivity extends BaseActivity {
 				statusStr = getResources().getString(R.string.making);
 				break;
 			case ParamConst.APP_ORDER_STATUS_PREPARING:
-				statusStr = getResources().getString(R.string.completed);
+				statusStr = getResources().getString(R.string.preparing);
 				break;
 			case ParamConst.APP_ORDER_STATUS_PREPARED:
+				statusStr = getResources().getString(R.string.prepared);
+				break;
+			case ParamConst.APP_ORDER_STATUS_COMPLETED:
 				statusStr = getResources().getString(R.string.finish);
 				break;
 			default:

@@ -244,8 +244,8 @@ public class SyncCentre {
 		HttpAPI.updatePassword(context, getAbsoluteUrl(APIName.USER_UPDATEPASSWORD), httpClient, parameters, handler, user);
 	}
 
-	public void getAppOrderById(Context context,Map<String, Object> parameters, Handler handler){
-		HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), syncHttpClient, parameters, handler);
+	public void getAppOrderById(Context context,Map<String, Object> parameters, Handler handler, boolean canCheck){
+		HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), syncHttpClient, parameters, handler, canCheck);
 	}
 	public void appOrderRefund(Context context, int appOrderId, Handler handler){
 		HttpAPI.appOrderRefund(context, getAbsoluteUrl(APIName.APP_ORDER_REFUND), httpClient, appOrderId, handler);

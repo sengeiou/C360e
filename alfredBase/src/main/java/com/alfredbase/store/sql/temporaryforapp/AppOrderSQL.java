@@ -181,6 +181,52 @@ public class AppOrderSQL {
 		return result;
 	}
 
+
+	public static List<AppOrder> getPreparAppOrder(long time){
+		String sql = "select * from " + TableNames.AppOrder + " where orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARING + " or orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARED + " and createTime > ? order by orderStatus desc, id desc ";
+		Cursor cursor = null;
+		List<AppOrder> result = new ArrayList<AppOrder>();
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {time + ""});
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				AppOrder appOrder = new AppOrder();
+				appOrder.setId(cursor.getInt(0));
+				appOrder.setOrderNo(cursor.getInt(1));
+				appOrder.setCustId(cursor.getInt(2));
+				appOrder.setRestId(cursor.getInt(3));
+				appOrder.setRevenueId(cursor.getInt(4));
+				appOrder.setSourceType(cursor.getInt(5));
+				appOrder.setTableId(cursor.getInt(6));
+				appOrder.setOrderStatus(cursor.getInt(7));
+				appOrder.setSubTotal(cursor.getString(8));
+				appOrder.setTaxAmount(cursor.getString(9));
+				appOrder.setDiscountAmount(cursor.getString(10));
+				appOrder.setDiscountType(cursor.getInt(11));
+				appOrder.setTotal(cursor.getString(12));
+				appOrder.setOrderCount(cursor.getInt(13));
+				appOrder.setCreateTime(cursor.getLong(14));
+				appOrder.setUpdateTime(cursor.getLong(15));
+				appOrder.setTableType(cursor.getInt(16));
+				appOrder.setTableNo(cursor.getString(17));
+				appOrder.setBizType(cursor.getInt(18));
+				appOrder.setOrderRemark(cursor.getString(19));
+				appOrder.setEatType(cursor.getInt(20));
+				appOrder.setPayStatus(cursor.getInt(21));
+				result.add(appOrder);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static AppOrder getAppOrderById(int id){
 		String sql = "select * from " + TableNames.AppOrder + " where id = ?";
 		Cursor cursor = null;

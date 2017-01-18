@@ -112,8 +112,8 @@ import com.alfredposclient.javabean.SecondScreenBean;
 import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
+import com.alfredposclient.push.PushServer;
 import com.alfredposclient.service.RabbitMqPushService;
-import com.alfredposclient.thread.PushThread;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
@@ -201,7 +201,7 @@ public class App extends BaseApplication {
     // price include tax;
     // public int taxIncluded = 0;
 
-    private PushThread pushThread;
+//    private PushThread pushThread;
 
     public boolean kot_print;
 
@@ -289,7 +289,7 @@ public class App extends BaseApplication {
     private IntentFilter intentFilter;
 
     private Observable<Object> observable;
-
+    private PushServer pushServer;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -376,14 +376,19 @@ public class App extends BaseApplication {
 //            }
 //        });
 
-        pushThread = new PushThread();
-        pushThread.start();
+//        pushThread = new PushThread();
+//        pushThread.start();
+        pushServer = new PushServer();
     }
 
-    public PushThread getPushThread() {
-        return pushThread;
-    }
 
+//    public PushThread getPushThread() {
+//        return pushThread;
+//    }
+
+    public PushServer getPushServer(){
+        return  pushServer;
+    }
     @Override
     public void onTerminate() {
         if(observable != null){
@@ -664,6 +669,16 @@ public class App extends BaseApplication {
             // TODO Auto-generated catch block
             e.printStackTrace();
 
+        }
+    }
+
+    public void startPushServer(String key){
+        try {
+            if(!pushServer.isAlive()){
+                this.pushServer.start(key);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1467,19 +1482,19 @@ public class App extends BaseApplication {
 //        this.startService(PushService.startIntent(this.getApplicationContext()));
         syncJob = new CloudSyncJobManager(this);
     }
-    public void bindPushWebSocketService(int restId) {
-        this.bindService(RabbitMqPushService.startIntent(this.getApplicationContext(), restId),
-                this.rabbitMqPushConnection, Context.BIND_IMPORTANT);
-        this.startService(RabbitMqPushService.startIntent(this.getApplicationContext(), restId));
-    }
+//    public void bindPushWebSocketService(int restId) {
+//        this.bindService(RabbitMqPushService.startIntent(this.getApplicationContext(), restId),
+//                this.rabbitMqPushConnection, Context.BIND_IMPORTANT);
+//        this.startService(RabbitMqPushService.startIntent(this.getApplicationContext(), restId));
+//    }
 
-    public void unBindPushWebSocketService() {
-        if(this.rabbitMqPushService != null){
-            this.stopService(new Intent(this.getApplicationContext(), RabbitMqPushService.class));
-            this.unbindService(this.rabbitMqPushConnection);
-            this.rabbitMqPushService = null;
-        }
-    }
+//    public void unBindPushWebSocketService() {
+//        if(this.rabbitMqPushService != null){
+//            this.stopService(new Intent(this.getApplicationContext(), RabbitMqPushService.class));
+//            this.unbindService(this.rabbitMqPushConnection);
+//            this.rabbitMqPushService = null;
+//        }
+//    }
 
 //    public void unBindPushWebSocketSerive() {
 //        if (this.pushService != null) {

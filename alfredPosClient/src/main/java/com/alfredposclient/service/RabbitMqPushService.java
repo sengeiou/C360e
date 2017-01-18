@@ -67,26 +67,26 @@ public class RabbitMqPushService extends Service {
 	public void onDestroy() {
 //		stopThread();
 //		pushThread = null;
-		App.instance.getPushThread().setStopThread(true);
+//		App.instance.getPushThread().stopThread();
 		super.onDestroy();
 		LogUtil.d(TAG, "Destroying Alfred Push Service " + this.toString() + "stopThread = " + stopThread);
 	}
 
-	public void stopThread(){
-		if(pushThread.isAlive()) {
-			pushThread.currentThread().interrupt();
-			stopThread = true;
-		}
-	}
+//	public void stopThread(){
+//		if(pushThread.isAlive()) {
+//			pushThread.currentThread().interrupt();
+//			stopThread = true;
+//		}
+//	}
 
 	@Override
 	public int onStartCommand(final Intent intent, int flags, int startId) {
-		if(intent == null){
-			App.instance.getPushThread().setStopThread(true);
-		}else{
-			App.instance.getPushThread().start(intent.getStringExtra("rKey"));
-			App.instance.getPushThread().setStopThread(false);
-		}
+//		if(intent == null){
+//			App.instance.getPushThread().stopThread();
+//		}else{
+//			App.instance.getPushThread().start(intent.getStringExtra("rKey"));
+////			App.instance.getPushThread().setStopThread(false);
+//		}
 //		stopThread = false;
 //		LogUtil.d(TAG, "开启服务 stopThread = " + stopThread);
 //		if(runnable == null){
