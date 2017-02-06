@@ -13,12 +13,13 @@ import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PushMessage;
+import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.IntegerUtils;
-import com.alfredposclient.activity.StoredCardActivity;
+import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.BOHSettlementHtml;
@@ -26,13 +27,16 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.MonthlyPLUReportHtml;
 import com.alfredposclient.activity.MonthlySalesReportHtml;
 import com.alfredposclient.activity.NetWorkOrderActivity;
+import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.XZReportHtml;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
@@ -1556,6 +1560,60 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+    public static void getAppVersion(final Context context, String url, AsyncHttpClient httpClient,
+                                     Map<String, Object> parameters, final int applicationTypes) {
+        try {
+            parameters.put("applicationTypes", applicationTypes);
+            httpClient.post(context, url,
+                    HttpAssembling.getAppVersion(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            try {
+                                if (resultCode == ResultCode.SUCCESS) {
+                                    Gson gson = new Gson();
+                                    JSONObject jsonObject = new JSONObject(new String(responseBody));
+                                    VersionUpdate versionUpdate = gson.fromJson(jsonObject.toString(), VersionUpdate.class);
+                                    switch (applicationTypes){
+                                        case 0:
+                                            Store.saveObject(context, Store.POS_SYSTEM_UPDATE_INFO, versionUpdate);
+                                            break;
+                                        case 5:
+                                            Store.saveObject(context, Store.WAITER_SYSTEM_UPDATE_INFO, versionUpdate);
+                                            break;
+                                        case 6:
+                                            Store.saveObject(context, Store.KDS_SYSTEM_UPDATE_INFO, versionUpdate);
+                                            break;
+                                    }
+                                    if(applicationTypes == 0){
+
+                                    }
+
+                                } else {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public static void callAppNo(final Context context, String url,
@@ -1613,5 +1671,26 @@ public class HttpAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void downloadApk(String url,
+                                   AsyncHttpClient httpClient){
+        httpClient.get(url, new BinaryHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] binaryData) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] binaryData, Throwable error) {
+
+            }
+
+            @Override
+            public void onProgress(int bytesWritten, int totalSize) {
+                super.onProgress(bytesWritten, totalSize);
+                LogUtil.e("下载进度", "" + (int) ((bytesWritten * 1.0 / totalSize) * 100));
+            }
+        });
     }
 }

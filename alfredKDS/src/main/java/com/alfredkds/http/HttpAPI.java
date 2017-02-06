@@ -1,16 +1,22 @@
 package com.alfredkds.http;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Handler;
+import android.view.View;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
+import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.system.VersionUpdate;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredkds.activity.KotHistory;
 import com.alfredkds.activity.Login;
 import com.alfredkds.activity.SelectKitchen;
@@ -346,6 +352,20 @@ public class HttpAPI {
 				try {
 					JSONObject object = new JSONObject(new String(responseBody));
 					information = object.optString("posVersion");
+					if(object.has("versionUpdate")){
+						final VersionUpdate versionUpdate = new Gson().fromJson(object.getString("versionUpdate"), VersionUpdate.class);
+						if (versionUpdate != null && App.instance.getAppVersionCode() < versionUpdate.getVersionCode()) {
+							if (versionUpdate != null && App.instance.getAppVersionCode() < versionUpdate.getVersionCode()) {
+								DialogFactory.showUpdateVersionDialog(App.getTopActivity(), versionUpdate, new View.OnClickListener() {
+									@Override
+									public void onClick(View v) {
+										long posUpdateId = DownloadFactory.downloadApk(App.getTopActivity(), (DownloadManager) App.getTopActivity().getSystemService(Context.DOWNLOAD_SERVICE), versionUpdate.getKdsDownload(), Store.getLong(App.getTopActivity(), "posUpdateId"));
+										Store.putLong(App.getTopActivity(), "posUpdateId", posUpdateId);
+									}
+								}, null);
+							}
+						}
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

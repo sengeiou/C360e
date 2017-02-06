@@ -232,16 +232,25 @@ public class ESCPOSPrinter {
 	  this.feed((byte) 1);
     }
     
-    //tested
+    //
     public  void kickDrawer()  throws Exception {
 		byte[] tcmd = new byte[5];
 		tcmd[0] = ESCPOSPrinter.ESC;
 		tcmd[1] = 0x70;
-		tcmd[2] = 0x00;     
-		tcmd[3] = 0x40;   
-		tcmd[4] = 0x50;   
+		tcmd[2] = 0x00;
+		tcmd[3] = 0x40;
+		tcmd[4] = 0x50;
 		out.write(tcmd);
     }
+
+	public  void kickDrawerForSunmi()  throws Exception {
+		byte[] tcmd = new byte[4];
+		tcmd[0] = 0x10;
+		tcmd[1] = 0x14;
+		tcmd[2] = 0x00;
+		tcmd[3] = 0x00;
+		out.write(tcmd);
+	}
 
 	public ByteArrayOutputStream getOut() {
 		return out;

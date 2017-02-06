@@ -62,4 +62,7 @@
     <string name="card_status_abnormal">User QRcode have abnormal</string>
     <string name="card_binding_mobile">User Stored-Card has binding App, please scans the QRcode on user phone</string>
     <string name="qrcode_expire">QRcode expire, please scans the QRcode on user phone</string>
+    <string name="has_new_version">Found a new version</string>
+    <string name="update">Update</string>
+    <string name="next">Next Time</string>
 </resources>

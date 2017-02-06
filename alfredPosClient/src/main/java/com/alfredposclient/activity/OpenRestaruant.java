@@ -3,15 +3,20 @@ package com.alfredposclient.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +30,9 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
 import com.alfredbase.PrinterLoadingDialog;
+import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
@@ -40,11 +47,13 @@ import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
@@ -79,7 +88,9 @@ import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
+import com.google.gson.Gson;
 import com.tencent.bugly.crashreport.BuglyLog;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -149,7 +160,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private boolean doubleBackToExitPressedOnce = false;
 	private int size;
 	private Observable<Integer> observable;
-	
+	private Observable<Object> observable1;
+	private VerifyDialog verifyDialog;
 //	private RelativeLayout rl_view_bg1;
 //	private ImageView iv_view_icon1;
 //	private RelativeLayout rl_view_bg2;
@@ -166,6 +178,38 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED); // 关闭手势滑动
 		mSettingView = (SettingView) findViewById(R.id.settingView);
 		mSettingView.setParams(this, mDrawerLayout);
+	}
+	private DownloadManager downManager;
+	private BroadcastReceiver downReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+			long id1 = intent.getLongExtra(DownloadManager.INTENT_EXTRAS_SORT_BY_SIZE, -1);
+			LogUtil.e("jidu", id1 + "");
+			long downloadId = Store.getLong(context, "posUpdateId");
+			if(id == downloadId){
+				DownloadManager.Query query = new DownloadManager.Query();
+				Cursor cursor= downManager.query(query);
+				while(cursor.moveToNext()){
+					int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+					if(status == DownloadManager.STATUS_SUCCESSFUL){
+						String address = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+						if(!TextUtils.isEmpty(address)) {
+							if(context.getPackageName().equals(DownloadFactory.getApkInfo(context, Uri.parse(address).getPath()).packageName)) {
+								DownloadFactory.installApk(OpenRestaruant.this, address);
+								return;
+							}
+						}
+					}
+				}
+				cursor.close();
+			}
+		}
+	};
+	private void downloadPos(VersionUpdate versionUpdate){
+		long posUpdateId = DownloadFactory.downloadApk(context, downManager, versionUpdate.getPosDownload(), Store.getLong(context, "posUpdateId"));
+		Store.putLong(context, "posUpdateId", posUpdateId);
 	}
 
 	@Override
@@ -190,7 +234,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		}
 		ButtonClickTimer.canClick();	
 		initDrawerLayout();
-		
+		verifyDialog = new VerifyDialog(context, handler);
 		zPrinterLoadingDialog = new PrinterLoadingDialog(context);
 		rl_slideUnlockView = (RelativeLayout) findViewById(R.id.rl_slideUnlockView);
 		iv_restaurant = (ImageView) findViewById(R.id.iv_restaurant);
@@ -422,7 +466,19 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			}
 		});
 
+		observable1 = RxBus.getInstance().register("open_drawer");
+		observable1.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+			@Override
+			public void call(Object object) {
 
+				if(App.getTopActivity() == OpenRestaruant.this)
+				verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER, null);
+			}
+		});
+		downManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+		IntentFilter downFilter = new IntentFilter();
+		downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+		registerReceiver(downReceiver, downFilter);
 	}
 
 
@@ -1303,6 +1359,21 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		}
 			break;
 		case R.id.rl_openbg:{
+			String value = MobclickAgent.getConfigParams(context, "updateVersion");
+			Gson gson = new Gson();
+			final VersionUpdate updateInfo  = gson.fromJson(value, VersionUpdate.class);
+			if (updateInfo != null && App.instance.getAppVersionCode() < updateInfo.getVersionCode()) {
+				if(updateInfo.getForceUpdate() == 1) {
+					DialogFactory.showUpdateVersionDialog(context, updateInfo, new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+//								SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
+							downloadPos(updateInfo);
+						}
+					}, null);
+					return;
+				}
+			}
 			final View vv = v;
 			final Long businessDate = TimeUtil.getNewBusinessDate();
 			String bizYmd = TimeUtil.getYMD(businessDate);
@@ -1484,6 +1555,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		if(observable != null){
 			RxBus.getInstance().unregister(RxBus.RX_MSG_1, observable);
 		}
+		if(observable1 != null){
+			RxBus.getInstance().unregister("open_drawer", observable1);
+		}
+		unregisterReceiver(downReceiver);
 	}
 
 	@Override
@@ -1567,6 +1642,17 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			case PROGRESS_PRINT_Z_END:
 //				zPrinterLoadingDialog.dismiss();
 				dismissPrinterLoadingDialog();
+				String value = MobclickAgent.getConfigParams(context, "updateVersion");
+				Gson gson = new Gson();
+				final VersionUpdate updateInfo  = gson.fromJson(value, VersionUpdate.class);
+					if (updateInfo != null && App.instance.getAppVersionCode() < updateInfo.getVersionCode()) {
+						DialogFactory.showUpdateVersionDialog(context, updateInfo, new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
+							}
+						}, null);
+					}
 				break;
 			case OPEN_RESTAURANT: {
 				
@@ -1721,6 +1807,20 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				}
 				
 				break;
+				case VerifyDialog.DIALOG_RESPONSE:
+					Map<String, Object> result = (Map<String, Object>) msg.obj;
+					User user = (User) result.get("User");
+					if(result.get("MsgObject").equals(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER)){
+						User openUser = user;
+						ObjectFactory.getInstance().getUserOpenDrawerRecord(App.instance.getRevenueCenter().getRestaurantId().intValue(),
+								App.instance.getRevenueCenter().getId().intValue(),
+								openUser,
+								App.instance.getUser().getId().intValue(),
+								App.instance.getSessionStatus().getSession_status());
+//					settingView.openDrawer();
+						App.instance.kickOutCashDrawer(App.instance.getCahierPrinter());
+					}
+					break;
 			default:
 				break;
 			}

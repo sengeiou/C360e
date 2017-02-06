@@ -74,6 +74,7 @@ public class RxBus {
         List<Subject> subjects = maps.get(tag);
         if (subjects != null && !subjects.isEmpty()) {
             for (Subject s : subjects) {
+//                s.delay(100, TimeUnit.MILLISECONDS);
                 s.onNext(o);
             }
         }

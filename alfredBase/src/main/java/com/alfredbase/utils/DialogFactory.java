@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.R;
+import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -230,6 +231,43 @@ public class DialogFactory {
 		} catch (WriterException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static void showUpdateVersionDialog( final BaseActivity activity, VersionUpdate versionUpdate, final OnClickListener onClickListener, final OnClickListener nextListener){
+		try {
+			final Dialog dialog = new Dialog(activity, R.style.qrcode_dialog);
+			View view = LayoutInflater.from(activity).inflate(
+					R.layout.dialog_update, null);
+			dialog.setCancelable(false);
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.setContentView(view);
+			TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
+			StringBuffer title = new StringBuffer(activity.getString(R.string.has_new_version));
+			((TextView)view.findViewById(R.id.tv_version)).setText("New Version:" + versionUpdate.getVersionName());
+			((TextView)view.findViewById(R.id.tv_description)).setText(versionUpdate.getDescription());
+			view.findViewById(R.id.btn_update_now).setOnClickListener(onClickListener);
+			if(versionUpdate.getForceUpdate() == 1){
+				title.append("\nPlease update now");
+				view.findViewById(R.id.btn_update_later).setVisibility(View.GONE);
+			}else{
+				view.findViewById(R.id.btn_update_later).setVisibility(View.VISIBLE);
+			}
+			tv_title.setText(title.toString());
+			view.findViewById(R.id.btn_update_later).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					dialog.dismiss();
+					if(nextListener != null){
+						nextListener.onClick(v);
+					}
+
+				}
+			});
+			dialog.show();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

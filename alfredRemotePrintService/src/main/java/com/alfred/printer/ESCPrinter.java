@@ -180,7 +180,11 @@ public class ESCPrinter implements WIFIPrintCallback{
 					Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
 					this.printer.printQRBitmap(bitmap);
 				}else if(toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {
-					this.printer.kickDrawer();
+					if(ip.equals(WifiCommunication.localIPAddress)){
+						this.printer.kickDrawerForSunmi();
+					}else {
+						this.printer.kickDrawer();
+					}
 					isKickDrawer = true;
 				}
 			}

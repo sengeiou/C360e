@@ -131,9 +131,13 @@ public class PushServer {
                                 Thread.sleep(500);
 
                         } catch (Exception e) {
+                            e.printStackTrace();
                             LogUtil.d(TAG, "出错15秒后重连");
                             try {
                                 Thread.sleep(15000);
+                                if(channel != null && !channel.isOpen()) {
+                                    channel = null;
+                                }
                             } catch (InterruptedException e1) {
                                 e1.printStackTrace();
                             }

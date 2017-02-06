@@ -1,20 +1,19 @@
 package com.alfredwaiter.http;
 
-import java.util.Map;
-
-import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Handler;
+import android.view.View;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
+import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.system.VersionUpdate;
+import com.alfredbase.store.Store;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.KOTNotification;
 import com.alfredwaiter.activity.Login;
@@ -26,6 +25,13 @@ import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.UIHelp;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
+
+import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 public class HttpAPI {
 	public static void employeeId(Context context,
@@ -795,11 +801,26 @@ public class HttpAPI {
 					try {
 						JSONObject object = new JSONObject(new String(responseBody));
 						information = object.optString("posVersion");
+						if(object.has("versionUpdate")){
+							final VersionUpdate versionUpdate = new Gson().fromJson(object.getString("versionUpdate"), VersionUpdate.class);
+								if (versionUpdate != null && App.instance.getAppVersionCode() < versionUpdate.getVersionCode()) {
+									DialogFactory.showUpdateVersionDialog(App.getTopActivity(), versionUpdate, new View.OnClickListener() {
+										@Override
+										public void onClick(View v) {
+											long posUpdateId = DownloadFactory.downloadApk(App.getTopActivity(), (DownloadManager) App.getTopActivity().getSystemService(Context.DOWNLOAD_SERVICE), versionUpdate.getWaiterDownload(), Store.getLong(App.getTopActivity(), "posUpdateId"));
+											Store.putLong(App.getTopActivity(), "posUpdateId", posUpdateId);
+										}
+									}, null);
+								}
+						}
+
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 					App.getTopActivity().dismissLoadingDialog();
 					UIHelp.showToast(App.getTopActivity(), ResultCode.getErrorResultStrByCode(App.instance, resultCode, information));
+
+
 				}
 			});
 		}

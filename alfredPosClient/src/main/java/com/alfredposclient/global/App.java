@@ -222,6 +222,7 @@ public class App extends BaseApplication {
      */
     private RemotePrintServiceCallback mCallback = new RemotePrintServiceCallback();
 
+
     /*
      * Remote Print Service Connection
      */
@@ -319,6 +320,7 @@ public class App extends BaseApplication {
                 public void onDisConnect() {
                     hasSecondScreen = false;
                     LogUtil.d(TAG, "副屏连接失败");
+                    if(isOpenLog)
                     UIHelp.showToast(getTopActivity(), "副屏连接失败");
                 }
 
@@ -328,6 +330,7 @@ public class App extends BaseApplication {
                     connState = state;
                     LogUtil.d(TAG, "副屏连接成功,副屏状态:" + state);
                     if(getTopActivity() != null) {
+                        if(isOpenLog)
                         UIHelp.showToast(getTopActivity(), "副屏连接成功,副屏状态:" + state);
                     }
                 }
@@ -379,8 +382,27 @@ public class App extends BaseApplication {
 //        pushThread = new PushThread();
 //        pushThread.start();
         pushServer = new PushServer();
+//        checkoutVersion();
     }
 
+
+//    public void checkoutVersion() {
+//        if(pi == null)
+//            return;
+//        try {
+//            PackageInfo pi = getBaseContext().getPackageManager().getPackageInfo(
+//                    getBaseContext().getPackageName(),
+//                    PackageManager.GET_CONFIGURATIONS);
+//            Map<String, Object> map = new HashMap<String, Object>();
+//            map.put("versionCode", pi.versionCode);
+//            SyncCentre.getInstance().getAppVersion(getBaseContext(), map, 0);
+//            SyncCentre.getInstance().getAppVersion(getBaseContext(), map, 5);
+//            SyncCentre.getInstance().getAppVersion(getBaseContext(), map, 6);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
 //    public PushThread getPushThread() {
 //        return pushThread;

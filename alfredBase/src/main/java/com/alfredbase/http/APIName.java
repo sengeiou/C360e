@@ -32,6 +32,7 @@ public class APIName {
 	public static final String MEMBERSHIP_REPORTCARD = "membership/reportCard";
 	public static final String MEMBERSHIP_REATTENDCARD = "membership/reAttendCard";
 	public static final String TABLE_UPDATETABLESTATUS = "table/updateTableStatus";
+	public static final String SOFTWARE_GETVERSION = "software/getVersion";
 
 	//3rd-party Serivce
 	public static final String REQUEST_ALIPAY = "alipay/getAlipayUrl";

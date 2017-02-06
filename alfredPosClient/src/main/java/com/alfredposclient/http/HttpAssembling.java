@@ -168,6 +168,16 @@ public class HttpAssembling {
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}	
-	
+	public static StringEntity getAppVersion(Map<String, Object> map)
+			throws UnsupportedEncodingException {
+		Gson gson = new Gson();
+		map.put("userKey", "118v4v8");
+		map.put("restaurantKey", "19yyrpy");
+		map.put("version", App.instance.VERSION );
+		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
+		return entity;
+	}
+
 	
 }

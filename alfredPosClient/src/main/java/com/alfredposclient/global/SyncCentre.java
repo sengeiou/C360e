@@ -281,6 +281,12 @@ public class SyncCentre {
 	public void changeStoredCard(Context context, Map<String, Object> parameters, Handler handler){
 		HttpAPI.changeStoredCardValue(context,getAbsoluteUrl(APIName.MEMBERSHIP_REATTENDCARD),httpClient, parameters, handler);
 	}
+	public void getAppVersion(Context context, Map<String, Object> parameters, int applicationTypes){
+		HttpAPI.getAppVersion(context,getAbsoluteUrl(APIName.SOFTWARE_GETVERSION),httpClient, parameters, applicationTypes);
+	}
+	public void downloadApk(String url){
+		HttpAPI.downloadApk(url,new AsyncHttpClient());
+	}
 
 	// Backend Server IP
 	private String getAbsoluteUrl(String relativeUrl) {
@@ -290,8 +296,8 @@ public class SyncCentre {
 		} else if (App.instance.isOpenLog) {
 			return "http://139.224.17.126/alfred-api/" + relativeUrl;
 		} else {
-//			return "http://54.169.45.214/alfred-api/" + relativeUrl;
-			return "http://52.77.208.125/alfred-api/" + relativeUrl;
+//			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
+			return "http://www.servedbyalfred.com/alfred-api/" + relativeUrl;
 		}
 	}
 
@@ -433,7 +439,7 @@ public class SyncCentre {
 			if (App.instance.countryCode == ParamConst.CHINA) {
 				url =  "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
 			}else {
-			    url =  "http://52.74.14.226/alfred-api/" + APIName.REQUEST_ALIPAY;
+			    url =  "http://www.servedbyalfred.com/alfred-api/" + APIName.REQUEST_ALIPAY;
 			}
 			param.append("amount="+parameters.get("amount")+"&");
 		}

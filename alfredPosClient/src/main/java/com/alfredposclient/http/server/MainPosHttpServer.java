@@ -29,6 +29,7 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.javabean.model.WaiterDevice;
+import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
@@ -60,6 +61,7 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -201,6 +203,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("resultCode", ResultCode.APP_VERSION_UNREAL);
 			result.put("posVersion", App.instance.VERSION);
+			VersionUpdate versionUpdate = new VersionUpdate();
+			String value = MobclickAgent.getConfigParams(App.getTopActivity(), "updateVersion");
+			result.put("versionUpdate", value);
 			return this.getJsonResponse(new Gson().toJson(result));
 		} else if (apiName.equals(APIName.LOGIN_LOGINVERIFY)) {// 厨房登录
 			return handlerLogin(body);

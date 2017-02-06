@@ -97,6 +97,7 @@ public class BaseApplication extends Application {
 	    
 	}
 
+
 	private Runnable runnable = new Runnable() {
 		@Override
 		public void run() {
@@ -127,6 +128,18 @@ public class BaseApplication extends Application {
 			e1.printStackTrace();
 		}
   		return version;
+	}
+
+	public int getAppVersionCode() {
+		PackageInfo info;
+		int version = 1000;
+		try {
+			info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+			version = info.versionCode;
+		} catch (NameNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		return version;
 	}
 	
 	public static void initImageLoader(Context context) {

@@ -162,7 +162,7 @@ public class OrderDetailTaxSQL {
 		}
 		if(tax != null){
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("taxPriceSum", BH.mul(BH.getBD(tax.getTaxPercentage()), BH.div(BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(order.getDiscountAmount()), false), BH.add(BH.getBD(1), BH.getBD(tax.getTaxPercentage()), false), false), true).toString());
+			map.put("taxPriceSum", BH.mul(BH.getBD(tax.getTaxPercentage()), BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(order.getDiscountAmount()), false), true).toString());
 			map.put("taxName", BaseApplication.getTopActivity().getResources().getString(R.string.inclusive) + tax.getTaxName());
 			map.put("taxPercentage", tax.getTaxPercentage());
 //			taxNames.add(BaseApplication.getTopActivity().getResources().getString(R.string.inclusive) + tax.getTaxName());
@@ -214,7 +214,7 @@ public class OrderDetailTaxSQL {
 		}
 		if(tax != null){
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("taxPriceSum", BH.mul(BH.getBD(tax.getTaxPercentage()), BH.div(BH.sub(BH.getBD(orderSplit.getSubTotal()), BH.getBD(orderSplit.getDiscountAmount()), false), BH.add(BH.getBD(1), BH.getBD(tax.getTaxPercentage()), false), false), true).toString());
+			map.put("taxPriceSum", BH.mul(BH.getBD(tax.getTaxPercentage()), BH.sub(BH.getBD(orderSplit.getSubTotal()), BH.getBD(orderSplit.getDiscountAmount()), false), true).toString());
 			map.put("taxName", BaseApplication.instance.getTopActivity().getResources().getString(R.string.inclusive) + tax.getTaxName());
 			map.put("taxPercentage", tax.getTaxPercentage());
 //			taxNames.add(BaseApplication.instance.getTopActivity().getResources().getString(R.string.inclusive) + tax.getTaxName());

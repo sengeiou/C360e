@@ -773,7 +773,8 @@ public class AsyncHttpClient {
      */
     public RequestHandle get(Context context, String url, RequestParams params, ResponseHandlerInterface responseHandler) {
         Log.i(LOG_TAG, "url:" + url);
-        Log.i(LOG_TAG, params.getParamString());
+        if(params != null)
+        Log.i(LOG_TAG, params != null ? params.getParamString(): "这个请求没有参数");
         return sendRequest(httpClient, httpContext, new HttpGet(getUrlWithQueryString(isUrlEncodingEnabled, url, params)), null, responseHandler, context);
     }
 

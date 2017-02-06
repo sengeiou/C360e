@@ -489,6 +489,7 @@ public class BillPrint extends PrintJob{
 				String toPrintStr = entry.getKey()+" : $"+lable+reNext;
 				toPrint.setDataFormat(PrintData.FORMAT_TXT);
 				toPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+				toPrint.setFontsize(2);
 				toPrint.setText(toPrintStr);
 				this.data.add(toPrint);
 			}

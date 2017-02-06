@@ -1245,7 +1245,8 @@ public class MainPageKiosk extends BaseActivity {
 							openUser,
 							App.instance.getUser().getId().intValue(),
 							App.instance.getSessionStatus().getSession_status());
-					settingView.openDrawer();
+//					settingView.openDrawer();
+					App.instance.kickOutCashDrawer(App.instance.getCahierPrinter());
 				}
 			}
 				break;
