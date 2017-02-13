@@ -1360,6 +1360,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			break;
 		case R.id.rl_openbg:{
 			String value = MobclickAgent.getConfigParams(context, "updateVersion");
+			if(App.isOpenLog){
+				value = MobclickAgent.getConfigParams(context, "updateVersionTest");
+			}
 			Gson gson = new Gson();
 			final VersionUpdate updateInfo  = gson.fromJson(value, VersionUpdate.class);
 			if (updateInfo != null && App.instance.getAppVersionCode() < updateInfo.getVersionCode()) {
@@ -1643,13 +1646,17 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //				zPrinterLoadingDialog.dismiss();
 				dismissPrinterLoadingDialog();
 				String value = MobclickAgent.getConfigParams(context, "updateVersion");
+				if(App.isOpenLog){
+					value = MobclickAgent.getConfigParams(context, "updateVersionTest");
+				}
 				Gson gson = new Gson();
 				final VersionUpdate updateInfo  = gson.fromJson(value, VersionUpdate.class);
 					if (updateInfo != null && App.instance.getAppVersionCode() < updateInfo.getVersionCode()) {
 						DialogFactory.showUpdateVersionDialog(context, updateInfo, new OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
+//								SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
+								downloadPos(updateInfo);
 							}
 						}, null);
 					}

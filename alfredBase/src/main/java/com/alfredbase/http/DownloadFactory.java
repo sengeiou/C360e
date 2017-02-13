@@ -64,9 +64,13 @@ public class DownloadFactory {
 		request.setTitle(context.getResources().getString(R.string.downloading));
 		request.setDescription(fileName + " is downloading");
 		request.setAllowedOverRoaming(false);
-		// 设置文件存放目录
-		request.setDestinationInExternalFilesDir(context,
-				Environment.DIRECTORY_DOWNLOADS, fileName);
+		try {
+			// 设置文件存放目录
+			request.setDestinationInExternalFilesDir(context,
+					Environment.DIRECTORY_DOWNLOADS, fileName);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 //		request.setAllowedOverMetered()
 		return request;
 	}

@@ -284,9 +284,9 @@ public class SyncCentre {
 	public void getAppVersion(Context context, Map<String, Object> parameters, int applicationTypes){
 		HttpAPI.getAppVersion(context,getAbsoluteUrl(APIName.SOFTWARE_GETVERSION),httpClient, parameters, applicationTypes);
 	}
-	public void downloadApk(String url){
-		HttpAPI.downloadApk(url,new AsyncHttpClient());
-	}
+//	public void downloadApk(String url){
+//		HttpAPI.downloadApk(url,new AsyncHttpClient());
+//	}
 
 	// Backend Server IP
 	private String getAbsoluteUrl(String relativeUrl) {

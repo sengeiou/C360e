@@ -1754,9 +1754,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
 		case ParamConst.SETTLEMENT_TYPE_UNIPAY:
 		case ParamConst.SETTLEMENT_TYPE_VISA: {
-			if (!verifyCardNo()) {
-				return;
-			} else {
+//			if (!verifyCardNo()) {
+//				return;
+//			} else {
 				BigDecimal paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
 				if(BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))){
 					PaymentSettlement paymentSettlement = ObjectFactory
@@ -1801,7 +1801,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					newPaymentMapList.add(paymentMap);
 				}
 			}
-			}
+//			}
 
 		}
 			break;

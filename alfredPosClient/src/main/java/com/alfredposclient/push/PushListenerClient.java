@@ -93,21 +93,36 @@ public class PushListenerClient implements PushServer.PushListener {
 					LogUtil.d(TAG, thirdpartyPayPushMsgDto.toString());
 				}
 			} else {
-				Map<String, Integer> pushMsgMap = App.instance.getPushMsgMap();
-				if (pushMsgMap.containsKey(msg.getMsg())) {
-					if (pushMsgMap.get(pushMsgMap) != null) {
-						pushMsgMap.put(msg.getMsg(), pushMsgMap.get(pushMsgMap) + 1);
-					} else {
-						pushMsgMap.put(msg.getMsg(), 1);
-					}
-
-				} else {
-					pushMsgMap.put(msg.getMsg(), 1);
+				if(PushMessage.HAPPY_HOURS.equals(msg.getMsg())
+						|| PushMessage.PRINTER.equals(msg.getMsg())
+						|| PushMessage.ITEM.equals(msg.getMsg())
+						|| PushMessage.MODIFIER.equals(msg.getMsg())
+						|| PushMessage.USER.equals(msg.getMsg())
+						|| PushMessage.RESTAURANT.equals(msg.getMsg())
+						|| PushMessage.PLACE_TABLE.equals(msg.getMsg())
+						|| PushMessage.TAX.equals(msg.getMsg())
+						|| PushMessage.REST_CONFIG.equals(msg.getMsg())){
+					saveUpdateInfo(msg);
 				}
-				App.instance.setPushMsgMap(pushMsgMap);
-				Store.saveObject(context, Store.PUSH_MESSAGE, App.instance.getPushMsgMap());
+
 			}
 		}
+	}
+
+	private void saveUpdateInfo(PushMessage msg){
+		Map<String, Integer> pushMsgMap = App.instance.getPushMsgMap();
+		if (pushMsgMap.containsKey(msg.getMsg())) {
+			if (pushMsgMap.get(pushMsgMap) != null) {
+				pushMsgMap.put(msg.getMsg(), pushMsgMap.get(pushMsgMap) + 1);
+			} else {
+				pushMsgMap.put(msg.getMsg(), 1);
+			}
+
+		} else {
+			pushMsgMap.put(msg.getMsg(), 1);
+		}
+		App.instance.setPushMsgMap(pushMsgMap);
+		Store.saveObject(context, Store.PUSH_MESSAGE, App.instance.getPushMsgMap());
 	}
 
 	@Override

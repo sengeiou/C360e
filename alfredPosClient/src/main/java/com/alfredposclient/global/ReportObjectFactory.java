@@ -136,7 +136,7 @@ public class ReportObjectFactory {
 
 		Map<String, String> refundBillsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_VOID, businessDate);
+						ParamConst.SETTLEMENT_TYPE_REFUND, businessDate);
 		String billRefund = BH.sub(BH.getBD(refundBillsMap
 				.get("sumAmount")), BH.getBD(refundTax),true).toString();
 		String billRefundQty = refundBillsMap.get("count");
@@ -373,7 +373,8 @@ public class ReportObjectFactory {
 				PaymentSettlement paymentSettlement = PaymentSettlementSQL.getPaymentSettlementsByOrderId(order.getId());
 				if(paymentSettlement != null 
 						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT 
-						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_VOID )
+						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_VOID
+						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_REFUND)
 				inclusiveTaxAmt = BH.add(BH.getBD(order.getInclusiveTaxPrice()), inclusiveTaxAmt, true);
 				billNoQty++;
 			}
