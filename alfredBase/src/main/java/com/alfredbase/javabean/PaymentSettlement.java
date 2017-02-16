@@ -30,7 +30,7 @@ public class PaymentSettlement {
 	 * 是否可用(-1删除，0正常) 用于本地
 	 */
 	private int isActive;
-	
+
 	public Integer getId() {
 		return id;
 	}

@@ -1459,7 +1459,7 @@ public class HttpAPI {
     }
 
     public static void updateStoredCardValue(Context context, String url, AsyncHttpClient httpClient,
-                                             Map<String, Object> parameters, final Handler handler) {
+                                             final Map<String, Object> parameters, final Handler handler) {
         try {
             httpClient.post(context, url,
                     HttpAssembling.encapsulateBaseInfo(parameters),
@@ -1471,7 +1471,11 @@ public class HttpAPI {
                                               final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
-                                HttpAnalysis.updateStoredCardValue(responseBody);
+                                int payTypeId = -1;
+                                if(parameters.containsKey("payTypeId")){
+                                    payTypeId = (Integer)parameters.get("payTypeId");
+                                }
+                                HttpAnalysis.updateStoredCardValue(responseBody, payTypeId);
                                 handler.sendEmptyMessage(StoredCardActivity.PAID_STOREDCARD_SUCCEED);
                             } else {
                                 handler.sendMessage(handler.obtainMessage(StoredCardActivity.HTTP_FAILURE, resultCode));

@@ -696,6 +696,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 map.put("revenueId", App.instance.getRevenueCenter().getId().intValue());
                 map.put("consumeAmount", value);
                 map.put("operateType", 1);
+                map.put("payTypeId", 0);
                 loadingDialog.show();
                 SyncCentre.getInstance().updateStoredCardValue(mainPage, map, handler);
             }

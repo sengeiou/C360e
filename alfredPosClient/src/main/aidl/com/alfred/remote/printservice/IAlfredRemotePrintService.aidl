@@ -37,7 +37,7 @@ interface IAlfredRemotePrintService {
 	
 	void registerCallBack(IAlfredRemotePrintServiceCallback cb);
 
-	void printDaySalesReport(String xzType,String printer,String title, String report, String tax, String useropen);
+	void printDaySalesReport(String xzType,String printer,String title, String report, String tax, String useropen, String sessionSales);
 
 	void printDetailAnalysisReport(String xzType, String printer, 
 										String title, String daySaleSummary, String plu, String pluMod, String pluCombo, String category, String items);

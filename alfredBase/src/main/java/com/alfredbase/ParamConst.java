@@ -263,6 +263,7 @@ public class ParamConst {
 	// cashInOut的type
 	public static final int CASHINOUT_TYPE_IN = 0;
 	public static final int CASHINOUT_TYPE_OUT = 1;
+	public static final int CASHINOUT_TYPE_START = 2;
 
 	// 网络job的类型
 	public static final int JOB_TYPE_POS_PLACEORDER = 0;

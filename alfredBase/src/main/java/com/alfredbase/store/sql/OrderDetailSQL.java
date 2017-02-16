@@ -1062,6 +1062,70 @@ public class OrderDetailSQL {
 		return result;
 	}
 
+
+	public static ArrayList<OrderDetail> getUnFreeOrderDetailsForWaiter(Order order) {
+		ArrayList<OrderDetail> result = new ArrayList<OrderDetail>();
+		String sql = "select * from " + TableNames.OrderDetail
+				+ " where orderDetailStatus = 1 and orderId = ? and isFree = " + ParamConst.NOT_FREE;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			db.beginTransaction();
+			cursor = db.rawQuery(sql, new String[] { order.getId() + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			OrderDetail orderDetail = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				orderDetail = new OrderDetail();
+				orderDetail.setId(cursor.getInt(0));
+				orderDetail.setOrderId(cursor.getInt(1));
+				orderDetail.setOrderOriginId(cursor.getInt(2));
+				orderDetail.setUserId(cursor.getInt(3));
+				orderDetail.setItemId(cursor.getInt(4));
+				orderDetail.setItemName(cursor.getString(5));
+				orderDetail.setItemNum(cursor.getInt(6));
+				orderDetail.setOrderDetailStatus(cursor.getInt(7));
+				orderDetail.setOrderDetailType(cursor.getInt(8));
+				orderDetail.setReason(cursor.getString(9));
+				orderDetail.setPrintStatus(cursor.getInt(10));
+				orderDetail.setItemPrice(cursor.getString(11));
+				orderDetail.setTaxPrice(cursor.getString(12));
+				orderDetail.setDiscountPrice(cursor.getString(13));
+				orderDetail.setModifierPrice(cursor.getString(14));
+				orderDetail.setRealPrice(cursor.getString(15));
+				orderDetail.setCreateTime(cursor.getLong(16));
+				orderDetail.setUpdateTime(cursor.getLong(17));
+				orderDetail.setDiscountRate(cursor.getString(18));
+				orderDetail.setDiscountType(cursor.getInt(19));
+				orderDetail.setFromOrderDetailId(cursor.getInt(20));
+				orderDetail.setIsFree(cursor.getInt(21));
+				orderDetail.setGroupId(cursor.getInt(22));
+				orderDetail.setIsOpenItem(cursor.getInt(23));
+				orderDetail.setSpecialInstractions(cursor.getString(24));
+				orderDetail.setOrderSplitId(cursor.getInt(25));
+				orderDetail.setIsTakeAway(cursor.getInt(26));
+				orderDetail.setWeight(cursor.getString(27));
+				orderDetail.setIsItemDiscount(cursor.getInt(28));
+				orderDetail.setIsSet(cursor.getInt(29));
+				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				result.add(orderDetail);
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+			db.endTransaction();
+		}
+		return result;
+	}
+
 	public static int getUnFreeOrderDetailsNumInKOTOrPOS(Order order,
 			ItemDetail itemDetail, Integer groupId) {
 		int sum = 0;

@@ -3,7 +3,6 @@ package com.alfredposclient.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,6 +51,7 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.ReportEntItem;
+import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.system.VersionUpdate;
@@ -66,10 +67,13 @@ import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.ReportDaySalesSQL;
+import com.alfredbase.store.sql.ReportSessionSalesSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
@@ -650,7 +654,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			setDateView();
 		}
 	};
-
+//  open session
 	private boolean open(View view) {
 		boolean result = true;
 		view.setX(iv_restaurantX + rl_slideUnlockViewX);
@@ -764,7 +768,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	}
 
 	/* close session */
-	private void close(View v) {
+	private void close(View v, String actual) {
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		final SessionStatus sessionStatus = Store.getObject(
@@ -797,7 +801,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		
 		//generate XReport data
 		final Map<String, Object> xReportInfo 
-				= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus);
+				= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
 
 		new Thread(new Runnable() {
 
@@ -917,7 +921,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			@Override
 			public void onAnimationEnd(Animator animation) {
 				super.onAnimationEnd(animation);
-				rl_closerestbg.setVisibility(View.VISIBLE); 
+				rl_closerestbg.setVisibility(View.VISIBLE);
+
 				new Thread(new Runnable() {
 
 					@Override
@@ -1037,7 +1042,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 		// sales report
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-				title, reportDaySales, reportDayTaxs, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus));
+				title, reportDaySales, reportDayTaxs, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
 		// detail analysis
 		App.instance.remotePrintDetailAnalysisReport(reportType,
@@ -1103,6 +1108,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				.getAllItemCategory();
 		ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
 				.getAllItemMainCategory();
+		List<ReportSessionSales> reportSessionSalesList = ReportSessionSalesSQL.getAllReportSessionSales(businessDate);
 		PrinterTitle title = ObjectFactory.getInstance()
 				.getPrinterTitleForReport(
 						App.instance.getRevenueCenter().getId(),
@@ -1117,7 +1123,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 		// sales report
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-				title, reportDaySales, reportDayTaxs, ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate));
+				title, reportDaySales, reportDayTaxs,
+				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
+				reportSessionSalesList);
 
 		// detail analysis
 		App.instance.remotePrintDetailAnalysisReport(reportType,
@@ -1519,27 +1527,22 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			if (x_ > 0 && x_ < rl_slideUnlockView.getWidth() && y_ > 0
 					&& y_ < rl_slideUnlockView.getHeight()) {
 				if (open(v)) {
-					new Thread(new Runnable() {
-						
-						@Override
-						public void run() {
-							CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-							if (cloudSync!=null) {
-								cloudSync.syncOpenOrCloseSessionAndRestaurant(
-										App.instance.getRevenueCenter().getId(),
-										App.instance.getBusinessDate(),
-										App.instance.getSessionStatus(),
-										CloudSyncJobManager.OPEN_SESSION);
-							}
-							
-						}
-					}).start();
-					App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
-					if (App.instance.isRevenueKiosk()) {
-						UIHelp.startMainPageKiosk(context);
-					} else {
-						UIHelp.startMainPage(context);
-					}
+					DialogFactory.commonTwoBtnInputDialog(context, "Start Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+							new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									openSession();
+								}
+							},
+							new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									EditText editText = (EditText) v;
+									String start = editText.getText().toString();
+									ObjectFactory.getInstance().getCashInOut(App.instance.getRevenueCenter(), App.instance.getBusinessDate(), App.instance.getUser(), 2, BH.getBD(start).toString(), "");
+									openSession();
+								}
+							});
 				}
 			} else {
 				// close(v);
@@ -1550,6 +1553,31 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			break;
 		}
 		return true;
+	}
+
+	private void openSession(){
+		UIHelp.showShortToast(context, "opening");
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+				if (cloudSync!=null) {
+					cloudSync.syncOpenOrCloseSessionAndRestaurant(
+							App.instance.getRevenueCenter().getId(),
+							App.instance.getBusinessDate(),
+							App.instance.getSessionStatus(),
+							CloudSyncJobManager.OPEN_SESSION);
+				}
+
+			}
+		}).start();
+		App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+		if (App.instance.isRevenueKiosk()) {
+			UIHelp.startMainPageKiosk(context);
+		} else {
+			UIHelp.startMainPage(context);
+		}
 	}
 
 	@Override
@@ -1589,10 +1617,24 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	}
 
 	private Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
+		public void handleMessage(final Message msg) {
 			switch (msg.what) {
 			case CAN_CLOSE:
-				close(((View) msg.obj));
+				DialogFactory.commonTwoBtnInputDialog(context, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+						new OnClickListener() {
+							@Override
+							public void onClick(View view) {
+								close(((View) msg.obj), "0.00");
+							}
+						},
+						new OnClickListener() {
+							@Override
+							public void onClick(View view) {
+								EditText editText = (EditText)view;
+								String actual = editText.getText().toString();
+								close(((View) msg.obj), actual);
+							}
+						});
 				break;
 			case CAN_NOT_CLOSE:{
 				final View view = (View) msg.obj;

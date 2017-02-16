@@ -24,6 +24,8 @@ public class ConsumingRecords implements Serializable{
 
     private long businessDate;
 
+    private int payTypeId;
+
     public Integer getCardId() {
         return cardId;
     }
@@ -88,6 +90,14 @@ public class ConsumingRecords implements Serializable{
         this.businessDate = businessDate;
     }
 
+    public int getPayTypeId() {
+        return payTypeId;
+    }
+
+    public void setPayTypeId(int payTypeId) {
+        this.payTypeId = payTypeId;
+    }
+
     @Override
     public String toString() {
         return "ConsumingRecords{" +
@@ -99,6 +109,7 @@ public class ConsumingRecords implements Serializable{
                 ", consumingAmount='" + consumingAmount + '\'' +
                 ", consumingTime=" + consumingTime +
                 ", businessDate=" + businessDate +
+                ", payTypeId=" + payTypeId +
                 '}';
     }
 }

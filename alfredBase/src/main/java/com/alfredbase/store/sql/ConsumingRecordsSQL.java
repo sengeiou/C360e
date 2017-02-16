@@ -24,8 +24,8 @@ public class ConsumingRecordsSQL {
         try {
             String sql = "insert into "
                     + TableNames.ConsumingRecords
-                    + "(cardId, restId, staffId, consumingType, fromType, consumingAmount, consumingTime, businessDate)"
-                    + " values (?,?,?,?,?,?,?,?)";
+                    + "(cardId, restId, staffId, consumingType, fromType, consumingAmount, consumingTime, businessDate, payTypeId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[] {
@@ -36,7 +36,8 @@ public class ConsumingRecordsSQL {
                             consumingRecords.getFromType(),
                             consumingRecords.getConsumingAmount(),
                             consumingRecords.getConsumingTime(),
-                            consumingRecords.getBusinessDate()
+                            consumingRecords.getBusinessDate(),
+                            consumingRecords.getPayTypeId()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,6 +86,57 @@ public class ConsumingRecordsSQL {
                 result = new HashMap<String, String>();
                 result.put("sumAmount", cursor.getString(0));
                 result.put("count", String.valueOf(cursor.getInt(1)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+    public static Map<String, String> getSumCashTopUPByBusinessDate(long businessDate){
+        Map<String, String> result = null;
+        String sql = "select SUM(consumingAmount) from " + TableNames.ConsumingRecords + " where businessDate = ? and consumingType = 1 and payTypeId = 0";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[] {businessDate + ""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            if (cursor.moveToFirst()) {
+                result = new HashMap<String, String>();
+                result.put("sumCashAmount", cursor.getString(0));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static Map<String, String> getSumCashTopUPBySession(long businessDate, SessionStatus sessionStatus){
+        Map<String, String> result = null;
+        String sql = "select SUM(consumingAmount) from " + TableNames.ConsumingRecords + " where businessDate = ? and consumingTime > ? and consumingType = 1 and payTypeId = 0";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[] {businessDate + "", sessionStatus.getTime() + ""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            if (cursor.moveToFirst()) {
+                result = new HashMap<String, String>();
+                result.put("sumCashAmount", cursor.getString(0));
             }
         } catch (Exception e) {
             e.printStackTrace();

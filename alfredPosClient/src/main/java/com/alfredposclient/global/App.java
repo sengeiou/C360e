@@ -68,6 +68,7 @@ import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrintReceiptInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.ReportEntItem;
+import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
@@ -1263,7 +1264,8 @@ public class App extends BaseApplication {
 
     public void remotePrintDaySalesReport(String xzType, PrinterDevice printer,
                                           PrinterTitle title, ReportDaySales reportData,
-                                          List<ReportDayTax> taxData, List<ReportUserOpenDrawer> reportUserOpenDrawers) {
+                                          List<ReportDayTax> taxData, List<ReportUserOpenDrawer> reportUserOpenDrawers,
+                                          List<ReportSessionSales> reportSessionSalesList) {
         if (mRemoteService == null) {
             printerDialog();
             return;
@@ -1275,8 +1277,9 @@ public class App extends BaseApplication {
             String report = gson.toJson(reportData);
             String tax = gson.toJson(taxData);
             String useropen = gson.toJson(reportUserOpenDrawers);
+            String reportSessionSaless = gson.toJson(reportSessionSalesList);
             mRemoteService.printDaySalesReport(xzType, prtStr, prtTitle,
-                    report, tax, useropen);
+                    report, tax, useropen, reportSessionSaless);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

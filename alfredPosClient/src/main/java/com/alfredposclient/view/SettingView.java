@@ -143,7 +143,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				break;
 			}
 			case R.id.ll_voidplu: {
-				UIHelp.startEntPluHtml(context);
+				UIHelp.startVoidPluHtml(context);
 				break;
 			}
 			case R.id.ll_close: {

@@ -146,11 +146,11 @@
                         android:layout_height="wrap_content"
                         android:text="123"
                         />
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="321"
-                    />
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="321"
+                        />
             </LinearLayout>
             <com.alfredposclient.view.DiscountMoneyKeyboard
                 android:id="@+id/discountKeyboard"

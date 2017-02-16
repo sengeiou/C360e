@@ -147,7 +147,17 @@ public class ReportDaySales implements Serializable{
 	private Integer billRefundQty;
 
 	private String refundTax;
-	
+
+	private String startDrawerAmount;
+
+	private String expectedAmount;
+
+	private String waiterAmount;
+
+	private String difference;
+
+	private String cashTopUp;
+
 	public ReportDaySales() {
 
 	}
@@ -773,6 +783,46 @@ public class ReportDaySales implements Serializable{
 		this.refundTax = refundTax;
 	}
 
+	public String getStartDrawerAmount() {
+		return startDrawerAmount;
+	}
+
+	public void setStartDrawerAmount(String startDrawerAmount) {
+		this.startDrawerAmount = startDrawerAmount;
+	}
+
+	public String getExpectedAmount() {
+		return expectedAmount;
+	}
+
+	public void setExpectedAmount(String expectedAmount) {
+		this.expectedAmount = expectedAmount;
+	}
+
+	public String getWaiterAmount() {
+		return waiterAmount;
+	}
+
+	public void setWaiterAmount(String waiterAmount) {
+		this.waiterAmount = waiterAmount;
+	}
+
+	public String getDifference() {
+		return difference;
+	}
+
+	public void setDifference(String difference) {
+		this.difference = difference;
+	}
+
+	public String getCashTopUp() {
+		return cashTopUp;
+	}
+
+	public void setCashTopUp(String cashTopUp) {
+		this.cashTopUp = cashTopUp;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -848,6 +898,11 @@ public class ReportDaySales implements Serializable{
 				", billRefund='" + billRefund + '\'' +
 				", billRefundQty=" + billRefundQty +
 				", refundTax='" + refundTax + '\'' +
+				", startDrawerAmount='" + startDrawerAmount + '\'' +
+				", expectedAmount='" + expectedAmount + '\'' +
+				", waiterAmount='" + waiterAmount + '\'' +
+				", difference='" + difference + '\'' +
+				", cashTopUp='" + cashTopUp + '\'' +
 				'}';
 	}
 }

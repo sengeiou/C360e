@@ -117,7 +117,7 @@ public class EntVoidReportHtml extends BaseActivity {
 			if (functionMode == EntVoidReportHtml.FROM_ENT_TAP)
 				   web.loadUrl(WebViewConfig.ROOT_DIRECTORY + "entVoid.html");
 				else
-				   web.loadUrl(WebViewConfig.ROOT_DIRECTORY + "entVoid.html");			
+				   web.loadUrl(WebViewConfig.ROOT_DIRECTORY + "voidEnt.html");
 			
 		}
 	}
@@ -175,13 +175,19 @@ public class EntVoidReportHtml extends BaseActivity {
 	private String loadVoidPluData() {
 		Gson gson = new Gson();
 
+
+		this.reportEntItems = ReportObjectFactory.getInstance().loadReportEntItem(businessDate);
 		this.reportVoidItems = ReportObjectFactory.getInstance().loadReportVoidItem(businessDate);
 		this.reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(businessDate);
 			
 		if (reportDaySales != null) {
 			map.put("total", String.valueOf(BH.add(BH.getBD(reportDaySales.getItemVoid()),
 													BH.getBD(reportDaySales.getBillVoid()), true)));
+		if(functionMode == FROM_ENT_TAP) {
+			map.put("plu", this.reportEntItems);
+		}else{
 			map.put("plu", this.reportVoidItems);
+		}
 			map.put("bizDate", TimeUtil.getPrintingDate(businessDate));
 		} else {
 			map.put("total", 0);
@@ -224,16 +230,18 @@ public class EntVoidReportHtml extends BaseActivity {
 					context);
 			printerLoadingDialog.setTitle(context.getResources().getString(R.string.printing));
 			printerLoadingDialog.showByTime(2000);
-			
-			if (reportVoidItems != null && reportVoidItems.size() > 0)
-				// Void PLU
-				App.instance.remotePrintVoidItemReport(rptType, cashierPrinter,
-						title, (ArrayList<ReportVoidItem>) reportVoidItems);
+			if(functionMode == FROM_ENT_TAP){
+				if (reportEntItems != null && reportEntItems.size() > 0)
+					// Ent PLU
+					App.instance.remotePrintEntItemReport(rptType, cashierPrinter,
+							title, (ArrayList<ReportEntItem>) reportEntItems);
+			}else{
+				if (reportVoidItems != null && reportVoidItems.size() > 0)
+					// Void PLU
+					App.instance.remotePrintVoidItemReport(rptType, cashierPrinter,
+							title, (ArrayList<ReportVoidItem>) reportVoidItems);
+			}
 
-			if (reportEntItems != null && reportEntItems.size() > 0)
-				// Ent PLU
-				App.instance.remotePrintEntItemReport(rptType, cashierPrinter,
-						title, (ArrayList<ReportEntItem>) reportEntItems);
 		}
 	}
 }

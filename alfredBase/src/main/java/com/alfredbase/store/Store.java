@@ -88,6 +88,8 @@ public class Store {
 	public static final String KDS_SYSTEM_UPDATE_INFO = "KDS_SYSTEM_UPDATE_INFO";
 	public static final String WAITER_SYSTEM_UPDATE_INFO = "WAITER_SYSTEM_UPDATE_INFO";
 
+
+
 	private Store() {
 	};
 	
