@@ -26,6 +26,7 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
+import com.alfredwaiter.view.WaiterReloginDialog;
 
 public class Setting extends BaseActivity {
 	public static final int HANDLER_LOGOUT_SUCCESS = 1;
@@ -35,6 +36,8 @@ public class Setting extends BaseActivity {
 	private SlipButton sb_kot_notification;
 	private SlipButton sb_zone_notification;
 	private TextView tv_version;
+	private WaiterReloginDialog waiterReloginDialog;
+
 	private Handler handler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
@@ -87,6 +90,7 @@ public class Setting extends BaseActivity {
 		findViewById(R.id.tv_reset).setOnClickListener(this);
 		findViewById(R.id.iv_back).setOnClickListener(this);
 		findViewById(R.id.tv_logout).setOnClickListener(this);
+		findViewById(R.id.tv_clock).setOnClickListener(this);
 		//		sb_kot_notification.SetOnChangedListener(new SlipButtonChangeListener() {
 //			
 //			@Override
@@ -177,6 +181,10 @@ public class Setting extends BaseActivity {
 							}
 						});				
 			break;
+			case R.id.tv_clock:
+				waiterReloginDialog = new WaiterReloginDialog(this, false);
+				waiterReloginDialog.show();
+				break;
 		default:
 			break;
 		}

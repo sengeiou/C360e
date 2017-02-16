@@ -1,5 +1,7 @@
 package com.alfredwaiter.global;
 
+import android.text.TextUtils;
+
 import com.alfredbase.BaseApplication;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.javabean.RevenueCenter;
@@ -9,12 +11,18 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
 import com.alfredwaiter.activity.Welcome;
 import com.alfredwaiter.http.server.WaiterHttpServer;
+import com.alfredwaiter.view.WaiterReloginDialog;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.IOException;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class App extends BaseApplication {
 
@@ -33,6 +41,8 @@ public class App extends BaseApplication {
 	private String fromTableName;
 	private String toTableName;
 	public  String VERSION = "1.0.0";
+
+	private Observable<Object> observable;
 	
 	private String currencySymbol = "$";
 	@Override
@@ -46,6 +56,19 @@ public class App extends BaseApplication {
 		UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);  
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);
 		CrashReport.initCrashReport(getApplicationContext(), "900042909", isOpenLog);
+
+		observable = RxBus.getInstance().register("showRelogin");
+		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+			@Override
+			public void call(Object object) {
+				if (getUser() != null && !TextUtils.isEmpty(Store.getString(instance, Store.EMPLOYEE_ID))){
+						WaiterReloginDialog reloginDialog = new WaiterReloginDialog(getTopActivity(), true);
+						reloginDialog.show();
+				}else {
+					return;
+				}
+			}
+		});
 	}
     
 	public void startHttpServer() {

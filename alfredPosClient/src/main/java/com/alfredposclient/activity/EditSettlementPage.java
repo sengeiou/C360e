@@ -95,7 +95,7 @@ public class EditSettlementPage extends BaseActivity {
         closeOrderSplitWindow = new CloseOrderSplitWindow(this,
                 findViewById(R.id.rl_root), mHandler);
         verifyDialog = new VerifyDialog(context, mHandler);
-        EditSettlementAdapter editSettlementAdapter = new EditSettlementAdapter(context, getSettlementList());
+        EditSettlementAdapter editSettlementAdapter = new EditSettlementAdapter(context, getSettlementList(), verifyDialog);
         ListView lv_payment = (ListView) findViewById(R.id.lv_payment);
         lv_payment.setAdapter(editSettlementAdapter);
         lv_payment.setOnItemClickListener(new OnItemClickListener() {
@@ -171,7 +171,7 @@ public class EditSettlementPage extends BaseActivity {
                                     currentOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    table.getName());
+                                    table.getName(), 1);
                     ArrayList<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder
                             .getId());
                     ArrayList<PrintOrderItem> printOrderItems = ObjectFactory.getInstance().getItemList(orderDetails);
@@ -222,7 +222,7 @@ public class EditSettlementPage extends BaseActivity {
                                     orderSplit,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    table.getName(), orderBill, App.instance.getBusinessDate().toString());
+                                    table.getName(), orderBill, App.instance.getBusinessDate().toString(), 1);
                     ArrayList<OrderDetail> orderSplitDetails = (ArrayList<OrderDetail>) OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(orderSplit);
 
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory

@@ -31,7 +31,33 @@ public class PrinterTitle implements Serializable{
 	private String footerOptions;// footer options
 	private Integer isTakeAway;
 	private String orderNo; //流水号
+	private String groupNum;
+	private Integer isKiosk;
+	private Integer copy;
 
+	public Integer getIsKiosk() {
+		return isKiosk;
+	}
+
+	public void setIsKiosk(Integer isKiosk) {
+		this.isKiosk = isKiosk;
+	}
+
+	public Integer getCopy() {
+		return copy;
+	}
+
+	public void setCopy(Integer copy) {
+		this.copy = copy;
+	}
+
+	public String getGroupNum() {
+		return groupNum;
+	}
+
+	public void setGroupNum(String groupNum) {
+		this.groupNum = groupNum;
+	}
 
 	public String getOptions() {
 		return options;
@@ -158,16 +184,31 @@ public class PrinterTitle implements Serializable{
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
+
 	@Override
 	public String toString() {
-		return "PrinterTitle [restaurantName=" + restaurantName
-				+ ", addressDetail=" + addressDetail + ", address=" + address
-				+ ", tel=" + tel + ", email=" + email + ", webAddress="
-				+ webAddress + ", op=" + op + ", pos=" + pos + ", date=" + date
-				+ ", list=" + list + ", bill_NO=" + bill_NO + ", time=" + time
-				+ ", tableName=" + tableName + ", logo=" + logo + ", bizDate="
-				+ bizDate + ", options=" + options + ", footerOptions="
-				+ footerOptions + ", isTakeAway=" + isTakeAway + "]";
+		return "PrinterTitle{" +
+				"restaurantName='" + restaurantName + '\'' +
+				", addressDetail='" + addressDetail + '\'' +
+				", address='" + address + '\'' +
+				", tel='" + tel + '\'' +
+				", email='" + email + '\'' +
+				", webAddress='" + webAddress + '\'' +
+				", op='" + op + '\'' +
+				", pos='" + pos + '\'' +
+				", date='" + date + '\'' +
+				", list=" + list +
+				", bill_NO='" + bill_NO + '\'' +
+				", time='" + time + '\'' +
+				", tableName='" + tableName + '\'' +
+				", logo='" + logo + '\'' +
+				", bizDate='" + bizDate + '\'' +
+				", options='" + options + '\'' +
+				", footerOptions='" + footerOptions + '\'' +
+				", isTakeAway=" + isTakeAway +
+				", orderNo='" + orderNo + '\'' +
+				", groupNum='" + groupNum + '\'' +
+				'}';
 	}
 
 }

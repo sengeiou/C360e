@@ -357,7 +357,6 @@ public class HttpAnalysis {
 					object.getString("taxCategoryList"),
 					new TypeToken<ArrayList<TaxCategory>>() {
 					}.getType());
-
 			CoreData.getInstance().setTaxCategories(taxCategories);
 			TaxCategorySQL.deleteAllTaxCategory();
 			TaxCategorySQL.addTaxCategorys(taxCategories);

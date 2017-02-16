@@ -142,6 +142,7 @@ public class OpenItemWindow implements OnClickListener, OnItemSelectedListener {
 		sp_sub_category.setAdapter(subCategoryAdapter);
 
 		sp_tax_group = (Spinner) view2.findViewById(R.id.sp_tax_group);
+		List<TaxCategory> list = CoreData.getInstance().getTaxCategoryGroup();
 		taxCategoryAdapter = new SpinnerAdapter(parent, CoreData.getInstance()
 				.getTaxCategoryGroup(), TAX_CATEGORY_TYPE);
 		sp_tax_group.setAdapter(taxCategoryAdapter);
@@ -664,7 +665,12 @@ public class OpenItemWindow implements OnClickListener, OnItemSelectedListener {
 			}
 			case TAX_CATEGORY_TYPE: {
 				TaxCategory taxCategory = (TaxCategory) object;
-				tv_name.setText(taxCategory.getTaxCategoryName());
+				if (TextUtils.isEmpty(taxCategory.getTaxCategoryName())){
+					tv_name.setText("normal");
+					taxCategory = null;
+				}else {
+					tv_name.setText(taxCategory.getTaxCategoryName());
+				}
 				tv_name.setTag(taxCategory);
 				break;
 			}

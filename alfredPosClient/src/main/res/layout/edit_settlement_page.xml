@@ -32,13 +32,13 @@
             android:id="@+id/ll_orders"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="5"
+            android:layout_weight="25"
             android:orientation="vertical" >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@color/light_gray"
+                android:background="#B2B2B2"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="10dp" >
@@ -83,6 +83,26 @@
                     android:text="@string/time"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:text="Reprint"
+                    android:textSize="10dp"
+                    android:gravity="center"
+                    android:visibility="invisible"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:text="Reprint"
+                    android:textSize="14dp"
+                    android:gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:visibility="invisible"/>
+
             </LinearLayout>
 
             <ListView
@@ -91,6 +111,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/gray_bg"
                 android:divider="@color/white"
+                android:dividerHeight="1dp"
                 android:scrollbars="none"/>
         </LinearLayout>
 

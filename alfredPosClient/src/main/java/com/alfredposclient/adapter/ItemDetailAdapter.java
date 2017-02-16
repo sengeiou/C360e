@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.store.Store;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 
@@ -87,7 +89,8 @@ public class ItemDetailAdapter extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) arg1.getTag();
 		}
-		
+		int color = Store.getInt(context, Store.COLOR_PICKER, Color.WHITE);
+		holder.tv_text.setBackgroundColor(color);
 		holder.tv_text.setText(itemDetails.get(arg0).getItemName());
 		return arg1;
 	}

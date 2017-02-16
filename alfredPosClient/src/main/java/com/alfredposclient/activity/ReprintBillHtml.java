@@ -1,5 +1,6 @@
 package com.alfredposclient.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -50,6 +51,7 @@ public class ReprintBillHtml extends BaseActivity {
 	private JavaConnectJS javaConnectJS;
 	private Gson gosn = new Gson();
 	private ArrayList<Order> orders;
+	@SuppressLint("JavascriptInterface")
 	@Override
 	protected void initView() {
 		super.initView();
@@ -218,7 +220,7 @@ public class ReprintBillHtml extends BaseActivity {
 							App.instance.getUser().getFirstName()
 									+ App.instance.getUser().getLastName(),
 							TableInfoSQL.getTableById(order.getTableId())
-									.getName()),
+									.getName(), 1),
 					order,
 					ObjectFactory.getInstance().getItemList(
 							OrderDetailSQL.getOrderDetails(order.getId())),
@@ -261,7 +263,7 @@ public class ReprintBillHtml extends BaseActivity {
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),
 								TableInfoSQL.getTableById(orderSplit.getTableId())
-										.getName(), orderBill, order.getBusinessDate().toString());
+										.getName(), orderBill, order.getBusinessDate().toString(), 1);
 				orderSplit
 						.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY);
 				OrderSplitSQL.update(orderSplit);

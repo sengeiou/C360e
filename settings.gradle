@@ -1,4 +1,4 @@
-include ':alfredBase'
+include ':alfredBase', ':galleryfinal'
 include ':alfredTaskQueue'
 include ':alfredPosClient'
 include ':alfredKDS'

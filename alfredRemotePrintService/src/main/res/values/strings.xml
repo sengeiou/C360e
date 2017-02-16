@@ -7,6 +7,7 @@
     <string name="swift_no_">Order No.</string>
     <string name="bill_no_">Bill No.</string>
     <string name="cashier">Cashier</string>
+    <string name="groupnum">Group Num</string>
     <string name="pos">POS</string>
     <string name="date">Date</string>
     <string name="table">Table</string>
@@ -21,7 +22,7 @@
     <string name="rounding_print">Rounding : $</string>
     <string name="grand_total">Grand Total : $</string>
     <string name="cash_">Cash</string>
-    <string name="changes">Changes</string>
+    <string name="changes">Change</string>
     <string name="mastercard">MasterCard</string>
     <string name="unionpay">UnionPay</string>
     <string name="visa">VISA</string>

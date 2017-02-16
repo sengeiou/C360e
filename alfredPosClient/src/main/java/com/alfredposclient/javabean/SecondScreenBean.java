@@ -1,5 +1,6 @@
 package com.alfredposclient.javabean;
 
+import com.alfredbase.store.Store;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 
@@ -20,11 +21,23 @@ public class SecondScreenBean {
     private String param5;
 
     public SecondScreenBean() {
-        param1 = App.instance.getResources().getString(R.string.index);
-        param2 = App.instance.getResources().getString(R.string.name);
-        param3 = App.instance.getResources().getString(R.string.price);
-        param4 = App.instance.getResources().getString(R.string.qty);
-        param5 = App.instance.getResources().getString(R.string.total);
+        if (Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE) == Store.SUNMI_TEXT) {
+            param1 = App.instance.getResources().getString(R.string.index);
+            param2 = App.instance.getResources().getString(R.string.name);
+            param3 = App.instance.getResources().getString(R.string.price);
+            param4 = App.instance.getResources().getString(R.string.qty);
+            param5 = App.instance.getResources().getString(R.string.total);
+        }else if (Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE) == Store.SUNMI_IMG_TEXT){
+            param1 = App.instance.getResources().getString(R.string.name);
+            param2 = App.instance.getResources().getString(R.string.price);
+            param3 = App.instance.getResources().getString(R.string.qty);
+            param4 = App.instance.getResources().getString(R.string.total);
+        }else if (Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE) == Store.SUNMI_VIDEO_TEXT){
+            param1 = App.instance.getResources().getString(R.string.name);
+            param2 = App.instance.getResources().getString(R.string.price);
+            param3 = App.instance.getResources().getString(R.string.qty);
+            param4 = App.instance.getResources().getString(R.string.total);
+        }
     }
 
     public SecondScreenBean(String index, String itemName, String itemPrice, String itemQty, String itemTotal) {

@@ -130,34 +130,73 @@
             android:scaleType="fitXY"
             android:src="@drawable/shadow_pop" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/rl_discount_keyboard"
             android:layout_width="match_parent"
             android:layout_height="450dp"
             android:layout_alignParentBottom="true"
-            android:background="#FFFFFF" >
+            android:orientation="horizontal"
+            android:background="#FFFFFF">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="gone">
-                    <CheckBox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="123"
-                        />
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="321"
-                    />
+                    android:text="123" />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="321" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingLeft="95dp"
+                android:paddingRight="95dp"
+                android:paddingBottom="65dp">
+
+                <TextView
+                    android:id="@+id/discount_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="Discount by Category"/>
+
+            <ListView
+                android:id="@+id/discount_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:listSelector="@android:color/transparent"
+                android:cacheColorHint="#00000000"
+                android:background="@drawable/discount_listview_shape"
+                android:layout_marginTop="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
             <com.alfredposclient.view.DiscountMoneyKeyboard
                 android:id="@+id/discountKeyboard"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-        </RelativeLayout>
+                android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </RelativeLayout>
 
 </RelativeLayout>

@@ -159,4 +159,18 @@ public class BH {
 			return false;
 		}
 	}
+
+	/**
+	 * 保留小数点后两位
+	 * @param value1
+	 * @param needFormat
+	 * @return
+	 */
+	public static BigDecimal formatDouble(BigDecimal value1, boolean needFormat) {
+		if (needFormat) {
+			return new BigDecimal(doubleFormat.format(value1));
+		} else {
+			return value1;
+		}
+	}
 }

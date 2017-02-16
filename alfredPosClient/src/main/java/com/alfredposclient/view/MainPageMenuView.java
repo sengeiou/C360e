@@ -77,6 +77,7 @@ public class MainPageMenuView extends LinearLayout {
 	private TextTypeFace textTypeFace;
 	private int height;
 	private boolean flag;
+	private ItemDetailAdapter itemAdp;
 	
 	private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
 			.getItemMainCategories();
@@ -112,6 +113,10 @@ public class MainPageMenuView extends LinearLayout {
 		textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_item_name));
 	}
+
+	public void refreshItemOrderDetail(){
+		itemAdp.notifyDataSetInvalidated();
+	}
 	
 	private void initItemDetail() {
 		List<View> itemDetailViews = new ArrayList<View>();
@@ -142,7 +147,7 @@ public class MainPageMenuView extends LinearLayout {
 					gv_menu_detail.setNumColumns(numColumns);
 				}
 			});
-			final ItemDetailAdapter itemAdp = new ItemDetailAdapter(parent,
+			itemAdp = new ItemDetailAdapter(parent,
 					currentItemDetails);
 			gv_menu_detail.setAdapter(itemAdp);
 			

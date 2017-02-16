@@ -58,6 +58,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -640,9 +641,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 				    								prtTitle.getRestaurantName(), 
 				    								prtTitle.getAddressDetail(), prtTitle.getOptions());
 			    	}
-			    	
 
-			    	billPrint.AddHeader(theOrder.getIsTakeAway(),prtTitle.getTableName(), theOrder.getPersons(), 
+			    	String tableName;
+					if (prtTitle.getCopy() == 2){
+						tableName = prtTitle.getTableName() + "(Reprint Bill Copy)";
+					}else {
+						tableName = prtTitle.getTableName();
+					}
+
+			    	billPrint.AddHeader(theOrder.getIsTakeAway(), tableName, theOrder.getPersons(),
 			    							prtTitle.getBill_NO(), prtTitle.getPos(),
 			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), theOrder.getOrderNo().toString());
 			    	billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
@@ -661,9 +668,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								PrintOrderModifier om =  orderModifiers.get(m);
 								if (om.getOrderDetailId() == item.getOrderDetailId()) {
 									if(om.getQty() > 1){
-										billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(),1);
+										billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(),1, om.getPrice());
 									}else{
-										billPrint.addOrderModifier(om.getItemName(),1);
+										billPrint.addOrderModifier(om.getItemName(),1, om.getPrice());
 									}
 								}
 							}
@@ -708,8 +715,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 				    								prtTitle.getAddressDetail(), prtTitle.getOptions());
 
 			    	}
-			    	
-			    	billPrint.AddHeader(theOrder.getIsTakeAway(),prtTitle.getTableName(), 
+
+					String tableName;
+					if (prtTitle.getCopy() == 2){
+						tableName = prtTitle.getTableName() + "(Reprint Bill Copy)";
+					}else {
+						tableName = prtTitle.getTableName();
+					}
+
+			    	billPrint.AddHeader(theOrder.getIsTakeAway(),tableName,
 			    							theOrder.getPersons(), 
 			    							prtTitle.getBill_NO(), prtTitle.getPos(),
 			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(),theOrder.getOrderNo().toString());
@@ -727,7 +741,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							for (int m=0; m<orderModifiers.size(); m++) {
 								PrintOrderModifier om =  orderModifiers.get(m);
 								if (om.getOrderDetailId() == item.getOrderDetailId()) {
-									billPrint.addOrderModifier(om.getItemName(),1);
+									billPrint.addOrderModifier(om.getItemName(),1, om.getPrice());
 								}
 							}	
 						}
@@ -1443,12 +1457,19 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 				    								prtTitle.getRestaurantName(), 
 				    								prtTitle.getAddressDetail(), null);
 			    	}
-			    	
+
+					String orderNo1;
+					if (prtTitle.getCopy() == 2){
+						orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
+					}else {
+						orderNo1 = prtTitle.getOrderNo();
+					}
+
 			    	if(!TextUtils.isEmpty(orderNo))
 			    		billPrint.AddOrderNo(theOrder.getIsTakeAway(), orderNo);
-			    	billPrint.AddKioskHeader(prtTitle.getTableName(), theOrder.getPersons(), 
+			    	billPrint.AddKioskHeader(prtTitle.getTableName(), theOrder.getPersons(),
 			    							prtTitle.getBill_NO(), prtTitle.getPos(),
-			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), prtTitle.getOrderNo());
+			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), orderNo1, prtTitle.getGroupNum());
 			    	
 			    	billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item), 
 			    			PrintService.instance.getResources().getString(R.string.price), 
@@ -1466,9 +1487,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								PrintOrderModifier om =  orderModifiers.get(m);
 								if (om.getOrderDetailId() == item.getOrderDetailId()) {
 									if(om.getQty() > 1){
-										billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(),1);
+										billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(),1, om.getPrice());
 									}else{
-										billPrint.addOrderModifier(om.getItemName(),1);
+										billPrint.addOrderModifier(om.getItemName(),1, om.getPrice());
 									}
 								}
 							}
@@ -1512,11 +1533,19 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 				    								prtTitle.getAddressDetail(), null);
 
 			    	}
+
+					String orderNo1;
+					if (prtTitle.getCopy() == 2){
+						orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
+					}else {
+						orderNo1 = prtTitle.getOrderNo();
+					}
+
 			    	if(!TextUtils.isEmpty(orderNo))
 			    		billPrint.AddOrderNo(theOrder.getIsTakeAway(), orderNo);
 			    	billPrint.AddKioskHeader(prtTitle.getTableName(), theOrder.getPersons(), 
 			    							prtTitle.getBill_NO(), prtTitle.getPos(),
-			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), prtTitle.getOrderNo());
+			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), orderNo1, prtTitle.getGroupNum());
 			    	
 			    	billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item), 
 			    			PrintService.instance.getResources().getString(R.string.price), 
@@ -1532,7 +1561,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							for (int m=0; m<orderModifiers.size(); m++) {
 								PrintOrderModifier om =  orderModifiers.get(m);
 								if (om.getOrderDetailId() == item.getOrderDetailId()) {
-									billPrint.addOrderModifier(om.getItemName(),1);
+									billPrint.addOrderModifier(om.getItemName(),1, om.getPrice());
 								}
 							}	
 						}

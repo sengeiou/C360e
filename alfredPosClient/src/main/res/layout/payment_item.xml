@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray"
+    android:background="#F2F2FA"
     android:orientation="horizontal"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
@@ -54,5 +54,25 @@
         android:textColor="@color/black"
         android:singleLine="true"
         android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/btn_edit_settlement"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.4"
+        android:text="Edit settlement"
+        android:textSize="10dp"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/btn_reprint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.4"
+        android:singleLine="false"
+        android:textSize="10dp"
+        android:text="Reprint"
+        android:gravity="center"
+        android:layout_marginLeft="12dp"/>
 
 </LinearLayout>

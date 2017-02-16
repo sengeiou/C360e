@@ -79,6 +79,8 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		findViewById(R.id.ll_monthly_sale_report).setOnClickListener(this);
 		findViewById(R.id.ll_monthly_plu_report).setOnClickListener(this);
 		findViewById(R.id.ll_printer_qr_code).setOnClickListener(this);
+		findViewById(R.id.ll_sunmi).setOnClickListener(this);
+
 
 		if (App.instance.countryCode != ParamConst.CHINA) {
         	findViewById(R.id.monthly_sale_report_container).setVisibility(View.GONE);
@@ -101,7 +103,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 	
 	public void initOptionsSessionOpen() {
 		findViewById(R.id.ll_edit_settlement).setVisibility(
-				View.VISIBLE);
+				View.GONE);
 		findViewById(R.id.ll_close).setVisibility(View.INVISIBLE);		
 	}
 	
@@ -114,7 +116,8 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				break;
 			}
 			case R.id.ll_reprint_bill: {
-				UIHelp.startReprintBillHtml(context);
+//				UIHelp.startReprintBillHtml(context);
+				UIHelp.startEditSettlementHtml(context);
 				break;
 			}
 			case R.id.ll_edit_settlement: {
@@ -205,9 +208,12 @@ public class SettingView extends LinearLayout implements OnClickListener {
 								LogUtil.d("SettingView", "打印二维码");
 							}
 						});
-
 			}
 				break;
+				case R.id.ll_sunmi:
+					UIHelp.startSunmiActivity(context);
+					break;
+
 			default:
 				break;
 			}
@@ -238,5 +244,14 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_opendrawer));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_printer_qr_code));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_version));
+		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_sunmi));
+	}
+
+	public void SUNMIVisible(){
+		findViewById(R.id.ll_sunmi).setVisibility(VISIBLE);
+	}
+
+	public void SUNMIGone(){
+		findViewById(R.id.ll_sunmi).setVisibility(GONE);
 	}
 }

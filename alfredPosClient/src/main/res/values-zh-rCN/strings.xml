@@ -161,6 +161,9 @@
     <string name="devices">设备</string>
     <string name="system">系统</string>
     <string name="close">关闭</string>
+    <string name="sunmi_screen">商米副屏</string>
+    <string name="color_picker_tip">提示:触摸颜色环或颜色条选择色值</string>
+    <string name="color_select">颜色选择</string>
     
     <!-- setting -->
     <string name="kot_print">厨房联打印</string>
@@ -369,4 +372,7 @@
     <string name="receving_order">接单</string>
 
     <string name="welcome">欢迎光临</string>
+    
+    <string name="bill_manage">账单管理</string>
+    
 </resources>

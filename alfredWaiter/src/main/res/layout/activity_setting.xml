@@ -141,7 +141,7 @@
         <RelativeLayout 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/box_setting"
+			android:background="@drawable/box_double_setting"
             android:layout_marginTop="10dp">
 	        <TextView 
 	            android:id="@+id/tv_reset"
@@ -152,6 +152,18 @@
 	            android:text="@string/reset"
 	            android:textColor="@color/black"
 	            android:textSize="@dimen/text_size_m"/>
+
+			<TextView
+				android:id="@+id/tv_clock"
+				android:layout_width="match_parent"
+				android:layout_height="43dp"
+				android:gravity="left|center_vertical"
+				android:layout_marginLeft="10dp"
+				android:text="@string/lock_screen"
+				android:layout_below="@+id/tv_reset"
+				android:textColor="@color/black"
+				android:textSize="@dimen/text_size_m"/>
+
         </RelativeLayout>
         
         <RelativeLayout 

@@ -29,6 +29,7 @@ import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.SelectPrintWindow;
+import com.alfredposclient.view.ColorPickerDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +57,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SelectPrintWindow selectPrintWindow;
 	public static final int UPDATE_PASSWORD_TAG = 2000;
 	private TextView tv_callnum;
+	private ColorPickerDialog colorPickerDialog;
 
 
 	@Override
@@ -109,6 +111,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
+		findViewById(R.id.ll_set_color).setOnClickListener(this);
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.rl_order_summary).setVisibility(View.GONE);
 			findViewById(R.id.view_order_summary_print).setVisibility(View.GONE);
@@ -225,6 +228,15 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		case R.id.ll_set_callnum:
 			selectPrintWindow.show();
 			break;
+		case R.id.ll_set_color:
+			colorPickerDialog = new ColorPickerDialog(SystemSetting.this, Store.getInt(SystemSetting.this, Store.COLOR_PICKER, Color.WHITE), getString(R.string.color_select), new ColorPickerDialog.OnColorChangedListener() {
+				@Override
+				public void colorChanged(int color) {
+					Store.putInt(SystemSetting.this, Store.COLOR_PICKER, color);
+				}
+			});
+			colorPickerDialog.show();
+			break;
 		default:
 			break;
 		}
@@ -290,6 +302,14 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			if(key.equals(PushMessage.REST_CONFIG)){
 				refreshSession = true;
 			}
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (colorPickerDialog != null && colorPickerDialog.isShowing()) {
+			colorPickerDialog.dismiss();
 		}
 	}
 

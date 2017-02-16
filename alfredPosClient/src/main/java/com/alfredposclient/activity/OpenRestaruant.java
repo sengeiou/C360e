@@ -178,6 +178,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED); // 关闭手势滑动
 		mSettingView = (SettingView) findViewById(R.id.settingView);
 		mSettingView.setParams(this, mDrawerLayout);
+		if (App.instance.isSUNMIShow()){
+			mSettingView.SUNMIVisible();
+		}else {
+			mSettingView.SUNMIGone();
+		}
 	}
 	private DownloadManager downManager;
 	private BroadcastReceiver downReceiver = new BroadcastReceiver() {
@@ -480,7 +485,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
 		registerReceiver(downReceiver, downFilter);
 	}
-
 
 	@Override
 	protected void onStart() {

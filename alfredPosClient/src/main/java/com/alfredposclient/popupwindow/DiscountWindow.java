@@ -8,14 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.ItemCategory;
+import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.store.sql.ItemCategorySQL;
+import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BH;
@@ -23,8 +28,12 @@ import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
+import com.alfredposclient.adapter.DiscountAdapter;
 import com.alfredposclient.view.DiscountMoneyKeyboard;
 import com.alfredposclient.view.DiscountMoneyKeyboard.KeyBoardClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_1 = 300;
@@ -45,10 +54,16 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private TextView tv_count_sign;
 	private TextView tv_discount_count;
 	private TextView inputView;
+	private ListView discount_listview;
+	private TextView discount_tv;
+
 	private StringBuffer keyBuffer;
 	private Order order;
 	private OrderDetail orderDetail;
 	private String sumRealPrice = "0.00";
+	private List<ItemCategory> categories = new ArrayList<ItemCategory>();
+
+	private DiscountAdapter discountAdapter;
 
 	public DiscountWindow(BaseActivity parent, View parentView) {
 		this.parent = parent;
@@ -69,6 +84,29 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		tv_discount_count.setOnClickListener(this);
 		tv_percent_sign = (TextView) contentView.findViewById(R.id.tv_percent_sign);
 		tv_count_sign = (TextView) contentView.findViewById(R.id.tv_count_sign);
+		discount_listview = (ListView) contentView.findViewById(R.id.discount_listview);
+		discount_tv = (TextView) contentView.findViewById(R.id.discount_tv);
+
+
+		List<Integer> ids = new ArrayList<Integer>();
+		List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
+		if (orderDetails != null && orderDetails.size() != 0){
+			categories.clear();
+			for (int i = 0; i < orderDetails.size(); i++){
+				OrderDetail detail = orderDetails.get(i);
+				ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(detail.getItemId());
+				if (!ids.contains(itemDetail.getItemCategoryId())){
+					ids.add(itemDetail.getItemCategoryId());
+					ItemCategory itemCategory = ItemCategorySQL.getItemCategoryById(itemDetail.getItemCategoryId());
+					categories.add(itemCategory);
+				}
+			}
+		}
+		System.out.println("****" + categories.toString());
+		discountAdapter = new DiscountAdapter(parent, categories);
+		discount_listview.setAdapter(discountAdapter);
+
+
 		inputView = tv_discount_percent;
 		if (order != null) {
 			sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
@@ -141,6 +179,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		textTypeFace.setTrajanProRegular(tv_discount_count);
 		textTypeFace.setTrajanProRegular(tv_count_sign);
 		textTypeFace.setTrajanProRegular(tv_percent_sign);
+		textTypeFace.setTrajanProRegular(discount_tv);
 	}
 	
 	/**

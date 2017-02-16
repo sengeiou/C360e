@@ -27,6 +27,7 @@ import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.OpenRestaruant;
 import com.alfredposclient.activity.ReprintBillHtml;
 import com.alfredposclient.activity.StoredCardActivity;
+import com.alfredposclient.activity.SunmiActivity;
 import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.XZReportHtml;
@@ -203,5 +204,12 @@ public class UIHelp {
 		toast.setDuration(Toast.LENGTH_LONG);
 		toast.setView(view);
 		toast.show();
+	}
+
+	public static void startSunmiActivity(BaseActivity context) {
+		Intent intent = new Intent(context, SunmiActivity.class);
+		context.startActivityForResult(intent, 1);
+//		context.overridePendingTransition(R.anim.slide_bottom_in,
+//				R.anim.centre_close_70);
 	}
 }

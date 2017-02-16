@@ -563,7 +563,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 													.getLastName(),
 									TableInfoSQL.getTableById(
 											orderSplit.getTableId())
-											.getName(), orderBill, order.getBusinessDate().toString());
+											.getName(), orderBill, order.getBusinessDate().toString(), 1);
 					orderSplit
 							.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY);
 					OrderSplitSQL.update(orderSplit);
@@ -619,7 +619,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					order,
 					App.instance.getUser().getFirstName()
 							+ App.instance.getUser().getLastName(),
-					TableInfoSQL.getTableById(order.getTableId()).getName());
+					TableInfoSQL.getTableById(order.getTableId()).getName(), 1);
 			order.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
 			OrderSQL.update(order);
 			ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whitesmoke"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/colorPickerTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:gravity="center"
+        android:layout_marginTop="6dp"
+        android:text="@string/color_select"
+        android:textColor="@color/black"
+        android:textSize="22sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/colorPickerTip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/color_picker_tip"
+        android:textSize="14sp"
+        android:layout_marginTop="6dp">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp">
+
+        <Button
+            android:id="@+id/bt_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ok" />
+
+        <Button
+            android:id="@+id/bt_cancle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel" />
+    </LinearLayout>
+
+</LinearLayout>

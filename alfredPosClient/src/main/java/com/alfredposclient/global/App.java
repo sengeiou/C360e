@@ -9,12 +9,16 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -124,12 +128,18 @@ import com.moonearly.model.OrderModel;
 import com.moonearly.utils.service.TcpSendCallBack;
 import com.moonearly.utils.service.TcpUdpFactory;
 import com.moonearly.utils.service.UdpSendCallBack;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 import com.tencent.bugly.crashreport.CrashReport;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -138,12 +148,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.finalteam.galleryfinal.CoreConfig;
+import cn.finalteam.galleryfinal.FunctionConfig;
+import cn.finalteam.galleryfinal.GalleryFinal;
+import cn.finalteam.galleryfinal.ImageLoader;
+import cn.finalteam.galleryfinal.ThemeConfig;
+import cn.finalteam.galleryfinal.widget.GFImageView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import sunmi.ds.DSKernel;
 import sunmi.ds.callback.IConnectionCallback;
+import sunmi.ds.callback.IReceiveCallback;
 import sunmi.ds.callback.ISendCallback;
+import sunmi.ds.callback.ISendFilesCallback;
+import sunmi.ds.data.DSData;
+import sunmi.ds.data.DSFile;
+import sunmi.ds.data.DSFiles;
 import sunmi.ds.data.DataPacket;
 
 public class App extends BaseApplication {
@@ -166,6 +187,8 @@ public class App extends BaseApplication {
     private Map<Integer, KDSDevice> kdsDevices = new ConcurrentHashMap<Integer, KDSDevice>();
     private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<Integer, PrinterDevice>();
     private Map<Integer, WaiterDevice> waiterDevices = new ConcurrentHashMap<Integer, WaiterDevice>();
+
+
     // push message
     public Map<String, Integer> pushMsgMap = new HashMap<String, Integer>();
 
@@ -335,28 +358,31 @@ public class App extends BaseApplication {
                     }
                 }
             });
-//            mDSKernel.addReceiveCallback(new IReceiveCallback() {
-//                @Override
-//                public void onReceiveData(DSData data) {
-//
-//                }
-//
-//                @Override
-//                public void onReceiveFile(DSFile file) {
-//
-//                }
-//
-//                @Override
-//                public void onReceiveFiles(DSFiles files) {
-//
-//                }
-//
-//                @Override
-//                public void onReceiveCMD(DSData cmd) {
-//
-//                }
-//            });
+
+            mDSKernel.addReceiveCallback(new IReceiveCallback() {
+                @Override
+                public void onReceiveData(DSData data) {
+
+                }
+
+                @Override
+                public void onReceiveFile(DSFile file) {
+
+                }
+
+                @Override
+                public void onReceiveFiles(DSFiles files) {
+
+                }
+
+                @Override
+                public void onReceiveCMD(DSData cmd) {
+
+                }
+            });
         }
+
+
         observable = RxBus.getInstance().register("showRelogin");
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
             @Override
@@ -383,6 +409,25 @@ public class App extends BaseApplication {
 //        pushThread.start();
         pushServer = new PushServer();
 //        checkoutVersion();
+
+        // 设置主题
+        ThemeConfig theme = new ThemeConfig.Builder().build();
+        // 配置功能
+        FunctionConfig functionConfig = new FunctionConfig.Builder()
+                .setEnableCamera(true)
+                .setEnableEdit(true)
+                .setEnableCrop(true)
+                .setEnableRotate(true)
+                .setCropSquare(true)
+                .setEnablePreview(true)
+                .build();
+
+        // 配置ImageLoader
+        ImageLoader imageloader = new PicassoImageLoader();
+        CoreConfig coreConfig = new CoreConfig.Builder(this, imageloader, theme)
+                .setFunctionConfig(functionConfig)
+                .build();
+        GalleryFinal.init(coreConfig);
     }
 
 
@@ -519,59 +564,13 @@ public class App extends BaseApplication {
     }
 
     public void sendDataToSecondScreen(Order order, List<OrderDetail> orderDetails){
+
         if(orderDetails != null  && order != null && orderDetails.size() > 0) {
             if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
-                if(isDebug)
-                    UIHelp.showToast(App.getTopActivity(), "准备发送数据:" + App.instance.getConnState());
-                String title = "Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName();
-                SecondScreenBean secondScreenDataHead = new SecondScreenBean();
-                List<SecondScreenBean> secondScreenBeans = new ArrayList<SecondScreenBean>();
-                for (int i = 0; i < orderDetails.size(); i++) {
-                    OrderDetail orderDetail = orderDetails.get(i);
-                    secondScreenBeans.add(
-                            new SecondScreenBean(
-                                    (orderDetails.size() - 1)+"",
-                                    orderDetail.getItemName(),
-                                    getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString(),
-                                    orderDetail.getItemNum() + "",
-                                    getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()).toString()));
-                }
-                List<SecondScreenTotal> secondScreenTotals = new ArrayList<SecondScreenTotal>();
-                secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.sub_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString()));
-                secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.discount), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString()));
-                secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.taxes), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString()));
-                secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.grand_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString()));
 
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("KVPList", secondScreenTotals);
-                map.put("list", secondScreenBeans);
-                map.put("head", secondScreenDataHead);
-                map.put("title", title);
-    //                    SecondScreenData secondScreenData = new SecondScreenData(title, secondScreenDataHead, secondScreenBeans, secondScreenTotals);
-                Gson gson = new Gson();
-                final String jsonStr = gson.toJson(map);
-                if(isDebug)
-                    UIHelp.showToast(App.getTopActivity(), "开始发送数据:。。。" +jsonStr);
-                DataPacket dsPacket = UPacketFactory.buildShowText(DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
-                    @Override
-                    public void onSendSuccess(long taskId) {
-                        if(isDebug)
-                            UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
-                    }
+                sendViceScreenData(order, orderDetails);
 
-                    @Override
-                    public void onSendFail(int errorId, String errorInfo) {
-                        if(isDebug)
-                            UIHelp.showToast(App.getTopActivity(), "发送数据:失败,\n失败信息" + errorInfo);
-                    }
 
-                    @Override
-                    public void onSendProcess(long totle, long sended) {
-                        if(isDebug)
-                            UIHelp.showToast(App.getTopActivity(), "发送数据:中"+jsonStr);
-                    }
-                });
-                App.instance.getmDSKernel().sendData(dsPacket);
             }else{
                 GoodsModel goodsModelTitle = new GoodsModel();
                 goodsModelTitle.setIndex(getResources().getString(R.string.index));
@@ -623,6 +622,323 @@ public class App extends BaseApplication {
         }
     }
 
+    /**
+     * 商米 副屏发送数据
+     * @param order
+     * @param orderDetails
+     */
+    public void sendViceScreenData(Order order, List<OrderDetail> orderDetails){
+        List<String> imgPath = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
+        int styleType = Store.getInt(App.instance, Store.SUNMI_STYLE);
+        UIHelp.showShortToast(getTopActivity(), styleType + "");
+        UIHelp.showShortToast(getTopActivity(), imgPath.toString());
+
+        if (imgPath.size() == 0 || imgPath == null){
+            return;
+        }
+        if (isSmallOrBigScreen()){
+            if (styleType == Store.SUNMI_IMG){
+                showSunmiImg(imgPath);
+            }else if (styleType == Store.SUNMI_TEXT){
+                showBigScreenData(order, orderDetails);
+            }else if (styleType == Store.SUNMI_IMG_TEXT){
+                showBigScreenImgText(order, orderDetails, imgPath);
+            }else if (styleType == Store.SUNMI_VIDEO_TEXT){
+                showBigScreenVideoText(order, orderDetails, imgPath);
+            }else if (styleType == Store.SUNMI_VIDEO){
+                showBigScreenVideo(imgPath);
+            }
+    }else {
+        if (styleType == Store.SUNMI_IMG){
+            showSunmiImg(imgPath);
+        }else if (styleType == Store.SUNMI_TEXT){
+            showSunmiText("Total Price:", order.getSubTotal());
+        }else if (styleType == Store.SUNMI_IMG_TEXT){
+            showSunmiTextAndImg("Total Price:", order.getSubTotal(), imgPath);
+        }
+    }
+}
+
+    /**
+     * 商米 全屏显示视频(14寸屏)
+     * @param path
+     */
+    private void showBigScreenVideo(List<String> path){
+        mDSKernel.sendFile(DSKernel.getDSDPackageName(), path.get(0), new ISendCallback() {
+            @Override
+            public void onSendSuccess(long taskId) {
+                String json = UPacketFactory.createJson(DataModel.VIDEO, "");
+                mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, taskId, null);
+            }
+            @Override
+            public void onSendFail(int errorId, String errorInfo) {
+            }
+            @Override
+            public void onSendProcess(long totle, long sended) {
+            }
+        });
+    }
+
+    /**
+     * 商米 屏幕左边显示视频，右边显示复杂的表格数据(14寸屏)
+     * @param order
+     * @param orderDetails
+     * @param path
+     */
+    private void showBigScreenVideoText(final Order order, final List<OrderDetail> orderDetails, List<String> path){
+        mDSKernel.sendFile(DSKernel.getDSDPackageName(), path.get(0), new ISendCallback() {
+            @Override
+            public void onSendSuccess(long taskId) {
+                String jsonStr = UPacketFactory.createJson(DataModel.SHOW_VIDEO_LIST, getSendData(order, orderDetails));
+                mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, taskId,null);
+            }
+            @Override
+            public void onSendFail(int errorId, String errorInfo) {
+            }
+            @Override
+            public void onSendProcess(long totle, long sended) {
+            }
+        });
+    }
+
+    /**
+     * 商米 .屏幕左边显示幻灯片或者图片，右边显示复杂的表格数据(14寸屏)
+     * @param order
+     * @param orderDetails
+     * @param path
+     */
+    private void showBigScreenImgText(final Order order, final List<OrderDetail> orderDetails, List<String> path){
+        if (path.size() == 1){
+            mDSKernel.sendFile(DSKernel.getDSDPackageName(), path.get(0), new ISendCallback() {
+                public void onSendSuccess(long fileId) {
+                    String jsonStr = UPacketFactory.createJson(DataModel.SHOW_IMG_LIST, getSendData(order, orderDetails));
+                    //第一个参数DataModel.SHOW_IMG_LIST为显示布局模式，jsonStr为要显示的内容字符
+                    mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, fileId,null);
+                }
+                public void onSendFail(int errorId, String errorInfo) {}
+                public void onSendProcess(long total, long sended) {}
+            });
+        }else if (path.size() > 1){
+            mDSKernel.sendFiles(DSKernel.getDSDPackageName(), "", path, new ISendFilesCallback() {
+                @Override
+                public void onAllSendSuccess(long fileid) {
+                    String jsonStr= UPacketFactory.createJson(DataModel.SHOW_IMGS_LIST, getSendData(order, orderDetails));
+                    mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, fileid,null);
+                }
+                @Override
+                public void onSendSuccess(String path, long taskId) {
+                }
+                @Override
+                public void onSendFaile(int errorId, String errorInfo) {
+                }
+                @Override
+                public void onSendFileFaile(String path, int errorId, String errorInfo) {
+                }
+                @Override
+                public void onSendProcess(String path, long totle, long sended) {
+                }
+            });
+        }
+    }
+
+    /**
+     * 商米 全屏只显示复杂的表格字符数据(14寸屏)
+     * @param order
+     * @param orderDetails
+     */
+    private void showBigScreenData(Order order, List<OrderDetail> orderDetails){
+
+        final String jsonStr = getSendData(order, orderDetails);
+
+        DataPacket dsPacket = UPacketFactory.buildShowText(DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
+            @Override
+            public void onSendSuccess(long taskId) {
+                    UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
+            }
+            @Override
+            public void onSendFail(int errorId, String errorInfo) {
+                    UIHelp.showToast(App.getTopActivity(), "发送数据:失败,\n失败信息" + errorInfo);
+            }
+            @Override
+            public void onSendProcess(long totle, long sended) {
+                    UIHelp.showToast(App.getTopActivity(), "发送数据:中"+jsonStr);
+            }
+        });
+        App.instance.getmDSKernel().sendData(dsPacket);
+    }
+
+    /**
+     * 组合要发送到商米副屏的表格数据
+     * @param order
+     * @param orderDetails
+     * @return
+     */
+    private String getSendData(Order order, List<OrderDetail> orderDetails){
+        String title = "Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName();
+        SecondScreenBean secondScreenDataHead = new SecondScreenBean();
+        List<SecondScreenBean> secondScreenBeans = new ArrayList<SecondScreenBean>();
+        for (int i = 0; i < orderDetails.size(); i++) {
+            OrderDetail orderDetail = orderDetails.get(i);
+            secondScreenBeans.add(
+                    new SecondScreenBean(
+                            (orderDetails.size() - 1)+"",
+                            orderDetail.getItemName(),
+                            getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString(),
+                            orderDetail.getItemNum() + "",
+                            getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()).toString()));
+        }
+        List<SecondScreenTotal> secondScreenTotals = new ArrayList<SecondScreenTotal>();
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.sub_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.discount), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.taxes), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.grand_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString()));
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("KVPList", secondScreenTotals);
+        map.put("list", secondScreenBeans);
+        map.put("head", secondScreenDataHead);
+        map.put("title", title);
+        Gson gson = new Gson();
+        final String jsonStr = gson.toJson(map);
+        return jsonStr;
+    }
+
+    /**
+     * 商米 全屏显示幻灯片或者图片
+     * @param list
+     */
+    private void showSunmiImg(List<String> list){
+        if (list.size() == 1){
+            mDSKernel.sendFile(DSKernel.getDSDPackageName(), list.get(0), new ISendCallback() {
+                @Override
+                public void onSendSuccess(long taskId) {
+                    String json = UPacketFactory.createJson(DataModel.SHOW_IMG_WELCOME, "def");
+                    mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, taskId, null);//该命令会让副屏显示图片
+                }
+                @Override
+                public void onSendFail(int errorId, String errorInfo) {
+                    UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                }
+                @Override
+                public void onSendProcess(long totle, long sended) {
+                }
+            });
+        }else if (list.size() > 1){
+            JSONObject object = new JSONObject();
+            try {
+                object.put("rotation_time",3000); //幻灯片的切换时间，用毫秒计算，如果不传默认是10000毫秒
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mDSKernel.sendFiles(DSKernel.getDSDPackageName(), object.toString(), list, new ISendFilesCallback() {
+                @Override
+                public void onAllSendSuccess(long fileid) {
+                    String json = UPacketFactory.createJson(DataModel.IMAGES, "def");
+                    mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, fileid, null);//该命令会让副屏显示图片
+                }
+                @Override
+                public void onSendSuccess(String path, long taskId) {
+                }
+                @Override
+                public void onSendFaile(int errorId, String errorInfo) {
+                    UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                }
+                @Override
+                public void onSendFileFaile(String path, int errorId, String errorInfo) {
+                    UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                }
+                @Override
+                public void onSendProcess(String path, long totle, long sended) {
+                }
+            });
+        }
+    }
+
+    /**
+     * 商米 全屏只显示简单文字(7寸屏)
+     * @param title
+     * @param content
+     */
+    private void showSunmiText(String title, String content){
+        try {
+            JSONObject json = new JSONObject();
+            json.put("title", title);//title为上面一行的标题内容
+            json.put("content", content);//content为下面一行的内容
+            String jsonStr = json.toString();
+            //构建DataPacket类
+            DataPacket packet = UPacketFactory.buildShowText(
+                    DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
+                        @Override
+                        public void onSendSuccess(long taskId) {
+                        }
+                        @Override
+                        public void onSendFail(int errorId, String errorInfo) {
+                            UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        }
+                        @Override
+                        public void onSendProcess(long totle, long sended) {
+                        }
+                    });
+            mDSKernel.sendData(packet);//调用sendData方法发送文本
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 商米 在屏幕部分区域显示图片+文字(7寸屏)
+     * @param title
+     * @param content
+     * @param list
+     */
+    private void showSunmiTextAndImg(String title, String content, List<String> list){
+        try {
+            JSONObject json = new JSONObject();
+            json.put("title", title);//title为上面一行的标题内容
+            json.put("content", content);//content为下面一行的内容
+            String jsonStr = json.toString();
+            if (list.size() == 1){
+                mDSKernel.sendFile(DSKernel.getDSDPackageName(), jsonStr, list.get(0), new ISendCallback() {
+                    @Override
+                    public void onSendSuccess(long taskId) {
+                        String json = UPacketFactory.createJson(DataModel.IMAGE, "def");
+                        mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, taskId, null);//该命令会让副屏显示图片
+                    }
+                    @Override
+                    public void onSendFail(int errorId, String errorInfo) {
+                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                    }
+                    @Override
+                    public void onSendProcess(long totle, long sended) {
+                    }
+                });
+            }else if (list.size() > 1){
+                mDSKernel.sendFiles(DSKernel.getDSDPackageName(), jsonStr, list, new ISendFilesCallback() {
+                    @Override
+                    public void onAllSendSuccess(long fileid) {
+                        String json = UPacketFactory.createJson(DataModel.IMAGES, "def");
+                        mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, fileid, null);//该命令会让副屏显示图片
+                    }
+                    @Override
+                    public void onSendSuccess(String path, long taskId) {
+                    }
+                    @Override
+                    public void onSendFaile(int errorId, String errorInfo) {
+                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                    }
+                    @Override
+                    public void onSendFileFaile(String path, int errorId, String errorInfo) {
+                        UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                    }
+                    @Override
+                    public void onSendProcess(String path, long totle, long sended) {
+                    }
+                });
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Override
@@ -2014,7 +2330,7 @@ public class App extends BaseApplication {
                     paidOrder,
                     getUser().getFirstName()
                             + getUser().getLastName(),
-                    TableInfoSQL.getKioskTable().getName());
+                    TableInfoSQL.getKioskTable().getName(), 1);
 
             ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
                     .getItemList(
@@ -2168,4 +2484,83 @@ public class App extends BaseApplication {
         RxBus.getInstance().post(RxBus.RX_MSG_1, 2);
     }
 
+    /**
+     * 判断是否使用的是商米设备  商米副屏设置是否展示
+     */
+    public boolean isSUNMIShow(){
+        String brand = SystemProperties.get("ro.product.brand");
+        String model = SystemProperties.get("ro.product.model");
+        Log.d(TAG, brand + "**************" + model);
+        if (brand.equals("SUNMI")){
+            try {
+                Class c = Class.forName("android.os.SystemProperties");
+                Method method = c.getMethod("get", String.class);
+                String sn = (String) method.invoke(c, "ro.serialno");
+                String str = sn.substring(0, 4);
+                Log.i("sunmi", "the sn:" + sn);
+                Log.i("sunmi", "First four characters:" + str);
+//                if (str.equals("T103") || str.equals("T104") || str.equals("T105") || str.equals("T106")){
+//                    return true;
+//                }
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断显示的商米富屏是大屏（14寸）还是小屏（7寸）
+     * @return 返回false为小屏  反之为大屏
+     */
+    public boolean isSmallOrBigScreen(){
+        try {
+            Class c = Class.forName("android.os.SystemProperties");
+            Method method = c.getMethod("get", String.class);
+            String sn = (String) method.invoke(c, "ro.serialno");
+            String str = sn.substring(0, 4);
+            if (str.equals("T103") || str.equals("T104")){
+                return true;
+            }else if (str.equals("T105") || str.equals("T106")){
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 图片加载框架
+     */
+    private class PicassoImageLoader implements ImageLoader {
+
+        private Bitmap.Config mConfig;
+
+        public PicassoImageLoader() {
+            this(Bitmap.Config.RGB_565);
+        }
+
+        public PicassoImageLoader(Bitmap.Config config) {
+            this.mConfig = config;
+        }
+
+        @Override
+        public void displayImage(Activity activity, String path, GFImageView imageView, Drawable defaultDrawable, int width, int height) {
+            Picasso.with(activity)
+                    .load(new File(path))
+                    .placeholder(defaultDrawable)
+                    .error(defaultDrawable)
+                    .config(mConfig)
+                    .resize(width, height)
+                    .centerInside()
+                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                    .into(imageView);
+        }
+
+        @Override
+        public void clearMemoryCache() {
+        }
+    }
 }

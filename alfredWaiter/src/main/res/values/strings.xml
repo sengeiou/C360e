@@ -71,6 +71,7 @@
     <string name="reset">Reset</string>
     <string name="logout">Logout</string>
     <string name="version_">Version</string>
+    <string name="lock_screen">Lock Screen</string>
         
     <!-- other -->
     <string name="session_change">Session Change</string>

@@ -1,5 +1,6 @@
 package com.alfred.printer;
 
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.alfred.print.jobs.PrintJob;
@@ -13,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -178,7 +180,7 @@ public class BillPrint extends PrintJob{
 	
 	/*Kiosk uses only*/
 	public void AddKioskHeader(String table, int pax, String billNo,
-			String posNo, String cashier, String dateTime, String orderNo) {
+			String posNo, String cashier, String dateTime, String orderNo, String groupNum) {
 		//流水号 NO
 		PrintData orderNoPrint = new PrintData();
 		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL-1);
@@ -189,6 +191,17 @@ public class BillPrint extends PrintJob{
 		orderNoPrint.setText(padorderNo);
 		this.data.add(orderNoPrint);
 
+		//group num
+		if (!TextUtils.isEmpty(groupNum)) {
+			PrintData groupNumPrint = new PrintData();
+			String groupNumStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.groupnum), this.FIXED_COL4_TOTAL);
+			String padGroupNum = groupNumStr + ":" + groupNum + reNext;
+			groupNumPrint.setDataFormat(PrintData.FORMAT_TXT);
+			groupNumPrint.setTextAlign(PrintData.ALIGN_LEFT);
+			groupNumPrint.setText(padGroupNum);
+			this.data.add(groupNumPrint);
+		}
+
 		//Bill NO
 		PrintData billNoPrint = new PrintData();
 		String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.bill_no_), this.FIXED_COL4_TOTAL);
@@ -197,7 +210,7 @@ public class BillPrint extends PrintJob{
 		billNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		billNoPrint.setText(padBillNo);
 		this.data.add(billNoPrint);
-		
+
 		//cashier
 		PrintData cashierPrint = new PrintData();
 		String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.cashier), this.FIXED_COL4_TOTAL);
@@ -372,12 +385,13 @@ public class BillPrint extends PrintJob{
 	}
 	
 
-	public void addOrderModifier(String itemName, int scale){
+	public void addOrderModifier(String itemName, int scale, String price){
+		BigDecimal bigDecimal = BH.formatDouble(new BigDecimal(price), true);
 		PrintData orderMod = new PrintData();
 		orderMod.setDataFormat(PrintData.FORMAT_TXT);
 		orderMod.setFontsize(scale);
 		orderMod.setLanguage(PrintData.LANG_CN);
-		orderMod.setText("  "+itemName+reNext);
+		orderMod.setText(this.getFourColContent("  "+itemName+reNext, bigDecimal.toString(), "", "", scale));
 		orderMod.setTextAlign(PrintData.ALIGN_LEFT);
 		this.data.add(orderMod);	
 	}	

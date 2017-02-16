@@ -35,8 +35,9 @@ public enum DataModel {
 	REBOOT(DataType.CMD, 0x181), // 控制副屏关机
 
 	SHOW_IMG_WELCOME(DataType.CMD, 0x191),//显示全屏图片的welcom界面
-	SHOW_IMG_LIST(DataType.CMD, 0x201);//显示图和列表页面
-
+	SHOW_IMG_LIST(DataType.CMD, 0x201),//显示图和列表页面
+	SHOW_IMGS_LIST(DataType.CMD,0x222),
+	SHOW_VIDEO_LIST(DataType.CMD,0x333);
 	DataType dataType;
 
 	int modelCode;// 模型描述code

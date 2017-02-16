@@ -1097,7 +1097,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	}
 
 	public PrinterTitle getPrinterTitle(RevenueCenter revenue, Order order,
-			String userName, String tableName) {
+			String userName, String tableName, int copy) {
 		PrinterTitle printerTitle = new PrinterTitle();
 		Restaurant restaurant = RestaurantSQL.getRestaurant();
 		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
@@ -1117,6 +1117,8 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		printerTitle.setFooterOptions(restaurant.getFooterOptions());
 		printerTitle.setIsTakeAway(order.getIsTakeAway());
 		printerTitle.setBizDate(order.getBusinessDate().toString());
+		printerTitle.setIsKiosk(revenue.getIsKiosk());
+		printerTitle.setCopy(copy);
 		if(revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
 			printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
 		}else{
@@ -1127,7 +1129,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	}
 	
 	public PrinterTitle getPrinterTitleByOrderSplit(RevenueCenter revenue, Order order, OrderSplit orderSplit,
-			String userName, String tableName, OrderBill orderBill, String businessDate) {
+			String userName, String tableName, OrderBill orderBill, String businessDate, int copy) {
 		PrinterTitle printerTitle = new PrinterTitle();
 		Restaurant restaurant = RestaurantSQL.getRestaurant();
 		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
@@ -1146,6 +1148,9 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		printerTitle.setOptions(restaurant.getOptions());
 		printerTitle.setFooterOptions(restaurant.getFooterOptions());
 		printerTitle.setBizDate(businessDate);
+		printerTitle.setGroupNum(orderSplit.getGroupId() + "");
+		printerTitle.setIsKiosk(revenue.getIsKiosk());
+		printerTitle.setCopy(copy);
 //		printerTitle.setOrderNo(orderSplit.getOrderId().toString());
 		if(revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
 			printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));

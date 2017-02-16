@@ -915,6 +915,7 @@ public class CoreData {
 				taxCategoryList.add(taxCategory);
 			}
 		}
+		taxCategoryList.add(0,new TaxCategory());
 		return taxCategoryList;
 	}
 

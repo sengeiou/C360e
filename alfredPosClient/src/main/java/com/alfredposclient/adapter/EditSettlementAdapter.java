@@ -1,33 +1,64 @@
 package com.alfredposclient.adapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.alfredbase.BaseActivity;
+import com.alfredbase.ParamConst;
+import com.alfredbase.PrinterLoadingDialog;
+import com.alfredbase.VerifyDialog;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderBill;
+import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.javabeanforhtml.EditSettlementInfo;
+import com.alfredbase.javabean.model.PrintBill;
+import com.alfredbase.javabean.model.PrintOrderItem;
+import com.alfredbase.javabean.model.PrintOrderModifier;
+import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
+import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.RoundAmountSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONObject;
+
+import static com.alfredposclient.activity.EditSettlementPage.EDIT_ITEM_ACTION;
 
 
 public class EditSettlementAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
-	private Context context;
+	private BaseActivity context;
 	private List<EditSettlementInfo> editSettlementInfos;
 	private int selectorPosition = 0;
-	public EditSettlementAdapter(Context context, List<EditSettlementInfo> editSettlementInfos) {
+	private VerifyDialog verifyDialog;
+
+	public EditSettlementAdapter(BaseActivity context, List<EditSettlementInfo> editSettlementInfos, VerifyDialog verifyDialog) {
 		this.context = context;
 		inflater = LayoutInflater.from(context);
 		if (editSettlementInfos == null)
 			editSettlementInfos = Collections.emptyList();
 		this.editSettlementInfos = editSettlementInfos;
-
+		this.verifyDialog = verifyDialog;
 	}
 	@Override
 	public int getCount() {
@@ -59,11 +90,13 @@ public class EditSettlementAdapter extends BaseAdapter {
 			holder.tv_total = (TextView) currentView.findViewById(R.id.tv_total);
 			holder.tv_poeple = (TextView) currentView.findViewById(R.id.tv_poeple);
 			holder.tv_time = (TextView) currentView.findViewById(R.id.tv_time);
+			holder.btn_edit_settlement = (Button) currentView.findViewById(R.id.btn_edit_settlement);
+			holder.btn_reprint = (Button) currentView.findViewById(R.id.btn_reprint);
 			currentView.setTag(holder);
 		} else {
 			holder = (ViewHolder) currentView.getTag();
 		}
-		EditSettlementInfo editSettlementInfo = editSettlementInfos.get(position);
+		final EditSettlementInfo editSettlementInfo = editSettlementInfos.get(position);
 		String billNo = editSettlementInfo.getBillNo() + "";
 		holder.tv_bill_no.setText(billNo);
 		holder.tv_place_name.setText(editSettlementInfo.getPlaceName());
@@ -73,6 +106,21 @@ public class EditSettlementAdapter extends BaseAdapter {
 		if(App.instance.isRevenueKiosk()){
 			holder.tv_place_name.setVisibility(View.GONE);
 		}
+
+		holder.btn_edit_settlement.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				verifyDialog.show(EDIT_ITEM_ACTION, editSettlementInfo);
+			}
+		});
+
+		holder.btn_reprint.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				printBillAction(editSettlementInfo);
+			}
+		});
+
 		return currentView;
 	
 	}
@@ -83,6 +131,100 @@ public class EditSettlementAdapter extends BaseAdapter {
 		public TextView tv_total;
 		public TextView tv_poeple;
 		public TextView tv_time;
+		public Button btn_edit_settlement;
+		public Button btn_reprint;
+	}
+
+	private void printBillAction(EditSettlementInfo editSettlementInfo){
+		Order order = OrderSQL.getOrder(editSettlementInfo.getOrderId());
+		if(order == null){
+			return;
+		}
+		int orderDetailCount = OrderDetailSQL.getOrderDetailCountByGroupId(
+				ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID, order.getId());
+
+		PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(context);
+		printerLoadingDialog.setTitle(context.getResources().getString(R.string.bill_printing));
+		printerLoadingDialog.showByTime(3000);
+		PrinterDevice printer = App.instance.getCahierPrinter();
+		if (orderDetailCount != 0) {
+			ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+					.getInstance().getItemModifierList(order, OrderDetailSQL.getOrderDetails(order.getId()));
+			OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+					order, App.instance.getRevenueCenter());
+			RoundAmount roundAmount = RoundAmountSQL
+					.getRoundAmountByOrderAndBill(order, orderBill);
+			App.instance.remoteBillPrint(
+					printer,
+					ObjectFactory.getInstance().getPrinterTitle(
+							App.instance.getRevenueCenter(),
+							order,
+							App.instance.getUser().getFirstName()
+									+ App.instance.getUser().getLastName(),
+							TableInfoSQL.getTableById(order.getTableId())
+									.getName(), 2),
+					order,
+					ObjectFactory.getInstance().getItemList(
+							OrderDetailSQL.getOrderDetails(order.getId())),
+					orderModifiers, OrderDetailTaxSQL.getTaxPriceSUMForPrint(
+							App.instance.getLocalRestaurantConfig()
+									.getIncludedTax().getTax(), order), null,
+					roundAmount);
+		} else {
+			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
+			for (OrderSplit orderSplit : orderSplits) {
+				OrderBill orderBill = ObjectFactory.getInstance()
+						.getOrderBillByOrderSplit(orderSplit,
+								App.instance.getRevenueCenter());
+				ArrayList<OrderDetail> orderDetails = (ArrayList<OrderDetail>) OrderDetailSQL
+						.getOrderDetailsByOrderAndOrderSplit(orderSplit);
+				if (orderDetails.isEmpty()) {
+					continue;
+				}
+//				RoundAmount orderSplitRoundAmount = ObjectFactory.getInstance()
+//						.getRoundAmountByOrderSplit(
+//								orderSplit,
+//								orderBill,
+//								App.instance.getLocalRestaurantConfig()
+//										.getRoundType(),
+//								order.getBusinessDate());
+//				OrderHelper.setOrderSplitTotalAlfterRound(orderSplit,
+//						orderSplitRoundAmount);
+				List<Map<String, String>> taxMap = OrderDetailTaxSQL
+						.getOrderSplitTaxPriceSUMForPrint(App.instance
+								.getLocalRestaurantConfig().getIncludedTax()
+								.getTax(), orderSplit);
+				ArrayList<PrintOrderItem> orderItems = ObjectFactory
+						.getInstance().getItemList(orderDetails);
+
+				PrinterTitle title = ObjectFactory.getInstance()
+						.getPrinterTitleByOrderSplit(
+								App.instance.getRevenueCenter(),
+								order,
+								orderSplit,
+								App.instance.getUser().getFirstName()
+										+ App.instance.getUser().getLastName(),
+								TableInfoSQL.getTableById(orderSplit.getTableId())
+										.getName(), orderBill, order.getBusinessDate().toString(), 2);
+				orderSplit
+						.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY);
+				OrderSplitSQL.update(orderSplit);
+				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+						.getInstance().getItemModifierListByOrderDetail(
+								orderDetails);
+				Order temporaryOrder = new Order();
+				temporaryOrder.setPersons(orderSplit.getPersons());
+				temporaryOrder.setSubTotal(orderSplit.getSubTotal());
+				temporaryOrder
+						.setDiscountAmount(orderSplit.getDiscountAmount());
+				temporaryOrder.setTotal(orderSplit.getTotal());
+				temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
+				temporaryOrder.setOrderNo(order.getOrderNo());
+				App.instance.remoteBillPrint(printer, title, temporaryOrder,
+						orderItems, orderModifiers, taxMap, null,
+						null);
+			}
+		}
 	}
 
 }

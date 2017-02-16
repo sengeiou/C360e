@@ -247,6 +247,11 @@ public class MainPageKiosk extends BaseActivity {
 		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);	//关闭手势滑动
 		settingView = (SettingView) findViewById(R.id.settingView);
 		settingView.setParams(this, mDrawerLayout);
+		if (App.instance.isSUNMIShow()){
+			settingView.SUNMIVisible();
+		}else {
+			settingView.SUNMIGone();
+		}
 	}
 
 	@Override
@@ -615,7 +620,7 @@ public class MainPageKiosk extends BaseActivity {
 									App.instance.getUser().getFirstName()
 											+ App.instance.getUser()
 													.getLastName(),
-									currentTable.getName());
+									currentTable.getName(), 1);
 					currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
 					OrderSQL.update(currentOrder);
 					ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
@@ -667,7 +672,7 @@ public class MainPageKiosk extends BaseActivity {
 									paidOrder,
 									App.instance.getUser().getFirstName()
 											+ App.instance.getUser().getLastName(),
-									currentTable.getName());
+									currentTable.getName(), 1);
 
 
 
@@ -781,7 +786,7 @@ public class MainPageKiosk extends BaseActivity {
 								paidOrderSplit,
 								App.instance.getUser().getFirstName()
 										+ App.instance.getUser().getLastName(),
-								currentTable.getName(), orderBill, App.instance.getBusinessDate().toString());
+								currentTable.getName(), orderBill, App.instance.getBusinessDate().toString(), 1);
 				ArrayList<OrderDetail> orderSplitDetails = (ArrayList<OrderDetail>) OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(paidOrderSplit);
 
 
@@ -1798,6 +1803,7 @@ public class MainPageKiosk extends BaseActivity {
 		if (mDrawerLayout.isDrawerOpen(settingView)) {
 			mDrawerLayout.closeDrawer(Gravity.END);
 		}
+		mainPageMenuView.setParent(context);
 	}
 
 	@Override

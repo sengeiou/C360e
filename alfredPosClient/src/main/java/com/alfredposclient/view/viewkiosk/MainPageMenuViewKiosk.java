@@ -84,6 +84,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 	private CustomNoteView customNoteView;
 	private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
 			.getItemMainCategories();
+	private ItemDetailAdapter itemAdp;
 	
 	public MainPageMenuViewKiosk(Context context) {
 		super(context);
@@ -114,6 +115,10 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 	private void initTextTypeFace(){
 		textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_item_name));
+	}
+
+	public void refreshItemOrderDetail(){
+		itemAdp.notifyDataSetChanged();
 	}
 	
 	private void initItemDetail() {
@@ -146,7 +151,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 					gv_menu_detail.setNumColumns(numColumns);
 				}
 			});
-			final ItemDetailAdapter itemAdp = new ItemDetailAdapter(parent,
+			itemAdp = new ItemDetailAdapter(parent,
 					currentItemDetails);
 			gv_menu_detail.setAdapter(itemAdp);
 			

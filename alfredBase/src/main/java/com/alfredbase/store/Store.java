@@ -8,6 +8,8 @@ import com.alfredbase.utils.LogUtil;
 import com.google.gson.Gson;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Store {
 	private static final String TAG = Store.class.getSimpleName();
@@ -88,12 +90,27 @@ public class Store {
 	public static final String KDS_SYSTEM_UPDATE_INFO = "KDS_SYSTEM_UPDATE_INFO";
 	public static final String WAITER_SYSTEM_UPDATE_INFO = "WAITER_SYSTEM_UPDATE_INFO";
 
+	public static final String SUNMI_STYLE = "SUNMI_STYLE";
+	public static final String SUNMI_DATA = "SUNMI_DATA";
+	public static final String SUNMI_WELCOME = "SUNMI_WELCOME";
+
+	public static final String COLOR_PICKER= "COLOR_PICKER";
+
+	public static final String LOCK_SCREEN = "LOCK_SCREEN";
+
 	private Store() {
 	};
 	
 	public static final long DEFAULT_LONG_TYPE = -1L;
 	public static final float DEFAULT_FLOAT_TYPE = -123;
-	public static final int DEFAULT_INT_TYPE = -123;
+	public static final int DEFAULT_INT_TYPE = -123;  // 副屏只显示文字
+
+	public static final int SUNMI_IMG = -122;  // 只显示图片
+	public static final int SUNMI_TEXT = -123;  // 副屏只显示文字
+	public static final int SUNMI_IMG_TEXT = -124;  // 显示图片和文字
+	public static final int SUNMI_VIDEO = -121;
+	public static final int SUNMI_VIDEO_TEXT = -125;
+
 	public static final String DEFAULT_STRING_TYPE = "";
 	private static SharedPreferences getSharedPreferences(Context context) {
 		SharedPreferences sharedPreferences = context.getSharedPreferences(
@@ -127,6 +144,10 @@ public class Store {
 	// 默认值为 -123 注意做判断的时候 多加个 为-123的判断
 	public static int getInt(Context context, String key) {
 		return getSharedPreferences(context).getInt(key, DEFAULT_INT_TYPE);
+	}
+
+	public static int getInt(Context context, String key, int defVal) {
+		return getSharedPreferences(context).getInt(key, defVal);
 	}
 	
 	public static void putBoolean(Context context, String key, boolean value) {
@@ -206,5 +227,72 @@ public class Store {
 		Editor editor = preferences.edit();
 		editor.remove(key);
 		editor.commit();
+	}
+
+	/**
+	 * 存储List<String>
+	 */
+	public static void putStrListValue(Context context, String key,
+									   List<String> strList) {
+		if (null == strList) {
+			return;
+		}
+		int size = strList.size();
+		putInt(context, key + "size", size);
+		for (int i = 0; i < size; i++) {
+			putString(context, key + i, strList.get(i));
+		}
+	}
+
+	/**
+	 * 取出List<String>
+	 */
+	public static List<String> getStrListValue(Context context, String key) {
+		List<String> strList = new ArrayList<String>();
+		int size = getInt(context, key + "size");
+		for (int i = 0; i < size; i++) {
+			strList.add(getString(context, key + i));
+		}
+		return strList;
+	}
+
+
+	/**
+	 * 清空List<String>所有数据
+	 **/
+	public static void removeStrList(Context context, String key) {
+		int size = getInt(context, key + "size");
+		if (0 == size) {
+			return;
+		}
+		remove(context, key + "size");
+		for (int i = 0; i < size; i++) {
+			remove(context, key + i);
+		}
+	}
+
+	/**
+	 * 清空List<String>单条数据
+	 */
+	public static void removeStrListItem(Context context, String key, String str) {
+		int size = getInt(context, key + "size");
+		if (0 == size) {
+			return;
+		}
+		List<String> strList = getStrListValue(context, key);
+		// 待删除的List<String>数据暂存
+		List<String> removeList = new ArrayList<String>();
+		for (int i = 0; i < size; i++) {
+			if (str.equals(strList.get(i))) {
+				if (i >= 0 && i < size) {
+					removeList.add(strList.get(i));
+					remove(context, key + i);
+					putInt(context, key + "size", size - 1);
+				}
+			}
+		}
+		strList.removeAll(removeList);
+		// 删除元素重新建立索引写入数据
+		putStrListValue(context, key, strList);
 	}
 }
