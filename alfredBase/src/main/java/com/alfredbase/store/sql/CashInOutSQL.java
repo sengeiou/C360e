@@ -1,14 +1,15 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.CashInOut;
+import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
 
 public class CashInOutSQL {
 
@@ -61,7 +62,61 @@ public class CashInOutSQL {
 		}
 		return result;
 	}
-	
+
+
+	public static String getCashInSUMBySession(long businessDate, SessionStatus sessionStatus) {
+		String result = "0.00";
+		String sql = "select SUM(cash) from " + TableNames.CashInOut
+				+ " where businessDate = ? and createTime > ? and type = "
+				+ ParamConst.CASHINOUT_TYPE_IN;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] { businessDate + "", sessionStatus.getTime() + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			if (cursor.moveToFirst()) {
+				result = cursor.getString(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+	public static String getStartDrawerSUMBySession(long businessDate, SessionStatus sessionStatus) {
+		String result = "0.00";
+		String sql = "select SUM(cash) from " + TableNames.CashInOut
+				+ " where businessDate = ? and createTime > ? and type = "
+				+ ParamConst.CASHINOUT_TYPE_START;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] { businessDate + "", sessionStatus.getTime() + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			if (cursor.moveToFirst()) {
+				result = cursor.getString(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static String getCashOutSUM(long businessDate) {
 		String result = "0.00";
 		String sql = "select SUM(cash) from " + TableNames.CashInOut
@@ -71,6 +126,34 @@ public class CashInOutSQL {
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
 			cursor = db.rawQuery(sql, new String[] { businessDate + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			if (cursor.moveToFirst()) {
+				result = cursor.getString(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
+
+	public static String getCashOutSUMBySession(long businessDate, SessionStatus sessionStatus) {
+		String result = "0.00";
+		String sql = "select SUM(cash) from " + TableNames.CashInOut
+				+ " where businessDate = ? and createTime > ? and type = "
+				+ ParamConst.CASHINOUT_TYPE_OUT;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] { businessDate + "", sessionStatus.getTime() + "" });
 			int count = cursor.getCount();
 			if (count < 1) {
 				return result;

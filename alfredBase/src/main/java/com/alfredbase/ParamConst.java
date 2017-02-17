@@ -136,7 +136,7 @@ public class ParamConst {
 	public static final int NOT_TAKE_AWAY = 0;
 	public static final int TAKE_AWAY = 1;
 
-	// 0:没有发送，1：发送了，但是没有成功，2：发送成功
+	// 0:没有发送，1：发送中，2：发送成功, 3没有成功
 	public static final int SYNC_MSG_UN_SEND = 0; // initial state create a new
 													// msg
 	public static final int SYNC_MSG_QUEUED = 1; // Queued in syncing JOB task
@@ -263,6 +263,7 @@ public class ParamConst {
 	// cashInOut的type
 	public static final int CASHINOUT_TYPE_IN = 0;
 	public static final int CASHINOUT_TYPE_OUT = 1;
+	public static final int CASHINOUT_TYPE_START = 2;
 
 	// 网络job的类型
 	public static final int JOB_TYPE_POS_PLACEORDER = 0;

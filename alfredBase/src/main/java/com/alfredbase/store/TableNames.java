@@ -71,5 +71,6 @@ public class TableNames {
 	public static final String PlaceInfo = "PlaceInfo_";
 	public static final String ConsumingRecords = "ConsumingRecords_";
 	public static final String UserOpenDrawerRecord = "UserOpenDrawerRecord_";
+	public static final String ReportSessionSales = "ReportSessionSales_";
 
 }

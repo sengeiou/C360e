@@ -23,8 +23,10 @@ public class ReportDaySalesSQL {
 					+ " visaQty, mc, mcQty, amex, amexQty, jbl, jblQty, unionPay, unionPayQty, diner, dinerQty, holdld, holdldQty, totalCard, totalCardQty,"
 					+ " totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount, firstReceipt, lastReceipt,"
 					+ " totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt, alipay, alipayQty, thirdParty,"
-					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty, refundTax)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty,"
+					+ " refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportDaySales.getId(),
@@ -98,7 +100,12 @@ public class ReportDaySalesSQL {
 							reportDaySales.getTopUpsQty() == null ? 0 : reportDaySales.getTopUpsQty(),
 							reportDaySales.getBillRefund() == null ? "0.00" : reportDaySales.getBillRefund(),
 							reportDaySales.getBillRefundQty() == null ? 0 : reportDaySales.getBillRefundQty(),
-							reportDaySales.getRefundTax() == null ? "0.00" : reportDaySales.getRefundTax()
+							reportDaySales.getRefundTax() == null ? "0.00" : reportDaySales.getRefundTax(),
+							reportDaySales.getStartDrawerAmount() == null ? "0.00" : reportDaySales.getStartDrawerAmount(),
+							reportDaySales.getExpectedAmount() == null ? "0.00" : reportDaySales.getExpectedAmount(),
+							reportDaySales.getWaiterAmount() == null ? "0.00" : reportDaySales.getWaiterAmount(),
+							reportDaySales.getDifference() == null ? "0.00" : reportDaySales.getDifference(),
+							reportDaySales.getCashTopUp() == null ? "0.00" : reportDaySales.getCashTopUp()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -119,8 +126,9 @@ public class ReportDaySalesSQL {
 					+ " totalCardQty, totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount,"
 					+ " firstReceipt, lastReceipt, totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt,"
 					+ " alipay, alipayQty, thirdParty, thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty,"
-					+ " billRefund, billRefundQty, refundTax)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " billRefund, billRefundQty, refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] {reportDaySales.getRestaurantId(),
@@ -193,7 +201,12 @@ public class ReportDaySalesSQL {
 							reportDaySales.getTopUpsQty() == null ? 0 : reportDaySales.getTopUpsQty(),
 							reportDaySales.getBillRefund() == null ? "0.00" : reportDaySales.getBillRefund(),
 							reportDaySales.getBillRefundQty() == null ? 0 : reportDaySales.getBillRefundQty(),
-							reportDaySales.getRefundTax() == null ? "0.00" : reportDaySales.getRefundTax()
+							reportDaySales.getRefundTax() == null ? "0.00" : reportDaySales.getRefundTax(),
+							reportDaySales.getStartDrawerAmount() == null ? "0.00" : reportDaySales.getStartDrawerAmount(),
+							reportDaySales.getExpectedAmount() == null ? "0.00" : reportDaySales.getExpectedAmount(),
+							reportDaySales.getWaiterAmount() == null ? "0.00" : reportDaySales.getWaiterAmount(),
+							reportDaySales.getDifference() == null ? "0.00" : reportDaySales.getDifference(),
+							reportDaySales.getCashTopUp() == null ? "0.00" : reportDaySales.getCashTopUp()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -281,6 +294,11 @@ public class ReportDaySalesSQL {
 				reportDaySales.setBillRefund(cursor.getString(69));
 				reportDaySales.setBillRefundQty(cursor.getInt(70));
 				reportDaySales.setRefundTax(cursor.getString(71));
+				reportDaySales.setStartDrawerAmount(cursor.getString(72));
+				reportDaySales.setExpectedAmount(cursor.getString(73));
+				reportDaySales.setWaiterAmount(cursor.getString(74));
+				reportDaySales.setDifference(cursor.getString(75));
+				reportDaySales.setCashTopUp(cursor.getString(76));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -297,7 +315,7 @@ public class ReportDaySalesSQL {
 	public static ReportDaySales getReportDaySalesByTime(long day) {
 		ReportDaySales reportDaySales = null;
 		String sql = "select * from " + TableNames.ReportDaySales
-				+ " where businessDate = ?";
+				+ " where businessDate = ? ";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql,
@@ -376,6 +394,11 @@ public class ReportDaySalesSQL {
 				reportDaySales.setBillRefund(cursor.getString(69));
 				reportDaySales.setBillRefundQty(cursor.getInt(70));
 				reportDaySales.setRefundTax(cursor.getString(71));
+				reportDaySales.setStartDrawerAmount(cursor.getString(72));
+				reportDaySales.setExpectedAmount(cursor.getString(73));
+				reportDaySales.setWaiterAmount(cursor.getString(74));
+				reportDaySales.setDifference(cursor.getString(75));
+				reportDaySales.setCashTopUp(cursor.getString(76));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -507,6 +530,11 @@ public class ReportDaySalesSQL {
 				reportDaySales.setBillRefund(cursor.getString(69));
 				reportDaySales.setBillRefundQty(cursor.getInt(70));
 				reportDaySales.setRefundTax(cursor.getString(71));
+				reportDaySales.setStartDrawerAmount(cursor.getString(72));
+				reportDaySales.setExpectedAmount(cursor.getString(73));
+				reportDaySales.setWaiterAmount(cursor.getString(74));
+				reportDaySales.setDifference(cursor.getString(75));
+				reportDaySales.setCashTopUp(cursor.getString(76));
 				result.add(reportDaySales);
 			}
 			db.setTransactionSuccessful();
@@ -612,6 +640,11 @@ public class ReportDaySalesSQL {
 				reportDaySales.setBillRefund(cursor.getString(69));
 				reportDaySales.setBillRefundQty(cursor.getInt(70));
 				reportDaySales.setRefundTax(cursor.getString(71));
+				reportDaySales.setStartDrawerAmount(cursor.getString(72));
+				reportDaySales.setExpectedAmount(cursor.getString(73));
+				reportDaySales.setWaiterAmount(cursor.getString(74));
+				reportDaySales.setDifference(cursor.getString(75));
+				reportDaySales.setCashTopUp(cursor.getString(76));
 				result.add(reportDaySales);
 			}
 			db.setTransactionSuccessful();

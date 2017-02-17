@@ -69,6 +69,8 @@
 -dontwarn com.hp.hpl.sparta.**
 -dontwarn com.google.zxing.**
 -dontwarn com.moonearly.**
+-dontwarn com.sunmi.**
+
 #-dontwarn com.hp.hpl.sparta.**
 #-dontwarn demo.**
 -dontwarn net.sourceforge.pinyin4j.**
@@ -103,6 +105,7 @@
 -keep class com.google.gson.internal.bind.**{*;}
 -keep class com.google.gson.reflect.**{*;}
 -keep class com.moonearly.**{*;}
+-keep class com.sunmi.**{*;}
 -keep class com.umeng.** {*;}
 -keepclassmembers class com.alfredbase.javabean.**{*;}
 -keepclassmembers class com.alfredposclient.javabean.**{*;}

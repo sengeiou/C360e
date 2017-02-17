@@ -330,7 +330,7 @@ public class XZReportHtml extends BaseActivity {
 	private String getXReportData(Long bizDate, SessionStatus sessionStatus) {
 
 		reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(
-				bizDate, sessionStatus);
+				bizDate, sessionStatus, "0.00", false);
 		if (reportDaySales != null) {
 			reportDayTaxs = ReportObjectFactory.getInstance()
 					.loadXReportDayTax(reportDaySales, bizDate, sessionStatus);
@@ -474,7 +474,7 @@ public class XZReportHtml extends BaseActivity {
 
 				// sales report
 				App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers);
+						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
 				// detail analysis
 				App.instance.remotePrintDetailAnalysisReport(rptType,
 						cashierPrinter, title, reportDaySales,
@@ -494,7 +494,7 @@ public class XZReportHtml extends BaseActivity {
 			if (type == XZReportHtml.REPORT_PRINT_SALES) {
 				// sales report
 				App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers);
+						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
 			}
 			if (type == XZReportHtml.REPORT_PRINT_DETAILS) {
 				if (zPrint)

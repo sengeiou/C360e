@@ -709,7 +709,7 @@ public class HttpAnalysis {
 			e.printStackTrace();
 		}
 	}
-	public static void updateStoredCardValue(byte[] responseBody){
+	public static void updateStoredCardValue(byte[] responseBody, int payTypeId){
 		try {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
@@ -717,6 +717,7 @@ public class HttpAnalysis {
 			String consuming = object.getString("records");
 			ConsumingRecords consumingRecords = gson.fromJson(consuming, ConsumingRecords.class);
 			consumingRecords.setBusinessDate(App.instance.getBusinessDate());
+			consumingRecords.setPayTypeId(payTypeId);
 			ConsumingRecordsSQL.addConsumingRecords(consumingRecords);
 			App.instance.remoteStoredCard(App.instance.getCahierPrinter(), consumingRecords, balance);
 		} catch (Exception e) {

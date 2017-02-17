@@ -8,7 +8,7 @@ public class CashInOut {
 	private int empId;
 	private String empName;
 	private long businessDate;
-	private int type;	//0-放钱，1-拿钱
+	private int type;	//0-放钱，1-拿钱 2-启动资金
 	private String comment;
 	private String cash;	//钱的金额
 	private String createTime;

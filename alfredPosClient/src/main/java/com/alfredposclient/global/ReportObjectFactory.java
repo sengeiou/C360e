@@ -22,6 +22,7 @@ import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.javabeanforhtml.DashboardTotalDetailInfo;
 import com.alfredbase.javabean.model.ReportEntItem;
+import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
@@ -46,6 +47,7 @@ import com.alfredbase.store.sql.ReportHourlySQL;
 import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
 import com.alfredbase.store.sql.ReportPluDayItemSQL;
 import com.alfredbase.store.sql.ReportPluDayModifierSQL;
+import com.alfredbase.store.sql.ReportSessionSalesSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
@@ -88,6 +90,7 @@ public class ReportObjectFactory {
 					.getReportDaySalesByTime(businessDate);
 			return reportDaySales;
 		}
+
 		reportDaySales = ReportDaySalesSQL
 				.getReportDaySalesByTime(businessDate);
 		if (reportDaySales == null) {
@@ -136,7 +139,7 @@ public class ReportObjectFactory {
 
 		Map<String, String> refundBillsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_VOID, businessDate);
+						ParamConst.SETTLEMENT_TYPE_REFUND, businessDate);
 		String billRefund = BH.sub(BH.getBD(refundBillsMap
 				.get("sumAmount")), BH.getBD(refundTax),true).toString();
 		String billRefundQty = refundBillsMap.get("count");
@@ -187,6 +190,10 @@ public class ReportObjectFactory {
 		String topUps = BH.doubleFormat
 				.format(BH.getBD(topUpsMap.get("sumAmount")));
 		String topUpsQty = topUpsMap.get("count");
+
+		Map<String, String> cashTopUpsMap = ConsumingRecordsSQL.getSumCashTopUPByBusinessDate(businessDate);
+		String cashTopUps = BH.doubleFormat
+				.format(BH.getBD(cashTopUpsMap.get("sumCashAmount")));
 		
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -373,7 +380,8 @@ public class ReportObjectFactory {
 				PaymentSettlement paymentSettlement = PaymentSettlementSQL.getPaymentSettlementsByOrderId(order.getId());
 				if(paymentSettlement != null 
 						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT 
-						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_VOID )
+						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_VOID
+						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_REFUND)
 				inclusiveTaxAmt = BH.add(BH.getBD(order.getInclusiveTaxPrice()), inclusiveTaxAmt, true);
 				billNoQty++;
 			}
@@ -427,6 +435,11 @@ public class ReportObjectFactory {
 				.getCashOutSUM(businessDate));
 		// BigDecimal varianceAmt = BH.abs(BH.add(BH.sub(cashInAmt, cashOutAmt,
 		// false), BH.getBD(totalCash), false), true); // TODO
+
+		String sumStartDrawer = ReportSessionSalesSQL.getSumStartDrawer(businessDate);
+		String sumExpected = ReportSessionSalesSQL.getSumExpected(businessDate);
+		String sumActual = ReportSessionSalesSQL.getSumActual(businessDate);
+		String sumDifference = ReportSessionSalesSQL.getSumDifference(businessDate);
 
 		reportDaySales.setRestaurantId(restaurant.getId());
 		reportDaySales.setRestaurantName(restaurant.getRestaurantName());
@@ -501,6 +514,11 @@ public class ReportObjectFactory {
 		reportDaySales.setBillRefund(billRefund);
 		reportDaySales.setBillRefundQty(Integer.parseInt(billRefundQty));
 		reportDaySales.setRefundTax(refundTax);
+		reportDaySales.setStartDrawerAmount(BH.getBD(sumStartDrawer).toString());
+		reportDaySales.setExpectedAmount(BH.getBD(sumExpected).toString());
+		reportDaySales.setWaiterAmount(BH.getBD(sumActual).toString());
+		reportDaySales.setDifference(BH.getBD(sumDifference).toString());
+		reportDaySales.setCashTopUp(BH.getBD(cashTopUps).toString());
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 		return reportDaySales;
 	}
@@ -1446,7 +1464,7 @@ public class ReportObjectFactory {
 	}
 
 	public ReportDaySales loadXReportDaySales(long businessDate,
-			SessionStatus sessionStatus) {
+			SessionStatus sessionStatus, String actualAmount, boolean isclose) {
 		ReportDaySales reportDaySales = null;
 		// if (App.instance.getBusinessDate() != businessDate) {
 		// reportDaySales = ReportDaySalesSQL
@@ -1458,6 +1476,10 @@ public class ReportObjectFactory {
 		// if (reportDaySales == null) {
 		reportDaySales = new ReportDaySales();
 		reportDaySales.setId(0);
+		ReportSessionSales reportSessionSales = new ReportSessionSales();
+		if(isclose){
+			reportSessionSales.setId(CommonSQL.getNextSeq(TableNames.ReportSessionSales));
+		}
 		// }
 		Map<String, Object> taxPriceSumMap = OrderDetailTaxSQL.getTaxDetail(
 				businessDate, sessionStatus);
@@ -1563,6 +1585,9 @@ public class ReportObjectFactory {
 		String topUps = BH.doubleFormat
 				.format(BH.getBD(topUpsMap.get("sumAmount")));
 		String topUpsQty = topUpsMap.get("count");
+		Map<String, String> cashTopUpsMap = ConsumingRecordsSQL.getSumCashTopUPBySession(businessDate, sessionStatus);
+		String cashTopUps = BH.doubleFormat
+				.format(BH.getBD(cashTopUpsMap.get("sumCashAmount")));
 
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -1802,12 +1827,25 @@ public class ReportObjectFactory {
 //		nettSales = BH.add(nettSales, BH.getBD(focBill), true);
 
 		BigDecimal cashInAmt = BH
-				.getBD(CashInOutSQL.getCashInSUM(businessDate));
+				.getBD(CashInOutSQL.getCashInSUMBySession(businessDate, sessionStatus));
 		BigDecimal cashOutAmt = BH.getBD(CashInOutSQL
-				.getCashOutSUM(businessDate));
+				.getCashOutSUMBySession(businessDate, sessionStatus));
+
+		BigDecimal startDrawer = BH.getBD(CashInOutSQL.getStartDrawerSUMBySession(businessDate, sessionStatus));
+
 		BigDecimal varianceAmt = BH.abs(
 				BH.add(BH.sub(cashInAmt, cashOutAmt, false),
 						BH.getBD(totalCash), false), true);
+
+		BigDecimal expected = BH.getBD(ParamConst.DOUBLE_ZERO);
+		expected = BH.add(expected,  startDrawer, false);
+		expected = BH.add(expected, BH.getBD(totalCash), false);
+		expected = BH.add(expected, BH.getBD(cashTopUps), false);
+		expected = BH.add(expected, cashInAmt, false);
+		expected = BH.sub(expected, cashOutAmt, false);
+
+		BigDecimal difference = BH.sub(BH.getBD(actualAmount), expected, false);
+
 
 		reportDaySales.setRestaurantId(restaurant.getId());
 		reportDaySales.setRestaurantName(restaurant.getRestaurantName());
@@ -1882,7 +1920,22 @@ public class ReportObjectFactory {
 		reportDaySales.setBillRefund(billRefund);
 		reportDaySales.setBillRefundQty(Integer.parseInt(billRefundQty));
 		reportDaySales.setRefundTax(refundTax);
-		// ReportDaySalesSQL.addReportDaySales(reportDaySales);
+		reportDaySales.setStartDrawerAmount(startDrawer.toString());
+		reportDaySales.setExpectedAmount(expected.toString());
+		reportDaySales.setWaiterAmount(BH.getBD(actualAmount).toString());
+		reportDaySales.setDifference(difference.toString());
+		reportDaySales.setCashTopUp(BH.getBD(cashTopUps).toString());
+
+		//-----------------------分割线----------------------------
+		reportSessionSales.setCash(reportDaySales.getTotalCash());
+		reportSessionSales.setStartDrawer(reportDaySales.getStartDrawerAmount());
+		reportSessionSales.setCashTopup(reportDaySales.getCashTopUp());
+		reportSessionSales.setExpectedAmount(reportDaySales.getExpectedAmount());
+		reportSessionSales.setActualAmount(reportDaySales.getWaiterAmount());
+		reportSessionSales.setDifference(reportDaySales.getDifference());
+		reportSessionSales.setBusinessDate(reportDaySales.getBusinessDate());
+		if(isclose)
+			ReportSessionSalesSQL.addReportSessionSales(reportSessionSales);
 		return reportDaySales;
 	}
 
@@ -2426,11 +2479,11 @@ public class ReportObjectFactory {
 	}
 
 	public Map<String, Object> getXReportInfo(long businessDate,
-			SessionStatus sessionStatus) {
+			SessionStatus sessionStatus, String actualAmount) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ReportDaySales reportDaySales = null;
 		// ReportDaySalesSQL.getReportDaySalesByTime(businessDate);
-		reportDaySales = loadXReportDaySales(businessDate, sessionStatus);
+		reportDaySales = loadXReportDaySales(businessDate, sessionStatus, actualAmount, true);
 		ArrayList<ReportDayTax> reportDayTaxs = new ArrayList<ReportDayTax>();
 		ArrayList<ReportPluDayItem> reportPluDayItems = new ArrayList<ReportPluDayItem>();
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
@@ -2761,7 +2814,7 @@ public class ReportObjectFactory {
 		//xReport Current session
 		ReportDaySales xReportObj = null;
 		if (sessionStatus!=null) {
-			xReportObj = this.loadXReportDaySales(bizDateNow, sessionStatus);
+			xReportObj = this.loadXReportDaySales(bizDateNow, sessionStatus, "0.00", false);
 		}
         if (reportSummary.isEmpty()) {
         	Map<String, Object> summyObj = new HashMap<String, Object>();

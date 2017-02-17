@@ -696,29 +696,67 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         //
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-12">----Cash In/Out-------</div>';
+        liList+='<div class="col-md-12">----Drawer-------</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Start Drawer</div>';
+        liList+='<div class="col-md-2"></div>';
+        liList+='<div class="col-md-4">$'+((getJson.startDrawerAmount==''||getJson.startDrawerAmount=='0')?'0.00':getJson.startDrawerAmount)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">TOTAL CASH</div>';
+        liList+='<div class="col-md-2"></div>';
+        liList+='<div class="col-md-4">$'+((getJson.totalCash==''||getJson.totalCash=='0')?'0.00':getJson.totalCash)+'</div>';
         liList+='</div>';
         liList+='</li>';
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">CashInAmt</div>';
+        liList+='<div class="col-md-6">Stored-Card Cash Charge</div>';
+        liList+='<div class="col-md-2"></div>';
+        liList+='<div class="col-md-4">$'+((getJson.cashTopUp==''||getJson.cashTopUp=='0')?'0.00':getJson.cashTopUp)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Cash In</div>';
         liList+='<div class="col-md-2"></div>';
         liList+='<div class="col-md-4">$'+((getJson.cashInAmt==''||getJson.cashInAmt=='0')?'0.00':getJson.cashInAmt)+'</div>';
         liList+='</div>';
         liList+='</li>';
+
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">CashOutAmt</div>';
+        liList+='<div class="col-md-6">Cash Out</div>';
         liList+='<div class="col-md-2"></div>';
         liList+='<div class="col-md-4">$'+((getJson.cashOutAmt==''||getJson.cashOutAmt=='0')?'0.00':getJson.cashOutAmt)+'</div>';
         liList+='</div>';
         liList+='</li>';
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';
-        liList+='<div class="col-md-6">VarianceAmt</div>';
+        liList+='<div class="col-md-6">Expected in Drawer</div>';
         liList+='<div class="col-md-2"></div>';
-        liList+='<div class="col-md-4">$'+((getJson.varianceAmt==''||getJson.varianceAmt=='0')?'0.00':getJson.varianceAmt)+'</div>';
-
+        liList+='<div class="col-md-4">$'+((getJson.expectedAmount==''||getJson.expectedAmount=='0')?'0.00':getJson.expectedAmount)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Actual in Drawer</div>';
+        liList+='<div class="col-md-2"></div>';
+        liList+='<div class="col-md-4">$'+((getJson.waiterAmount==''||getJson.waiterAmount=='0')?'0.00':getJson.waiterAmount)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">Difference</div>';
+        liList+='<div class="col-md-2"></div>';
+        liList+='<div class="col-md-4">$'+((getJson.difference==''||getJson.difference=='0')?'0.00':getJson.difference)+'</div>';
         liList+='</div>';
         liList+='</li>';
         bilvalue=""+getJson.totalBills==''?'0':""+getJson.totalBills;

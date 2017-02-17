@@ -306,7 +306,7 @@ public class MainPage extends BaseActivity {
 	}
 
 	private void refreshTotal() {
-		orderDetails = OrderDetailSQL.getUnFreeOrderDetails(currentOrder);
+		orderDetails = OrderDetailSQL.getUnFreeOrderDetailsForWaiter(currentOrder);
 		List<OrderDetail> orderDetailList = OrderDetailSQL
 				.getOrderDetails(currentOrder.getId());
 		int itemCount = 0;

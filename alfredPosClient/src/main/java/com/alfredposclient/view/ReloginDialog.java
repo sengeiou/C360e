@@ -48,7 +48,7 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
 
     public ReloginDialog(BaseActivity parent) {
         this.parent = parent;
-        user = App.instance.getUser();
+//        user = App.instance.getUser();
         initView();
     }
 

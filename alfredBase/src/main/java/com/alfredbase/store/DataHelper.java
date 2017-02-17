@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.alfredbase.ParamConst;
+
 public class DataHelper {
 	private SQLiteDatabase db;
 	private static String database_name;
@@ -42,6 +44,7 @@ public class DataHelper {
 				onUpgradeForOldVersion7(db);
 				onUpgradeForOldVersion8(db);
 				onUpgradeForOldVersion9(db);
+				onUpgrandForOldVersion11(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -65,6 +68,8 @@ public class DataHelper {
 						onUpgradeForOldVersion7(db);
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
@@ -75,6 +80,8 @@ public class DataHelper {
 						onUpgradeForOldVersion7(db);
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
@@ -84,6 +91,8 @@ public class DataHelper {
 						onUpgradeForOldVersion7(db);
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
 						break;
 					case 4:
 						onUpgradeForOldVersion4(db);
@@ -92,6 +101,8 @@ public class DataHelper {
 						onUpgradeForOldVersion7(db);
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
 						break;
 					case 5:
 						onUpgradeForOldVersion5(db);
@@ -99,24 +110,41 @@ public class DataHelper {
 						onUpgradeForOldVersion7(db);
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
 						break;
 					case 6:
 						onUpgradeForOldVersion6(db);
 						onUpgradeForOldVersion7(db);
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
 						break;
 					case 7:
 						onUpgradeForOldVersion7(db);
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
 						break;
 					case 8:
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
 						break;
 					case 9:
 						onUpgradeForOldVersion9(db);
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
+						break;
+					case 10:
+						onUpgradeForOldVersion10(db);
+						onUpgrandForOldVersion11(db);
+						break;
+					case 11:
+						onUpgrandForOldVersion11(db);
 						break;
 				default:
 					break;
@@ -683,6 +711,29 @@ public class DataHelper {
 					+ " ADD COLUMN orderRemark TEXT");
 			db.execSQL("ALTER TABLE " + TableNames.KotSummary
 					+ " ADD COLUMN orderRemark TEXT");
+		}
+		private void onUpgradeForOldVersion10(SQLiteDatabase db){
+			db.execSQL("update " + TableNames.SyncMsg + " set status = " + ParamConst.SYNC_MSG_UN_SEND + " where status = " + ParamConst.SYNC_MSG_MALDATA + " and msgType <> 1001");
+		}
+
+		private void onUpgrandForOldVersion11(SQLiteDatabase db){
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN startDrawerAmount TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN expectedAmount TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN waiterAmount TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN difference TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN cashTopUp TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ConsumingRecords
+					+ " ADD COLUMN payTypeId INTEGER default -1");
+
+			db.execSQL("CREATE TABLE "
+					+ TableNames.ReportSessionSales
+					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, sessionName TEXT, startDrawer TEXT, cash TEXT, cashTopup TEXT, expectedAmount TEXT, actualAmount TEXT, difference TEXT, businessDate LONG)");
+
 		}
 	}
 }

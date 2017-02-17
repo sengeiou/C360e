@@ -142,6 +142,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="gone">
+<<<<<<< HEAD
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -150,6 +151,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="321" />
+=======
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="123"
+                        />
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="321"
+                        />
+>>>>>>> master
             </LinearLayout>
 
             <LinearLayout

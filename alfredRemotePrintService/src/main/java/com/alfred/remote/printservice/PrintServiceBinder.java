@@ -43,6 +43,7 @@ import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrintReceiptInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.ReportEntItem;
+import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.utils.BH;
@@ -110,7 +111,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 		}
 		
 	}
-	
+
 	@Override
 	public String getMessage() throws RemoteException {
 		return "hello";
@@ -142,7 +143,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 	}
 	
 	@Override
-	public void printDaySalesReport(String xzType, String printer,String title, String report, String tax, String useropen)
+	public void printDaySalesReport(String xzType, String printer,String title, String report, String tax, String useropen, String sessionSales)
 			throws RemoteException{
 		Gson gson = new Gson();
 		PrinterDevice prtDevice =  gson.fromJson(printer, PrinterDevice.class);
@@ -150,6 +151,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 		ReportDaySales reportData =  gson.fromJson(report, ReportDaySales.class);
 		ArrayList<ReportDayTax> taxData = gson.fromJson(tax, new TypeToken<ArrayList<ReportDayTax>>(){}.getType());
 		List<ReportUserOpenDrawer> reportUserOpenDrawers = gson.fromJson(useropen, new TypeToken<List<ReportUserOpenDrawer>>(){}.getType());
+		List<ReportSessionSales> reportSessionSales = null;
+		if(!TextUtils.isEmpty(sessionSales)){
+			reportSessionSales = gson.fromJson(sessionSales, new TypeToken<List<ReportSessionSales>>(){}.getType());
+		}
  		PrintManager printMgr = this.service.getPrintMgr();
 		JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
 		PrinterQueueManager pqMgr = this.service.getPqMgr();
@@ -175,7 +180,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					PrintService.instance.getResources().getString(R.string.qty_), 
 					PrintService.instance.getResources().getString(R.string.amount));
 			salesPrint.setPrinterIp(prtDevice.getIP());
-			salesPrint.print(reportData, taxData, reportUserOpenDrawers);
+			salesPrint.print(reportData, taxData, reportUserOpenDrawers, reportSessionSales);
 			salesPrint.AddFooter(prtTitle.getDate()+" "+prtTitle.getTime());
 			
 			pqMgr.queuePrint(salesPrint.getJobForQueue());
