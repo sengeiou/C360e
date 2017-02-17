@@ -124,7 +124,7 @@ public class PhotoEditActivity extends CropImageActivity implements AdapterView.
         super.onRestoreInstanceState(savedInstanceState);
         mSelectPhotoList = (ArrayList<PhotoInfo>) getIntent().getSerializableExtra("selectPhotoMap");
         mEditPhotoCacheFile = (File) savedInstanceState.getSerializable("editPhotoCacheFile");
-        mPhotoTempMap = new LinkedHashMap<>((HashMap<Integer, PhotoTempModel>) getIntent().getSerializableExtra("results"));
+        mPhotoTempMap = new LinkedHashMap<Integer, PhotoTempModel>((HashMap<Integer, PhotoTempModel>) getIntent().getSerializableExtra("results"));
 
         mSelectIndex = savedInstanceState.getInt("selectIndex");
         mCropState = savedInstanceState.getBoolean("cropState");
@@ -208,15 +208,15 @@ public class PhotoEditActivity extends CropImageActivity implements AdapterView.
             mEditPhotoAction = this.getIntent().getBooleanExtra(EDIT_PHOTO_ACTION, false);
 
             if (mSelectPhotoList == null) {
-                mSelectPhotoList = new ArrayList<>();
+                mSelectPhotoList = new ArrayList<PhotoInfo>();
             }
-            mPhotoTempMap = new LinkedHashMap<>();
-            mPhotoList = new ArrayList<>(mSelectPhotoList);
+            mPhotoTempMap = new LinkedHashMap<Integer, PhotoTempModel>();
+            mPhotoList = new ArrayList<PhotoInfo>(mSelectPhotoList);
 
             mEditPhotoCacheFile = GalleryFinal.getCoreConfig().getEditPhotoCacheFolder();
 
             if (mPhotoList == null) {
-                mPhotoList = new ArrayList<>();
+                mPhotoList = new ArrayList<PhotoInfo>();
             }
 
             for (PhotoInfo info : mPhotoList) {

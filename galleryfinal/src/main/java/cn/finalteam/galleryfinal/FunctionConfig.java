@@ -138,7 +138,7 @@ public class FunctionConfig implements Cloneable{
 
         public Builder setSelected(Collection<PhotoInfo> selectedList) {
             if ( selectedList != null ) {
-                ArrayList<String> list = new ArrayList<>();
+                ArrayList<String> list = new ArrayList<String>();
                 for(PhotoInfo info:selectedList) {
                     if (info != null) {
                         list.add(info.getPhotoPath());
@@ -159,7 +159,7 @@ public class FunctionConfig implements Cloneable{
 
         public Builder setFilter(Collection<PhotoInfo> filterList) {
             if ( filterList != null ) {
-                ArrayList<String> list = new ArrayList<>();
+                ArrayList<String> list = new ArrayList<String>();
                 for(PhotoInfo info:filterList) {
                     if (info != null) {
                         list.add(info.getPhotoPath());

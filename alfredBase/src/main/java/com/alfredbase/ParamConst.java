@@ -85,6 +85,8 @@ public class ParamConst {
 	public static final int ORDER_DISCOUNT_TYPE_RATE_BY_ORDER = 10;
 	public static final int ORDER_DISCOUNT_TYPE_SUB_BY_ORDER = 11;
 	public static final int ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL = 12;
+	public static final int ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY = 21;
+	public static final int ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY = 22;
 
 	// 打折类型(0不打折、1根据比例打折、2直接减)
 	public static final int ORDERDETAIL_DISCOUNT_TYPE_NULL = 0;
@@ -92,6 +94,8 @@ public class ParamConst {
 	public static final int ORDERDETAIL_DISCOUNT_TYPE_SUB = 2;
 	public static final int ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE = 3;
 	public static final int ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB = 4;
+	public static final int ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE = 5;
+	public static final int ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB = 6;
 
 	// OrderDetail的订单详情的状态 1added、2Kotprinterd、发送到厨房 3prepared、 厨房已经做好了 4served、
 	// 服务员已经送菜

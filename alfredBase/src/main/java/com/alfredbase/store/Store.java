@@ -90,7 +90,6 @@ public class Store {
 	public static final String KDS_SYSTEM_UPDATE_INFO = "KDS_SYSTEM_UPDATE_INFO";
 	public static final String WAITER_SYSTEM_UPDATE_INFO = "WAITER_SYSTEM_UPDATE_INFO";
 
-<<<<<<< HEAD
 	public static final String SUNMI_STYLE = "SUNMI_STYLE";
 	public static final String SUNMI_DATA = "SUNMI_DATA";
 	public static final String SUNMI_WELCOME = "SUNMI_WELCOME";
@@ -98,9 +97,7 @@ public class Store {
 	public static final String COLOR_PICKER= "COLOR_PICKER";
 
 	public static final String LOCK_SCREEN = "LOCK_SCREEN";
-=======
-
->>>>>>> master
+	public static final String DISCOUNT_SELECTED_ITEM = "DISCOUNT_SELECTED_ITEM";
 
 	private Store() {
 	};
@@ -299,4 +296,6 @@ public class Store {
 		// 删除元素重新建立索引写入数据
 		putStrListValue(context, key, strList);
 	}
+
+
 }

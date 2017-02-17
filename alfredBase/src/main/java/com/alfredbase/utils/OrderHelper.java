@@ -251,33 +251,36 @@ public class OrderHelper {
 	public static void setOrderDiscount(Order order,
 			List<OrderDetail> orderDetails) {
 		BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER) {
+		if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER
+				|| order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY) {
 			discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
 			for (OrderDetail orderDetail : orderDetails) {
-				if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE){
+				if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+						|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB){
 					discount = BH.add(discount, BH.mul(
 							BH.getBD(orderDetail.getRealPrice()),
 							BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
 							true);
-				}else if(orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-					discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
+					}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+						discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
 					}
 				}
-			} else {
+		} else {
 				for (OrderDetail orderDetail : orderDetails) {
 					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
 						discount = BH.add(discount,
 								BH.getBD(orderDetail.getDiscountPrice()), true);
 					} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
 									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
-									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB) {
+									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE) {
 						discount = BH.add(discount, BH.mul(
 								BH.getBD(orderDetail.getRealPrice()),
 								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
 								true);
 					}
 				}
-			}		
+			}
 			order.setDiscountAmount(BH.doubleFormat.format(discount));
 	}
 	// 只有修改orderDiscount的时候才能调用这个方法

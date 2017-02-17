@@ -42,7 +42,7 @@ public class PhotoTools {
      * @return
      */
     public static List<PhotoFolderInfo> getAllPhotoFolder(Context context, List<PhotoInfo> selectPhotoMap) {
-        List<PhotoFolderInfo> allFolderList = new ArrayList<>();
+        List<PhotoFolderInfo> allFolderList = new ArrayList<PhotoFolderInfo>();
         final String[] projectionPhotos = {
                 MediaStore.Images.Media._ID,
                 MediaStore.Images.Media.BUCKET_ID,
@@ -52,8 +52,8 @@ public class PhotoTools {
                 MediaStore.Images.Media.ORIENTATION,
                 MediaStore.Images.Thumbnails.DATA
         };
-        final ArrayList<PhotoFolderInfo> allPhotoFolderList = new ArrayList<>();
-        HashMap<Integer, PhotoFolderInfo> bucketMap = new HashMap<>();
+        final ArrayList<PhotoFolderInfo> allPhotoFolderList = new ArrayList<PhotoFolderInfo>();
+        HashMap<Integer, PhotoFolderInfo> bucketMap = new HashMap<Integer, PhotoFolderInfo>();
         Cursor cursor = null;
         //所有图片
         PhotoFolderInfo allPhotoFolderInfo = new PhotoFolderInfo();

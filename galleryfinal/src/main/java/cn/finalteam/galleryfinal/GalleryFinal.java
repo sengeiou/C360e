@@ -317,7 +317,7 @@ public class GalleryFinal {
         config.crop = true;
 
         mCurrentFunctionConfig = config;
-        ArrayList<PhotoInfo> map = new ArrayList<>();
+        ArrayList<PhotoInfo> map = new ArrayList<PhotoInfo>();
         PhotoInfo photoInfo = new PhotoInfo();
         photoInfo.setPhotoPath(photoPath);
         photoInfo.setPhotoId(Utils.getRandom(10000, 99999));
@@ -385,7 +385,7 @@ public class GalleryFinal {
         config.mutiSelect = false;//拍照为单选
 
         mCurrentFunctionConfig = config;
-        ArrayList<PhotoInfo> map = new ArrayList<>();
+        ArrayList<PhotoInfo> map = new ArrayList<PhotoInfo>();
         PhotoInfo photoInfo = new PhotoInfo();
         photoInfo.setPhotoPath(photoPath);
         photoInfo.setPhotoId(Utils.getRandom(10000, 99999));

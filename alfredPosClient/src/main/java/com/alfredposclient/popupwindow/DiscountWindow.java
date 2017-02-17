@@ -15,12 +15,8 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
-import com.alfredbase.javabean.ItemCategory;
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.store.sql.ItemCategorySQL;
-import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BH;
@@ -31,9 +27,6 @@ import com.alfredposclient.R;
 import com.alfredposclient.adapter.DiscountAdapter;
 import com.alfredposclient.view.DiscountMoneyKeyboard;
 import com.alfredposclient.view.DiscountMoneyKeyboard.KeyBoardClickListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_1 = 300;
@@ -61,7 +54,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private Order order;
 	private OrderDetail orderDetail;
 	private String sumRealPrice = "0.00";
-	private List<ItemCategory> categories = new ArrayList<ItemCategory>();
+//	private List<ItemMainCategory> categories = new ArrayList<ItemMainCategory>();
 
 	private DiscountAdapter discountAdapter;
 
@@ -87,54 +80,55 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		discount_listview = (ListView) contentView.findViewById(R.id.discount_listview);
 		discount_tv = (TextView) contentView.findViewById(R.id.discount_tv);
 
-
-		List<Integer> ids = new ArrayList<Integer>();
-		List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
-		if (orderDetails != null && orderDetails.size() != 0){
-			categories.clear();
-			for (int i = 0; i < orderDetails.size(); i++){
-				OrderDetail detail = orderDetails.get(i);
-				ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(detail.getItemId());
-				if (!ids.contains(itemDetail.getItemCategoryId())){
-					ids.add(itemDetail.getItemCategoryId());
-					ItemCategory itemCategory = ItemCategorySQL.getItemCategoryById(itemDetail.getItemCategoryId());
-					categories.add(itemCategory);
-				}
-			}
-		}
-		System.out.println("****" + categories.toString());
-		discountAdapter = new DiscountAdapter(parent, categories);
+		discountAdapter = new DiscountAdapter(parent, order);
 		discount_listview.setAdapter(discountAdapter);
 
 
 		inputView = tv_discount_percent;
 		if (order != null) {
-			sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
-			if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_NULL) {
-				tv_discount_percent.setText(ParamConst.INT_ZERO);
-				tv_discount_count.setText(ParamConst.DOUBLE_ZERO);
-			} else if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER) {
-				tv_discount_percent
-				.setText(BH.intFormat.format(BH.mul(
+			if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY){
+				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 						BH.getBD(order.getDiscountRate()),
 						BH.getBD(100), true)));
-				
-				tv_discount_count.setText(BH.mul(
-						BH.getBD(order.getDiscountRate()),
-						BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString());
-			} else {
-				if(BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))){
+				tv_discount_count.setText(ParamConst.DOUBLE_ZERO);
+				inputView = tv_discount_percent;
+				tv_count_sign.setBackgroundResource(R.color.white);
+				tv_percent_sign.setBackgroundResource(R.color.brown);
+				tv_percent_sign.setTextColor(parent.getResources().getColor(R.color.white));
+			}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY){
+				tv_discount_percent.setText(ParamConst.INT_ZERO);
+				tv_discount_count.setText(BH.getBD(order.getDiscountPrice()).toString());
+				inputView = tv_discount_count;
+				tv_count_sign.setBackgroundResource(R.color.brown);
+				tv_count_sign.setTextColor(parent.getResources().getColor(R.color.white));
+				tv_percent_sign.setBackgroundResource(R.color.white);
+			}else {
+				sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
+				if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_NULL) {
+					tv_discount_percent.setText(ParamConst.INT_ZERO);
+					tv_discount_count.setText(ParamConst.DOUBLE_ZERO);
+				} else if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER) {
 					tv_discount_percent
 							.setText(BH.intFormat.format(BH.mul(
-									BH.div(BH.getBD(order.getDiscountPrice()), BH.sub(BH.getBD(order.getSubTotal()), 
-											BH.getBD(sumRealPrice), false), false),
+									BH.getBD(order.getDiscountRate()),
 									BH.getBD(100), true)));
-				}else{
-					tv_discount_percent.setText(ParamConst.INT_ZERO);
-				}
-				tv_discount_count.setText(BH.getBD(order.getDiscountPrice()).toString());
-			}
 
+					tv_discount_count.setText(BH.mul(
+							BH.getBD(order.getDiscountRate()),
+							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString());
+				} else {
+					if (BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))) {
+						tv_discount_percent
+								.setText(BH.intFormat.format(BH.mul(
+										BH.div(BH.getBD(order.getDiscountPrice()), BH.sub(BH.getBD(order.getSubTotal()),
+												BH.getBD(sumRealPrice), false), false),
+										BH.getBD(100), true)));
+					} else {
+						tv_discount_percent.setText(ParamConst.INT_ZERO);
+					}
+					tv_discount_count.setText(BH.getBD(order.getDiscountPrice()).toString());
+				}
+			}
 		} else {
 			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
@@ -320,18 +314,20 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		if ("X".equals(key)) {
 			dismiss();
 			if (resultCall != null)
-				resultCall.call(null, null);
+				resultCall.call(null, null, false);
 		} else if ("Enter".equals(key)) {
 			dismiss();
 			if (resultCall != null) {
 				if (inputView == tv_discount_percent) {
+					boolean discountByCategory = discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
 					resultCall.call(
 							BH.div(BH.getBD(tv_discount_percent.getText()
 									.toString()), BH.getBD(100), true)
-									.toString(), null);
+									.toString(), null, discountByCategory);
 				} else {
+					boolean discountByCategory = discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
 					resultCall.call(null, tv_discount_count.getText()
-							.toString());
+							.toString(), discountByCategory);
 				}
 			}
 		} else if ("C".equals(key)) {
@@ -343,6 +339,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 			tv_discount_percent.setText(num);
 			setDiscountKey(num);
 		} else {
+			boolean discountByCategory = discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
 			if (inputView == tv_discount_percent) {
 				String temp = keyBuffer.toString() + key;
 				int percent = Integer.parseInt(temp);
@@ -351,6 +348,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				tv_discount_percent.setText(percent + "");
 				keyBuffer.append(key);
 				if (order != null) {
+					if(!discountByCategory)
 					tv_discount_count.setText(BH.mul(
 							BH.sub(BH.getBD(order.getSubTotal()), 
 							BH.getBD(sumRealPrice), false),
@@ -377,6 +375,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				keyBuffer.append(key);
 
 				if (order != null) {
+					if(!discountByCategory)
 					tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 							BH.div(BH.getBD(count + ""),
 									BH.sub(BH.getBD(order.getSubTotal()), 
@@ -394,6 +393,6 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	}
 
 	public interface ResultCall {
-		public void call(String discount_rate, String discount_price);
+		public void call(String discount_rate, String discount_price, boolean discountByCategory);
 	}
 }

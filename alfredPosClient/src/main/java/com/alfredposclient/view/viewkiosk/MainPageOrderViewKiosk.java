@@ -61,7 +61,6 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.view.RingTextView;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -609,44 +608,14 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
 			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()));
 
-			// 以下计算过程应该是不需要的，数据库的total数据是准确的，但是还没有时间测试
-			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-
-				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
-					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-				} else {
-					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-							+ BH.getBD(orderDetail.getDiscountPrice()));
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-							+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
-									BH.getBD(orderDetail.getDiscountPrice()),
-									true).toString());
-				}
-			} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
-							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB) {
-				BigDecimal discount = BH.mul(
-						BH.getBD(orderDetail.getRealPrice()),
-						BH.getBDNoFormat(orderDetail.getDiscountRate()), true);
-
-				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
-					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-				} else {
-					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + discount);
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-							+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
-									discount, true));
-				}
-			} else {
+			if(orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE){
 				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-				} else {
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-							+ BH.getBD(orderDetail.getRealPrice()));
-				}
+				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
+			}else{
+				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getDiscountPrice()).toString());
+				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
+						+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
+						BH.getBD(orderDetail.getDiscountPrice()), true));
 			}
 			holder.discount.setBackgroundColor(context.getResources().getColor(
 					R.color.white));
@@ -675,7 +644,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 					map.put("resultCall", new ResultCall() {
 						@Override
 						public void call(final String discount_rate,
-								final String discount_price) {
+								final String discount_price, boolean discountByCategory) {
 							// parent.loadingDialog.show();
 							new Thread(new Runnable() {
 

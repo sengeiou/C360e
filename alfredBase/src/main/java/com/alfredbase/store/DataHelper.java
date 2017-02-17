@@ -733,7 +733,8 @@ public class DataHelper {
 			db.execSQL("CREATE TABLE "
 					+ TableNames.ReportSessionSales
 					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, sessionName TEXT, startDrawer TEXT, cash TEXT, cashTopup TEXT, expectedAmount TEXT, actualAmount TEXT, difference TEXT, businessDate LONG)");
-
+			db.execSQL("ALTER TABLE " + TableNames.OrderDetail
+					+ " ADD COLUMN mainCategoryId INTEGER default 0");
 		}
 	}
 }

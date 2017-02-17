@@ -16,7 +16,6 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
-import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.TextTypeFace;
@@ -187,7 +186,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 		map.put("resultCall", new ResultCall() {
 
 			@Override
-			public void call(final String discount_rate, final String discount_price) {
+			public void call(final String discount_rate, final String discount_price, final boolean discountByCategory) {
 //				parent.loadingDialog.show();
 				new Thread(new Runnable() {
 					
@@ -203,18 +202,26 @@ public class MainPageOperatePanel extends LinearLayout implements
 
 						if (!CommonUtil.isNull(discount_rate)) {
 							order.setDiscountRate(discount_rate);
-							order.setDiscountPrice(BH.mul(
-									BH.getBD(order.getSubTotal()),
-									BH.getBDNoFormat(order.getDiscountRate()), true)
-									.toString());
-							order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER);
+//							order.setDiscountPrice(BH.mul(
+//									BH.getBD(order.getSubTotal()),
+//									BH.getBDNoFormat(order.getDiscountRate()), true)
+//									.toString());
+							if(discountByCategory){
+								order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY);
+							}else{
+								order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER);
+							}
 						} else {
 							order.setDiscountPrice(discount_price);
-							order.setDiscountRate(BH.div(
-									BH.getBD(order.getDiscountAmount()),
-									BH.getBD(order.getSubTotal()), true)
-									.toString());
-							order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER);
+//							order.setDiscountRate(BH.div(
+//									BH.getBD(order.getDiscountAmount()),
+//									BH.getBD(order.getSubTotal()), true)
+//									.toString());
+							if(discountByCategory){
+								order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY);
+							}else{
+								order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER);
+							}
 						}
 						OrderSQL.updateOrderAndOrderDetailByDiscount(order);
 						List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);

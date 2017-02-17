@@ -164,8 +164,8 @@ public class EasyPermissions {
         PermissionCallbacks callbacks = (PermissionCallbacks) object;
 
         // Make a collection of granted and denied permissions from the request.
-        ArrayList<String> granted = new ArrayList<>();
-        ArrayList<String> denied = new ArrayList<>();
+        ArrayList<String> granted = new ArrayList<String>();
+        ArrayList<String> denied = new ArrayList<String>();
         for (int i = 0; i < permissions.length; i++) {
             String perm = permissions[i];
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {

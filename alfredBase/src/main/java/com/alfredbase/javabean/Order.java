@@ -53,7 +53,7 @@ public class Order implements Serializable {
 	 */
 	private String discountRate;
 	/**
-	 * (0不打折、10主订单按照比率打折、11主订单直接减、12子订单打折)
+	 * (0不打折、10主订单按照比率打折、11主订单直接减、12子订单打折, 21按分类百分比打折, 22 按分类直接减)
 	 */
 	private Integer discountType;
 	/**

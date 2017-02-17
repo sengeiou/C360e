@@ -30,7 +30,7 @@ buildscript {
 //        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0'
+        classpath 'com.android.tools.build:gradle:2.1.0'
         classpath 'com.tencent.bugly:symtabfileuploader:latest.release'
 //        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     }

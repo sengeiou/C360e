@@ -53,6 +53,7 @@ import com.alfredbase.store.sql.BohHoldSettlementSQL;
 import com.alfredbase.store.sql.CardsSettlementSQL;
 import com.alfredbase.store.sql.CashInOutSQL;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
@@ -223,6 +224,7 @@ public class ObjectFactory {
 			}
 			orderDetail.setGroupId(groupId);
 			orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+			orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 			if (itemDetail.getItemType() == 3)
 				orderDetail.setIsSet(1);
 		}
@@ -257,6 +259,8 @@ public class ObjectFactory {
 			orderDetail.setRealPrice(appOrderDetail.getTotalItemPrice());
 			orderDetail.setGroupId(0);
 			orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+			ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(appOrderDetail.getItemId().intValue());
+			orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 			orderDetail.setAppOrderDetailId(appOrderDetail.getId());
 		}
 		return orderDetail;
@@ -291,6 +295,7 @@ public class ObjectFactory {
 		orderDetail.setIsTakeAway(oldOrderDetail.getIsTakeAway());
 		orderDetail.setIsItemDiscount(oldOrderDetail.getIsItemDiscount());
 		orderDetail.setAppOrderDetailId(oldOrderDetail.getId());
+		orderDetail.setMainCategoryId(oldOrderDetail.getMainCategoryId());
 		return orderDetail;
 	}
 
@@ -328,6 +333,7 @@ public class ObjectFactory {
 		orderDetail.setGroupId(groupId);
 		orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 		orderDetail.setAppOrderDetailId(0);
+		orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 		return orderDetail;
 	}
 
@@ -557,6 +563,7 @@ public class ObjectFactory {
 				orderDetail.setOrderSplitId(null);
 				orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 				orderDetail.setAppOrderDetailId(0);
+				orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 			} else {
 				orderDetail.setItemNum(itemHappyHour.getFreeNum()
 						* fromOrderDetail.getItemNum());
@@ -613,6 +620,7 @@ public class ObjectFactory {
 				orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
 				orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 				orderDetail.setAppOrderDetailId(0);
+				orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 			} else {
 				orderDetail.setItemNum(itemHappyHour.getFreeNum()
 						* fromOrderDetail.getItemNum());

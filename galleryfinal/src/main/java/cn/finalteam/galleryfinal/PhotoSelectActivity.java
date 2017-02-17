@@ -84,7 +84,7 @@ public class PhotoSelectActivity extends PhotoBaseActivity implements View.OnCli
 
     //是否需要刷新相册
     private boolean mHasRefreshGallery = false;
-    private ArrayList<PhotoInfo> mSelectPhotoList = new ArrayList<>();
+    private ArrayList<PhotoInfo> mSelectPhotoList = new ArrayList<PhotoInfo>();
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -135,11 +135,11 @@ public class PhotoSelectActivity extends PhotoBaseActivity implements View.OnCli
             findViews();
             setListener();
 
-            mAllPhotoFolderList = new ArrayList<>();
+            mAllPhotoFolderList = new ArrayList<PhotoFolderInfo>();
             mFolderListAdapter = new FolderListAdapter(this, mAllPhotoFolderList, GalleryFinal.getFunctionConfig());
             mLvFolderList.setAdapter(mFolderListAdapter);
 
-            mCurPhotoList = new ArrayList<>();
+            mCurPhotoList = new ArrayList<PhotoInfo>();
             mPhotoListAdapter = new PhotoListAdapter(this, mCurPhotoList, mSelectPhotoList, mScreenWidth);
             mGvPhotoList.setAdapter(mPhotoListAdapter);
 
@@ -274,7 +274,7 @@ public class PhotoSelectActivity extends PhotoBaseActivity implements View.OnCli
         //添加到集合中
         List<PhotoInfo> photoInfoList = mAllPhotoFolderList.get(0).getPhotoList();
         if (photoInfoList == null) {
-            photoInfoList = new ArrayList<>();
+            photoInfoList = new ArrayList<PhotoInfo>();
         }
         photoInfoList.add(0, photoInfo);
         mAllPhotoFolderList.get(0).setPhotoList(photoInfoList);
@@ -283,7 +283,7 @@ public class PhotoSelectActivity extends PhotoBaseActivity implements View.OnCli
             PhotoFolderInfo photoFolderInfo = mFolderListAdapter.getSelectFolder();
             List<PhotoInfo> list = photoFolderInfo.getPhotoList();
             if ( list == null ) {
-                list = new ArrayList<>();
+                list = new ArrayList<PhotoInfo>();
             }
             list.add(0, photoInfo);
             if ( list.size() == 1 ) {
@@ -301,7 +301,7 @@ public class PhotoSelectActivity extends PhotoBaseActivity implements View.OnCli
                 if (TextUtils.equals(folderA, folderB)) {
                     List<PhotoInfo> list = folderInfo.getPhotoList();
                     if (list == null) {
-                        list = new ArrayList<>();
+                        list = new ArrayList<PhotoInfo>();
                     }
                     list.add(0, photoInfo);
                     folderInfo.setPhotoList(list);
@@ -330,7 +330,7 @@ public class PhotoSelectActivity extends PhotoBaseActivity implements View.OnCli
                 mHasRefreshGallery = true;
                 toPhotoEdit();
             } else {
-                ArrayList<PhotoInfo> list = new ArrayList<>();
+                ArrayList<PhotoInfo> list = new ArrayList<PhotoInfo>();
                 list.add(photoInfo);
                 resultData(list);
             }
@@ -447,7 +447,7 @@ public class PhotoSelectActivity extends PhotoBaseActivity implements View.OnCli
                     || ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg"))) {
                 toPhotoEdit();
             } else {
-                ArrayList<PhotoInfo> list = new ArrayList<>();
+                ArrayList<PhotoInfo> list = new ArrayList<PhotoInfo>();
                 list.add(info);
                 resultData(list);
             }

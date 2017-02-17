@@ -50,7 +50,7 @@ public class OrderDetail implements Serializable {
 
 	private String discountRate;
 	/**
-	 * 打折类型(0不打折、1根据自己比例打折、2根据自己直接减、3根据Order按照比例打折、4根据Order直接减)
+	 * 打折类型(0不打折、1根据自己比例打折、2根据自己直接减、3根据Order按照比例打折、4根据Order直接减, 5 根据分类按比例打折, 6根据分类直接减)
 	 */
 	private Integer discountType;
 
@@ -106,7 +106,9 @@ public class OrderDetail implements Serializable {
 	private int isSet = 0;
 
 	private int appOrderDetailId = 0;
-	
+
+	private int mainCategoryId;
+
 	public OrderDetail() {
 		// set openItem False
 		this.isOpenItem = 0;
@@ -360,6 +362,14 @@ public class OrderDetail implements Serializable {
 		this.appOrderDetailId = appOrderDetailId;
 	}
 
+	public int getMainCategoryId() {
+		return mainCategoryId;
+	}
+
+	public void setMainCategoryId(int mainCategoryId) {
+		this.mainCategoryId = mainCategoryId;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderDetail{" +
@@ -394,6 +404,7 @@ public class OrderDetail implements Serializable {
 				", isItemDiscount=" + isItemDiscount +
 				", isSet=" + isSet +
 				", appOrderDetailId=" + appOrderDetailId +
+				", mainCategoryId=" + mainCategoryId +
 				'}';
 	}
 

@@ -137,8 +137,8 @@ public class OrderDetailSQL {
 					+ TableNames.OrderDetail
 					+ "(id,orderId, orderOriginId, userId, itemId,itemName,itemNum, orderDetailStatus, orderDetailType,reason, printStatus, itemPrice,"
 					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
-					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { orderDetail.getId(),
@@ -169,7 +169,8 @@ public class OrderDetailSQL {
 							orderDetail.getWeight(),
 							orderDetail.getIsItemDiscount(),
 							orderDetail.getIsSet(),
-							orderDetail.getAppOrderDetailId()
+							orderDetail.getAppOrderDetailId(),
+							orderDetail.getMainCategoryId()
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,7 +189,18 @@ public class OrderDetailSQL {
 		}
 
 	}
-	
+	public static void updateDiscountTypeByMainCategoryId(int discountType, int mainCategoryId, int orderId) {
+		try {
+			String sql = "update " + TableNames.OrderDetail
+					+ " set discountType = ? where orderId = ? and mainCategoryId = ?";
+			SQLExe.getDB().execSQL(sql,
+					new Object[] { discountType, orderId, mainCategoryId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public static void updateOrderDetailGroupId(OrderDetail orderDetail){
 		try {
 			String sql = "update " + TableNames.OrderDetail
@@ -220,7 +232,97 @@ public class OrderDetailSQL {
 					+ TableNames.OrderDetail
 					+ "(id, orderId, orderOriginId, userId, itemId, itemName, itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
 					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
-					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId)"
+					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
+			for (OrderDetail orderDetail : orderDetailList) {
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
+						orderDetail.getId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
+						orderDetail.getOrderId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 3,
+						orderDetail.getOrderOriginId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
+						orderDetail.getUserId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 5,
+						orderDetail.getItemId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 6,
+						orderDetail.getItemName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
+						orderDetail.getItemNum());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
+						orderDetail.getOrderDetailStatus());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
+						orderDetail.getOrderDetailType());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 10,
+						orderDetail.getReason());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 11,
+						orderDetail.getPrintStatus());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 12,
+						orderDetail.getItemPrice());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 13,
+						orderDetail.getTaxPrice());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 14,
+						orderDetail.getDiscountPrice());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 15,
+						orderDetail.getModifierPrice());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 16,
+						orderDetail.getRealPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 17,
+						orderDetail.getCreateTime());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 18,
+						orderDetail.getUpdateTime());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 19,
+						orderDetail.getDiscountRate());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 20,
+						orderDetail.getDiscountType());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 21,
+						orderDetail.getFromOrderDetailId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 22,
+						orderDetail.getIsFree());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 23,
+						orderDetail.getGroupId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 24,
+						orderDetail.getIsOpenItem());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 25,
+						orderDetail.getSpecialInstractions());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
+						orderDetail.getOrderSplitId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 27,
+						orderDetail.getIsTakeAway());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 28,
+						orderDetail.getWeight());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 29,
+						orderDetail.getIsItemDiscount());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 30,
+						orderDetail.getIsSet());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 31,
+						orderDetail.getAppOrderDetailId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 32,
+						orderDetail.getMainCategoryId());
+				sqLiteStatement.executeInsert();
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	public static void addOrderDetailListFromWaiter(
+			List<OrderDetail> orderDetailList) {
+		if (orderDetailList == null) {
+			return;
+		}
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			db.beginTransaction();
+			String sql = "insert into "
+					+ TableNames.OrderDetail
+					+ "(orderId, orderOriginId, userId, itemId, itemName, itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
+					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree," 
+					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (OrderDetail orderDetail : orderDetailList) {
@@ -286,95 +388,8 @@ public class OrderDetailSQL {
 						orderDetail.getIsSet());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 31,
 						orderDetail.getAppOrderDetailId());
-
-				sqLiteStatement.executeInsert();
-			}
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-	public static void addOrderDetailListFromWaiter(
-			List<OrderDetail> orderDetailList) {
-		if (orderDetailList == null) {
-			return;
-		}
-		SQLiteDatabase db = SQLExe.getDB();
-		try {
-			db.beginTransaction();
-			String sql = "insert into "
-					+ TableNames.OrderDetail
-					+ "(orderId, orderOriginId, userId, itemId, itemName, itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
-					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree," 
-					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
-			for (OrderDetail orderDetail : orderDetailList) {
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
-						orderDetail.getId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
-						orderDetail.getOrderId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 3,
-						orderDetail.getOrderOriginId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
-						orderDetail.getUserId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 5,
-						orderDetail.getItemId());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 6,
-						orderDetail.getItemName());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
-						orderDetail.getItemNum());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
-						orderDetail.getOrderDetailStatus());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
-						orderDetail.getOrderDetailType());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 10,
-						orderDetail.getReason());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 11,
-						orderDetail.getPrintStatus());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 12,
-						orderDetail.getItemPrice());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 13,
-						orderDetail.getTaxPrice());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 14,
-						orderDetail.getDiscountPrice());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 15,
-						orderDetail.getModifierPrice());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 16,
-						orderDetail.getRealPrice());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 17,
-						orderDetail.getCreateTime());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 18,
-						orderDetail.getUpdateTime());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 19,
-						orderDetail.getDiscountRate());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 20,
-						orderDetail.getDiscountType());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 21,
-						orderDetail.getFromOrderDetailId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 22,
-						orderDetail.getIsFree());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 23,
-						orderDetail.getGroupId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 24,
-						orderDetail.getIsOpenItem());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 25,
-						orderDetail.getSpecialInstractions());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
-						orderDetail.getOrderSplitId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 27,
-						orderDetail.getIsTakeAway());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 28,
-						orderDetail.getWeight());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 29,
-						orderDetail.getIsItemDiscount());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 30,
-						orderDetail.getIsSet());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 31,
-						orderDetail.getAppOrderDetailId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 32,
+						orderDetail.getMainCategoryId());
 
 				sqLiteStatement.executeInsert();
 			}
@@ -392,8 +407,8 @@ public class OrderDetailSQL {
 					+ TableNames.OrderDetail
 					+ "(orderId, orderOriginId, userId, itemId, itemName, itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
 					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
-					+ " groupId,isOpenItem,specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " groupId,isOpenItem,specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { orderDetail.getOrderId(),
@@ -423,7 +438,8 @@ public class OrderDetailSQL {
 							orderDetail.getWeight(),
 							orderDetail.getIsItemDiscount(),
 							orderDetail.getIsSet(),
-							orderDetail.getAppOrderDetailId()
+							orderDetail.getAppOrderDetailId(),
+							orderDetail.getMainCategoryId()
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -436,8 +452,8 @@ public class OrderDetailSQL {
 					+ TableNames.OrderDetail
 					+ "(id, orderId, orderOriginId, userId, itemId, itemName,itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
 					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
-					+ " groupId,isOpenItem,specialInstractions, orderSplitId, isTakeAway,weight, isItemDiscount, isSet, appOrderDetailId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " groupId,isOpenItem,specialInstractions, orderSplitId, isTakeAway,weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { orderDetail.getId(),
@@ -468,7 +484,8 @@ public class OrderDetailSQL {
 							orderDetail.getWeight(),
 							orderDetail.getIsItemDiscount(),
 							orderDetail.getIsSet(),
-							orderDetail.getAppOrderDetailId()
+							orderDetail.getAppOrderDetailId(),
+							orderDetail.getMainCategoryId()
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -522,6 +539,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -641,6 +659,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -712,6 +731,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -774,6 +794,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -844,6 +865,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -914,6 +936,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -984,6 +1007,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -1047,6 +1071,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -1111,6 +1136,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -1197,6 +1223,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1278,6 +1305,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1336,6 +1364,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				orderDetails.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -1399,6 +1428,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				orderDetails.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -1463,6 +1493,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				orderDetails.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -1659,6 +1690,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1883,6 +1915,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				orderDetails.add(orderDetail);
 			}
 		} catch (Exception e) {
@@ -1944,6 +1977,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				orderDetails.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -2007,6 +2041,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				orderDetails.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -2072,6 +2107,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				orderDetails.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -2134,6 +2170,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				orderDetails.add(orderDetail);
 			}
 			db.setTransactionSuccessful();
@@ -2195,6 +2232,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2292,6 +2330,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			
@@ -2331,6 +2370,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			cursor = db.rawQuery(sql3,
@@ -2369,6 +2409,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 		} catch (Exception e) {
@@ -2629,6 +2670,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 			
@@ -2668,6 +2710,7 @@ public class OrderDetailSQL {
 				orderDetail.setIsItemDiscount(cursor.getInt(28));
 				orderDetail.setIsSet(cursor.getInt(29));
 				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
 				result.add(orderDetail);
 			}
 				cursor = db.rawQuery(sql3,
@@ -2706,6 +2749,7 @@ public class OrderDetailSQL {
 					orderDetail.setIsItemDiscount(cursor.getInt(28));
 					orderDetail.setIsSet(cursor.getInt(29));
 					orderDetail.setAppOrderDetailId(cursor.getInt(30));
+					orderDetail.setMainCategoryId(cursor.getInt(31));
 					result.add(orderDetail);
 				}
 		} catch (Exception e) {
