@@ -89,8 +89,6 @@ public class Store {
 	public static final String POS_SYSTEM_UPDATE_INFO = "POS_SYSTEM_UPDATE_INFO";
 	public static final String KDS_SYSTEM_UPDATE_INFO = "KDS_SYSTEM_UPDATE_INFO";
 	public static final String WAITER_SYSTEM_UPDATE_INFO = "WAITER_SYSTEM_UPDATE_INFO";
-
-<<<<<<< HEAD
 	public static final String SUNMI_STYLE = "SUNMI_STYLE";
 	public static final String SUNMI_DATA = "SUNMI_DATA";
 	public static final String SUNMI_WELCOME = "SUNMI_WELCOME";
@@ -98,9 +96,6 @@ public class Store {
 	public static final String COLOR_PICKER= "COLOR_PICKER";
 
 	public static final String LOCK_SCREEN = "LOCK_SCREEN";
-=======
-
->>>>>>> master
 
 	private Store() {
 	};
