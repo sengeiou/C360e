@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.StateListDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,9 @@ import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.ColorSelectedUtils;
+import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 
@@ -89,8 +93,23 @@ public class ItemDetailAdapter extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) arg1.getTag();
 		}
-		int color = Store.getInt(context, Store.COLOR_PICKER, Color.WHITE);
-		holder.tv_text.setBackgroundColor(color);
+		int color = Store.getInt(context, Store.COLOR_PICKER, 0);
+
+		if (IntegerUtils.isEmptyOrZero(color)){
+			holder.tv_text.setTextColor(context.getResources().getColorStateList(R.color.text_color_selector));
+			holder.tv_text.setBackgroundResource(R.drawable.box_menu_selector);
+		}else {
+//			boolean boo = CommonUtil.isShenRGB(CommonUtil.getRgb(color));
+//			if (boo){
+//				holder.tv_text.setTextColor(context.getResources().getColorStateList(R.color.text_color_selector));
+//			}else {
+//				holder.tv_text.setTextColor(context.getResou rces().getColorStateList(R.color.text_color_white_black_selector));
+//			}
+			int[] rgb = CommonUtil.getRgb(color);
+			int color1 = Color.rgb(Math.abs(rgb[0] - 255),Math.abs(rgb[1] - 255),Math.abs(rgb[2]-255));
+			holder.tv_text.setTextColor(ColorSelectedUtils.createColorStateList(color1, color));
+			holder.tv_text.setBackgroundDrawable(ColorSelectedUtils.newSelector(color, color1));
+		}
 		holder.tv_text.setText(itemDetails.get(arg0).getItemName());
 		return arg1;
 	}

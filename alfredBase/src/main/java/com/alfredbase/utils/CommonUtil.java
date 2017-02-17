@@ -319,4 +319,29 @@ public class CommonUtil {
 		}
 		return type;
 	}
+
+	/**
+	 * 颜色换算
+	 * @param color
+	 * @return
+	 */
+	public static int[] getRgb(int color){
+		int[] colors = new int[3];
+		colors[0] = (color & 0xff0000) >> 16;
+		colors[1] = (color & 0x00ff00) >> 8;
+		colors[2] = (color & 0x0000ff);
+		return colors;
+	}
+
+	/**
+	 * 判断是不是深颜色
+	 * @return
+	 */
+	public static boolean isShenRGB(int[] colors){
+		int grayLevel = (int) (colors[0] * 0.299 + colors[1] * 0.587 + colors[2] * 0.114);
+		if(grayLevel>=192){
+			return true;
+		}
+		return false;
+	}
 }
