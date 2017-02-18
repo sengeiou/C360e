@@ -587,7 +587,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
 			OrderSQL.update(order);
 			btn_print_receipt.setVisibility(View.VISIBLE);
-			btn_close_bill.setVisibility(View.GONE);
+            if(!(parent instanceof EditSettlementPage))
+			    btn_close_bill.setVisibility(View.GONE);
 		} else {
 			btn_print_receipt.setVisibility(View.GONE);
 			btn_close_bill.setVisibility(View.VISIBLE);
@@ -2070,9 +2071,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		default:
 			break;
 		}
+
 		initBillSummary();
 		if(viewTag != ParamConst.SETTLEMENT_TYPE_STORED_CARD)
 			closeMoneyKeyboard();
+
+        if (settlementNum.compareTo(BH.getBD(order.getTotal())) == 0) {
+            printBill();
+        }
 	}
 
 	private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount){

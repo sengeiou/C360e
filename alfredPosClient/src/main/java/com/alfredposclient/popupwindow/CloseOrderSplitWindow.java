@@ -656,7 +656,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 			}
 			btn_print_receipt.setVisibility(View.VISIBLE);
-			btn_close_bill.setVisibility(View.GONE);
+			if(!(parent instanceof EditSettlementPage))
+				btn_close_bill.setVisibility(View.GONE);
 		} else {
 			btn_print_receipt.setVisibility(View.GONE);
 			btn_close_bill.setVisibility(View.VISIBLE);
@@ -1297,6 +1298,35 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		set.start();
 	}
 
+	private void printBill(){
+		final int paidOrderId = orderSplit.getId();
+		final int tabelId = orderSplit.getTableId();
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+
+				HashMap<String, String> map = new HashMap<String, String>();
+
+
+				map.put("orderSplitId", String.valueOf(paidOrderId));
+				map.put("paymentId", String.valueOf(payment.getId().intValue()));
+				// to print close receipt
+				handler.sendMessage(handler.obtainMessage(
+						MainPage.VIEW_EVENT_CLOSE_SPLIT_BILL, map));
+				parent.runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						// show table after settlement is done
+						printReceiptAction(tabelId);
+					}
+				});
+			}
+		}).start();
+	}
+
 	@Override
 	public void onClick(View v) {
 		if (ButtonClickTimer.canClick(v)) {
@@ -1308,34 +1338,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			case R.id.btn_print_receipt: {
 //				v.setVisibility(View.GONE);
 				// closeWindowAction();
-                final int paidOrderId = orderSplit.getId();
-                final int tabelId = orderSplit.getTableId();
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-
-
-						HashMap<String, String> map = new HashMap<String, String>();
-
-
-						map.put("orderSplitId", String.valueOf(paidOrderId));
-						map.put("paymentId", String.valueOf(payment.getId().intValue()));
-						// to print close receipt
-						handler.sendMessage(handler.obtainMessage(
-								MainPage.VIEW_EVENT_CLOSE_SPLIT_BILL, map));
-						parent.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								// show table after settlement is done
-								printReceiptAction(tabelId);
-							}
-						});
-					}
-				}).start();
-
-
+				printBill();
 			}
 
 				break;
@@ -2422,6 +2425,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		initBillSummary();
 		closeMoneyKeyboard();
 		initSettlementDetail();
+
+		if (settlementNum.compareTo(BH.getBD(orderSplit.getTotal())) == 0) {
+			printBill();
+		}
 	}
 	
 	private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount){

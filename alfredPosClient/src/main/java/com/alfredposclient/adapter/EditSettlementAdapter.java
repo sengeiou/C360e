@@ -1,11 +1,5 @@
 package com.alfredposclient.adapter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +15,11 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.Payment;
+import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.javabeanforhtml.EditSettlementInfo;
-import com.alfredbase.javabean.model.PrintBill;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
@@ -32,15 +27,19 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.PaymentSQL;
+import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static com.alfredposclient.activity.EditSettlementPage.EDIT_ITEM_ACTION;
 
@@ -154,6 +153,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 					order, App.instance.getRevenueCenter());
 			RoundAmount roundAmount = RoundAmountSQL
 					.getRoundAmountByOrderAndBill(order, orderBill);
+			List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getPaymentSettlementsBypaymentId(editSettlementInfo.getPaymentId());
 			App.instance.remoteBillPrint(
 					printer,
 					ObjectFactory.getInstance().getPrinterTitle(
@@ -168,7 +168,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 							OrderDetailSQL.getOrderDetails(order.getId())),
 					orderModifiers, OrderDetailTaxSQL.getTaxPriceSUMForPrint(
 							App.instance.getLocalRestaurantConfig()
-									.getIncludedTax().getTax(), order), null,
+									.getIncludedTax().getTax(), order), paymentSettlements,
 					roundAmount);
 		} else {
 			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
@@ -181,15 +181,6 @@ public class EditSettlementAdapter extends BaseAdapter {
 				if (orderDetails.isEmpty()) {
 					continue;
 				}
-//				RoundAmount orderSplitRoundAmount = ObjectFactory.getInstance()
-//						.getRoundAmountByOrderSplit(
-//								orderSplit,
-//								orderBill,
-//								App.instance.getLocalRestaurantConfig()
-//										.getRoundType(),
-//								order.getBusinessDate());
-//				OrderHelper.setOrderSplitTotalAlfterRound(orderSplit,
-//						orderSplitRoundAmount);
 				List<Map<String, String>> taxMap = OrderDetailTaxSQL
 						.getOrderSplitTaxPriceSUMForPrint(App.instance
 								.getLocalRestaurantConfig().getIncludedTax()
@@ -206,9 +197,6 @@ public class EditSettlementAdapter extends BaseAdapter {
 										+ App.instance.getUser().getLastName(),
 								TableInfoSQL.getTableById(orderSplit.getTableId())
 										.getName(), orderBill, order.getBusinessDate().toString(), 2);
-				orderSplit
-						.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY);
-				OrderSplitSQL.update(orderSplit);
 				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 						.getInstance().getItemModifierListByOrderDetail(
 								orderDetails);
@@ -220,9 +208,12 @@ public class EditSettlementAdapter extends BaseAdapter {
 				temporaryOrder.setTotal(orderSplit.getTotal());
 				temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
 				temporaryOrder.setOrderNo(order.getOrderNo());
+				RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit, orderBill);
+				Payment payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId().intValue());
+				List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getPaymentSettlementsBypaymentId(payment.getId().intValue());
 				App.instance.remoteBillPrint(printer, title, temporaryOrder,
-						orderItems, orderModifiers, taxMap, null,
-						null);
+						orderItems, orderModifiers, taxMap, paymentSettlements,
+						roundAmount);
 			}
 		}
 	}

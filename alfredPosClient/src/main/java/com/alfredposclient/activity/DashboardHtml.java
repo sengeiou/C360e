@@ -1,9 +1,7 @@
 package com.alfredposclient.activity;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -11,6 +9,7 @@ import android.webkit.WebView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.VerifyDialog;
 import com.alfredbase.javabean.javabeanforhtml.DashboardInfo;
 import com.alfredbase.javabean.javabeanforhtml.DashboardItemDetail;
 import com.alfredbase.javabean.javabeanforhtml.DashboardSales;
@@ -31,6 +30,9 @@ import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.global.WebViewConfig;
 import com.google.gson.Gson;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+
 public class DashboardHtml extends BaseActivity {
 	private String TAG = DashboardHtml.class.getSimpleName();
 	private WebView web;
@@ -40,6 +42,23 @@ public class DashboardHtml extends BaseActivity {
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_common_web);
+		VerifyDialog verifyDialog = new VerifyDialog(context, handler);
+		verifyDialog.show("initData",null);
+	}
+
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what){
+				case VerifyDialog.DIALOG_RESPONSE:
+					init();
+					break;
+			}
+		}
+	};
+
+	private void init(){
 		web = (WebView) findViewById(R.id.web);
 		WebViewConfig.setDefaultConfig(web);
 		javaConnectJS = new JavaConnectJS() {

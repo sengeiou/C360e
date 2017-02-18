@@ -67,7 +67,6 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.popupwindow.CloseOrderSplitWindow;
 import com.alfredposclient.popupwindow.CloseOrderWindow;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +79,7 @@ public class EditSettlementPage extends BaseActivity {
     private Order currentOrder;
     private CloseOrderSplitWindow closeOrderSplitWindow;
     private OrderSplit orderSplit;
-    private Gson gson = new Gson();
+//    private Gson gson = new Gson();
     public static final int EDIT_SETTLEMENT_CLOSE_BILL = -110;
     public static final String EDIT_ITEM_ACTION = "EDIT_ITEM_ACTION";
     private VerifyDialog verifyDialog;

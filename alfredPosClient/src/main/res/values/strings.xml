@@ -97,6 +97,7 @@
     <string name="pax">Pax:</string>
     <string name="order_id">Order ID:</string>
     <string name="discount">Discount</string>
+    <string name="unseat">Unseat</string>
     <string name="bill">Bill</string>
     <string name="table">Table</string>
     <string name="misc">Misc</string>

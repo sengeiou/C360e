@@ -188,6 +188,7 @@ public class MainPage extends BaseActivity {
 	public static final int VIEW_EVENT_SET_WEIGHT = 147;
 	
 	public static final int VIEW_EVENT_SET_APPORDER_TABLE_PACKS = 148;
+	public static final int VIEW_EVENT_UNSEAT_ORDER = 149;
 
 
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
@@ -1589,6 +1590,20 @@ public class MainPage extends BaseActivity {
 				OrderDetail orderDetail = (OrderDetail) msg.obj;
 				setWeightWindow.show(orderDetail);
 			}
+				break;
+			case VIEW_EVENT_UNSEAT_ORDER:
+				OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
+				KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
+				OrderBillSQL.deleteOrderBillByOrder(currentOrder);
+				OrderSQL.deleteOrder(currentOrder);
+				TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
+				tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
+				TableInfoSQL.updateTables(tables);
+				activityRequestCode = 0;
+				selectOrderSplitDialog.dismiss();
+				tableShowAction = SHOW_TABLES;
+				currentOrder = null;
+				showTables();
 				break;
 			default:
 				break;

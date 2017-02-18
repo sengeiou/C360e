@@ -14,10 +14,13 @@ import com.alfredbase.ParamHelper;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -66,6 +69,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 		findViewById(R.id.tv_close_bill).setOnClickListener(this);
 		findViewById(R.id.tv_tables).setOnClickListener(this);
 		findViewById(R.id.tv_discount).setOnClickListener(this);
+		findViewById(R.id.tv_unseat).setOnClickListener(this);
 		findViewById(R.id.tv_open_item).setOnClickListener(this);
 		findViewById(R.id.tv_print_bill).setOnClickListener(this);
 		findViewById(R.id.tv_transfer_table).setOnClickListener(this);
@@ -83,6 +87,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_close_bill));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_tables));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_discount));
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_unseat));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_open_item));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_print_bill));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_transfer_table));
@@ -146,6 +151,22 @@ public class MainPageOperatePanel extends LinearLayout implements
 				}
 				break;
 			}
+			case R.id.tv_unseat:
+				PaymentSettlement paymentSettlement = PaymentSettlementSQL.getPaymentSettlementsByOrderId(order.getId());
+				if (paymentSettlement != null) {
+					return;
+				}
+				DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),
+						parent.getResources().getString(R.string.discard_current_order),
+						parent.getResources().getString(R.string.no),
+						parent.getResources().getString(R.string.yes), null, new OnClickListener() {
+
+							@Override
+							public void onClick(View arg0) {
+								handler.sendEmptyMessage(MainPage.VIEW_EVENT_UNSEAT_ORDER);
+							}
+						});
+				break;
 			case R.id.tv_open_item:
 				Message msg = handler.obtainMessage();
 				msg.what = MainPage.VIEW_EVENT_SHOW_OPEN_ITEM_WINDOW;

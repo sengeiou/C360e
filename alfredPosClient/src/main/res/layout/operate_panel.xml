@@ -121,12 +121,26 @@
 
         <TextView
             android:id="@+id/tv_discount"
-            android:layout_width="170dp"
-            android:layout_height="@dimen/dp80"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
             android:layout_below="@+id/tv_print_bill"
+            android:layout_marginRight="5dp"
             android:background="@drawable/box_bill_selector"
             android:gravity="center"
             android:text="@string/discount"
+            android:textColor="@color/text_color_selector"
+            android:textSize="@dimen/text_size_small" />
+
+        <TextView
+            android:id="@+id/tv_unseat"
+            android:layout_width="@dimen/dp80"
+            android:layout_height="@dimen/dp90"
+            android:layout_below="@+id/tv_print_bill"
+            android:layout_toRightOf="@+id/tv_discount"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/box_bill_selector"
+            android:gravity="center"
+            android:text="@string/unseat"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_small" />
 

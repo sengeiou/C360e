@@ -97,6 +97,7 @@
 	<string name="pax">人数：</string>
 	<string name="order_id">单号：</string>
 	<string name="discount">折扣</string>
+    <string name="unseat">清台</string>
 	<string name="bill">账单</string>
 	<string name="table">桌台</string>
 	<string name="misc">其他</string>

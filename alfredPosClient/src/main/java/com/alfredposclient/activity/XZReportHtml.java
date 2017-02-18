@@ -1,15 +1,7 @@
 package com.alfredposclient.activity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +11,7 @@ import android.webkit.WebView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
+import com.alfredbase.VerifyDialog;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.PrinterTitle;
@@ -29,7 +22,6 @@ import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.RevenueCenter;
-import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
@@ -53,6 +45,15 @@ import com.alfredposclient.global.WebViewConfig;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.DialogSelectReportPrint;
 import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class XZReportHtml extends BaseActivity {
 	private String TAG = XZReportHtml.class.getSimpleName();
@@ -91,6 +92,23 @@ public class XZReportHtml extends BaseActivity {
 		super.initView();
 		setContentView(R.layout.activity_common_web);
 		context = this;
+		VerifyDialog verifyDialog = new VerifyDialog(context, handler);
+		verifyDialog.show("initData",null);
+	}
+
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what){
+				case VerifyDialog.DIALOG_RESPONSE:
+					init();
+					break;
+			}
+		}
+	};
+	private void init(){
+
 		businessDate = App.instance.getLastBusinessDate();
 		web = (WebView) findViewById(R.id.web);
 		WebViewConfig.setDefaultConfig(web);
