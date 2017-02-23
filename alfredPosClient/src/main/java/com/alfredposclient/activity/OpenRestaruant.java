@@ -50,6 +50,7 @@ import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
@@ -1869,7 +1870,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 								App.instance.getRevenueCenter().getId().intValue(),
 								openUser,
 								App.instance.getUser().getId().intValue(),
-								App.instance.getSessionStatus().getSession_status());
+								App.instance.getSessionStatus() == null ? -1 : App.instance.getSessionStatus().getSession_status());
 //					settingView.openDrawer();
 						App.instance.kickOutCashDrawer(App.instance.getCahierPrinter());
 					}

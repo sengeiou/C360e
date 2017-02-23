@@ -9,9 +9,12 @@ import com.alfredbase.javabean.model.ThirdpartyPayPushMsgDto;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
@@ -36,75 +39,105 @@ public class PushListenerClient implements PushServer.PushListener {
 		LogUtil.d(TAG, msg.toString());
 		if (msg == null)
 			return;
-		if(msg.getRevenueId() == 0 || msg.getRevenueId() == App.instance.getRevenueCenter().getId().intValue()) {
-			if (msg != null && PushMessage.PUSH_ORDER.equals(msg.getMsg())
-					&& !TextUtils.isEmpty(msg.getContent())) {
-				try {
-					JSONObject jsonObject = new JSONObject(msg.getContent());
-					int type = 0;
-					if(jsonObject.has("refundType")){
-						type = jsonObject.getInt("refundType");
+		if(TextUtils.isEmpty(msg.getMsg()))
+			return;
+		if(PushMessage.RE_SYNC_DATA_BY_BUSINESS_DATE.equals(msg.getMsg())){
+			if(CommonUtil.isNull(msg.getRevenueId()) || TextUtils.isEmpty(msg.getBusinessStr()) || App.instance.getRevenueCenter() == null) {
+				return;
+			}else{
+				try{
+					if(msg.getRevenueId().intValue() == App.instance.getRevenueCenter().getId().intValue()) {
+						long business = TimeUtil.getPrintingLongDate(msg.getBusinessStr());
+						SyncMsgSQL.updateSyncMsgStatus(ParamConst.SYNC_MSG_UN_SEND, business);
 					}
-					int appOrderId = jsonObject.getInt("appOrderId");
-
-					if(type == -2016){
-						AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
-						App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
-						if(App.getTopActivity() instanceof NetWorkOrderActivity){
-							App.getTopActivity().httpRequestAction(type, null);
-						}
-					}else {
-						AppOrder appOrder = AppOrderSQL.getAppOrderById(appOrderId);
-						if (appOrder == null) {
-							Map<String, Object> map = new HashMap<String, Object>();
-							map.put("appOrderId", appOrderId);
-							SyncCentre.getInstance().getAppOrderById(context, map, null, canCheck);
-						}
-					}
-				} catch (Exception e) {
+				}catch (Exception e){
 					e.printStackTrace();
 				}
+			}
+		}else{
+			if(msg.getRevenueId() == 0 || msg.getRevenueId() == App.instance.getRevenueCenter().getId().intValue()) {
+				if (msg != null && PushMessage.PUSH_ORDER.equals(msg.getMsg())
+						&& !TextUtils.isEmpty(msg.getContent())) {
+					try {
+						JSONObject jsonObject = new JSONObject(msg.getContent());
+						int type = 0;
+						if(jsonObject.has("refundType")){
+							type = jsonObject.getInt("refundType");
+						}
+						int appOrderId = jsonObject.getInt("appOrderId");
 
-//				String [] contentArray = msg.getContent().split(PushMessage.CONTENT_DELIMITER);
-//				String restaurantKeyMd5 = contentArray[0];
-////				String QRCodeStr = contentArray[1];
-//				String localRestaurantKeyMd5 = MD5Util.md5(CoreData.getInstance().getLoginResult().getRestaurantKey());
-//				if(localRestaurantKeyMd5.equals(restaurantKeyMd5)){
-//					Map<String, Object> parameters = new HashMap<String, Object>();
-//					parameters.put("QRCodeStr",msg.getContent());
-//					SyncCentre.getInstance().getOrderFromApp(App.instance.getTopActivity(), parameters);
-//				}
-			} else if (msg != null && PushMessage.ALIPAY_RESULT.equals(msg.getMsg())) {
-				if (!TextUtils.isEmpty(msg.getContent())) {
-					Gson gson = new Gson();
-					AlipayPushMsgDto alipayPushMsgDto = gson.fromJson(msg.getContent(), AlipayPushMsgDto.class);
-					App.instance.addAlipayPushMessage(alipayPushMsgDto);
-					LogUtil.d(TAG, alipayPushMsgDto.toString());
-				}
-			} else if (msg != null && PushMessage.THIRDPARTYPAY_RESULT.equals(msg.getMsg())) {
-				if (!TextUtils.isEmpty(msg.getContent())) {
-					Gson gson = new Gson();
-					ThirdpartyPayPushMsgDto thirdpartyPayPushMsgDto = gson.fromJson(msg.getContent(), ThirdpartyPayPushMsgDto.class);
-					TempOrder tempOrder = TempOrderSQL.getTempOrderByAppOrderId(Integer.parseInt(thirdpartyPayPushMsgDto.getSysOrderId()));
-					if (tempOrder == null)
-						return;
-					tempOrder.setPaied(ParamConst.TEMPORDER_PAIED);
-					TempOrderSQL.updateTempOrder(tempOrder);
-					LogUtil.d(TAG, thirdpartyPayPushMsgDto.toString());
-				}
-			} else {
-				if(PushMessage.HAPPY_HOURS.equals(msg.getMsg())
-						|| PushMessage.PRINTER.equals(msg.getMsg())
-						|| PushMessage.ITEM.equals(msg.getMsg())
-						|| PushMessage.MODIFIER.equals(msg.getMsg())
-						|| PushMessage.USER.equals(msg.getMsg())
-						|| PushMessage.RESTAURANT.equals(msg.getMsg())
-						|| PushMessage.PLACE_TABLE.equals(msg.getMsg())
-						|| PushMessage.TAX.equals(msg.getMsg())
-						|| PushMessage.REST_CONFIG.equals(msg.getMsg())){
-					saveUpdateInfo(msg);
-				}
+						if(type == -2016){
+							AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
+							App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+							if(App.getTopActivity() instanceof NetWorkOrderActivity){
+								App.getTopActivity().httpRequestAction(type, null);
+							}
+						}else {
+							AppOrder appOrder = AppOrderSQL.getAppOrderById(appOrderId);
+							if (appOrder == null) {
+								Map<String, Object> map = new HashMap<String, Object>();
+								map.put("appOrderId", appOrderId);
+								SyncCentre.getInstance().getAppOrderById(context, map, null, canCheck);
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
+	//				String [] contentArray = msg.getContent().split(PushMessage.CONTENT_DELIMITER);
+	//				String restaurantKeyMd5 = contentArray[0];
+	////				String QRCodeStr = contentArray[1];
+	//				String localRestaurantKeyMd5 = MD5Util.md5(CoreData.getInstance().getLoginResult().getRestaurantKey());
+	//				if(localRestaurantKeyMd5.equals(restaurantKeyMd5)){
+	//					Map<String, Object> parameters = new HashMap<String, Object>();
+	//					parameters.put("QRCodeStr",msg.getContent());
+	//					SyncCentre.getInstance().getOrderFromApp(App.instance.getTopActivity(), parameters);
+	//				}
+				} else if (msg != null && PushMessage.ALIPAY_RESULT.equals(msg.getMsg())) {
+					if (!TextUtils.isEmpty(msg.getContent())) {
+						Gson gson = new Gson();
+						AlipayPushMsgDto alipayPushMsgDto = gson.fromJson(msg.getContent(), AlipayPushMsgDto.class);
+						App.instance.addAlipayPushMessage(alipayPushMsgDto);
+						LogUtil.d(TAG, alipayPushMsgDto.toString());
+					}
+				} else if (msg != null && PushMessage.THIRDPARTYPAY_RESULT.equals(msg.getMsg())) {
+					if (!TextUtils.isEmpty(msg.getContent())) {
+						Gson gson = new Gson();
+						ThirdpartyPayPushMsgDto thirdpartyPayPushMsgDto = gson.fromJson(msg.getContent(), ThirdpartyPayPushMsgDto.class);
+						TempOrder tempOrder = TempOrderSQL.getTempOrderByAppOrderId(Integer.parseInt(thirdpartyPayPushMsgDto.getSysOrderId()));
+						if (tempOrder == null)
+							return;
+						tempOrder.setPaied(ParamConst.TEMPORDER_PAIED);
+						TempOrderSQL.updateTempOrder(tempOrder);
+						LogUtil.d(TAG, thirdpartyPayPushMsgDto.toString());
+					}
+				} else {
+					/**
+					 * Map<String, Integer> map = new HashMap<String, Integer>();
+					 map.put(PushMessage.HAPPY_HOURS, 1);
+					 map.put(PushMessage.PRINTER, 1);
+					 map.put(PushMessage.ITEM, 1);
+					 map.put(PushMessage.MODIFIER, 1);
+					 map.put(PushMessage.USER, 1);
+					 //									map.put(PushMessage.PLACE_TABLE, 1);
+					 map.put(PushMessage.TAX, 1);
+					 */
+					if(PushMessage.HAPPY_HOURS.equals(msg.getMsg())
+							|| PushMessage.ITEM.equals(msg.getMsg())
+							|| PushMessage.MODIFIER.equals(msg.getMsg())
+							|| PushMessage.USER.equals(msg.getMsg())
+	//						|| PushMessage.PLACE_TABLE.equals(msg.getMsg())
+							|| PushMessage.TAX.equals(msg.getMsg())){
+						saveUpdateInfo(msg);
+					}
+					if(PushMessage.RESTAURANT.equals(msg.getMsg())
+							|| PushMessage.PRINTER.equals(msg.getMsg())
+							|| PushMessage.REST_CONFIG.equals(msg.getMsg())){
+						msg.setMsg(PushMessage.PRINTER);
+						saveUpdateInfo(msg);
+					}
+
+				}
 			}
 		}
 	}

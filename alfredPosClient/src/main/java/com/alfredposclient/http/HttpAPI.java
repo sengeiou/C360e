@@ -144,10 +144,10 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(map
-                                                    .get(PushMessage.PRINTER));
+                                            map.remove(PushMessage.PRINTER);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
                                         }
                                         if (mHandler != null) {
                                             mHandler.sendMessage(mHandler
@@ -251,10 +251,10 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(map
-                                                    .get(PushMessage.USER));
+                                            map.remove(PushMessage.USER);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
                                         }
                                         HttpAnalysis.getUsers(statusCode,
                                                 headers, responseBody);
@@ -341,10 +341,10 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(map
-                                                    .get(PushMessage.ITEM));
+                                            map.remove(PushMessage.ITEM);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
                                         }
                                         HttpAnalysis.getItemCategory(
                                                 statusCode, headers,
@@ -458,10 +458,10 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(map
-                                                    .get(PushMessage.MODIFIER));
+                                            map.remove(PushMessage.MODIFIER);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
                                         }
                                         HttpAnalysis.getAllModifier(statusCode,
                                                 headers, responseBody);
@@ -521,9 +521,10 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(map.get(PushMessage.TAX));
+                                            map.remove(PushMessage.TAX);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
                                         }
                                         HttpAnalysis.getTax(statusCode,
                                                 headers, responseBody);
@@ -587,10 +588,10 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(map
-                                                    .get(PushMessage.HAPPY_HOURS));
+                                            map.remove(PushMessage.HAPPY_HOURS);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
                                         }
                                         if (mode == SyncCentre.MODE_FIRST_SYNC) {
                                             handler.sendMessage(handler
@@ -653,10 +654,10 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(map
-                                                    .get(PushMessage.PLACE_TABLE));
+                                            map.remove(PushMessage.PLACE_TABLE);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
                                         }
 //										HttpAnalysis.getPlaceInfo(statusCode,
 //												headers, responseBody);
@@ -821,6 +822,8 @@ public class HttpAPI {
                             // exception to rerun job
                             // syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
                             // SyncMsgSQL.add(syncMsg);
+                            syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
+                            SyncMsgSQL.add(syncMsg);
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
                             throw new RuntimeException(error);
@@ -1396,6 +1399,14 @@ public class HttpAPI {
                                     @Override
                                     public void run() {
                                         HttpAnalysis.getPlaceTable(responseBody);
+                                        Map<String, Integer> map = App.instance
+                                                .getPushMsgMap();
+                                        if (!map.isEmpty()) {
+                                            map.remove(PushMessage.PLACE_TABLE);
+                                            Store.saveObject(App.instance,
+                                                    Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
+                                        }
                                         handler.sendMessage(handler
                                                 .obtainMessage(
                                                         SyncData.SYNC_DATA_TAG,

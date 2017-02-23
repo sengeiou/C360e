@@ -9,6 +9,7 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UploadSQL;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.http.HttpAPI;
@@ -97,6 +98,7 @@ public class CloudSyncJobManager {
 	    		this.syncJobManager.addJob(syncOrderJob);
 	    		msg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
 	    		SyncMsgSQL.add(msg);
+				LogUtil.d("TEST","add");
 	    	}
     	}
     }

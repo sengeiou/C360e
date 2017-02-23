@@ -360,6 +360,17 @@ public class SyncMsgSQL {
 			e.printStackTrace();
 		}
 	}
+
+	public static void updateSyncMsgStatus(int status, long businessDate){
+
+		String sql = "update " + TableNames.SyncMsg + " set status = ? where businessDate = ? and msgType <> 1001";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {status, businessDate});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 	
 	public static void deleteSyncMsgByBusinessDate(long businessDate) {
 		String sql = "delete from " + TableNames.SyncMsg + " where businessDate = ?";

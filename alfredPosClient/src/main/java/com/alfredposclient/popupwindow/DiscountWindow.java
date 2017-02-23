@@ -80,12 +80,12 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		discount_listview = (ListView) contentView.findViewById(R.id.discount_listview);
 		discount_tv = (TextView) contentView.findViewById(R.id.discount_tv);
 
-		discountAdapter = new DiscountAdapter(parent, order);
-		discount_listview.setAdapter(discountAdapter);
-
 
 		inputView = tv_discount_percent;
 		if (order != null) {
+			contentView.findViewById(R.id.ll_discount_layout).setVisibility(View.VISIBLE);
+			discountAdapter = new DiscountAdapter(parent, order);
+			discount_listview.setAdapter(discountAdapter);
 			if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY){
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 						BH.getBD(order.getDiscountRate()),
@@ -130,6 +130,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				}
 			}
 		} else {
+			contentView.findViewById(R.id.ll_discount_layout).setVisibility(View.GONE);
 			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 						BH.getBD(orderDetail.getDiscountRate()), BH.getBD(100),
@@ -319,13 +320,20 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 			dismiss();
 			if (resultCall != null) {
 				if (inputView == tv_discount_percent) {
-					boolean discountByCategory = discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
+					boolean discountByCategory = false;
+					if(order != null){
+						discountByCategory = discountAdapter == null ? false : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
+					}
+
 					resultCall.call(
 							BH.div(BH.getBD(tv_discount_percent.getText()
 									.toString()), BH.getBD(100), true)
 									.toString(), null, discountByCategory);
 				} else {
-					boolean discountByCategory = discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
+					boolean discountByCategory = false;
+					if(order != null) {
+						discountByCategory = discountAdapter == null ? false : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
+					}
 					resultCall.call(null, tv_discount_count.getText()
 							.toString(), discountByCategory);
 				}
@@ -339,7 +347,11 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 			tv_discount_percent.setText(num);
 			setDiscountKey(num);
 		} else {
-			boolean discountByCategory = discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
+			boolean discountByCategory = false;
+			if(order != null){
+				discountByCategory = discountAdapter == null ? false : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
+			}
+
 			if (inputView == tv_discount_percent) {
 				String temp = keyBuffer.toString() + key;
 				int percent = Integer.parseInt(temp);

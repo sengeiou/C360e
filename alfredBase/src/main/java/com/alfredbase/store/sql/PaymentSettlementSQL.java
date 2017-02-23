@@ -693,9 +693,11 @@ public class PaymentSettlementSQL {
 				+ " t, "
 				+ TableNames.Order
 				+ " o "
-				+ "WHERE p.id = s.paymentId AND s.paymentTypeId = "
+				+ "WHERE p.id = s.paymentId AND (s.paymentTypeId = "
 				+ ParamConst.SETTLEMENT_TYPE_VOID
-				+ " and p.type = "
+				+ " or s.paymentTypeId = "
+				+ ParamConst.SETTLEMENT_TYPE_REFUND
+				+ ") and p.type = "
 				+ ParamConst.BILL_TYPE_UN_SPLIT
 				+ " AND p.orderId = t.orderId AND p.orderId = o.id AND p.businessDate = ? and s.isActive = " 
 				+ ParamConst.PAYMENT_SETT_IS_ACTIVE 
@@ -846,9 +848,11 @@ public class PaymentSettlementSQL {
 				+ " t, "
 				+ TableNames.OrderSplit
 				+ " o "
-				+ "WHERE p.id = s.paymentId AND s.paymentTypeId = "
+				+ "WHERE p.id = s.paymentId AND (s.paymentTypeId = "
 				+ ParamConst.SETTLEMENT_TYPE_VOID
-				+ " and p.type = "
+				+ " or s.paymentTypeId = "
+				+ ParamConst.SETTLEMENT_TYPE_REFUND
+				+ ") and p.type = "
 				+ ParamConst.BILL_TYPE_SPLIT
 				+ " AND p.orderId = t.orderId and t.groupId = o.groupId and s.isActive = " 
 				+ ParamConst.PAYMENT_SETT_IS_ACTIVE 

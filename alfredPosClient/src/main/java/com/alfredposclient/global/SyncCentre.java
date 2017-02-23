@@ -8,7 +8,6 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
-import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
@@ -219,13 +218,13 @@ public class SyncCentre {
 			HttpAPI.getRestaurantInfo(context, null,
 					getAbsoluteUrl(APIName.RESTAURANT_GETRESTAURANTINFO),
 					httpClient, handler, MODE_PUSH_SYNC);
-		} else if (type.equals(PushMessage.PLACE_TABLE)) {
-			RevenueCenter revenueCenter = App.instance.getRevenueCenter();
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("revenueCenter", revenueCenter);
-//			HttpAPI.getPlaceTable(context, parameters,
-//					getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO),
-//					httpClient, handler);
+//		} else if (type.equals(PushMessage.PLACE_TABLE)) {
+//			RevenueCenter revenueCenter = App.instance.getRevenueCenter();
+//			Map<String, Object> parameters = new HashMap<String, Object>();
+//			parameters.put("revenueCenter", revenueCenter);
+////			HttpAPI.getPlaceTable(context, parameters,
+////					getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO),
+////					httpClient, handler);
 		} else if (type.equals(PushMessage.TAX)) {
 			HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX),
 					httpClient, handler, MODE_PUSH_SYNC);

@@ -241,6 +241,7 @@ public class HttpAnalysis {
 			CoreData.getInstance().setRestaurantConfigs(restaurantConfigs);
 			RestaurantConfigSQL.deleteAllRestaurantConfig();
 			RestaurantConfigSQL.addRestaurantConfigs(restaurantConfigs);
+			App.instance.setLocalRestaurantConfig(restaurantConfigs);
 //			App.instance.setSessionConfigType(CoreData.getInstance().getRestaurantConfigs());
 //			App.instance.setRoundType(restaurantConfigs);
 //			App.instance.setCurrencySymbol(restaurantConfigs);

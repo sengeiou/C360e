@@ -26,6 +26,8 @@ public class PushMessage {
 	public final static String ALIPAY_RESULT = "alipay_result";
 	
 	public final static String THIRDPARTYPAY_RESULT = "thirdpartyPay_result";
+
+	public final static String RE_SYNC_DATA_BY_BUSINESS_DATE = "RE_SYNC_DATA_BY_BUSINESS_DATE";
 	
 	public final static int MESSAGE_TYPE_HEART_BEAT = -2;
 	public final static int MESSAGE_TYPE_REGISTER = 0;
@@ -37,6 +39,7 @@ public class PushMessage {
 	private Integer restId;
 	private Integer revenueId;
 	private String content; // json 数据
+	private String businessStr;
 
 
 	public PushMessage() {
@@ -88,6 +91,14 @@ public class PushMessage {
 		this.content = content;
 	}
 
+	public String getBusinessStr() {
+		return businessStr;
+	}
+
+	public void setBusinessStr(String businessStr) {
+		this.businessStr = businessStr;
+	}
+
 	@Override
 	public String toString() {
 		return "PushMessage{" +
@@ -95,6 +106,7 @@ public class PushMessage {
 				", restId=" + restId +
 				", revenueId=" + revenueId +
 				", content='" + content + '\'' +
+				", businessStr='" + businessStr + '\'' +
 				'}';
 	}
 

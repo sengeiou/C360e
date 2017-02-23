@@ -12,13 +12,12 @@ import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.os.SystemProperties;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -140,7 +139,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -174,7 +172,7 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     private static final String DATABASE_NAME = "com.alfredposclient";
 
     private String callAppIp;
@@ -2491,24 +2489,12 @@ public class App extends BaseApplication {
      * 判断是否使用的是商米设备  商米副屏设置是否展示
      */
     public boolean isSUNMIShow(){
-        String brand = SystemProperties.get("ro.product.brand");
-        String model = SystemProperties.get("ro.product.model");
-        Log.d(TAG, brand + "**************" + model);
-        if (brand.equals("SUNMI")){
-            try {
-                Class c = Class.forName("android.os.SystemProperties");
-                Method method = c.getMethod("get", String.class);
-                String sn = (String) method.invoke(c, "ro.serialno");
-                String str = sn.substring(0, 4);
-                Log.i("sunmi", "the sn:" + sn);
-                Log.i("sunmi", "First four characters:" + str);
-//                if (str.equals("T103") || str.equals("T104") || str.equals("T105") || str.equals("T106")){
-//                    return true;
-//                }
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        String brand = Build.BRAND;
+        String model = Build.MODEL;
+        String manufacturer = Build.MANUFACTURER;
+        LogUtil.d(TAG, brand + "**************" + model);
+        if (brand.equals("SUNMI") && manufacturer.equals("SUNMI")){
+            return true;
         }
         return false;
     }
@@ -2519,13 +2505,13 @@ public class App extends BaseApplication {
      */
     public boolean isSmallOrBigScreen(){
         try {
-            Class c = Class.forName("android.os.SystemProperties");
-            Method method = c.getMethod("get", String.class);
-            String sn = (String) method.invoke(c, "ro.serialno");
+            String sn = Build.SERIAL;
             String str = sn.substring(0, 4);
             if (str.equals("T103") || str.equals("T104")){
                 return true;
             }else if (str.equals("T105") || str.equals("T106")){
+                return false;
+            }else {
                 return false;
             }
         } catch (Exception e) {

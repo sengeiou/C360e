@@ -283,13 +283,13 @@ public class MainPage extends BaseActivity {
 		OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
 				currentOrder, itemDetail, currentGroupId,
 				ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
-		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
-				currentOrder, itemDetail, currentGroupId);
-		if ((count - oldCount) <= 0) {// 删除
+//		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
+//				currentOrder, itemDetail, currentGroupId);
+		if (count == 0){// 删除
 			OrderDetailSQL.deleteOrderDetail(orderDetail);
 			OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
 		} else {// 添加
-			count = count - oldCount;
+//			count = count - oldCount;
 			currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
 			OrderSQL.update(currentOrder);
 			if (orderDetail == null) {

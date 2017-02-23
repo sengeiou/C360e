@@ -38,6 +38,8 @@ public class OrderDetailSQL {
 			return;
 		}
 		Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+		if(order == null)
+			return;
 		if(order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED){
 			return;
 		}
@@ -1091,7 +1093,9 @@ public class OrderDetailSQL {
 	public static ArrayList<OrderDetail> getUnFreeOrderDetailsForWaiter(Order order) {
 		ArrayList<OrderDetail> result = new ArrayList<OrderDetail>();
 		String sql = "select * from " + TableNames.OrderDetail
-				+ " where orderDetailStatus = 1 and orderId = ? and isFree = " + ParamConst.NOT_FREE;
+				+ " where orderDetailStatus = "
+				+ ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE
+				+ " and orderId = ? and isFree = " + ParamConst.NOT_FREE;
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -1152,35 +1156,35 @@ public class OrderDetailSQL {
 		return result;
 	}
 
-	public static int getUnFreeOrderDetailsNumInKOTOrPOS(Order order,
-			ItemDetail itemDetail, Integer groupId) {
-		int sum = 0;
-		String sql = "select sum( itemNum) from "
-				+ TableNames.OrderDetail
-				+ " where orderId = ? and itemId = ? and groupId = ? and orderDetailStatus <> "
-				+ ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE
-				+ " and isFree = " + ParamConst.NOT_FREE
-				+ " and orderDetailType = "
-				+ ParamConst.ORDERDETAIL_TYPE_GENERAL;
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(
-					sql,
-					new String[] { order.getId() + "", itemDetail.getId() + "",
-							groupId + "" });
-			if (cursor.moveToFirst()) {
-				sum = cursor.getInt(0);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
-		}
-		return sum;
-	}
+//	public static int getUnFreeOrderDetailsNumInKOTOrPOS(Order order,
+//			ItemDetail itemDetail, Integer groupId) {
+//		int sum = 0;
+//		String sql = "select sum( itemNum) from "
+//				+ TableNames.OrderDetail
+//				+ " where orderId = ? and itemId = ? and groupId = ? and orderDetailStatus < "
+//				+ ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD
+//				+ " and isFree = " + ParamConst.NOT_FREE
+//				+ " and orderDetailType = "
+//				+ ParamConst.ORDERDETAIL_TYPE_GENERAL;
+//		Cursor cursor = null;
+//		try {
+//			cursor = SQLExe.getDB().rawQuery(
+//					sql,
+//					new String[] { order.getId() + "", itemDetail.getId() + "",
+//							groupId + "" });
+//			if (cursor.moveToFirst()) {
+//				sum = cursor.getInt(0);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//
+//		} finally {
+//			if (cursor != null && !cursor.isClosed()) {
+//				cursor.close();
+//			}
+//		}
+//		return sum;
+//	}
 
 	public static OrderDetail getOrderDetail(Integer orderDetailID) {
 		OrderDetail orderDetail = null;

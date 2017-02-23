@@ -360,19 +360,19 @@ public class OrderHelper {
 	
 	public static void setOrderInclusiveTaxPrice(Order order){
 		if(order.getInclusiveTaxPercentage() != null){
-//			order.setInclusiveTaxPrice(BH
-//					.mul(BH.getBD(order.getInclusiveTaxPercentage()),
-//							BH.div(BH.sub(BH.getBD(order.getSubTotal()),
-//									BH.getBD(order.getDiscountAmount()), false),
-//									BH.add(BH.getBD(1), BH.getBD(order
-//											.getInclusiveTaxPercentage()),
-//											false), false), true).toString());
-			order.setInclusiveTaxPrice( BH.mul(
-							BH.getBD(order.getInclusiveTaxPercentage()),
-							BH.sub(BH.getBD(order.getSubTotal()),
-											BH.getBD(order.getDiscountAmount()),
-											false),
-									true).toString());
+			order.setInclusiveTaxPrice(BH
+					.mul(BH.getBD(order.getInclusiveTaxPercentage()),
+							BH.div(BH.sub(BH.getBD(order.getSubTotal()),
+									BH.getBD(order.getDiscountAmount()), false),
+									BH.add(BH.getBD(1), BH.getBD(order
+											.getInclusiveTaxPercentage()),
+											false), false), true).toString());
+//			order.setInclusiveTaxPrice( BH.mul(
+//							BH.getBD(order.getInclusiveTaxPercentage()),
+//							BH.sub(BH.getBD(order.getSubTotal()),
+//											BH.getBD(order.getDiscountAmount()),
+//											false),
+//									true).toString());
 		}
 	}
 	

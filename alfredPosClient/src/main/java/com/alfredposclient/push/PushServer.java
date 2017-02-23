@@ -117,6 +117,9 @@ public class PushServer {
                                         if(jsonObject.has("revenueId")){
                                             pushMessage.setRevenueId(jsonObject.getInt("revenueId"));
                                         }
+                                        if(jsonObject.has("businessStr")){
+                                            pushMessage.setBusinessStr(jsonObject.getString("businessStr"));
+                                        }
                                         if(!TextUtils.isEmpty(pushMessage.getMsg())){
                                             if (mListener != null)
                                                 mListener.onPushMessageReceived(pushMessage, canCheckAppOrder);

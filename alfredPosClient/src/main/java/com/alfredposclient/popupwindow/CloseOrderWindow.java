@@ -702,7 +702,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					}
 						break;
 					case ParamConst.SETTLEMENT_TYPE_REFUND: {
-						addVoidOrEntTax();
+//						addVoidOrEntTax();
 						VoidSettlement voidSettlement = VoidSettlementSQL
 								.getVoidSettlementByPament(payment.getId(),
 										paymentSettlement.getId());
@@ -1965,11 +1965,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_NETS: {
-			String cardNo = tv_nets_ref_num.getText().toString();
-			if(TextUtils.isEmpty(cardNo)){
-				UIHelp.showToast(parent, parent.getResources().getString(R.string.ref_id_not_empty));
-				return;
-			}else{
+//			String cardNo = tv_nets_ref_num.getText().toString();
+//			if(TextUtils.isEmpty(cardNo)){
+//				UIHelp.showToast(parent, parent.getResources().getString(R.string.ref_id_not_empty));
+//				return;
+//			}else{
 				BigDecimal paidBD = BH.getBD(tv_nets_amount_paid_num.getText().toString());
 				if(BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))){
 					PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
@@ -1991,7 +1991,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 							.getNetsSettlementByPayment(
 									payment,
 									paymentSettlement,
-									Integer.parseInt(((TextView) contentView
+									Integer.parseInt("0" + ((TextView) contentView
 											.findViewById(R.id.tv_nets_ref_num))
 											.getText().toString()),
 											paidBD.toString());
@@ -2007,7 +2007,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					}
 				}
 			}
-		}
+//		}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_ALIPAY:{
 			BigDecimal paidBD = BH.getBD(tv_wechat_ali_amount_paid_num.getText().toString());

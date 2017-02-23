@@ -153,6 +153,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_discount_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -171,15 +172,15 @@
                     android:layout_marginTop="10dp"
                     android:text="Discount by Category"/>
 
-            <ListView
-                android:id="@+id/discount_listview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:listSelector="@android:color/transparent"
-                android:cacheColorHint="#00000000"
-                android:background="@drawable/discount_listview_shape"
-                android:layout_marginTop="20dp"/>
+                <ListView
+                    android:id="@+id/discount_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:listSelector="@android:color/transparent"
+                    android:cacheColorHint="#00000000"
+                    android:background="@drawable/discount_listview_shape"
+                    android:layout_marginTop="20dp"/>
 
             </LinearLayout>
 

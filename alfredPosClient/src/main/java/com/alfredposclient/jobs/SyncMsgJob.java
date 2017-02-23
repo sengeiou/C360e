@@ -53,6 +53,7 @@ public class SyncMsgJob extends Job {
     	if (content != null) {
     		content.setStatus(ParamConst.SYNC_MSG_QUEUED);
     		SyncMsgSQL.add(content);
+            LogUtil.d("TEST","onAdd");
     	}
     	LogUtil.d(TAG, "onAdded");
     }

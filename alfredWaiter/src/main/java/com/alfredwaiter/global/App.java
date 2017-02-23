@@ -27,7 +27,7 @@ import rx.functions.Action1;
 public class App extends BaseApplication {
 
 	public static final int VIEW_EVENT_SET_QTY = 10;
-	private static final int DATABASE_VERSION = 11;
+	private static final int DATABASE_VERSION = 12;
 	private static final String DATABASE_NAME = "com.alfredwaiter";
 	public static App instance;
 	private RevenueCenter revenueCenter;
