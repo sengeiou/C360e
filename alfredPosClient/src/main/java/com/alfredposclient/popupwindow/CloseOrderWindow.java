@@ -1965,7 +1965,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_NETS: {
-//			String cardNo = tv_nets_ref_num.getText().toString();
+			String cardNo = tv_nets_ref_num.getText().toString();
 //			if(TextUtils.isEmpty(cardNo)){
 //				UIHelp.showToast(parent, parent.getResources().getString(R.string.ref_id_not_empty));
 //				return;
@@ -1987,13 +1987,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 					}
 					PaymentSQL.addPayment(payment);
 					PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+                    Integer cardNum = TextUtils.isEmpty(cardNo) ? 0 : Integer.parseInt(cardNo);
 					NetsSettlement netsSettlement = ObjectFactory.getInstance()
 							.getNetsSettlementByPayment(
 									payment,
 									paymentSettlement,
-									Integer.parseInt("0" + ((TextView) contentView
-											.findViewById(R.id.tv_nets_ref_num))
-											.getText().toString()),
+                                    cardNum,
 											paidBD.toString());
 					NetsSettlementSQL.addNetsSettlement(netsSettlement);
 

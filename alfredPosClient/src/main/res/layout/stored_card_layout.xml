@@ -66,19 +66,6 @@
                 android:layout_height="0.5dp"
                 android:background="@color/black"/>
             <Button
-                android:id="@+id/btn_clear"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="@string/card_loss"
-                android:textSize="@dimen/text_size_m"
-                android:background="@color/white"
-                android:visibility="gone"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/black"
-                android:visibility="gone"/>
-            <Button
                 android:id="@+id/btn_rebinding"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -89,6 +76,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="@color/black"/>
+            <Button
+                android:id="@+id/btn_clear"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Query Balance"
+                android:textSize="@dimen/text_size_m"
+                android:background="@color/white"
+                android:visibility="visible"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/black"
+                android:visibility="visible"/>
         </LinearLayout>
 
         <View
@@ -328,7 +328,7 @@
 
             </RelativeLayout>
             <LinearLayout
-                android:id="@+id/rl_stored_card_loss"
+                android:id="@+id/rl_stored_card_query"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/ll_stored_card_info"
@@ -339,22 +339,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:text="Please fill in the Stored-Card number or user phone number"/>
+                    android:text="Please scan the Stored-Card or fill in user phone number"/>
+                <!--<EditText-->
+                    <!--android:id="@+id/et_query_card_no"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_margin="20dp"-->
+                    <!--android:hint="Please enter the Stored-Card number"-->
+                    <!--android:inputType="number"-->
+                    <!--android:singleLine="true" />-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textStyle="bold"-->
+                    <!--android:text="OR"/>-->
                 <EditText
-                    android:id="@+id/et_loss_card_no"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:hint="Please enter the Stored-Card number"
-                    android:inputType="number"
-                    android:singleLine="true" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="OR"/>
-                <EditText
-                    android:id="@+id/et_loss_phone"
+                    android:id="@+id/et_query_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
@@ -362,7 +362,7 @@
                     android:inputType="number"
                     android:singleLine="true" />
                 <Button
-                    android:id="@+id/rl_loss_ok"
+                    android:id="@+id/rl_query_ok"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"

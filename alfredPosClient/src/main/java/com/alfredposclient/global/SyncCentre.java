@@ -280,6 +280,9 @@ public class SyncCentre {
 	public void changeStoredCard(Context context, Map<String, Object> parameters, Handler handler){
 		HttpAPI.changeStoredCardValue(context,getAbsoluteUrl(APIName.MEMBERSHIP_REATTENDCARD),httpClient, parameters, handler);
 	}
+	public void queryStoredCardBalance(Context context, Map<String, Object> parameters, Handler handler){
+		HttpAPI.queryStoredCardBalance(context,getAbsoluteUrl(APIName.MEMBERSHIP_QUERYBALANCE),httpClient, parameters, handler);
+	}
 	public void getAppVersion(Context context, Map<String, Object> parameters, int applicationTypes){
 		HttpAPI.getAppVersion(context,getAbsoluteUrl(APIName.SOFTWARE_GETVERSION),httpClient, parameters, applicationTypes);
 	}

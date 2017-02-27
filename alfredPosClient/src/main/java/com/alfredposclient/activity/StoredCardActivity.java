@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -56,6 +55,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     public static final int REPLACEMENT_STOREDCARD_SUCCEED = 102;
     public static final int PAID_STOREDCARD_SUCCEED = 155;
     public static final int CHANGE_STOREDCARD_SUCCEED = 104;
+    public static final int QUERYBALANCE_STOREDCARD_SUCCEED = 105;
 //    public static final int REPLACEMENT_STOREDCARD_FAILURE = -101;
     public static final int HTTP_FAILURE = -156;
 
@@ -102,8 +102,8 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     private EditText et_replacement_card_no;
     private EditText et_replacement_phone;
 
-    private EditText et_loss_card_no;
-    private EditText et_loss_phone;
+//    private EditText et_query_card_no;
+    private EditText et_query_phone;
 
     private TextView tv_store_card_value;
 //    private Handler mainPageHandler;
@@ -138,8 +138,8 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         et_address = (EditText) findViewById(R.id.et_address);
         et_replacement_card_no = (EditText) findViewById(R.id.et_replacement_card_no);
         et_replacement_phone = (EditText) findViewById(R.id.et_replacement_phone);
-        et_loss_card_no = (EditText) findViewById(R.id.et_loss_card_no);
-        et_loss_phone = (EditText) findViewById(R.id.et_loss_phone);
+//        et_query_card_no = (EditText) findViewById(R.id.et_query_card_no);
+        et_query_phone = (EditText) findViewById(R.id.et_query_phone);
         tv_store_card_value = (TextView) findViewById(R.id.tv_store_card_value);
         numerickeyboard = (NumerickeyboardForStoredCard) findViewById(R.id.numerickeyboard);
         numerickeyboard.setKeyBoardClickListener(this);
@@ -164,7 +164,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         tv_refund.setOnClickListener(this);
         tv_paid.setOnClickListener(this);
         findViewById(R.id.btn_replacement_ok).setOnClickListener(this);
-        findViewById(R.id.rl_loss_ok).setOnClickListener(this);
+        findViewById(R.id.rl_query_ok).setOnClickListener(this);
         beepManager = new BeepManager(mainPage);
         selectActionViewId = R.id.btn_paid_refund;
         refreshActionView();
@@ -208,8 +208,8 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 //        et_address = (EditText) findViewById(R.id.et_address);
 //        et_replacement_card_no = (EditText) findViewById(R.id.et_replacement_card_no);
 //        et_replacement_phone = (EditText) findViewById(R.id.et_replacement_phone);
-//        et_loss_card_no = (EditText) findViewById(R.id.et_loss_card_no);
-//        et_loss_phone = (EditText) findViewById(R.id.et_loss_phone);
+//        et_query_card_no = (EditText) findViewById(R.id.et_query_card_no);
+//        et_query_phone = (EditText) findViewById(R.id.et_query_phone);
 //        tv_store_card_value = (TextView) findViewById(R.id.tv_store_card_value);
 //        numerickeyboard = (NumerickeyboardForStoredCard) findViewById(R.id.numerickeyboard);
 //        numerickeyboard.setKeyBoardClickListener(this);
@@ -230,7 +230,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 //        findViewById(R.id.tv_refund).setOnClickListener(this);
 //        findViewById(R.id.tv_paid).setOnClickListener(this);
 //        findViewById(R.id.btn_replacement_ok).setOnClickListener(this);
-//        findViewById(R.id.rl_loss_ok).setOnClickListener(this);
+//        findViewById(R.id.rl_query_ok).setOnClickListener(this);
 //        beepManager = new BeepManager(mainPage);
 //        selectActionViewId = R.id.btn_paid_refund;
 //        refreshActionView();
@@ -399,12 +399,12 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         QRcodeString = "";
         View ll_stored_card_user = findViewById(R.id.ll_stored_card_user);
         View rl_stored_card_paid = findViewById(R.id.rl_stored_card_paid);
-        View rl_stored_card_loss = findViewById(R.id.rl_stored_card_loss);
+        View rl_stored_card_query = findViewById(R.id.rl_stored_card_query);
         View rl_stored_card_replacement = findViewById(R.id.rl_stored_card_replacement);
         View ll_stored_card_info = findViewById(R.id.ll_stored_card_info);
         ll_stored_card_user.setVisibility(View.GONE);
         rl_stored_card_paid.setVisibility(View.GONE);
-        rl_stored_card_loss.setVisibility(View.GONE);
+        rl_stored_card_query.setVisibility(View.GONE);
         rl_stored_card_replacement.setVisibility(View.GONE);
         ll_stored_card_info.setVisibility(View.VISIBLE);
         tv_stored_card_no.setText(QRcodeString);
@@ -416,8 +416,9 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 rl_stored_card_paid.setVisibility(View.VISIBLE);
                 break;
             case R.id.btn_clear:
-                rl_stored_card_loss.setVisibility(View.VISIBLE);
-                ll_stored_card_info.setVisibility(View.INVISIBLE);
+                rl_stored_card_query.setVisibility(View.VISIBLE);
+//                ll_stored_card_info.setVisibility(View.INVISIBLE);
+//              et_query_card_no
                 break;
             case R.id.btn_rebinding:
                 rl_stored_card_replacement.setVisibility(View.VISIBLE);
@@ -547,6 +548,11 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 case CHANGE_STOREDCARD_SUCCEED:
                     UIHelp.showShortToast(mainPage, "Stored card change succeed");
                     break;
+                case QUERYBALANCE_STOREDCARD_SUCCEED:
+                    DialogFactory.showOneButtonCompelDialog(context, "", "Balance: " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + (String) msg.obj, null);
+                    et_query_phone.setText("");
+                    clearRegistInfo();
+                    break;
                 case HTTP_FAILURE:
                     UIHelp.showShortToast(mainPage, ResultCode.getErrorResultStrByCode(mainPage,
                             (Integer) msg.obj, mainPage.getResources().getString(R.string.server)));
@@ -575,16 +581,16 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         loadingDialog.show();
         SyncCentre.getInstance().updateStoredCardValue(mainPage, map, handler);
     }
-    public void storedCardLoss(){
-        String loss_phone = et_loss_phone.getText().toString().trim();
-        String loss_card_no = et_loss_card_no.getText().toString().trim();
+    public void storedCardQueryBalance(){
+        String query_phone = et_query_phone.getText().toString().trim();
+//        String query_card_no = et_query_card_no.getText().toString().trim();
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("cardId", loss_card_no);
-        map.put("phone", loss_phone);
+//        map.put("cardId", query_card_no);
+        map.put("phone", query_phone);
         map.put("revenueId", App.instance.getRevenueCenter().getId().intValue());
         map.put("qrCode", QRcodeString);
         loadingDialog.show();
-        SyncCentre.getInstance().closeStoredCard(mainPage, map, handler);
+        SyncCentre.getInstance().queryStoredCardBalance(mainPage, map, handler);
     }
     public void storedCardReplacement(){
         String replacement_phone = et_replacement_phone.getText().toString().trim();
@@ -600,8 +606,6 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 
     @Override
     protected void handlerClickEvent(View v) {
-        if(!ButtonClickTimer.canClick())
-            return;
         switch (v.getId()){
             case R.id.btn_binding:
             case R.id.btn_paid_refund:
@@ -633,7 +637,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         findViewById(R.id.tv_refund).setOnClickListener(this);
         findViewById(R.id.tv_paid).setOnClickListener(this);
         findViewById(R.id.btn_replacement_ok).setOnClickListener(this);
-        findViewById(R.id.rl_loss_ok).setOnClickListener(this);
+        findViewById(R.id.rl_query_ok).setOnClickListener(this);
              */
             case R.id.btn_binding_ok:{
                 if(TextUtils.isEmpty(QRcodeString)){
@@ -716,15 +720,15 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 storedCardReplacement();
             }
             break;
-            case R.id.rl_loss_ok:{
-                String loss_phone = et_loss_phone.getText().toString().trim();
-                String loss_card_no = et_loss_card_no.getText().toString().trim();
-                if(TextUtils.isEmpty(loss_phone) && TextUtils.isEmpty(loss_card_no)){
-                    UIHelp.showShortToast(mainPage, "old phone num and cardNo can not all empty");
+            case R.id.rl_query_ok:{
+                String query_phone = et_query_phone.getText().toString().trim();
+//                String query_card_no = et_query_card_no.getText().toString().trim();
+                if(TextUtils.isEmpty(query_phone) && TextUtils.isEmpty(QRcodeString)){
+                    UIHelp.showShortToast(mainPage, "Phone num and QRcode can not all empty");
                     return;
                 }
 //                mainPageHandler.sendEmptyMessage(VIEW_EVENT_STORED_CARD_LOSS);
-                storedCardLoss();
+                storedCardQueryBalance();
             }
 
             break;
@@ -759,6 +763,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
      */
     public void handleDecode(Result rawResult) {
         inactivityTimer.onActivity();
+        hiddenScanView();
         //这里处理解码完成后的结果，此处将参数回传到Activity处理
         if (rawResult !=null && !TextUtils.isEmpty(rawResult.getText())) {
             beepManager.playBeepSoundAndVibrate();
@@ -799,7 +804,6 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
             if(isPayAction){
 
             }
-            hiddenScanView();
 
 //            intent.putExtra("codedBitmap", barcode);
 

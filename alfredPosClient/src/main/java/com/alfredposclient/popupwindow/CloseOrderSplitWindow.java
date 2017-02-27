@@ -2077,9 +2077,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
 		case ParamConst.SETTLEMENT_TYPE_UNIPAY:
 		case ParamConst.SETTLEMENT_TYPE_VISA: {
-			if (!verifyCardNo()) {
-				return;
-			} else {
+//			if (!verifyCardNo()) {
+//				return;
+//			} else {
 				BigDecimal paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
 				if(BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))){
 					PaymentSettlement paymentSettlement = ObjectFactory
@@ -2128,7 +2128,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					newPaymentMapList.add(paymentMap);
 				}
 			}
-			}
+//			}
 
 		}
 			break;
@@ -2313,10 +2313,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			break;
 		case ParamConst.SETTLEMENT_TYPE_NETS: {
 			String cardNo = tv_nets_ref_num.getText().toString();
-			if(TextUtils.isEmpty(cardNo)){
-				UIHelp.showToast(parent, parent.getResources().getString(R.string.ref_id_not_empty));
-				return;
-			}else{
+//			if(TextUtils.isEmpty(cardNo)){
+//				UIHelp.showToast(parent, parent.getResources().getString(R.string.ref_id_not_empty));
+//				return;
+//			}else{
 				BigDecimal paidBD = BH.getBD(tv_nets_amount_paid_num.getText().toString());
 				if(BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))){
 					PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
@@ -2337,14 +2337,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 						remainTotal = BH.sub(remainTotal, settlementNum, false);
 					}
 					PaymentSQL.addPayment(payment);
+					Integer cardNum = TextUtils.isEmpty(cardNo) ? 0 : Integer.parseInt(cardNo);
 					PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 					NetsSettlement netsSettlement = ObjectFactory.getInstance()
 							.getNetsSettlementByPayment(
 									payment,
 									paymentSettlement,
-									Integer.parseInt(((TextView) contentView
-											.findViewById(R.id.tv_nets_ref_num))
-											.getText().toString()),
+									cardNum,
 											paidBD.toString());
 					NetsSettlementSQL.addNetsSettlement(netsSettlement);
 		
@@ -2357,7 +2356,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 						newPaymentMapList.add(paymentMap);
 					}
 				}
-			}
+//			}
 		}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_ALIPAY:{

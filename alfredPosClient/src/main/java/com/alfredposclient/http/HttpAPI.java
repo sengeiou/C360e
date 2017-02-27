@@ -18,6 +18,7 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.Fragment.TableLayoutFragment;
@@ -1556,6 +1557,46 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendEmptyMessage(StoredCardActivity.CHANGE_STOREDCARD_SUCCEED);
+                            } else {
+                                handler.sendMessage(handler.obtainMessage(StoredCardActivity.HTTP_FAILURE, resultCode));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void queryStoredCardBalance(Context context, String url, AsyncHttpClient httpClient,
+                                             Map<String, Object> parameters, final Handler handler) {
+        try {
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String balance = BH.getBD(ParamConst.DOUBLE_ZERO).toString();
+                                try {
+                                    JSONObject object = new JSONObject(new String(responseBody));
+                                    balance = BH.getBD(object.getDouble("balance")).toString();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                handler.sendMessage(handler.obtainMessage(StoredCardActivity.QUERYBALANCE_STOREDCARD_SUCCEED, balance));
                             } else {
                                 handler.sendMessage(handler.obtainMessage(StoredCardActivity.HTTP_FAILURE, resultCode));
                             }

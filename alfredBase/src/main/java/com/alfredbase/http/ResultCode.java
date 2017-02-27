@@ -251,6 +251,8 @@ public class ResultCode {
 			return "The App Order have been cancelled!";
 		case PHONE_HAS_USED:
 			return "The mobile phone number has been registered!";
+		case CARD_QUERY_FAIL:
+			return "There is no record";
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);

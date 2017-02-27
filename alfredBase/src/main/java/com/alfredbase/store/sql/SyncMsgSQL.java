@@ -363,7 +363,7 @@ public class SyncMsgSQL {
 
 	public static void updateSyncMsgStatus(int status, long businessDate){
 
-		String sql = "update " + TableNames.SyncMsg + " set status = ? where businessDate = ? and msgType <> 1001";
+		String sql = "update " + TableNames.SyncMsg + " set status = ? where businessDate = ? and msg_type <> 1001";
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] {status, businessDate});
 		} catch (Exception e) {

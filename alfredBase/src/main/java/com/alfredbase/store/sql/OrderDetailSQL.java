@@ -329,68 +329,66 @@ public class OrderDetailSQL {
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (OrderDetail orderDetail : orderDetailList) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
-						orderDetail.getId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
 						orderDetail.getOrderId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 3,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
 						orderDetail.getOrderOriginId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 3,
 						orderDetail.getUserId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 5,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
 						orderDetail.getItemId());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 6,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 5,
 						orderDetail.getItemName());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 6,
 						orderDetail.getItemNum());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
 						orderDetail.getOrderDetailStatus());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
 						orderDetail.getOrderDetailType());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 10,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 9,
 						orderDetail.getReason());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 11,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 10,
 						orderDetail.getPrintStatus());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 12,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 11,
 						orderDetail.getItemPrice());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 13,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 12,
 						orderDetail.getTaxPrice());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 14,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 13,
 						orderDetail.getDiscountPrice());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 15,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 14,
 						orderDetail.getModifierPrice());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 16,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 15,
 						orderDetail.getRealPrice());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 17,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 16,
 						orderDetail.getCreateTime());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 18,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 17,
 						orderDetail.getUpdateTime());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 19,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 18,
 						orderDetail.getDiscountRate());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 20,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 19,
 						orderDetail.getDiscountType());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 21,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 20,
 						orderDetail.getFromOrderDetailId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 22,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 21,
 						orderDetail.getIsFree());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 23,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 22,
 						orderDetail.getGroupId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 24,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 23,
 						orderDetail.getIsOpenItem());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 25,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 24,
 						orderDetail.getSpecialInstractions());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 25,
 						orderDetail.getOrderSplitId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 27,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
 						orderDetail.getIsTakeAway());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 28,
+				SQLiteStatementHelper.bindString(sqLiteStatement, 27,
 						orderDetail.getWeight());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 29,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 28,
 						orderDetail.getIsItemDiscount());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 30,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 29,
 						orderDetail.getIsSet());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 31,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 30,
 						orderDetail.getAppOrderDetailId());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 32,
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 31,
 						orderDetail.getMainCategoryId());
 
 				sqLiteStatement.executeInsert();
