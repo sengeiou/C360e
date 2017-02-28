@@ -10,6 +10,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Handler;
 
 import com.alfredbase.utils.LogUtil;
@@ -37,7 +38,7 @@ public class BaseApplication extends Application {
 	 */
 
 	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = false;	//	release 时设置为false
+	public static boolean isOpenLog = true;	//	release 时设置为false
 
 
 
@@ -94,7 +95,25 @@ public class BaseApplication extends Application {
 	    initImageLoader(instance);
 	    if(isOpenLog)
 	    	MobclickAgent.setCatchUncaughtExceptions(!isOpenLog);
-	    
+
+		String device_model = Build.MODEL; // 设备型号 。
+		String version_sdk = Build.VERSION.SDK; // 设备SDK版本  。
+		String version_release = Build.VERSION.RELEASE; // 设备的系统版本 。
+		String brand = Build.BRAND;
+		String Manufacturer = Build.MANUFACTURER;
+		String priduct = Build.PRODUCT;
+		String fingerprint = Build.FINGERPRINT;
+		String serial = Build.SERIAL;
+
+		System.out.println("device_model*******" + device_model);
+		System.out.println("version_sdk*******" + version_sdk);
+		System.out.println("version_release*******" + version_release);
+		System.out.println("brand*******" + brand);
+		System.out.println("Manufacturer*******" + Manufacturer);
+		System.out.println("priduct*******" + priduct);
+
+		System.out.println("fingerprint*******" + fingerprint);
+		System.out.println("serial*******" + serial);
 	}
 
 

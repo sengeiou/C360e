@@ -307,7 +307,43 @@ public class HttpAPI {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static void callSpecifyNum(Context context,
+			final Map<String, Object> parameters, String url,
+			AsyncHttpClient httpClient, final Handler handler){
+		if (parameters != null) {
+			parameters.put("userKey", CoreData.getInstance().getUserKey());
+			parameters.put("appVersion", App.instance.VERSION);
+		}
+		try {
+			httpClient.post(context, url,
+					new StringEntity(new Gson().toJson(parameters) + EOF,
+							"UTF-8"), CONTENT_TYPE,
+					new AsyncHttpResponseHandlerEx() {
+						@Override
+						public void onSuccess(int statusCode, Header[] headers,
+								byte[] responseBody) {
+							super.onSuccess(statusCode, headers, responseBody);
+								if (resultCode == ResultCode.SUCCESS){
+									handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+								}else {
+									elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+								}
+							}
+						@Override
+						public void onFailure(int statusCode, Header[] headers,
+								byte[] responseBody, Throwable error) {
+							error.printStackTrace();
+							handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED,error));
+							super.onFailure(statusCode, headers, responseBody, error);
+
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void Logout(Context context,
 			final Map<String, Object> parameters, String url,
 			AsyncHttpClient httpClient, final Handler handler){

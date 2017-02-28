@@ -20,7 +20,8 @@
         android:layout_height="30dp"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone">
     </LinearLayout>
     
     <com.alfredkds.view.HorizontalListView 

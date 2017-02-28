@@ -14,6 +14,7 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.R;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.utils.TextTypeFace;
+import com.alfredkds.activity.CallNumActivity;
 import com.alfredkds.activity.ConnectPOS;
 import com.alfredkds.activity.EmployeeID;
 import com.alfredkds.activity.KitchenOrder;
@@ -88,6 +89,13 @@ public class UIHelp {
 //	public static void showToast(BaseActivity context, String text) {
 //		Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 //	}
+
+	public static void startCallNum(BaseActivity context){
+		Intent intent = new Intent(context, CallNumActivity.class);
+		context.startActivity(intent);
+//		context.overridePendingTransition(R.anim.slide_bottom_in,
+//		R.anim.slide_top_out);
+	}
 	
 	public static void showToast(BaseActivity context, String text) {
 		Toast toast = new Toast(context);

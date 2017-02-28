@@ -102,9 +102,9 @@ public class PopItemAdapter extends BaseAdapter{
 			}else {
 				holder.modifiers.setText("");
 			}
-			textTypeFace.setTrajanProBlod(holder.itemName);
-			textTypeFace.setTrajanProRegular(holder.itemNum);
-			textTypeFace.setTrajanProRegular(holder.modifiers);
+//			textTypeFace.setTrajanProBlod(holder.itemName);
+//			textTypeFace.setTrajanProRegular(holder.itemNum);
+//			textTypeFace.setTrajanProRegular(holder.modifiers);
 		return convertView;
 	}
 	

@@ -61,6 +61,7 @@ public class APIName {
 	public static final String KOT_COMPLETE = "kot_complete";
 	public static final String CANCEL_COMPLETE = "cancel_complete";
 	public static final String SUMMARY_COMPLETE = "summary_complete";
+	public static final String CALL_SPECIFY_THE_NUMBER = "call_specify_the_number";
 	
 	/**
 	 * 以kds作为服务器

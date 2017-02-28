@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alfredkds"
     android:versionCode="12"
-    android:versionName="1.0.11" >
+    android:versionName="1.0.11">
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -19,19 +19,31 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
-        android:name="com.alfredkds.global.App"
+        android:name=".global.App"
         android:allowBackup="true"
         android:icon="@drawable/logo_icon"
         android:label="@string/app_name"
-        android:largeHeap="true" >
-        
+        android:largeHeap="true">
         <activity
             android:name=".activity.Welcome"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
-            android:theme="@style/NullActivityTheme" >
+            android:theme="@style/NullActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,55 +51,54 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.alfredkds.activity.ConnectPOS"
+            android:name=".activity.ConnectPOS"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/NullActivityTheme" />
         <activity
-            android:name="com.alfredkds.activity.EmployeeID"
+            android:name=".activity.EmployeeID"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/CentreOpenMainActivityTheme" />
         <activity
-            android:name="com.alfredkds.activity.Login"
+            android:name=".activity.Login"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/CentreOpenMainActivityTheme" />
         <activity
-            android:name="com.alfredkds.activity.KitchenOrder"
+            android:name=".activity.KitchenOrder"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
         <activity
-            android:name="com.alfredkds.activity.SelectKitchen"
+            android:name=".activity.SelectKitchen"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
-        
         <activity
-            android:name="com.alfredkds.activity.Setting"
+            android:name=".activity.Setting"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
-        
         <activity
-            android:name="com.alfredkds.activity.KotHistory"
+            android:name=".activity.KotHistory"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
-        
         <activity
-            android:name="com.alfredkds.activity.Summary"
+            android:name=".activity.Summary"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
+
         <receiver android:name=".receiver.DownloadReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
             </intent-filter>
         </receiver>
 
-<!--           <receiver android:name="com.alfredkds.scheduler.AlfredAlarmReceiver"/>
+        <!--
+               <receiver android:name="com.alfredkds.scheduler.AlfredAlarmReceiver"/>
 
         <receiver android:name="com.alfredkds.scheduler.AlarmBootReceiver"
                 android:enabled="false">
@@ -96,20 +107,23 @@
             </intent-filter>
         </receiver>
                 
-        <service android:name="com.alfredkds.scheduler.AlfredSchedulingService" /> -->      
-        <meta-data android:value="5434b1d6fd98c5d8c003fc95" android:name="UMENG_APPKEY"></meta-data>
-		<meta-data android:value="Umeng" android:name="UMENG_CHANNEL"/>  
+        <service android:name="com.alfredkds.scheduler.AlfredSchedulingService" />
+        -->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5434b1d6fd98c5d8c003fc95" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Umeng" />
+
+        <activity android:name=".activity.CallNumActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
-
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.INTERNET"/>
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
 </manifest>

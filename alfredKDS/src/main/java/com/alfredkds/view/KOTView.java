@@ -6,6 +6,8 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +20,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
@@ -60,6 +63,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private TextView date;
 	private TextView time;
 	private TextView tv_kiosk_order_id;
+	private TextView tv_orderremark;
+	private TextView tv_remark;
+	private LinearLayout ll_orderRemark;
 	private View kotView;
 	public TextView tv_progress;
 	private ListView lv_dishes;
@@ -101,8 +107,13 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		tv_progress = (TextView) kotView.findViewById(R.id.tv_progress);
 		lv_dishes = (ListView) kotView.findViewById(R.id.lv_dishes);
 		tv_kiosk_order_id = (TextView) kotView.findViewById(R.id.tv_kiosk_order_id);
+		tv_orderremark = (TextView) kotView.findViewById(R.id.tv_orderremark);
+		ll_orderRemark = (LinearLayout) kotView.findViewById(R.id.ll_orderRemark);
+
+		tv_orderremark.setMovementMethod(ScrollingMovementMethod.getInstance());
+
 		adapter = new KotItemDetailAdapter();
-		initTextTypeFace();
+//		initTextTypeFace();
 		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
 			tv_kiosk_order_id.setVisibility(View.VISIBLE);
 			orderId.setVisibility(View.GONE);
@@ -170,9 +181,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			holder.tv_order_num.setText(kotItemDetail.getUnFinishQty()+"");
 			holder.tv_text.setText(kotItemDetail.getItemName());
 			holder.tv_dish_introduce.setText(sBuffer);
-			textTypeFace.setTrajanProBlod(holder.tv_text);
-			textTypeFace.setTrajanProRegular(holder.tv_order_num);
-			textTypeFace.setTrajanProRegular(holder.tv_dish_introduce);
+//			textTypeFace.setTrajanProBlod(holder.tv_text);
+//			textTypeFace.setTrajanProRegular(holder.tv_order_num);
+//			textTypeFace.setTrajanProRegular(holder.tv_dish_introduce);
 			return convertView;
 		}
 	}
@@ -197,6 +208,15 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		tv_kiosk_order_id.setText(orderNoStr);
 		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName() + "");
 		posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
+
+		String remark = kot.getKotSummary().getOrderRemark();
+		if (TextUtils.isEmpty(remark)){
+			ll_orderRemark.setVisibility(GONE);
+		}else {
+			ll_orderRemark.setVisibility(VISIBLE);
+			tv_orderremark.setText("Remark:" + " " + remark);
+		}
+
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
 		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
 		tv_progress.setText(TimeUtil.getSubTimeFormat(kot.getKotSummary().getUpdateTime())+"");
@@ -318,5 +338,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		textTypeFace.setTrajanProRegular(time);
 		textTypeFace.setTrajanProRegular(tv_progress);
 		textTypeFace.setTrajanProRegular(tv_kiosk_order_id);
+		textTypeFace.setTrajanProRegular(tv_orderremark);
+		textTypeFace.setTrajanProRegular(tv_remark);
 	}
 }

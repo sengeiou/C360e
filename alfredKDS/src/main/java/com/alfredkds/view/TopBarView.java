@@ -4,12 +4,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredkds.R;
+import com.alfredkds.activity.CallNumActivity;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
 import com.alfredkds.global.UIHelp;
@@ -19,6 +21,7 @@ public class TopBarView extends LinearLayout implements OnClickListener{
 	private ImageView iv_classify;
 	private ImageView iv_refresh;
 	public ImageView iv_setting;
+	private Button btn_call_num;
 	private KitchenOrder parent;
 	 
 	public TopBarView(Context context) {
@@ -41,12 +44,14 @@ public class TopBarView extends LinearLayout implements OnClickListener{
 		iv_classify = (ImageView)findViewById(R.id.iv_classify);
 		iv_refresh = (ImageView)findViewById(R.id.iv_refresh);
 		iv_setting = (ImageView)findViewById(R.id.iv_setting);
+		btn_call_num = (Button) findViewById(R.id.btn_call_num);
 		kitchName.setText(App.instance.getPrinter().getPrinterName());
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod(kitchName);
 		iv_classify.setOnClickListener(this);
 		iv_refresh.setOnClickListener(this);
 		iv_setting.setOnClickListener(this);
+		btn_call_num.setOnClickListener(this);
 		
 	}
 
@@ -61,6 +66,9 @@ public class TopBarView extends LinearLayout implements OnClickListener{
 			break;
 		case R.id.iv_setting:
 			UIHelp.startSetting(parent);
+			break;
+		case R.id.btn_call_num:
+			UIHelp.startCallNum(parent);
 			break;
 		default:
 			break;

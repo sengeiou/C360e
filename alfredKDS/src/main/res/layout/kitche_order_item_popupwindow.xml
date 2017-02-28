@@ -50,7 +50,7 @@
                     android:padding="5dp"
                     android:text="KOT ID"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_b"
+                    android:textSize="@dimen/text_size_m"
                     android:visibility="gone" />
                 
                 <TextView
@@ -62,7 +62,7 @@
                     android:padding="5dp"
                     android:text="@string/table"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_b" />
+                    android:textSize="@dimen/text_size_m" />
 
                 <TextView
                     android:id="@+id/tv_order_id"
@@ -72,7 +72,7 @@
                     android:paddingLeft="20dp"
                     android:text="Order ID"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_m" 
+                    android:textSize="@dimen/text_size_s"
                     android:visibility="gone"/>
 
                 <LinearLayout
@@ -91,7 +91,7 @@
 	                    android:paddingLeft="15dp"
 	                    android:text="Order ID"
 	                    android:textColor="@color/black"
-	                    android:textSize="@dimen/text_size_m" />
+	                    android:textSize="@dimen/text_size_s" />
 
                     <TextView
                         android:id="@+id/tv_time"
@@ -102,7 +102,7 @@
                         android:paddingRight="20dp"
                         android:text="11:20am"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_m" />
+                        android:textSize="@dimen/text_size_s" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -117,10 +117,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:paddingLeft="20dp"
+                        android:paddingLeft="15dp"
                         android:text="POS"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_m" />
+                        android:textSize="@dimen/text_size_s" />
 
                     <TextView
                         android:id="@+id/tv_date"
@@ -128,17 +128,46 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="right"
-                        android:paddingRight="20dp"
+                        android:paddingRight="15dp"
                         android:text="20/04/2014"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_m" />
+                        android:textSize="@dimen/text_size_s" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/kitchen_ll_orderRemark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/ll_pos"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/kitchen_tv_orderremark"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Order remark:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_s"
+                        android:singleLine="false"
+                        android:scrollbarStyle="outsideOverlay"
+                        android:scrollbars="vertical"
+                        android:maxLines="3"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:lineSpacingExtra="3dp"
+                        android:isScrollContainer="true"
+                        android:scrollbarFadeDuration="3000"/>
+
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@color/black"
-                    android:layout_below="@+id/ll_pos" />
+                    android:layout_below="@+id/kitchen_ll_orderRemark" />
             </RelativeLayout>
 
             <com.alfredkds.view.PopItemListView
@@ -163,17 +192,17 @@
             <LinearLayout
                 android:id="@+id/ll_bottom"
                 android:layout_width="match_parent"
-                android:layout_height="50dp" 
+                android:layout_height="45dp"
                 android:layout_alignParentBottom="true"
+                android:gravity="center"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_b"
-                    android:layout_gravity="center|center_vertical"
-                    android:text="@string/completed"
-                    />
+                    android:textSize="@dimen/text_size_small"
+                    android:layout_gravity="center"
+                    android:text="@string/completed"/>
             </LinearLayout>
         </RelativeLayout>
 

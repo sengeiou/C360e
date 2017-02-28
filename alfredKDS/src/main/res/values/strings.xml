@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-	<!-- global -->
+
+    <!-- global -->
     <string name="app_name">AlfredKDS</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-	<string name="version">Version:</string>
-	<string name="exit_program">Please click BACK again to exit</string>
-	<string name="revenue_center">Revenue Center</string>
-	<string name="loading">Loading</string>
-	
-	<!-- before login -->
-	<string name="scanqr_tips">Scan QR code from the POS of\nrevenue center to get KDS tablet paired.\nOr Slide to the left And\nManually connect POS by IP</string>
-	<string name="ipaddr_tips">Device Pairing\nSet up POS IP Address</string>
-	<string name="connect">Connect</string>
-	<string name="check_ip">Check the IP address is not correct</string>
-	<string name="pairing_fails">Pairing fails, no permit</string>
-	<string name="employee_id">Device paired\nEnter Your Employee ID</string>
-	<string name="select_kitchen">KDS Paired\nPlease select the kitchen\nthat the KDS belongs to</string>
-	<string name="paired_failed">The KDS Device is not paired to Alfred POS</string>
-	<string name="cashier_login_tips1">Enter Employee ID</string>
+    <string name="version">Version:</string>
+    <string name="exit_program">Please click BACK again to exit</string>
+    <string name="revenue_center">Revenue Center</string>
+    <string name="loading">Loading</string>
+
+    <!-- before login -->
+    <string name="scanqr_tips">Scan QR code from the POS of\nrevenue center to get KDS tablet paired.\nOr Slide to the left And\nManually connect POS by IP</string>
+    <string name="ipaddr_tips">Device Pairing\nSet up POS IP Address</string>
+    <string name="connect">Connect</string>
+    <string name="check_ip">Check the IP address is not correct</string>
+    <string name="pairing_fails">Pairing fails, no permit</string>
+    <string name="employee_id">Device paired\nEnter Your Employee ID</string>
+    <string name="select_kitchen">KDS Paired\nPlease select the kitchen\nthat the KDS belongs to</string>
+    <string name="paired_failed">The KDS Device is not paired to Alfred POS</string>
+    <string name="cashier_login_tips1">Enter Employee ID</string>
     <string name="cashier_login_tips2">Enter Password</string>
     <string name="logining">Logining</string>
-    
+
     <!-- KitchOrder -->
     <string name="send_failed">Send Failed!</string>
     <string name="other_pos_data">Other MainPos send data</string>
@@ -31,7 +31,7 @@
     <string name="order_id_">Order No : </string>
     <string name="table_">Table -  </string>
     <string name="take_away">Take away</string>
-    
+
     <!-- Summary -->
     <string name="summary">Summary</string>
     <string name="item">Item</string>
@@ -40,7 +40,7 @@
     <string name="kitchen_name">Kitchen Name</string>
     <string name="reconnect_pos_">Send Failed,you can reconnect Main Pos</string>
     <string name="kot_in_progress">in progress</string>
-    
+
     <!-- KotHistory -->
     <string name="kot_history">KOT HISTORY</string>
     <string name="kot_revert">revert</string>
@@ -53,22 +53,22 @@
     <string name="time">Time</string>
     <string name="dish">Dish</string>
     <string name="undoing">Undoing</string>
-    
+
     <!-- Setting -->
     <string name="reset">All data will be removed, \n are you sure to reset KDS?</string>
     <string name="cancel">Cancel</string>
-	<string name="ok">OK</string>
+    <string name="ok">OK</string>
     <string name="setting">Setting</string>
     <string name="reset_kds">Reset KDS</string>
     <string name="switch_account">Switch Account</string>
     <string name="kot_history_">Kot History</string>
-    
+
     <!-- KdsHttpServer -->
     <string name="transfer_table_failed">Transfer table failed</string>
     <string name="kot_submit_failed">KOT submit failed</string>
     <string name="session_change">Session Change</string>
     <string name="relogin_pos">POS has closed the current session.\nPlease relogin when next session starts</string>
-    
+
     <!-- other -->
     <string name="network_error">Network Fatal Error</string>
     <string name="finished_items_number">Please Enter The Number Of Finished Dishes</string>

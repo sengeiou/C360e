@@ -9,6 +9,8 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredkds.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 
+import org.apache.http.protocol.RequestUserAgent;
+
 import java.util.Map;
 
 /* Wrapper of all HTTP Requests (KDS -> Main POS) */
@@ -79,6 +81,13 @@ public class SyncCentre {
 		HttpAPI.KotComplete(context, parameters,
 				getAbsoluteUrl(mainPosInfo, APIName.KOT_ITEM_COMPLETE), httpClient, handler);
 	}
+
+	public void callSpecifyNum(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
+			Handler handler) {
+		HttpAPI.callSpecifyNum(context, parameters,
+				getAbsoluteUrl(mainPosInfo, APIName.CALL_SPECIFY_THE_NUMBER), httpClient, handler);
+	}
+
 	/* cancel KOT Complete to main POS*/
 	public void cancelComplete(Context context,MainPosInfo mainPosInfo, Map<String, Object> parameters,
 			Handler handler){

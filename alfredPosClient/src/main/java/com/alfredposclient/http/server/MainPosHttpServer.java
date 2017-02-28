@@ -59,6 +59,7 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.http.HttpAPI;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.umeng.analytics.MobclickAgent;
@@ -262,6 +263,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				return handlerGetKotNotifications();
 			} else if (apiName.equals(APIName.GET_BILL)) {
 				return handlerGetBill(body);
+			} else if (apiName.equals(APIName.CALL_SPECIFY_THE_NUMBER)){
+				return handlerCallSpecifyNumber(body);
 			} else {
 				return this.getNotFoundResponse();
 			}
@@ -1484,6 +1487,31 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			result.put("resultCode", ResultCode.SUCCESS);
 			resp = this.getJsonResponse(new Gson().toJson(result));
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
+
+	private Response handlerCallSpecifyNumber(String params){
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		Gson gson = new Gson();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			final String str = jsonObject.getString("callnumber");
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
+						SyncCentre.getInstance().callAppNo(App.getTopActivity(), str);
+					}
+				}
+			}).start();
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
 		} catch (Exception e) {
 			e.printStackTrace();
 			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));

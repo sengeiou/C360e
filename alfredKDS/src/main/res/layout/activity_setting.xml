@@ -7,12 +7,18 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="@string/setting" 
+        android:text="@string/setting"
+        android:textStyle="bold"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_size_xb"/>
+        android:textSize="@dimen/text_size_m"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#dedede"/>
     
     <LinearLayout 
         android:layout_width="match_parent"
@@ -27,7 +33,7 @@
         android:layout_height="wrap_content"
         android:text="@string/kot_history_"
         android:gravity="center"
-        android:textSize="@dimen/text_size_b"
+        android:textSize="@dimen/text_size_small"
         android:textColor="@color/black"/>
     
     <TextView 
@@ -36,8 +42,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/reset_kds"
-        android:textSize="@dimen/text_size_b"
+        android:textSize="@dimen/text_size_small"
         android:textColor="@color/black"/>
+
+
 
     <TextView 
         android:id="@+id/tv_switch_account"
@@ -46,7 +54,7 @@
         android:text="@string/switch_account"
         android:layout_marginTop="300dp"
         android:gravity="center"
-        android:textSize="@dimen/text_size_b"
+        android:textSize="@dimen/text_size_small"
         android:textColor="@color/black"/>
     
     <TextView 
@@ -54,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="@dimen/text_size_b"
+        android:textSize="@dimen/text_size_small"
         android:textColor="@color/black"/>
     
     </LinearLayout>

@@ -139,6 +139,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -360,24 +361,16 @@ public class App extends BaseApplication {
 
             mDSKernel.addReceiveCallback(new IReceiveCallback() {
                 @Override
-                public void onReceiveData(DSData data) {
-
-                }
+                public void onReceiveData(DSData data) {}
 
                 @Override
-                public void onReceiveFile(DSFile file) {
-
-                }
+                public void onReceiveFile(DSFile file) {}
 
                 @Override
-                public void onReceiveFiles(DSFiles files) {
-
-                }
+                public void onReceiveFiles(DSFiles files) {}
 
                 @Override
-                public void onReceiveCMD(DSData cmd) {
-
-                }
+                public void onReceiveCMD(DSData cmd) {}
             });
         }
 
