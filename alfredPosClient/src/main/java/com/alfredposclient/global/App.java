@@ -1504,17 +1504,20 @@ public class App extends BaseApplication {
                     mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
                             this.systemSettings.isDoubleBillPrint(),
-                            this.systemSettings.isDoubleReceiptPrint(), roundStr, getPrintOrderNo(order.getId().intValue()));
+                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                            getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol());
                 else
                     mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
                             this.systemSettings.isDoubleBillPrint(),
-                            this.systemSettings.isDoubleReceiptPrint(), roundStr, null);
+                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                            null, getLocalRestaurantConfig().getCurrencySymbol());
             else
                 mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
                         mods, tax, payment,
                         this.systemSettings.isDoubleBillPrint(),
-                        this.systemSettings.isDoubleReceiptPrint(), roundStr);
+                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                        getLocalRestaurantConfig().getCurrencySymbol());
         } catch (RemoteException e) {
             e.printStackTrace();
         }

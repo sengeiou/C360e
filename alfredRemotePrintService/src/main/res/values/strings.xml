@@ -16,11 +16,11 @@
     <string name="price">Price</string>
     <string name="qty">QTY</string>
     <string name="total">Total</string>
-    <string name="sub_total">Subtotal : $</string>
-    <string name="discount">Discount : $</string>
-    <string name="total_">Total : $</string>
-    <string name="rounding_print">Rounding : $</string>
-    <string name="grand_total">Grand Total : $</string>
+    <string name="sub_total">Subtotal : </string>
+    <string name="discount">Discount : </string>
+    <string name="total_">Total : </string>
+    <string name="rounding_print">Rounding : </string>
+    <string name="grand_total">Grand Total : </string>
     <string name="cash_">Cash</string>
     <string name="changes">Change</string>
     <string name="mastercard">MasterCard</string>

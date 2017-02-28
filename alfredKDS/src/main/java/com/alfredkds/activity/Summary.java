@@ -130,7 +130,8 @@ public class Summary extends BaseActivity {
 				List<KotItemDetail> skotItemDetails = (List<KotItemDetail>) msg.obj;
 				kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(skotItemDetails.get(0).getItemName()));
 				kotdetailsAdapter.notifyDataSetChanged();
-				popItemAdapter.notifyDataSetChanged();
+				if(popItemAdapter != null)
+					popItemAdapter.notifyDataSetChanged();
 				break;
 			case App.HANDLER_RECONNECT_POS:
 				loadingDialog.dismiss();

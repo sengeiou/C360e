@@ -61,6 +61,7 @@ public class DiscountAdapter extends BaseAdapter {
         boolean has = false;
         if(sparseBooleanArray.size() > 0 ){
             has = true;
+            OrderDetailSQL.updateDiscountTypeBeforeByMainCategoryId(order.getId().intValue());
             for(int i = 0; i < sparseBooleanArray.size(); i ++){
                 int key  = sparseBooleanArray.keyAt(i);
                 if(sparseBooleanArray.get(key)) {

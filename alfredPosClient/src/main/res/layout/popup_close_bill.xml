@@ -847,6 +847,8 @@
                                             android:background="@android:color/transparent"
                                             android:hint="@string/guest_name"
                                             android:inputType="textNoSuggestions"
+                                            android:imeOptions="actionNext"
+                                            android:nextFocusForward="@+id/et_special_settlement_phone_text"
                                             android:singleLine="true"
                                             android:textColor="@color/black"
                                             android:textSize="@dimen/text_size_s" />

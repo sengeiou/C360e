@@ -313,9 +313,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		}
 
 		popupWindow.setContentView(contentView);
-//		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
-		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+//		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		popupWindow.setFocusable(true);
 //		popupWindow.setBackgroundDrawable(new BitmapDrawable());
 		initTextTypeFace(contentView);
@@ -1834,18 +1834,19 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD: {
-
+			EditText et_special_settlement_person_name = (EditText) contentView
+					.findViewById(R.id.et_special_settlement_person_name);
+			EditText et_special_settlement_phone_text = (EditText) contentView
+					.findViewById(R.id.et_special_settlement_phone_text);
 			PaymentSQL.addPayment(payment);
 			PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
 					.getPaymentSettlement(payment, paymentTypeId,
 							order.getTotal());
 			PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 			BohHoldSettlement mBohHoldSettlement = new BohHoldSettlement();
-			mBohHoldSettlement.setNameOfPerson(((EditText) contentView
-					.findViewById(R.id.et_special_settlement_person_name))
+			mBohHoldSettlement.setNameOfPerson(et_special_settlement_person_name
 					.getText().toString());
-			mBohHoldSettlement.setPhone(((EditText) contentView
-					.findViewById(R.id.et_special_settlement_phone_text))
+			mBohHoldSettlement.setPhone(et_special_settlement_phone_text
 					.getText().toString());
 			mBohHoldSettlement.setRemarks(et_special_settlement_remarks_text
 					.getText().toString());
@@ -1869,6 +1870,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				newPaymentMapList.add(paymentMap);
 
 			}
+			et_special_settlement_person_name.setText("");
+			et_special_settlement_phone_text.setText("");
+			et_special_settlement_remarks_text.setText("");
 		}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT: {
@@ -2253,7 +2257,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_NETS: {
-			((TextView) parent.findViewById(R.id.tv_nets_ref_num))
+			((TextView) contentView.findViewById(R.id.tv_nets_ref_num))
 					.setText("");
 		}
 			break;

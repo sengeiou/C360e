@@ -736,7 +736,7 @@ public class DataHelper {
 					+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, sessionName TEXT, startDrawer TEXT, cash TEXT, cashTopup TEXT, expectedAmount TEXT, actualAmount TEXT, difference TEXT, businessDate LONG)");
 			db.execSQL("ALTER TABLE " + TableNames.OrderDetail
 					+ " ADD COLUMN mainCategoryId INTEGER default 0");
-			db.execSQL("update " + TableNames.SyncMsg + " set status = " + ParamConst.SYNC_MSG_UN_SEND + " where status = " + ParamConst.SYNC_MSG_QUEUED + " or status = " + ParamConst.SYNC_MSG_MALDATA + " and msg_type <> 1001");
+			db.execSQL("update " + TableNames.SyncMsg + " set status = " + ParamConst.SYNC_MSG_UN_SEND + " where (status = " + ParamConst.SYNC_MSG_QUEUED + " or status = " + ParamConst.SYNC_MSG_MALDATA + ") and msg_type <> 1001");
 			try {
 				Store.remove(BaseApplication.instance, Store.PUSH_MESSAGE);
 			}catch (Exception e){

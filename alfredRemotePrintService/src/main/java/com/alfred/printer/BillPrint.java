@@ -396,13 +396,13 @@ public class BillPrint extends PrintJob{
 		this.data.add(orderMod);	
 	}	
 	public void AddBillSummary(String subtotal, String discount,
-				List<Map<String, String>>taxes, String total, String rounding) {
+				List<Map<String, String>>taxes, String total, String rounding,String currencySymbol) {
 
 		this.addHortionalLine(this.charSize);
 		//subtotal
 		PrintData subTotalPrint = new PrintData();
 		String subTotal = StringUtil.padLeft(subtotal, this.FIXED_COL4_TOTAL);
-		String padSubtotal = PrintService.instance.getResources().getString(R.string.sub_total)+subTotal+reNext;
+		String padSubtotal = PrintService.instance.getResources().getString(R.string.sub_total) + currencySymbol + subTotal+reNext;
 		subTotalPrint.setDataFormat(PrintData.FORMAT_TXT);
 		subTotalPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		subTotalPrint.setText(padSubtotal);
@@ -412,7 +412,7 @@ public class BillPrint extends PrintJob{
 		//discount
 		PrintData discPrint = new PrintData();
 		String discountStr = StringUtil.padLeft(discount, this.FIXED_COL4_TOTAL);
-		String padDiscount = PrintService.instance.getResources().getString(R.string.discount)+discountStr+reNext;
+		String padDiscount = PrintService.instance.getResources().getString(R.string.discount) + currencySymbol + discountStr+reNext;
 		discPrint.setDataFormat(PrintData.FORMAT_TXT);
 		discPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		discPrint.setText(padDiscount);
@@ -430,7 +430,7 @@ public class BillPrint extends PrintJob{
 	            String padTax = map.get("taxName")
 							+ "("
 							+ (int) (Double.parseDouble(map.get("taxPercentage")) * 100)
-							+ "%) : $" + taxvalue +reNext;
+							+ "%) :" + currencySymbol + taxvalue +reNext;
 	                
 	            taxPrint.setDataFormat(PrintData.FORMAT_TXT);
 	            taxPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -463,7 +463,7 @@ public class BillPrint extends PrintJob{
 		PrintData totalPrint = new PrintData();
 		String totalStr = StringUtil.padLeft(roundMap.get("Total"),
 				this.FIXED_COL4_TOTAL);
-		String totaling = PrintService.instance.getResources().getString(R.string.total_) + totalStr + reNext;
+		String totaling = PrintService.instance.getResources().getString(R.string.total_) + currencySymbol  + totalStr + reNext;
 		totalPrint.setDataFormat(PrintData.FORMAT_TXT);
 		totalPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		totalPrint.setMarginTop(10);
@@ -473,7 +473,7 @@ public class BillPrint extends PrintJob{
 		PrintData roundingPrint = new PrintData();
 		String roundingStr = StringUtil.padLeft(roundMap.get("Rounding"),
 				this.FIXED_COL4_TOTAL);
-		String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + roundingStr + reNext;
+		String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + currencySymbol  + roundingStr + reNext;
 		roundingPrint.setDataFormat(PrintData.FORMAT_TXT);
 		roundingPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		roundingPrint.setText(padRounding);
@@ -482,7 +482,7 @@ public class BillPrint extends PrintJob{
 		//grand total
 		PrintData gtPrint = new PrintData();
 		String gtotalStr = StringUtil.padLeft(total, this.FIXED_COL4_TOTAL);
-		String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + gtotalStr+reNext;
+		String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + currencySymbol  + gtotalStr+reNext;
 		gtPrint.setDataFormat(PrintData.FORMAT_TXT);
 		gtPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		gtPrint.setMarginTop(10);
@@ -494,13 +494,13 @@ public class BillPrint extends PrintJob{
 		this.addHortionaDoublelLine(this.charSize);
 	}
 
-	public void AddSettlementDetails(List<LinkedHashMap<String, String>> settlementList) {
+	public void AddSettlementDetails(List<LinkedHashMap<String, String>> settlementList, String currencySymbol) {
 		for(LinkedHashMap<String, String> settlement : settlementList){
 			//subtotal
 			for (Map.Entry<String, String> entry : settlement.entrySet()) {
 				PrintData toPrint = new PrintData();
 				String lable = StringUtil.padLeft(entry.getValue(), this.FIXED_COL4_TOTAL);
-				String toPrintStr = entry.getKey()+" : $"+lable+reNext;
+				String toPrintStr = entry.getKey()+" : "  + currencySymbol + lable+reNext;
 				toPrint.setDataFormat(PrintData.FORMAT_TXT);
 				toPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 				toPrint.setFontsize(2);

@@ -191,12 +191,33 @@ public class OrderDetailSQL {
 		}
 
 	}
+	/*
+	ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE = 5;
+	public static final int ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB = 6;
+	 */
 	public static void updateDiscountTypeByMainCategoryId(int discountType, int mainCategoryId, int orderId) {
 		try {
 			String sql = "update " + TableNames.OrderDetail
 					+ " set discountType = ? where orderId = ? and mainCategoryId = ?";
 			SQLExe.getDB().execSQL(sql,
 					new Object[] { discountType, orderId, mainCategoryId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	public static void updateDiscountTypeBeforeByMainCategoryId(int orderId) {
+		try {
+			String sql = "update "
+					+ TableNames.OrderDetail
+					+ " set discountType = "
+					+ ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL
+					+ " where orderId = ?  and discountType <> "
+					+ ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+					+ " and discountType <> "
+					+ ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB;
+			SQLExe.getDB().execSQL(sql,
+					new Object[] { orderId});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

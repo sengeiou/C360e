@@ -336,6 +336,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
 		popupWindow.setContentView(contentView);
 		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+		popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
 		popupWindow.setFocusable(true);
 		initTextTypeFace(contentView);
 	}
@@ -2151,18 +2152,19 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			}
 		}
 		case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD: {
-
+			EditText et_special_settlement_person_name = (EditText) contentView
+					.findViewById(R.id.et_special_settlement_person_name);
+			EditText et_special_settlement_phone_text = (EditText) contentView
+					.findViewById(R.id.et_special_settlement_phone_text);
 			PaymentSQL.addPayment(payment);
 			PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
 					.getPaymentSettlement(payment, paymentTypeId,
 							orderSplit.getTotal());
 			PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 			BohHoldSettlement mBohHoldSettlement = new BohHoldSettlement();
-			mBohHoldSettlement.setNameOfPerson(((EditText) contentView
-					.findViewById(R.id.et_special_settlement_person_name))
+			mBohHoldSettlement.setNameOfPerson(et_special_settlement_person_name
 					.getText().toString());
-			mBohHoldSettlement.setPhone(((EditText) contentView
-					.findViewById(R.id.et_special_settlement_phone_text))
+			mBohHoldSettlement.setPhone(et_special_settlement_phone_text
 					.getText().toString());
 			mBohHoldSettlement.setRemarks(et_special_settlement_remarks_text
 					.getText().toString());
@@ -2197,6 +2199,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				newPaymentMapList.add(paymentMap);
 				
 			}
+			et_special_settlement_person_name.setText("");
+			et_special_settlement_phone_text.setText("");
+			et_special_settlement_remarks_text.setText("");
 		}
 			break;
 		case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT: {

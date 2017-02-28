@@ -480,9 +480,12 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		observable1.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
 			@Override
 			public void call(Object object) {
-
+				if(App.instance.getSessionStatus() == null){
+					UIHelp.showShortToast(context, "Please open the session!");
+					return;
+				}
 				if(App.getTopActivity() == OpenRestaruant.this)
-				verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER, null);
+					verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER, null);
 			}
 		});
 		downManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
@@ -1085,6 +1088,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		ReportDaySales reportDaySales = ReportObjectFactory.getInstance()
 				.loadReportDaySales(businessDate);
 		if (reportDaySales == null) {
+			handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
 			return;
 		}
 		String bizDate = TimeUtil.getPrintingDate(businessDate);		
