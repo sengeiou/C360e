@@ -16,11 +16,11 @@
     <string name="price">价格</string>
     <string name="qty">数量</string>
     <string name="total">总计</string>
-    <string name="sub_total">小计 : $</string>
-    <string name="discount">折扣 : $</string>
-    <string name="total_">总计 : $</string>
-    <string name="rounding_print">抹零 : $</string>
-    <string name="grand_total">应支付 : $</string>
+    <string name="sub_total">小计 : </string>
+    <string name="discount">折扣 : </string>
+    <string name="total_">总计 : </string>
+    <string name="rounding_print">抹零 : </string>
+    <string name="grand_total">应支付 : </string>
     <string name="cash_">现金</string>
     <string name="changes">找零</string>
     <string name="mastercard">MasterCard</string>
