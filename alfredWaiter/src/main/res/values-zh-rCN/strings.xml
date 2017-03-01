@@ -54,6 +54,7 @@
     <string name="group_all">分组:全部</string>
     <string name="place_order">下单</string>
     <string name="get_bill">账单</string>
+    <string name="print_bill">打印</string>
     <string name="notification">通知</string>
     <string name="grand_total">总计</string>
     

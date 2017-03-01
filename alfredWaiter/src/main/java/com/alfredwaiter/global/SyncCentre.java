@@ -99,7 +99,15 @@ public class SyncCentre {
 		HttpAPI.getBillPrint(context, parameters,
 				getAbsoluteUrl(APIName.GET_BILL), httpClient, handler);
 	}
-	
+	/*
+	print Bill
+	 */
+	public void printBill(Context context, Map<String, Object> parameters,
+			Handler handler) {
+		HttpAPI.printBill(context, parameters,
+				getAbsoluteUrl(APIName.PRINT_BILL), httpClient, handler);
+	}
+
 	// get OrderDetail Un Waiter Create
 	public void handlerGetOrderDetails(Context context, Map<String, Object> parameters,
 			Handler handler) {

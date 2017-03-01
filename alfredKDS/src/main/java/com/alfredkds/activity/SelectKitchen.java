@@ -1,11 +1,5 @@
 package com.alfredkds.activity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -32,6 +26,12 @@ import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class SelectKitchen extends BaseActivity {
 	private ListView lv_kitchen_centre;
 	private List<Printer> printers = new ArrayList<Printer>();
@@ -51,6 +51,7 @@ public class SelectKitchen extends BaseActivity {
 		Intent intent = getIntent();
 		printers = (List<Printer>) intent.getSerializableExtra("printers");
 		if (printers == null || printers.isEmpty()) {
+			UIHelp.showToast(context, "POS has no Kitchen Printer Configured. Kindly check Backend Settings if a Printer is Configured for the Kitchen.");
 			finish();
 		}
 		lv_kitchen_centre.setAdapter(new KitchenListAdapter(context, printers));

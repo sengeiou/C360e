@@ -1,10 +1,12 @@
  package com.alfredbase.javabean;
 
+import android.text.TextUtils;
+
+import com.alfredbase.javabean.model.PrintOrderItem;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.alfredbase.javabean.model.PrintOrderItem;
 
 public class PrinterTitle implements Serializable{
 	
@@ -88,10 +90,13 @@ public class PrinterTitle implements Serializable{
 		this.restaurantName = restaurantName;
 	}
 	public String getAddressDetail() {
+		if(!TextUtils.isEmpty(addressDetail)){
+			return addressDetail.replace("</br>", "\n");
+		}
 		return addressDetail;
 	}
 	public void setAddressDetail(String addressDetail) {
-		this.addressDetail = addressDetail;
+			this.addressDetail = addressDetail;
 	}
 	public String getAddress() {
 		return address;

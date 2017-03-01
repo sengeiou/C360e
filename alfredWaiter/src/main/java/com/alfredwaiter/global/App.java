@@ -7,6 +7,7 @@ import com.alfredbase.UnCEHandler;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
@@ -19,6 +20,8 @@ import com.alfredwaiter.view.WaiterReloginDialog;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -41,7 +44,7 @@ public class App extends BaseApplication {
 	private String fromTableName;
 	private String toTableName;
 	public  String VERSION = "1.0.0";
-
+	private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<Integer, PrinterDevice>();
 	private Observable<Object> observable;
 	
 	private String currencySymbol = "$";
@@ -115,6 +118,15 @@ public class App extends BaseApplication {
 		super.onIPChanged();
 		
 	}
+
+	public Map<Integer, PrinterDevice> getPrinterDevices() {
+		return this.printerDevices;
+	}
+
+	public void setPrinterDevices(Map<Integer, PrinterDevice> printerDevices) {
+		this.printerDevices = printerDevices;
+	}
+
 	@Override
 	protected void onNetworkConnectionUpdate () {
 		super.onNetworkConnectionUpdate();

@@ -50,6 +50,7 @@ public class APIName {
 	public static final String COLLECT_KOT_ITEM = "collect_kot_item";
 	public static final String GET_ORDERDETAILS = "get_orderDetails";
 	public static final String GET_BILL = "get_bill";
+	public static final String PRINT_BILL = "print_bill";
 
 	// 以下是KDS专用
 	public static final String GET_PRINTERS= "get_printers";

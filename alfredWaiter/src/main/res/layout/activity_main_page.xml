@@ -73,12 +73,17 @@
 	            android:textColor="@color/black"
 	            android:src="@drawable/icon_waiter_order"
 	            android:textSize="@dimen/text_size_m" />
-		    <ImageView 
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_marginLeft="10dp"
-		        android:layout_marginTop="-5dp"
-		        android:src="@drawable/icon_waiter_order_number"/>
+
+			<ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+				android:src="@drawable/icon_waiter_order_number"
+				android:layout_alignParentTop="true"
+				android:layout_alignLeft="@+id/iv_tables_name"
+				android:layout_alignStart="@+id/iv_tables_name"
+				android:layout_marginStart="15dp"
+				android:id="@+id/imageView" />
 		</RelativeLayout>        
 
     </LinearLayout>

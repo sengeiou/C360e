@@ -25,6 +25,7 @@ import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.store.Store;
@@ -63,6 +64,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HttpAnalysis {
 	public static void employeeId(int statusCode, Header[] headers,
@@ -202,6 +204,13 @@ public class HttpAnalysis {
 //			TablesSQL.addTablesList(tables);
 			TableInfoSQL.deleteAllTableInfo();
 			TableInfoSQL.addTablesList(tables);
+
+			if(object.has("printMap")){
+				Map<Integer, PrinterDevice> printerDevices = gson.fromJson(object.getString("printMap"),
+						new TypeToken<Map<Integer, PrinterDevice>>() {
+						}.getType());
+				App.instance.setPrinterDevices(printerDevices);
+			}
 
 		} catch (JSONException e) {
 			e.printStackTrace();

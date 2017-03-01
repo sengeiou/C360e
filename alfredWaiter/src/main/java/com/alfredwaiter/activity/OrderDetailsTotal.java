@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -53,6 +55,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	public static final int PLACE_ORDER_RESULT_CODE = 1;
 	public static final int VIEW_EVENT_GET_BILL = 2;
 	public static final int VIEW_EVENT_GET_BILL_FAILED = 3;
+	public static final int VIEW_EVENT_PRINT_BILL = 4;
+	public static final int VIEW_EVENT_PRINT_BILL_FAILED = 5;
+	public static final int VIEW_EVENT_GET_PRINT_LIST = 6;
+	public static final int VIEW_EVENT_GET_PRINT_LIST_FAILED = 7;
+
 	private static final int DURATION_1 = 300;
 	private ListView lv_dishes;
 	private Order currentOrder;
@@ -61,7 +68,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	private RelativeLayout rl_countKeyboard;
 	private TextView tv_group;
 	private TextView tv_place_order;
-	private TextView tv_get_bill;
+	private Button btn_get_bill;
+	private Button btn_print_bill;
 	private SelectGroupWindow selectGroupWindow;
 	private int groupId = -1;
 	private OrderDetailListAdapter adapter;
@@ -74,7 +82,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	private List<OrderDetail> oldOrderDetails = new ArrayList<OrderDetail>();
 	private StringBuffer buffer = new StringBuffer();
 	private DismissCall dismissCall;
-
+	private LinearLayout ll_bill_action;
 	@Override
 	protected void initView() {
 		super.initView();
@@ -82,7 +90,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		getIntentData();
 		lv_dishes = (ListView) findViewById(R.id.lv_dishes);
 		tv_place_order = (TextView) findViewById(R.id.tv_place_order);
-		tv_get_bill = (TextView) findViewById(R.id.tv_get_bill);
+		btn_get_bill = (Button) findViewById(R.id.btn_get_bill);
+		btn_print_bill = (Button) findViewById(R.id.btn_print_bill);
 		loadingDialog = new LoadingDialog(context);
 		adapter = new OrderDetailListAdapter(context);
 		lv_dishes.setAdapter(adapter);
@@ -103,7 +112,9 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		tv_group = (TextView) findViewById(R.id.tv_group);
 		tv_group.setOnClickListener(this);
 		tv_place_order.setOnClickListener(this);
-		tv_get_bill.setOnClickListener(this);
+		btn_get_bill.setOnClickListener(this);
+		btn_print_bill.setOnClickListener(this);
+		ll_bill_action = (LinearLayout) findViewById(R.id.ll_bill_action);
 		selectGroupWindow = new SelectGroupWindow(context, tv_group, handler);
 		((TextView) findViewById(R.id.tv_tables_name)).setText(TableInfoSQL.getTableById(currentOrder.getTableId())
 				.getName());
@@ -195,6 +206,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				}
 				
 				break;
+			case VIEW_EVENT_PRINT_BILL:
+				UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_succ));
+				break;
+			case VIEW_EVENT_PRINT_BILL_FAILED:
+				UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_failed));
+				break;
 			default:
 				break;
 			}
@@ -274,14 +291,26 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			// VibrationUtil.playVibratorTwice();
 			commitOrderToPOS();
 			break;
-		case R.id.tv_get_bill:
+		case R.id.btn_get_bill: {
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters
 					.put("table",
 							TableInfoSQL.getTableById(
 									currentOrder.getTableId()));
 			SyncCentre.getInstance().getBillPrint(context, parameters, handler);
+		}
+			break;
+		case R.id.btn_print_bill: {
+			DialogFactory.commonTwoBtnDialog(context, "Waring", "Use the default Cashier Printer ?", "Other", "OK",
+					null,
+					new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							printBill(null);
+						}
+			});
 
+		}
 			break;
 		case R.id.iv_add:
 			OpenMainPage();
@@ -289,6 +318,14 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		default:
 			break;
 		}
+	}
+
+	private void printBill(Printer printer){
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("orderId",currentOrder.getId().intValue());
+		parameters.put("tableName",TableInfoSQL.getTableById(
+				currentOrder.getTableId()).getName());
+		SyncCentre.getInstance().printBill(context, parameters, handler);
 	}
 	@Override
 	public void onBackPressed() {
@@ -343,10 +380,10 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	private void refreshOrder() {
 		if (currentOrder.getOrderStatus() == ParamConst.ORDER_STATUS_OPEN_IN_POS) {
 			tv_place_order.setVisibility(View.GONE);
-			tv_get_bill.setVisibility(View.VISIBLE);
+			ll_bill_action.setVisibility(View.VISIBLE);
 		} else {
 			tv_place_order.setVisibility(View.VISIBLE);
-			tv_get_bill.setVisibility(View.GONE);
+			ll_bill_action.setVisibility(View.GONE);
 		}
 	}
 

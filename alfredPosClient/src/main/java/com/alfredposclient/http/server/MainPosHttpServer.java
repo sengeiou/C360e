@@ -20,12 +20,16 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.KotNotification;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.javabean.model.PrintOrderItem;
+import com.alfredbase.javabean.model.PrintOrderModifier;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.javabean.model.WaiterDevice;
@@ -59,7 +63,6 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
-import com.alfredposclient.http.HttpAPI;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.umeng.analytics.MobclickAgent;
@@ -263,6 +266,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				return handlerGetKotNotifications();
 			} else if (apiName.equals(APIName.GET_BILL)) {
 				return handlerGetBill(body);
+			} else if (apiName.equals(APIName.PRINT_BILL)) {
+				return handlerPrintBill(body);
 			} else if (apiName.equals(APIName.CALL_SPECIFY_THE_NUMBER)){
 				return handlerCallSpecifyNumber(body);
 			} else {
@@ -694,6 +699,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 		result.put("placeList", PlaceInfoSQL.getAllPlaceInfo());
 		result.put("tableList", TableInfoSQL.getAllTables());
+		result.put("printMap", App.instance.getPrinterDevices());
 		result.put("resultCode", ResultCode.SUCCESS);
 		resp = this.getJsonResponse(new Gson().toJson(result));
 		return resp;
@@ -1484,6 +1490,56 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			App.getTopActivity().httpRequestAction(
 					MainPage.VIEW_EVNT_GET_BILL_PRINT, tabInPOS);
 
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
+	private Response handlerPrintBill(String params) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		Gson gson = new Gson();
+
+		/*No waiter apps in kiosk mode */
+		if (App.instance.isRevenueKiosk()) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+			return resp;
+		}
+
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int orderId = jsonObject.getInt("orderId");
+			String tableName = jsonObject.getString("tableName");
+			if(orderId > 0){
+				Order order = OrderSQL.getOrder(orderId);
+				PrinterTitle title = ObjectFactory.getInstance()
+						.getPrinterTitle(
+								App.instance.getRevenueCenter(),
+								order,
+								App.instance.getUser().getFirstName()
+										+ App.instance.getUser()
+										.getLastName(),
+								tableName, 1);
+				ArrayList<PrintOrderItem> orderItems = ObjectFactory
+						.getInstance().getItemList(
+								OrderDetailSQL.getOrderDetails(order
+										.getId()));
+				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+						.getInstance().getItemModifierList(order, OrderDetailSQL.getOrderDetails(order
+								.getId()));
+				List<Map<String, String>> taxMap = OrderDetailTaxSQL
+						.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
+				PrinterDevice printer = App.instance.getCahierPrinter();
+				App.instance.remoteBillPrint(printer, title, order,
+						orderItems, orderModifiers, taxMap, null, null);
+				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
+			}
 			result.put("resultCode", ResultCode.SUCCESS);
 			resp = this.getJsonResponse(new Gson().toJson(result));
 

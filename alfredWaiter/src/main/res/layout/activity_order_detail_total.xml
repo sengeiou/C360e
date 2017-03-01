@@ -119,27 +119,46 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_m" />
         </LinearLayout>
-        <TextView
-            android:id="@+id/tv_place_order"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:text="@string/place_order"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_m" />
-        <TextView
-            android:id="@+id/tv_get_bill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:text="@string/get_bill"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_m" 
-            android:visibility="gone"/>
+			<TextView
+				android:id="@+id/tv_place_order"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_centerVertical="true"
+				android:layout_marginRight="10dp"
+				android:text="@string/place_order"
+				android:textColor="@color/black"
+				android:textSize="@dimen/text_size_m"
+				android:visibility="gone"/>
+			<LinearLayout
+				android:id="@+id/ll_bill_action"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_alignParentRight="true"
+				android:layout_marginRight="10dp"
+				android:orientation="horizontal"
+				android:visibility="visible">
+				<Button
+					android:id="@+id/btn_print_bill"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:text="@string/print_bill"
+					android:textColor="@color/black"
+					android:layout_marginRight="20dp"
+					android:textSize="@dimen/text_size_m"
+					/>
+				<Button
+					android:id="@+id/btn_get_bill"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:text="@string/get_bill"
+					android:textColor="@color/black"
+					android:textSize="@dimen/text_size_m"
+					/>
+			</LinearLayout>
+
     	</RelativeLayout>
     </RelativeLayout>
     
