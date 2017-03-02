@@ -80,8 +80,6 @@ public class PrinterTitle implements Serializable{
 		this.footerOptions = options;
 	}
 
-
-
 	
 	public PrinterTitle(){
 	}
