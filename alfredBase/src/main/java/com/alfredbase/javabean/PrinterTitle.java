@@ -91,6 +91,7 @@ public class PrinterTitle implements Serializable{
 	}
 	public String getAddressDetail() {
 		if(!TextUtils.isEmpty(addressDetail)){
+			// #32
 			return addressDetail.replace("</br>", "\n");
 		}
 		return addressDetail;
