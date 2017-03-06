@@ -310,6 +310,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 						}
 			});
 
+
 		}
 			break;
 		case R.id.iv_add:
