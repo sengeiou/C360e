@@ -3,6 +3,7 @@ package com.alfredbase.utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Bitmap;
@@ -11,14 +12,19 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.R;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.google.zxing.BarcodeFormat;
@@ -30,7 +36,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DialogFactory {
@@ -475,7 +484,81 @@ public class DialogFactory {
 
 	}
 
-	public static void  showInputNetSalesDialog(){
+	public static void  showSelectPrinterDialog(final BaseActivity activity, final DialogCallBack dialogCallBack, Map<Integer, PrinterDevice> map){
+		try {
+			final Dialog dialog = new Dialog(activity, R.style.qrcode_dialog);
+			View view = LayoutInflater.from(activity).inflate(
+					R.layout.dialog_printer_list, null);
+			dialog.setCancelable(false);
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.setContentView(view);
 
+			Collection<PrinterDevice> valueCollection = map.values();
+			final List<PrinterDevice> list = new ArrayList<PrinterDevice>(valueCollection);
+
+			ListView listView = (ListView) view.findViewById(R.id.lv_printer);
+			PrinterAdapter printerAdapter = new PrinterAdapter(activity, list);
+			listView.setAdapter(printerAdapter);
+			listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					PrinterDevice printerDevice = list.get(position);
+					dialogCallBack.callBack(printerDevice);
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+
+	public interface DialogCallBack{
+		void callBack(PrinterDevice printerDevice);
+	}
+
+	private static class PrinterAdapter extends BaseAdapter{
+		private List<PrinterDevice> list = new ArrayList<PrinterDevice>();
+		private LayoutInflater inflater;
+		public PrinterAdapter(Context context, List<PrinterDevice> list){
+			this.list = list;
+			inflater = LayoutInflater.from(context);
+		}
+		@Override
+		public int getCount() {
+			return list.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return list.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder = null;
+			if (convertView == null) {
+				convertView = inflater.inflate(R.layout.printer_item, null);
+				holder = new ViewHolder();
+				holder.tv_printer_name = (TextView) convertView.findViewById(R.id.tv_printer_name);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			PrinterDevice printerDevice = list.get(position);
+			holder.tv_printer_name.setText(printerDevice.getName());
+			return convertView;
+		}
+
+		class ViewHolder{
+			TextView tv_printer_name;
+		}
+	}
+
 }

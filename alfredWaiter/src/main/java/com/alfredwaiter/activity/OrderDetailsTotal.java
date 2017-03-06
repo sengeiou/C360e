@@ -28,7 +28,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -302,13 +302,23 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			break;
 		case R.id.btn_print_bill: {
 			DialogFactory.commonTwoBtnDialog(context, "Waring", "Use the default Cashier Printer ?", "Other", "OK",
-					null,
+					new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							DialogFactory.showSelectPrinterDialog(context, new DialogFactory.DialogCallBack() {
+								@Override
+								public void callBack(PrinterDevice printerDevice) {
+									printBill(printerDevice);
+								}
+							},App.instance.getPrinterDevices());
+						}
+					},
 					new OnClickListener() {
 						@Override
 						public void onClick(View v) {
 							printBill(null);
 						}
-			});
+					});
 
 
 		}
@@ -321,11 +331,14 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		}
 	}
 
-	private void printBill(Printer printer){
+	private void printBill(PrinterDevice printer){
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("orderId",currentOrder.getId().intValue());
 		parameters.put("tableName",TableInfoSQL.getTableById(
 				currentOrder.getTableId()).getName());
+		if(printer != null){
+			parameters.put("deviceId", printer.getDevice_id());
+		}
 		SyncCentre.getInstance().printBill(context, parameters, handler);
 	}
 	@Override
@@ -379,7 +392,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	}
 
 	private void refreshOrder() {
-		if (currentOrder.getOrderStatus() == ParamConst.ORDER_STATUS_OPEN_IN_POS) {
+		if (currentOrder.getOrderStatus() >= ParamConst.ORDER_STATUS_OPEN_IN_POS) {
 			tv_place_order.setVisibility(View.GONE);
 			ll_bill_action.setVisibility(View.VISIBLE);
 		} else {

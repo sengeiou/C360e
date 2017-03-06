@@ -1516,6 +1516,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			JSONObject jsonObject = new JSONObject(params);
 			int orderId = jsonObject.getInt("orderId");
 			String tableName = jsonObject.getString("tableName");
+			int deviceId = 0;
+			if(jsonObject.has("deviceId")) {
+				 deviceId = jsonObject.getInt("deviceId");
+			}
 			if(orderId > 0){
 				Order order = OrderSQL.getOrder(orderId);
 				PrinterTitle title = ObjectFactory.getInstance()
@@ -1536,6 +1540,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				List<Map<String, String>> taxMap = OrderDetailTaxSQL
 						.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
 				PrinterDevice printer = App.instance.getCahierPrinter();
+				if(deviceId != 0){
+					printer = App.instance.getPrinterDeviceById(deviceId);
+				}
 				App.instance.remoteBillPrint(printer, title, order,
 						orderItems, orderModifiers, taxMap, null, null);
 				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
