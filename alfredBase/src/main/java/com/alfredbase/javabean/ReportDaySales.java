@@ -158,6 +158,16 @@ public class ReportDaySales implements Serializable{
 
 	private String cashTopUp;
 
+	private String takeawaySales;
+
+	private String takeawayTax;
+
+	private Integer takeawayQty;
+
+	private Long createTime;
+
+	private Long updateTime;
+
 	public ReportDaySales() {
 
 	}
@@ -823,6 +833,46 @@ public class ReportDaySales implements Serializable{
 		this.cashTopUp = cashTopUp;
 	}
 
+	public String getTakeawaySales() {
+		return takeawaySales;
+	}
+
+	public void setTakeawaySales(String takeawaySales) {
+		this.takeawaySales = takeawaySales;
+	}
+
+	public String getTakeawayTax() {
+		return takeawayTax;
+	}
+
+	public void setTakeawayTax(String takeawayTax) {
+		this.takeawayTax = takeawayTax;
+	}
+
+	public Integer getTakeawayQty() {
+		return takeawayQty;
+	}
+
+	public void setTakeawayQty(Integer takeawayQty) {
+		this.takeawayQty = takeawayQty;
+	}
+
+	public Long getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Long createTime) {
+		this.createTime = createTime;
+	}
+
+	public Long getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Long updateTime) {
+		this.updateTime = updateTime;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -903,6 +953,11 @@ public class ReportDaySales implements Serializable{
 				", waiterAmount='" + waiterAmount + '\'' +
 				", difference='" + difference + '\'' +
 				", cashTopUp='" + cashTopUp + '\'' +
+				", takeawaySales='" + takeawaySales + '\'' +
+				", takeawayTax='" + takeawayTax + '\'' +
+				", takeawayQty=" + takeawayQty +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
 				'}';
 	}
 }

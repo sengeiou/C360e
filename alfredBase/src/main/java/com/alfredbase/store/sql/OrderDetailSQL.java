@@ -206,6 +206,17 @@ public class OrderDetailSQL {
 		}
 
 	}
+
+	public static void updateOrderDetailTaxById(String taxPrice, int orderDetailId){
+		try {
+			String sql = "update " + TableNames.OrderDetail
+					+ " set taxPrice = ? where id = ?";
+			SQLExe.getDB().execSQL(sql,
+					new Object[] { taxPrice, orderDetailId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void updateDiscountTypeBeforeByMainCategoryId(int orderId) {
 		try {
 			String sql = "update "

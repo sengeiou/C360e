@@ -46,6 +46,7 @@ public class DataHelper {
 				onUpgradeForOldVersion8(db);
 				onUpgradeForOldVersion9(db);
 				onUpgradeForOldVersion11(db);
+				onUpgradeForOldVersion12(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -71,6 +72,7 @@ public class DataHelper {
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
@@ -83,6 +85,7 @@ public class DataHelper {
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
@@ -94,6 +97,7 @@ public class DataHelper {
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 4:
 						onUpgradeForOldVersion4(db);
@@ -104,6 +108,7 @@ public class DataHelper {
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 5:
 						onUpgradeForOldVersion5(db);
@@ -113,6 +118,7 @@ public class DataHelper {
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 6:
 						onUpgradeForOldVersion6(db);
@@ -121,6 +127,7 @@ public class DataHelper {
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 7:
 						onUpgradeForOldVersion7(db);
@@ -128,24 +135,32 @@ public class DataHelper {
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 8:
 						onUpgradeForOldVersion8(db);
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 9:
 						onUpgradeForOldVersion9(db);
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 10:
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
 						break;
 					case 11:
 						onUpgradeForOldVersion11(db);
+						onUpgradeForOldVersion12(db);
+						break;
+					case 12:
+						onUpgradeForOldVersion12(db);
 						break;
 				default:
 					break;
@@ -742,6 +757,15 @@ public class DataHelper {
 			}catch (Exception e){
 				e.printStackTrace();
 			}
+		}
+
+		private void onUpgradeForOldVersion12(SQLiteDatabase db){
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN takeawaySales TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN takeawayTax TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+					+ " ADD COLUMN takeawayQty INTEGER default 0");
 		}
 	}
 }

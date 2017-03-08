@@ -44,6 +44,15 @@ import java.util.Map;
 
 public class DialogFactory {
 
+
+	public static void commonTwoBtnDialog(BaseActivity activity,
+										  String title, String content,
+										  String leftText, String rightText,
+										  OnClickListener leftListener,
+										  OnClickListener rghtListener){
+		commonTwoBtnDialog(activity, title, content, leftText, rightText, leftListener, rghtListener, false);
+	}
+
 	/**
 	 * 通用的，两按钮Dialog
 	 * 
@@ -58,7 +67,7 @@ public class DialogFactory {
 	public static void commonTwoBtnDialog(final BaseActivity activity,
 			final String title, final String content, final String leftText, final String rightText,
 			final OnClickListener leftListener,
-			final OnClickListener rghtListener) {
+			final OnClickListener rghtListener, final boolean canBack) {
 		activity.runOnUiThread(new Runnable() {
 			
 			@Override
@@ -70,7 +79,7 @@ public class DialogFactory {
 				((TextView) view.findViewById(R.id.tv_content)).setText(content);
 				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
 				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
-				dialog.setCancelable(false);
+				dialog.setCancelable(canBack);
 				dialog.setCanceledOnTouchOutside(false);
 				dialog.setContentView(view);
 				view.findViewById(R.id.tv_left).setOnClickListener(
@@ -489,7 +498,7 @@ public class DialogFactory {
 			final Dialog dialog = new Dialog(activity, R.style.qrcode_dialog);
 			View view = LayoutInflater.from(activity).inflate(
 					R.layout.dialog_printer_list, null);
-			dialog.setCancelable(false);
+			dialog.setCancelable(true);
 			dialog.setCanceledOnTouchOutside(false);
 			dialog.setContentView(view);
 

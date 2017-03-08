@@ -17,6 +17,7 @@ import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
+import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -193,9 +194,11 @@ public class OrderHelper {
 	 */
 	public static BigDecimal getOrderDetailDiscountPrice(OrderDetail orderDetail) {
 		BigDecimal discountPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE) {
+		if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
+				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
 			discountPrice = BH.mul(BH.getBD(orderDetail.getRealPrice()),
 					BH.getBDNoFormat(orderDetail.getDiscountRate()), true);
 			return discountPrice;
@@ -255,8 +258,7 @@ public class OrderHelper {
 				|| order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY) {
 			discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
 			for (OrderDetail orderDetail : orderDetails) {
-				if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-						|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB){
+				if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE){
 					discount = BH.add(discount, BH.mul(
 							BH.getBD(orderDetail.getRealPrice()),
 							BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
@@ -272,8 +274,9 @@ public class OrderHelper {
 								BH.getBD(orderDetail.getDiscountPrice()), true);
 					} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
 									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
-									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE) {
+//									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
+									) {
 						discount = BH.add(discount, BH.mul(
 								BH.getBD(orderDetail.getRealPrice()),
 								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
@@ -342,9 +345,11 @@ public class OrderHelper {
 							BH.getBD(orderDetail.getTaxPrice()),
 							false);
 				}else {
+					BigDecimal orderDetailTax = OrderHelper.getOrderDetailTax(order, orderDetail);
 					tax = BH.add(tax,
-							OrderHelper.getOrderDetailTax(order, orderDetail),
+							orderDetailTax,
 							false);
+					OrderDetailSQL.updateOrderDetailTaxById(orderDetailTax.toString(), orderDetail.getId().intValue());
 				}
 			}
 		}

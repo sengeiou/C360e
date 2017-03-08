@@ -263,6 +263,9 @@ public class ReportObjectFactory {
 			return null;
 		}
 		BigDecimal inclusiveTaxAmt = BH.getBD(ParamConst.DOUBLE_ZERO);
+		BigDecimal takeawaySales = BH.getBD(ParamConst.DOUBLE_ZERO);
+		BigDecimal takeawayTax = BH.getBD(ParamConst.DOUBLE_ZERO);
+		int takeawayQty = 0;
 		for (int orderIndex = 0; orderIndex < orderList.size(); orderIndex++) {
 			Order order = orderList.get(orderIndex);
 			// itemSalesDicimal = BH.add(itemSalesDicimal,
@@ -293,6 +296,11 @@ public class ReportObjectFactory {
 									true);
 						}
 					}
+					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+						takeawayQty += orderDetail.getItemNum();
+					}
 				}
 				discountPerQty++;
 			}
@@ -318,6 +326,11 @@ public class ReportObjectFactory {
 									true);
 							discountPerQty++;
 						}
+					}
+					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+						takeawayQty += orderDetail.getItemNum();
 					}
 				}
 //				discountPer = BH.add(discountPer, BH.getBD(order.getDiscountPrice()), true);
@@ -352,6 +365,11 @@ public class ReportObjectFactory {
 							discountQty++;
 						}
 					}
+					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+						takeawayQty += orderDetail.getItemNum();
+					}
 				}
 			}
 				break;
@@ -385,7 +403,6 @@ public class ReportObjectFactory {
 				inclusiveTaxAmt = BH.add(BH.getBD(order.getInclusiveTaxPrice()), inclusiveTaxAmt, true);
 				billNoQty++;
 			}
-			
 		}
 
 		// itemSalesDicimal = BH.add(itemSalesDicimal, BH.getBD(iVoid),
@@ -519,6 +536,11 @@ public class ReportObjectFactory {
 		reportDaySales.setWaiterAmount(BH.getBD(sumActual).toString());
 		reportDaySales.setDifference(BH.getBD(sumDifference).toString());
 		reportDaySales.setCashTopUp(BH.getBD(cashTopUps).toString());
+		reportDaySales.setTakeawaySales(BH.formatDouble(takeawaySales, true).toString());
+		reportDaySales.setTakeawayTax(BH.formatDouble(takeawayTax, true).toString());
+		reportDaySales.setTakeawayQty(takeawayQty);
+		reportDaySales.setCreateTime(System.currentTimeMillis());
+		reportDaySales.setUpdateTime(System.currentTimeMillis());
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 		return reportDaySales;
 	}
@@ -1665,6 +1687,9 @@ public class ReportObjectFactory {
 			return null;
 		}
 		BigDecimal inclusiveTaxAmt = BH.getBD(ParamConst.DOUBLE_ZERO);
+		BigDecimal takeawaySales = BH.getBD(ParamConst.DOUBLE_ZERO);
+		BigDecimal takeawayTax = BH.getBD(ParamConst.DOUBLE_ZERO);
+		int takeawayQty = 0;
 		for (int orderIndex = 0; orderIndex < orderList.size(); orderIndex++) {
 			Order order = orderList.get(orderIndex);
 			// itemSalesDicimal = BH.add(itemSalesDicimal,
@@ -1695,6 +1720,11 @@ public class ReportObjectFactory {
 									true);
 						}
 					}
+					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+						takeawayQty += orderDetail.getItemNum();
+					}
 				}
 				discountPerQty++;
 			}
@@ -1720,6 +1750,11 @@ public class ReportObjectFactory {
 									true);
 							discountPerQty++;
 						}
+					}
+					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+						takeawayQty += orderDetail.getItemNum();
 					}
 				}
 //				discountPer = BH.add(discountPer, BH.getBD(order.getDiscountPrice()), true);
@@ -1753,6 +1788,11 @@ public class ReportObjectFactory {
 									BH.getBD(orderDetail.getDiscountPrice()), true);
 							discountQty++;
 						}
+					}
+					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+						takeawayQty += orderDetail.getItemNum();
 					}
 				}
 			}
@@ -1925,6 +1965,11 @@ public class ReportObjectFactory {
 		reportDaySales.setWaiterAmount(BH.getBD(actualAmount).toString());
 		reportDaySales.setDifference(difference.toString());
 		reportDaySales.setCashTopUp(BH.getBD(cashTopUps).toString());
+		reportDaySales.setTakeawaySales(BH.formatDouble(takeawaySales, true).toString());
+		reportDaySales.setTakeawayTax(BH.formatDouble(takeawayTax, true).toString());
+		reportDaySales.setTakeawayQty(takeawayQty);
+		reportDaySales.setCreateTime(System.currentTimeMillis());
+		reportDaySales.setUpdateTime(System.currentTimeMillis());
 
 		//-----------------------分割线----------------------------
 		reportSessionSales.setCash(reportDaySales.getTotalCash());

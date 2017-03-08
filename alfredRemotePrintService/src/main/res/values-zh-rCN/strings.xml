@@ -64,6 +64,9 @@
     <string name="total_refund">退款总额</string>
     <string name="discount_on_per">百分比折扣</string>
     <string name="discount_on_pri">现金折扣</string>
+    <string name="take_away_sales">打包销售</string>
+    <string name="take_away_tax">打包税收</string>
+    <string name="take_away_qty">打包菜品数量</string>
     <string name="total_tax">总税</string>
     <string name="rounding">抹零</string>
     <string name="nett_sales">销售净额</string>
@@ -82,6 +85,7 @@
     <string name="vr_summary">退单/菜 汇总</string>
     <string name="total_void">总退菜(单)</string>
     <string name="disc_summary">折扣汇总</string>
+    <string name="take_away">打包汇总</string>
     <string name="total_disc">折扣总额</string>
     <string name="tax_svc">TAX/SVC</string>
     <string name="open_drawer">OPEN DRAWER</string>

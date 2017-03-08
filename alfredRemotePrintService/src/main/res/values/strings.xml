@@ -64,6 +64,9 @@
     <string name="total_refund">Total Refund</string>
     <string name="discount_on_per">Discount on %</string>
     <string name="discount_on_pri">Discount on $</string>
+    <string name="take_away_sales">Take away sales</string>
+    <string name="take_away_tax">Take away tax</string>
+    <string name="take_away_qty">Take away item qty</string>
     <string name="total_tax">Exlusive Tax</string>
     <string name="rounding">Rounding</string>
     <string name="nett_sales">NETT Sales</string>
@@ -82,6 +85,7 @@
     <string name="vr_summary">VOID/REFUND SUMMARY</string>
     <string name="total_void">Total Void</string>
     <string name="disc_summary">DISCOUNTS SUMMARY</string>
+    <string name="take_away">TAKE AWAY SUMMARY</string>
     <string name="total_disc">Total Discount</string>
     <string name="tax_svc">TAX/SVC</string>
     <string name="open_drawer">OPEN DRAWER</string>

@@ -363,6 +363,16 @@ public class DaySalesReportPrint extends ReportBasePrint{
 					String.valueOf(BH.add(BH.getBD(reportDaySales.getDiscountPer()),
 							BH.getBD(reportDaySales.getDiscount()), true)), 1);
 		}
+		if(reportDaySales.getTakeawayQty() > 0){
+			this.addSectionHeader(PrintService.instance.getResources().getString(R.string.take_away));
+			this.addItem(PrintService.instance.getResources().getString(R.string.take_away_sales),
+					BH.getBD(reportDaySales.getTakeawaySales()).toString(), 1);
+			this.addItem(PrintService.instance.getResources().getString(R.string.take_away_tax),
+					BH.getBD(reportDaySales.getTakeawayTax()).toString(),
+					1);
+			this.addItem(PrintService.instance.getResources().getString(R.string.take_away_qty),
+					String.valueOf(reportDaySales.getTakeawayQty()), 1);
+		}
         if(App.countryCode != ParamConst.CHINA){
 			if (reportDayTaxs != null) {		
 				this.addSectionHeader(PrintService.instance.getResources().getString(R.string.tax_svc));	

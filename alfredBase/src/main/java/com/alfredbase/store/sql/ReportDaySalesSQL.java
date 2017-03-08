@@ -24,9 +24,10 @@ public class ReportDaySalesSQL {
 					+ " totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount, firstReceipt, lastReceipt,"
 					+ " totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt, alipay, alipayQty, thirdParty,"
 					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty,"
-					+ " refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp)"
+					+ " refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, takeawayQty, createTime,"
+					+ " updateTime)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportDaySales.getId(),
@@ -105,7 +106,12 @@ public class ReportDaySalesSQL {
 							reportDaySales.getExpectedAmount() == null ? "0.00" : reportDaySales.getExpectedAmount(),
 							reportDaySales.getWaiterAmount() == null ? "0.00" : reportDaySales.getWaiterAmount(),
 							reportDaySales.getDifference() == null ? "0.00" : reportDaySales.getDifference(),
-							reportDaySales.getCashTopUp() == null ? "0.00" : reportDaySales.getCashTopUp()
+							reportDaySales.getCashTopUp() == null ? "0.00" : reportDaySales.getCashTopUp(),
+							reportDaySales.getTakeawaySales() == null ? "0.00" : reportDaySales.getTakeawaySales(),
+							reportDaySales.getTakeawayTax() == null ? "0.00" : reportDaySales.getTakeawayTax(),
+							reportDaySales.getTakeawayQty() == null ? 0 : reportDaySales.getTakeawayQty(),
+							reportDaySales.getCreateTime(),
+							reportDaySales.getUpdateTime()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -126,9 +132,10 @@ public class ReportDaySalesSQL {
 					+ " totalCardQty, totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount,"
 					+ " firstReceipt, lastReceipt, totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt,"
 					+ " alipay, alipayQty, thirdParty, thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty,"
-					+ " billRefund, billRefundQty, refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp)"
+					+ " billRefund, billRefundQty, refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, "
+					+ " takeawayQty, createTime, updateTime)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] {reportDaySales.getRestaurantId(),
@@ -206,7 +213,12 @@ public class ReportDaySalesSQL {
 							reportDaySales.getExpectedAmount() == null ? "0.00" : reportDaySales.getExpectedAmount(),
 							reportDaySales.getWaiterAmount() == null ? "0.00" : reportDaySales.getWaiterAmount(),
 							reportDaySales.getDifference() == null ? "0.00" : reportDaySales.getDifference(),
-							reportDaySales.getCashTopUp() == null ? "0.00" : reportDaySales.getCashTopUp()
+							reportDaySales.getCashTopUp() == null ? "0.00" : reportDaySales.getCashTopUp(),
+							reportDaySales.getTakeawaySales() == null ? "0.00" : reportDaySales.getTakeawaySales(),
+							reportDaySales.getTakeawayTax() == null ? "0.00" : reportDaySales.getTakeawayTax(),
+							reportDaySales.getTakeawayQty() == null ? 0 : reportDaySales.getTakeawayQty(),
+							reportDaySales.getCreateTime(),
+							reportDaySales.getUpdateTime()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -299,6 +311,11 @@ public class ReportDaySalesSQL {
 				reportDaySales.setWaiterAmount(cursor.getString(74));
 				reportDaySales.setDifference(cursor.getString(75));
 				reportDaySales.setCashTopUp(cursor.getString(76));
+				reportDaySales.setTakeawaySales(cursor.getString(77));
+				reportDaySales.setTakeawayTax(cursor.getString(78));
+				reportDaySales.setTakeawayQty(cursor.getInt(79));
+				reportDaySales.setCreateTime(cursor.getLong(80));
+				reportDaySales.setUpdateTime(cursor.getLong(81));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -399,6 +416,11 @@ public class ReportDaySalesSQL {
 				reportDaySales.setWaiterAmount(cursor.getString(74));
 				reportDaySales.setDifference(cursor.getString(75));
 				reportDaySales.setCashTopUp(cursor.getString(76));
+				reportDaySales.setTakeawaySales(cursor.getString(77));
+				reportDaySales.setTakeawayTax(cursor.getString(78));
+				reportDaySales.setTakeawayQty(cursor.getInt(79));
+				reportDaySales.setCreateTime(cursor.getLong(80));
+				reportDaySales.setUpdateTime(cursor.getLong(81));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -535,6 +557,11 @@ public class ReportDaySalesSQL {
 				reportDaySales.setWaiterAmount(cursor.getString(74));
 				reportDaySales.setDifference(cursor.getString(75));
 				reportDaySales.setCashTopUp(cursor.getString(76));
+				reportDaySales.setTakeawaySales(cursor.getString(77));
+				reportDaySales.setTakeawayTax(cursor.getString(78));
+				reportDaySales.setTakeawayQty(cursor.getInt(79));
+				reportDaySales.setCreateTime(cursor.getLong(80));
+				reportDaySales.setUpdateTime(cursor.getLong(81));
 				result.add(reportDaySales);
 			}
 			db.setTransactionSuccessful();
@@ -645,6 +672,11 @@ public class ReportDaySalesSQL {
 				reportDaySales.setWaiterAmount(cursor.getString(74));
 				reportDaySales.setDifference(cursor.getString(75));
 				reportDaySales.setCashTopUp(cursor.getString(76));
+				reportDaySales.setTakeawaySales(cursor.getString(77));
+				reportDaySales.setTakeawayTax(cursor.getString(78));
+				reportDaySales.setTakeawayQty(cursor.getInt(79));
+				reportDaySales.setCreateTime(cursor.getLong(80));
+				reportDaySales.setUpdateTime(cursor.getLong(81));
 				result.add(reportDaySales);
 			}
 			db.setTransactionSuccessful();

@@ -318,7 +318,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 						public void onClick(View v) {
 							printBill(null);
 						}
-					});
+					}, true);
 
 
 		}

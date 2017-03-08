@@ -259,11 +259,12 @@ public class OrderSQL {
 				}
 			}
 		}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY){
-			String sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
-			if(BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))){
+			BigDecimal sumRatePrice = BH.getBD(ParamConst.DOUBLE_ZERO);
+
 //				String discount_rate = BH.div(BH.getBD(order.getDiscountPrice()),
 //						BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), false).toString();
-				BigDecimal discount_rate = BH.getBD(ParamConst.DOUBLE_ZERO);
+//				BigDecimal discount_rate = BH.getBD(ParamConst.DOUBLE_ZERO);
+//				BigDecimal
 				for (OrderDetail orderDetail : orderDetails) {
 					// 本身是送的，不参与打折
 					if (orderDetail.getIsFree() == ParamConst.FREE) {
@@ -277,9 +278,13 @@ public class OrderSQL {
 					}
 					if (orderDetail.getMainCategoryId() != 0
 							&& orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
-						discount_rate = BH.add(discount_rate, BH.getBD(orderDetail.getRealPrice()), false);
+						sumRatePrice = BH.add(sumRatePrice, BH.getBD(orderDetail.getRealPrice()), false);
 					}
 				}
+
+			if(sumRatePrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) == 1){
+				BigDecimal discount_rate = BH.div(BH.getBD(order.getDiscountPrice()),
+						sumRatePrice, false);
 				for (OrderDetail orderDetail : orderDetails) {
 					// 本身是送的，不参与打折
 					if (orderDetail.getIsFree() == ParamConst.FREE) {
@@ -292,7 +297,7 @@ public class OrderSQL {
 						continue;
 					}
 					if (orderDetail.getMainCategoryId() != 0
-							&& orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
+							&& orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
 						orderDetail.setDiscountRate(discount_rate.toString());
 						orderDetail
 								.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
