@@ -83,7 +83,7 @@ public class EditSettlementPage extends BaseActivity {
     public static final int EDIT_SETTLEMENT_CLOSE_BILL = -110;
     public static final String EDIT_ITEM_ACTION = "EDIT_ITEM_ACTION";
     private VerifyDialog verifyDialog;
-
+    private View view_top_line;
 
     @Override
     protected void initView() {
@@ -94,6 +94,7 @@ public class EditSettlementPage extends BaseActivity {
         closeOrderSplitWindow = new CloseOrderSplitWindow(this,
                 findViewById(R.id.rl_root), mHandler);
         verifyDialog = new VerifyDialog(context, mHandler);
+        view_top_line = findViewById(R.id.view_top_line);
         EditSettlementAdapter editSettlementAdapter = new EditSettlementAdapter(context, getSettlementList(), verifyDialog);
         ListView lv_payment = (ListView) findViewById(R.id.lv_payment);
         lv_payment.setAdapter(editSettlementAdapter);
@@ -560,14 +561,15 @@ public class EditSettlementPage extends BaseActivity {
             case ParamConst.BILL_TYPE_UN_SPLIT:
                 currentOrder = OrderSQL.getOrder(editSettlementInfo.getOrderId());
                 OrderBill orderBill = OrderBillSQL.getOrderBillByOrder(currentOrder);
-                closeOrderWindow.show(currentOrder, 250.0f, orderBill);
+                List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
+                closeOrderWindow.show(view_top_line,currentOrder, 250.0f, orderBill, orderDetails);
                 break;
             case ParamConst.BILL_TYPE_SPLIT:
                 Payment payment = PaymentSQL.getPayment(editSettlementInfo.getPaymentId());
                 if(payment.getOrderSplitId() != null && payment.getOrderSplitId().intValue() != 0){
                     orderSplit = OrderSplitSQL.get(payment.getOrderSplitId());
                     currentOrder = OrderSQL.getOrder(editSettlementInfo.getOrderId());
-                    closeOrderSplitWindow.show(OrderSQL.getOrder(payment.getOrderId()), orderSplit);
+                    closeOrderSplitWindow.show(view_top_line, OrderSQL.getOrder(payment.getOrderId()), orderSplit);
                 }
                 break;
             default:

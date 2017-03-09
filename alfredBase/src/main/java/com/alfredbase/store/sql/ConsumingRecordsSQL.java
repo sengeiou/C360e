@@ -72,7 +72,7 @@ public class ConsumingRecordsSQL {
     }
 
     public static Map<String, String> getSumTopUPAndRefoundBySession(long businessDate, SessionStatus sessionStatus){
-        Map<String, String> result = null;
+        Map<String, String> result = new HashMap<String, String>();;
         String sql = "select SUM(consumingAmount), COUNT(*) from " + TableNames.ConsumingRecords + " where businessDate = ? and consumingTime > ? and consumingType = 1";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
@@ -83,7 +83,6 @@ public class ConsumingRecordsSQL {
                 return result;
             }
             if (cursor.moveToFirst()) {
-                result = new HashMap<String, String>();
                 result.put("sumAmount", cursor.getString(0));
                 result.put("count", String.valueOf(cursor.getInt(1)));
             }

@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,7 +66,6 @@ import com.alfredbase.utils.NetUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
-import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.EditSettlementPage;
@@ -1118,7 +1116,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 	}
 
 
-	public void show(Order order, OrderSplit orderSplit) {
+	public void show(View view, Order order, OrderSplit orderSplit) {
 		if (isShowing()) {
 			return;
 		}
@@ -1137,8 +1135,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		if (show.length() > 0) {
 			show.delete(0, show.length());
 		}
-		popupWindow
-				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, ScreenSizeUtil.getStatusBarHeight(parent));
+//		popupWindow
+//				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, ScreenSizeUtil.getStatusBarHeight(parent));
+		popupWindow.setAnimationStyle(0);
+		popupWindow.showAsDropDown(view,0,0);
 //		rl_pay_panel.post(new Runnable() {
 //			@Override
 //			public void run() {

@@ -1606,7 +1606,7 @@ public class ReportObjectFactory {
 		Map<String, String> topUpsMap = ConsumingRecordsSQL.getSumTopUPAndRefoundBySession(businessDate, sessionStatus);
 		String topUps = BH.doubleFormat
 				.format(BH.getBD(topUpsMap.get("sumAmount")));
-		String topUpsQty = topUpsMap.get("count");
+		String topUpsQty = topUpsMap.get("count") == null ? "0" : topUpsMap.get("count");
 		Map<String, String> cashTopUpsMap = ConsumingRecordsSQL.getSumCashTopUPBySession(businessDate, sessionStatus);
 		String cashTopUps = BH.doubleFormat
 				.format(BH.getBD(cashTopUpsMap.get("sumCashAmount")));
@@ -2205,109 +2205,109 @@ public class ReportObjectFactory {
 	public ArrayList<ReportPluDayModifier> loadXReportPluDayModifier(
 			long businessDate, SessionStatus sessionStatus) {
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
-//		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
-//		modifiers = ModifierSQL.getAllModifier();
-//		for (Modifier modifier : modifiers) {
-//			if (modifier.getType() == ParamConst.ORDER_MODIFIER_TYPE_CATEGORY) {
-//				ReportPluDayModifier reportPluDayModifier = new ReportPluDayModifier();
-//				Map<String, String> modifierPriceMap = OrderModifierSQL
-//						.getOrderModifierByModifierId(modifier.getId(),
-//								businessDate, sessionStatus);
-//				String modifierPrice = modifierPriceMap.get("sumModifierPrice") == null ? "0.00"
-//						: modifierPriceMap.get("sumModifierPrice");
-//				String modifierCount = modifierPriceMap.get("sumModifierNum") == null ? "0"
-//						: modifierPriceMap.get("sumModifierNum");
-//				if (modifierCount.equals("0")) {
-//					continue;
-//				}
-//				Map<String, String> billVoidPriceMap = OrderModifierSQL
-//						.getAllOrderModifierByOrderDetailType(modifier.getId(),
-//								businessDate, sessionStatus,
-//								ParamConst.ORDERDETAIL_TYPE_GENERAL);
-//				String billVoidPrice = billVoidPriceMap.get("sumModifierPrice") == null ? "0.00"
-//						: billVoidPriceMap.get("sumModifierPrice");
-//				String billVoidCount = billVoidPriceMap.get("sumModifierNum") == null ? "0"
-//						: billVoidPriceMap.get("sumModifierNum");
-//				Map<String, String> voidModifierPriceMap = OrderModifierSQL
-//						.getAllOrderModifierByOrderDetailType(
-//								modifier.getId(),
-//								businessDate,
-//								sessionStatus,
-//								ParamConst.ORDERDETAIL_TYPE_VOID);
-//				String voidModifierPrice = voidModifierPriceMap
-//						.get("sumModifierPrice") == null ? "0.00"
-//						: voidModifierPriceMap.get("sumModifierPrice");
-//				String voidModifierCount = voidModifierPriceMap
-//						.get("sumModifierNum") == null ? "0"
-//						: voidModifierPriceMap.get("sumModifierNum");
-//				Map<String, String> bohModifierPriceMap = OrderModifierSQL
-//						.getAllOrderModifierByOrderDetailType(modifier.getId(),
-//								businessDate, sessionStatus,
-//								ParamConst.ORDERDETAIL_TYPE_GENERAL);
-//				String bohModifierPrice = bohModifierPriceMap
-//						.get("sumModifierPrice") == null ? "0.00"
-//						: bohModifierPriceMap.get("sumModifierPrice");
-//				String bohModifierCount = bohModifierPriceMap
-//						.get("sumModifierNum") == null ? "0"
-//						: bohModifierPriceMap.get("sumModifierNum");
-//				Map<String, String> focModifierPriceMap = OrderModifierSQL
-//						.getAllOrderModifierByOrderDetailType(modifier.getId(),
-//								businessDate, sessionStatus,
-//								ParamConst.ORDERDETAIL_TYPE_FREE);
-//				String focModifierPrice = focModifierPriceMap
-//						.get("sumModifierPrice") == null ? "0.00"
-//						: focModifierPriceMap.get("sumModifierPrice");
-//				String focModifierCount = focModifierPriceMap
-//						.get("sumModifierNum") == null ? "0"
-//						: focModifierPriceMap.get("sumModifierNum");
-//				
-//				Map<String, String> billFocPriceMap = OrderModifierSQL
-//						.getAllOrderModifierByOrderDetailType(modifier.getId(),
-//								businessDate, sessionStatus,
-//								ParamConst.ORDERDETAIL_TYPE_FREE);
-//				String billFocPrice = billFocPriceMap
-//						.get("sumModifierPrice") == null ? "0.00"
-//						: focModifierPriceMap.get("sumModifierPrice");
-//				String billFocCount = billFocPriceMap
-//						.get("sumModifierNum") == null ? "0"
-//						: focModifierPriceMap.get("sumModifierNum");
-//				reportPluDayModifier.setId(0);
-//				reportPluDayModifier.setReportNo(0); // TODO
-//				reportPluDayModifier.setRestaurantId(restaurant.getId());
-//				reportPluDayModifier.setRestaurantName(restaurant
-//						.getRestaurantName());
-//				reportPluDayModifier.setRevenueId(revenueCenter.getId());
-//				reportPluDayModifier.setRevenueName(revenueCenter.getRevName());
-//				reportPluDayModifier.setBusinessDate(businessDate);
-//				reportPluDayModifier.setModifierCategoryId(modifier
-//						.getCategoryId());
-//				reportPluDayModifier.setModifierCategoryName(modifier
-//						.getCategoryName());
-//				reportPluDayModifier.setModifierId(modifier.getId());
-//				reportPluDayModifier
-//						.setModifierName(modifier.getModifierName());
-//				reportPluDayModifier.setModifierPrice(modifierPrice);
-//				reportPluDayModifier.setModifierCount(Integer
-//						.parseInt(modifierCount));
-//				reportPluDayModifier.setBillVoidPrice(billVoidPrice);
-//				reportPluDayModifier.setBillVoidCount(Integer
-//						.parseInt(billVoidCount));
-//				reportPluDayModifier.setVoidModifierPrice(voidModifierPrice);
-//				reportPluDayModifier.setVoidModifierCount(Integer
-//						.parseInt(voidModifierCount));
-//				reportPluDayModifier.setBohModifierPrice(bohModifierPrice);
-//				reportPluDayModifier.setBohModifierCount(Integer
-//						.parseInt(bohModifierCount));
-//				reportPluDayModifier.setFocModifierPrice(focModifierPrice);
-//				reportPluDayModifier.setFocModifierCount(Integer
-//						.parseInt(focModifierCount));
-//				reportPluDayModifier.setBillFocPrice(billFocPrice);
-//				reportPluDayModifier.setBillFocCount(Integer
-//						.parseInt(billFocCount));
-//				reportPluDayModifier.setComboItem(modifier.getItemId().intValue());
-//				reportPluDayModifiers.add(reportPluDayModifier);
-//			}
-//		}
+		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers = ModifierSQL.getAllModifier();
+		for (Modifier modifier : modifiers) {
+			if (modifier.getType() == ParamConst.ORDER_MODIFIER_TYPE_CATEGORY) {
+				ReportPluDayModifier reportPluDayModifier = new ReportPluDayModifier();
+				Map<String, String> modifierPriceMap = OrderModifierSQL
+						.getOrderModifierByModifierId(modifier.getId(),
+								businessDate, sessionStatus);
+				String modifierPrice = modifierPriceMap.get("sumModifierPrice") == null ? "0.00"
+						: modifierPriceMap.get("sumModifierPrice");
+				String modifierCount = modifierPriceMap.get("sumModifierNum") == null ? "0"
+						: modifierPriceMap.get("sumModifierNum");
+				if (modifierCount.equals("0")) {
+					continue;
+				}
+				Map<String, String> billVoidPriceMap = OrderModifierSQL
+						.getAllOrderModifierByOrderDetailType(modifier.getId(),
+								businessDate, sessionStatus,
+								ParamConst.ORDERDETAIL_TYPE_GENERAL);
+				String billVoidPrice = billVoidPriceMap.get("sumModifierPrice") == null ? "0.00"
+						: billVoidPriceMap.get("sumModifierPrice");
+				String billVoidCount = billVoidPriceMap.get("sumModifierNum") == null ? "0"
+						: billVoidPriceMap.get("sumModifierNum");
+				Map<String, String> voidModifierPriceMap = OrderModifierSQL
+						.getAllOrderModifierByOrderDetailType(
+								modifier.getId(),
+								businessDate,
+								sessionStatus,
+								ParamConst.ORDERDETAIL_TYPE_VOID);
+				String voidModifierPrice = voidModifierPriceMap
+						.get("sumModifierPrice") == null ? "0.00"
+						: voidModifierPriceMap.get("sumModifierPrice");
+				String voidModifierCount = voidModifierPriceMap
+						.get("sumModifierNum") == null ? "0"
+						: voidModifierPriceMap.get("sumModifierNum");
+				Map<String, String> bohModifierPriceMap = OrderModifierSQL
+						.getAllOrderModifierByOrderDetailType(modifier.getId(),
+								businessDate, sessionStatus,
+								ParamConst.ORDERDETAIL_TYPE_GENERAL);
+				String bohModifierPrice = bohModifierPriceMap
+						.get("sumModifierPrice") == null ? "0.00"
+						: bohModifierPriceMap.get("sumModifierPrice");
+				String bohModifierCount = bohModifierPriceMap
+						.get("sumModifierNum") == null ? "0"
+						: bohModifierPriceMap.get("sumModifierNum");
+				Map<String, String> focModifierPriceMap = OrderModifierSQL
+						.getAllOrderModifierByOrderDetailType(modifier.getId(),
+								businessDate, sessionStatus,
+								ParamConst.ORDERDETAIL_TYPE_FREE);
+				String focModifierPrice = focModifierPriceMap
+						.get("sumModifierPrice") == null ? "0.00"
+						: focModifierPriceMap.get("sumModifierPrice");
+				String focModifierCount = focModifierPriceMap
+						.get("sumModifierNum") == null ? "0"
+						: focModifierPriceMap.get("sumModifierNum");
+
+				Map<String, String> billFocPriceMap = OrderModifierSQL
+						.getAllOrderModifierByOrderDetailType(modifier.getId(),
+								businessDate, sessionStatus,
+								ParamConst.ORDERDETAIL_TYPE_FREE);
+				String billFocPrice = billFocPriceMap
+						.get("sumModifierPrice") == null ? "0.00"
+						: focModifierPriceMap.get("sumModifierPrice");
+				String billFocCount = billFocPriceMap
+						.get("sumModifierNum") == null ? "0"
+						: focModifierPriceMap.get("sumModifierNum");
+				reportPluDayModifier.setId(0);
+				reportPluDayModifier.setReportNo(0); // TODO
+				reportPluDayModifier.setRestaurantId(restaurant.getId());
+				reportPluDayModifier.setRestaurantName(restaurant
+						.getRestaurantName());
+				reportPluDayModifier.setRevenueId(revenueCenter.getId());
+				reportPluDayModifier.setRevenueName(revenueCenter.getRevName());
+				reportPluDayModifier.setBusinessDate(businessDate);
+				reportPluDayModifier.setModifierCategoryId(modifier
+						.getCategoryId());
+				reportPluDayModifier.setModifierCategoryName(modifier
+						.getCategoryName());
+				reportPluDayModifier.setModifierId(modifier.getId());
+				reportPluDayModifier
+						.setModifierName(modifier.getModifierName());
+				reportPluDayModifier.setModifierPrice(modifierPrice);
+				reportPluDayModifier.setModifierCount(Integer
+						.parseInt(modifierCount));
+				reportPluDayModifier.setBillVoidPrice(billVoidPrice);
+				reportPluDayModifier.setBillVoidCount(Integer
+						.parseInt(billVoidCount));
+				reportPluDayModifier.setVoidModifierPrice(voidModifierPrice);
+				reportPluDayModifier.setVoidModifierCount(Integer
+						.parseInt(voidModifierCount));
+				reportPluDayModifier.setBohModifierPrice(bohModifierPrice);
+				reportPluDayModifier.setBohModifierCount(Integer
+						.parseInt(bohModifierCount));
+				reportPluDayModifier.setFocModifierPrice(focModifierPrice);
+				reportPluDayModifier.setFocModifierCount(Integer
+						.parseInt(focModifierCount));
+				reportPluDayModifier.setBillFocPrice(billFocPrice);
+				reportPluDayModifier.setBillFocCount(Integer
+						.parseInt(billFocCount));
+				reportPluDayModifier.setComboItem(modifier.getItemId().intValue());
+				reportPluDayModifiers.add(reportPluDayModifier);
+			}
+		}
 		return reportPluDayModifiers;
 	}
 	

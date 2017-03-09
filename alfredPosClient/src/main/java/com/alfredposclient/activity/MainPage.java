@@ -255,6 +255,7 @@ public class MainPage extends BaseActivity {
 	private int appOrderId;
 	
 	private View animatorView;
+	private View view_top_line;
 
 //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
@@ -286,7 +287,7 @@ public class MainPage extends BaseActivity {
 		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
 		printerLoadingDialog = new PrinterLoadingDialog(context);
 		printerLoadingDialog.setTitle(context.getResources().getString(R.string.send_kitchen));
-		
+		view_top_line = findViewById(R.id.view_top_line);
 		selectOrderSplitDialog = new SelectOrderSplitDialog(context, handler);
 //		web_tables = (WebView) findViewById(R.id.web_tables);
 		FragmentManager fragmentManager = this.getSupportFragmentManager();
@@ -1537,7 +1538,7 @@ public class MainPage extends BaseActivity {
 				mainPageMenuView.closeSubMenu(mainCategoryId);
 				break;
 			case VIEW_EVENT_SHOW_CLOSE_SPLIT_BILL:
-				closeOrderSplitWindow.show(currentOrder, (OrderSplit)msg.obj);
+				closeOrderSplitWindow.show(view_top_line,currentOrder, (OrderSplit)msg.obj);
 				break;
 			case ORDER_TIME_OUT:
 				TableInfo mTables = (TableInfo) msg.obj;
@@ -1701,7 +1702,7 @@ public class MainPage extends BaseActivity {
 		if (orderBill != null && orderBill.getBillNo() != null) {
 			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);
 			if(orderSplits.isEmpty()){
-				closeOrderWindow.show(currentOrder,operatePanel.getWidth(), orderBill);
+				closeOrderWindow.show(view_top_line,currentOrder,operatePanel.getWidth(), orderBill, orderDetails);
 			}else{
 				int count = OrderDetailSQL.getOrderDetailCountByGroupId(ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID, currentOrder.getId());
 				if(count == 0){

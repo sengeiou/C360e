@@ -4,7 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white" >
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:id="@+id/view_top_line"
+        />
     <TextView
         android:id="@+id/tv_showat"
         android:layout_width="wrap_content"

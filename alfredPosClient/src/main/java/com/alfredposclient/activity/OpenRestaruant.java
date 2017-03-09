@@ -36,6 +36,7 @@ import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
+import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PlaceInfo;
@@ -50,7 +51,6 @@ import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
@@ -68,7 +68,6 @@ import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
-import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportSessionSalesSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
@@ -664,6 +663,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	};
 //  open session
 	private boolean open(View view) {
+		if(!ButtonClickTimer.canClick(view))
+			return false;
 		boolean result = true;
 		view.setX(iv_restaurantX + rl_slideUnlockViewX);
 		view.setY(iv_restaurantY + rl_slideUnlockViewY);
@@ -777,7 +778,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 	/* close session */
 	private void close(View v, String actual) {
-
+		if(!ButtonClickTimer.canClick(v))
+			return;
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		final SessionStatus sessionStatus = Store.getObject(
 				context, Store.SESSION_STATUS, SessionStatus.class);
@@ -1032,7 +1034,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				.getAllItemCategory();
 		ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
 				.getAllItemMainCategory();
-//		List<Modifier> modifiers = ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue());
+		List<Modifier> modifiers = ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue());
 		PrinterTitle title = ObjectFactory.getInstance()
 				.getPrinterTitleForReport(
 						App.instance.getRevenueCenter().getId(),
@@ -1058,8 +1060,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				reportPluDayModifiers, null, itemMainCategorys, itemCategorys);
 
 		//modifier report
-//		App.instance.remotePrintModifierDetailAnalysisReport(reportType,
-//				cashierPrinter, title, reportPluDayModifiers, modifiers);
+		App.instance.remotePrintModifierDetailAnalysisReport(reportType,
+				cashierPrinter, title, reportPluDayModifiers, modifiers);
 
 		App.instance.remotePrintSummaryAnalysisReport(reportType,
 				cashierPrinter, title, filteredPluDayItems,

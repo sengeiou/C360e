@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,11 +42,9 @@ import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.VoidSettlement;
 import com.alfredbase.javabean.WeixinSettlement;
-import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
 import com.alfredbase.store.sql.BohHoldSettlementSQL;
 import com.alfredbase.store.sql.CardsSettlementSQL;
-import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
@@ -71,7 +68,6 @@ import com.alfredbase.utils.NetUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
-import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.EditSettlementPage;
@@ -131,7 +127,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	private int paymentTypeId;
 	private int viewTag = 0; // 当前显示的view的标志
 	private TextView selectView;
-	private ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+	private List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 	private Payment payment;
 	private User user; // 授权人
 	private List<Map<String, Object>> oldPaymentMapList;
@@ -320,7 +316,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 //		popupWindow.setBackgroundDrawable(new BitmapDrawable());
 		initTextTypeFace(contentView);
 		ListView lv_list = (ListView) contentView.findViewById(R.id.lv_list);
-		orderDetails = OrderDetailSQL.getOrderDetails(CommonSQL.getNextSeq(TableNames.Order) - 1);
+//		orderDetails = OrderDetailSQL.getOrderDetails(CommonSQL.getNextSeq(TableNames.Order) - 1);
 		orderDetailAdapter = new OrderDetailAdapter(parent, orderDetails);
 		lv_list.setAdapter(orderDetailAdapter);
 	}
@@ -947,7 +943,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		return itemCount;
 	}
 
-	public void show(Order order, float startX, OrderBill orderBill) {
+	public void show(View view,Order order, float startX, OrderBill orderBill, List<OrderDetail> orderDetailList) {
 		if (isShowing()) {
 			return;
 		}
@@ -963,14 +959,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			return;
 		}
 		init();
-		orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
+//		orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
+		this.orderDetails = orderDetailList;
 		orderDetailAdapter.setList(orderDetails);
 		orderDetailAdapter.notifyDataSetChanged();
 		if (show.length() > 0) {
 			show.delete(0, show.length());
 		}
-		popupWindow
-				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, ScreenSizeUtil.getStatusBarHeight(parent));
+//		popupWindow
+//				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, ScreenSizeUtil.getStatusBarHeight(parent));
+		popupWindow.setAnimationStyle(0);
+		popupWindow.showAsDropDown(view,0,0);
 		ll_pay.setVisibility(View.VISIBLE);
 		moneyKeyboard.setVisibility(View.GONE);
 		ll_subtotal_layout.setVisibility(

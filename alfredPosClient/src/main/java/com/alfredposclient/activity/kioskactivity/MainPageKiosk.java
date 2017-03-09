@@ -234,7 +234,7 @@ public class MainPageKiosk extends BaseActivity {
 	private SettingView settingView; // 右滑视图
 
 	private int activityRequestCode = 0;
-
+	private View view_top_line;
 	private int appOrderId;
 	private FragmentManager fragmentManager;
 	private FragmentTransaction transaction;
@@ -260,6 +260,7 @@ public class MainPageKiosk extends BaseActivity {
 		super.initView();
 //		findViewById(R.id.rl_stored_card_fragment_father).setOnClickListener(null);
 		fragmentManager = this.getSupportFragmentManager();
+		view_top_line = findViewById(R.id.view_top_line);
 //		f_stored_card = (StoredCardActivity) fragmentManager.findFragmentById(R.id.f_stored_card);
 //		f_stored_card.setMainPageHandler(handler);
 //		hideStoredCard();
@@ -1349,7 +1350,7 @@ public class MainPageKiosk extends BaseActivity {
 				mainPageMenuView.closeSubMenu(mainCategoryId);
 				break;
 			case VIEW_EVENT_SHOW_CLOSE_SPLIT_BILL:
-				closeOrderSplitWindow.show(currentOrder, (OrderSplit)msg.obj);
+				closeOrderSplitWindow.show(view_top_line, currentOrder, (OrderSplit)msg.obj);
 				break;
 			case KIOSK_VIEW_EVENT_DELETE_ORDER:
 				OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
@@ -1506,7 +1507,7 @@ public class MainPageKiosk extends BaseActivity {
 		if (orderBill != null && orderBill.getBillNo() != null) {
 			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);
 			if(orderSplits.isEmpty()){
-				closeOrderWindow.show(currentOrder, operatePanel.getWidth(), orderBill);
+				closeOrderWindow.show(view_top_line, currentOrder, operatePanel.getWidth(), orderBill, orderDetails);
 			}else{
 				int count = OrderDetailSQL.getOrderDetailCountByGroupId(0, currentOrder.getId());
 				if(count == 0){

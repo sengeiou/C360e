@@ -511,9 +511,11 @@ public class DialogFactory {
 			listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					PrinterDevice printerDevice = list.get(position);
-					dialogCallBack.callBack(printerDevice);
-					dialog.dismiss();
+					if(ButtonClickTimer.canClick()) {
+						PrinterDevice printerDevice = list.get(position);
+						dialogCallBack.callBack(printerDevice);
+						dialog.dismiss();
+					}
 				}
 			});
 			dialog.show();
