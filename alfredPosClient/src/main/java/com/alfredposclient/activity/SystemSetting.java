@@ -45,6 +45,10 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SlipButton sb_double_close_bill_print;
 	private SlipButton sb_order_summary_print;
 	private SlipButton sb_session_report_print;
+	private SlipButton sb_plu_category;
+	private SlipButton sb_plu_item;
+	private SlipButton sb_plu_modifier;
+	private SlipButton sb_hourly_payment;
 	private SlipButton sb_print_before_close;
 	private SlipButton sb_cash_close_print;
 	private SystemSettings settings;
@@ -59,7 +63,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private TextView tv_callnum;
 	private ColorPickerDialog colorPickerDialog;
 
-
+//sb_plu_category
 	@Override
 	protected void initView() {
 		super.initView();
@@ -86,6 +90,10 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_double_close_bill_print = (SlipButton)findViewById(R.id.sb_double_close_bill_print);
 		sb_order_summary_print = (SlipButton)findViewById(R.id.sb_order_summary_print);
 		sb_session_report_print = (SlipButton)findViewById(R.id.sb_session_report_print);
+		sb_plu_category = (SlipButton)findViewById(R.id.sb_plu_category);
+		sb_plu_item = (SlipButton)findViewById(R.id.sb_plu_item);
+		sb_plu_modifier = (SlipButton)findViewById(R.id.sb_plu_modifier);
+		sb_hourly_payment = (SlipButton)findViewById(R.id.sb_hourly_payment);
 		sb_print_before_close = (SlipButton)findViewById(R.id.sb_print_before_close);
 		sb_cash_close_print = (SlipButton)findViewById(R.id.sb_cash_close_print);
 
@@ -106,6 +114,10 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_double_close_bill_print.setOnChangedListener(this);
 		sb_order_summary_print.setOnChangedListener(this);
 		sb_session_report_print.setOnChangedListener(this);
+		sb_plu_category.setOnChangedListener(this);
+		sb_plu_item.setOnChangedListener(this);
+		sb_plu_modifier.setOnChangedListener(this);
+		sb_hourly_payment.setOnChangedListener(this);
 		sb_print_before_close.setOnChangedListener(this);
 		sb_cash_close_print.setOnChangedListener(this);
 
@@ -157,6 +169,26 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			sb_session_report_print.setChecked(true);
 		}else{
 			sb_session_report_print.setChecked(false);
+		}
+		if(settings.isPrintPluCategory()){
+			sb_plu_category.setChecked(true);
+		}else{
+			sb_plu_category.setChecked(false);
+		}
+		if(settings.isPrintPluItem()){
+			sb_plu_item.setChecked(true);
+		}else{
+			sb_plu_item.setChecked(false);
+		}
+		if(settings.isPrintPluModifier()){
+			sb_plu_modifier.setChecked(true);
+		}else{
+			sb_plu_modifier.setChecked(false);
+		}
+		if(settings.isPrintHourlyPayment()){
+			sb_hourly_payment.setChecked(true);
+		}else{
+			sb_hourly_payment.setChecked(false);
 		}
 		if(settings.isPrintBeforCloseBill()){
 			sb_print_before_close.setChecked(true);
@@ -380,6 +412,42 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 				settings.setPrintWhenCloseSession(ParamConst.DEFAULT_FALSE);
 			}
 			break;
+		case R.id.sb_plu_category:
+			if(checkState){
+				sb_plu_category.setChecked(true);
+				settings.setPrintPluCategory(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_plu_category.setChecked(false);
+				settings.setPrintPluCategory(ParamConst.DEFAULT_FALSE);
+			}
+			break;
+		case R.id.sb_plu_item:
+			if(checkState){
+				sb_plu_item.setChecked(true);
+				settings.setPrintPluItem(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_plu_item.setChecked(false);
+				settings.setPrintPluItem(ParamConst.DEFAULT_FALSE);
+			}
+			break;
+		case R.id.sb_plu_modifier:
+			if(checkState){
+				sb_plu_modifier.setChecked(true);
+				settings.setPrintPluModifier(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_plu_modifier.setChecked(false);
+				settings.setPrintPluModifier(ParamConst.DEFAULT_FALSE);
+			}
+			break;
+		case R.id.sb_hourly_payment:
+			if(checkState){
+				sb_hourly_payment.setChecked(true);
+				settings.setPrintHourlyPayment(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_hourly_payment.setChecked(false);
+				settings.setPrintHourlyPayment(ParamConst.DEFAULT_FALSE);
+			}
+			break;
 		case R.id.sb_print_before_close:
 			if(checkState){
 				sb_print_before_close.setChecked(true);
@@ -417,6 +485,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_sync_data));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_before_close));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_session_report_print));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_change_color));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_plu_category));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_plu_item));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_plu_modifier));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_hourly_payment));
 		textTypeFace.setTrajanProRegular(tv_syncdata_warn);
 	}
 }

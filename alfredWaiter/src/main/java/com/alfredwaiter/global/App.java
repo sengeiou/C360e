@@ -55,8 +55,9 @@ public class App extends BaseApplication {
 		SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
 		//HTTPServer.start();
         VERSION = getAppVersionName();
+		httpServer = new WaiterHttpServer();
 		startHttpServer();
-		UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);  
+		UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);
 		CrashReport.initCrashReport(getApplicationContext(), "900042909", isOpenLog);
 
@@ -75,9 +76,6 @@ public class App extends BaseApplication {
 	}
     
 	public void startHttpServer() {
-		if(httpServer == null){
-			httpServer = new WaiterHttpServer();
-		}
 		try {
 			if (!httpServer.isAlive())
 				this.httpServer.start();

@@ -296,6 +296,7 @@ public class ObjectFactory {
 		orderDetail.setIsItemDiscount(oldOrderDetail.getIsItemDiscount());
 		orderDetail.setAppOrderDetailId(oldOrderDetail.getId());
 		orderDetail.setMainCategoryId(oldOrderDetail.getMainCategoryId());
+
 		return orderDetail;
 	}
 

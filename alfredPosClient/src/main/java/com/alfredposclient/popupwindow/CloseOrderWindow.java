@@ -310,7 +310,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 		popupWindow.setContentView(contentView);
 		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-		popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+//		popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
 //		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		popupWindow.setFocusable(true);
 //		popupWindow.setBackgroundDrawable(new BitmapDrawable());

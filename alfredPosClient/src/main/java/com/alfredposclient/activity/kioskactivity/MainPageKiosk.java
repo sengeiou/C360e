@@ -1324,7 +1324,7 @@ public class MainPageKiosk extends BaseActivity {
 				break;
 			case VIEW_EVENT_SHOW_SPECIAL_INSTRACTIONS_WINDOW: {
 				OrderDetail orderDetail = (OrderDetail) msg.obj;
-				specialInstractionsWindow.show(orderDetail);
+				specialInstractionsWindow.show(view_top_line, orderDetail);
 			}
 				break;
 			case ParamConst.JOB_TYPE_POS_TRANSFER_TABLE:

@@ -1,8 +1,5 @@
 package com.alfredwaiter.activity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.os.Handler;
 import android.widget.TextView;
 
@@ -11,7 +8,9 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
@@ -19,6 +18,9 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Login extends BaseActivity implements KeyBoardClickListener {
 	public static final int HANDLER_LOGIN = 0;
@@ -121,6 +123,9 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		loadingDialog.setTitle(context.getResources().getString(R.string.logining));
 		loadingDialog.show();
 		Map<String, Object> parameters = new HashMap<String, Object>();
+		WaiterDevice waiterDevice = App.instance.getWaiterdev();
+		waiterDevice.setIP(CommonUtil.getLocalIpAddress());
+		App.instance.setWaiterdev(waiterDevice);
 		parameters.put("employee_ID", old_employee_ID);
 		parameters.put("password", password);
 		parameters.put("type", ParamConst.USER_TYPE_WAITER);

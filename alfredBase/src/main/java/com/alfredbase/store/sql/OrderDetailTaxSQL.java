@@ -524,6 +524,16 @@ public class OrderDetailTaxSQL {
 	
 	}
 
+	public static void updateOrderDetailTaxForTransation(OrderDetail newOrderDetail, OrderDetail oldOrderDetail){
+		String sql = "update " + TableNames.OrderDetailTax + " set orderId = ? , orderDetailId = ? ,orderSplitId = ? where orderDetailId = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {newOrderDetail.getOrderId().intValue(), newOrderDetail.getId().intValue(), newOrderDetail.getOrderSplitId().intValue(), oldOrderDetail.getId().intValue()});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
 	public static void deleteOrderDetailTax(OrderDetailTax orderDetailTax) {
 		String sql = "delete from " + TableNames.OrderDetailTax
 				+ " where id = ?";

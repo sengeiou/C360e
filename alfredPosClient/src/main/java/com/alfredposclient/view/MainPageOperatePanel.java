@@ -14,10 +14,8 @@ import com.alfredbase.ParamHelper;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
-import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
-import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
@@ -152,20 +150,24 @@ public class MainPageOperatePanel extends LinearLayout implements
 				break;
 			}
 			case R.id.tv_unseat:
-				PaymentSettlement paymentSettlement = PaymentSettlementSQL.getPaymentSettlementsByOrderId(order.getId());
-				if (paymentSettlement != null) {
-					return;
-				}
-				DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),
-						parent.getResources().getString(R.string.discard_current_order),
-						parent.getResources().getString(R.string.no),
-						parent.getResources().getString(R.string.yes), null, new OnClickListener() {
+//				PaymentSettlement paymentSettlement = PaymentSettlementSQL.getPaymentSettlementsByOrderId(order.getId());
+//				if (paymentSettlement != null) {
+//					return;
+//				}
+				if(orderDetails != null && orderDetails.size() > 0) {
+					DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),
+							parent.getResources().getString(R.string.unseat_table),
+							parent.getResources().getString(R.string.no),
+							parent.getResources().getString(R.string.yes), null, new OnClickListener() {
 
-							@Override
-							public void onClick(View arg0) {
-								handler.sendEmptyMessage(MainPage.VIEW_EVENT_UNSEAT_ORDER);
-							}
-						});
+								@Override
+								public void onClick(View arg0) {
+									handler.sendEmptyMessage(MainPage.VIEW_EVENT_UNSEAT_ORDER);
+								}
+							});
+				}else{
+					DialogFactory.showOneButtonCompelDialog(parent,"", parent.getResources().getString(R.string.cannot_unseat), null);
+				}
 				break;
 			case R.id.tv_open_item:
 				Message msg = handler.obtainMessage();

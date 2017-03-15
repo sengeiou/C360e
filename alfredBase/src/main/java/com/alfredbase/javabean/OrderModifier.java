@@ -35,6 +35,7 @@ public class OrderModifier {
 	
 	private String modifierItemPrice;
 
+
 	public OrderModifier() {
 	}
 
@@ -172,14 +173,22 @@ public class OrderModifier {
 
 	@Override
 	public String toString() {
-		return "OrderModifier [id=" + id + ", orderId=" + orderId
-				+ ", orderDetailId=" + orderDetailId + ", orderOriginId="
-				+ orderOriginId + ", userId=" + userId + ", itemId=" + itemId
-				+ ", modifierId=" + modifierId + ", modifierNum=" + modifierNum
-				+ ", status=" + status + ", modifierPrice=" + modifierPrice
-				+ ", createTime=" + createTime + ", updateTime=" + updateTime
-				+ ", printerId=" + printerId + ", modifierItemPrice="
-				+ modifierItemPrice + "]";
+		return "OrderModifier{" +
+				"id=" + id +
+				", orderId=" + orderId +
+				", orderDetailId=" + orderDetailId +
+				", orderOriginId=" + orderOriginId +
+				", userId=" + userId +
+				", itemId=" + itemId +
+				", modifierId=" + modifierId +
+				", modifierNum=" + modifierNum +
+				", status=" + status +
+				", modifierPrice='" + modifierPrice + '\'' +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", printerId=" + printerId +
+				", modifierItemPrice='" + modifierItemPrice + '\'' +
+				'}';
 	}
 
 }

@@ -62,12 +62,15 @@ public class ReportPluDayComboModifier implements Serializable{
 	private String modifierItemPrice;
 
 	//套餐分类信息
-	private Integer item_main_category_id;
-	private String item_main_category_name;
-	private Integer item_category_id;
-	private String item_category_name;
+//	private Integer item_main_category_id;
+//	private String item_main_category_name;
+//	private Integer item_category_id;
+//	private String item_category_name;
 	
 //	private Integer
+
+	private String realPrice;
+	private Integer realCount;
 	
 	public Integer getId() {
 		return id;
@@ -233,33 +236,56 @@ public class ReportPluDayComboModifier implements Serializable{
 	public void setModifierItemPrice(String modifierItemPrice) {
 		this.modifierItemPrice = modifierItemPrice;
 	}
-	
+
+	public String getRealPrice() {
+		return realPrice;
+	}
+
+	public void setRealPrice(String realPrice) {
+		this.realPrice = realPrice;
+	}
+
+	public Integer getRealCount() {
+		return realCount;
+	}
+
+	public void setRealCount(Integer realCount) {
+		this.realCount = realCount;
+	}
+
 	@Override
 	public String toString() {
-		return "ReportPluDayComboModifier [id=" + id + ", reportNo=" + reportNo
-				+ ", restaurantId=" + restaurantId + ", restaurantName="
-				+ restaurantName + ", revenueId=" + revenueId
-				+ ", revenueName=" + revenueName + ", businessDate="
-				+ businessDate + ", modifierCategoryId=" + modifierCategoryId
-				+ ", modifierCategoryName=" + modifierCategoryName
-				+ ", modifierId=" + modifierId + ", modifierName="
-				+ modifierName + ", modifierPrice=" + modifierPrice
-				+ ", modifierCount=" + modifierCount + ", billVoidPrice="
-				+ billVoidPrice + ", billVoidCount=" + billVoidCount
-				+ ", voidModifierPrice=" + voidModifierPrice
-				+ ", voidModifierCount=" + voidModifierCount
-				+ ", bohModifierPrice=" + bohModifierPrice
-				+ ", bohModifierCount=" + bohModifierCount
-				+ ", focModifierPrice=" + focModifierPrice
-				+ ", focModifierCount=" + focModifierCount + ", billFocPrice="
-				+ billFocPrice + ", billFocCount=" + billFocCount
-				+ ", comboItemId=" + comboItemId + ", itemId=" + itemId
-				+ ", itemName=" + itemName + ", modifierItemPrice="
-				+ modifierItemPrice + ", item_main_category_id="
-				+ item_main_category_id + ", item_main_category_name="
-				+ item_main_category_name + ", item_category_id="
-				+ item_category_id + ", item_category_name="
-				+ item_category_name + "]";
+		return "ReportPluDayComboModifier{" +
+				"id=" + id +
+				", reportNo=" + reportNo +
+				", restaurantId=" + restaurantId +
+				", restaurantName='" + restaurantName + '\'' +
+				", revenueId=" + revenueId +
+				", revenueName='" + revenueName + '\'' +
+				", businessDate=" + businessDate +
+				", modifierCategoryId=" + modifierCategoryId +
+				", modifierCategoryName='" + modifierCategoryName + '\'' +
+				", modifierId=" + modifierId +
+				", modifierName='" + modifierName + '\'' +
+				", modifierPrice='" + modifierPrice + '\'' +
+				", modifierCount=" + modifierCount +
+				", billVoidPrice='" + billVoidPrice + '\'' +
+				", billVoidCount=" + billVoidCount +
+				", voidModifierPrice='" + voidModifierPrice + '\'' +
+				", voidModifierCount=" + voidModifierCount +
+				", bohModifierPrice='" + bohModifierPrice + '\'' +
+				", bohModifierCount=" + bohModifierCount +
+				", focModifierPrice='" + focModifierPrice + '\'' +
+				", focModifierCount=" + focModifierCount +
+				", billFocPrice='" + billFocPrice + '\'' +
+				", billFocCount=" + billFocCount +
+				", comboItemId=" + comboItemId +
+				", itemId=" + itemId +
+				", itemName='" + itemName + '\'' +
+				", modifierItemPrice='" + modifierItemPrice + '\'' +
+				", realPrice='" + realPrice + '\'' +
+				", realCount=" + realCount +
+				'}';
 	}
-	
+
 }

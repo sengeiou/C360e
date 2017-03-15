@@ -1,13 +1,13 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
 
 public class ReportPluDayModifierSQL {
 	public static void addReportPluDayModifier(
@@ -20,8 +20,8 @@ public class ReportPluDayModifierSQL {
 					+ "(id, reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 					+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, " 
 					+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
-					+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice, realPrice, realCount)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportPluDayModifier.getId(),
@@ -48,7 +48,9 @@ public class ReportPluDayModifierSQL {
 							reportPluDayModifier.getBillFocPrice() == null ? "0.00" : reportPluDayModifier.getFocModifierCount(),
 							reportPluDayModifier.getBillFocCount() == null ? 0 : reportPluDayModifier.getFocModifierCount(),
 							reportPluDayModifier.getComboItemId(),
-							reportPluDayModifier.getModifierItemPrice() == null ? "0.00" : reportPluDayModifier.getModifierItemPrice()
+							reportPluDayModifier.getModifierItemPrice() == null ? "0.00" : reportPluDayModifier.getModifierItemPrice(),
+							reportPluDayModifier.getRealPrice() == null ? "0.00" : reportPluDayModifier.getRealPrice(),
+							reportPluDayModifier.getRealCount() == null ? 0 : reportPluDayModifier.getRealCount()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,8 +92,10 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setFocModifierCount(cursor.getInt(20));
 				reportPluDayModifier.setBillFocPrice(cursor.getString(21));
 				reportPluDayModifier.setBillFocCount(cursor.getInt(22));
-				reportPluDayModifier.setComboItem(cursor.getInt(23));
+				reportPluDayModifier.setComboItemId(cursor.getInt(23));
 				reportPluDayModifier.setModifierItemPrice(cursor.getString(24));
+				reportPluDayModifier.setRealPrice(cursor.getString(25));
+				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				return reportPluDayModifier;
 			}
 		} catch (Exception e) {
@@ -145,8 +149,10 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setFocModifierCount(cursor.getInt(20));
 				reportPluDayModifier.setBillFocPrice(cursor.getString(21));
 				reportPluDayModifier.setBillFocCount(cursor.getInt(22));
-				reportPluDayModifier.setComboItem(cursor.getInt(23));
+				reportPluDayModifier.setComboItemId(cursor.getInt(23));
 				reportPluDayModifier.setModifierItemPrice(cursor.getString(24));
+				reportPluDayModifier.setRealPrice(cursor.getString(25));
+				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				result.add(reportPluDayModifier);
 			}
 			db.setTransactionSuccessful();
@@ -204,8 +210,10 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setFocModifierCount(cursor.getInt(20));
 				reportPluDayModifier.setBillFocPrice(cursor.getString(21));
 				reportPluDayModifier.setBillFocCount(cursor.getInt(22));
-				reportPluDayModifier.setComboItem(cursor.getInt(23));
+				reportPluDayModifier.setComboItemId(cursor.getInt(23));
 				reportPluDayModifier.setModifierItemPrice(cursor.getString(24));
+				reportPluDayModifier.setRealPrice(cursor.getString(25));
+				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				result.add(reportPluDayModifier);
 			}
 			db.setTransactionSuccessful();

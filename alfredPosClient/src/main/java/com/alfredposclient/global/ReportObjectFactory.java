@@ -1013,7 +1013,7 @@ public class ReportObjectFactory {
 					reportPluDayModifier.setBillFocPrice(billFocPrice);
 					reportPluDayModifier.setBillFocCount(Integer
 							.parseInt(billFocCount));
-					reportPluDayModifier.setComboItem(modifier.getItemId());
+					reportPluDayModifier.setComboItemId(modifier.getItemId());
 					reportPluDayModifiers.add(reportPluDayModifier);
 					ReportPluDayModifierSQL
 							.addReportPluDayModifier(reportPluDayModifier);
@@ -1024,26 +1024,33 @@ public class ReportObjectFactory {
 	}
 	
 	
-	public ArrayList<ReportPluDayComboModifier> loadReportPluDayComboModifier(
+	public Map<String, Object> loadReportPluDayModifierInfo(
 			long businessDate) {
-		
+		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>();
+		ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
 		if (App.instance.getBusinessDate().longValue() != businessDate) {
 			reportPluDayComboModifiers = ReportPluDayComboModifierSQL
 					.getReportPluDayComboModifiersByTime(businessDate);
-			return reportPluDayComboModifiers;
+			reportPluDayModifiers = ReportPluDayModifierSQL
+					.getReportPluDayModifiersByTime(businessDate);
+			map.put("reportPluDayModifiers", reportPluDayModifiers);
+			map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
+			return map;
 		}
 		ReportPluDayComboModifierSQL
 				.deleteReportPluDayComboModifierByBusinessDate(businessDate);
-		if (reportPluDayComboModifiers.isEmpty()) {
+		ReportPluDayModifierSQL
+				.deleteReportPluDayModifierByBusinessDate(businessDate);
+		if (map.isEmpty()) {
 			
 			List<ItemDetail> itemDetails = ItemDetailSQL.getAllItemDetailForReport();
 			ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 			modifiers = ModifierSQL.getAllModifierForReport();
 			for (ItemDetail itemDetail : itemDetails) {
-				if(itemDetail.getItemType().intValue() != ParamConst.ITEMDETAIL_COMBO_ITEM){
-					continue;
-				}
+//				if(itemDetail.getItemType().intValue() != ParamConst.ITEMDETAIL_COMBO_ITEM){
+//					continue;
+//				}
 				Map<Integer, Map<String, String>> voidBeforeSelettmentMap = OrderModifierSQL.getModifiersByBusinessDateAndOrderDetailType(itemDetail.getId().intValue(), businessDate, ParamConst.ORDERDETAIL_TYPE_VOID);
 				
 				Map<Integer, Map<String, String>> focBeforeSelettmentMap = OrderModifierSQL.getModifiersByBusinessDateAndOrderDetailType(itemDetail.getId().intValue(),businessDate, ParamConst.ORDERDETAIL_TYPE_FREE);
@@ -1060,7 +1067,7 @@ public class ReportObjectFactory {
 								ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate);
 				for(Modifier modifier : modifiers) {
 				if (modifier.getType() == ParamConst.ORDER_MODIFIER_TYPE_CATEGORY) {
-					ReportPluDayComboModifier reportPluDayComboModifier = new ReportPluDayComboModifier();
+//					ReportPluDayComboModifier reportPluDayComboModifier = new ReportPluDayComboModifier();
 					Map<String, String> modifierPriceMap = OrderModifierSQL
 							.getOrderModifierByItemAndModifier(itemDetail.getId().intValue(), modifier.getId().intValue(),
 									businessDate);
@@ -1136,55 +1143,97 @@ public class ReportObjectFactory {
 								.get("sumModifierNum") == null ? "0"
 								: billFocPriceMap.get("sumModifierNum");
 					}
-					
-					reportPluDayComboModifier.setId(CommonSQL
-							.getNextSeq(TableNames.ReportPluDayComboModifier));
-					reportPluDayComboModifier.setReportNo(0); // TODO
-					reportPluDayComboModifier.setRestaurantId(restaurant.getId());
-					reportPluDayComboModifier.setRestaurantName(restaurant
-							.getRestaurantName());
-					reportPluDayComboModifier.setRevenueId(revenueCenter.getId());
-					reportPluDayComboModifier.setRevenueName(revenueCenter
-							.getRevName());
-					reportPluDayComboModifier.setBusinessDate(businessDate);
-					reportPluDayComboModifier.setModifierCategoryId(modifier
-							.getCategoryId());
-					reportPluDayComboModifier.setModifierCategoryName(modifier
-							.getCategoryName());
-					reportPluDayComboModifier.setModifierId(modifier.getId());
-					reportPluDayComboModifier.setModifierName(modifier
-							.getModifierName());
-					reportPluDayComboModifier.setModifierPrice(modifierPrice);
-					reportPluDayComboModifier.setModifierCount(Integer
-							.parseInt(modifierCount));
-					reportPluDayComboModifier.setBillVoidPrice(billVoidPrice);
-					reportPluDayComboModifier.setBillVoidCount(Integer
-							.parseInt(billVoidCount));
-					reportPluDayComboModifier
-							.setVoidModifierPrice(voidModifierPrice);
-					reportPluDayComboModifier.setVoidModifierCount(Integer
-							.parseInt(voidModifierCount));
-					reportPluDayComboModifier.setBohModifierPrice(bohModifierPrice);
-					reportPluDayComboModifier.setBohModifierCount(Integer
-							.parseInt(bohModifierCount));
-					reportPluDayComboModifier.setFocModifierPrice(focModifierPrice);
-					reportPluDayComboModifier.setFocModifierCount(Integer
-							.parseInt(focModifierCount));
-					reportPluDayComboModifier.setBillFocPrice(billFocPrice);
-					reportPluDayComboModifier.setBillFocCount(Integer
-							.parseInt(billFocCount));
-					reportPluDayComboModifier.setComboItemId(modifier.getItemId());
-					reportPluDayComboModifier.setItemId(itemDetail.getId());
-					reportPluDayComboModifier.setItemName(itemDetail.getItemName());
-					reportPluDayComboModifier.setModifierItemPrice(modifierItemPrice);
-					reportPluDayComboModifiers.add(reportPluDayComboModifier);
-					ReportPluDayComboModifierSQL
-							.addReportPluDayModifier(reportPluDayComboModifier);
+
+					BigDecimal realPrice = BH.getBD(modifierPrice);
+					int realCount = Integer.parseInt(modifierCount);
+					if(Integer.parseInt(billVoidCount) > 0 ) {
+						realPrice = BH.sub(realPrice, BH.getBD(billVoidPrice), true);
+						realCount =- Integer.parseInt(billVoidCount);
+					}else if(Integer.parseInt(voidModifierCount) > 0){
+						realPrice = BH.sub(realPrice, BH.getBD(voidModifierPrice),true);
+						realCount =- Integer.parseInt(voidModifierCount);
+					}else if(Integer.parseInt(focModifierCount) > 0){
+						realPrice = BH.sub(realPrice, BH.getBD(focModifierPrice), true);
+						realCount =- Integer.parseInt(focModifierCount);
+					}else if(Integer.parseInt(billFocCount) > 0){
+						realPrice = BH.sub(realPrice, BH.getBD(billFocPrice), true);
+						realCount =- Integer.parseInt(billFocCount);
+					}
+					if(itemDetail.getItemType().intValue() != ParamConst.ITEMDETAIL_COMBO_ITEM){
+						ReportPluDayModifier reportPluDayModifier = new ReportPluDayModifier();
+						reportPluDayModifier.setId(CommonSQL
+								.getNextSeq(TableNames.ReportPluDayModifier));
+						reportPluDayModifier.setReportNo(0);
+						reportPluDayModifier.setRestaurantId(restaurant.getId().intValue());
+						reportPluDayModifier.setRestaurantName(restaurant.getRestaurantName());
+						reportPluDayModifier.setRevenueId(revenueCenter.getId().intValue());
+						reportPluDayModifier.setRevenueName(revenueCenter.getRevName());
+						reportPluDayModifier.setBusinessDate(businessDate);
+						reportPluDayModifier.setModifierCategoryId(modifier.getCategoryId());
+						reportPluDayModifier.setModifierCategoryName(modifier.getCategoryName());
+						reportPluDayModifier.setModifierId(modifier.getId().intValue());
+						reportPluDayModifier.setModifierName(modifier.getModifierName());
+						reportPluDayModifier.setModifierPrice(modifierPrice);
+						reportPluDayModifier.setModifierCount(Integer.parseInt(modifierCount));
+						reportPluDayModifier.setBillVoidPrice(billVoidPrice);
+						reportPluDayModifier.setBillVoidCount(Integer.parseInt(billVoidCount));
+						reportPluDayModifier.setVoidModifierPrice(voidModifierPrice);
+						reportPluDayModifier.setVoidModifierCount(Integer.parseInt(voidModifierCount));
+						reportPluDayModifier.setBohModifierPrice(bohModifierPrice);
+						reportPluDayModifier.setBohModifierCount(Integer.parseInt(bohModifierCount));
+						reportPluDayModifier.setFocModifierPrice(focModifierPrice);
+						reportPluDayModifier.setFocModifierCount(Integer.parseInt(focModifierCount));
+						reportPluDayModifier.setBillFocPrice(billFocPrice);
+						reportPluDayModifier.setBillFocCount(Integer.parseInt(billFocCount));
+						reportPluDayModifier.setComboItemId(0);
+						reportPluDayModifier.setModifierItemPrice(modifierItemPrice);
+						reportPluDayModifier.setRealPrice(realPrice.toString());
+						reportPluDayModifier.setRealCount(realCount);
+						reportPluDayModifiers.add(reportPluDayModifier);
+						ReportPluDayModifierSQL.addReportPluDayModifier(reportPluDayModifier);
+					}else {
+						ReportPluDayComboModifier reportPluDayComboModifier = new ReportPluDayComboModifier();
+						reportPluDayComboModifier.setId(CommonSQL.getNextSeq(TableNames.ReportPluDayComboModifier));
+						reportPluDayComboModifier.setReportNo(0); // TODO
+						reportPluDayComboModifier.setRestaurantId(restaurant.getId().intValue());
+						reportPluDayComboModifier.setRestaurantName(restaurant.getRestaurantName());
+						reportPluDayComboModifier.setRevenueId(revenueCenter.getId().intValue());
+						reportPluDayComboModifier.setRevenueName(revenueCenter.getRevName());
+						reportPluDayComboModifier.setBusinessDate(businessDate);
+						reportPluDayComboModifier.setModifierCategoryId(modifier.getCategoryId());
+						reportPluDayComboModifier.setModifierCategoryName(modifier.getCategoryName());
+						reportPluDayComboModifier.setModifierId(modifier.getId().intValue());
+						reportPluDayComboModifier.setModifierName(modifier.getModifierName());
+						reportPluDayComboModifier.setModifierPrice(modifierPrice);
+						reportPluDayComboModifier.setModifierCount(Integer.parseInt(modifierCount));
+						reportPluDayComboModifier.setBillVoidPrice(billVoidPrice);
+						reportPluDayComboModifier.setBillVoidCount(Integer.parseInt(billVoidCount));
+						reportPluDayComboModifier.setVoidModifierPrice(voidModifierPrice);
+						reportPluDayComboModifier.setVoidModifierCount(Integer.parseInt(voidModifierCount));
+						reportPluDayComboModifier.setBohModifierPrice(bohModifierPrice);
+						reportPluDayComboModifier.setBohModifierCount(Integer.parseInt(bohModifierCount));
+						reportPluDayComboModifier.setFocModifierPrice(focModifierPrice);
+						reportPluDayComboModifier.setFocModifierCount(Integer.parseInt(focModifierCount));
+						reportPluDayComboModifier.setBillFocPrice(billFocPrice);
+						reportPluDayComboModifier.setBillFocCount(Integer.parseInt(billFocCount));
+						reportPluDayComboModifier.setComboItemId(modifier.getItemId());
+						reportPluDayComboModifier.setItemId(itemDetail.getId());
+						reportPluDayComboModifier.setItemName(itemDetail.getItemName());
+						reportPluDayComboModifier.setModifierItemPrice(modifierItemPrice);
+						reportPluDayComboModifier.setRealPrice(realPrice.toString());
+						reportPluDayComboModifier.setRealCount(realCount);
+						reportPluDayComboModifiers.add(reportPluDayComboModifier);
+						ReportPluDayComboModifierSQL
+								.addReportPluDayModifier(reportPluDayComboModifier);
+					}
+
 				}
 				}
 			}
 		}
-		return reportPluDayComboModifiers;
+		map.put("reportPluDayModifiers", reportPluDayModifiers);
+		map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
+		return map;
 	}
 
 	public ArrayList<ReportHourly> loadReportHourlys(long businessDate) {
@@ -2304,7 +2353,7 @@ public class ReportObjectFactory {
 				reportPluDayModifier.setBillFocPrice(billFocPrice);
 				reportPluDayModifier.setBillFocCount(Integer
 						.parseInt(billFocCount));
-				reportPluDayModifier.setComboItem(modifier.getItemId().intValue());
+				reportPluDayModifier.setComboItemId(modifier.getItemId().intValue());
 				reportPluDayModifiers.add(reportPluDayModifier);
 			}
 		}
@@ -2312,10 +2361,11 @@ public class ReportObjectFactory {
 	}
 	
 	
-	public ArrayList<ReportPluDayComboModifier> loadXReportPluDayComboModifier(
+	public Map<String, Object> loadXReportPluDayModifierInfo(
 			long businessDate, SessionStatus sessionStatus) {
 		
 		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>();
+		ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
 //		if (App.instance.getBusinessDate() != businessDate) {
 //			reportPluDayComboModifiers = ReportPluDayComboModifierSQL
 //					.getReportPluDayComboModifiersByTime(businessDate);
@@ -2329,9 +2379,7 @@ public class ReportObjectFactory {
 			ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 			modifiers = ModifierSQL.getAllModifierForReport();
 			for (ItemDetail itemDetail : itemDetails) {
-				if(itemDetail.getItemType().intValue() != ParamConst.ITEMDETAIL_COMBO_ITEM){
-					continue;
-				}
+
 				Map<Integer, Map<String, String>> voidBeforeSelettmentMap = OrderModifierSQL.getModifiersBySessionStatusAndOrderDetailType(itemDetail.getId().intValue(), businessDate, ParamConst.ORDERDETAIL_TYPE_VOID, sessionStatus);
 				
 				Map<Integer, Map<String, String>> focBeforeSelettmentMap = OrderModifierSQL.getModifiersBySessionStatusAndOrderDetailType(itemDetail.getId().intValue(),businessDate, ParamConst.ORDERDETAIL_TYPE_FREE, sessionStatus);
@@ -2348,7 +2396,6 @@ public class ReportObjectFactory {
 								ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate, sessionStatus);
 				for(Modifier modifier : modifiers) {
 				if (modifier.getType() == ParamConst.ORDER_MODIFIER_TYPE_CATEGORY) {
-					ReportPluDayComboModifier reportPluDayComboModifier = new ReportPluDayComboModifier();
 					Map<String, String> modifierPriceMap = OrderModifierSQL
 							.getOrderModifierByItemAndModifierAndSession(itemDetail.getId().intValue(), modifier.getId().intValue(),
 									businessDate, sessionStatus);
@@ -2423,55 +2470,93 @@ public class ReportObjectFactory {
 								.get("sumModifierNum") == null ? "0"
 								: billFocPriceMap.get("sumModifierNum");
 					}
-					
-					reportPluDayComboModifier.setId(CommonSQL
-							.getNextSeq(TableNames.ReportPluDayComboModifier));
-					reportPluDayComboModifier.setReportNo(0); // TODO
-					reportPluDayComboModifier.setRestaurantId(restaurant.getId());
-					reportPluDayComboModifier.setRestaurantName(restaurant
-							.getRestaurantName());
-					reportPluDayComboModifier.setRevenueId(revenueCenter.getId());
-					reportPluDayComboModifier.setRevenueName(revenueCenter
-							.getRevName());
-					reportPluDayComboModifier.setBusinessDate(businessDate);
-					reportPluDayComboModifier.setModifierCategoryId(modifier
-							.getCategoryId());
-					reportPluDayComboModifier.setModifierCategoryName(modifier
-							.getCategoryName());
-					reportPluDayComboModifier.setModifierId(modifier.getId());
-					reportPluDayComboModifier.setModifierName(modifier
-							.getModifierName());
-					reportPluDayComboModifier.setModifierPrice(modifierPrice);
-					reportPluDayComboModifier.setModifierCount(Integer
-							.parseInt(modifierCount));
-					reportPluDayComboModifier.setBillVoidPrice(billVoidPrice);
-					reportPluDayComboModifier.setBillVoidCount(Integer
-							.parseInt(billVoidCount));
-					reportPluDayComboModifier
-							.setVoidModifierPrice(voidModifierPrice);
-					reportPluDayComboModifier.setVoidModifierCount(Integer
-							.parseInt(voidModifierCount));
-					reportPluDayComboModifier.setBohModifierPrice(bohModifierPrice);
-					reportPluDayComboModifier.setBohModifierCount(Integer
-							.parseInt(bohModifierCount));
-					reportPluDayComboModifier.setFocModifierPrice(focModifierPrice);
-					reportPluDayComboModifier.setFocModifierCount(Integer
-							.parseInt(focModifierCount));
-					reportPluDayComboModifier.setBillFocPrice(billFocPrice);
-					reportPluDayComboModifier.setBillFocCount(Integer
-							.parseInt(billFocCount));
-					reportPluDayComboModifier.setComboItemId(modifier.getItemId());
-					reportPluDayComboModifier.setItemId(itemDetail.getId());
-					reportPluDayComboModifier.setItemName(itemDetail.getItemName());
-					reportPluDayComboModifier.setModifierItemPrice(modifierItemPrice);
-					reportPluDayComboModifiers.add(reportPluDayComboModifier);
-//					ReportPluDayComboModifierSQL
-//							.addReportPluDayModifier(reportPluDayComboModifier);
-//				}
+					BigDecimal realPrice = BH.getBD(modifierPrice);
+					int realCount = Integer.parseInt(modifierCount);
+					if(Integer.parseInt(billVoidCount) > 0 ) {
+						realPrice = BH.sub(realPrice, BH.getBD(billVoidPrice), true);
+						realCount =- Integer.parseInt(billVoidCount);
+					}else if(Integer.parseInt(voidModifierCount) > 0){
+						realPrice = BH.sub(realPrice, BH.getBD(voidModifierPrice),true);
+						realCount =- Integer.parseInt(voidModifierCount);
+					}else if(Integer.parseInt(focModifierCount) > 0){
+						realPrice = BH.sub(realPrice, BH.getBD(focModifierPrice), true);
+						realCount =- Integer.parseInt(focModifierCount);
+					}else if(Integer.parseInt(billFocCount) > 0){
+						realPrice = BH.sub(realPrice, BH.getBD(billFocPrice), true);
+						realCount =- Integer.parseInt(billFocCount);
+					}
+					if(itemDetail.getItemType().intValue() != ParamConst.ITEMDETAIL_COMBO_ITEM){
+						ReportPluDayModifier reportPluDayModifier = new ReportPluDayModifier();
+						reportPluDayModifier.setId(CommonSQL
+								.getNextSeq(TableNames.ReportPluDayModifier));
+						reportPluDayModifier.setReportNo(0);
+						reportPluDayModifier.setRestaurantId(restaurant.getId().intValue());
+						reportPluDayModifier.setRestaurantName(restaurant.getRestaurantName());
+						reportPluDayModifier.setRevenueId(revenueCenter.getId().intValue());
+						reportPluDayModifier.setRevenueName(revenueCenter.getRevName());
+						reportPluDayModifier.setBusinessDate(businessDate);
+						reportPluDayModifier.setModifierCategoryId(modifier.getCategoryId());
+						reportPluDayModifier.setModifierCategoryName(modifier.getCategoryName());
+						reportPluDayModifier.setModifierId(modifier.getId().intValue());
+						reportPluDayModifier.setModifierName(modifier.getModifierName());
+						reportPluDayModifier.setModifierPrice(modifierPrice);
+						reportPluDayModifier.setModifierCount(Integer.parseInt(modifierCount));
+						reportPluDayModifier.setBillVoidPrice(billVoidPrice);
+						reportPluDayModifier.setBillVoidCount(Integer.parseInt(billVoidCount));
+						reportPluDayModifier.setVoidModifierPrice(voidModifierPrice);
+						reportPluDayModifier.setVoidModifierCount(Integer.parseInt(voidModifierCount));
+						reportPluDayModifier.setBohModifierPrice(bohModifierPrice);
+						reportPluDayModifier.setBohModifierCount(Integer.parseInt(bohModifierCount));
+						reportPluDayModifier.setFocModifierPrice(focModifierPrice);
+						reportPluDayModifier.setFocModifierCount(Integer.parseInt(focModifierCount));
+						reportPluDayModifier.setBillFocPrice(billFocPrice);
+						reportPluDayModifier.setBillFocCount(Integer.parseInt(billFocCount));
+						reportPluDayModifier.setComboItemId(0);
+						reportPluDayModifier.setModifierItemPrice(modifierItemPrice);
+						reportPluDayModifier.setRealPrice(realPrice.toString());
+						reportPluDayModifier.setRealCount(realCount);
+						reportPluDayModifiers.add(reportPluDayModifier);
+					}else {
+						ReportPluDayComboModifier reportPluDayComboModifier = new ReportPluDayComboModifier();
+						reportPluDayComboModifier.setId(CommonSQL.getNextSeq(TableNames.ReportPluDayComboModifier));
+						reportPluDayComboModifier.setReportNo(0); // TODO
+						reportPluDayComboModifier.setRestaurantId(restaurant.getId().intValue());
+						reportPluDayComboModifier.setRestaurantName(restaurant.getRestaurantName());
+						reportPluDayComboModifier.setRevenueId(revenueCenter.getId().intValue());
+						reportPluDayComboModifier.setRevenueName(revenueCenter.getRevName());
+						reportPluDayComboModifier.setBusinessDate(businessDate);
+						reportPluDayComboModifier.setModifierCategoryId(modifier.getCategoryId());
+						reportPluDayComboModifier.setModifierCategoryName(modifier.getCategoryName());
+						reportPluDayComboModifier.setModifierId(modifier.getId().intValue());
+						reportPluDayComboModifier.setModifierName(modifier.getModifierName());
+						reportPluDayComboModifier.setModifierPrice(modifierPrice);
+						reportPluDayComboModifier.setModifierCount(Integer.parseInt(modifierCount));
+						reportPluDayComboModifier.setBillVoidPrice(billVoidPrice);
+						reportPluDayComboModifier.setBillVoidCount(Integer.parseInt(billVoidCount));
+						reportPluDayComboModifier.setVoidModifierPrice(voidModifierPrice);
+						reportPluDayComboModifier.setVoidModifierCount(Integer.parseInt(voidModifierCount));
+						reportPluDayComboModifier.setBohModifierPrice(bohModifierPrice);
+						reportPluDayComboModifier.setBohModifierCount(Integer.parseInt(bohModifierCount));
+						reportPluDayComboModifier.setFocModifierPrice(focModifierPrice);
+						reportPluDayComboModifier.setFocModifierCount(Integer.parseInt(focModifierCount));
+						reportPluDayComboModifier.setBillFocPrice(billFocPrice);
+						reportPluDayComboModifier.setBillFocCount(Integer.parseInt(billFocCount));
+						reportPluDayComboModifier.setComboItemId(modifier.getItemId());
+						reportPluDayComboModifier.setItemId(itemDetail.getId());
+						reportPluDayComboModifier.setItemName(itemDetail.getItemName());
+						reportPluDayComboModifier.setModifierItemPrice(modifierItemPrice);
+						reportPluDayComboModifier.setRealPrice(realPrice.toString());
+						reportPluDayComboModifier.setRealCount(realCount);
+						reportPluDayComboModifiers.add(reportPluDayComboModifier);
+					}
 				}
 			}
 		}
-		return reportPluDayComboModifiers;
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
+		map.put("reportPluDayModifiers", reportPluDayModifiers);
+ 		return map;
 	}
 
 	public ArrayList<ReportHourly> loadXReportHourlys(long businessDate,
@@ -2541,9 +2626,12 @@ public class ReportObjectFactory {
 		reportDayTaxs = loadXReportDayTax(reportDaySales, businessDate,
 				sessionStatus);
 		reportPluDayItems = loadXReportPluDayItem(businessDate, sessionStatus);
-		reportPluDayModifiers = loadXReportPluDayModifier(businessDate,
-				sessionStatus);
-		reportPluDayComboModifiers = loadXReportPluDayComboModifier(businessDate, sessionStatus);
+		Map<String, Object> modifierInfoMap = loadXReportPluDayModifierInfo(businessDate, sessionStatus);
+		reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) modifierInfoMap.get("reportPluDayModifiers");
+//				loadXReportPluDayModifier(businessDate,
+//				sessionStatus);
+		reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) modifierInfoMap.get("reportPluDayComboModifiers");
+//				loadXReportPluDayComboModifier(businessDate, sessionStatus);
 		reportHourlys = loadXReportHourlys(businessDate, sessionStatus);
 		// userTimeSheets =
 		// UserTimeSheetSQL.getUserTimeSheetsByBusinessDate(businessDate);
@@ -2603,7 +2691,8 @@ public class ReportObjectFactory {
 		}
 		return filteredPluDayItems;
 	}
-	
+
+
     // Main POS Dashboard
 	public ArrayList<DashboardTotalDetailInfo> loadDaySalesDashBoard(long bizDateNow) {
 

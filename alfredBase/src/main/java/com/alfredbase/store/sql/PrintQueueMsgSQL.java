@@ -219,7 +219,8 @@ public class PrintQueueMsgSQL {
 			e.printStackTrace();
 		}
 	}
-		
+
+
 	public static void deleteSuccessedMsgs() {
 		String sql = "delete from " + TableNames.PrintQueue + " where status = ?";
 		try {
@@ -239,7 +240,7 @@ public class PrintQueueMsgSQL {
 	}
 	
 	public static void deletePrintQueueMsgByBusinessDate(long businessDate) {
-		String sql = "delete from " + TableNames.PrintQueue + " where bizDate = ?";
+		String sql = "delete from " + TableNames.PrintQueue + " where bizDate < ?";
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] { businessDate+"" });
 		} catch (Exception e) {

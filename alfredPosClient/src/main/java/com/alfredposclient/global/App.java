@@ -139,7 +139,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1532,6 +1531,15 @@ public class App extends BaseApplication {
         }
         try {
             mRemoteService.kickCashDrawer(prtStr);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteOldPrinterMsg(long businessDate){
+
+        try {
+            mRemoteService.deleteOldPrinterMsg(String.valueOf(businessDate));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

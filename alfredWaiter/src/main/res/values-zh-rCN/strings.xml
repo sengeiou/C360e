@@ -15,6 +15,8 @@
     <!-- before login -->
     <string name="scan_qr_remind">扫描收银机的二维码连接收银机。\n或者向左滑动，手动输入收银机IP地址</string>
     <string name="set_ipaddr">设置IP连接收银中心</string>
+    <string name="print_bill_succ">Print bill successfully</string>
+    <string name="print_bill_failed">Failed to print bill</string>
     <string name="connect">连接</string>
     <string name="invalid_ip">无效的收银机IP地址，请检查后再试</string>
     <string name="invalid_ip_">设置一个无效IP地址</string>

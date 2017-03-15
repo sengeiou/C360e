@@ -10,7 +10,8 @@ interface IAlfredRemotePrintService {
 	void configure(int country,int lang, int dollarsign);
 	
 	void clearPrint();
-	
+	void deleteOldPrinterMsg(String businessDate);
+
 	void printKOT(String printer,String summary, String detail, String modifiers, 
 						boolean oneprint, boolean doublePrint, int kotFontSize);
 

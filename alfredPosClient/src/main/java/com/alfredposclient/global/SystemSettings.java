@@ -14,6 +14,10 @@ public class SystemSettings {
 	private boolean doubleReceiptPrint = false; //double closing receipt
 	private boolean orderSummaryPrint = false; //double closing receipt
 	private boolean printWhenCloseSession = true; // session close is report?
+	private boolean printPluCategory = true; // session close is report?
+	private boolean printPluItem = true; // session close is report?
+	private boolean printPluModifier = true; // session close is report?
+	private boolean printHourlyPayment = true; // session close is report?
 	private boolean printBeforCloseBill = true; // bill close need print Bill?
 	private boolean cashClosePrint = true; // cash w close need print Bill?
 	private int maxPrintOrderNo = 98;
@@ -161,10 +165,92 @@ public class SystemSettings {
 				this.printWhenCloseSession = true;
 			else
 				this.printWhenCloseSession = false;
-
-			return printWhenCloseSession;
 		}
 		return printWhenCloseSession;
+	}
+	public void setPrintPluCategory(Integer printPluCategory) {
+		Store.putInt(this.context, Store.PRINT_REPORT_PLU_CATEGORY,
+				printPluCategory);
+		if (printPluCategory.intValue() == 1)
+			this.printPluCategory = true;
+		else
+			this.printPluCategory = false;
+	}
+
+	public boolean isPrintPluCategory() {
+
+		Integer value = Store.getInt(context,
+				Store.PRINT_REPORT_PLU_CATEGORY);
+		if (value != null && value != Store.DEFAULT_INT_TYPE) {
+			if (value.intValue() == 1)
+				this.printPluCategory = true;
+			else
+				this.printPluCategory = false;
+		}
+		return printPluCategory;
+	}
+	public void setPrintPluItem(Integer printPluItem) {
+		Store.putInt(this.context, Store.PRINT_REPORT_PLU_ITEM,
+				printPluItem);
+		if (printPluItem.intValue() == 1)
+			this.printPluItem = true;
+		else
+			this.printPluItem = false;
+	}
+
+	public boolean isPrintPluItem() {
+
+		Integer value = Store.getInt(context,
+				Store.PRINT_REPORT_PLU_ITEM);
+		if (value != null && value != Store.DEFAULT_INT_TYPE) {
+			if (value.intValue() == 1)
+				this.printPluItem = true;
+			else
+				this.printPluItem = false;
+		}
+		return printPluItem;
+	}
+	public void setPrintPluModifier(Integer printPluModifier) {
+		Store.putInt(this.context, Store.PRINT_REPORT_PLU_MODIFIER,
+				printPluModifier);
+		if (printPluModifier.intValue() == 1)
+			this.printPluModifier = true;
+		else
+			this.printPluModifier = false;
+	}
+
+	public boolean isPrintPluModifier() {
+
+		Integer value = Store.getInt(context,
+				Store.PRINT_REPORT_PLU_MODIFIER);
+		if (value != null && value != Store.DEFAULT_INT_TYPE) {
+			if (value.intValue() == 1)
+				this.printPluModifier = true;
+			else
+				this.printPluModifier = false;
+		}
+		return printPluModifier;
+	}
+	public void setPrintHourlyPayment(Integer printHourlyPayment) {
+		Store.putInt(this.context, Store.PRINT_REPORT_HOURLY_PAYMENT,
+				printHourlyPayment);
+		if (printHourlyPayment.intValue() == 1)
+			this.printHourlyPayment = true;
+		else
+			this.printHourlyPayment = false;
+	}
+
+	public boolean isPrintHourlyPayment() {
+
+		Integer value = Store.getInt(context,
+				Store.PRINT_REPORT_HOURLY_PAYMENT);
+		if (value != null && value != Store.DEFAULT_INT_TYPE) {
+			if (value.intValue() == 1)
+				this.printHourlyPayment = true;
+			else
+				this.printHourlyPayment = false;
+		}
+		return printHourlyPayment;
 	}
 
 	public boolean isPrintBeforCloseBill() {

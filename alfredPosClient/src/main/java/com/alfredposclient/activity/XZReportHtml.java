@@ -414,16 +414,14 @@ public class XZReportHtml extends BaseActivity {
 
 			filteredPluDayItems = ReportObjectFactory.getInstance()
 					.getPLUItemWithoutVoidEnt(reportPluDayItems);
-
-			reportPluDayModifiers = ReportObjectFactory.getInstance()
-					.loadReportPluDayModifier(bizDate);
+			Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(bizDate);
+			reportPluDayModifiers = (List<ReportPluDayModifier>) map.get("reportPluDayModifiers");
 			reportHourlys = ReportObjectFactory.getInstance()
 					.loadReportHourlys(bizDate);
 			itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
 			itemMainCategorys = ItemMainCategorySQL
 					.getAllItemMainCategoryForReport();
-			reportPluDayComboModifiers = ReportObjectFactory.getInstance()
-					.loadReportPluDayComboModifier(bizDate);
+			reportPluDayComboModifiers = (List<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
 		} else {
 			reportDayTaxs = Collections.emptyList();
 			reportPluDayItems = new ArrayList<ReportPluDayItem>();

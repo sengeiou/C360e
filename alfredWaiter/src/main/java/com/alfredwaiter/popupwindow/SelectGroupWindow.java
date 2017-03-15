@@ -110,7 +110,7 @@ public class SelectGroupWindow {
 			} else if (position == 1){
 				holder.tv_text.setText("?");
 			} else {
-				holder.tv_text.setText(position + "");
+				holder.tv_text.setText((position - 1) + "");
 			}
 			return convertView;
 		}

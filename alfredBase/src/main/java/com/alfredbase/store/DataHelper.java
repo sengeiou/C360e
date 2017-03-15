@@ -766,6 +766,14 @@ public class DataHelper {
 					+ " ADD COLUMN takeawayTax TEXT default '0.00'");
 			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
 					+ " ADD COLUMN takeawayQty INTEGER default 0");
+			db.execSQL("ALTER TABLE " + TableNames.ReportPluDayModifier
+					+ " ADD COLUMN realPrice TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportPluDayModifier
+					+ " ADD COLUMN realCount INTEGER default 0");
+			db.execSQL("ALTER TABLE " + TableNames.ReportPluDayComboModifier
+					+ " ADD COLUMN realPrice TEXT default '0.00'");
+			db.execSQL("ALTER TABLE " + TableNames.ReportPluDayComboModifier
+					+ " ADD COLUMN realCount INTEGER default 0");
 		}
 	}
 }

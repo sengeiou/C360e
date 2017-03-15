@@ -33,6 +33,7 @@ public class SyncCentre {
 	private TimerTask timerTask;
 
 	private static AsyncHttpClient httpClient;
+	private static SyncHttpClient shttpClient;
 
 	private static SyncCentre instance;
 	private static SyncHttpClient syncHttpClient;
@@ -357,7 +358,7 @@ public class SyncCentre {
 			String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.KOT_NOTIFICATION;
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("total", KotNotificationqty);
-			HTTPWaiterRequest.sendKotNotification(context, parameters, url, waiterDevice.clone(), httpClient);
+			HTTPWaiterRequest.sendKotNotification(context, parameters, url, waiterDevice.clone(), shttpClient);
 		}
 
 	}

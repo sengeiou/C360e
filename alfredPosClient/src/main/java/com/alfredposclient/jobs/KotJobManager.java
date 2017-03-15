@@ -188,6 +188,7 @@ public class KotJobManager {
 							fromKotSummary, orderMap);
 					kotJobManager.addJob(kotjob);
 				}
+
 				boolean ret = transferItemToPrinter(fromKotSummary,
 						toKotSummary, orderMap);
 				if (!ret) {
@@ -327,13 +328,15 @@ public class KotJobManager {
 				// physical printer
 				PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
 						.getId());
-				prntd.setGroupId(prgid.intValue());
 				if (prntd != null) {
+					prntd.setGroupId(prgid.intValue());
 					String fromTableName = (String) orderMap.get("fromTableName");
 					printKotSummary.setDescription("*** Transferred from " + fromTableName + " ***");
 					printed = App.instance.remoteKotPrint(prntd, printKotSummary,
 							kots.get(prgid), mods.get(prgid));
 
+				}else{
+					printed = true;
 				}
 			}
 		}

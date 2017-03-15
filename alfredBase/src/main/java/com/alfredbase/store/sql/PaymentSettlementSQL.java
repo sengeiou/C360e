@@ -982,7 +982,56 @@ public class PaymentSettlementSQL {
 		}
 		return result;
 	}
-	
+	public static Map<Integer, Map<String, String>> getModifiersInVoidSplitBillByBusinessDateAndSession(
+			long businessDate, SessionStatus sessionStatus) {
+		Map<Integer, Map<String, String>> result = new HashMap<Integer, Map<String, String>>();
+		String sql = "SELECT om.modifierId, sum(om.modifierNum), sum(om.modifierPrice) FROM"
+				+ TableNames.Payment
+				+ " p, "
+				+ TableNames.PaymentSettlement
+				+ " s, "
+				+ TableNames.OrderDetail
+				+ " t, "
+				+ TableNames.OrderModifier
+				+ " om, "
+				+ TableNames.OrderSplit
+				+ " o "
+				+ "WHERE p.id = s.paymentId AND s.paymentTypeId = "
+				+ ParamConst.SETTLEMENT_TYPE_VOID
+				+" and p.type = "
+				+ ParamConst.BILL_TYPE_SPLIT
+				+ " AND p.orderId = t.orderId  and t.groupId = o.groupId AND p.orderSplitId = o.id and s.isActive = "
+				+ ParamConst.PAYMENT_SETT_IS_ACTIVE
+				+ " AND p.businessDate = ? and o.sessionStatus = ? and o.createTime > ? AND om.orderDetailId = t.id AND t.orderDetailType = "
+				+ ParamConst.ORDERDETAIL_TYPE_GENERAL + " group by om.modifierId";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+
+		try {
+			cursor = db.rawQuery(sql,
+					new String[] { String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()) });
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				Map<String, String> map = new HashMap<String, String>();
+				Integer modifierId = cursor.getInt(0);
+				Integer sumItemNum = cursor.getInt(1);
+				String sumRealPrice = cursor.getString(2) == null ? "0.00"
+						: cursor.getString(2);
+				map.put("sumItemNum", sumItemNum + "");
+				map.put("sumRealPrice", sumRealPrice);
+				result.put(modifierId, map);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static Map<Integer, Map<String, String>> getItemsInFocBillByBusinessDate(
 			long businessDate) {
 		Map<Integer, Map<String, String>> result = new HashMap<Integer, Map<String, String>>();

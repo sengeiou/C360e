@@ -87,7 +87,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
     private BaseActivity mainPage;
     private LoadingDialog loadingDialog;
-    private RelativeLayout rl_table_area;
+//    private RelativeLayout rl_table_area;
     private int width;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -102,7 +102,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         tv_table_edit = (TextView) view.findViewById(R.id.tv_table_edit);
         rl_tables = (RelativeLayout) view.findViewById(R.id.rl_tables);
         rl_create_table = (RelativeLayout) view.findViewById(R.id.rl_create_table);
-        rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
+//        rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
 //        ViewTreeObserver vto = rl_table_area.getViewTreeObserver();
 //        width = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(mainPage, 40.0f))*3/2;
         LinearLayout.LayoutParams ps2 = new LinearLayout.LayoutParams(
@@ -137,9 +137,9 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         lv_table_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(lv_table_list.getLastVisiblePosition() == position){
-                    return;
-                }
+//                if(lv_table_list.getLastVisiblePosition() == position){
+//                    return;
+//                }
                 TableInfo newTable = ObjectFactory.getInstance().addNewTable(images[position],
                         App.instance.getRevenueCenter().getRestaurantId(),
                         App.instance.getRevenueCenter().getId(),

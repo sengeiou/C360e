@@ -81,6 +81,10 @@ public class Store {
 	public static final String KOT_PRINT = "KOT_PRINT";
 
 	public static final String PRINT_REPORT_WHEN_CLOSE_SESSION = "PRINT_REPORT_WHEN_CLOSE_SESSION";
+	public static final String PRINT_REPORT_PLU_CATEGORY = "PRINT_REPORT_PLU_CATEGORY";
+	public static final String PRINT_REPORT_PLU_ITEM= "PRINT_REPORT_PLU_ITEM";
+	public static final String PRINT_REPORT_PLU_MODIFIER = "PRINT_REPORT_PLU_MODIFIER";
+	public static final String PRINT_REPORT_HOURLY_PAYMENT = "PRINT_REPORT_HOURLY_PAYMENT";
 	public static final String PRINT_BEFORE_CLOSE_BILL = "PRINT_BEFORE_CLOSE_BILL";
 	public static final String PRINT_CASH_CLOSE = "PRINT_CASH_CLOSE";
 

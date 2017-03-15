@@ -241,6 +241,7 @@
     <string name="no_pax">人数</string>
     <string name="online_order">网络订单</string>
     <string name="the_most_selections">最多可选%d个</string>
+    <string name="name_of_the_place">输入名称</string>
     
     <!-- html -->
     <string name="no_sales_print">没有需要打印的销售数据</string>
@@ -340,7 +341,8 @@
     <string name="order_first">不能打折</string>
     <string name="no_cashier_printer">没有发现收银打印机</string>
     <string name="discard_current_order">确定删除当前订单吗？</string>
-    
+    <string name="unseat_table">确定重置当前桌?</string>
+    <string name="cannot_unseat">不能重置当前桌,因为已经点菜了。</string>
     <!-- REPORT PRINT -->
     <string name="select_report_print">选择报表</string>
     <string name="sales_report_print">日报表</string>

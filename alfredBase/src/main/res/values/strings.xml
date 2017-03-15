@@ -20,7 +20,7 @@
     <string name="change_employee_password">Change Employee Password</string>
     <string name="online_order">Online Order</string>
     <string name="have_online_order">You have a new online order</string>
-    <string name="color_select_goods">Dishes background setting</string>
+    <string name="color_select_goods">Menu background setting</string>
 
     <!-- ResultCode -->
     <string name="failed_connect_server">Failed to connect to </string> 

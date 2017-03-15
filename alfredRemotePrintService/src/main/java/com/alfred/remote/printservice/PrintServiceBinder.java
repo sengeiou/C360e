@@ -46,6 +46,7 @@ import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
+import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TimeUtil;
@@ -1194,6 +1195,14 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 		this.service.getPrintMgr().stop();
 		this.service.getPrintMgr().clear();
 		this.service.stopSelf();
+	}
+
+	@Override
+	public void deleteOldPrinterMsg(String businessDate) throws RemoteException {
+		if(TextUtils.isEmpty(businessDate))
+			return;
+		long date = Long.getLong(businessDate);
+		PrintQueueMsgSQL.deletePrintQueueMsgByBusinessDate(date);
 	}
 
 	@Override

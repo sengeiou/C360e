@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -37,6 +38,7 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
@@ -581,6 +583,9 @@ public class MainPage extends BaseActivity {
 			for (OrderDetail orderDetail : orderDetails) {
 				OrderDetail newOrderDetail = ObjectFactory.getInstance()
 						.getOrderDetailForTransferTable(newOrder, orderDetail);
+				if(!!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+					OrderDetailTaxSQL.updateOrderDetailTaxForTransation(newOrderDetail, orderDetail);
+				}
 				OrderDetailSQL.addOrderDetailETC(newOrderDetail);
 				List<OrderModifier> orderModifiers = OrderModifierSQL
 						.getOrderModifiers(orderDetail);
@@ -1502,8 +1507,28 @@ public class MainPage extends BaseActivity {
 				}
 				break;
 			case VIEW_EVENT_SHOW_SPECIAL_INSTRACTIONS_WINDOW: {
-				OrderDetail orderDetail = (OrderDetail) msg.obj;
-				specialInstractionsWindow.show(orderDetail);
+				final OrderDetail orderDetail = (OrderDetail) msg.obj;
+				specialInstractionsWindow.show(view_top_line, orderDetail);
+//				DialogFactory.commonTwoBtnInputDialog(context, "Instruction", "", "Cancle", "Save", null, new OnClickListener() {
+//					@Override
+//					public void onClick(View v) {
+//						EditText editText = (EditText) v;
+//						final String specialInstractions = editText
+//								.getText().toString();
+//						new Thread(new Runnable() {
+//
+//							@Override
+//							public void run() {
+//								if (specialInstractions != null) {
+//									orderDetail
+//											.setSpecialInstractions(specialInstractions);
+//									OrderDetailSQL.updateOrderDetail(orderDetail);
+//									handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+//								}
+//							}
+//						}).start();
+//					}
+//				});
 			}
 				break;
 			case ParamConst.JOB_TYPE_POS_TRANSFER_TABLE:

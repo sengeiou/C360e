@@ -1054,21 +1054,24 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
 				title, reportDaySales, reportDayTaxs, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
-		// detail analysis
-		App.instance.remotePrintDetailAnalysisReport(reportType,
-				cashierPrinter, title, null, filteredPluDayItems,
-				reportPluDayModifiers, null, itemMainCategorys, itemCategorys);
+		if(App.instance.getSystemSettings().isPrintPluItem())
+			// detail analysis
+			App.instance.remotePrintDetailAnalysisReport(reportType,
+					cashierPrinter, title, null, filteredPluDayItems,
+					reportPluDayModifiers, null, itemMainCategorys, itemCategorys);
 
-		//modifier report
-		App.instance.remotePrintModifierDetailAnalysisReport(reportType,
-				cashierPrinter, title, reportPluDayModifiers, modifiers);
-
-		App.instance.remotePrintSummaryAnalysisReport(reportType,
-				cashierPrinter, title, filteredPluDayItems,
-				reportPluDayModifiers, itemMainCategorys, itemCategorys);
-		// hourly sales
-		App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
-				reportHourlys);
+		if(App.instance.getSystemSettings().isPrintPluModifier())
+			//modifier report
+			App.instance.remotePrintModifierDetailAnalysisReport(reportType,
+					cashierPrinter, title, reportPluDayModifiers, modifiers);
+		if(App.instance.getSystemSettings().isPrintPluCategory())
+			App.instance.remotePrintSummaryAnalysisReport(reportType,
+					cashierPrinter, title, filteredPluDayItems,
+					reportPluDayModifiers, itemMainCategorys, itemCategorys);
+		if(App.instance.getSystemSettings().isPrintHourlyPayment())
+			// hourly sales
+			App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
+					reportHourlys);
 //		if(App.countryCode == ParamConst.CHINA) {
 //		if(reportPluDayModifiers != null && reportPluDayModifiers.size() > 0)
 //		// modifier detail analysis
@@ -1102,12 +1105,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		//bob add to filter ENT and VOID item in PLU items
 		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
 				.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
+		Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(businessDate);
+		ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
 		
-		ArrayList<ReportPluDayModifier> reportPluDayModifiers = ReportObjectFactory
-				.getInstance().loadReportPluDayModifier(businessDate);
-		
-		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = ReportObjectFactory
-				.getInstance().loadReportPluDayComboModifier(businessDate);
+		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
 		
 		ArrayList<ReportHourly> reportHourlys = ReportObjectFactory
 				.getInstance().loadReportHourlys(businessDate);
@@ -1137,22 +1138,24 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				title, reportDaySales, reportDayTaxs,
 				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
 				reportSessionSalesList);
-
-		// detail analysis
-		App.instance.remotePrintDetailAnalysisReport(reportType,
-				cashierPrinter, title, reportDaySales, filteredPluDayItems,
-				reportPluDayModifiers, reportPluDayComboModifiers, itemMainCategorys, itemCategorys);
-
-		App.instance.remotePrintSummaryAnalysisReport(reportType,
-				cashierPrinter, title, filteredPluDayItems,
-				reportPluDayModifiers, itemMainCategorys, itemCategorys);
-		// hourly sales
-		App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
-				reportHourlys);
+		if(App.instance.getSystemSettings().isPrintPluItem())
+			// detail analysis
+			App.instance.remotePrintDetailAnalysisReport(reportType,
+					cashierPrinter, title, reportDaySales, filteredPluDayItems,
+					reportPluDayModifiers, reportPluDayComboModifiers, itemMainCategorys, itemCategorys);
+		if(App.instance.getSystemSettings().isPrintPluCategory())
+			App.instance.remotePrintSummaryAnalysisReport(reportType,
+					cashierPrinter, title, filteredPluDayItems,
+					reportPluDayModifiers, itemMainCategorys, itemCategorys);
+		if(App.instance.getSystemSettings().isPrintHourlyPayment())
+			// hourly sales
+			App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
+					reportHourlys);
 		if(reportPluDayModifiers != null && reportPluDayModifiers.size() > 0){
-			App.instance.remotePrintModifierDetailAnalysisReport(reportType,
-					cashierPrinter, title, reportPluDayModifiers,
-					ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue()));
+			if(App.instance.getSystemSettings().isPrintPluModifier())
+				App.instance.remotePrintModifierDetailAnalysisReport(reportType,
+						cashierPrinter, title, reportPluDayModifiers,
+						ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue()));
 		}
 		if (reportVoidItems != null && reportVoidItems.size() > 0)
 			// Void PLU
@@ -1398,6 +1401,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			}
 			final View vv = v;
 			final Long businessDate = TimeUtil.getNewBusinessDate();
+			App.instance.deleteOldPrinterMsg(businessDate);
 			String bizYmd = TimeUtil.getYMD(businessDate);
 			DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant), 
 					context.getResources().getString(R.string.operation_on) + bizYmd + 

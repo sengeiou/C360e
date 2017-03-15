@@ -1,11 +1,5 @@
 package com.alfredwaiter.http.server;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -23,10 +17,17 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.EmployeeID;
+import com.alfredwaiter.activity.KOTNotification;
 import com.alfredwaiter.activity.MainPage;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.UIHelp;
 import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class WaiterHttpServer extends AlfredHttpServer {
 
@@ -91,7 +92,8 @@ public class WaiterHttpServer extends AlfredHttpServer {
 			JSONObject jsonObject = new JSONObject(params);
 			int kotNotificationQty = jsonObject.optInt("total");
 			App.instance.setKotNotificationQty(kotNotificationQty);
-			App.instance.playVibration();
+			if(!(App.getTopActivity() instanceof KOTNotification))
+				App.instance.playVibration();
 			App.getTopActivity().httpRequestAction(App.VIEW_EVENT_SET_QTY,
 					null);// 在这边参数没有作用
 		} catch (JSONException e) {

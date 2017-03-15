@@ -442,7 +442,7 @@ public class OrderModifierSQL {
 		}
 		return result;
 	}
-	
+
 	public static Map<String, String> getOrderModifierByModifierId(int modifierId, long businessDate) {
 		Map<String, String> result = new HashMap<String, String>();
 		String sql = "select sum(modifierPrice), sum(modifierNum) from " + TableNames.OrderModifier

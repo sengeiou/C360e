@@ -1248,17 +1248,17 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 							/* no waiter in kiosk mode*/
 						if (!App.instance.isRevenueKiosk())
-							App.getTopActivity().runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
+//							App.getTopActivity().runOnUiThread(new Runnable() {
+//
+//								@Override
+//								public void run() {
 									SyncCentre.getInstance()
 											.notifyWaiterToGetNotifications(
 													App.getTopActivity(),
 													KotNotificationSQL
 															.getAllKotNotificationQty());
-								}
-							});
+//								}
+//							});
 						if(count == 0){
 							Order order = OrderSQL.getOrder(kotSummary.getOrderId().intValue());
 							if(order != null && !IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
@@ -1376,15 +1376,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					KotNotification.class);
 			kotNotification.setStatus(ParamConst.KOTNOTIFICATION_STATUS_DELETE);
 			KotNotificationSQL.update(kotNotification);
-			App.getTopActivity().runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
+//			App.getTopActivity().runOnUiThread(new Runnable() {
+//
+//				@Override
+//				public void run() {
 					SyncCentre.getInstance().notifyWaiterToGetNotifications(
 							App.getTopActivity(),
 							KotNotificationSQL.getAllKotNotificationQty());
-				}
-			});
+//				}
+//			});
 			result.put("resultCode", ResultCode.SUCCESS);
 			resp = this.getJsonResponse(new Gson().toJson(result));
 		} catch (JSONException e) {
@@ -1450,15 +1450,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			result.put("newKotItemDetails", newKotItemDetails);
 			LogUtil.e(TAG, "cancelComplete5");
 			resp = this.getJsonResponse(new Gson().toJson(result));
-			App.getTopActivity().runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
+//			App.getTopActivity().runOnUiThread(new Runnable() {
+//
+//				@Override
+//				public void run() {
 					SyncCentre.getInstance().notifyWaiterToGetNotifications(
 							App.getTopActivity(),
 							KotNotificationSQL.getAllKotNotificationQty());
-				}
-			});
+//				}
+//			});
 			LogUtil.e(TAG, "cancelComplete6");
 		} catch (Exception e) {
 			e.printStackTrace();

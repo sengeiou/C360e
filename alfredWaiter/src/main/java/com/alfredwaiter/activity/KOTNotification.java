@@ -1,10 +1,5 @@
 package com.alfredwaiter.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.os.Handler;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -21,6 +16,11 @@ import com.alfredwaiter.adapter.KOTNotificationAdapter;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KOTNotification extends BaseActivity {
 	private ExpandableListView expandedListViewEx;
@@ -50,8 +50,8 @@ public class KOTNotification extends BaseActivity {
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id) {
 				loadingDialog.show();
-				v.setBackgroundColor(getResources().getColor(
-						R.color.default_line_indicator_selected_color));
+//				v.setBackgroundColor(getResources().getColor(
+//						R.color.default_line_indicator_selected_color));
 				Map<String, Object> parameters = new HashMap<String, Object>();
 				KotNotification kotNotification = notifications.get(groupPosition).getKotNotifications().get(childPosition);
 				parameters.put("kotNotification", kotNotification);
