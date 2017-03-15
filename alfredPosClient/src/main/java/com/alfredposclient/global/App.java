@@ -1539,7 +1539,7 @@ public class App extends BaseApplication {
     public void deleteOldPrinterMsg(long businessDate){
 
         try {
-            mRemoteService.deleteOldPrinterMsg(String.valueOf(businessDate));
+            mRemoteService.deleteOldPrinterMsg(businessDate+"");
         } catch (RemoteException e) {
             e.printStackTrace();
         }

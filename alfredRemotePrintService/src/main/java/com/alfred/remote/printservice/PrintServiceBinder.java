@@ -1201,7 +1201,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 	public void deleteOldPrinterMsg(String businessDate) throws RemoteException {
 		if(TextUtils.isEmpty(businessDate))
 			return;
-		long date = Long.getLong(businessDate);
+		long date = Long.parseLong(businessDate);
 		PrintQueueMsgSQL.deletePrintQueueMsgByBusinessDate(date);
 	}
 
