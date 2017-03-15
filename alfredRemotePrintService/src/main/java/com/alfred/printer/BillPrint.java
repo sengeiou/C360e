@@ -397,7 +397,9 @@ public class BillPrint extends PrintJob{
 	}	
 	public void AddBillSummary(String subtotal, String discount,
 				List<Map<String, String>>taxes, String total, String rounding,String currencySymbol) {
-
+		if("¥".equals(currencySymbol)){
+			currencySymbol = "$";
+		}
 		this.addHortionalLine(this.charSize);
 		//subtotal
 		PrintData subTotalPrint = new PrintData();
@@ -495,6 +497,9 @@ public class BillPrint extends PrintJob{
 	}
 
 	public void AddSettlementDetails(List<LinkedHashMap<String, String>> settlementList, String currencySymbol) {
+		if("¥".equals(currencySymbol)){
+			currencySymbol = "$";
+		}
 		for(LinkedHashMap<String, String> settlement : settlementList){
 			//subtotal
 			for (Map.Entry<String, String> entry : settlement.entrySet()) {

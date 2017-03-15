@@ -13,7 +13,9 @@ import android.webkit.WebView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.SystemUtil;
@@ -99,7 +101,10 @@ public class CashInOutHtml extends BaseActivity {
 					dialog.show(ACTION_CONTINUE,null);
 				}else {
 					UIHelp.showToast(context, context.getResources().getString(R.string.cash_not_empty));
+					return;
 				}
+				PrinterDevice printerDevice = App.instance.getCahierPrinter();
+				App.instance.kickOutCashDrawer(printerDevice);
 				break;
 			case VerifyDialog.DIALOG_RESPONSE:
 				Map<String, Object> map = (Map<String, Object>) msg.obj;

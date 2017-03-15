@@ -155,6 +155,8 @@ public class MainPageOperatePanel extends LinearLayout implements
 //					return;
 //				}
 				if(orderDetails != null && orderDetails.size() > 0) {
+					DialogFactory.showOneButtonCompelDialog(parent,"", parent.getResources().getString(R.string.cannot_unseat), null);
+				}else{
 					DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),
 							parent.getResources().getString(R.string.unseat_table),
 							parent.getResources().getString(R.string.no),
@@ -165,8 +167,6 @@ public class MainPageOperatePanel extends LinearLayout implements
 									handler.sendEmptyMessage(MainPage.VIEW_EVENT_UNSEAT_ORDER);
 								}
 							});
-				}else{
-					DialogFactory.showOneButtonCompelDialog(parent,"", parent.getResources().getString(R.string.cannot_unseat), null);
 				}
 				break;
 			case R.id.tv_open_item:
