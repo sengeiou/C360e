@@ -627,7 +627,7 @@ public class App extends BaseApplication {
         if (imgPath.size() == 0 || imgPath == null){
             return;
         }
-        if (isSmallOrBigScreen()){
+//        if (isSmallOrBigScreen()){
             if (styleType == Store.SUNMI_IMG){
                 showSunmiImg(imgPath);
             }else if (styleType == Store.SUNMI_TEXT){
@@ -639,15 +639,15 @@ public class App extends BaseApplication {
             }else if (styleType == Store.SUNMI_VIDEO){
                 showBigScreenVideo(imgPath);
             }
-    }else {
-        if (styleType == Store.SUNMI_IMG){
-            showSunmiImg(imgPath);
-        }else if (styleType == Store.SUNMI_TEXT){
-            showSunmiText("Total Price:", order.getSubTotal());
-        }else if (styleType == Store.SUNMI_IMG_TEXT){
-            showSunmiTextAndImg("Total Price:", order.getSubTotal(), imgPath);
-        }
-    }
+//    }else {
+//        if (styleType == Store.SUNMI_IMG){
+//            showSunmiImg(imgPath);
+//        }else if (styleType == Store.SUNMI_TEXT){
+//            showSunmiText("Total Price:", order.getSubTotal());
+//        }else if (styleType == Store.SUNMI_IMG_TEXT){
+//            showSunmiTextAndImg("Total Price:", order.getSubTotal(), imgPath);
+//        }
+//    }
 }
 
     /**

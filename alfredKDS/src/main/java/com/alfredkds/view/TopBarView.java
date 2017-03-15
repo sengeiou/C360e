@@ -21,7 +21,7 @@ public class TopBarView extends LinearLayout implements OnClickListener{
 	private ImageView iv_classify;
 	private ImageView iv_refresh;
 	public ImageView iv_setting;
-	private Button btn_call_num;
+	private ImageView btn_call_num;
 	private KitchenOrder parent;
 	 
 	public TopBarView(Context context) {
@@ -44,7 +44,7 @@ public class TopBarView extends LinearLayout implements OnClickListener{
 		iv_classify = (ImageView)findViewById(R.id.iv_classify);
 		iv_refresh = (ImageView)findViewById(R.id.iv_refresh);
 		iv_setting = (ImageView)findViewById(R.id.iv_setting);
-		btn_call_num = (Button) findViewById(R.id.btn_call_num);
+		btn_call_num = (ImageView) findViewById(R.id.btn_call_num);
 		kitchName.setText(App.instance.getPrinter().getPrinterName());
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod(kitchName);

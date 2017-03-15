@@ -45,7 +45,8 @@
         <RelativeLayout 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/box_double_setting">
+            android:background="@drawable/box_double_setting"
+			android:visibility="gone">
             <TextView
 	            android:id="@+id/tv_order_history"
 	            android:layout_width="match_parent"
@@ -71,7 +72,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/box_double_setting"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+			android:visibility="gone">
             <TextView
 	            android:id="@+id/tv_connect_pos"
 	            android:layout_width="match_parent"
@@ -101,6 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/box_double_setting"
+			android:visibility="gone"
             android:layout_marginTop="10dp">
             <RelativeLayout
 	            android:id="@+id/rl_kot_notification"

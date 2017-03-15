@@ -201,6 +201,7 @@ public class Setting extends BaseActivity {
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_kot_notification));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_zone_notification));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_reset));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_clock));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_version_name));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_version));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_logout));

@@ -46,7 +46,7 @@
             android:paddingRight="10dp"
             android:paddingTop="5dp"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_size_s" />
+            android:textSize="@dimen/text_size_m" />
 
         <TextView
             android:id="@+id/tv_dish_introduce"
