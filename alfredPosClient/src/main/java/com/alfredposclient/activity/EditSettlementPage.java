@@ -55,6 +55,7 @@ import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.TimeUtil;
@@ -119,6 +120,13 @@ public class EditSettlementPage extends BaseActivity {
             findViewById(R.id.tv_place_name_title).setVisibility(View.GONE);
         }
         ((TextView) findViewById(R.id.tv_title_name)).setText(getResources().getString(R.string.edit_settlement));
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtil.e(TAG, "测试");
     }
 
     @Override

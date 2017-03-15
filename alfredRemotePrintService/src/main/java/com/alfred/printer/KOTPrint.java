@@ -237,7 +237,7 @@ public class KOTPrint extends PrintJob{
 
 			PrintData kot = new PrintData();
 			kot.setDataFormat(PrintData.FORMAT_TXT);
-			kot.setFontsize(kotFontSize);
+			kot.setFontsize(9);
 			kot.setUnderline(true);
 			kot.setLanguage(PrintData.LANG_CN);
 			kot.setTextAlign(PrintData.ALIGN_LEFT);
