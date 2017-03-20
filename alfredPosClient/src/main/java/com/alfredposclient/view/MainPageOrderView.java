@@ -921,6 +921,7 @@ public class MainPageOrderView extends LinearLayout {
 					if (tag.getIsFree().intValue() == ParamConst.FREE) {
 						return;
 					} else if(!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())){
+						UIHelp.showShortToast(parent, "Cannot delete order item from diner app!");
 						return;
 					}else if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),

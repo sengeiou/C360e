@@ -3,7 +3,6 @@ package com.alfredposclient.jobs;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
@@ -11,18 +10,14 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.LogUtil;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
@@ -117,7 +112,7 @@ public class KotJob extends Job {
 	    		}
 	    	}else if(APIName.TRANSFER_KOT.equals(apiName)){
 	    		SyncCentre.getInstance().syncTransferTable(kds, context, data, null);
-		    	
+
 		    	String action = (String) kotMap.get("action");
 		    	if(ParamConst.JOB_MERGER_KOT.equals(action)){
 		    		KotSummary fromKotSummary = (KotSummary) data.get("fromKotSummary");
@@ -132,44 +127,45 @@ public class KotJob extends Job {
 						KotItemDetailSQL.update(kotItemDetail);
 					}
 					KotSummarySQL.deleteKotSummary(fromKotSummary);
-					Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
-					OrderBill newOrderBill = ObjectFactory.getInstance().getOrderBill(newOrder, App.instance.getRevenueCenter());
-					List<OrderDetail> orderDetails = OrderDetailSQL
-							.getUnFreeOrderDetails(oldOrder);
-					if (!orderDetails.isEmpty()) {
-						for (OrderDetail orderDetail : orderDetails) {
-							OrderDetail newOrderDetail = ObjectFactory.getInstance()
-									.getOrderDetailForTransferTable(newOrder, orderDetail);
-							OrderDetailSQL.addOrderDetailETC(newOrderDetail);
-							List<OrderModifier> orderModifiers = OrderModifierSQL
-									.getOrderModifiers(orderDetail);
-							if (orderModifiers.isEmpty()) {
-								continue;
-							}
-							for (OrderModifier orderModifier : orderModifiers) {
-								OrderModifier newOrderModifier = ObjectFactory
-										.getInstance().getOrderModifier(
-												newOrder,
-												newOrderDetail,
-												CoreData.getInstance().getModifier(
-														orderModifier.getModifierId()), 
-												orderModifier.getPrinterId().intValue());
-								OrderModifierSQL.addOrderModifier(newOrderModifier);
-							}
-						}
-					}
-					OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-					OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-					OrderBillSQL.deleteOrderBillByOrder(oldOrder);
-					OrderBillSQL.add(newOrderBill);
-					OrderSQL.deleteOrder(oldOrder);
+//					Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
+//					OrderBill newOrderBill = ObjectFactory.getInstance().getOrderBill(newOrder, App.instance.getRevenueCenter());
+//					List<OrderDetail> orderDetails = OrderDetailSQL
+//							.getUnFreeOrderDetails(oldOrder);
+//					if (!orderDetails.isEmpty()) {
+//						for (OrderDetail orderDetail : orderDetails) {
+//							OrderDetail newOrderDetail = ObjectFactory.getInstance()
+//									.getOrderDetailForTransferTable(newOrder, orderDetail);
+//							OrderDetailSQL.addOrderDetailETC(newOrderDetail);
+//							OrderDetailTaxSQL.updateOrderDetailTaxForTransation(newOrderDetail, orderDetail);
+//							List<OrderModifier> orderModifiers = OrderModifierSQL
+//									.getOrderModifiers(orderDetail);
+//							if (orderModifiers.isEmpty()) {
+//								continue;
+//							}
+//							for (OrderModifier orderModifier : orderModifiers) {
+//								OrderModifier newOrderModifier = ObjectFactory
+//										.getInstance().getOrderModifier(
+//												newOrder,
+//												newOrderDetail,
+//												CoreData.getInstance().getModifier(
+//														orderModifier.getModifierId()),
+//												orderModifier.getPrinterId().intValue());
+//								OrderModifierSQL.addOrderModifier(newOrderModifier);
+//							}
+//						}
+//					}
+//					OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
+//					OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
+//					OrderBillSQL.deleteOrderBillByOrder(oldOrder);
+//					OrderBillSQL.add(newOrderBill);
+//					OrderSQL.deleteOrder(oldOrder);
 					context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
 		    	}else if(ParamConst.JOB_TRANSFER_KOT.equals(action)){
 		    		KotSummary fromKotSummary = (KotSummary) data.get("fromKotSummary");
-		    		
+
 		    		KotSummarySQL.update(fromKotSummary);
 		    		Order order = (Order) kotMap.get("fromOrder");
-		    		OrderSQL.update(order);
+//		    		OrderSQL.update(order);
 		    		context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE, order);
 		    	}
 		    	

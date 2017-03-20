@@ -272,7 +272,8 @@ public class ReportObjectFactory {
 			// BH.getBD(order.getSubTotal()), true);
 			orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(order);
 			switch (order.getDiscountType()) {
-			case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER: {
+			case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER:
+			case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY: {
 				for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
 						.size(); orderDetailIndex++) {
 					OrderDetail orderDetail = orderDetailList
@@ -305,7 +306,8 @@ public class ReportObjectFactory {
 				discountPerQty++;
 			}
 				break;
-			case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER: {
+			case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER:
+			case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY: {
 				for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
 						.size(); orderDetailIndex++) {
 					OrderDetail orderDetail = orderDetailList
@@ -1745,7 +1747,8 @@ public class ReportObjectFactory {
 			// BH.getBD(order.getSubTotal()), true);
 			orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(order);
 			switch (order.getDiscountType()) {
-			case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER: {
+			case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER:
+			case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY: {
 				for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
 						.size(); orderDetailIndex++) {
 					OrderDetail orderDetail = orderDetailList
@@ -1778,7 +1781,8 @@ public class ReportObjectFactory {
 				discountPerQty++;
 			}
 				break;
-			case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER: {
+			case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER:
+			case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY: {
 				for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
 						.size(); orderDetailIndex++) {
 					OrderDetail orderDetail = orderDetailList

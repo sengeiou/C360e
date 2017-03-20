@@ -65,15 +65,15 @@
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden|adjustUnspecified"
-            android:theme="@style/MainActivityTheme"/>
+            android:theme="@style/MainActivityTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
         <!--android:windowSoftInputMode="stateHidden|adjustPan" />-->
         <activity
             android:name=".activity.kioskactivity.MainPageKiosk"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden|adjustUnspecified"
+            android:windowSoftInputMode="stateHidden|adjustPan"
             android:theme="@style/MainActivityTheme"/>
         <!--android:windowSoftInputMode="stateHidden|adjustPan" />-->
         <activity

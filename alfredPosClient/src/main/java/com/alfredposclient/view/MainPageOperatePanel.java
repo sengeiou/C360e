@@ -19,6 +19,7 @@ import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -178,6 +179,10 @@ public class MainPageOperatePanel extends LinearLayout implements
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_OPERATEPANEL);
 				break;
 			case R.id.tv_transfer_table:
+				if(!IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
+					UIHelp.showShortToast(parent, "Orders from Diner App Cannot be Transferred");
+					return;
+				}
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_TANSFER_TABLE);
 				break;
 			case R.id.tv_kick_cashdrawer:

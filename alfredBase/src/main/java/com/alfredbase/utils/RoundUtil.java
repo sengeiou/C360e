@@ -31,6 +31,21 @@ public class RoundUtil {
 					false);
 			return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
 					BH.getBD("0.05"), true);
+		} else if(roundType.equalsIgnoreCase(ParamConst.ROUND_10CENTS_UP)){
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.1"),
+					false);
+			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
+					BH.getBD("0.1"), true);
+		} else if(roundType.equalsIgnoreCase(ParamConst.ROUND_1DOLLAR_UP)){
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("1.0"),
+					false);
+			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
+					BH.getBD("1.0"), true);
+		} else if(roundType.equalsIgnoreCase(ParamConst.ROUND_5CENTS_UP)){
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.05"),
+					false);
+			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
+					BH.getBD("0.05"), true);
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_10CENTS_DOWN)) {
 			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.1"), 

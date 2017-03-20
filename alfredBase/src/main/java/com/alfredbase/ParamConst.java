@@ -300,6 +300,18 @@ public class ParamConst {
 	 */
 	public static final String ROUND_1DOLLAR = "ROUND_1DOLLAR";
 	/**
+	 * 精确小数点后两位,向上四舍五入
+	 */
+	public static final String ROUND_5CENTS_UP = "ROUND_5CENTS_UP";
+	/**
+	 * 精确小数点后一位,向上四舍五入
+	 */
+	public static final String ROUND_10CENTS_UP = "ROUND_10CENTS_UP";
+	/**
+	 * 精确到小数点前一位,向上四舍五入
+	 */
+	public static final String ROUND_1DOLLAR_UP = "ROUND_1DOLLAR_UP";
+	/**
 	 * 精确小数点后两位,向下四舍五入
 	 */
 	public static final String ROUND_5CENTS_DOWN = "ROUND_5CENTS_DOWN";

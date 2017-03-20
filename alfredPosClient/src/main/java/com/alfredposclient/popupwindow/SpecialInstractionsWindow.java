@@ -2,9 +2,11 @@ package com.alfredposclient.popupwindow;
 
 import android.content.Context;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,7 +47,7 @@ public class SpecialInstractionsWindow implements OnClickListener {
 				LinearLayout.LayoutParams.MATCH_PARENT);
 //		popupWindow.setAnimationStyle(R.style.set_qty_window_style);
 		popupWindow.setContentView(contentView);
-
+		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 //		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 //		popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
 //		popupWindow.setOutsideTouchable(false);
@@ -63,7 +65,9 @@ public class SpecialInstractionsWindow implements OnClickListener {
 		}
 		init();
 		currentOrderDetail = orderDetail;
-		popupWindow.showAsDropDown(view,0,0);
+//		popupWindow.showAsDropDown(view,0,0);
+		popupWindow
+				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, 0);
 		if(currentOrderDetail.getSpecialInstractions() != null)
 			et_special_instractions.setText(currentOrderDetail.getSpecialInstractions());
 		popupOutputMethidWindow();

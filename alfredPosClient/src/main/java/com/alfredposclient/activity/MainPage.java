@@ -583,9 +583,6 @@ public class MainPage extends BaseActivity {
 			for (OrderDetail orderDetail : orderDetails) {
 				OrderDetail newOrderDetail = ObjectFactory.getInstance()
 						.getOrderDetailForTransferTable(newOrder, orderDetail);
-				if(!!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
-					OrderDetailTaxSQL.updateOrderDetailTaxForTransation(newOrderDetail, orderDetail);
-				}
 				OrderDetailSQL.addOrderDetailETC(newOrderDetail);
 				List<OrderModifier> orderModifiers = OrderModifierSQL
 						.getOrderModifiers(orderDetail);
@@ -611,29 +608,7 @@ public class MainPage extends BaseActivity {
 
 	}
 
-//	private void closeCloseOrderWindow(){
-//		if(closeOrderWindow != null && !closeOrderWindow.isHidden()){
-//			FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-//			transaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_right_out);
-//			transaction.hide(closeOrderWindow);
-//			transaction.commitAllowingStateLoss();
-//		}
-//
-//	}
 
-//	private void showCloseOrderWindow(){
-//		if(closeOrderWindow != null && closeOrderWindow.isHidden()){
-//			FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-//			transaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_right_out);
-//			transaction.show(closeOrderWindow);
-//			transaction.commitAllowingStateLoss();
-//		}
-//	}
-
-
-	public Handler getHandler(){
-		return handler;
-	}
 
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -1215,6 +1190,7 @@ public class MainPage extends BaseActivity {
 											currentTable.getName());
 									parameters.put("currentTableId",
 											currentTable.getPosId());
+									mergerOrder();
 									App.instance.getKdsJobManager()
 											.transferTableDownKot(
 													ParamConst.JOB_MERGER_KOT,
@@ -1797,14 +1773,15 @@ public class MainPage extends BaseActivity {
 //        ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
 //                web_tables.getY(), 0).setDuration(300);
 //        animator.start();
+//		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		isShowTables = true;
 		isTableFirstShow = false;
 //        transaction = fragmentManager.beginTransaction();
 		FragmentManager fragmentManager = this.getSupportFragmentManager();
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
-        transaction.show(f_tables);
-        transaction.commitAllowingStateLoss();
+		transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
+		transaction.show(f_tables);
+		transaction.commitAllowingStateLoss();
 		App.instance.showWelcomeToSecondScreen();
 	}
 
@@ -1815,10 +1792,11 @@ public class MainPage extends BaseActivity {
 //		animator.start();
 //        transaction = fragmentManager.beginTransaction();
 //        transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
+//		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED);
 		FragmentManager fragmentManager = this.getSupportFragmentManager();
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.hide(f_tables);
-        transaction.commitAllowingStateLoss();
+		transaction.hide(f_tables);
+		transaction.commitAllowingStateLoss();
 		isShowTables = false;
 	}
 

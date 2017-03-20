@@ -294,7 +294,7 @@ public class ObjectFactory {
 		orderDetail.setGroupId(ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID);
 		orderDetail.setIsTakeAway(oldOrderDetail.getIsTakeAway());
 		orderDetail.setIsItemDiscount(oldOrderDetail.getIsItemDiscount());
-		orderDetail.setAppOrderDetailId(oldOrderDetail.getId());
+		orderDetail.setAppOrderDetailId(oldOrderDetail.getAppOrderDetailId());
 		orderDetail.setMainCategoryId(oldOrderDetail.getMainCategoryId());
 
 		return orderDetail;

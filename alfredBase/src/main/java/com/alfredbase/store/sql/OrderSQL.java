@@ -246,16 +246,17 @@ public class OrderSQL {
 					continue;
 				}
 				if(orderDetail.getMainCategoryId() != 0
-					&& orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE) {
+					&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
+						|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
 					orderDetail.setDiscountRate(order.getDiscountRate());
 					orderDetail
 							.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
 					orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
 					OrderDetailSQL.updateOrderDetail(orderDetail);
-				}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL){
-					orderDetail.setDiscountRate("");
-					orderDetail.setDiscountPrice("0.00");
-					OrderDetailSQL.updateOrderDetail(orderDetail);
+//				}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL){
+//					orderDetail.setDiscountRate("");
+//					orderDetail.setDiscountPrice("0.00");
+//					OrderDetailSQL.updateOrderDetail(orderDetail);
 				}
 			}
 		}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY){
@@ -297,16 +298,17 @@ public class OrderSQL {
 						continue;
 					}
 					if (orderDetail.getMainCategoryId() != 0
-							&& orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
+							&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
+							|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
 						orderDetail.setDiscountRate(discount_rate.toString());
 						orderDetail
 								.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
 						orderDetail.setDiscountPrice(BH.mul(discount_rate, BH.getBD(orderDetail.getRealPrice()), false).toString());
 						OrderDetailSQL.updateOrderDetail(orderDetail);
-					}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL){
-						orderDetail.setDiscountRate("");
-						orderDetail.setDiscountPrice("0.00");
-						OrderDetailSQL.updateOrderDetail(orderDetail);
+//					}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL){
+//						orderDetail.setDiscountRate("");
+//						orderDetail.setDiscountPrice("0.00");
+//						OrderDetailSQL.updateOrderDetail(orderDetail);
 					}
 				}
 			}

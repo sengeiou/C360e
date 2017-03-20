@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -1137,8 +1138,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		}
 //		popupWindow
 //				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, ScreenSizeUtil.getStatusBarHeight(parent));
-		popupWindow.setAnimationStyle(0);
-		popupWindow.showAsDropDown(view,0,0);
+		popupWindow
+				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, 0);
+//		popupWindow.setAnimationStyle(0);
+//		popupWindow.showAsDropDown(view,0,0);
 //		rl_pay_panel.post(new Runnable() {
 //			@Override
 //			public void run() {

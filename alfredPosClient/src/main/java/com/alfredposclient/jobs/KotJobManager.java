@@ -9,9 +9,7 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.KDSDevice;
@@ -19,13 +17,9 @@ import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
-import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.LogUtil;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
 import com.path.android.jobqueue.JobManager;
@@ -229,46 +223,51 @@ public class KotJobManager {
 								.getId()));
 			}
 			KotSummarySQL.deleteKotSummary(fromKotSummary);
-			Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
-			OrderBill newOrderBill = ObjectFactory.getInstance().getOrderBill(
-					newOrder, App.instance.getRevenueCenter());
-			List<OrderDetail> orderDetails = OrderDetailSQL
-					.getUnFreeOrderDetails(oldOrder);
-			if (!orderDetails.isEmpty()) {
-				for (OrderDetail orderDetail : orderDetails) {
-					OrderDetail newOrderDetail = ObjectFactory.getInstance()
-							.getOrderDetailForTransferTable(newOrder,
-									orderDetail);
-					OrderDetailSQL.addOrderDetailETC(newOrderDetail);
-					List<OrderModifier> orderModifiers = OrderModifierSQL
-							.getOrderModifiers(orderDetail);
-					if (orderModifiers.isEmpty()) {
-						continue;
-					}
-					for (OrderModifier orderModifier : orderModifiers) {
-						OrderModifier newOrderModifier = ObjectFactory
-								.getInstance().getOrderModifier(
-										newOrder,
-										newOrderDetail,
-										CoreData.getInstance().getModifier(
-												orderModifier.getModifierId()),
-										orderModifier.getPrinterId().intValue());
-						OrderModifierSQL.addOrderModifier(newOrderModifier);
-					}
-				}
-			}
-
-			OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-			OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-			OrderBillSQL.deleteOrderBillByOrder(oldOrder);
-			OrderBillSQL.add(newOrderBill);
-			OrderSQL.deleteOrder(oldOrder);
+//			Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
+//			OrderBill newOrderBill = ObjectFactory.getInstance().getOrderBill(
+//					newOrder, App.instance.getRevenueCenter());
+//			List<OrderDetail> orderDetails = OrderDetailSQL
+//					.getUnFreeOrderDetails(oldOrder);
+//			if (!orderDetails.isEmpty()) {
+//				for (OrderDetail orderDetail : orderDetails) {
+//					OrderDetail newOrderDetail = ObjectFactory.getInstance()
+//							.getOrderDetailForTransferTable(newOrder,
+//									orderDetail);
+////					if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+//						OrderDetailTaxSQL.updateOrderDetailTaxForTransation(newOrderDetail, orderDetail);
+////					}
+//					OrderDetailSQL.addOrderDetailETC(newOrderDetail);
+//					List<OrderModifier> orderModifiers = OrderModifierSQL
+//							.getOrderModifiers(orderDetail);
+//					if (orderModifiers.isEmpty()) {
+//						continue;
+//					}
+//					for (OrderModifier orderModifier : orderModifiers) {
+//						OrderModifier newOrderModifier = ObjectFactory
+//								.getInstance().getOrderModifier(
+//										newOrder,
+//										newOrderDetail,
+//										CoreData.getInstance().getModifier(
+//												orderModifier.getModifierId()),
+//										orderModifier.getPrinterId().intValue());
+//						OrderModifierSQL.addOrderModifier(newOrderModifier);
+//					}
+//				}
+//			}
+////			if(!IntegerUtils.isEmptyOrZero(oldOrder.getAppOrderId()){
+////				OrderDetailTaxSQL.updateOrderDetailTaxForTransation(newOrderDetail, orderDetail);
+////			}
+//			OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
+//			OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
+//			OrderBillSQL.deleteOrderBillByOrder(oldOrder);
+//			OrderBillSQL.add(newOrderBill);
+//			OrderSQL.deleteOrder(oldOrder);
 			context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
 			printKotSummary = toKotSummary;
 		} else if (ParamConst.JOB_TRANSFER_KOT.equals(transferAction)) {
 			KotSummarySQL.update(fromKotSummary);
 			Order order = (Order) orderMap.get("fromOrder");
-			OrderSQL.update(order);
+//			OrderSQL.update(order);
 			kotItemDetails = KotItemDetailSQL
 					.getKotItemDetailBySummaryId(fromKotSummary.getId());
 			for (KotItemDetail kotItemDetail : kotItemDetails)
