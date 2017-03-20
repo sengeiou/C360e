@@ -14,12 +14,13 @@ public class SystemSettings {
 	private boolean doubleReceiptPrint = false; //double closing receipt
 	private boolean orderSummaryPrint = false; //double closing receipt
 	private boolean printWhenCloseSession = true; // session close is report?
-	private boolean printPluCategory = true; // session close is report?
-	private boolean printPluItem = true; // session close is report?
-	private boolean printPluModifier = true; // session close is report?
-	private boolean printHourlyPayment = true; // session close is report?
+	private boolean printPluCategory = true; //
+	private boolean printPluItem = true; //
+	private boolean printPluModifier = true; //
+	private boolean printHourlyPayment = true; //
 	private boolean printBeforCloseBill = true; // bill close need print Bill?
 	private boolean cashClosePrint = true; // cash w close need print Bill?
+	private boolean autoRecevingOnlineOrder = false;
 	private int maxPrintOrderNo = 98;
     
 	public SystemSettings(Context context) {
@@ -295,6 +296,28 @@ public class SystemSettings {
 			return  this.cashClosePrint;
 		}
 		return cashClosePrint;
+	}
+
+	public boolean isAutoRecevingOnlineOrder() {
+		Integer value = Store.getInt(context,
+				Store.AUTO_RECEIVE_ONLINE_ORDER);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1)
+				this.autoRecevingOnlineOrder = true;
+			else
+				this.autoRecevingOnlineOrder = false;
+			return  this.autoRecevingOnlineOrder;
+		}
+		return autoRecevingOnlineOrder;
+	}
+
+	public void setAutoRecevingOnlineOrder(Integer autoRecevingOnlineOrder) {
+		Store.putInt(this.context, Store.AUTO_RECEIVE_ONLINE_ORDER,
+				autoRecevingOnlineOrder);
+		if (autoRecevingOnlineOrder.intValue() == 1)
+			this.autoRecevingOnlineOrder = true;
+		else
+			this.autoRecevingOnlineOrder = false;
 	}
 
 	public int getMaxPrintOrderNo() {

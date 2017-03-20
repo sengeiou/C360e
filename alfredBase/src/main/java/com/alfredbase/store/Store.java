@@ -87,6 +87,7 @@ public class Store {
 	public static final String PRINT_REPORT_HOURLY_PAYMENT = "PRINT_REPORT_HOURLY_PAYMENT";
 	public static final String PRINT_BEFORE_CLOSE_BILL = "PRINT_BEFORE_CLOSE_BILL";
 	public static final String PRINT_CASH_CLOSE = "PRINT_CASH_CLOSE";
+	public static final String AUTO_RECEIVE_ONLINE_ORDER = "AUTO_RECEIVE_ONLINE_ORDER";
 
 	public static final String WELCOME_IMAGE_ID = "WELCOME_IMAGE_ID";
 

@@ -265,6 +265,39 @@
                                 android:layout_marginRight="10dp" />
                         </RelativeLayout>
                     </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/ll_app_order"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ll_bill_print"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/box_system_setting"
+                        android:orientation="vertical" >
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="60dp"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:id="@+id/tv_auto_receive_app"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:padding="10dp"
+                                android:text="Auto Receive Online Order"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_m" />
+
+                            <com.alfredbase.view.SlipButton
+                                android:id="@+id/sb_auto_receive_app"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="10dp" />
+                        </RelativeLayout>
+                        </LinearLayout>
                 </RelativeLayout>
 
                 <LinearLayout
@@ -309,6 +342,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:layout_alignParentRight="true"
+                                    android:layout_marginRight="10dp"
                                     android:layout_alignParentEnd="true" />
                             </RelativeLayout>
 

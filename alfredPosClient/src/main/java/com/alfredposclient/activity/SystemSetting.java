@@ -50,6 +50,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SlipButton sb_plu_modifier;
 	private SlipButton sb_hourly_payment;
 	private SlipButton sb_print_before_close;
+	private SlipButton sb_auto_receive_app;
 	private SlipButton sb_cash_close_print;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
@@ -71,9 +72,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.rl_cash_close_print).setVisibility(View.VISIBLE);
 			findViewById(R.id.view_cash_close_print).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_app_order).setVisibility(View.GONE);
 		}else{
 			findViewById(R.id.rl_cash_close_print).setVisibility(View.GONE);
 			findViewById(R.id.view_cash_close_print).setVisibility(View.GONE);
+			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
 		}
 		syncMap = App.instance.getPushMsgMap();
 		settings = new SystemSettings(context);
@@ -96,6 +99,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_hourly_payment = (SlipButton)findViewById(R.id.sb_hourly_payment);
 		sb_print_before_close = (SlipButton)findViewById(R.id.sb_print_before_close);
 		sb_cash_close_print = (SlipButton)findViewById(R.id.sb_cash_close_print);
+		sb_auto_receive_app = (SlipButton)findViewById(R.id.sb_auto_receive_app);
 
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -120,6 +124,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_hourly_payment.setOnChangedListener(this);
 		sb_print_before_close.setOnChangedListener(this);
 		sb_cash_close_print.setOnChangedListener(this);
+		sb_auto_receive_app.setOnChangedListener(this);
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
@@ -199,6 +204,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			sb_cash_close_print.setChecked(true);
 		}else{
 			sb_cash_close_print.setChecked(false);
+		}
+		if(settings.isAutoRecevingOnlineOrder()){
+			sb_auto_receive_app.setChecked(true);
+		}else{
+			sb_auto_receive_app.setChecked(false);
 		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
@@ -464,6 +474,15 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			}else{
 				sb_cash_close_print.setChecked(false);
 				settings.setCashClosePrint(ParamConst.DEFAULT_FALSE);
+			}
+			break;
+		case R.id.sb_auto_receive_app:
+			if(checkState){
+				sb_auto_receive_app.setChecked(true);
+				settings.setAutoRecevingOnlineOrder(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_auto_receive_app.setChecked(false);
+				settings.setAutoRecevingOnlineOrder(ParamConst.DEFAULT_FALSE);
 			}
 			break;
 		default:

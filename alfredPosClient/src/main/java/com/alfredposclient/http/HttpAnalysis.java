@@ -625,6 +625,9 @@ public class HttpAnalysis {
 			if(canCheck)
 			if(!App.instance.isRevenueKiosk()) {
 				App.instance.appOrderShowDialog(true, appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+			}else{
+				if(App.instance.getSystemSettings().isAutoRecevingOnlineOrder())
+					App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
 			}
 			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
 		} catch (Exception e) {
