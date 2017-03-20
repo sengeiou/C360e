@@ -72,11 +72,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.rl_cash_close_print).setVisibility(View.VISIBLE);
 			findViewById(R.id.view_cash_close_print).setVisibility(View.VISIBLE);
-			findViewById(R.id.ll_app_order).setVisibility(View.GONE);
+			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
 		}else{
 			findViewById(R.id.rl_cash_close_print).setVisibility(View.GONE);
 			findViewById(R.id.view_cash_close_print).setVisibility(View.GONE);
-			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_app_order).setVisibility(View.GONE);
 		}
 		syncMap = App.instance.getPushMsgMap();
 		settings = new SystemSettings(context);
