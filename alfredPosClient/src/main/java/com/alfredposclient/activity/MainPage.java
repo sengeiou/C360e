@@ -1701,12 +1701,15 @@ public class MainPage extends BaseActivity {
 			}
 		}
 		if (orderBill != null && orderBill.getBillNo() != null) {
-			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);
-			if(orderSplits.isEmpty()){
+//
+//			List<OrderDetail>
+			int id = OrderDetailSQL.getMaxGroupId(currentOrder);
+			if(id == 0){
 				closeOrderWindow.show(view_top_line,currentOrder,operatePanel.getWidth(), orderBill, orderDetails);
 			}else{
 				int count = OrderDetailSQL.getOrderDetailCountByGroupId(ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID, currentOrder.getId());
 				if(count == 0){
+					List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);
 					selectOrderSplitDialog.show(orderSplits, currentOrder);
 				}else{
 					UIHelp.showToast(context, context.getResources().getString(R.string.assign_items));
@@ -1729,7 +1732,7 @@ public class MainPage extends BaseActivity {
 	private void showSearchView() {
 		mainPageSearchView.setVisibility(View.VISIBLE);
 		mainPageSearchView.setParam(context, currentOrder, CoreData
-				.getInstance().getItemDetails(), handler);
+				.getInstance().getItemDetails(), handler, true);
 	}
 
 	private void search(String key) {
@@ -1748,7 +1751,7 @@ public class MainPage extends BaseActivity {
 				}
 			}
 			mainPageSearchView.setParam(context, currentOrder, itemDetailList,
-					handler);
+					handler, false);
 		}
 	}
 

@@ -20,6 +20,7 @@ import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OrderSQL {
@@ -35,8 +36,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
 					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime," 
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getOrderOriginId(), order.getUserId(),
@@ -51,7 +52,9 @@ public class OrderSQL {
 							order.getDiscountPrice(),order.getInclusiveTaxName(),
 							order.getInclusiveTaxPrice(), order.getInclusiveTaxPercentage(),
 							order.getAppOrderId(),order.getIsTakeAway(),
-					        order.getTableName(), order.getOrderRemark()});
+					        order.getTableName(), order.getOrderRemark(),
+							order.getDiscountCategoryId()
+						});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -97,8 +100,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -114,7 +117,7 @@ public class OrderSQL {
 							order.getInclusiveTaxName(), order.getInclusiveTaxPrice(),
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
-							order.getOrderRemark()});
+							order.getOrderRemark(), order.getDiscountCategoryId()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -234,6 +237,7 @@ public class OrderSQL {
 				}
 			}
 		}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY){
+			List<String> categoryId = Arrays.asList(order.getDiscountCategoryId().split(","));
 			for (OrderDetail orderDetail : orderDetails) {
 				// 本身是送的，不参与打折
 				if (orderDetail.getIsFree() == ParamConst.FREE) {
@@ -245,21 +249,29 @@ public class OrderSQL {
 				if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 					continue;
 				}
-				if(orderDetail.getMainCategoryId() != 0
-					&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
-						|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
-					orderDetail.setDiscountRate(order.getDiscountRate());
-					orderDetail
-							.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
-					orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
-					OrderDetailSQL.updateOrderDetail(orderDetail);
-//				}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL){
-//					orderDetail.setDiscountRate("");
-//					orderDetail.setDiscountPrice("0.00");
-//					OrderDetailSQL.updateOrderDetail(orderDetail);
+				if(categoryId != null && categoryId.size() > 0) {
+					if(categoryId.contains(orderDetail.getMainCategoryId()+"")){
+						if (orderDetail.getMainCategoryId() != 0
+								&& categoryId.contains(orderDetail.getMainCategoryId()+"")
+								&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
+								|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
+							orderDetail.setDiscountRate(order.getDiscountRate());
+							orderDetail
+									.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
+							orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
+							OrderDetailSQL.updateOrderDetail(orderDetail);
+						}
+					}else if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+							&& orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
+						orderDetail.setDiscountRate("");
+						orderDetail.setDiscountPrice("0.00");
+						orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+						OrderDetailSQL.updateOrderDetail(orderDetail);
+					}
 				}
 			}
 		}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY){
+			List<String> categoryId = Arrays.asList(order.getDiscountCategoryId().split(","));
 			BigDecimal sumRatePrice = BH.getBD(ParamConst.DOUBLE_ZERO);
 
 //				String discount_rate = BH.div(BH.getBD(order.getDiscountPrice()),
@@ -277,9 +289,13 @@ public class OrderSQL {
 					if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
 						continue;
 					}
-					if (orderDetail.getMainCategoryId() != 0
-							&& orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
-						sumRatePrice = BH.add(sumRatePrice, BH.getBD(orderDetail.getRealPrice()), false);
+					if(categoryId != null && categoryId.size() > 0) {
+						if (orderDetail.getMainCategoryId() != 0
+								&& categoryId.contains(orderDetail.getMainCategoryId()+"")
+								&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
+								|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
+							sumRatePrice = BH.add(sumRatePrice, BH.getBD(orderDetail.getRealPrice()), false);
+						}
 					}
 				}
 
@@ -297,18 +313,24 @@ public class OrderSQL {
 					if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
 						continue;
 					}
-					if (orderDetail.getMainCategoryId() != 0
-							&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
-							|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
-						orderDetail.setDiscountRate(discount_rate.toString());
-						orderDetail
-								.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
-						orderDetail.setDiscountPrice(BH.mul(discount_rate, BH.getBD(orderDetail.getRealPrice()), false).toString());
-						OrderDetailSQL.updateOrderDetail(orderDetail);
-//					}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL){
-//						orderDetail.setDiscountRate("");
-//						orderDetail.setDiscountPrice("0.00");
-//						OrderDetailSQL.updateOrderDetail(orderDetail);
+					if(categoryId != null && categoryId.size() > 0) {
+						if(categoryId.contains(orderDetail.getMainCategoryId() + "")) {
+							if (orderDetail.getMainCategoryId() != 0
+									&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
+									|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
+								orderDetail.setDiscountRate(discount_rate.toString());
+								orderDetail
+										.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
+								orderDetail.setDiscountPrice(BH.mul(discount_rate, BH.getBD(orderDetail.getRealPrice()), false).toString());
+								OrderDetailSQL.updateOrderDetail(orderDetail);
+							}
+						}else if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+								&& orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
+							orderDetail.setDiscountRate("");
+							orderDetail.setDiscountPrice("0.00");
+							orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+							OrderDetailSQL.updateOrderDetail(orderDetail);
+						}
 					}
 				}
 			}
@@ -327,8 +349,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Order order : orderList) {
@@ -386,6 +408,8 @@ public class OrderSQL {
 							order.getTableName());
 					SQLiteStatementHelper.bindString(sqLiteStatement, 27,
 							order.getOrderRemark());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 28,
+							order.getDiscountCategoryId());
 					sqLiteStatement.executeInsert();
 				}
 			db.setTransactionSuccessful();
@@ -440,6 +464,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -498,6 +523,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -557,6 +583,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -618,6 +645,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -679,6 +707,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -798,6 +827,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				return order;
 			}
 		} catch (Exception e) {
@@ -853,6 +883,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				return order;
 			}
 		} catch (Exception e) {
@@ -910,6 +941,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				return order;
 			}
 		} catch (Exception e) {
@@ -967,6 +999,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1025,6 +1058,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
 			db.setTransactionSuccessful();
@@ -1077,6 +1111,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1139,6 +1174,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1197,6 +1233,7 @@ public class OrderSQL {
 				order.setIsTakeAway(cursor.getInt(25));
 				order.setTableName(cursor.getString(26));
 				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
 		} catch (Exception e) {

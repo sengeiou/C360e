@@ -1533,7 +1533,7 @@ public class MainPageKiosk extends BaseActivity {
 	private void showSearchView() {
 		mainPageSearchView.setVisibility(View.VISIBLE);
 		mainPageSearchView.setParam(context, currentOrder, CoreData
-				.getInstance().getItemDetails(), handler);
+				.getInstance().getItemDetails(), handler, true);
 	}
 
 	private void search(String key) {
@@ -1552,7 +1552,7 @@ public class MainPageKiosk extends BaseActivity {
 				}
 			}
 			mainPageSearchView.setParam(context, currentOrder, itemDetailList,
-					handler);
+					handler, false);
 		}
 	}
 

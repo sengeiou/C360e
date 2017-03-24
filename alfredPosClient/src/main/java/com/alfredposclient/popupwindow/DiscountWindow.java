@@ -3,6 +3,7 @@ package com.alfredposclient.popupwindow;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +58,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 //	private List<ItemMainCategory> categories = new ArrayList<ItemMainCategory>();
 
 	private DiscountAdapter discountAdapter;
-
+	String discountByCategory = "";
 	public DiscountWindow(BaseActivity parent, View parentView) {
 		this.parent = parent;
 		this.parentView = parentView;
@@ -193,6 +194,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		this.order = order;
 		this.orderDetail = orderDetail;
 		this.resultCall = resultCall;
+		this.discountByCategory = "";
 		keyBuffer = new StringBuffer();
 		init();
 		popupWindow
@@ -297,6 +299,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		tv_percent_sign.setBackgroundResource(R.color.brown);
 		tv_percent_sign.setTextColor(parent.getResources().getColor(R.color.white));
 		if (order != null) {
+			if(TextUtils.isEmpty(discountByCategory))
 			tv_discount_count.setText(BH.mul(
 					BH.sub(BH.getBD(order.getSubTotal()), 
 					BH.getBD(sumRealPrice), false),
@@ -309,20 +312,19 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 					true).toString());
 		}
 	}
-	
+
 	@Override
 	public void onKeyBoardClick(String key) {
 		if ("X".equals(key)) {
 			dismiss();
 			if (resultCall != null)
-				resultCall.call(null, null, false);
+				resultCall.call(null, null, "");
 		} else if ("Enter".equals(key)) {
 			dismiss();
 			if (resultCall != null) {
 				if (inputView == tv_discount_percent) {
-					boolean discountByCategory = false;
 					if(order != null){
-						discountByCategory = discountAdapter == null ? false : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
+						discountByCategory = discountAdapter == null ? "" : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
 					}
 
 					resultCall.call(
@@ -330,9 +332,8 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 									.toString()), BH.getBD(100), true)
 									.toString(), null, discountByCategory);
 				} else {
-					boolean discountByCategory = false;
 					if(order != null) {
-						discountByCategory = discountAdapter == null ? false : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
+						discountByCategory = discountAdapter == null ? "" : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
 					}
 					resultCall.call(null, tv_discount_count.getText()
 							.toString(), discountByCategory);
@@ -347,9 +348,9 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 			tv_discount_percent.setText(num);
 			setDiscountKey(num);
 		} else {
-			boolean discountByCategory = false;
+
 			if(order != null){
-				discountByCategory = discountAdapter == null ? false : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
+				discountByCategory = discountAdapter == null ? "" : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
 			}
 
 			if (inputView == tv_discount_percent) {
@@ -360,7 +361,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				tv_discount_percent.setText(percent + "");
 				keyBuffer.append(key);
 				if (order != null) {
-					if(!discountByCategory)
+					if(TextUtils.isEmpty(discountByCategory))
 					tv_discount_count.setText(BH.mul(
 							BH.sub(BH.getBD(order.getSubTotal()), 
 							BH.getBD(sumRealPrice), false),
@@ -387,7 +388,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				keyBuffer.append(key);
 
 				if (order != null) {
-					if(!discountByCategory)
+					if(TextUtils.isEmpty(discountByCategory))
 					tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 							BH.div(BH.getBD(count + ""),
 									BH.sub(BH.getBD(order.getSubTotal()), 
@@ -405,6 +406,6 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	}
 
 	public interface ResultCall {
-		public void call(String discount_rate, String discount_price, boolean discountByCategory);
+		public void call(String discount_rate, String discount_price, String discountByCategory);
 	}
 }

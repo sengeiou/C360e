@@ -23,14 +23,16 @@ interface IAlfredRemotePrintService {
 
 						
 	void printBill(String printer, String title, 
-							String order, String orderDetail,
-							String modifiers,String tax, String payment,
-							boolean doubleprint, boolean doubleReceipts, String rounding, String currencySymbol);
+    							String order, String orderDetail,
+    							String modifiers,String tax, String payment,
+    							boolean doubleprint, boolean doubleReceipts,
+    							String rounding, String currencySymbol, boolean openDrawer);
 
-	void printKioskBill(String printer, String title, 
-							String order, String orderDetail,
-							String modifiers,String tax, String payment,
-							boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo, String currencySymbol);
+    	void printKioskBill(String printer, String title,
+    							String order, String orderDetail,
+    							String modifiers,String tax, String payment,
+    							boolean doubleprint, boolean doubleReceipts,
+    							String rounding, String orderNo, String currencySymbol, boolean openDrawer);
 
 
 	void kickCashDrawer(String printer);

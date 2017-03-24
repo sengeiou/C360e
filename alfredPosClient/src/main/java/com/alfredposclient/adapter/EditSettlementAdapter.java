@@ -169,7 +169,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 					orderModifiers, OrderDetailTaxSQL.getTaxPriceSUMForPrint(
 							App.instance.getLocalRestaurantConfig()
 									.getIncludedTax().getTax(), order), paymentSettlements,
-					roundAmount);
+					roundAmount, false);
 		} else {
 			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
 			for (OrderSplit orderSplit : orderSplits) {
@@ -213,7 +213,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 				List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getPaymentSettlementsBypaymentId(payment.getId().intValue());
 				App.instance.remoteBillPrint(printer, title, temporaryOrder,
 						orderItems, orderModifiers, taxMap, paymentSettlements,
-						roundAmount);
+						roundAmount, false);
 			}
 		}
 	}

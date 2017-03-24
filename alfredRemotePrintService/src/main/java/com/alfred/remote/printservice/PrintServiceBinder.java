@@ -591,9 +591,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 	
 	@Override
 	public void printBill(String printer, String title, 
-							String order, String orderDetail,
-							String modifiers,
-							String tax, String payment, boolean doubleprint, boolean doubleReceipts, String rounding, String currencySymbol) throws RemoteException {
+						  String order, String orderDetail,
+						  String modifiers, String tax,
+						  String payment, boolean doubleprint,
+						  boolean doubleReceipts, String rounding,
+						  String currencySymbol, boolean openDrawer) throws RemoteException {
 		
 		Gson gson = new Gson();
 		boolean isCashSettlement = false;
@@ -772,6 +774,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 									isCashSettlement = true;
 								}
 								if (isCashSettlement && i==0) {
+									if(openDrawer)
 									this.kickCashDrawer(printer);
 								}
 								break;
@@ -1419,8 +1422,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 
 	@Override
 	public void printKioskBill(String printer, String title, String order,
-			String orderDetail, String modifiers, String tax, String payment,
-			boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo, String currencySymbol) throws RemoteException {
+							   String orderDetail, String modifiers, String tax, String payment,
+							   boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,
+							   String currencySymbol, boolean openDrawer) throws RemoteException {
 		
 		Gson gson = new Gson();
 		boolean isCashSettlement = false;
@@ -1600,6 +1604,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 									isCashSettlement = true;
 								}
 								if (isCashSettlement && i==0) {
+									if(openDrawer)
 									this.kickCashDrawer(printer);
 								}
 								break;

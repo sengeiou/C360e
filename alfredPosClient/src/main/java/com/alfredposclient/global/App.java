@@ -1425,7 +1425,16 @@ public class App extends BaseApplication {
                                 Order order, ArrayList<PrintOrderItem> orderItems,
                                 ArrayList<PrintOrderModifier> orderModifiers,
                                 List<Map<String, String>> taxes,
-                                List<PaymentSettlement> settlement, RoundAmount roundAmount) {
+                                List<PaymentSettlement> settlement, RoundAmount roundAmount){
+        remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, true);
+    }
+
+    public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
+                                Order order, ArrayList<PrintOrderItem> orderItems,
+                                ArrayList<PrintOrderModifier> orderModifiers,
+                                List<Map<String, String>> taxes,
+                                List<PaymentSettlement> settlement, RoundAmount roundAmount,
+                                boolean openDrawer) {
 
         if (mRemoteService == null) {
             printerDialog();
@@ -1504,19 +1513,22 @@ public class App extends BaseApplication {
                             details, mods, tax, payment,
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                            getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol());
+                            getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
+                            true);
                 else
                     mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                            null, getLocalRestaurantConfig().getCurrencySymbol());
+                            null, getLocalRestaurantConfig().getCurrencySymbol(),
+                            openDrawer);
             else
                 mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
                         mods, tax, payment,
                         this.systemSettings.isDoubleBillPrint(),
                         this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                        getLocalRestaurantConfig().getCurrencySymbol());
+                        getLocalRestaurantConfig().getCurrencySymbol(),
+                        openDrawer);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

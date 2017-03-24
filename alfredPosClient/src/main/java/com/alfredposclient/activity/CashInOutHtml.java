@@ -1,10 +1,7 @@
 package com.alfredposclient.activity;
 
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -13,7 +10,6 @@ import android.webkit.WebView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
-import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -24,6 +20,10 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.global.WebViewConfig;
+
+import org.json.JSONObject;
+
+import java.util.Map;
 
 public class CashInOutHtml extends BaseActivity {
 	private static final String ACTION_CONTINUE = "ACTION_CONTINUE";
@@ -42,7 +42,27 @@ public class CashInOutHtml extends BaseActivity {
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_common_web);
-		dialog = new VerifyDialog(context, mHandler);
+		dialog = new VerifyDialog(context, handler);
+		dialog.show("initData",null);
+	}
+
+
+
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what){
+				case VerifyDialog.DIALOG_RESPONSE:
+					Map<String, Object> map = (Map<String, Object>) msg.obj;
+					user = (User) map.get("User");
+					init();
+					break;
+			}
+		}
+	};
+
+	private void init(){
 		web = (WebView) findViewById(R.id.web);
 		WebViewConfig.setDefaultConfig(web);
 		javaConnectJS = new JavaConnectJS() {
@@ -98,18 +118,6 @@ public class CashInOutHtml extends BaseActivity {
 					e.printStackTrace();
 				}
 				if (!TextUtils.isEmpty(cash) && !cash.equals(defaultCash)) {
-					dialog.show(ACTION_CONTINUE,null);
-				}else {
-					UIHelp.showToast(context, context.getResources().getString(R.string.cash_not_empty));
-					return;
-				}
-				PrinterDevice printerDevice = App.instance.getCahierPrinter();
-				App.instance.kickOutCashDrawer(printerDevice);
-				break;
-			case VerifyDialog.DIALOG_RESPONSE:
-				Map<String, Object> map = (Map<String, Object>) msg.obj;
-				user = (User) map.get("User");
-				if (map.get("MsgObject").equals(ACTION_CONTINUE) && user!=null) {
 					if (App.instance.countryCode == ParamConst.CHINA) {
 						user.setUserName(user.getLastName()+user.getFirstName());
 					}else {
@@ -119,7 +127,12 @@ public class CashInOutHtml extends BaseActivity {
 							App.instance.getLastBusinessDate(),user,type,cash,comment);
 					UIHelp.showToast(context, context.getResources().getString(R.string.save_success));
 					mHandler.sendEmptyMessageDelayed(JavaConnectJS.ACTION_CLICK_BACK, 350);
+				}else {
+					UIHelp.showToast(context, context.getResources().getString(R.string.cash_not_empty));
+					return;
 				}
+				PrinterDevice printerDevice = App.instance.getCahierPrinter();
+				App.instance.kickOutCashDrawer(printerDevice);
 				break;
 			default:
 				break;

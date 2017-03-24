@@ -391,7 +391,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 		map.put("resultCall", new ResultCall() {
 
 			@Override
-			public void call(final String discount_rate, final String discount_price,final boolean discountByCategory) {
+			public void call(final String discount_rate, final String discount_price,final String discountByCategory) {
 //				parent.loadingDialog.show();
 				new Thread(new Runnable() {
 					
@@ -412,10 +412,12 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 //									BH.getBD(order.getSubTotal()),
 //									BH.getBDNoFormat(order.getDiscountRate()), true)
 //									.toString());
-							if(discountByCategory){
+							if(!TextUtils.isEmpty(discountByCategory)){
 								order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY);
+								order.setDiscountCategoryId(discountByCategory);
 							}else{
 								order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER);
+								order.setDiscountCategoryId("");
 							}
 
 						} else {
@@ -424,10 +426,12 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 //									BH.getBD(order.getDiscountAmount()),
 //									BH.getBD(order.getSubTotal()), true)
 //									.toString());
-							if(discountByCategory){
+							if(!TextUtils.isEmpty(discountByCategory)){
 								order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY);
+								order.setDiscountCategoryId(discountByCategory);
 							}else{
 								order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER);
+								order.setDiscountCategoryId("");
 							}
 
 						}

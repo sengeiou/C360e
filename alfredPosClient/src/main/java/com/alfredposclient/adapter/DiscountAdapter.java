@@ -1,5 +1,6 @@
 package com.alfredposclient.adapter;
 
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +58,8 @@ public class DiscountAdapter extends BaseAdapter {
         this.activity = activity;
     }
 
-    public boolean getSelectedItem(int discountType){
+    public String getSelectedItem(int discountType){
+        String discountCategoryId = "";
         boolean has = false;
         if(sparseBooleanArray.size() > 0 ){
             has = true;
@@ -66,11 +68,16 @@ public class DiscountAdapter extends BaseAdapter {
                 int key  = sparseBooleanArray.keyAt(i);
                 if(sparseBooleanArray.get(key)) {
                     OrderDetailSQL.updateDiscountTypeByMainCategoryId(discountType, key, order.getId());
+                    if(!TextUtils.isEmpty(discountCategoryId)){
+                        discountCategoryId = discountCategoryId + "," + key;
+                    }else{
+                        discountCategoryId = key + "";
+                    }
                 }
             }
         }
 
-        return has;
+        return discountCategoryId;
     }
 
     @Override

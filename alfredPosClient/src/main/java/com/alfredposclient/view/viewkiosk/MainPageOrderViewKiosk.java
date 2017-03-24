@@ -644,7 +644,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 					map.put("resultCall", new ResultCall() {
 						@Override
 						public void call(final String discount_rate,
-								final String discount_price, boolean discountByCategory) {
+								final String discount_price, String discountByCategory) {
 							// parent.loadingDialog.show();
 							new Thread(new Runnable() {
 

@@ -137,7 +137,7 @@ public class MainPageSearchViewKiosk extends LinearLayout implements OnClickList
 	}
 
 	public void setParam(BaseActivity parent, Order order,
-			List<ItemDetail> itemDetails, Handler handler) {
+			List<ItemDetail> itemDetails, Handler handler, boolean showKey) {
 		if (itemDetails == null)
 			itemDetails = Collections.emptyList();
 		this.parent = parent;
@@ -148,9 +148,11 @@ public class MainPageSearchViewKiosk extends LinearLayout implements OnClickList
 		et_search.setFocusable(true);
 		et_search.setFocusableInTouchMode(true);
 		et_search.requestFocus();
-		imm = (InputMethodManager)parent.getSystemService(Context.INPUT_METHOD_SERVICE);
-		if (imm != null)
-			imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+		if(showKey) {
+			imm = (InputMethodManager) parent.getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (imm != null)
+				imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+		}
 		gv_items.getViewTreeObserver().addOnGlobalLayoutListener(
 				new OnGlobalLayoutListener() {
 

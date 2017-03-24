@@ -109,6 +109,8 @@ public class Order implements Serializable {
 	 * 订单备注
 	 */
 	private String orderRemark;
+
+	private String discountCategoryId;
 	
 	public Order() {
 	}
@@ -406,6 +408,14 @@ public class Order implements Serializable {
 		this.orderRemark = orderRemark;
 	}
 
+	public String getDiscountCategoryId() {
+		return discountCategoryId;
+	}
+
+	public void setDiscountCategoryId(String discountCategoryId) {
+		this.discountCategoryId = discountCategoryId;
+	}
+
 	@Override
 	public String toString() {
 		return "Order{" +
@@ -437,6 +447,7 @@ public class Order implements Serializable {
 				", isTakeAway=" + isTakeAway +
 				", tableName='" + tableName + '\'' +
 				", orderRemark='" + orderRemark + '\'' +
+				", discountCategoryId='" + discountCategoryId + '\'' +
 				'}';
 	}
 }
