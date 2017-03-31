@@ -53,6 +53,10 @@ public class MainPage extends BaseActivity {
 	public static final int VIEW_EVENT_SET_QTY = 3;
 	public static final int VIEW_ENVENT_KOTNOTIFICATION_LIST = 4;
 	public static final int VIEW_EVENT_CLICK_ALL_MAIN_CATEGORY = 5;
+
+	public static final int VIEW_EVENT_FIRST_COLLAPSE = 6;
+	public static final int VIEW_EVENT_COLLAPSE = 7;
+
 	public static final int VIEW_ENVENT_GET_ORDERDETAILS = 101;
 	public static final int TRANSFER_TABLE_NOTIFICATION = 102;
 	
@@ -111,6 +115,26 @@ public class MainPage extends BaseActivity {
 		TableInfo currentTable = TableInfoSQL.getTableById(currentOrder.getTableId());
 		if (currentTable!=null)
 		  table_name.setText(currentTable.getName());
+
+		expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+			@Override
+			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+				ItemCategoryAndDetails itemCategoryAndDetails = itemCategoryAndDetailsList.get(groupPosition);
+				itemCategoryAndDetailsList.remove(itemCategoryAndDetails);
+				itemCategoryAndDetailsList.add(0, itemCategoryAndDetails);
+				refreshTotal();
+				refreshList();
+				for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
+					if (i == 0){
+						expandableListView.expandGroup(0);
+					}else  {
+						expandableListView.collapseGroup(i);
+					}
+				}
+				return true;
+			}
+		});
+
 //		expandableListView.setOnChildClickListener(new OnChildClickListener() {
 //
 //			@Override
@@ -260,6 +284,25 @@ public class MainPage extends BaseActivity {
 				break;
 			case VIEW_EVENT_SLIDE_CLICK:
 				btn_slide.setBackgroundResource(R.drawable.btn_slide);
+				break;
+			case VIEW_EVENT_FIRST_COLLAPSE:{
+				itemCategoryAndDetailsList.clear();
+				itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
+				for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
+					expandableListView.collapseGroup(i);
+				}
+				refreshList();
+				break;
+			}
+			case VIEW_EVENT_COLLAPSE:
+				ItemMainCategory itemMainCategory = (ItemMainCategory) msg.obj;
+				itemCategoryAndDetailsList.clear();
+				itemCategoryAndDetailsList
+						.addAll(getItemCategoryAndDetails(itemMainCategory));
+				for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
+					expandableListView.collapseGroup(i);
+				}
+				refreshList();
 				break;
 			default:
 				break;

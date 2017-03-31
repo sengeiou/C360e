@@ -598,13 +598,13 @@
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
                         android:background="@color/pos_setting_title" />
-                    
+
                     <LinearLayout
                         android:id="@+id/ll_close"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:padding="10dp" 
+                        android:padding="10dp"
                         android:orientation="vertical">
 
                         <ImageView
@@ -624,6 +624,35 @@
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_sunmi"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/image_sunmi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/setting_system_selector" />
+
+                        <TextView
+                            android:id="@+id/text_sunmi"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center"
+                            android:paddingTop="4dp"
+                            android:text="SUNMI"
+                            android:textColor="@color/text_brownness_selector"
+                            android:textSize="@dimen/text_size_s_small" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <View
@@ -632,12 +661,19 @@
                     android:background="@color/pos_setting_title" />
 
                 <LinearLayout
-                    android:id="@+id/ll_sunmi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="80dp"
+                    android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_sunmi"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/iv_sunmi"
@@ -656,6 +692,18 @@
                         android:text="SUNMI"
                         android:textColor="@color/text_brownness_selector"
                         android:textSize="@dimen/text_size_s_small" />
+                </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/pos_setting_title" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
                 </LinearLayout>
 
                 <View

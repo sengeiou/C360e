@@ -60,6 +60,9 @@ public class SlidePanelView extends LinearLayout implements
 	
 	private TextTypeFace textTypeFace;
 
+	private boolean isPressed = true;
+	private int selectItem = 0;
+
 	public SlidePanelView(Context context, View otherView, int width,
 			int height,  final Handler handler) {
 		super(context);
@@ -104,19 +107,43 @@ public class SlidePanelView extends LinearLayout implements
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				if (arg2 == 0) {
+				if (selectItem == arg2){
+					isPressed = true;
+				}else {
+					isPressed = false;
+					selectItem = arg2;
+				}
+
+				if (!isPressed) {
+					if (arg2 == 0) {
+						((MainCategoryAdapter) lv_main_category.getAdapter()).setSelectItem(arg2);
+						((MainCategoryAdapter) lv_main_category.getAdapter()).refresh();
+						handler.sendMessage(handler.obtainMessage(
+								MainPage.VIEW_EVENT_CLICK_ALL_MAIN_CATEGORY, null));
+					}
 					((MainCategoryAdapter) lv_main_category.getAdapter()).setSelectItem(arg2);
 					((MainCategoryAdapter) lv_main_category.getAdapter()).refresh();
+					ItemMainCategory itemMainCategory = (ItemMainCategory) arg0
+							.getItemAtPosition(arg2);
 					handler.sendMessage(handler.obtainMessage(
-							MainPage.VIEW_EVENT_CLICK_ALL_MAIN_CATEGORY,null));
+							MainPage.VIEW_EVENT_CLICK_MAIN_CATEGORY,
+							itemMainCategory));
+				}else if (isPressed){
+					selectItem = -1 ;
+					if (arg2 == 0) {
+						((MainCategoryAdapter) lv_main_category.getAdapter()).setSelectItem(arg2);
+						((MainCategoryAdapter) lv_main_category.getAdapter()).refresh();
+						handler.sendMessage(handler.obtainMessage(
+								MainPage.VIEW_EVENT_FIRST_COLLAPSE, null));
+					}
+					((MainCategoryAdapter) lv_main_category.getAdapter()).setSelectItem(arg2);
+					((MainCategoryAdapter) lv_main_category.getAdapter()).refresh();
+					ItemMainCategory itemMainCategory = (ItemMainCategory) arg0
+							.getItemAtPosition(arg2);
+					handler.sendMessage(handler.obtainMessage(
+							MainPage.VIEW_EVENT_COLLAPSE,
+							itemMainCategory));
 				}
-				((MainCategoryAdapter) lv_main_category.getAdapter()).setSelectItem(arg2);
-				((MainCategoryAdapter) lv_main_category.getAdapter()).refresh();
-				ItemMainCategory itemMainCategory = (ItemMainCategory) arg0
-						.getItemAtPosition(arg2);
-				handler.sendMessage(handler.obtainMessage(
-						MainPage.VIEW_EVENT_CLICK_MAIN_CATEGORY,
-						itemMainCategory));
 			}
 		});
 	}

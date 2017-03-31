@@ -183,8 +183,25 @@ public class KitchenOrder extends BaseActivity {
 			itemPopupWindow.dismiss();
 		}
 		if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+			Kot kot = App.instance.getKot(kotSummary);
 			popItemAdapter.setKot(App.instance.getKot(kotSummary));
 			popItemAdapter.notifyDataSetChanged();
+			ArrayList<KotItemDetail> list = new ArrayList<KotItemDetail>();
+			if (list != null && list.size() != 0){
+				list.clear();
+			}
+			for (int i = 0; i < kot.getKotItemDetails().size(); i++){
+				KotItemDetail kotItemDetail = kot.getKotItemDetails().get(i);
+				if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE){
+					list.add(kotItemDetail);
+				}
+			}
+
+			if (list.size() == kot.getKotItemDetails().size()){
+				if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+					itemPopupWindow.dismiss();
+				}
+			}
 		}
 	}
 

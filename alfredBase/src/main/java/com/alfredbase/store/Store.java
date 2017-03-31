@@ -100,6 +100,7 @@ public class Store {
 	public static final String SUNMI_WELCOME = "SUNMI_WELCOME";
 
 	public static final String COLOR_PICKER= "COLOR_PICKER";
+	public static final String SET_BACKGROUND = "SET_BACKGROUND";
 
 	public static final String LOCK_SCREEN = "LOCK_SCREEN";
 	public static final String DISCOUNT_SELECTED_ITEM = "DISCOUNT_SELECTED_ITEM";

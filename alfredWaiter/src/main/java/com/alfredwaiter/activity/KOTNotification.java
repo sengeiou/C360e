@@ -29,6 +29,7 @@ public class KOTNotification extends BaseActivity {
 	public static final int VIEW_EVENT_COLLECT_KOTITEM = 1;
 	public static final int VIEW_EVENT_GET_DATA = 0;
 	public static final int VIEW_EVENT_NOTIFICATION = 2;
+	private int expand = -1;
 
 	@Override
 	protected void initView() {
@@ -60,6 +61,40 @@ public class KOTNotification extends BaseActivity {
 				return false;
 			}
 		});
+
+//		expandedListViewEx.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//			@Override
+//			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+//				TableAndKotNotificationList notificationList = notifications.get(groupPosition);
+//				notifications.remove(notificationList);
+//				notifications.add(0, notificationList);
+//				adapter.setData(notifications);
+//				adapter.notifyDataSetChanged();
+//
+//				for (int i = 0; i < notifications.size(); i++) {
+//					if (i == 0){
+//						expandedListViewEx.expandGroup(0);
+//					}else  {
+//						expandedListViewEx.collapseGroup(i);
+//					}
+//				}
+//
+////				if (expand == -1){
+////					expandedListViewEx.expandGroup(0);
+////					expandedListViewEx.setSelectedGroup(0);
+////					expand = 0;
+////				}else if (expand == 0){
+////					expandedListViewEx.collapseGroup(groupPosition);
+////					expand = -1;
+////				}else {
+////					expandedListViewEx.collapseGroup(0);
+////					expandedListViewEx.expandGroup(groupPosition);
+////					expandedListViewEx.setSelectedGroup(groupPosition);
+////					expand = 0;
+////				}
+//				return true;
+//			}
+//		});
 	}
 	
 	public void initTitle(){
