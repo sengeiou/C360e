@@ -424,9 +424,18 @@
         android:orientation="vertical"
         android:visibility="gone">
         <include
+            android:id="@+id/rl_camera_scanner"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             layout="@layout/capture"
+            />
+        <TextView
+            android:id="@+id/tv_usb_scanner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Please Scan Qr Code"
+            android:background="@color/white"
+            android:gravity="center"
             />
     </LinearLayout>
 </RelativeLayout>

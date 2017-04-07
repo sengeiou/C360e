@@ -1698,7 +1698,15 @@ public class MainPage extends BaseActivity {
 			if(App.instance.getSystemSettings().isPrintBeforCloseBill()) {
 				UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_));
 				return;
+			}else{
+				if (OrderDetailSQL
+						.getOrderDetailsCountUnPlaceOrder(currentOrder.getId()) > 0) {
+					UIHelp.showToast(context,
+							context.getResources().getString(R.string.place_before_print));
+					return;
+				}
 			}
+
 		}
 		if (orderBill != null && orderBill.getBillNo() != null) {
 //
@@ -1716,7 +1724,8 @@ public class MainPage extends BaseActivity {
 				}
 			}
 		} else {
-			UIHelp.showToast(context, context.getResources().getString(R.string.not_complete_order));
+			UIHelp.showToast(context,
+					context.getResources().getString(R.string.place_before_print));
 		}
 	}
 

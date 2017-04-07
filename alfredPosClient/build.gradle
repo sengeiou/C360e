@@ -34,7 +34,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
@@ -43,7 +43,12 @@ android {
 //        exclude 'LICENSE.txt'
 //    }
 }
+repositories {
 
+    flatDir {
+        dirs 'libs'
+    }
+}
 dependencies {
     compile project(':alfredBase')
     compile project(':alfredTaskQueue')
@@ -60,4 +65,5 @@ dependencies {
     compile 'com.rabbitmq:amqp-client:3.6.5'
     compile 'com.sunmi:DS_Lib:1.0.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile(name:'barcode_scanner_library_v2.0.8.0', ext:'aar')
 }
