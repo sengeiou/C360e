@@ -20,6 +20,7 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.NumerickeyboardForStoredCard;
@@ -41,6 +42,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * Created by Alex on 16/9/28.
@@ -115,6 +120,9 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     private Button btn_clear;
     private Button btn_rebinding;
     private TextTypeFace textTypeFace;
+
+    private boolean useUSBScanner = false;
+    private Observable<String> observable;
     @Override
     protected void initView() {
         mainPage = context;
@@ -165,77 +173,57 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         tv_paid.setOnClickListener(this);
         findViewById(R.id.btn_replacement_ok).setOnClickListener(this);
         findViewById(R.id.rl_query_ok).setOnClickListener(this);
-        beepManager = new BeepManager(mainPage);
         selectActionViewId = R.id.btn_paid_refund;
         refreshActionView();
         isPayAction = getIntent().getBooleanExtra("isPayAction",false);
         if(!isPayAction) {
-                ll_stored_card_action.setVisibility(View.VISIBLE);
-                hiddenScanView();
-                isFontShow = true;
-                showActionView();
-            }else{
-                isFontShow = true;
-                amount = getIntent().getStringExtra("amount");
-                findViewById(R.id.ll_stored_card_scan).setVisibility(View.VISIBLE);
+            ll_stored_card_action.setVisibility(View.VISIBLE);
+            hiddenScanView();
+            isFontShow = true;
+            showActionView();
+        }else{
+            isFontShow = true;
+            amount = getIntent().getStringExtra("amount");
+            findViewById(R.id.ll_stored_card_scan).setVisibility(View.VISIBLE);
+            if(App.instance.isSUNMIShow()){
+                findViewById(R.id.rl_camera_scanner).setVisibility(View.GONE);
+                findViewById(R.id.tv_usb_scanner).setVisibility(View.VISIBLE);
+                if(App.instance.isUsbScannerLink()) {
+                    useUSBScanner = true;
+//                    UIHelp.showShortToast(context, "Please Scan the QR Coder");
+                }else{
+                    UIHelp.showShortToast(context, "Please input Scanner");
+                }
+            }else {
+                findViewById(R.id.rl_camera_scanner).setVisibility(View.VISIBLE);
+                findViewById(R.id.tv_usb_scanner).setVisibility(View.GONE);
                 showScanner(true);
             }
-            tv_store_card_value.setText("");
+        }
+        tv_store_card_value.setText("");
 
         RelativeLayout.LayoutParams ps = new RelativeLayout.LayoutParams((int)(ScreenSizeUtil.width * 2 / 3),
                 (int) (ScreenSizeUtil.height * 2 / 3 + ScreenSizeUtil.dip2px(this, 60)));
         ps.addRule(RelativeLayout.CENTER_IN_PARENT);
         rl_stored_cart_root.setLayoutParams(ps);
+        if(App.instance.isSUNMIShow()){
+            observable = RxBus.getInstance().register(RxBus.RX_MSG_2);
+            observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                @Override
+                public void call(String object) {
+                    if (useUSBScanner && object != null) {
+                        useUSBScanner = false;
+                        handleDecode(new Result(object, null, null, null));
+                    }
+                }
+            });
+        }else {
+            beepManager = new BeepManager(mainPage);
+        }
     }
 
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        loadingDialog = new LoadingDialog(mainPage);
-//        loadingDialog.setTitle("loading");
-//        hasSurface = false;
-//        final View view = inflater.inflate(R.layout.stored_card_layout, container, false);
-//        ll_stored_card_action = (LinearLayout) findViewById(R.id.ll_stored_card_action);
-//        rl_stored_card_title = (RelativeLayout) findViewById(R.id.rl_stored_card_title);
-//        rl_stored_cart_root = (RelativeLayout) findViewById(R.id.rl_stored_cart_root);
-//        ll_stored_card_scan = (LinearLayout) findViewById(R.id.ll_stored_card_scan);
-//        surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-//        viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-//        tv_stored_card_no = (TextView) findViewById(R.id.tv_stored_card_no);
-//        et_first_name = (EditText) findViewById(R.id.et_first_name);
-//        et_phone = (EditText) findViewById(R.id.et_phone);
-//        et_last_name = (EditText) findViewById(R.id.et_last_name);
-//        et_email = (EditText) findViewById(R.id.et_email);
-//        et_address = (EditText) findViewById(R.id.et_address);
-//        et_replacement_card_no = (EditText) findViewById(R.id.et_replacement_card_no);
-//        et_replacement_phone = (EditText) findViewById(R.id.et_replacement_phone);
-//        et_query_card_no = (EditText) findViewById(R.id.et_query_card_no);
-//        et_query_phone = (EditText) findViewById(R.id.et_query_phone);
-//        tv_store_card_value = (TextView) findViewById(R.id.tv_store_card_value);
-//        numerickeyboard = (NumerickeyboardForStoredCard) findViewById(R.id.numerickeyboard);
-//        numerickeyboard.setKeyBoardClickListener(this);
-//
-//        btn_paid_refund = (Button) findViewById(R.id.btn_paid_refund);
-//        btn_binding = (Button) findViewById(R.id.btn_binding);
-//        btn_clear = (Button) findViewById(R.id.btn_clear);
-//        btn_rebinding = (Button) findViewById(R.id.btn_rebinding);
-//        btn_binding.setOnClickListener(this);
-//        btn_paid_refund.setOnClickListener(this);
-//        btn_clear.setOnClickListener(this);
-//        btn_rebinding.setOnClickListener(this);
-//        findViewById(R.id.iv_stored_card_scan).setOnClickListener(this);
-//        findViewById(R.id.btn_cancel_scan).setOnClickListener(this);
-//        findViewById(R.id.btn_change).setOnClickListener(this);
-//        findViewById(R.id.btn_binding_ok).setOnClickListener(this);
-//        findViewById(R.id.btn_clear_info).setOnClickListener(this);
-//        findViewById(R.id.tv_refund).setOnClickListener(this);
-//        findViewById(R.id.tv_paid).setOnClickListener(this);
-//        findViewById(R.id.btn_replacement_ok).setOnClickListener(this);
-//        findViewById(R.id.rl_query_ok).setOnClickListener(this);
-//        beepManager = new BeepManager(mainPage);
-//        selectActionViewId = R.id.btn_paid_refund;
-//        refreshActionView();
-//        return view;
-//    }
+
+
 
 
     private void refreshActionView(){
@@ -436,6 +424,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 
     @Override
     public void onPause() {
+        useUSBScanner = false;
         if(isShowedScaner) {
             if (captureActivityHandler != null) {
                 captureActivityHandler.quitSynchronously();
@@ -464,6 +453,10 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 //            inactivityTimer.onPause();
             inactivityTimer.shutdown();
             inactivityTimer = null;
+        }
+
+        if(observable != null){
+            RxBus.getInstance().unregister(RxBus.RX_MSG_2, observable);
         }
         super.onDestroy();
     }
@@ -617,11 +610,30 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 break;
             case R.id.iv_stored_card_scan:
                 isFontShow = true;
-                findViewById(R.id.ll_stored_card_scan).setVisibility(View.VISIBLE);
-                showScanner(isFontShow);
+
+                if(App.instance.isSUNMIShow()){
+                    if(App.instance.isUsbScannerLink()) {
+                        useUSBScanner = true;
+                        UIHelp.showShortToast(context, "Please Scan the QR Coder");
+                    }else{
+                        UIHelp.showShortToast(context, "Please input Scanner");
+                    }
+                }else {
+                    findViewById(R.id.ll_stored_card_scan).setVisibility(View.VISIBLE);
+                    showScanner(isFontShow);
+                }
                 break;
             case R.id.btn_change:
-                showScanner(isFontShow);
+                if(App.instance.isSUNMIShow()){
+                    if(App.instance.isUsbScannerLink()) {
+                        useUSBScanner = true;
+                        UIHelp.showShortToast(context, "Please Scan the QR Coder");
+                    }else{
+                        UIHelp.showShortToast(context, "Please input Scanner");
+                    }
+                }else {
+                    showScanner(isFontShow);
+                }
                 break;
             case R.id.btn_cancel_scan:
                 if(isPayAction){
@@ -762,12 +774,15 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
      * @param rawResult
      */
     public void handleDecode(Result rawResult) {
-        inactivityTimer.onActivity();
-        hiddenScanView();
+        if(!App.instance.isSUNMIShow()) {
+            inactivityTimer.onActivity();
+            hiddenScanView();
+        }
         //这里处理解码完成后的结果，此处将参数回传到Activity处理
         if (rawResult !=null && !TextUtils.isEmpty(rawResult.getText())) {
-            beepManager.playBeepSoundAndVibrate();
-
+            if(!App.instance.isSUNMIShow()) {
+                beepManager.playBeepSoundAndVibrate();
+            }
 //            Toast.makeText(this, "扫描成功", Toast.LENGTH_SHORT).show();
 
 //            Intent intent = getIntent();

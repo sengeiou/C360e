@@ -224,7 +224,7 @@
 
     <!-- MainPage -->
     <string name="send_kitchen">Sending to Kitchen</string>
-    <string name="place_before_print">Please place the order before printing bill!</string>
+    <string name="place_before_print">Please place the order first!</string>
     <string name="setting_printer">The printer is not ready, \n please go Setting menu to assign corrent Cashier printer!</string>
     <string name="bill_printing">Bill is Printing</string>
     <string name="no_items">No items in order list!</string>
