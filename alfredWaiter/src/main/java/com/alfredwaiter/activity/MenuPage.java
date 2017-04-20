@@ -1,8 +1,5 @@
 package com.alfredwaiter.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
@@ -29,6 +26,9 @@ import com.alfredwaiter.popupwindow.SearchMenuItemWindow;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.SlidePanelView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuPage extends BaseActivity {
 	public static final int VIEW_EVENT_CLICK_MAIN_CATEGORY = 0;
@@ -71,7 +71,7 @@ public class MenuPage extends BaseActivity {
 		expandableListView = (ExpandableListView) findViewById(R.id.expandedListViewEx);
 		expandableListView.setDividerHeight(0);
 		itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
-		adapter = new OrderAdapter(context, itemCategoryAndDetailsList, handler,setItemCountWindow);
+		adapter = new OrderAdapter(context, itemCategoryAndDetailsList, handler,setItemCountWindow , null);
 		expandableListView.setGroupIndicator(null);
 		expandableListView.setAdapter(adapter);
 		for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {

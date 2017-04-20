@@ -27,7 +27,7 @@ import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.CountView;
-import com.alfredwaiter.view.CountView.onCountChange;
+import com.alfredwaiter.view.CountView.OnCountChange;
 import com.alfredwaiter.view.DeleteView;
 import com.alfredwaiter.view.DeleteView.DeleteListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -99,9 +99,9 @@ public class OrderDetailPage extends BaseActivity {
 			count_view.setInitCount(orderDetail.getItemNum());
 		}
 		count_view.setParam(itemDetail, setItemCountWindow);
-		count_view.setOnCountChange(new onCountChange() {
+		count_view.setOnCountChange(new OnCountChange() {
 			@Override
-			public void onChange(int count) {
+			public void onChange(ItemDetail itemDetail, int count, boolean isAdd) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("count", count);
 				handler.sendMessage(handler.obtainMessage(

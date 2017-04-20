@@ -14,7 +14,7 @@ import com.alfredwaiter.popupwindow.SetItemCountWindow;
 
 public class CountView extends LinearLayout implements OnClickListener {
 	private TextView tv_count;
-	private onCountChange onCountChange;
+	private OnCountChange onCountChange;
 	private ItemDetail itemDetail;
 	private SetItemCountWindow setItemCountWindow;
 	public CountView(Context context) {
@@ -34,7 +34,7 @@ public class CountView extends LinearLayout implements OnClickListener {
 //		findViewById(R.id.tv_add).setOnClickListener(this);
 	}
 
-	public void setOnCountChange(onCountChange onCountChange) {
+	public void setOnCountChange(OnCountChange onCountChange) {
 		this.onCountChange = onCountChange;
 	}
 	public void setIsCanClick(boolean isCanClick){
@@ -79,7 +79,7 @@ public class CountView extends LinearLayout implements OnClickListener {
 				count = 0;
 			tv_count.setText(count + "");
 			if (onCountChange != null) {
-				onCountChange.onChange(count);
+				onCountChange.onChange(itemDetail, count, false);
 			}
 			break;
 		}
@@ -95,7 +95,7 @@ public class CountView extends LinearLayout implements OnClickListener {
 				count = 1;
 			tv_count.setText(count + "");
 			if (onCountChange != null) {
-				onCountChange.onChange(count);
+				onCountChange.onChange(itemDetail, count, true);
 			}
 			break;
 		}
@@ -108,8 +108,8 @@ public class CountView extends LinearLayout implements OnClickListener {
 
 	}
 
-	public interface onCountChange {
-		void onChange(int count);
+	public interface OnCountChange {
+		void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd);
 	}
 
 }

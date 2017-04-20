@@ -291,5 +291,5 @@ public class ReportPluDayItem implements Serializable{
 	}
 
 
-    
+
 }

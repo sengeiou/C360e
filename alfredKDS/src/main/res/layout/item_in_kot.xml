@@ -45,6 +45,7 @@
             android:paddingBottom="5dp"
             android:paddingRight="10dp"
             android:paddingTop="5dp"
+            android:text="CC"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_m" />
 
@@ -54,9 +55,9 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical|right"
             android:paddingRight="10dp"
-            android:text="Modifiers,instructions"
+            android:text="-- Modifiers,instructions"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_size_s_small" />
+            android:textSize="@dimen/text_size_m_smail" />
     </LinearLayout>
 
     <View
