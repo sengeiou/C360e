@@ -471,7 +471,6 @@ public class ReportDaySalesSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db =SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -564,7 +563,6 @@ public class ReportDaySalesSQL {
 				reportDaySales.setUpdateTime(cursor.getLong(81));
 				result.add(reportDaySales);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -572,7 +570,6 @@ public class ReportDaySalesSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -585,7 +582,6 @@ public class ReportDaySalesSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -679,7 +675,6 @@ public class ReportDaySalesSQL {
 				reportDaySales.setUpdateTime(cursor.getLong(81));
 				result.add(reportDaySales);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -687,7 +682,6 @@ public class ReportDaySalesSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

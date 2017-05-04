@@ -1,10 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -13,6 +8,11 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PaymentSQL {
 	public static void addPayment(Payment payment) {
@@ -213,7 +213,6 @@ public class PaymentSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -239,7 +238,6 @@ public class PaymentSQL {
 				payment.setUpdateTime(cursor.getLong(13));
 				result.add(payment);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -247,7 +245,6 @@ public class PaymentSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -276,7 +273,6 @@ public class PaymentSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate), String.valueOf(time),
 					String.valueOf(dayZero) });
 			int count = cursor.getCount();
@@ -288,7 +284,6 @@ public class PaymentSQL {
 				map.put("sum", cursor.getString(0));
 				map.put("count", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -296,7 +291,6 @@ public class PaymentSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		if (map.get("sum") == null) {
 			return null;

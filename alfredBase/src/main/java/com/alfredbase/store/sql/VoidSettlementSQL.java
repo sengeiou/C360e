@@ -93,7 +93,6 @@ public class VoidSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(paymentId), String.valueOf(paymentSettId) });
 			if (cursor.moveToFirst()) {
@@ -115,7 +114,6 @@ public class VoidSettlementSQL {
 				voidSettlement.setType(cursor.getInt(14));
 				return voidSettlement;
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -123,7 +121,6 @@ public class VoidSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return voidSettlement;
 	}
@@ -136,7 +133,6 @@ public class VoidSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(paymentId) });
 			if (cursor.moveToFirst()) {
@@ -158,7 +154,6 @@ public class VoidSettlementSQL {
 				voidSettlement.setType(cursor.getInt(14));
 				voidSettlements.add(voidSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -166,7 +161,6 @@ public class VoidSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return voidSettlements;
 	}
@@ -177,7 +171,6 @@ public class VoidSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -203,7 +196,6 @@ public class VoidSettlementSQL {
 				voidSettlement.setType(cursor.getInt(14));
 				result.add(voidSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -211,7 +203,6 @@ public class VoidSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -225,7 +216,6 @@ public class VoidSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(
 					sql,
 					new String[] { String.valueOf(time),
@@ -236,7 +226,6 @@ public class VoidSettlementSQL {
 				result.put("sumAmount", cursor.getString(0));
 				result.put("count", cursor.getInt(1));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -244,7 +233,6 @@ public class VoidSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

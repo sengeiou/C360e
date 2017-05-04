@@ -221,7 +221,6 @@ public class OrderSplitSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {order.getId() + ""});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -255,7 +254,6 @@ public class OrderSplitSQL {
 				orderSplit.setInclusiveTaxPercentage(cursor.getString(21));
 				result.add(orderSplit);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -263,7 +261,6 @@ public class OrderSplitSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

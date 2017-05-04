@@ -166,7 +166,6 @@ public class ItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -203,7 +202,6 @@ public class ItemDetailSQL {
 				itemDetail.setBarcode(cursor.getString(24));
 				result.add(itemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -211,7 +209,6 @@ public class ItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -223,7 +220,6 @@ public class ItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -260,7 +256,6 @@ public class ItemDetailSQL {
 				itemDetail.setBarcode(cursor.getString(24));
 				result.add(itemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -268,7 +263,6 @@ public class ItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -280,7 +274,6 @@ public class ItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { ParamConst.ITEMDETAIL_TEMP_ITEM + "" });
 			int count = cursor.getCount();
@@ -318,7 +311,6 @@ public class ItemDetailSQL {
 				itemDetail.setBarcode(cursor.getString(24));
 				result.add(itemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -326,7 +318,6 @@ public class ItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -387,14 +378,12 @@ public class ItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(time), String.valueOf(dayZero), String.valueOf(itemType) });
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
 				count = cursor.getInt(0);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -402,7 +391,6 @@ public class ItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return count;
 	}

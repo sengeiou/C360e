@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -11,6 +8,9 @@ import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemCategorySQL {
 
@@ -97,7 +97,6 @@ public class ItemCategorySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -121,7 +120,6 @@ public class ItemCategorySQL {
 				itemCategory.setUpdateTime(cursor.getLong(11));
 				result.add(itemCategory);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -129,7 +127,6 @@ public class ItemCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -141,7 +138,6 @@ public class ItemCategorySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -165,7 +161,6 @@ public class ItemCategorySQL {
 				itemCategory.setUpdateTime(cursor.getLong(11));
 				result.add(itemCategory);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -173,7 +168,6 @@ public class ItemCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -184,7 +178,6 @@ public class ItemCategorySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { String.valueOf(itemCategoryId) });
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -201,7 +194,6 @@ public class ItemCategorySQL {
 				itemCategory.setCreateTime(cursor.getLong(10));
 				itemCategory.setUpdateTime(cursor.getLong(11));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -209,7 +201,6 @@ public class ItemCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return itemCategory;
 	}
@@ -221,7 +212,6 @@ public class ItemCategorySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { String.valueOf(itemCategoryId) });
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -238,7 +228,6 @@ public class ItemCategorySQL {
 				itemCategory.setCreateTime(cursor.getLong(10));
 				itemCategory.setUpdateTime(cursor.getLong(11));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -246,7 +235,6 @@ public class ItemCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return itemCategory;
 	}

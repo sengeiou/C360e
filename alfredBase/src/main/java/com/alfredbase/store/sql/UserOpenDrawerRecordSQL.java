@@ -50,7 +50,6 @@ public class UserOpenDrawerRecordSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            db.beginTransaction();
             cursor = db.rawQuery(sql, new String[] {sessionStatus +"", createTime + ""});
             int count = cursor.getCount();
             if (count < 1) {
@@ -70,7 +69,6 @@ public class UserOpenDrawerRecordSQL {
                 userOpenDrawerRecord.setLoginUserId(cursor.getInt(7));
                 result.add(userOpenDrawerRecord);
             }
-            db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -78,7 +76,6 @@ public class UserOpenDrawerRecordSQL {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            db.endTransaction();
         }
         return result;
     }
@@ -89,7 +86,6 @@ public class UserOpenDrawerRecordSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            db.beginTransaction();
             cursor = db.rawQuery(sql, new String[] {sessionStatus +"", createTime + ""});
             int count = cursor.getCount();
             if (count < 1) {
@@ -103,7 +99,6 @@ public class UserOpenDrawerRecordSQL {
                 reportUserOpenDrawer.setTimes(cursor.getInt(1));
                 result.add(reportUserOpenDrawer);
             }
-            db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -111,7 +106,6 @@ public class UserOpenDrawerRecordSQL {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            db.endTransaction();
         }
         return result;
     }
@@ -121,7 +115,6 @@ public class UserOpenDrawerRecordSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            db.beginTransaction();
             cursor = db.rawQuery(sql, new String[] {createTime + ""});
             int count = cursor.getCount();
             if (count < 1) {
@@ -135,7 +128,6 @@ public class UserOpenDrawerRecordSQL {
                 reportUserOpenDrawer.setTimes(cursor.getInt(1));
                 result.add(reportUserOpenDrawer);
             }
-            db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -143,7 +135,6 @@ public class UserOpenDrawerRecordSQL {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            db.endTransaction();
         }
         return result;
     }
