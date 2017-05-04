@@ -32,10 +32,24 @@ android {
         abortOnError false
     }
 
+    //配置keystore签名
+    signingConfigs {
+        release {
+            storeFile file("../keyStore/alfredposclient.keystore")
+            storePassword "8uhb*UHB"
+            keyAlias "alfred shanghai"
+            keyPassword "8uhb*UHB"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
         }
     }
 

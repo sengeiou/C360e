@@ -1,7 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,6 +8,8 @@ import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
 
 public class BohHoldSettlementSQL {
 
@@ -135,7 +135,6 @@ public class BohHoldSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(paymentId) });
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -160,7 +159,6 @@ public class BohHoldSettlementSQL {
 				bohHoldSettlement.setIsActive(cursor.getInt(16));
 				bohHoldSettlements.add(bohHoldSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -168,7 +166,6 @@ public class BohHoldSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return bohHoldSettlements;
 	}
@@ -179,7 +176,6 @@ public class BohHoldSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -208,7 +204,6 @@ public class BohHoldSettlementSQL {
 				bohHoldSettlement.setIsActive(cursor.getInt(16));
 				result.add(bohHoldSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -216,7 +211,6 @@ public class BohHoldSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -229,7 +223,6 @@ public class BohHoldSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {String.valueOf(status)});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -258,7 +251,6 @@ public class BohHoldSettlementSQL {
 				bohHoldSettlement.setIsActive(cursor.getInt(16));
 				result.add(bohHoldSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -266,7 +258,6 @@ public class BohHoldSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

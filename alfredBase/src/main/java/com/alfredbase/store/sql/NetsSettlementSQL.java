@@ -1,7 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,6 +8,8 @@ import com.alfredbase.javabean.NetsSettlement;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
 
 public class NetsSettlementSQL {
 
@@ -110,7 +110,6 @@ public class NetsSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(paymentId) });
 			if (cursor.moveToFirst()) {
@@ -126,7 +125,6 @@ public class NetsSettlementSQL {
 				netsSettlement.setIsActive(cursor.getInt(8));
 				netsSettlements.add(netsSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -134,7 +132,6 @@ public class NetsSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return netsSettlements;
 	}
@@ -145,7 +142,6 @@ public class NetsSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -165,7 +161,6 @@ public class NetsSettlementSQL {
 				netsSettlement.setUpdateTime(cursor.getLong(7));
 				result.add(netsSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -173,7 +168,6 @@ public class NetsSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -186,7 +180,6 @@ public class NetsSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -207,7 +200,6 @@ public class NetsSettlementSQL {
 				netsSettlement.setIsActive(cursor.getInt(8));
 				result.add(netsSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -215,7 +207,6 @@ public class NetsSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

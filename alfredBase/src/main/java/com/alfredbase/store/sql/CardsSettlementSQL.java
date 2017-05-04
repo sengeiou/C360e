@@ -1,7 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,6 +8,8 @@ import com.alfredbase.javabean.CardsSettlement;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
 
 public class CardsSettlementSQL {
 
@@ -115,7 +115,6 @@ public class CardsSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(paymentId) });
 			if (cursor.moveToFirst()) {
@@ -133,7 +132,6 @@ public class CardsSettlementSQL {
 				cardsSettlement.setIsActive(cursor.getInt(10));
 				cardsSettlements.add(cardsSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -141,7 +139,6 @@ public class CardsSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return cardsSettlements;
 	}
@@ -152,7 +149,6 @@ public class CardsSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -175,7 +171,6 @@ public class CardsSettlementSQL {
 				cardsSettlement.setIsActive(cursor.getInt(10));
 				result.add(cardsSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -183,7 +178,6 @@ public class CardsSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -196,7 +190,6 @@ public class CardsSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -219,7 +212,6 @@ public class CardsSettlementSQL {
 				cardsSettlement.setIsActive(cursor.getInt(10));
 				result.add(cardsSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -227,7 +219,6 @@ public class CardsSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

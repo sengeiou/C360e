@@ -146,7 +146,6 @@ public class TableInfoSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            db.beginTransaction();
             cursor = db.rawQuery(sql, new String[] {});
             int count = cursor.getCount();
             if (count < 1) {
@@ -179,7 +178,6 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 result.add(newTable);
             }
-            db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -187,7 +185,6 @@ public class TableInfoSQL {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            db.endTransaction();
         }
         return result;
     }
@@ -198,7 +195,6 @@ public class TableInfoSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            db.beginTransaction();
             cursor = db.rawQuery(sql, new String[] {});
             int count = cursor.getCount();
             if (count < 1) {
@@ -231,7 +227,6 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 result.add(newTable);
             }
-            db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -239,7 +234,6 @@ public class TableInfoSQL {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            db.endTransaction();
         }
         return result;
     }
@@ -251,7 +245,6 @@ public class TableInfoSQL {
         TableInfo newTable = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            db.beginTransaction();
             cursor = db.rawQuery(sql, new String[] {});
             int count = cursor.getCount();
             if (count < 1) {
@@ -282,7 +275,6 @@ public class TableInfoSQL {
                 newTable.setOrders(cursor.getInt(19));
                 newTable.setIsKiosk(cursor.getInt(20));
             }
-            db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -290,7 +282,6 @@ public class TableInfoSQL {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            db.endTransaction();
         }
         return newTable;
     }

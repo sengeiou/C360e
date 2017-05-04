@@ -115,7 +115,6 @@ public class ReportPluDayModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -155,7 +154,6 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				result.add(reportPluDayModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -163,7 +161,6 @@ public class ReportPluDayModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -176,7 +173,6 @@ public class ReportPluDayModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {String.valueOf(date)});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -216,7 +212,6 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				result.add(reportPluDayModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -224,7 +219,6 @@ public class ReportPluDayModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

@@ -426,7 +426,6 @@ public class OrderSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -467,7 +466,6 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -475,7 +473,6 @@ public class OrderSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -485,7 +482,6 @@ public class OrderSQL {
 		SQLiteDatabase db = SQLExe.getDB();
 		Cursor cursor = null;
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(businessDate)});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -526,7 +522,6 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -534,7 +529,6 @@ public class OrderSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}	
@@ -545,7 +539,6 @@ public class OrderSQL {
 		SQLiteDatabase db = SQLExe.getDB();
 		Cursor cursor = null;
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {String.valueOf(sessionStatus.getSession_status()), String.valueOf(businessDate)});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -586,7 +579,6 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -594,7 +586,6 @@ public class OrderSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -604,7 +595,6 @@ public class OrderSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.query(TableNames.Order,
 					new String[] { " * " }, "businessDate = ? and orderStatus = " + ParamConst.ORDER_STATUS_FINISHED,
 					new String[] { String.valueOf(businessDate) }, "", "", "",
@@ -648,7 +638,6 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -656,7 +645,6 @@ public class OrderSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -666,7 +654,6 @@ public class OrderSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.query(TableNames.Order,
 					new String[] { " * " }, "businessDate = ? and sessionStatus = ? and createTime > ? and orderStatus = " + ParamConst.ORDER_STATUS_FINISHED,
 					new String[] { String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime() )}, "", "", "",
@@ -710,7 +697,6 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -718,7 +704,6 @@ public class OrderSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -736,8 +721,7 @@ public class OrderSQL {
 				+ ParamConst.ORDER_STATUS_FINISHED
 				+ " group by t.posId";
 		try {
-			db.beginTransaction();
-			cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate), 
+			cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate),
 					String.valueOf(sessionStatus.getSession_status()), 
 					String.valueOf(sessionStatus.getTime() ),String.valueOf(time)});
 			int count = cursor.getCount();
@@ -771,7 +755,6 @@ public class OrderSQL {
 				tables.setIsKiosk(cursor.getInt(20));
 				result.add(tables);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -779,7 +762,6 @@ public class OrderSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -1020,7 +1002,6 @@ public class OrderSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -1061,7 +1042,6 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				result.add(order);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -1069,7 +1049,6 @@ public class OrderSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -1252,7 +1231,6 @@ public class OrderSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.query(TableNames.Order,
 					new String[] { " sum(subTotal)", "sum(taxAmount)", "sum(discountAmount)", "sum(total)", "businessDate" }, "orderStatus = " + ParamConst.ORDER_STATUS_FINISHED,
 					new String[] { }, "businessDate", "", "",
@@ -1272,7 +1250,6 @@ public class OrderSQL {
 				totalDetailInfo.setBusinessDateStr(cursor.getLong(4));
 				totalDetailInfos.add(totalDetailInfo);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -1280,7 +1257,6 @@ public class OrderSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return totalDetailInfos;
 	

@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,6 +7,9 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AlipaySettlementSQL {
 
@@ -140,7 +140,6 @@ public class AlipaySettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -161,7 +160,6 @@ public class AlipaySettlementSQL {
 				alipaySettlement.setIsActive(cursor.getInt(8));
 				result.add(alipaySettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -169,7 +167,6 @@ public class AlipaySettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

@@ -141,7 +141,6 @@ public class OrderDetailTaxSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { order.getId() + "" });
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -151,14 +150,12 @@ public class OrderDetailTaxSQL {
 				map.put("taxPercentage", cursor.getString(2));
 				result.add(map);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if(cursor != null && !cursor.isClosed()){
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		if(tax != null){
 			Map<String, String> map = new HashMap<String, String>();
@@ -193,7 +190,6 @@ public class OrderDetailTaxSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {orderSplit.getId() + "", orderSplit.getOrderId() + ""});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -203,14 +199,12 @@ public class OrderDetailTaxSQL {
 				map.put("taxPercentage", cursor.getString(2));
 				result.add(map);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if(cursor != null && !cursor.isClosed()){
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		if(tax != null){
 			Map<String, String> map = new HashMap<String, String>();
@@ -263,7 +257,6 @@ public class OrderDetailTaxSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			String sql = "select sum(taxPrice), taxName, taxPercentage, taxId, count(*) from "
 					+ TableNames.Order
 					+ " o,"
@@ -281,14 +274,12 @@ public class OrderDetailTaxSQL {
 				taxIds.add(cursor.getInt(3));
 				taxCounts.add(cursor.getInt(4));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if(cursor != null && !cursor.isClosed()){
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("taxPriceSum", taxPriceSum);
@@ -369,7 +360,6 @@ public class OrderDetailTaxSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { order.getId() + "" });
 			OrderDetailTax orderDetailTax = null;
@@ -391,14 +381,12 @@ public class OrderDetailTaxSQL {
 				orderDetailTax.setIsActive(cursor.getInt(12));
 				orderDetailTaxs.add(orderDetailTax);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if(cursor != null && !cursor.isClosed()){
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return orderDetailTaxs;
 	}

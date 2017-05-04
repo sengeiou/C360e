@@ -154,7 +154,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private TextView tv_msgnum;
 	private DrawerLayout mDrawerLayout;
 	private SettingView mSettingView;
-	private static final int CAN_CLOSE = 1;
+	private static final int CAN_CLOSE = 5;
 	private static final int CAN_NOT_CLOSE = 0;
 	private static final int OPEN_RESTAURANT = 3;
 	private static final int PRINTER_UNLINK = 4;
@@ -777,7 +777,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	}
 
 	/* close session */
-	private void close(View v, String actual) {
+	private void close(View v, final String actual) {
 		if(!ButtonClickTimer.canClick(v))
 			return;
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -810,20 +810,28 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //		printerLoadingDialog.show();
 		
 		//generate XReport data
-		final Map<String, Object> xReportInfo 
-				= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
+
 
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				if (sessionStatus == null) {
-					dismissPrinterLoadingDialog();
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							dismissPrinterLoadingDialog();
+						}
+					});
 					return;
 				}
-				//sync finished Order info in current session to cloud 
+				final Map<String, Object> xReportInfo
+						= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
+				//sync finished Order info in current session to cloud
+				LogUtil.e("测试", "11");
 				List<Order> orders = OrderSQL.getFinishedOrdersBySession(
 						sessionStatus, bizDate);
+				LogUtil.e("测试", "22");
 				if (!orders.isEmpty()) {
 					for (Order order : orders) {
                         // sync order to cloud
@@ -835,6 +843,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						}
 					}
 				}
+				LogUtil.e("测试", "33");
 				
 				//sync X-Report to cloud
 				if (cloudSync!=null) {
@@ -845,23 +854,28 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					cloudSync.syncOpenOrCloseSessionAndRestaurant(App.instance
 							.getRevenueCenter().getId(), bizDate,
 							sessionStatus, CloudSyncJobManager.CLOSE_SESSION);
+					LogUtil.e("测试", "44");
 				}
-			}
-		}).start();
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
 				if (sessionStatus == null) {
-					dismissPrinterLoadingDialog();
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							dismissPrinterLoadingDialog();
+						}
+					});
 					return;
 				}
 				if(App.instance.getSystemSettings().isPrintWhenCloseSession())
 				sendXPrintData(xReportInfo, bizDate,
 									CommonUtil.getReportType(context, sessionStatus.getSession_status()),
 									sessionStatus);
-				
-				dismissPrinterLoadingDialog();
+
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						dismissPrinterLoadingDialog();
+					}
+				});
 			}
 		}).start();
 		Store.remove(context, Store.SESSION_STATUS);

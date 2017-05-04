@@ -2678,12 +2678,12 @@ public class ReportObjectFactory {
 	
 				int itemFocQty = tmpItem.getItemFocQty();
 				if (itemFocQty>0) {
-	//				totalQty = totalQty - itemFocQty;
+					totalQty = totalQty - itemFocQty;
 					totalAmount = BH.sub(totalAmount,BH.getBD(tmpItem.getItemFocPrice()), true);
 				}			
 				int billFocQty = tmpItem.getBillFocQty();
 				if (billFocQty>0) {
-	//				totalQty = totalQty - billFocQty;
+					totalQty = totalQty - billFocQty;
 					totalAmount = BH.sub(totalAmount,BH.getBD(tmpItem.getBillFocPrice()), true);
 				}
 				if (totalQty>0) {

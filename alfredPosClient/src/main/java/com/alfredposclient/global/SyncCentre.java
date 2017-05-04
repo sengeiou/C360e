@@ -37,6 +37,10 @@ public class SyncCentre {
 
 	private static SyncCentre instance;
 	private static SyncHttpClient syncHttpClient;
+	/**
+	 * 大数据用
+	 */
+	private static SyncHttpClient bigSyncHttpClient;
 	public static final int MODE_FIRST_SYNC = 1;
 	public static final int MODE_PUSH_SYNC = 2;
 	
@@ -61,6 +65,10 @@ public class SyncCentre {
 			syncHttpClient.addHeader("Connection", "close");
 			syncHttpClient.setTimeout(20 * 1000);
 			syncHttpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
+			bigSyncHttpClient = new SyncHttpClient();
+			bigSyncHttpClient.addHeader("Connection", "close");
+			bigSyncHttpClient.setTimeout(100 * 1000);
+			bigSyncHttpClient.setMaxRetriesAndTimeout(0, 1 * 1000);
 		}
 	}
 	
@@ -156,7 +164,7 @@ public class SyncCentre {
 	public void cloudSyncUploadOrderInfo( BaseActivity context,
 			SyncMsg syncMsg, Handler handler) {
 			HttpAPI.cloudSync(context, syncMsg,
-					getAbsoluteUrl("receive/dataMsg"), syncHttpClient);
+					getAbsoluteUrl("receive/dataMsg"), bigSyncHttpClient);
 	}
 	/*
 	 *  Sync X/Z Report Info to Cloud : for JOB
@@ -164,7 +172,7 @@ public class SyncCentre {
 	public void cloudSyncUploadReportInfo( BaseActivity context,
 			SyncMsg syncMsg, Handler handler) {
 				HttpAPI.cloudSync(context, syncMsg,
-						getAbsoluteUrl("receive/dataMsg"), syncHttpClient);
+						getAbsoluteUrl("receive/dataMsg"), bigSyncHttpClient);
 	}
 	
 	/*load day sales report from cloud */
