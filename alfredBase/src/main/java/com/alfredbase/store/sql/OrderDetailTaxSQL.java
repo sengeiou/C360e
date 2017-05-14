@@ -323,6 +323,13 @@ public class OrderDetailTaxSQL {
 		ArrayList<Integer> taxCounts = new ArrayList<Integer>();
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
+		String  sql = "select sum(taxPrice), taxName, taxPercentage, taxId, count(*) from "
+				+ TableNames.OrderDetailTax
+				+ " where isActive = "
+				+ ParamConst.ACTIVE_NOMAL
+				+ " and orderId in ( select id from "
+				+ TableNames.Order
+				+ "  where businessDate = ? and sessionStatus = ? and createTime > ?) group by taxId";
 		try {
 			cursor = db.query(TableNames.OrderDetailTax,
 					new String[] { "sum(taxPrice), taxName, taxPercentage, taxId, count(*)" },
@@ -431,6 +438,48 @@ public class OrderDetailTaxSQL {
 			}
 		}
 		return null;
+	}
+
+	public static List<OrderDetailTax> getAllOrderDetail() {
+		String sql = "select * from " + TableNames.OrderDetailTax
+				+ " where isActive = " + ParamConst.ACTIVE_NOMAL;
+		List<OrderDetailTax> orderDetailTaxes = new ArrayList<OrderDetailTax>();
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(
+					sql,
+					new String[] { });
+
+			if (cursor.getCount() <= 0) {
+				return null;
+			}
+			OrderDetailTax orderDetailTax = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				orderDetailTax = new OrderDetailTax();
+				orderDetailTax.setId(cursor.getInt(0));
+				orderDetailTax.setOrderId(cursor.getInt(1));
+				orderDetailTax.setOrderDetailId(cursor.getInt(2));
+				orderDetailTax.setTaxId(cursor.getInt(3));
+				orderDetailTax.setTaxName(cursor.getString(4));
+				orderDetailTax.setTaxPercentage(cursor.getString(5));
+				orderDetailTax.setTaxPrice(cursor.getString(6));
+				orderDetailTax.setTaxType(cursor.getInt(7));
+				orderDetailTax.setCreateTime(cursor.getLong(8));
+				orderDetailTax.setUpdateTime(cursor.getLong(9));
+				orderDetailTax.setIndexId(cursor.getInt(10));
+				orderDetailTax.setOrderSplitId(cursor.getInt(11));
+				orderDetailTax.setIsActive(cursor.getInt(12));
+				orderDetailTaxes.add(orderDetailTax);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(cursor != null && !cursor.isClosed()){
+				cursor.close();
+			}
+		}
+		return orderDetailTaxes;
 	}
 
 	public static OrderDetailTax getOrderDetailTaxId(int orderId,

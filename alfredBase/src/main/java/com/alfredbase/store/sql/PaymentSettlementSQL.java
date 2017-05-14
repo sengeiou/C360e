@@ -236,7 +236,7 @@ public class PaymentSettlementSQL {
 
 	public static ArrayList<PaymentSettlement> getAllPaymentSettlement() {
 		ArrayList<PaymentSettlement> result = new ArrayList<PaymentSettlement>();
-		String sql = "select * from " + TableNames.PaymentSettlement + " and isActive = " + ParamConst.PAYMENT_SETT_IS_ACTIVE;
+		String sql = "select * from " + TableNames.PaymentSettlement + " where isActive = " + ParamConst.PAYMENT_SETT_IS_ACTIVE;
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {

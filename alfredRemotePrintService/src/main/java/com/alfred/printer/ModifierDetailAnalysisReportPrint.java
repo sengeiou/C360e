@@ -181,12 +181,11 @@ public class ModifierDetailAnalysisReportPrint extends ReportBasePrint{
 						this.addHortionalLine(this.charSize);
 						showMainCategory = false;
 					}
-					BigDecimal modifierAmount = BH.mul(BH.getBD(pluModifier.getModifierCount()), BH.getBD(pluModifier.getModifierPrice()), true);
-					this.AddItem(pluModifier.getModifierName(), pluModifier.getModifierPrice(), pluModifier.getModifierCount().toString(), ""
-							+ modifierAmount.toString(), 1);
+					this.AddItem(pluModifier.getModifierName(), pluModifier.getModifierItemPrice(), pluModifier.getModifierCount().toString(),
+							BH.getBD(pluModifier.getModifierPrice()).toString(), 1);
 					allQty += pluModifier.getModifierCount();
 					allAmount = BH.add(allAmount,
-							modifierAmount, true);
+							BH.getBD(pluModifier.getModifierPrice()), true);
 				}
 			}
 			if(!showMainCategory)

@@ -177,7 +177,7 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
     private static final String DATABASE_NAME = "com.alfredposclient";
 
     private String callAppIp;
@@ -385,8 +385,11 @@ public class App extends BaseApplication {
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
             @Override
             public void call(Object object) {
-                ReloginDialog reloginDialog = new ReloginDialog(getTopActivity());
-                reloginDialog.show();
+                boolean isScreenLock = systemSettings.isScreenLock();
+                if(isScreenLock) {
+                    ReloginDialog reloginDialog = new ReloginDialog(getTopActivity());
+                    reloginDialog.show();
+                }
             }
         });
         TcpUdpFactory.startUdpServer(1);

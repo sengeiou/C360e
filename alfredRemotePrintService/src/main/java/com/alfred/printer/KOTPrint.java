@@ -237,12 +237,12 @@ public class KOTPrint extends PrintJob{
 
 			PrintData kot = new PrintData();
 			kot.setDataFormat(PrintData.FORMAT_TXT);
-			kot.setFontsize(9);
+			kot.setFontsize(10);
 			kot.setUnderline(true);
 			kot.setLanguage(PrintData.LANG_CN);
 			kot.setTextAlign(PrintData.ALIGN_LEFT);
 			kot.setMarginTop(2);
-			modifiers = "  " + modifiers + reNext;
+			modifiers = modifiers + reNext;
 			kot.setText(modifiers);
 			this.data.add(kot);
 		}

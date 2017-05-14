@@ -300,12 +300,18 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		contentView.findViewById(R.id.iv_dinersclub).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_BILL_on_HOLD).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_VOID).setOnClickListener(this);
-		contentView.findViewById(R.id.tv_COMPANY).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_ENTERTAINMENT)
 				.setOnClickListener(this);
 		contentView.findViewById(R.id.tv_stored_card)
 				.setOnClickListener(this);
-		contentView.findViewById(R.id.tv_HOUSE_CHARGE).setOnClickListener(this);
+		contentView.findViewById(R.id.tv_deliveroo)
+				.setOnClickListener(this);
+		contentView.findViewById(R.id.tv_ubereats)
+				.setOnClickListener(this);
+		contentView.findViewById(R.id.tv_foodpanda)
+				.setOnClickListener(this);
+		contentView.findViewById(R.id.tv_voucher_event)
+				.setOnClickListener(this);
 
 //		contentView.findViewById(R.id.iv_right_icon).setOnClickListener(this);
 //		contentView.findViewById(R.id.iv_settlement_back).setOnClickListener(
@@ -501,20 +507,21 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_VOID));
 		textTypeFace.setTrajanProRegular((TextView) view
-				.findViewById(R.id.tv_COMPANY));
-		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_ENTERTAINMENT));
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_stored_card));
+
 		textTypeFace.setTrajanProRegular((TextView) view
-				.findViewById(R.id.tv_HOUSE_CHARGE));
+				.findViewById(R.id.tv_delivery));
+		textTypeFace.setTrajanProRegular((TextView) view
+				.findViewById(R.id.tv_deliveroo));
+		textTypeFace.setTrajanProRegular((TextView) view
+				.findViewById(R.id.tv_ubereats));
+		textTypeFace.setTrajanProRegular((TextView) view
+				.findViewById(R.id.tv_foodpanda));
 
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_voucher));
-		textTypeFace.setTrajanProRegular((TextView) view
-				.findViewById(R.id.tv_voucher_5));
-		textTypeFace.setTrajanProRegular((TextView) view
-				.findViewById(R.id.tv_voucher_10));
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_voucher_event));
 
@@ -754,6 +761,11 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 						break;
 					case ParamConst.SETTLEMENT_TYPE_HOURS_CHARGE:
 						// TODO
+						break;
+					case ParamConst.SETTLEMENT_TYPE_DELIVEROO:
+					case ParamConst.SETTLEMENT_TYPE_UBEREATS:
+					case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
+
 						break;
 					case ParamConst.SETTLEMENT_TYPE_VOID: {
 						addVoidOrEntTax();
@@ -1161,7 +1173,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //				set.start();
 //			}
 //		});
-
+		ll_pay.setVisibility(View.VISIBLE);
 		contentView.findViewById(R.id.ll_subtotal_layout).setVisibility(
 				View.VISIBLE);
 		contentView.findViewById(R.id.ll_cash_settlement).setVisibility(
@@ -1569,6 +1581,34 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
 			}
 				break;
+			case R.id.tv_deliveroo:
+				if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+					return;
+				}
+				viewTag = ParamConst.SETTLEMENT_TYPE_DELIVEROO;
+				paymentTypeId = ParamConst.SETTLEMENT_TYPE_DELIVEROO;
+				clickEnterAction();
+				break;
+			case R.id.tv_ubereats:
+				if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+					return;
+				}
+				viewTag = ParamConst.SETTLEMENT_TYPE_UBEREATS;
+				paymentTypeId = ParamConst.SETTLEMENT_TYPE_UBEREATS;
+				clickEnterAction();
+				break;
+			case R.id.tv_foodpanda:
+				if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+					return;
+				}
+				viewTag = ParamConst.SETTLEMENT_TYPE_FOODPANDA;
+				paymentTypeId = ParamConst.SETTLEMENT_TYPE_FOODPANDA;
+				clickEnterAction();
+				break;
+			case R.id.tv_voucher_event:
+
+
+				break;
 			case R.id.tv_BILL_on_HOLD:
 				if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
 					return;
@@ -1585,11 +1625,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				handler.sendMessage(handler
 						.obtainMessage(MainPage.VIEW_EVENT_SHOW_VOID));
 				// openMoneyKeyboard(View.GONE,ParamConst.SETTLEMENT_TYPE_VOID);
-				break;
-			case R.id.tv_COMPANY:
-				if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
-					return;
-				}
 				break;
 			case R.id.tv_ENTERTAINMENT:
 				if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
@@ -1614,9 +1649,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				break;
 			case R.id.iv_wechatpay:
 				openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_WEIXIN);
-				break;
-			case R.id.tv_HOUSE_CHARGE:
-
 				break;
 			case R.id.rl_cards_amount_paid_num:
 				tv_cards_amount_paid_num.setBackgroundColor(parent.getResources().getColor(
@@ -2249,6 +2281,29 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				paymentMap.put("newPaymentSettlement", paymentSettlement);
 				paymentMap.put("newSubPaymentSettlement",
 						nonChargableSettlement);
+				newPaymentMapList.add(paymentMap);
+			}
+		}
+			break;
+		case ParamConst.SETTLEMENT_TYPE_DELIVEROO:
+		case ParamConst.SETTLEMENT_TYPE_UBEREATS:
+		case ParamConst.SETTLEMENT_TYPE_FOODPANDA:{
+			PaymentSQL.addPayment(payment);
+			PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+					.getPaymentSettlement(payment, paymentTypeId,
+							orderSplit.getTotal());
+			payment_amount = remainTotal;
+			paymentType = viewTag;
+			orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+			OrderSplitSQL.update(orderSplit);
+			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+			if(upDoneOrderSplitCount == 0){
+				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
+			}
+			if (newPaymentMapList != null) {
+				Map<String, Object> paymentMap = new HashMap<String, Object>();
+				paymentMap.put("newPaymentSettlement", paymentSettlement);
+				paymentMap.put("newSubPaymentSettlement", null);
 				newPaymentMapList.add(paymentMap);
 			}
 		}

@@ -1,8 +1,5 @@
 package com.alfredposclient.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -51,6 +48,9 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.adapter.ItemDetailAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainPageMenuView extends LinearLayout {
 	private static final int WIDTH = (int) (ScreenSizeUtil.width*(1 - (700+300)/ScreenSizeUtil.WIDTH_POS));
@@ -666,6 +666,13 @@ public class MainPageMenuView extends LinearLayout {
 		
 	}
 
+	public boolean isModifierOpen(){
+		if(ll_menu != null && ll_menu.getVisibility() != View.VISIBLE)
+			return true;
+		else
+			return false;
+	}
+
 	public void closeModifiers() {
 		if (AnimatorListenerImpl.isRunning || ll_menu.getVisibility() == View.VISIBLE) {
 			return;
@@ -723,7 +730,7 @@ public class MainPageMenuView extends LinearLayout {
 	 * 
 	 * @param hsv
 	 * @param index
-	 * @param itemWidth
+//	 * @param itemWidth
 	 */
 	private void scrollToIndex(final HorizontalScrollViewEx hsv, final int index) {
 		if (index < 0

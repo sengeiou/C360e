@@ -180,6 +180,11 @@ public class ParamConst {
 	public static final int SETTLEMENT_TYPE_REFUND = 2001;
 	public static final int SETTLEMENT_TYPE_ENTERTAINMENT = 105;
 	public static final int SETTLEMENT_TYPE_THIRDPARTY = 106;
+	public static final int SETTLEMENT_TYPE_DELIVEROO = 3001;
+	public static final int SETTLEMENT_TYPE_UBEREATS = 3002;
+	public static final int SETTLEMENT_TYPE_FOODPANDA = 3003;
+	public static final int SETTLEMENT_TYPE_VOUCHER = 4001;
+
 	
 
 	// BOH PaymentType

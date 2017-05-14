@@ -41,11 +41,15 @@
     <string name="paypal">Diner App</string>
     <string name="stored_card_use">Stored-Card Use</string>
     <string name="stored_card">Stored-Card</string>
+    <string name="deliveroo">Deliveroo</string>
+    <string name="ubereats">Ubereats</string>
+    <string name="foodpanda">Foodpanda</string>
+    <string name="voucher">Voucher</string>
     <string name="stored_card_charge">Stored-Card Charge</string>
     <string name="card_no">CardNo</string>
     <string name="check_closed"> Check Closed </string>
     <string name="see_you">Thank you and see you again!</string>
-    <string name="powered_by_alfred">Powered by Alfred</string>
+    <string name="powered_by_alfred">#ServedByAlfred</string>
     <string name="kg">KG</string>
     
     <!-- DaySalesReportPrint -->

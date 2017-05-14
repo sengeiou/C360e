@@ -785,6 +785,15 @@ public class KotItemDetailSQL {
 		}
 	}
 
+	public static void updateKotItemDetailId(int newOrderDetailId, int oldOrderDetailId){
+		String sql = "update " + TableNames.KotItemDetail + " set orderDetailId = ? where orderDetailId = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {newOrderDetailId, oldOrderDetailId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void deleteAllKotItemDetail() {
 		String sql = "delete from " + TableNames.KotItemDetail;
 		try {

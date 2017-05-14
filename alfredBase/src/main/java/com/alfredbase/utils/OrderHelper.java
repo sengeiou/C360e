@@ -1,5 +1,6 @@
 package com.alfredbase.utils;
 
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.HappyHourWeek;
@@ -17,6 +18,7 @@ import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
@@ -407,21 +409,60 @@ public class OrderHelper {
 	
 	public static void setOrderSplitDiscount(Order order, OrderSplit orderSplit,
 			List<OrderDetail> orderDetails) {
-			BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
+//			BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
+//			for (OrderDetail orderDetail : orderDetails) {
+//					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+//						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()){
+//							discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), false);
+//						}
+//					} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+//							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+//							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB) {
+//						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()){
+//							discount = BH.add(discount, BH.mul( BH.getBD(orderDetail.getRealPrice()),
+//									BH.getBDNoFormat(orderDetail.getDiscountRate()), false),false);
+//						}
+//					}
+//				}
+		BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
+		if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER
+				|| order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY) {
+			discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
 			for (OrderDetail orderDetail : orderDetails) {
-					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()){
-							discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), false);
-						}
-					} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
-							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB) {
-						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()){
-							discount = BH.add(discount, BH.mul( BH.getBD(orderDetail.getRealPrice()),
-									BH.getBDNoFormat(orderDetail.getDiscountRate()), false),false);
-						}
+				if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE){
+					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
+						discount = BH.add(discount, BH.mul(
+								BH.getBD(orderDetail.getRealPrice()),
+								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
+								true);
+					}
+				}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
+						discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
 					}
 				}
+			}
+		} else {
+			for (OrderDetail orderDetail : orderDetails) {
+				if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
+						discount = BH.add(discount,
+								BH.getBD(orderDetail.getDiscountPrice()), true);
+					}
+				} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+						|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+//									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+						|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
+						) {
+					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
+						discount = BH.add(discount, BH.mul(
+								BH.getBD(orderDetail.getRealPrice()),
+								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
+								true);
+					}
+				}
+			}
+		}
 			orderSplit.setDiscountAmount(BH.doubleFormat.format(discount).toString());
 	}
 	
@@ -573,8 +614,12 @@ public class OrderHelper {
 	
 	/*Bob:加入流水号 */
 	public static int calculateOrderNo(long bizDate) {
+		int maxOrderNo = Store.getInt(BaseApplication.instance, Store.MAX_ORDER_NO, 0);
 		int sid = 0;
 		sid = OrderSQL.getSumCountByBizDate(bizDate);
+		if(maxOrderNo > 0 && sid >= maxOrderNo){
+			return 1;
+		}
 		return sid+1;
 	}
 }

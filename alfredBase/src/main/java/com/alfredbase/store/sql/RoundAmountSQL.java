@@ -341,10 +341,10 @@ public class RoundAmountSQL {
 			}
 		return totalBalancePrice;
 	}
-	
+	// TODO
 	public static double getAllRoundBalancePriceByTime(long businessDate, SessionStatus sessionStatus){
 		double totalBalancePrice = 0.00;
-		String sql = "select sum(roundBalancePrice) from " + TableNames.RoundAmount +" where orderSplitId = 0 and orderId in ( select id from " + TableNames.Order + " where businessDate = ? and sessionStatus = ? and createTime > ? )";
+		String sql = "select sum(roundBalancePrice) from " + TableNames.RoundAmount +" where orderId in ( select id from " + TableNames.Order + " where businessDate = ? and sessionStatus = ? and createTime > ? )";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql,

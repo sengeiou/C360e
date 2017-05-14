@@ -45,11 +45,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="-5dp" />
-
-                    <com.alfredposclient.view.viewkiosk.MainPageMenuViewKiosk
-                        android:id="@+id/mainPageMenuView"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"></com.alfredposclient.view.viewkiosk.MainPageMenuViewKiosk>
+                        android:layout_height="match_parent">
+                        <com.alfredposclient.view.viewkiosk.MainPageMenuViewKiosk
+                            android:id="@+id/mainPageMenuView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"></com.alfredposclient.view.viewkiosk.MainPageMenuViewKiosk>
+                        <View
+                            android:id="@+id/view_top"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </RelativeLayout>
+
                 </LinearLayout>
 
             </RelativeLayout>

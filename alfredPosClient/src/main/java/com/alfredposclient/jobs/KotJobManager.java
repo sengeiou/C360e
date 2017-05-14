@@ -216,7 +216,8 @@ public class KotJobManager {
 					.getKotItemDetailBySummaryId(fromKotSummary.getId());
 			kotItemModifiers = new ArrayList<KotItemModifier>();
 			for (KotItemDetail kotItemDetail : kotItemDetails) {
-				kotItemDetail.setKotSummaryId(toKotSummary.getId());
+				kotItemDetail.setKotSummaryId(toKotSummary.getId().intValue());
+				kotItemDetail.setOrderId(toKotSummary.getOrderId().intValue());
 				KotItemDetailSQL.update(kotItemDetail);
 				kotItemModifiers.addAll(KotItemModifierSQL
 						.getKotItemModifiersByKotItemDetail(kotItemDetail

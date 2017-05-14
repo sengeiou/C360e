@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -222,6 +223,7 @@ public class MainPageKiosk extends BaseActivity {
 	private Order oldOrder;
 	private List<OrderDetail> orderDetails;
 	private VerifyDialog verifyDialog;
+	private View view_top;
 //	public LoadingDialog loadingDialog;
 
 	public PrinterLoadingDialog printerLoadingDialog;
@@ -308,6 +310,7 @@ public class MainPageKiosk extends BaseActivity {
 		setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
 				handler);
 		currentTable = TableInfoSQL.getKioskTable();
+		view_top = findViewById(R.id.view_top);
 		setData();
 		observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
 		observable1 = RxBus.getInstance().register("open_drawer");
@@ -370,8 +373,16 @@ public class MainPageKiosk extends BaseActivity {
 		handler.sendEmptyMessage(GET_TABLESTATUSINFO_DATA);
 	}
 
+	private View animatorView;
 	private void openModifiers(OrderDetail orderDetail,
-			List<ItemModifier> itemModifiers) {
+			List<ItemModifier> itemModifiers, View view) {
+		if(mainPageMenuView.isModifierOpen()) {
+			if (animatorView == view) {
+				return;
+			} else {
+				animatorView = view;
+			}
+		}
 		mainPageMenuView
 				.openModifiers(currentOrder, orderDetail, itemModifiers);
 	}
@@ -893,7 +904,7 @@ public class MainPageKiosk extends BaseActivity {
 			case VIEW_EVENT_OPEN_MODIFIERS: {
 				Map<String, Object> map = (Map<String, Object>) msg.obj;
 				openModifiers((OrderDetail) map.get("orderDetail"),
-						(List<ItemModifier>) map.get("itemModifiers"));
+						(List<ItemModifier>) map.get("itemModifiers"), (View)map.get("view"));
 				break;
 			}
 
@@ -927,7 +938,7 @@ public class MainPageKiosk extends BaseActivity {
 								}
 							}
 						}).start();
-						setPAXWindow.show(SetPAXWindow.GENERAL_ORDER);
+						setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
 					} else {
 						handler.sendMessage(handler
 								.obtainMessage(MainPageKiosk.VIEW_EVENT_DISMISS_TABLES));
@@ -949,7 +960,7 @@ public class MainPageKiosk extends BaseActivity {
 							.intValue()) {
 						currentTable = newTable;
 						if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-							setPAXWindow.show(SetPAXWindow.GENERAL_ORDER);
+							setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
 						} else {
 							handler.sendMessage(handler
 									.obtainMessage(MainPageKiosk.VIEW_EVENT_DISMISS_TABLES));
@@ -1333,7 +1344,7 @@ public class MainPageKiosk extends BaseActivity {
 				break;
 			case VIEW_EVENT_TANSFER_PAX:
 				String pax = (String) msg.obj;
-				setPAXWindow.show(pax, currentOrder);
+				setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_pax));
 				break;
 			case VIEW_EVENT_VOID_OR_FREE:
 				verifyDialog.show(HANDLER_MSG_OBJECT_VOID_OR_FREE,
@@ -1601,6 +1612,12 @@ public class MainPageKiosk extends BaseActivity {
 		initOrder(currentTable);
 		orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 		mainPageMenuView.setParam(currentOrder, handler);
+		view_top.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return App.instance.getSystemSettings().isTopMaskingIsUser();
+			}
+		});
 //		mainPageMenuView.closeModifiers();
 		orderView.setParam(this, currentOrder, orderDetails, handler);
 		operatePanel.setParams(this, currentOrder, orderDetails,

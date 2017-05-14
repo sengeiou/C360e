@@ -33,24 +33,24 @@ android {
     }
 
     //配置keystore签名
-    signingConfigs {
-        release {
-            storeFile file("../keyStore/alfredposclient.keystore")
-            storePassword "8uhb*UHB"
-            keyAlias "alfred shanghai"
-            keyPassword "8uhb*UHB"
-        }
-    }
+//    signingConfigs {
+//        release {
+//            storeFile file("../keyStore/alfredposclient.keystore")
+//            storePassword "8uhb*UHB"
+//            keyAlias "alfred shanghai"
+//            keyPassword "8uhb*UHB"
+//        }
+//    }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
-        debug {
-            signingConfig signingConfigs.release
-        }
+//        debug {
+////            signingConfig signingConfigs.release
+//        }
     }
 
 //    packagingOptions {
