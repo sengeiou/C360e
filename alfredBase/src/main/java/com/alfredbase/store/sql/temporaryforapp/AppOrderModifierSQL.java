@@ -106,7 +106,6 @@ public class AppOrderModifierSQL {
 		List<AppOrderModifier> result = new ArrayList<AppOrderModifier>();
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {orderDetailId + ""});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -125,7 +124,6 @@ public class AppOrderModifierSQL {
 				appOrderModifier.setUpdateTime(cursor.getLong(11));
 				result.add(appOrderModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -133,7 +131,6 @@ public class AppOrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -144,7 +141,6 @@ public class AppOrderModifierSQL {
 		List<AppOrderModifier> result = new ArrayList<AppOrderModifier>();
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {appOrderId + ""});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -163,7 +159,6 @@ public class AppOrderModifierSQL {
 				appOrderModifier.setUpdateTime(cursor.getLong(11));
 				result.add(appOrderModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -171,7 +166,6 @@ public class AppOrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

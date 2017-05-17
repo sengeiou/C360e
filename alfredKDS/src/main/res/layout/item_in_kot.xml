@@ -20,20 +20,11 @@
     </LinearLayout>
     -->
 
-    <TextView
-        android:id="@+id/tv_order_num"
-        android:layout_width="70dp"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|left"
-        android:paddingLeft="5dp"
-        android:singleLine="true"
-        android:text="1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_small" />
 
     <LinearLayout
         android:id="@+id/ll_item"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="9"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
@@ -41,10 +32,10 @@
             android:id="@+id/tv_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
             android:paddingBottom="5dp"
             android:paddingRight="10dp"
             android:paddingTop="5dp"
+            android:text="CC"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_m" />
 
@@ -52,13 +43,23 @@
             android:id="@+id/tv_dish_introduce"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical|right"
+            android:gravity="center_vertical|left"
             android:paddingRight="10dp"
-            android:text="Modifiers,instructions"
+            android:text="-- Modifiers,instructions"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_size_s_small" />
+            android:textSize="@dimen/text_size_m_smail" />
     </LinearLayout>
-
+    <TextView
+        android:id="@+id/tv_order_num"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|left"
+        android:paddingLeft="5dp"
+        android:singleLine="true"
+        android:text="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_small" />
     <View
         android:id="@+id/black_line"
         android:layout_width="match_parent"

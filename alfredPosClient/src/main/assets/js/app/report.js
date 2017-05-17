@@ -523,6 +523,54 @@ function showSalesAnalysis(getJson,getReportDayTaxs){
         liList+='</div>';
         liList+='</li>';
 
+        var totalDeliveryQty=0;
+        var totalDelivery=0.00;
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">DELIVEROO</div>';
+        liList+='<div class="col-md-2">'+(getJson.deliverooQty==''?'0':getJson.deliverooQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.deliveroo==''||getJson.deliveroo=='0')?'0.00':getJson.deliveroo)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+        totalDeliveryQty += parseInt(getJson.deliverooQty);
+        totalDelivery += parseFloat(getJson.deliveroo);
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">UBEREATS</div>';
+        liList+='<div class="col-md-2">'+(getJson.ubereatsQty==''?'0':getJson.ubereatsQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.ubereats==''||getJson.ubereats=='0')?'0.00':getJson.ubereats)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+        totalDeliveryQty += parseInt(getJson.ubereatsQty);
+        totalDelivery += parseFloat(getJson.ubereats);
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">FOODPANDA</div>';
+        liList+='<div class="col-md-2">'+(getJson.foodpandaQty==''?'0':getJson.foodpandaQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.foodpanda==''||getJson.foodpanda=='0')?'0.00':getJson.foodpanda)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+        totalDeliveryQty += parseInt(getJson.foodpandaQty);
+        totalDelivery += parseFloat(getJson.foodpanda);
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">VOUCHER</div>';
+        liList+='<div class="col-md-2">'+(getJson.voucherQty==''?'0':getJson.voucherQty)+'</div>';
+        liList+='<div class="col-md-4">$'+((getJson.voucher==''||getJson.voucher=='0')?'0.00':getJson.voucher)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
+
+        liList+='<li class="summaryitemworp">';
+        liList+='<div class="row">';
+        liList+='<div class="col-md-6">TOTAL DELIVERY</div>';
+        liList+='<div class="col-md-2">'+totalDeliveryQty+'</div>';
+        liList+='<div class="col-md-4">$'+parseFloat(totalDelivery).toFixed(2)+'</div>';
+        liList+='</div>';
+        liList+='</li>';
 
         liList+='<li class="summaryitemworp">';
         liList+='<div class="row">';

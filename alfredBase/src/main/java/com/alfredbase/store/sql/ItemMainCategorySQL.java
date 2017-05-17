@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -11,6 +8,9 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemMainCategorySQL {
 
@@ -92,7 +92,6 @@ public class ItemMainCategorySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -114,7 +113,6 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
 				result.add(itemMainCategory);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -122,7 +120,6 @@ public class ItemMainCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -133,7 +130,6 @@ public class ItemMainCategorySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -155,7 +151,6 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
 				result.add(itemMainCategory);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -163,7 +158,6 @@ public class ItemMainCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -175,7 +169,6 @@ public class ItemMainCategorySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -197,7 +190,6 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
 				result.add(itemMainCategory);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -205,7 +197,6 @@ public class ItemMainCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -216,7 +207,6 @@ public class ItemMainCategorySQL {
 		ItemMainCategory itemMainCategory = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {String.valueOf(itemMainCategoryId)});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -232,7 +222,6 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setCreateTime(cursor.getLong(8));
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -240,7 +229,6 @@ public class ItemMainCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return itemMainCategory;
 	}
@@ -251,7 +239,6 @@ public class ItemMainCategorySQL {
 		ItemMainCategory itemMainCategory = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {String.valueOf(itemMainCategoryId)});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -267,7 +254,6 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setCreateTime(cursor.getLong(8));
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -275,7 +261,6 @@ public class ItemMainCategorySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return itemMainCategory;
 	}

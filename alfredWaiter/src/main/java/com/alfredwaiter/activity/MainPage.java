@@ -19,9 +19,13 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
+import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.store.TableNames;
+import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -35,9 +39,11 @@ import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.javabean.ItemCategoryAndDetails;
+import com.alfredwaiter.popupwindow.ModifierWindow;
 import com.alfredwaiter.popupwindow.SearchMenuItemWindow;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.utils.WaiterUtils;
+import com.alfredwaiter.view.CountView;
 import com.alfredwaiter.view.SelectPersonDialog;
 import com.alfredwaiter.view.SlidePanelView;
 
@@ -53,6 +59,10 @@ public class MainPage extends BaseActivity {
 	public static final int VIEW_EVENT_SET_QTY = 3;
 	public static final int VIEW_ENVENT_KOTNOTIFICATION_LIST = 4;
 	public static final int VIEW_EVENT_CLICK_ALL_MAIN_CATEGORY = 5;
+
+	public static final int VIEW_EVENT_FIRST_COLLAPSE = 6;
+	public static final int VIEW_EVENT_COLLAPSE = 7;
+
 	public static final int VIEW_ENVENT_GET_ORDERDETAILS = 101;
 	public static final int TRANSFER_TABLE_NOTIFICATION = 102;
 	
@@ -63,7 +73,8 @@ public class MainPage extends BaseActivity {
 	
 	public static final int VIEW_EVENT_SLIDE = 204;
 	public static final int VIEW_EVENT_SLIDE_CLICK = 205;
-	
+	public static final int VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER = 206;
+
 //	public static final int VIEW_EVENT_SET_ITEM_NUM = 103;
 	private ExpandableListView expandableListView;
 	private OrderAdapter adapter;
@@ -84,6 +95,7 @@ public class MainPage extends BaseActivity {
 	private SearchMenuItemWindow searchPopUp;
 	
 	private Button btn_slide;
+	private ModifierWindow modifierWindow;
 	@Override
 	protected void initView() {
 		super.initView();
@@ -91,6 +103,7 @@ public class MainPage extends BaseActivity {
 		initTextTypeFace();
 		initTitle();
 		searchPopUp = new SearchMenuItemWindow(context,handler,findViewById(R.id.rl_root));
+		modifierWindow = new ModifierWindow(context, handler, findViewById(R.id.rl_root));
 //		searchPopUp.setParams(this, handler, findViewById(R.id.rl_root));
 //		searchPopUp.setParams(currentOrder,CoreData.getInstance().getItemDetails());
 		setItemCountWindow = new SetItemCountWindow(this, findViewById(R.id.rl_root),
@@ -100,7 +113,26 @@ public class MainPage extends BaseActivity {
 		expandableListView = (ExpandableListView) findViewById(R.id.expandedListViewEx);
 		expandableListView.setDividerHeight(0);
 		itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
-		adapter = new OrderAdapter(context, itemCategoryAndDetailsList, handler,setItemCountWindow);
+		adapter = new OrderAdapter(context, itemCategoryAndDetailsList, handler,setItemCountWindow,new CountView.OnCountChange() {
+			@Override
+			public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				if(CoreData.getInstance()
+						.getItemModifiers(selectedItemDetail).size() > 0){
+					if(isAdd){
+						modifierWindow.show(selectedItemDetail);
+					}else{
+                        refreshList();
+					}
+				}else{
+					map.put("itemDetail", selectedItemDetail);
+					map.put("count", count);
+					map.put("isAdd", isAdd);
+					handler.sendMessage(handler.obtainMessage(
+							MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, map));
+				}
+			}
+		});
 		expandableListView.setGroupIndicator(null);
 		expandableListView.setAdapter(adapter);
 		for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
@@ -111,6 +143,26 @@ public class MainPage extends BaseActivity {
 		TableInfo currentTable = TableInfoSQL.getTableById(currentOrder.getTableId());
 		if (currentTable!=null)
 		  table_name.setText(currentTable.getName());
+
+		expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+			@Override
+			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+				ItemCategoryAndDetails itemCategoryAndDetails = itemCategoryAndDetailsList.get(groupPosition);
+				itemCategoryAndDetailsList.remove(itemCategoryAndDetails);
+				itemCategoryAndDetailsList.add(0, itemCategoryAndDetails);
+				refreshTotal();
+				refreshList();
+				for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
+					if (i == 0){
+						expandableListView.expandGroup(0);
+					}else  {
+						expandableListView.collapseGroup(i);
+					}
+				}
+				return true;
+			}
+		});
+
 //		expandableListView.setOnChildClickListener(new OnChildClickListener() {
 //
 //			@Override
@@ -261,6 +313,34 @@ public class MainPage extends BaseActivity {
 			case VIEW_EVENT_SLIDE_CLICK:
 				btn_slide.setBackgroundResource(R.drawable.btn_slide);
 				break;
+			case VIEW_EVENT_FIRST_COLLAPSE:{
+				itemCategoryAndDetailsList.clear();
+				itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
+				for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
+					expandableListView.collapseGroup(i);
+				}
+				refreshList();
+				break;
+			}
+			case VIEW_EVENT_COLLAPSE:
+				ItemMainCategory itemMainCategory = (ItemMainCategory) msg.obj;
+				itemCategoryAndDetailsList.clear();
+				itemCategoryAndDetailsList
+						.addAll(getItemCategoryAndDetails(itemMainCategory));
+				for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
+					expandableListView.collapseGroup(i);
+				}
+				refreshList();
+				break;
+			case VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER:
+				Map<String, Object> map = (Map<String, Object>) msg.obj;
+				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
+				List<Integer> modifierIds = (List<Integer>) map.get("modifierIds");
+				String description = (String) map.get("description");
+				addOrderDetailAndOrderModifier(itemDetail, 1, modifierIds, description);
+                refreshTotal();
+                refreshList();
+				break;
 			default:
 				break;
 			}
@@ -303,6 +383,39 @@ public class MainPage extends BaseActivity {
 				OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
 			}
 		}
+	}
+
+	private void addOrderDetailAndOrderModifier(ItemDetail itemDetail,int count, List<Integer> modifierIds, String description){
+        currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+        OrderSQL.update(currentOrder);
+		OrderDetail orderDetail = ObjectFactory.getInstance()
+				.createOrderDetailForWaiter(currentOrder, itemDetail,
+						currentGroupId, App.instance.getUser());
+		orderDetail.setItemNum(count);
+		orderDetail.setReason(description);
+		for(Integer id : modifierIds){
+			Modifier modifier = CoreData.getInstance().getModifier(id);
+			OrderModifier orderModifier = new OrderModifier();
+			orderModifier.setId(CommonSQL
+					.getNextSeq(TableNames.OrderModifier));
+			orderModifier.setOrderId(currentOrder.getId());
+			orderModifier.setOrderDetailId(orderDetail.getId());
+			orderModifier
+					.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
+			orderModifier.setUserId(currentOrder.getUserId());
+			orderModifier.setItemId(orderDetail.getItemId());
+			orderModifier.setModifierId(modifier.getId());
+			orderModifier.setModifierNum(modifier.getQty());
+			orderModifier
+					.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
+			orderModifier.setModifierPrice(modifier.getPrice());
+			Long time = System.currentTimeMillis();
+			orderModifier.setCreateTime(time);
+			orderModifier.setUpdateTime(time);
+			OrderModifierSQL.addOrderModifierForWaiter(orderModifier);
+		}
+		OrderDetailSQL.addOrderDetailETCForWaiter(orderDetail);
+
 	}
 
 	private void refreshTotal() {

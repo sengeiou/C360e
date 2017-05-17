@@ -92,6 +92,14 @@ public class ReportDaySales implements Serializable{
 	private Integer totalCardQty;
 	private String totalCash;
 	private Integer totalCashQty;
+	private String deliveroo;
+	private Integer deliverooQty;
+	private String ubereats;
+	private Integer ubereatsQty;
+	private String foodpanda;
+	private Integer foodpandaQty;
+	private String voucher;
+	private Integer voucherQty;
 	/**
 	 * voidBill结算后退单金额
 	 */
@@ -880,139 +888,163 @@ public class ReportDaySales implements Serializable{
 		this.updateTime = updateTime;
 	}
 
-//	public String getCashGstDiscount() {
-//		return cashGstDiscount;
-//	}
-//
-//	public void setCashGstDiscount(String cashGstDiscount) {
-//		this.cashGstDiscount = cashGstDiscount;
-//	}
-//
-//	public String getNetsGstDiscount() {
-//		return netsGstDiscount;
-//	}
-//
-//	public void setNetsGstDiscount(String netsGstDiscount) {
-//		this.netsGstDiscount = netsGstDiscount;
-//	}
-//
-//	public String getVisaGstDiscount() {
-//		return visaGstDiscount;
-//	}
-//
-//	public void setVisaGstDiscount(String visaGstDiscount) {
-//		this.visaGstDiscount = visaGstDiscount;
-//	}
-//
-//	public String getMasterCardGstDiscount() {
-//		return masterCardGstDiscount;
-//	}
-//
-//	public void setMasterCardGstDiscount(String masterCardGstDiscount) {
-//		this.masterCardGstDiscount = masterCardGstDiscount;
-//	}
-//
-//	public String getAmexGstDiscount() {
-//		return amexGstDiscount;
-//	}
-//
-//	public void setAmexGstDiscount(String amexGstDiscount) {
-//		this.amexGstDiscount = amexGstDiscount;
-//	}
-//
-//	public String getOtherGstDiscount() {
-//		return otherGstDiscount;
-//	}
-//
-//	public void setOtherGstDiscount(String otherGstDiscount) {
-//		this.otherGstDiscount = otherGstDiscount;
-//	}
-
-		@Override
-		public String toString () {
-			return "ReportDaySales{" +
-					"id=" + id +
-					", restaurantId=" + restaurantId +
-					", restaurantName='" + restaurantName + '\'' +
-					", revenueId=" + revenueId +
-					", revenueName='" + revenueName + '\'' +
-					", businessDate=" + businessDate +
-					", itemSales='" + itemSales + '\'' +
-					", itemSalesQty=" + itemSalesQty +
-					", discountPer='" + discountPer + '\'' +
-					", discountPerQty=" + discountPerQty +
-					", discount='" + discount + '\'' +
-					", discountQty=" + discountQty +
-					", discountAmt='" + discountAmt + '\'' +
-					", focItem='" + focItem + '\'' +
-					", focItemQty=" + focItemQty +
-					", focBill='" + focBill + '\'' +
-					", focBillQty=" + focBillQty +
-					", totalSales='" + totalSales + '\'' +
-					", cash='" + cash + '\'' +
-					", cashQty=" + cashQty +
-					", nets='" + nets + '\'' +
-					", netsQty=" + netsQty +
-					", visa='" + visa + '\'' +
-					", visaQty=" + visaQty +
-					", mc='" + mc + '\'' +
-					", mcQty=" + mcQty +
-					", amex='" + amex + '\'' +
-					", amexQty=" + amexQty +
-					", jbl='" + jbl + '\'' +
-					", jblQty=" + jblQty +
-					", unionPay='" + unionPay + '\'' +
-					", unionPayQty=" + unionPayQty +
-					", diner='" + diner + '\'' +
-					", dinerQty=" + dinerQty +
-					", holdld='" + holdld + '\'' +
-					", holdldQty=" + holdldQty +
-					", alipay='" + alipay + '\'' +
-					", alipayQty=" + alipayQty +
-					", weixinpay='" + weixinpay + '\'' +
-					", weixinpayQty=" + weixinpayQty +
-					", thirdParty='" + thirdParty + '\'' +
-					", thirdPartyQty=" + thirdPartyQty +
-					", totalCard='" + totalCard + '\'' +
-					", totalCardQty=" + totalCardQty +
-					", totalCash='" + totalCash + '\'' +
-					", totalCashQty=" + totalCashQty +
-					", billVoid='" + billVoid + '\'' +
-					", billVoidQty=" + billVoidQty +
-					", itemVoid='" + itemVoid + '\'' +
-					", itemVoidQty=" + itemVoidQty +
-					", nettSales='" + nettSales + '\'' +
-					", totalBills=" + totalBills +
-					", openCount=" + openCount +
-					", firstReceipt=" + firstReceipt +
-					", lastReceipt=" + lastReceipt +
-					", totalTax='" + totalTax + '\'' +
-					", orderQty=" + orderQty +
-					", personQty=" + personQty +
-					", totalBalancePrice='" + totalBalancePrice + '\'' +
-					", cashInAmt='" + cashInAmt + '\'' +
-					", cashOutAmt='" + cashOutAmt + '\'' +
-					", varianceAmt='" + varianceAmt + '\'' +
-					", inclusiveTaxAmt='" + inclusiveTaxAmt + '\'' +
-					", paypalpay='" + paypalpay + '\'' +
-					", paypalpayQty=" + paypalpayQty +
-					", storedCard='" + storedCard + '\'' +
-					", storedCardQty=" + storedCardQty +
-					", topUps='" + topUps + '\'' +
-					", topUpsQty=" + topUpsQty +
-					", billRefund='" + billRefund + '\'' +
-					", billRefundQty=" + billRefundQty +
-					", refundTax='" + refundTax + '\'' +
-					", startDrawerAmount='" + startDrawerAmount + '\'' +
-					", expectedAmount='" + expectedAmount + '\'' +
-					", waiterAmount='" + waiterAmount + '\'' +
-					", difference='" + difference + '\'' +
-					", cashTopUp='" + cashTopUp + '\'' +
-					", takeawaySales='" + takeawaySales + '\'' +
-					", takeawayTax='" + takeawayTax + '\'' +
-					", takeawayQty=" + takeawayQty +
-					", createTime=" + createTime +
-					", updateTime=" + updateTime +
-					'}';
-		}
+	public Integer getVoucherQty() {
+		return voucherQty;
 	}
+
+	public void setVoucherQty(Integer voucherQty) {
+		this.voucherQty = voucherQty;
+	}
+
+	public String getDeliveroo() {
+		return deliveroo;
+	}
+
+	public void setDeliveroo(String deliveroo) {
+		this.deliveroo = deliveroo;
+	}
+
+	public Integer getDeliverooQty() {
+		return deliverooQty;
+	}
+
+	public void setDeliverooQty(Integer deliverooQty) {
+		this.deliverooQty = deliverooQty;
+	}
+
+	public String getUbereats() {
+		return ubereats;
+	}
+
+	public void setUbereats(String ubereats) {
+		this.ubereats = ubereats;
+	}
+
+	public Integer getUbereatsQty() {
+		return ubereatsQty;
+	}
+
+	public void setUbereatsQty(Integer ubereatsQty) {
+		this.ubereatsQty = ubereatsQty;
+	}
+
+	public String getFoodpanda() {
+		return foodpanda;
+	}
+
+	public void setFoodpanda(String foodpanda) {
+		this.foodpanda = foodpanda;
+	}
+
+	public Integer getFoodpandaQty() {
+		return foodpandaQty;
+	}
+
+	public void setFoodpandaQty(Integer foodpandaQty) {
+		this.foodpandaQty = foodpandaQty;
+	}
+
+	public String getVoucher() {
+		return voucher;
+	}
+
+	public void setVoucher(String voucher) {
+		this.voucher = voucher;
+	}
+
+	@Override
+	public String toString() {
+		return "ReportDaySales{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", restaurantName='" + restaurantName + '\'' +
+				", revenueId=" + revenueId +
+				", revenueName='" + revenueName + '\'' +
+				", businessDate=" + businessDate +
+				", itemSales='" + itemSales + '\'' +
+				", itemSalesQty=" + itemSalesQty +
+				", discountPer='" + discountPer + '\'' +
+				", discountPerQty=" + discountPerQty +
+				", discount='" + discount + '\'' +
+				", discountQty=" + discountQty +
+				", discountAmt='" + discountAmt + '\'' +
+				", focItem='" + focItem + '\'' +
+				", focItemQty=" + focItemQty +
+				", focBill='" + focBill + '\'' +
+				", focBillQty=" + focBillQty +
+				", totalSales='" + totalSales + '\'' +
+				", cash='" + cash + '\'' +
+				", cashQty=" + cashQty +
+				", nets='" + nets + '\'' +
+				", netsQty=" + netsQty +
+				", visa='" + visa + '\'' +
+				", visaQty=" + visaQty +
+				", mc='" + mc + '\'' +
+				", mcQty=" + mcQty +
+				", amex='" + amex + '\'' +
+				", amexQty=" + amexQty +
+				", jbl='" + jbl + '\'' +
+				", jblQty=" + jblQty +
+				", unionPay='" + unionPay + '\'' +
+				", unionPayQty=" + unionPayQty +
+				", diner='" + diner + '\'' +
+				", dinerQty=" + dinerQty +
+				", holdld='" + holdld + '\'' +
+				", holdldQty=" + holdldQty +
+				", alipay='" + alipay + '\'' +
+				", alipayQty=" + alipayQty +
+				", weixinpay='" + weixinpay + '\'' +
+				", weixinpayQty=" + weixinpayQty +
+				", thirdParty='" + thirdParty + '\'' +
+				", thirdPartyQty=" + thirdPartyQty +
+				", totalCard='" + totalCard + '\'' +
+				", totalCardQty=" + totalCardQty +
+				", totalCash='" + totalCash + '\'' +
+				", totalCashQty=" + totalCashQty +
+				", deliveroo='" + deliveroo + '\'' +
+				", deliverooQty=" + deliverooQty +
+				", ubereats='" + ubereats + '\'' +
+				", ubereatsQty=" + ubereatsQty +
+				", foodpanda='" + foodpanda + '\'' +
+				", foodpandaQty=" + foodpandaQty +
+				", voucher='" + voucher + '\'' +
+				", voucherQty=" + voucherQty +
+				", billVoid='" + billVoid + '\'' +
+				", billVoidQty=" + billVoidQty +
+				", itemVoid='" + itemVoid + '\'' +
+				", itemVoidQty=" + itemVoidQty +
+				", nettSales='" + nettSales + '\'' +
+				", totalBills=" + totalBills +
+				", openCount=" + openCount +
+				", firstReceipt=" + firstReceipt +
+				", lastReceipt=" + lastReceipt +
+				", totalTax='" + totalTax + '\'' +
+				", orderQty=" + orderQty +
+				", personQty=" + personQty +
+				", totalBalancePrice='" + totalBalancePrice + '\'' +
+				", cashInAmt='" + cashInAmt + '\'' +
+				", cashOutAmt='" + cashOutAmt + '\'' +
+				", varianceAmt='" + varianceAmt + '\'' +
+				", inclusiveTaxAmt='" + inclusiveTaxAmt + '\'' +
+				", paypalpay='" + paypalpay + '\'' +
+				", paypalpayQty=" + paypalpayQty +
+				", storedCard='" + storedCard + '\'' +
+				", storedCardQty=" + storedCardQty +
+				", topUps='" + topUps + '\'' +
+				", topUpsQty=" + topUpsQty +
+				", billRefund='" + billRefund + '\'' +
+				", billRefundQty=" + billRefundQty +
+				", refundTax='" + refundTax + '\'' +
+				", startDrawerAmount='" + startDrawerAmount + '\'' +
+				", expectedAmount='" + expectedAmount + '\'' +
+				", waiterAmount='" + waiterAmount + '\'' +
+				", difference='" + difference + '\'' +
+				", cashTopUp='" + cashTopUp + '\'' +
+				", takeawaySales='" + takeawaySales + '\'' +
+				", takeawayTax='" + takeawayTax + '\'' +
+				", takeawayQty=" + takeawayQty +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				'}';
+	}
+}

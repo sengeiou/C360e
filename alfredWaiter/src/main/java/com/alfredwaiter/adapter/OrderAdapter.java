@@ -1,9 +1,5 @@
 package com.alfredwaiter.adapter;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -14,22 +10,20 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
-import com.alfredwaiter.activity.MainPage;
 import com.alfredwaiter.global.App;
-import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.javabean.ItemCategoryAndDetails;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.view.CountView;
-import com.alfredwaiter.view.CountView.onCountChange;
+import com.alfredwaiter.view.CountView.OnCountChange;
+
+import java.util.List;
 
 public class OrderAdapter extends BaseExpandableListAdapter {
 	private List<ItemCategoryAndDetails> itemCategoryAndDetailsList = null;
@@ -41,15 +35,16 @@ public class OrderAdapter extends BaseExpandableListAdapter {
 	private Order currentOrder;
 	private TextTypeFace textTypeFace = TextTypeFace.getInstance();
 	private SetItemCountWindow setItemCountWindow;
-
+	private OnCountChange onCountChange;
 	public OrderAdapter(Context context, List<ItemCategoryAndDetails> tables,
-			Handler handler,SetItemCountWindow setItemCountWindow) {
+			Handler handler,SetItemCountWindow setItemCountWindow, OnCountChange onCountChange) {
 		this.itemCategoryAndDetailsList = tables;
 		mContext = context;
 		inflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.handler = handler;
 		this.setItemCountWindow = setItemCountWindow;
+		this.onCountChange = onCountChange;
 	}
 
 	public void setParams(Order currentOrder,List<OrderDetail> orderDetails, int currentGroupId) {
@@ -80,11 +75,11 @@ public class OrderAdapter extends BaseExpandableListAdapter {
 			
 			@Override
 			public void onClick(View v) {
-				OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
-						currentOrder, itemDetail, currentGroupId,
-						ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
-				UIHelp.startOrderDetail((BaseActivity)mContext, currentOrder, itemDetail,
-						orderDetail, currentGroupId);
+//				OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+//						currentOrder, itemDetail, currentGroupId,
+//						ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
+//				UIHelp.startOrderDetail((BaseActivity)mContext, currentOrder, itemDetail,
+//						orderDetail, currentGroupId);
 			}
 		});
 		TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
@@ -99,16 +94,7 @@ public class OrderAdapter extends BaseExpandableListAdapter {
 		count_view.setInitCount(getItemNum(itemDetail));
 		count_view.setTag(itemDetail);
 		count_view.setParam(itemDetail,setItemCountWindow);
-		count_view.setOnCountChange(new onCountChange() {
-			@Override
-			public void onChange(int count) {
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("itemDetail", count_view.getTag());
-				map.put("count", count);
-				handler.sendMessage(handler.obtainMessage(
-						MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, map));
-			}
-		});
+		count_view.setOnCountChange(onCountChange);
 		return view;
 	}
 

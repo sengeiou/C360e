@@ -126,7 +126,6 @@ public class KotItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -157,7 +156,6 @@ public class KotItemDetailSQL {
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				result.add(kotItemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -165,7 +163,6 @@ public class KotItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -177,7 +174,6 @@ public class KotItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -208,7 +204,6 @@ public class KotItemDetailSQL {
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				result.add(kotItemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 			
@@ -216,7 +211,6 @@ public class KotItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -346,7 +340,6 @@ public class KotItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { orderId + "" });
 			int count = cursor.getCount();
 			Log.i("KotItemDetailSQL", count + "");
@@ -378,7 +371,6 @@ public class KotItemDetailSQL {
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				result.add(kotItemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -386,7 +378,6 @@ public class KotItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -398,7 +389,6 @@ public class KotItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { kotSummary.getId() + "" });
 			int count = cursor.getCount();
 			Log.i("KotItemDetailSQL", count + "");
@@ -430,7 +420,6 @@ public class KotItemDetailSQL {
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				result.add(kotItemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -438,7 +427,6 @@ public class KotItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -450,7 +438,6 @@ public class KotItemDetailSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { kotSummaryId + "", printerGroupId + "" });
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -481,7 +468,6 @@ public class KotItemDetailSQL {
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				result.add(kotItemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -489,7 +475,6 @@ public class KotItemDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -797,6 +782,15 @@ public class KotItemDetailSQL {
 	public static void deleteKotItemDetail(List<KotItemDetail> kotItemDetails) {
 		for (KotItemDetail kotItemDetail : kotItemDetails) {
 			deleteKotItemDetail(kotItemDetail);
+		}
+	}
+
+	public static void updateKotItemDetailId(int newOrderDetailId, int oldOrderDetailId){
+		String sql = "update " + TableNames.KotItemDetail + " set orderDetailId = ? where orderDetailId = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {newOrderDetailId, oldOrderDetailId});
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

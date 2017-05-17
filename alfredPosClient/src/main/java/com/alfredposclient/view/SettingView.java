@@ -80,6 +80,8 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		findViewById(R.id.ll_monthly_plu_report).setOnClickListener(this);
 		findViewById(R.id.ll_printer_qr_code).setOnClickListener(this);
 		findViewById(R.id.ll_sunmi).setOnClickListener(this);
+		findViewById(R.id.linear_sunmi).setOnClickListener(this);
+		SUNMIVisible();
 
 
 		if (App.instance.countryCode != ParamConst.CHINA) {
@@ -97,14 +99,29 @@ public class SettingView extends LinearLayout implements OnClickListener {
 	public void initOptionsNoSessionOpen() {
 		findViewById(R.id.ll_edit_settlement).setVisibility(
 				View.GONE);
-		findViewById(R.id.ll_close).setVisibility(View.GONE);		
-		
+		findViewById(R.id.ll_close).setVisibility(View.GONE);
+		if (App.instance.isSUNMIShow()){
+			findViewById(R.id.linear_sunmi).setVisibility(VISIBLE);
+			SUNMIGone();
+		}else {
+			findViewById(R.id.linear_sunmi).setVisibility(GONE);
+			SUNMIGone();
+		}
+
+
 	}
 	
 	public void initOptionsSessionOpen() {
 		findViewById(R.id.ll_edit_settlement).setVisibility(
 				View.GONE);
-		findViewById(R.id.ll_close).setVisibility(View.INVISIBLE);		
+		findViewById(R.id.ll_close).setVisibility(View.GONE);
+		if (App.instance.isSUNMIShow()){
+			findViewById(R.id.linear_sunmi).setVisibility(VISIBLE);
+			SUNMIGone();
+		}else {
+			findViewById(R.id.linear_sunmi).setVisibility(INVISIBLE);
+			SUNMIGone();
+		}
 	}
 	
 	@Override
@@ -213,7 +230,9 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				case R.id.ll_sunmi:
 					UIHelp.startSunmiActivity(context);
 					break;
-
+				case R.id.linear_sunmi:
+					UIHelp.startSunmiActivity(context);
+					break;
 			default:
 				break;
 			}
@@ -245,6 +264,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_printer_qr_code));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_version));
 		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_sunmi));
+		 textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.text_sunmi));
 	}
 
 	public void SUNMIVisible(){

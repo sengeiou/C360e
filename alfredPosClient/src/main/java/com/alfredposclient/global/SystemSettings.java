@@ -21,6 +21,8 @@ public class SystemSettings {
 	private boolean printBeforCloseBill = true; // bill close need print Bill?
 	private boolean cashClosePrint = true; // cash w close need print Bill?
 	private boolean autoRecevingOnlineOrder = false;
+	private boolean topMaskingIsUser = false;
+	private boolean isScreenLock = true;
 	private int maxPrintOrderNo = 98;
     
 	public SystemSettings(Context context) {
@@ -318,6 +320,49 @@ public class SystemSettings {
 			this.autoRecevingOnlineOrder = true;
 		else
 			this.autoRecevingOnlineOrder = false;
+	}
+
+	public boolean isTopMaskingIsUser() {
+		Integer value = Store.getInt(context,
+				Store.TOP_MASKING_IS_USER);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1)
+				this.topMaskingIsUser = true;
+			else
+				this.topMaskingIsUser = false;
+		}
+		return topMaskingIsUser;
+	}
+
+	public void setTopMaskingIsUser(Integer topMaskingIsUser) {
+		Store.putInt(this.context, Store.TOP_MASKING_IS_USER,
+				topMaskingIsUser);
+		if(topMaskingIsUser.intValue() == 1)
+			this.topMaskingIsUser = true;
+		else
+			this.topMaskingIsUser = false;
+	}
+
+	public boolean isScreenLock() {
+		Integer value = Store.getInt(context,
+				Store.IS_SCREDDN_LOCK);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1){
+				this.isScreenLock = true;
+			}else{
+				this.isScreenLock = false;
+			}
+		}
+		return isScreenLock;
+	}
+
+	public void setScreenLock(Integer screenLock) {
+		Store.putInt(this.context, Store.IS_SCREDDN_LOCK,
+				screenLock.intValue());
+		if(screenLock.intValue() == 1)
+			this.isScreenLock = true;
+		else
+			this.isScreenLock = false;
 	}
 
 	public int getMaxPrintOrderNo() {

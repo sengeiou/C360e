@@ -34,21 +34,17 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
     private TextView tv_psw_4;
     private TextView tv_psw_5;
     private String employee_ID;
-    private String password;
     private StringBuffer keyBuf = new StringBuffer();
     /**
      * 当前键盘输入对应的状态，0表示输入的员工ID，1表示输入的密码
      */
-    private int state = STATE_IN_ENTER_ID;
     public BaseActivity parent;
     public View contentView;
     private Dialog dialog;
     public TextTypeFace textTypeFace;
-    private User user;
 
     public ReloginDialog(BaseActivity parent) {
         this.parent = parent;
-//        user = App.instance.getUser();
         initView();
     }
 
@@ -79,7 +75,6 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
         Restaurant rest = CoreData.getInstance().getRestaurant();
         if(rest != null)
             tv_rest_name.setText(rest.getRestaurantName()+"");
-        refresh();
 
     }
 
@@ -99,24 +94,11 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
     }
 
 
-    private void refresh(){
-        String title = parent.getString(R.string.cashier_login_tips1);
-        if(state == STATE_IN_ENTER_ID){
-            tv_logout.setVisibility(View.INVISIBLE);
-        }else{
-            title = parent.getString(R.string.cashier_login_tips2) + "(" + user.getFirstName() + "." + user.getLastName() +")";
-        }
-        tv_login_tips.setText(title);
-    }
-
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_logout:
-                state = STATE_IN_ENTER_ID;
-                user = null;
-                refresh();
                 break;
         }
     }
@@ -135,65 +117,37 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
         int key_len = keyBuf.length();
         setPassword(key_len);
         if (key_len == KEY_LENGTH) {
-            if (state == STATE_IN_ENTER_ID) {
-                String title = parent.getString(R.string.cashier_login_tips1);
-                ((TextView) (contentView.findViewById(R.id.tv_login_tips))).setText(title);
+            employee_ID = keyBuf.toString();
+            setPassword(keyBuf.length());
+            User user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
+            if (user != null) {
+                RevenueCenter revenueCenter = App.instance
+                        .getRevenueCenter();
+                boolean cashierAccess = CoreData.getInstance()
+                        .checkUserCashierAccessInRevcenter(user,
+                                revenueCenter.getRestaurantId(),
+                                revenueCenter.getId());
 
-//                state = STATE_IN_ENTER_PASSWORD;
-                employee_ID = keyBuf.toString();
-                keyBuf.delete(0, key_len);
-                setPassword(keyBuf.length());
-//            } else if (state == STATE_IN_ENTER_PASSWORD) {
-                password = keyBuf.toString();
-                if(user == null) {
-//                     user = CoreData.getInstance().getUser(employee_ID,
-//                            password);
-                    user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
-                }
-                boolean cashierAccess = false;
-                if (user != null) {
-                    RevenueCenter revenueCenter = App.instance
-                            .getRevenueCenter();
-                    cashierAccess = CoreData.getInstance()
-                            .checkUserCashierAccessInRevcenter(user,
-                                    revenueCenter.getRestaurantId(),
-                                    revenueCenter.getId());
-
-                    if (cashierAccess) {
-                        User appUser = App.instance.getUser();
-                        App.instance.setUser(user);
-                        if(appUser != null){
-                            if(appUser.getId().intValue() != user.getId().intValue()){
-                                RxBus.getInstance().post(RxBus.RX_MSG_1, new Integer(1));
-                            }
+                if (cashierAccess) {
+                    App.instance.setUser(user);
+                    RxBus.getInstance().post(RxBus.RX_MSG_1, new Integer(1));
+                    contentView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dissmiss();
                         }
-
-//                        parent.overridePendingTransition(
-//                                R.anim.slide_bottom_in, R.anim.slide_top_out);
-//                        RxBus.getInstance()
-                        dissmiss();
-                        return;
-                    } else {
-                        UIHelp.showToast(parent, parent.getResources().getString(R.string.login_required));
-//                        String title = parent.getString(R.string.cashier_login_tips1);
-//                        ((TextView) (contentView.findViewById(R.id.tv_login_tips))).setText(title);
-                        state = STATE_IN_ENTER_ID;
-                        refresh();
-                        employee_ID = null;
-                        password = null;
-                    }
-                }else{
-                    UIHelp.showToast(parent, parent.getResources().getString(R.string.invalid_employee));
-//                    String title = parent.getString(R.string.cashier_login_tips1);
-//                    ((TextView) (contentView.findViewById(R.id.tv_login_tips))).setText(title);
-                    state = STATE_IN_ENTER_ID;
-                    refresh();
+                    },200);
+                    return;
+                } else {
+                    UIHelp.showToast(parent, parent.getResources().getString(R.string.login_required));
                     employee_ID = null;
-                    password = null;
                 }
-                keyBuf.delete(0, key_len);
-                setPassword(keyBuf.length());
+            }else{
+                UIHelp.showToast(parent, parent.getResources().getString(R.string.invalid_employee));
+                employee_ID = null;
             }
+
+
         }
     }
     private void setPassword(int key_len) {

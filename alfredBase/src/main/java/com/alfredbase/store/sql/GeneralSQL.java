@@ -1,7 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,6 +8,8 @@ import com.alfredbase.javabean.javabeanforhtml.DashboardItemDetail;
 import com.alfredbase.javabean.javabeanforhtml.DashboardSales;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
 
 /**
  * 本类用于综合查询，多变查询等
@@ -24,7 +24,6 @@ public class GeneralSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db
 					.query(TableNames.ItemCategory + " as a,"
 							+ TableNames.ItemDetail + " as b,"
@@ -48,7 +47,6 @@ public class GeneralSQL {
 				dashboardItemDetail.setName(cursor.getString(2));
 				dashboardItemDetails.add(dashboardItemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -56,7 +54,6 @@ public class GeneralSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return dashboardItemDetails;
 	}
@@ -67,7 +64,6 @@ public class GeneralSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db
 					.query(TableNames.OrderDetail + " as a, "
 							+ TableNames.ItemDetail + " as b",
@@ -90,7 +86,6 @@ public class GeneralSQL {
 				dashboardItemDetail.setName(cursor.getString(2));
 				dashboardItemDetails.add(dashboardItemDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -98,7 +93,6 @@ public class GeneralSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return dashboardItemDetails;
 	}
@@ -108,7 +102,6 @@ public class GeneralSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db
 					.query(TableNames.Order + " as a, " + TableNames.User
 							+ " as b",
@@ -132,7 +125,6 @@ public class GeneralSQL {
 						+ cursor.getString(3));
 				dashboardSaless.add(dashboardSales);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -140,7 +132,6 @@ public class GeneralSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return dashboardSaless;
 	}

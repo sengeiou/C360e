@@ -449,9 +449,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										   || kotItemModifier.getPrinterId().intValue() == prtDevice.getDevice_id()){
 									   canPrint = true;
 									   if(!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1){
-										   kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(),1);
+										   kot.AddModifierItem("-" + kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(),1);
 									   }else{
-										   kot.AddModifierItem(kotItemModifier.getModifierName(),1);
+										   kot.AddModifierItem("-" + kotItemModifier.getModifierName(),1);
 									   }
 
 
@@ -461,7 +461,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							   canPrint = true;
 							   List<String> mods = getModifierNameStr(modList);
 							   for (String mod : mods) {
-							       kot.AddModifierItem(mod,1);
+							       kot.AddModifierItem("-"+mod,1);
 							   }
 						   }
 							if (item.getSpecialInstractions() != null) {
@@ -513,16 +513,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 
 									kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
 									 if(!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1){
-										 kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
+										 kot.AddModifierItem("-" + kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
 									 } else{
-										 kot.AddModifierItem(kotItemModifier.getModifierName(), 1);
+										 kot.AddModifierItem("-" + kotItemModifier.getModifierName(), 1);
 									 }
 
 									for(KotItemModifier kotGeneralItemModifier : comboGeneralModifiers){
 										 if(!IntegerUtils.isEmptyOrZero(kotGeneralItemModifier.getModifierNum()) && kotGeneralItemModifier.getModifierNum().intValue() > 1){
-											 kot.AddModifierItem(kotGeneralItemModifier.getModifierName() + "x" + kotGeneralItemModifier.getModifierNum().intValue(), 1);
+											 kot.AddModifierItem("-" + kotGeneralItemModifier.getModifierName() + "x" + kotGeneralItemModifier.getModifierNum().intValue(), 1);
 										 }else{
-											 kot.AddModifierItem(kotGeneralItemModifier.getModifierName(), 1);
+											 kot.AddModifierItem("-" + kotGeneralItemModifier.getModifierName(), 1);
 										 }
 									}
 									if (item.getSpecialInstractions() != null) {
@@ -566,7 +566,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
 							List<String> mods = getModifierNameStr(modList);
 							for (String mod : mods) {
-								kot.AddModifierItem(mod, 1);
+								kot.AddModifierItem("-" + mod, 1);
 							}
 							if (item.getSpecialInstractions() != null) {
 								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
@@ -828,6 +828,18 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								break;
 							case ParamConst.SETTLEMENT_TYPE_STORED_CARD:
 								paymentType = PrintService.instance.getResources().getString(R.string.stored_card);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_DELIVEROO:
+								paymentType = PrintService.instance.getResources().getString(R.string.deliveroo);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_UBEREATS:
+								paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
+								paymentType = PrintService.instance.getResources().getString(R.string.foodpanda);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_VOUCHER:
+								paymentType = PrintService.instance.getResources().getString(R.string.voucher);
 								break;
 							}
 							if (!TextUtils.isEmpty(paymentType)) {
@@ -1276,9 +1288,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										   || kotItemModifier.getPrinterId().intValue() == prtDevice.getDevice_id()){
 									   canPrint = true;
 									   if(!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1){
-										   kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
+										   kot.AddModifierItem("-" + kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
 									   } else{
-										   kot.AddModifierItem(kotItemModifier.getModifierName(), 1);
+										   kot.AddModifierItem("-" + kotItemModifier.getModifierName(), 1);
 									   }
 									   
 								   }
@@ -1287,7 +1299,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							   canPrint = true;
 							   List<String> mods = getModifierNameStr(modList);
 							   for (String mod : mods) {
-							       kot.AddModifierItem(mod, 1);
+							       kot.AddModifierItem("-" + mod, 1);
 							   }
 						   }
 						   if (item.getSpecialInstractions() != null) {
@@ -1342,16 +1354,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					
 									kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
 									if(!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1){
-										kot.AddModifierItem(kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
+										kot.AddModifierItem("-" + kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
 									} else {
-										kot.AddModifierItem(kotItemModifier.getModifierName(), 1);
+										kot.AddModifierItem("-" + kotItemModifier.getModifierName(), 1);
 									}
 									
 									for(KotItemModifier kotGeneralItemModifier : comboGeneralModifiers){
 										if(!IntegerUtils.isEmptyOrZero(kotGeneralItemModifier.getModifierNum()) && kotGeneralItemModifier.getModifierNum().intValue() > 1){
-											kot.AddModifierItem(kotGeneralItemModifier.getModifierName() + "x" + kotGeneralItemModifier.getModifierNum().intValue(), 1);
+											kot.AddModifierItem("-" + kotGeneralItemModifier.getModifierName() + "x" + kotGeneralItemModifier.getModifierNum().intValue(), 1);
 										}else {
-											kot.AddModifierItem(kotGeneralItemModifier.getModifierName(), 1);
+											kot.AddModifierItem("-" + kotGeneralItemModifier.getModifierName(), 1);
 										}
 										
 									}
@@ -1659,6 +1671,18 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							case ParamConst.SETTLEMENT_TYPE_STORED_CARD:
 								paymentType = PrintService.instance.getResources().getString(R.string.stored_card);
 								break;
+							case ParamConst.SETTLEMENT_TYPE_DELIVEROO:
+								paymentType = PrintService.instance.getResources().getString(R.string.deliveroo);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_UBEREATS:
+								paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
+								paymentType = PrintService.instance.getResources().getString(R.string.foodpanda);
+								break;
+							case ParamConst.SETTLEMENT_TYPE_VOUCHER:
+								paymentType = PrintService.instance.getResources().getString(R.string.voucher);
+								break;
 							}
 							if (!TextUtils.isEmpty(paymentType)) {
 								stmt.put(paymentType,
@@ -1752,7 +1776,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							   canPrint = true;
 							   List<String> mods = getModifierNameStr(modList);
 							   for (String mod : mods) {
-							       kot.AddModifierItem(mod,1);
+							       kot.AddModifierItem("-" + mod,1);
 							   }
 //						   }
 							if (item.getSpecialInstractions() != null) {

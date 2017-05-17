@@ -1,9 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -12,6 +8,10 @@ import com.alfredbase.javabean.NonChargableSettlement;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NonChargableSettlementSQL {
 
@@ -132,7 +132,6 @@ public class NonChargableSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(paymentId) });
 			if (cursor.moveToFirst()) {
@@ -154,7 +153,6 @@ public class NonChargableSettlementSQL {
 				nonChargableSettlement.setIsActive(cursor.getInt(14));
 				nonChargableSettlements.add(nonChargableSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -162,7 +160,6 @@ public class NonChargableSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return nonChargableSettlements;
 	}
@@ -173,7 +170,6 @@ public class NonChargableSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -200,7 +196,6 @@ public class NonChargableSettlementSQL {
 				nonChargableSettlement.setIsActive(cursor.getInt(14));
 				result.add(nonChargableSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -208,7 +203,6 @@ public class NonChargableSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -234,7 +228,6 @@ public class NonChargableSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db =SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(
 					sql,
 					new String[] { String.valueOf(time),
@@ -248,7 +241,6 @@ public class NonChargableSettlementSQL {
 				result.put("sumAmount", cursor.getString(0));
 				result.put("count", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -256,7 +248,6 @@ public class NonChargableSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

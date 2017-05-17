@@ -310,7 +310,34 @@ public class DaySalesReportPrint extends ReportBasePrint{
 				this.addItem(PrintService.instance.getResources().getString(R.string.boh), reportDaySales.getHoldldQty().toString(),
 						reportDaySales.getHoldld(), 1);
 		}
-		
+		int totalDeliveryQty = 0;
+		BigDecimal totalDelivery = BH.getBD(ParamConst.DOUBLE_ZERO);
+		if(BH.getBD(reportDaySales.getDeliveroo()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
+			this.addItem(PrintService.instance.getResources().getString(R.string.deliveroo), reportDaySales.getDeliverooQty().toString(),
+					BH.getBD(reportDaySales.getDeliveroo()).toString(), 1);
+			totalDelivery = BH.add(totalDelivery, BH.getBD(reportDaySales.getDeliveroo()), false);
+			totalDeliveryQty += reportDaySales.getDeliverooQty().intValue();
+		}
+		if(BH.getBD(reportDaySales.getUbereats()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
+			this.addItem(PrintService.instance.getResources().getString(R.string.ubereats), reportDaySales.getUbereatsQty().toString(),
+					BH.getBD(reportDaySales.getUbereats()).toString(), 1);
+			totalDelivery = BH.add(totalDelivery, BH.getBD(reportDaySales.getUbereats()), false);
+			totalDeliveryQty += reportDaySales.getUbereatsQty().intValue();
+		}
+		if(BH.getBD(reportDaySales.getFoodpanda()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
+			this.addItem(PrintService.instance.getResources().getString(R.string.foodpanda), reportDaySales.getFoodpandaQty().toString(),
+					BH.getBD(reportDaySales.getFoodpanda()).toString(), 1);
+			totalDelivery = BH.add(totalDelivery, BH.getBD(reportDaySales.getFoodpanda()), false);
+			totalDeliveryQty += reportDaySales.getFoodpandaQty().intValue();
+		}
+		if(BH.getBD(reportDaySales.getVoucher()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
+			this.addItem(PrintService.instance.getResources().getString(R.string.voucher), reportDaySales.getVoucherQty().toString(),
+					BH.getBD(reportDaySales.getVoucher()).toString(), 1);
+		}
+		if(totalDelivery.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
+			this.addItem("TOTAL DELIVERY", totalDeliveryQty+"",
+					totalDelivery.toString(), 1);
+		}
 //        this.addItem(PrintService.instance.getResources().getString(R.string.ent), reportDaySales.getFocBillQty().toString(),
 //                reportDaySales.getFocBill(), 1);
 		if(BH.getBD(reportDaySales.getTotalCard()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)

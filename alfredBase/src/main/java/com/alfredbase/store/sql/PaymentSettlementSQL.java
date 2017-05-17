@@ -88,7 +88,6 @@ public class PaymentSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(paymentID) });
 			int count = cursor.getCount();
@@ -114,7 +113,6 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setIsActive(cursor.getInt(12));
 				paymentSettlements.add(paymentSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -122,7 +120,6 @@ public class PaymentSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return paymentSettlements;
 	}
@@ -141,7 +138,6 @@ public class PaymentSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(orderId) });
 			int count = cursor.getCount();
@@ -165,7 +161,6 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setCashChange(cursor.getString(11));
 				paymentSettlement.setIsActive(cursor.getInt(12));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -173,7 +168,6 @@ public class PaymentSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return paymentSettlement;
 	}
@@ -185,13 +179,11 @@ public class PaymentSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { String.valueOf(paymentID) });
 			if (cursor.moveToFirst()) {
 				sumPaidamount = cursor.getString(0);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -199,7 +191,6 @@ public class PaymentSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return sumPaidamount;
 	}
@@ -245,11 +236,10 @@ public class PaymentSettlementSQL {
 
 	public static ArrayList<PaymentSettlement> getAllPaymentSettlement() {
 		ArrayList<PaymentSettlement> result = new ArrayList<PaymentSettlement>();
-		String sql = "select * from " + TableNames.PaymentSettlement + " and isActive = " + ParamConst.PAYMENT_SETT_IS_ACTIVE;
+		String sql = "select * from " + TableNames.PaymentSettlement + " where isActive = " + ParamConst.PAYMENT_SETT_IS_ACTIVE;
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -274,7 +264,6 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setIsActive(cursor.getInt(12));
 				result.add(paymentSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -282,7 +271,6 @@ public class PaymentSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -300,7 +288,6 @@ public class PaymentSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] { paymentId + "" });
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -325,7 +312,6 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setIsActive(cursor.getInt(12));
 				result.add(paymentSettlement);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -333,7 +319,6 @@ public class PaymentSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -350,7 +335,6 @@ public class PaymentSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(
 					sql,
 					new String[] { String.valueOf(paymentTypeId),
@@ -360,7 +344,6 @@ public class PaymentSettlementSQL {
 				map.put("sumAmount", cursor.getString(0));
 				map.put("count", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -368,7 +351,6 @@ public class PaymentSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		if (map.get("sumAmount") == null || map.get("sumAmount").equals("0")) {
 			map.put("sumAmount", "0.00");
@@ -394,7 +376,6 @@ public class PaymentSettlementSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(
 					sql,
 					new String[] { String.valueOf(paymentTypeId),
@@ -406,7 +387,6 @@ public class PaymentSettlementSQL {
 				map.put("sumAmount", cursor.getString(0));
 				map.put("count", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -414,7 +394,6 @@ public class PaymentSettlementSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		if (map.get("sumAmount") == null || map.get("sumAmount").equals("0")) {
 			map.put("sumAmount", "0.00");
@@ -899,9 +878,11 @@ public class PaymentSettlementSQL {
 				+ " t, "
 				+ TableNames.Order
 				+ " o "
-				+ "WHERE p.id = s.paymentId AND s.paymentTypeId = "
+				+ "WHERE p.id = s.paymentId AND (s.paymentTypeId = "
 				+ ParamConst.SETTLEMENT_TYPE_VOID
-				+" and p.type = "
+				+ " or s.paymentTypeId = " +
+				+ ParamConst.SETTLEMENT_TYPE_REFUND
+				+ " ) and p.type = "
 				+ ParamConst.BILL_TYPE_UN_SPLIT
 				+ " AND p.orderId = t.orderId AND p.orderId = o.id AND p.businessDate = ? and s.isActive = " 
 				+ ParamConst.PAYMENT_SETT_IS_ACTIVE 
@@ -947,9 +928,11 @@ public class PaymentSettlementSQL {
 				+ " t, "
 				+ TableNames.OrderSplit
 				+ " o "
-				+ "WHERE p.id = s.paymentId AND s.paymentTypeId = "
+				+ "WHERE p.id = s.paymentId AND (s.paymentTypeId = "
 				+ ParamConst.SETTLEMENT_TYPE_VOID
-				+" and p.type = "
+				+ " or s.paymentTypeId = "
+				+ ParamConst.SETTLEMENT_TYPE_REFUND
+				+ " ) and p.type = "
 				+ ParamConst.BILL_TYPE_SPLIT
 				+ " AND p.orderId = t.orderId  and t.groupId = o.groupId AND p.orderSplitId = o.id and s.isActive = " 
 				+ ParamConst.PAYMENT_SETT_IS_ACTIVE 

@@ -212,7 +212,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { order.getId() + "" });
 			int count = cursor.getCount();
@@ -239,7 +238,6 @@ public class OrderModifierSQL {
 				orderModifier.setModifierItemPrice(cursor.getString(13));
 				result.add(orderModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -247,7 +245,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -266,7 +263,6 @@ public class OrderModifierSQL {
 			Cursor cursor = null;
 			SQLiteDatabase db = SQLExe.getDB();
 			try {
-				db.beginTransaction();
 				cursor = db.rawQuery(sql,
 						new String[] { orderDetail.getId() + "" });
 				int count = cursor.getCount();
@@ -293,7 +289,6 @@ public class OrderModifierSQL {
 					orderModifier.setModifierItemPrice(cursor.getString(13));
 					result.add(orderModifier);
 				}
-				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
 
@@ -301,7 +296,6 @@ public class OrderModifierSQL {
 				if (cursor != null && !cursor.isClosed()) {
 					cursor.close();
 				}
-				db.endTransaction();
 			}
 			return result;
 	}
@@ -319,7 +313,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] { order.getId() + "" });
 			int count = cursor.getCount();
@@ -346,7 +339,6 @@ public class OrderModifierSQL {
 				orderModifier.setModifierItemPrice(cursor.getString(13));
 				result.add(orderModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -354,7 +346,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 }
@@ -366,7 +357,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] {String.valueOf(modifierId), String.valueOf(businessDate), String.valueOf(orderDetailStatus)});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -374,7 +364,6 @@ public class OrderModifierSQL {
 				result.put("sumModifierPrice", cursor.getString(0));
 				result.put("sumModifierNum", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -382,7 +371,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -394,7 +382,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] {String.valueOf(itemId), String.valueOf(modifierId), String.valueOf(businessDate), String.valueOf(orderDetailStatus)});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -402,7 +389,6 @@ public class OrderModifierSQL {
 				result.put("sumModifierPrice", cursor.getString(0));
 				result.put("sumModifierNum", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -410,7 +396,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -422,7 +407,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] {String.valueOf(modifierId), String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(orderDetailStatus)});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -430,7 +414,6 @@ public class OrderModifierSQL {
 				result.put("sumModifierPrice", cursor.getString(0));
 				result.put("sumModifierNum", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -438,7 +421,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -450,7 +432,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] {String.valueOf(modifierId), String.valueOf(businessDate)});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -458,7 +439,6 @@ public class OrderModifierSQL {
 				result.put("sumModifierPrice", cursor.getString(0));
 				result.put("sumModifierNum", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -466,7 +446,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -513,7 +492,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] {String.valueOf(itemId), String.valueOf(modifierId), String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime())});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -522,7 +500,6 @@ public class OrderModifierSQL {
 				result.put("sumModifierNum", String.valueOf(cursor.getInt(1)));
 				result.put("modifierItemPrice", cursor.getString(2));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -530,7 +507,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -542,7 +518,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql,
 					new String[] {String.valueOf(modifierId), String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime())});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -550,7 +525,6 @@ public class OrderModifierSQL {
 				result.put("sumModifierPrice", cursor.getString(0));
 				result.put("sumModifierNum", String.valueOf(cursor.getInt(1)));
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -558,7 +532,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -575,7 +548,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db
 					.rawQuery(
 							sql,
@@ -605,7 +577,6 @@ public class OrderModifierSQL {
 				orderModifier.setModifierItemPrice(cursor.getString(13));
 				result.add(orderModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -613,7 +584,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -625,7 +595,6 @@ public class OrderModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db
 					.rawQuery(
 							sql,
@@ -654,7 +623,6 @@ public class OrderModifierSQL {
 				orderModifier.setModifierItemPrice(cursor.getString(13));
 				result.add(orderModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -662,7 +630,6 @@ public class OrderModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

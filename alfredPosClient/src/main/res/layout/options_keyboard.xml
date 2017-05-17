@@ -16,44 +16,31 @@
             android:layout_weight="1"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/tv_BILL_on_HOLD"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/box_number_selector"
-                android:gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/bill_on_hold" 
-                android:textColor="@color/text_color_selector"
-                android:textSize="@dimen/text_size_s"/>
-            
-            <TextView
-                android:id="@+id/tv_COMPANY"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/box_number_selector"
-                android:gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/company" 
-                android:textColor="@color/text_color_selector"
-                android:textSize="@dimen/text_size_s"/>
-            
-            <TextView
-	            android:id="@+id/tv_HOUSE_CHARGE"
-	            android:layout_width="match_parent"
-	            android:layout_height="0dp"
-	            android:layout_weight="1"
-	            android:background="@drawable/box_number_selector"
-	            android:gravity="center"
-	            android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-	            android:text="@string/house_charge"
-	            android:textColor="@color/text_color_selector"
-                android:textSize="@dimen/text_size_s" />
+			<TextView
+				android:id="@+id/tv_ENTERTAINMENT"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:background="@drawable/box_number_selector"
+				android:gravity="center"
+				android:layout_marginLeft="10dp"
+				android:layout_marginRight="10dp"
+				android:text="@string/entertainment"
+				android:textColor="@color/text_color_selector"
+				android:textSize="@dimen/text_size_s" />
+
+			<TextView
+				android:id="@+id/tv_BILL_on_HOLD"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:background="@drawable/box_number_selector"
+				android:gravity="center"
+				android:layout_marginLeft="10dp"
+				android:layout_marginRight="10dp"
+				android:text="@string/bill_on_hold"
+				android:textColor="@color/text_color_selector"
+				android:textSize="@dimen/text_size_s"/>
 
         </LinearLayout>
 
@@ -76,20 +63,9 @@
                 android:textColor="@color/text_color_selector"
                 android:textSize="@dimen/text_size_s"/>
 
-            <TextView
-                android:id="@+id/tv_ENTERTAINMENT"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/box_number_selector"
-                android:gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/entertainment"
-                android:textColor="@color/text_color_selector"
-                android:textSize="@dimen/text_size_s" />
-            
-            <TextView
+
+
+			<TextView
 				android:id="@+id/tv_stored_card"
 	            android:layout_width="match_parent"
 	            android:layout_height="0dp"

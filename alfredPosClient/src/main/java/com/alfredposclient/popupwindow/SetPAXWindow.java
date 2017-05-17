@@ -24,6 +24,7 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
+import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.view.MoneyKeyboard;
 import com.alfredposclient.view.MoneyKeyboard.KeyBoardClickListener;
@@ -33,6 +34,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_2 = 500;
 	public static final int APP_ORDER = 1;
 	public static final int GENERAL_ORDER = 0;
+	public static final int MAX_ORDER_NO = 2;
 	private BaseActivity parent;
 	private View parentView;
 	private Handler handler;
@@ -82,13 +84,14 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 		popupWindow.setFocusable(true);
 	}
 
-	public void show(int type) {
+	public void show(int type, String title) {
 		if(isShowing()){
 			return;
 		}
 		init();
 		flag = false;
 		this.type = type;
+		tv_pax_tips.setText(title);
 		popupWindow
 				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, 0);
 		rl_pax_panel.post(new Runnable() {
@@ -113,11 +116,17 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 		});
 	}
 	
-	public void show(String str, Order order) {
+	public void show(String str, Order order, String title) {
 		this.str = str;
 		this.order = order;
-		show(0);
+		show(0, title);
 	}
+	public void show(int type, String str, String title) {
+		this.str = str;
+		show(type, title);
+	}
+
+
 	
 
 	public void dismiss() {
@@ -171,6 +180,12 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 		} else if ("Enter".equals(key)) {
 			if (TextUtils.isEmpty(tv_pax.getText().toString())) {
 				UIHelp.showToast(parent, parent.getResources().getString(R.string.enter_people));
+			}else if (type == MAX_ORDER_NO){
+				Message msg = handler.obtainMessage();
+				msg.what = SystemSetting.SET_MAX_ORDER_NO;
+				msg.obj = tv_pax.getText().toString();
+				handler.sendMessage(msg);
+				dismiss();
 			}else if (type == APP_ORDER) {
 				Message msg = handler.obtainMessage();
 				msg.what = MainPage.VIEW_EVENT_SET_APPORDER_TABLE_PACKS;

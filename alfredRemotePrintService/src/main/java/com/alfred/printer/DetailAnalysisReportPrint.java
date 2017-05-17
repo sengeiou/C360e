@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 public class DetailAnalysisReportPrint extends ReportBasePrint{
@@ -322,115 +322,184 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 		ComparatorPluDayItem comparatorPluDayItem = new ComparatorPluDayItem();
 		Collections.sort(reportPluDayItems, comparatorPluDayItem);
-		List<ReportPluDayItem> cop = new ArrayList<ReportPluDayItem>();
+//		List<ReportPluDayItem> cop = new ArrayList<ReportPluDayItem>();
 		int allQty = 0;
 		BigDecimal allAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
-			boolean showMainCategory = true;
-			int mainCategoryId = 0;
-			boolean lastLinePrinted = false;
-		BigDecimal categoryAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
-		String name = "";
-		int id = 0;
+//			boolean showMainCategory = true;
+//			int mainCategoryId = 0;
+		boolean lastLinePrinted = false;
+//		BigDecimal categoryAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+//		String name = "";
+//		int id = 0;
+		Map<Integer, ReportPluDayItem> map = new HashMap<Integer, ReportPluDayItem>();
 		for (int j = 0; j < reportPluDayItems.size(); j++) {
 
 			ReportPluDayItem reportPluDayItem = reportPluDayItems.get(j);
-				if(mainCategoryId == 0 || mainCategoryId == reportPluDayItem.getItemMainCategoryId().intValue()){
-					categoryAmount = BH.add(categoryAmount,
-							BH.getBD(reportPluDayItem.getItemAmount()), true);
-					name = reportPluDayItem.getItemMainCategoryName();
-					id = reportPluDayItem.getItemMainCategoryId().intValue();
-
-					if(mainCategoryId == 0)
-						mainCategoryId = id;
-
-					if( j ==  reportPluDayItems.size() - 1){
-						ReportPluDayItem rr = new ReportPluDayItem();
-						rr.setItemMainCategoryId(id);
-						rr.setItemMainCategoryName(name);
-						rr.setItemAmount(categoryAmount.toString());
-						cop.add(rr);
-					}
-				}else{
-					ReportPluDayItem rr = new ReportPluDayItem();
-					rr.setItemMainCategoryId(id);
-					rr.setItemMainCategoryName(name);
-					rr.setItemAmount(categoryAmount.toString());
-					cop.add(rr);
-					name = reportPluDayItem.getItemMainCategoryName();
-					id = reportPluDayItem.getItemMainCategoryId().intValue();
-					mainCategoryId = id;
-					categoryAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
-					categoryAmount = BH.add(categoryAmount,
-							BH.getBD(reportPluDayItem.getItemAmount()), true);
-
-				}
+			if(map.containsKey(reportPluDayItem.getItemMainCategoryId().intValue())){
+				ReportPluDayItem amountReportPluDayItem = map.get(reportPluDayItem.getItemMainCategoryId().intValue());
+				BigDecimal amount = BH.add(BH.getBD(amountReportPluDayItem.getItemAmount()), BH.getBD(reportPluDayItem.getItemAmount()), false);
+				amountReportPluDayItem.setItemAmount(amount.toString());
+			}else{
+				ReportPluDayItem rr = new ReportPluDayItem();
+				rr.setItemMainCategoryId(reportPluDayItem.getItemMainCategoryId());
+				rr.setItemMainCategoryName(reportPluDayItem.getItemMainCategoryName());
+				rr.setItemAmount(reportPluDayItem.getItemAmount().toString());
+				map.put(reportPluDayItem.getItemMainCategoryId().intValue(), rr);
+			}
+//				if(mainCategoryId == 0 || mainCategoryId == reportPluDayItem.getItemMainCategoryId().intValue()){
+//					categoryAmount = BH.add(categoryAmount,
+//							BH.getBD(reportPluDayItem.getItemAmount()), true);
+//					name = reportPluDayItem.getItemMainCategoryName();
+//					id = reportPluDayItem.getItemMainCategoryId().intValue();
+//
+//					if(mainCategoryId == 0)
+//						mainCategoryId = id;
+//
+//					if( j ==  reportPluDayItems.size() - 1){
+//						ReportPluDayItem rr = new ReportPluDayItem();
+//						rr.setItemMainCategoryId(id);
+//						rr.setItemMainCategoryName(name);
+//						rr.setItemAmount(categoryAmount.toString());
+//						cop.add(rr);
+//					}
+//				}else{
+//					ReportPluDayItem rr = new ReportPluDayItem();
+//					rr.setItemMainCategoryId(id);
+//					rr.setItemMainCategoryName(name);
+//					rr.setItemAmount(categoryAmount.toString());
+//					cop.add(rr);
+//					name = reportPluDayItem.getItemMainCategoryName();
+//					id = reportPluDayItem.getItemMainCategoryId().intValue();
+//					mainCategoryId = id;
+//					categoryAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+//					categoryAmount = BH.add(categoryAmount,
+//							BH.getBD(reportPluDayItem.getItemAmount()), true);
+//
+//				}
 		}
-			for(ReportPluDayItem category : cop) {
-				if(cop.indexOf(category) != 0){
-					this.addHortionalLine(this.charSize);
-				}
-				this.AddItem(category.getItemMainCategoryName(), "", "", category.getItemAmount(), 1);
+
+		Iterator<Map.Entry<Integer, ReportPluDayItem>> entries = map.entrySet().iterator();
+		boolean isFirst = true;
+		while (entries.hasNext()){
+			Map.Entry<Integer, ReportPluDayItem> entry = entries.next();
+			if(!isFirst){
 				this.addHortionalLine(this.charSize);
-				for (int j = 0; j < reportPluDayItems.size(); j++) {
+			}
+			isFirst = false;
+			ReportPluDayItem amontReportPluDayItem = entry.getValue();
+			this.AddItem(amontReportPluDayItem.getItemMainCategoryName(), "", "", amontReportPluDayItem.getItemAmount(), 1);
+			this.addHortionalLine(this.charSize);
+			for (int j = 0; j < reportPluDayItems.size(); j++) {
 
-					ReportPluDayItem reportPluDayItem = reportPluDayItems.get(j);
-//					if (mainCategoryId != reportPluDayItem.getItemMainCategoryId().intValue()) {
-//						if (mainCategoryId != 0) {
-//							if (!lastLinePrinted)
-//								this.addHortionalLine(this.charSize);
-//							lastLinePrinted = true;
-//						}
-//						mainCategoryId = reportPluDayItem.getItemMainCategoryId().intValue();
-//						showMainCategory = true;
-//					}
-//					if (showMainCategory) {
-//						this.AddItem(reportPluDayItem.getItemMainCategoryName(), "", "", "", 1);
-//						this.addHortionalLine(this.charSize);
-//						showMainCategory = false;
-//						lastLinePrinted = true;
-//					}
-					if (category.getItemMainCategoryId().intValue() == reportPluDayItem.getItemMainCategoryId().intValue()) {
-						//Bob: Print comb modifier
-						int itmId = reportPluDayItem.getItemDetailId().intValue();
-						ArrayList<ReportPluDayComboModifier> comItems = combMap.get(itmId);
-						if (comItems != null && comItems.size() > 0) {
+				ReportPluDayItem reportPluDayItem = reportPluDayItems.get(j);
+				if (amontReportPluDayItem.getItemMainCategoryId().intValue() == reportPluDayItem.getItemMainCategoryId().intValue()) {
+					//Bob: Print comb modifier
+					int itmId = reportPluDayItem.getItemDetailId().intValue();
+					ArrayList<ReportPluDayComboModifier> comItems = combMap.get(itmId);
+					if (comItems != null && comItems.size() > 0) {
 
-							int mm = 0;
-							this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
-									reportPluDayItem.getItemCount().toString(),
-									reportPluDayItem.getItemAmount(), 1);
-							lastLinePrinted = false;
-							this.addHortionalLine(this.charSize);
-							for (mm = 0; mm < comItems.size(); mm++) {
-								ReportPluDayComboModifier pluModifier = comItems.get(mm);
-								int count = pluModifier.getModifierCount().intValue() - pluModifier.getVoidModifierCount().intValue() - pluModifier.getBillVoidCount().intValue();
-								if (count > 0) {
-									BigDecimal modifierAmount = BH.mul(BH.getBD(1.00), BH.getBD(pluModifier.getModifierPrice()), true);
-									BigDecimal modifierPrice = BH.mul(BH.getBD(1.00), BH.getBD(pluModifier.getModifierItemPrice()), true);
-									this.AddItem(" (" + pluModifier.getModifierName() + ")",
-											"(" + modifierPrice.toString() + ")", "(" + String.valueOf(count) + ")", "(" + modifierAmount.toString() + ")", 1);
-									lastLinePrinted = false;
-								}
+						int mm = 0;
+						this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
+								reportPluDayItem.getItemCount().toString(),
+								reportPluDayItem.getItemAmount(), 1);
+						lastLinePrinted = false;
+						this.addHortionalLine(this.charSize);
+						for (mm = 0; mm < comItems.size(); mm++) {
+							ReportPluDayComboModifier pluModifier = comItems.get(mm);
+							int count = pluModifier.getModifierCount().intValue() - pluModifier.getVoidModifierCount().intValue() - pluModifier.getBillVoidCount().intValue();
+							if (count > 0) {
+								BigDecimal modifierAmount = BH.mul(BH.getBD(1.00), BH.getBD(pluModifier.getModifierPrice()), true);
+								BigDecimal modifierPrice = BH.mul(BH.getBD(1.00), BH.getBD(pluModifier.getModifierItemPrice()), true);
+								this.AddItem(" (" + pluModifier.getModifierName() + ")",
+										"(" + modifierPrice.toString() + ")", "(" + String.valueOf(count) + ")", "(" + modifierAmount.toString() + ")", 1);
+								lastLinePrinted = false;
 							}
-							if (mm == comItems.size() && mm > 0) {
-								if (!lastLinePrinted)
-									this.addHortionalLine(this.charSize);
-								lastLinePrinted = true;
-							}
-
-						} else {
-
-							this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
-									reportPluDayItem.getItemCount().toString(), "" + reportPluDayItem.getItemAmount(), 1);
-							lastLinePrinted = false;
 						}
-						//END Comb modifier print
-						allQty += reportPluDayItem.getItemCount();
-						allAmount = BH.add(allAmount,
-								BH.getBD(reportPluDayItem.getItemAmount()), true);
+						if (mm == comItems.size() && mm > 0) {
+							if (!lastLinePrinted)
+								this.addHortionalLine(this.charSize);
+							lastLinePrinted = true;
+						}
+
+					} else {
+
+						this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
+								reportPluDayItem.getItemCount().toString(), "" + reportPluDayItem.getItemAmount(), 1);
+						lastLinePrinted = false;
 					}
+					//END Comb modifier print
+					allQty += reportPluDayItem.getItemCount();
+					allAmount = BH.add(allAmount,
+							BH.getBD(reportPluDayItem.getItemAmount()), true);
 				}
 			}
+		}
+//		for(ReportPluDayItem category : cop) {
+//				if(cop.indexOf(category) != 0){
+//					this.addHortionalLine(this.charSize);
+//				}
+//				this.AddItem(category.getItemMainCategoryName(), "", "", category.getItemAmount(), 1);
+//				this.addHortionalLine(this.charSize);
+//				for (int j = 0; j < reportPluDayItems.size(); j++) {
+//
+//					ReportPluDayItem reportPluDayItem = reportPluDayItems.get(j);
+////					if (mainCategoryId != reportPluDayItem.getItemMainCategoryId().intValue()) {
+////						if (mainCategoryId != 0) {
+////							if (!lastLinePrinted)
+////								this.addHortionalLine(this.charSize);
+////							lastLinePrinted = true;
+////						}
+////						mainCategoryId = reportPluDayItem.getItemMainCategoryId().intValue();
+////						showMainCategory = true;
+////					}
+////					if (showMainCategory) {
+////						this.AddItem(reportPluDayItem.getItemMainCategoryName(), "", "", "", 1);
+////						this.addHortionalLine(this.charSize);
+////						showMainCategory = false;
+////						lastLinePrinted = true;
+////					}
+//					if (category.getItemMainCategoryId().intValue() == reportPluDayItem.getItemMainCategoryId().intValue()) {
+//						//Bob: Print comb modifier
+//						int itmId = reportPluDayItem.getItemDetailId().intValue();
+//						ArrayList<ReportPluDayComboModifier> comItems = combMap.get(itmId);
+//						if (comItems != null && comItems.size() > 0) {
+//
+//							int mm = 0;
+//							this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
+//									reportPluDayItem.getItemCount().toString(),
+//									reportPluDayItem.getItemAmount(), 1);
+//							lastLinePrinted = false;
+//							this.addHortionalLine(this.charSize);
+//							for (mm = 0; mm < comItems.size(); mm++) {
+//								ReportPluDayComboModifier pluModifier = comItems.get(mm);
+//								int count = pluModifier.getModifierCount().intValue() - pluModifier.getVoidModifierCount().intValue() - pluModifier.getBillVoidCount().intValue();
+//								if (count > 0) {
+//									BigDecimal modifierAmount = BH.mul(BH.getBD(1.00), BH.getBD(pluModifier.getModifierPrice()), true);
+//									BigDecimal modifierPrice = BH.mul(BH.getBD(1.00), BH.getBD(pluModifier.getModifierItemPrice()), true);
+//									this.AddItem(" (" + pluModifier.getModifierName() + ")",
+//											"(" + modifierPrice.toString() + ")", "(" + String.valueOf(count) + ")", "(" + modifierAmount.toString() + ")", 1);
+//									lastLinePrinted = false;
+//								}
+//							}
+//							if (mm == comItems.size() && mm > 0) {
+//								if (!lastLinePrinted)
+//									this.addHortionalLine(this.charSize);
+//								lastLinePrinted = true;
+//							}
+//
+//						} else {
+//
+//							this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
+//									reportPluDayItem.getItemCount().toString(), "" + reportPluDayItem.getItemAmount(), 1);
+//							lastLinePrinted = false;
+//						}
+//						//END Comb modifier print
+//						allQty += reportPluDayItem.getItemCount();
+//						allAmount = BH.add(allAmount,
+//								BH.getBD(reportPluDayItem.getItemAmount()), true);
+//					}
+//				}
+//			}
 					if (allQty != 0) {
 						this.addHortionalLine(this.charSize);
 						this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "", "" + allAmount, 1);

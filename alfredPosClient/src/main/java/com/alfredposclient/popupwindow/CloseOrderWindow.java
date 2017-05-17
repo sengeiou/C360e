@@ -286,11 +286,18 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		contentView.findViewById(R.id.iv_dinersclub).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_BILL_on_HOLD).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_VOID).setOnClickListener(this);
-		contentView.findViewById(R.id.tv_COMPANY).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_ENTERTAINMENT)
 				.setOnClickListener(this);
 		contentView.findViewById(R.id.tv_stored_card).setOnClickListener(this);
-		contentView.findViewById(R.id.tv_HOUSE_CHARGE).setOnClickListener(this);
+		contentView.findViewById(R.id.tv_deliveroo)
+				.setOnClickListener(this);
+		contentView.findViewById(R.id.tv_ubereats)
+				.setOnClickListener(this);
+		contentView.findViewById(R.id.tv_foodpanda)
+				.setOnClickListener(this);
+		contentView.findViewById(R.id.tv_voucher_event)
+				.setOnClickListener(this);
+
 		btn_close_bill.setOnClickListener(this);
 		btn_print_receipt.setOnClickListener(this);
 
@@ -450,18 +457,21 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_VOID));
 		textTypeFace.setTrajanProRegular((TextView) view
-				.findViewById(R.id.tv_COMPANY));
-		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_ENTERTAINMENT));
 		textTypeFace.setTrajanProRegular((TextView) view
-				.findViewById(R.id.tv_HOUSE_CHARGE));
+				.findViewById(R.id.tv_stored_card));
+
+		textTypeFace.setTrajanProRegular((TextView) view
+				.findViewById(R.id.tv_delivery));
+		textTypeFace.setTrajanProRegular((TextView) view
+				.findViewById(R.id.tv_deliveroo));
+		textTypeFace.setTrajanProRegular((TextView) view
+				.findViewById(R.id.tv_ubereats));
+		textTypeFace.setTrajanProRegular((TextView) view
+				.findViewById(R.id.tv_foodpanda));
 
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_voucher));
-		textTypeFace.setTrajanProRegular((TextView) view
-				.findViewById(R.id.tv_voucher_5));
-		textTypeFace.setTrajanProRegular((TextView) view
-				.findViewById(R.id.tv_voucher_10));
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_voucher_event));
 
@@ -1145,6 +1155,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				break;
 			case R.id.btn_close_bill: {
 				// if (!(parent instanceof EditSettlementHtml)) {
+//				if(ll_subtotal_layout.getVisibility() == View.VISIBLE){
+//					closeMoneyKeyboard();
+//				}
 				closeWindowAction();
 				if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
 					Map<String, List<Map<String, Object>>> newAndOldPaymentSettlement = new HashMap<String, List<Map<String,Object>>>();
@@ -1251,6 +1264,34 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 			}
 			break;
+			case R.id.tv_deliveroo:
+				if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+					return;
+				}
+				viewTag = ParamConst.SETTLEMENT_TYPE_DELIVEROO;
+				paymentTypeId = ParamConst.SETTLEMENT_TYPE_DELIVEROO;
+				clickEnterAction();
+				break;
+			case R.id.tv_ubereats:
+				if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+					return;
+				}
+				viewTag = ParamConst.SETTLEMENT_TYPE_UBEREATS;
+				paymentTypeId = ParamConst.SETTLEMENT_TYPE_UBEREATS;
+				clickEnterAction();
+				break;
+			case R.id.tv_foodpanda:
+				if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+					return;
+				}
+				viewTag = ParamConst.SETTLEMENT_TYPE_FOODPANDA;
+				paymentTypeId = ParamConst.SETTLEMENT_TYPE_FOODPANDA;
+				clickEnterAction();
+				break;
+			case R.id.tv_voucher_event:
+
+
+				break;
 //			case R.id.iv_alipay:
 //				Map<Integer, AlipayPushMsgDto> alipayPush =  App.instance.getAlipayPushMessage();
 //				if (alipayPush.containsKey(orderBill.getBillNo())) {
@@ -1273,20 +1314,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				handler.sendMessage(handler
 						.obtainMessage(MainPage.VIEW_EVENT_SHOW_VOID));
 				break;
-			case R.id.tv_COMPANY:
-				if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
-					return;
-				}
-				break;
 			case R.id.tv_ENTERTAINMENT:
 				if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
 					return;
 				}
 				handler.sendMessage(handler
 						.obtainMessage(MainPage.VIEW_EVENT_SHOW_ENTERTAINMENT));
-				break;
-			case R.id.tv_HOUSE_CHARGE:
-
 				break;
 			case R.id.rl_cards_amount_paid_num:
 				tv_cards_amount_paid_num.setBackgroundColor(parent.getResources().getColor(
@@ -1908,6 +1941,26 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				paymentMap.put("newPaymentSettlement", paymentSettlement);
 				paymentMap.put("newSubPaymentSettlement",
 						nonChargableSettlement);
+				newPaymentMapList.add(paymentMap);
+			}
+		}
+			break;
+		case ParamConst.SETTLEMENT_TYPE_DELIVEROO:
+		case ParamConst.SETTLEMENT_TYPE_UBEREATS:
+		case ParamConst.SETTLEMENT_TYPE_FOODPANDA: {
+			PaymentSQL.addPayment(payment);
+			PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+					.getPaymentSettlement(payment, paymentTypeId,
+							order.getTotal());
+			PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+			payment_amount = remainTotal;
+			paymentType = viewTag;
+			order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+			OrderSQL.update(order);
+			if (newPaymentMapList != null) {
+				Map<String, Object> paymentMap = new HashMap<String, Object>();
+				paymentMap.put("newPaymentSettlement", paymentSettlement);
+				paymentMap.put("newSubPaymentSettlement", null);
 				newPaymentMapList.add(paymentMap);
 			}
 		}

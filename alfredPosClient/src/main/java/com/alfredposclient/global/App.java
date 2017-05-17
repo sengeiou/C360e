@@ -131,6 +131,11 @@ import com.moonearly.utils.service.UdpSendCallBack;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.zebra.scannercontrol.DCSSDKDefs;
+import com.zebra.scannercontrol.DCSScannerInfo;
+import com.zebra.scannercontrol.FirmwareUpdateEvent;
+import com.zebra.scannercontrol.IDcsSdkApiDelegate;
+import com.zebra.scannercontrol.SDKHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -172,7 +177,7 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
     private static final String DATABASE_NAME = "com.alfredposclient";
 
     private String callAppIp;
@@ -313,6 +318,8 @@ public class App extends BaseApplication {
 
     private Observable<Object> observable;
     private PushServer pushServer;
+    private SDKHandler sdkHandler;
+    private boolean  isUsbScannerLink = false;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -378,8 +385,11 @@ public class App extends BaseApplication {
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
             @Override
             public void call(Object object) {
-                ReloginDialog reloginDialog = new ReloginDialog(getTopActivity());
-                reloginDialog.show();
+                boolean isScreenLock = systemSettings.isScreenLock();
+                if(isScreenLock) {
+                    ReloginDialog reloginDialog = new ReloginDialog(getTopActivity());
+                    reloginDialog.show();
+                }
             }
         });
         TcpUdpFactory.startUdpServer(1);
@@ -419,6 +429,12 @@ public class App extends BaseApplication {
                 .setFunctionConfig(functionConfig)
                 .build();
         GalleryFinal.init(coreConfig);
+
+        if(isSUNMIShow()){
+            sdkHandler = new SDKHandler(this);
+            sdkHandler.dcssdkSetDelegate(iDcsSdkApiDelegate);
+            initializeDcsSdk();
+        }
     }
 
 
@@ -443,6 +459,84 @@ public class App extends BaseApplication {
 //    public PushThread getPushThread() {
 //        return pushThread;
 //    }
+
+
+    public boolean isUsbScannerLink() {
+        return isUsbScannerLink;
+    }
+
+    private void initializeDcsSdk(){
+        sdkHandler.dcssdkEnableAvailableScannersDetection(true);
+        sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_BT_NORMAL);
+        sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_SNAPI);
+        int notifications_mask = 0;
+        notifications_mask |= (DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_APPEARANCE.value | DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_DISAPPEARANCE.value);
+        notifications_mask |= (DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_ESTABLISHMENT.value | DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_TERMINATION.value);
+        notifications_mask |= (DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_BARCODE.value);
+        sdkHandler.dcssdkSubsribeForEvents(notifications_mask);
+    }
+    private DCSSDKDefs.DCSSDK_RESULT connect(int scannerId) {
+        if (sdkHandler != null) {
+            return sdkHandler.dcssdkEstablishCommunicationSession(scannerId);
+        } else {
+            return DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE;
+        }
+    }
+    private IDcsSdkApiDelegate iDcsSdkApiDelegate = new IDcsSdkApiDelegate() {
+        @Override
+        public void dcssdkEventScannerAppeared(final DCSScannerInfo dcsScannerInfo) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    DCSSDKDefs.DCSSDK_RESULT result =connect(dcsScannerInfo.getScannerID());
+                    if(result== DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_SUCCESS){
+//                        UIHelp.showShortToast(getTopActivity(), "Scanner linked");
+                        isUsbScannerLink = true;
+                    }
+                    else if(result== DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE){
+//                        Log.e(TAG, "连接失败");
+                        isUsbScannerLink = false;
+                    }
+                }
+            }).start();
+        }
+
+        @Override
+        public void dcssdkEventScannerDisappeared(int i) {
+            isUsbScannerLink = false;
+        }
+
+        @Override
+        public void dcssdkEventCommunicationSessionEstablished(DCSScannerInfo dcsScannerInfo) {
+
+        }
+
+        @Override
+        public void dcssdkEventCommunicationSessionTerminated(int i) {
+
+        }
+
+        @Override
+        public void dcssdkEventBarcode(byte[] bytes, int i, int i1) {
+//            handleDecode(new Result(new String(bytes), bytes, null, null));
+            RxBus.getInstance().post(RxBus.RX_MSG_2, new String(bytes));
+        }
+
+        @Override
+        public void dcssdkEventImage(byte[] bytes, int i) {
+
+        }
+
+        @Override
+        public void dcssdkEventVideo(byte[] bytes, int i) {
+
+        }
+
+        @Override
+        public void dcssdkEventFirmwareUpdate(FirmwareUpdateEvent firmwareUpdateEvent) {
+
+        }
+    };
 
     public PushServer getPushServer(){
         return  pushServer;
@@ -619,26 +713,30 @@ public class App extends BaseApplication {
      * @param orderDetails
      */
     public void sendViceScreenData(Order order, List<OrderDetail> orderDetails){
-        List<String> imgPath = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
         int styleType = Store.getInt(App.instance, Store.SUNMI_STYLE);
-        UIHelp.showShortToast(getTopActivity(), styleType + "");
-        UIHelp.showShortToast(getTopActivity(), imgPath.toString());
-
-        if (imgPath.size() == 0 || imgPath == null){
-            return;
+        if(isOpenLog) {
+            UIHelp.showShortToast(getTopActivity(), styleType + "");
+        }
+        if (styleType == Store.SUNMI_TEXT){
+            showBigScreenData(order, orderDetails);
+        }else {
+            List<String> imgPath = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
+            if(isOpenLog)
+                UIHelp.showShortToast(getTopActivity(), imgPath.toString());
+            if (imgPath != null && imgPath.size() != 0) {
+                if (styleType == Store.SUNMI_IMG) {
+                    showSunmiImg(imgPath);
+                } else if (styleType == Store.SUNMI_IMG_TEXT) {
+                    showBigScreenImgText(order, orderDetails, imgPath);
+                } else if (styleType == Store.SUNMI_VIDEO_TEXT) {
+                    showBigScreenVideoText(order, orderDetails, imgPath);
+                } else if (styleType == Store.SUNMI_VIDEO) {
+                    showBigScreenVideo(imgPath);
+                }
+            }
         }
 //        if (isSmallOrBigScreen()){
-            if (styleType == Store.SUNMI_IMG){
-                showSunmiImg(imgPath);
-            }else if (styleType == Store.SUNMI_TEXT){
-                showBigScreenData(order, orderDetails);
-            }else if (styleType == Store.SUNMI_IMG_TEXT){
-                showBigScreenImgText(order, orderDetails, imgPath);
-            }else if (styleType == Store.SUNMI_VIDEO_TEXT){
-                showBigScreenVideoText(order, orderDetails, imgPath);
-            }else if (styleType == Store.SUNMI_VIDEO){
-                showBigScreenVideo(imgPath);
-            }
+
 //    }else {
 //        if (styleType == Store.SUNMI_IMG){
 //            showSunmiImg(imgPath);
@@ -744,14 +842,17 @@ public class App extends BaseApplication {
         DataPacket dsPacket = UPacketFactory.buildShowText(DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
             @Override
             public void onSendSuccess(long taskId) {
+                if(isOpenLog)
                     UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
             }
             @Override
             public void onSendFail(int errorId, String errorInfo) {
+                if(isOpenLog)
                     UIHelp.showToast(App.getTopActivity(), "发送数据:失败,\n失败信息" + errorInfo);
             }
             @Override
             public void onSendProcess(long totle, long sended) {
+                if(isOpenLog)
                     UIHelp.showToast(App.getTopActivity(), "发送数据:中"+jsonStr);
             }
         });
@@ -808,7 +909,9 @@ public class App extends BaseApplication {
                 }
                 @Override
                 public void onSendFail(int errorId, String errorInfo) {
-                    UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                    if(isOpenLog) {
+                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                    }
                 }
                 @Override
                 public void onSendProcess(long totle, long sended) {
@@ -832,11 +935,15 @@ public class App extends BaseApplication {
                 }
                 @Override
                 public void onSendFaile(int errorId, String errorInfo) {
-                    UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                    if(isOpenLog) {
+                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                    }
                 }
                 @Override
                 public void onSendFileFaile(String path, int errorId, String errorInfo) {
-                    UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                    if(isOpenLog) {
+                        UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                    }
                 }
                 @Override
                 public void onSendProcess(String path, long totle, long sended) {
@@ -864,7 +971,9 @@ public class App extends BaseApplication {
                         }
                         @Override
                         public void onSendFail(int errorId, String errorInfo) {
-                            UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                            if(isOpenLog) {
+                                UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                            }
                         }
                         @Override
                         public void onSendProcess(long totle, long sended) {
@@ -897,7 +1006,9 @@ public class App extends BaseApplication {
                     }
                     @Override
                     public void onSendFail(int errorId, String errorInfo) {
-                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        if(isOpenLog) {
+                            UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        }
                     }
                     @Override
                     public void onSendProcess(long totle, long sended) {
@@ -915,11 +1026,15 @@ public class App extends BaseApplication {
                     }
                     @Override
                     public void onSendFaile(int errorId, String errorInfo) {
-                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        if(isOpenLog) {
+                            UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        }
                     }
                     @Override
                     public void onSendFileFaile(String path, int errorId, String errorInfo) {
-                        UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                        if(isOpenLog) {
+                            UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                        }
                     }
                     @Override
                     public void onSendProcess(String path, long totle, long sended) {

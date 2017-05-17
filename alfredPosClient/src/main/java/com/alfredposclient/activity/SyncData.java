@@ -69,6 +69,17 @@ public class SyncData extends BaseActivity {
 	@Override
 	protected void initView() {
 		super.initView();
+//		Order order = OrderSQL.getOrder(2800);
+//
+////		List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(2800);
+//		List<Order> orderList = OrderSQL.getAllOrderByTime(1491321600000L);
+//		List<String> aaa = new ArrayList<String>();
+//		Gson gson = new Gson();
+//		for(Order o : orderList){
+//			String a = gson.toJson(UploadSQL.getOrderInfo(o.getId().intValue()));
+//			aaa.add(a);
+//		}
+
 		setContentView(R.layout.activity_sync_data);
 		dialog = new LoadingDialog(context);
 		findViewById(R.id.btn_ok).setOnClickListener(this);

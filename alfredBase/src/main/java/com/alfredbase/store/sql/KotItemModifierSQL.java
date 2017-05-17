@@ -82,7 +82,6 @@ public class KotItemModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -101,7 +100,6 @@ public class KotItemModifierSQL {
 				kotItemModifier.setPrinterId(cursor.getInt(6));
 				result.add(kotItemModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -109,7 +107,6 @@ public class KotItemModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -147,7 +144,6 @@ public class KotItemModifierSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {String.valueOf(kotItemDetailId)});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -166,7 +162,6 @@ public class KotItemModifierSQL {
 				kotItemModifier.setPrinterId(cursor.getInt(6));
 				result.add(kotItemModifier);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -174,7 +169,6 @@ public class KotItemModifierSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

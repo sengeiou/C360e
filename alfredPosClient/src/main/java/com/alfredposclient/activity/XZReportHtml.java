@@ -455,9 +455,9 @@ public class XZReportHtml extends BaseActivity {
 
 		SessionStatus session = App.instance.getSessionStatus();
 
-		String label = "X";
+		String label = "YX";
 		if (zPrint) {
-			label = "Z";
+			label = "YZ";
 		} else {
 			rptType = CommonUtil.getReportType(context,
 					session.getSession_status());
@@ -478,9 +478,9 @@ public class XZReportHtml extends BaseActivity {
 		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 		List<ReportUserOpenDrawer> reportUserOpenDrawers = new ArrayList<ReportUserOpenDrawer>();
 		if(zPrint){
-			reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawer(session.getSession_status(), bzDate);
-		}else{
 			reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawerByTime(businessDate);
+		}else{
+			reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawer(session.getSession_status(), bzDate);
 		}
 		if (cashierPrinter == null) {
 			AlertToDeviceSetting.noKDSorPrinter(context, context.getResources()

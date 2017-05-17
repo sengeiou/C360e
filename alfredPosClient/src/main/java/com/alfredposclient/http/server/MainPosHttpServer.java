@@ -1522,6 +1522,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			}
 			if(orderId > 0){
 				Order order = OrderSQL.getOrder(orderId);
+				if(order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
+					result.put("resultCode", ResultCode.ORDER_FINISHED);
+					resp = this.getJsonResponse(new Gson().toJson(result));
+				}
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitle(
 								App.instance.getRevenueCenter(),

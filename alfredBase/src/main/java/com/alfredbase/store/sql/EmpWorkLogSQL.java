@@ -85,7 +85,6 @@ public class EmpWorkLogSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -105,7 +104,6 @@ public class EmpWorkLogSQL {
 				empWorkLog.setStatus(cursor.getInt(7));
 				result.add(empWorkLog);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -113,7 +111,6 @@ public class EmpWorkLogSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

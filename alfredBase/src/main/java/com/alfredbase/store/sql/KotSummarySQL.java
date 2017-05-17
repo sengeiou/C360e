@@ -107,7 +107,6 @@ public class KotSummarySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -133,7 +132,6 @@ public class KotSummarySQL {
 				kotSummary.setOrderRemark(cursor.getString(13));
 				result.add(kotSummary);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -141,7 +139,6 @@ public class KotSummarySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -152,7 +149,6 @@ public class KotSummarySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -178,7 +174,6 @@ public class KotSummarySQL {
 				kotSummary.setOrderRemark(cursor.getString(13));
 				result.add(kotSummary);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -186,7 +181,6 @@ public class KotSummarySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -197,7 +191,6 @@ public class KotSummarySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {businessDate+""});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -223,7 +216,6 @@ public class KotSummarySQL {
 				kotSummary.setOrderRemark(cursor.getString(13));
 				result.add(kotSummary);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -231,7 +223,6 @@ public class KotSummarySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -242,7 +233,6 @@ public class KotSummarySQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {businessDate+""});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -268,7 +258,6 @@ public class KotSummarySQL {
 				kotSummary.setOrderRemark(cursor.getString(13));
 				result.add(kotSummary);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -276,7 +265,6 @@ public class KotSummarySQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

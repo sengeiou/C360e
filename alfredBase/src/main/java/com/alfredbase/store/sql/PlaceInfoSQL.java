@@ -79,7 +79,6 @@ public class PlaceInfoSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -99,7 +98,6 @@ public class PlaceInfoSQL {
 				places.setIsKiosk(cursor.getInt(7));
 				result.add(places);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -107,7 +105,6 @@ public class PlaceInfoSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -119,7 +116,6 @@ public class PlaceInfoSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {"1"});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -139,7 +135,6 @@ public class PlaceInfoSQL {
 				places.setIsKiosk(cursor.getInt(7));
 				result.add(places);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -147,7 +142,6 @@ public class PlaceInfoSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

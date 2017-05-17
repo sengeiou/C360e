@@ -652,6 +652,13 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 		animSet.start();
 	}
 
+	public boolean isModifierOpen(){
+		if(ll_menu != null && ll_menu.getVisibility() != View.VISIBLE)
+			return true;
+		else
+			return false;
+	}
+
 	public void closeModifiers() {
 		if (AnimatorListenerImpl.isRunning || ll_menu.getVisibility() == View.VISIBLE) {
 			return;

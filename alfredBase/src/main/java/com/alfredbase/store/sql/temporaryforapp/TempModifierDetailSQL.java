@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql.temporaryforapp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -11,6 +8,9 @@ import com.alfredbase.javabean.temporaryforapp.TempModifierDetail;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TempModifierDetailSQL {
 	public static void addTempModifierDetailList(List<TempModifierDetail> tempModifierDetailList) {
@@ -54,7 +54,6 @@ public class TempModifierDetailSQL {
 		List<TempModifierDetail> result = new ArrayList<TempModifierDetail>();
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {orderDetailId + ""});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -67,7 +66,6 @@ public class TempModifierDetailSQL {
 				tempModifierDetail.setModifierId(cursor.getInt(5));
 				result.add(tempModifierDetail);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -75,7 +73,6 @@ public class TempModifierDetailSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

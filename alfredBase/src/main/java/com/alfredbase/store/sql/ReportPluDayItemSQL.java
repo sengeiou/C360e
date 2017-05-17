@@ -1,8 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -11,6 +8,9 @@ import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReportPluDayItemSQL {
 	public static void addReportPluDayItem(ReportPluDayItem reportPluDayItem) {
@@ -167,7 +167,6 @@ public class ReportPluDayItemSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -205,7 +204,6 @@ public class ReportPluDayItemSQL {
 				reportPluDayItem.setBillFocPrice(cursor.getString(25));
 				result.add(reportPluDayItem);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -213,7 +211,6 @@ public class ReportPluDayItemSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}
@@ -226,7 +223,6 @@ public class ReportPluDayItemSQL {
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			db.beginTransaction();
 			cursor = db.rawQuery(sql, new String[] {String.valueOf(date)});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -264,7 +260,6 @@ public class ReportPluDayItemSQL {
 				reportPluDayItem.setBillFocPrice(cursor.getString(25));
 				result.add(reportPluDayItem);
 			}
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -272,7 +267,6 @@ public class ReportPluDayItemSQL {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
-			db.endTransaction();
 		}
 		return result;
 	}

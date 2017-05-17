@@ -5,10 +5,10 @@ def supportVersion = "22.0.0"
 ext {
     compileSdkVersion = 20
     buildToolsVersion = "22.0.1"
-    targetSdkVersion = 18
-    minSdkVersion = 14
-    versionCode = 17
-    versionName = "1.0.16"
+    targetSdkVersion = 20
+    minSdkVersion = 19
+    versionCode = 18
+    versionName = "1.0.17"
     javaVersion = JavaVersion.VERSION_1_6
 
     //lib

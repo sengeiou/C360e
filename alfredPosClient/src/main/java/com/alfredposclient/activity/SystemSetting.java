@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
@@ -29,6 +30,7 @@ import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.SelectPrintWindow;
+import com.alfredposclient.popupwindow.SetPAXWindow;
 import com.alfredposclient.view.ColorPickerDialog;
 
 import java.util.HashMap;
@@ -52,6 +54,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SlipButton sb_print_before_close;
 	private SlipButton sb_auto_receive_app;
 	private SlipButton sb_cash_close_print;
+	private SlipButton sb_top_masking_use;
+	private SlipButton sb_top_screen_lock;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -61,21 +65,21 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private ChangePasswordDialog changePasswordDialog;
 	private SelectPrintWindow selectPrintWindow;
 	public static final int UPDATE_PASSWORD_TAG = 2000;
+	public static final int SET_MAX_ORDER_NO = 2001;
 	private TextView tv_callnum;
 	private ColorPickerDialog colorPickerDialog;
-
+	private SetPAXWindow setPAXWindow;
+	private LinearLayout ll_max_order_no;
+	private TextView tv_max_order_no;
+	private int maxOrderNo;
 //sb_plu_category
 	@Override
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_system_setting);
 		if(App.instance.isRevenueKiosk()){
-			findViewById(R.id.rl_cash_close_print).setVisibility(View.VISIBLE);
-			findViewById(R.id.view_cash_close_print).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
 		}else{
-			findViewById(R.id.rl_cash_close_print).setVisibility(View.GONE);
-			findViewById(R.id.view_cash_close_print).setVisibility(View.GONE);
 			findViewById(R.id.ll_app_order).setVisibility(View.GONE);
 		}
 		syncMap = App.instance.getPushMsgMap();
@@ -100,6 +104,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_print_before_close = (SlipButton)findViewById(R.id.sb_print_before_close);
 		sb_cash_close_print = (SlipButton)findViewById(R.id.sb_cash_close_print);
 		sb_auto_receive_app = (SlipButton)findViewById(R.id.sb_auto_receive_app);
+		sb_top_masking_use = (SlipButton)findViewById(R.id.sb_top_masking_use);
+		sb_top_screen_lock = (SlipButton)findViewById(R.id.sb_top_screen_lock);
 
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -125,6 +131,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_print_before_close.setOnChangedListener(this);
 		sb_cash_close_print.setOnChangedListener(this);
 		sb_auto_receive_app.setOnChangedListener(this);
+		sb_top_masking_use.setOnChangedListener(this);
+		sb_top_screen_lock.setOnChangedListener(this);
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
@@ -137,6 +145,21 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		
 		initViewData();
 		initTextTypeFace();
+		setPAXWindow = new SetPAXWindow(context, findViewById(R.id.rl_root),
+				handler);
+		tv_max_order_no = (TextView) findViewById(R.id.tv_max_order_no);
+		maxOrderNo = Store.getInt(context, Store.MAX_ORDER_NO, 0);
+		refreshMaxOrderNo();
+		ll_max_order_no = (LinearLayout) findViewById(R.id.ll_max_order_no);
+		ll_max_order_no.setOnClickListener(this);
+	}
+
+	private void refreshMaxOrderNo(){
+		if(maxOrderNo > 0){
+			tv_max_order_no.setText(maxOrderNo + "");
+		}else{
+			tv_max_order_no.setText("");
+		}
 	}
 
 	private void initViewData() {
@@ -210,6 +233,16 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		}else{
 			sb_auto_receive_app.setChecked(false);
 		}
+		if(settings.isTopMaskingIsUser()){
+			sb_top_masking_use.setChecked(true);
+		}else{
+			sb_top_masking_use.setChecked(false);
+		}
+		if(settings.isScreenLock()){
+			sb_top_screen_lock.setChecked(true);
+		}else{
+			sb_top_screen_lock.setChecked(false);
+		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
 		}else{
@@ -279,6 +312,16 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			});
 			colorPickerDialog.show();
 			break;
+		case R.id.ll_max_order_no:
+			String maxOrderStr = tv_max_order_no.getText().toString();
+
+			if(TextUtils.isEmpty(maxOrderStr)){
+				setPAXWindow.show(SetPAXWindow.MAX_ORDER_NO, "0", "Max Order No");
+			}else{
+				setPAXWindow.show(SetPAXWindow.MAX_ORDER_NO, maxOrderStr, "Max Order No");
+			}
+
+			break;
 		default:
 			break;
 		}
@@ -323,6 +366,14 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 					break;
 				}
 			}
+				break;
+			case SET_MAX_ORDER_NO:
+				String maxOrderNoStr = (String) msg.obj;
+				if(!TextUtils.isEmpty(maxOrderNoStr)){
+					maxOrderNo = Integer.parseInt(maxOrderNoStr);
+					Store.putInt(context, Store.MAX_ORDER_NO,maxOrderNo);
+				}
+				refreshMaxOrderNo();
 				break;
 
 			case JavaConnectJS.ACTION_ASSIGN_PRINTER_DEVICE:
@@ -485,6 +536,24 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 				settings.setAutoRecevingOnlineOrder(ParamConst.DEFAULT_FALSE);
 			}
 			break;
+		case R.id.sb_top_masking_use:
+			if(checkState){
+				sb_top_masking_use.setChecked(true);
+				settings.setTopMaskingIsUser(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_top_masking_use.setChecked(false);
+				settings.setTopMaskingIsUser(ParamConst.DEFAULT_FALSE);
+			}
+			break;
+		case R.id.sb_top_screen_lock:
+			if(checkState){
+				sb_top_screen_lock.setChecked(true);
+				settings.setScreenLock(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_top_screen_lock.setChecked(false);
+				settings.setScreenLock(ParamConst.DEFAULT_FALSE);
+			}
+			break;
 		default:
 			break;
 		}
@@ -510,5 +579,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_plu_modifier));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_hourly_payment));
 		textTypeFace.setTrajanProRegular(tv_syncdata_warn);
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_top_screen_lock));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_top_masking_use));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_max_order_no_str));
 	}
 }

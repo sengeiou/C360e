@@ -513,10 +513,12 @@ public class MainPage extends BaseActivity {
 
 	private void openModifiers(OrderDetail orderDetail,
 			List<ItemModifier> itemModifiers, View view) {
-		if(animatorView == view){
-			return;
-		}else{
-			animatorView = view;
+		if(mainPageMenuView.isModifierOpen()) {
+			if (animatorView == view) {
+				return;
+			} else {
+				animatorView = view;
+			}
 		}
 		mainPageMenuView
 				.openModifiers(currentOrder, orderDetail, itemModifiers);
@@ -586,6 +588,7 @@ public class MainPage extends BaseActivity {
 				OrderDetailSQL.addOrderDetailETC(newOrderDetail);
 				List<OrderModifier> orderModifiers = OrderModifierSQL
 						.getOrderModifiers(orderDetail);
+				KotItemDetailSQL.updateKotItemDetailId(newOrderDetail.getId().intValue(), orderDetail.getId().intValue());
 				if (orderModifiers.isEmpty()) {
 					continue;
 				}
@@ -1029,7 +1032,7 @@ public class MainPage extends BaseActivity {
 								}
 							}
 						}).start();
-						setPAXWindow.show(SetPAXWindow.GENERAL_ORDER);
+						setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
 					} else {
 						handler.sendMessage(handler
 								.obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
@@ -1052,7 +1055,7 @@ public class MainPage extends BaseActivity {
 							.intValue()) {
 						currentTable = newTable;
 						if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-							setPAXWindow.show(SetPAXWindow.GENERAL_ORDER);
+							setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
 						} else {
 							handler.sendMessage(handler
 									.obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
@@ -1112,7 +1115,7 @@ public class MainPage extends BaseActivity {
 								}
 							}
 						}).start();
-						setPAXWindow.show(SetPAXWindow.APP_ORDER);
+						setPAXWindow.show(SetPAXWindow.APP_ORDER, context.getResources().getString(R.string.no_pax));
 					} else {
 						DialogFactory.showOneButtonCompelDialog(context, "警告", "请选择空桌", null);
 					}
@@ -1513,7 +1516,7 @@ public class MainPage extends BaseActivity {
 				break;
 			case VIEW_EVENT_TANSFER_PAX:
 				String pax = (String) msg.obj;
-				setPAXWindow.show(pax, currentOrder);
+				setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_pax));
 				break;
 			case VIEW_EVENT_VOID_OR_FREE:
 				verifyDialog.show(HANDLER_MSG_OBJECT_VOID_OR_FREE,
@@ -1698,7 +1701,15 @@ public class MainPage extends BaseActivity {
 			if(App.instance.getSystemSettings().isPrintBeforCloseBill()) {
 				UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_));
 				return;
+			}else{
+				if (OrderDetailSQL
+						.getOrderDetailsCountUnPlaceOrder(currentOrder.getId()) > 0) {
+					UIHelp.showToast(context,
+							context.getResources().getString(R.string.place_before_print));
+					return;
+				}
 			}
+
 		}
 		if (orderBill != null && orderBill.getBillNo() != null) {
 //
@@ -1716,7 +1727,8 @@ public class MainPage extends BaseActivity {
 				}
 			}
 		} else {
-			UIHelp.showToast(context, context.getResources().getString(R.string.not_complete_order));
+			UIHelp.showToast(context,
+					context.getResources().getString(R.string.place_before_print));
 		}
 	}
 

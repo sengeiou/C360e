@@ -18,7 +18,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
+import com.alfredbase.store.Store;
 import com.alfredposclient.R;
 
 public class ColorPickerDialog extends Dialog {
@@ -30,6 +34,11 @@ public class ColorPickerDialog extends Dialog {
 	private int mInitialColor;// 初始颜色
 	private int mSetColor;// 选中颜色
 	private OnColorChangedListener mListener;
+	private TextView colorPickerTip;
+	private ColorPickerView myView;
+	private RadioButton set_image;
+	private RadioButton set_color;
+	private RadioGroup set_rg;
 
 	/**
 	 * 初始颜色黑色
@@ -64,6 +73,16 @@ public class ColorPickerDialog extends Dialog {
 		this.title = title;
 	}
 
+	public void setVisible(){
+		colorPickerTip.setVisibility(View.VISIBLE);
+		myView.setVisibility(View.VISIBLE);
+	}
+
+	public void setGone(){
+		colorPickerTip.setVisibility(View.GONE);
+		myView.setVisibility(View.GONE);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,18 +105,63 @@ public class ColorPickerDialog extends Dialog {
         LinearLayout view = (LinearLayout) View.inflate(context, R.layout.colorsetview, null);
         Button bt_ok = (Button) view.findViewById(R.id.bt_ok);
         Button bt_cancle = (Button) view.findViewById(R.id.bt_cancle);
-        ColorPickerView myView = new ColorPickerView(context, height, width);
-        view.addView(myView,2);
+		colorPickerTip = (TextView) view.findViewById(R.id.colorPickerTip);
+		set_image = (RadioButton) view.findViewById(R.id.set_image);
+		set_color = (RadioButton) view.findViewById(R.id.set_color);
+		set_rg = (RadioGroup) view.findViewById(R.id.set_rg);
+
+
+		myView = new ColorPickerView(context, height, width);
+		view.addView(myView,2);
 		setContentView(view);
+
+		boolean isSet = Store.getBoolean(context, Store.SET_BACKGROUND, false);
+		if (isSet){
+			setGone();
+			set_image.setChecked(true);
+			set_color.setChecked(false);
+		}else {
+			setVisible();
+			set_image.setChecked(false);
+			set_color.setChecked(true);
+		}
+
+		set_rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				switch (checkedId){
+					case R.id.set_image:
+						setGone();
+						break;
+					case R.id.set_color:
+						setVisible();
+						break;
+				}
+			}
+		});
+
+
 		bt_ok.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if (mListener != null) {
-					mListener.colorChanged(mSetColor);
-					ColorPickerDialog.this.dismiss();
+				if (set_image.isChecked()){
+					Store.putBoolean(context, Store.SET_BACKGROUND, true);
+					if (mListener != null) {
+						mListener.colorChanged(mInitialColor);
+						ColorPickerDialog.this.dismiss();
+					}
 				}
+
+				if (set_color.isChecked()){
+					Store.putBoolean(context, Store.SET_BACKGROUND, false);
+					if (mListener != null) {
+						mListener.colorChanged(mSetColor);
+						ColorPickerDialog.this.dismiss();
+					}
+				}
+
 			}
 		});
 		

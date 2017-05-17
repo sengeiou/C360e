@@ -83,6 +83,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private boolean canEdit = false;
     private ImageView iv_more_table;
     private TextView tv_table_edit;
+    private TextView tv_cancel;
     private List<TableInfo> newTables = new ArrayList<TableInfo>();
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
     private BaseActivity mainPage;
@@ -100,6 +101,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         lv_table_list = (ListView)view.findViewById(R.id.lv_table_list);
         iv_more_table = (ImageView) view.findViewById(R.id.iv_more_table);
         tv_table_edit = (TextView) view.findViewById(R.id.tv_table_edit);
+        tv_cancel = (TextView) view.findViewById(R.id.tv_cancel);
         rl_tables = (RelativeLayout) view.findViewById(R.id.rl_tables);
         rl_create_table = (RelativeLayout) view.findViewById(R.id.rl_create_table);
 //        rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
@@ -151,6 +153,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
 
         tv_table_edit.setOnClickListener(this);
+        tv_cancel.setOnClickListener(this);
         iv_more_table.setOnClickListener(this);
         view.findViewById(R.id.ll_table_root).setOnClickListener(null);
         return view;
@@ -199,10 +202,12 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             iv_more_table.setVisibility(View.VISIBLE);
             rl_create_table.setVisibility(View.VISIBLE);
             tv_table_edit.setText(mainPage.getResources().getText(R.string.save));
+            tv_cancel.setVisibility(View.VISIBLE);
         }else{
             iv_more_table.setVisibility(View.INVISIBLE);
             rl_create_table.setVisibility(View.INVISIBLE);
             tv_table_edit.setText(mainPage.getResources().getText(R.string.edit));
+            tv_cancel.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -519,9 +524,9 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                             }
                         }
                     }
+                    canEdit = true;
+                    changeLayoutStatus();
                 }
-                canEdit = !canEdit;
-                changeLayoutStatus();
                 break;
             case R.id.iv_more_table:
                 RelativeLayout rl_table_list = (RelativeLayout) getView().findViewById(R.id.rl_table_list);
@@ -530,6 +535,11 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 }else{
                     rl_table_list.setVisibility(View.VISIBLE);
                 }
+                break;
+            case R.id.tv_cancel:
+                canEdit = false;
+                changeLayoutStatus();
+                refresh();
                 break;
         }
     }
@@ -552,21 +562,23 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     TableInfoSQL.addTablesList(newTables);
                     loadingDialog.dismiss();
                     UIHelp.showShortToast(mainPage, "Save success");
+                    canEdit = false;
+                    changeLayoutStatus();
                     break;
                 case UPDATE_PLACE_TABLE_FAILURE:
                     loadingDialog.dismiss();
 //                    DialogFactory.showOneButtonCompelDialog(mainPage, getActivity().getResources().getString(R.string.warning),
 //                            ResultCode.getErrorResultStrByCode(mainPage,(Integer)msg.obj, null)), new Onc);
                     DialogFactory.showOneButtonCompelDialog(mainPage, mainPage.getResources().getString(R.string.warning),
-                            ResultCode.getErrorResultStrByCode(mainPage, (Integer) msg.obj, null) + "\nTables will be updated the next time save.", null);
-                    TableInfoSQL.addTablesList(newTables);
+                            ResultCode.getErrorResultStrByCode(mainPage, (Integer) msg.obj, null), null);
+//                    TableInfoSQL.addTablesList(newTables);
                     break;
                 case ResultCode.CONNECTION_FAILED:
                     loadingDialog.dismiss();
                     DialogFactory.showOneButtonCompelDialog(mainPage, mainPage.getResources().getString(R.string.warning),
                             ResultCode.getErrorResultStr(mainPage,
-                                    (Throwable) msg.obj, mainPage.getResources().getString(R.string.server)) + "\nTables will be updated the next time save.", null);
-                    TableInfoSQL.addTablesList(newTables);
+                                    (Throwable) msg.obj, mainPage.getResources().getString(R.string.server)), null);
+//                    TableInfoSQL.addTablesList(newTables);
 
                     break;
             }

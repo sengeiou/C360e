@@ -20,7 +20,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
@@ -172,11 +171,14 @@ public class KOTView extends LinearLayout implements AnimationListener,
 				if (kotItemModifier != null
 						&& !kotItemModifiers.equals("")
 						&& kotItemDetail.getId() == kotItemModifier.getKotItemDetailId()) {
-					sBuffer.append(kotItemModifier.getModifierName()+ ";");
+					sBuffer.append("--" + kotItemModifier.getModifierName() + "\n");
 				}
 			}
 			if (kotItemDetail.getSpecialInstractions() != null) {
-				sBuffer.append(kotItemDetail.getSpecialInstractions());
+				sBuffer.append("*" + kotItemDetail.getSpecialInstractions() + "*");
+			}
+			if(sBuffer.toString().endsWith("\n")){
+				sBuffer.deleteCharAt(sBuffer.length()-1);
 			}
 			holder.tv_order_num.setText(kotItemDetail.getUnFinishQty()+"");
 			holder.tv_text.setText(kotItemDetail.getItemName());
@@ -200,7 +202,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemDetails = kot.getKotItemDetails();
 		this.kotItemModifiers = kot.getKotItemModifiers();
 		kotId.setText(kot.getKotSummary().getId() + "");
-		orderId.setText(context.getResources().getString(R.string.order_id) + kot.getKotSummary().getOrderNo() + "");
+		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo() + "");
 		String orderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
 		if(kot.getKotSummary() != null && kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.TAKE_AWAY){
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
