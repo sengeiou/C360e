@@ -5,7 +5,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
@@ -26,19 +28,24 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
+import com.alfredkds.global.SyncCentre;
 import com.alfredkds.javabean.Kot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * KOT信息，每桌菜品展示ScrollView
@@ -67,13 +74,18 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private LinearLayout ll_orderRemark;
 	private View kotView;
 	public TextView tv_progress;
+
+	private TextView complete_all_tv;
+	private TextView call_num_tv;
+
 	private ListView lv_dishes;
 	private KotItemDetailAdapter adapter;
 	private List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 	private List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
 	private TextTypeFace textTypeFace;
+	private Handler handler;
 	
-	public KOTView(Context context,Handler handler) {
+	public KOTView(Context context) {
 		super(context);
 		this.parent = (KitchenOrder) context;
 		this.context = context;
@@ -88,9 +100,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
 	}
 	
-	public void setParams(Context context){
+	public void setParams(Context context, Handler handler){
 		this.parent = (KitchenOrder) context;
 		this.context = context;
+		this.handler = handler;
 	}
 	
 	public void init() {
@@ -108,6 +121,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		tv_kiosk_order_id = (TextView) kotView.findViewById(R.id.tv_kiosk_order_id);
 		tv_orderremark = (TextView) kotView.findViewById(R.id.tv_orderremark);
 		ll_orderRemark = (LinearLayout) kotView.findViewById(R.id.ll_orderRemark);
+		call_num_tv = (TextView) kotView.findViewById(R.id.call_num_tv);
+		complete_all_tv = (TextView) kotView.findViewById(R.id.complete_all_tv);
 
 		tv_orderremark.setMovementMethod(ScrollingMovementMethod.getInstance());
 
@@ -120,8 +135,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			tv_kiosk_order_id.setVisibility(View.GONE);
 			orderId.setVisibility(View.VISIBLE);
 		}
-		
-		
+
 	}
 	
 	public class KotItemDetailAdapter extends BaseAdapter{
@@ -252,6 +266,34 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		}else {
 			tv_progress.setFocusable(false);
 		}
+
+		call_num_tv.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(!ButtonClickTimer.canClick()){
+					return;
+				}
+				Message message = new Message();
+				message.arg1 = kot.getKotSummary().getOrderId();
+				message.what = App.HANDLER_KOT_CALL_NUM;
+				handler.sendMessage(message);
+			}
+		});
+
+		complete_all_tv.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(!ButtonClickTimer.canClick()){
+					return;
+				}
+				Message message = new Message();
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("kotSummary", kot.getKotSummary());
+				message.setData(bundle);
+				message.what = App.HANDLER_KOT_COMPLETE_ALL;
+				handler.sendMessage(message);
+			}
+		});
 		
 	}
 

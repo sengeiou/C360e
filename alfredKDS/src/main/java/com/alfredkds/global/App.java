@@ -48,9 +48,12 @@ public class App extends BaseApplication {
 	public static final int HANDLER_RETURN_ERROR_SHOW = 16;
 	public static final int HANDLER_KOTSUMMARY_IS_UNREAL = 17;
 	public static final int HANDLER_KOT_COMPLETE_USER_FAILED = 18;
+
+	public static final int HANDLER_KOT_CALL_NUM = 101;
+	public static final int HANDLER_KOT_COMPLETE_ALL = 102;
 	
 	public static final int HANDLER_NEW_KOT = 20;
-	public static final int HANDLER_UPDATE_KOT = 1;
+	public static final int HANDLER_UPDATE_KOT = 8;
 	public static final int HANDLER_DELETE_KOT = 2;
 	private static final int DATABASE_VERSION = 14;
 	private static final String DATABASE_NAME = "com.alfredkds";

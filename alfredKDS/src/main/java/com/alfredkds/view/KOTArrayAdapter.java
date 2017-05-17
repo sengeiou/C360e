@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,10 +17,12 @@ public class KOTArrayAdapter extends BaseAdapter {
 	private Context mContext;
 	private List<Kot> kots = new ArrayList<Kot>();
 	private boolean addFirstItem = false;
+	private Handler handler;
 
-	public KOTArrayAdapter(Context mContext) {
+	public KOTArrayAdapter(Context mContext, Handler handler) {
 		super();
 		this.mContext = mContext;
+		this.handler = handler;
 	}
 
 	public void setAddFirstItem(boolean addFirstItem) {
@@ -49,7 +52,7 @@ public class KOTArrayAdapter extends BaseAdapter {
 			convertView = View.inflate(mContext,R.layout.kot_array_view, null);
 			holder = new ViewHolder();
 			holder.kotView = (KOTView) convertView.findViewById(R.id.kotview);
-			holder.kotView.setParams(mContext);
+			holder.kotView.setParams(mContext, handler);
 			convertView.setTag(holder);
 //			kotView = new KOTView(mContext, mHandler);
 //			convertView = kotView;
