@@ -224,7 +224,10 @@ public class KitchenOrder extends BaseActivity {
 		adapter.setKots(kots);
 		adapter.notifyDataSetChanged();
 		if (kots.isEmpty()) {
-			itemPopupWindow.dismiss();
+//			itemPopupWindow.dismiss();
+			if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+				itemPopupWindow.dismiss();
+			}
 		}
 		if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 			Kot kot = App.instance.getKot(kotSummary);
