@@ -43,7 +43,7 @@ public class BaseApplication extends Application {
 
 
 	private Handler reLoginHandler = new Handler();
-	/**
+	/**x
 	 * 国家电话代码
 	 * 用于区别不通过的代码逻辑
 	 */

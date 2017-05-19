@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -159,6 +161,49 @@ public class KitchenOrder extends BaseActivity {
 				case Login.HANDLER_LOGIN:
 					refresh();
 					break;
+				case ResultCode.SUCCESS:
+					loadingDialog.dismiss();
+					break;
+				case App.HANDLER_KOT_CALL_NUM:
+					int i = msg.arg1;
+					String str = i + "";
+					if (!TextUtils.isEmpty(str)) {
+						loadingDialog.show();
+						Map<String, Object> parameters = new HashMap<String, Object>();
+						parameters.put("callnumber", str);
+						SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler);
+					}else {
+						UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
+					}
+					break;
+				case App.HANDLER_KOT_COMPLETE_ALL:
+					Bundle bundle = msg.getData();
+					final KotSummary kotSummary = (KotSummary) bundle.getSerializable("kotSummary");
+					String title = getResources().getString(R.string.warning);
+					String content = getResources().getString(R.string.complete_all_item);
+					String left = getResources().getString(R.string.no);
+					String right = getResources().getString(R.string.yes);
+					DialogFactory.commonTwoBtnDialog(KitchenOrder.this, title, content, left, right, null, new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+							for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary).getKotItemDetails()) {
+								kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
+								kotItemDetail.setUnFinishQty(0);
+								kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+								KotItemDetailSQL.update(kotItemDetail);
+								itemDetails.add(kotItemDetail);
+							}
+							Map<String, Object> parameters = new HashMap<String, Object>();
+							parameters.put("kotSummary", kotSummary);
+							parameters.put("kotItemDetails", itemDetails);
+							parameters.put("type", 1);
+							SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+									App.instance.getCurrentConnectedMainPos(), parameters, handler);
+							loadingDialog.show();
+						}
+					});
+					break;
 				default:
 					break;
 			}
@@ -180,7 +225,10 @@ public class KitchenOrder extends BaseActivity {
 		adapter.setKots(kots);
 		adapter.notifyDataSetChanged();
 		if (kots.isEmpty()) {
-			itemPopupWindow.dismiss();
+//			itemPopupWindow.dismiss();
+			if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+				itemPopupWindow.dismiss();
+			}
 		}
 		if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 			Kot kot = App.instance.getKot(kotSummary);
@@ -263,7 +311,7 @@ public class KitchenOrder extends BaseActivity {
 
 	private void initKOTList() {
 		// Assign adapter to the HorizontalListView
-		adapter = new KOTArrayAdapter(context);
+		adapter = new KOTArrayAdapter(context, handler);
 		kots = App.instance.getInitKots();
 		adapter.setKots(kots);
 		ll_orders.setAdapter(adapter);

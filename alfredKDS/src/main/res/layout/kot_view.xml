@@ -151,11 +151,17 @@
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/linear_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
         <RelativeLayout
             android:id="@+id/ll_progress"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
             android:background="@color/color_kotview"
             android:gravity="center" >
 
@@ -189,6 +195,45 @@
                 android:visibility="gone" />
         </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@color/color_kotview">
+
+                <TextView
+                    android:id="@+id/complete_all_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:text="Complete All"
+                    android:gravity="center"
+                    android:textSize="16sp"/>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"/>
+
+                <TextView
+                    android:id="@+id/call_num_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Call"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
         <!--
     <ScrollView 
         android:id="@+id/sv_dishes"
@@ -211,7 +256,7 @@
             android:id="@+id/lv_dishes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/ll_progress"
+            android:layout_above="@+id/linear_progress"
             android:layout_below="@+id/ll_kot_info" >
         </ListView>
 
@@ -224,7 +269,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_above="@+id/ll_progress"
+            android:layout_above="@+id/linear_progress"
             android:background="@color/black" />
     </RelativeLayout>
 
