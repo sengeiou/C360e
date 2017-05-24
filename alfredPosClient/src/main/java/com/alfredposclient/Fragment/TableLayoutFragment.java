@@ -548,6 +548,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("revenueId", App.instance.getRevenueCenter().getId().intValue());
         parameters.put("placeList", PlaceInfoSQL.getAllPlaceInfo());
+//        parameters.put("placePosId", places.get(selectPlaceIndex).getId().intValue());
         parameters.put("tableList", newTables);
         SyncCentre.getInstance().updatePlaceTable(mainPage, parameters, handler);
         loadingDialog.show();

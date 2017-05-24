@@ -176,6 +176,20 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         selectActionViewId = R.id.btn_paid_refund;
         refreshActionView();
         isPayAction = getIntent().getBooleanExtra("isPayAction",false);
+        if(App.instance.isSUNMIShow()){
+            observable = RxBus.getInstance().register(RxBus.RX_MSG_2);
+            observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                @Override
+                public void call(String object) {
+                    if (useUSBScanner && object != null) {
+                        useUSBScanner = false;
+                        handleDecode(new Result(object, null, null, null));
+                    }
+                }
+            });
+        }else {
+            beepManager = new BeepManager(mainPage);
+        }
         if(!isPayAction) {
             ll_stored_card_action.setVisibility(View.VISIBLE);
             hiddenScanView();
@@ -206,20 +220,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 (int) (ScreenSizeUtil.height * 2 / 3 + ScreenSizeUtil.dip2px(this, 60)));
         ps.addRule(RelativeLayout.CENTER_IN_PARENT);
         rl_stored_cart_root.setLayoutParams(ps);
-        if(App.instance.isSUNMIShow()){
-            observable = RxBus.getInstance().register(RxBus.RX_MSG_2);
-            observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-                @Override
-                public void call(String object) {
-                    if (useUSBScanner && object != null) {
-                        useUSBScanner = false;
-                        handleDecode(new Result(object, null, null, null));
-                    }
-                }
-            });
-        }else {
-            beepManager = new BeepManager(mainPage);
-        }
+
     }
 
 

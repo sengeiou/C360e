@@ -1,8 +1,8 @@
 package com.alfredbase.javabean;
 
-import java.io.Serializable;
-
 import com.alfredbase.utils.CommonUtil;
+
+import java.io.Serializable;
 
 public class Modifier implements Serializable{
 	/**
@@ -60,7 +60,7 @@ public class Modifier implements Serializable{
 	 * 任意选择数量 当mustDefault为2的时候才有用
 	 * 注意：这个字段是ModifierGroup使用的
 	 */
-	private int optionQty;
+	private int  optionQty;
 	
 
 	public Integer getId() {
