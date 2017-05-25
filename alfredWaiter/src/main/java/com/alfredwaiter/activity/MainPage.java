@@ -39,9 +39,11 @@ import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.javabean.ItemCategoryAndDetails;
+import com.alfredwaiter.javabean.ModifierVariance;
 import com.alfredwaiter.popupwindow.ModifierWindow;
 import com.alfredwaiter.popupwindow.SearchMenuItemWindow;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
+import com.alfredwaiter.popupwindow.WaiterModifierWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.CountView;
 import com.alfredwaiter.view.SelectPersonDialog;
@@ -62,6 +64,8 @@ public class MainPage extends BaseActivity {
 
 	public static final int VIEW_EVENT_FIRST_COLLAPSE = 6;
 	public static final int VIEW_EVENT_COLLAPSE = 7;
+
+	public static final int VIEW_EVENT_MODIFIER_COUNT = 8;
 
 	public static final int VIEW_ENVENT_GET_ORDERDETAILS = 101;
 	public static final int TRANSFER_TABLE_NOTIFICATION = 102;
@@ -95,7 +99,9 @@ public class MainPage extends BaseActivity {
 	private SearchMenuItemWindow searchPopUp;
 	
 	private Button btn_slide;
-	private ModifierWindow modifierWindow;
+//	private ModifierWindow modifierWindow;
+	private WaiterModifierWindow modifierWindow;
+
 	@Override
 	protected void initView() {
 		super.initView();
@@ -103,7 +109,8 @@ public class MainPage extends BaseActivity {
 		initTextTypeFace();
 		initTitle();
 		searchPopUp = new SearchMenuItemWindow(context,handler,findViewById(R.id.rl_root));
-		modifierWindow = new ModifierWindow(context, handler, findViewById(R.id.rl_root));
+//		modifierWindow = new ModifierWindow(context, handler, findViewById(R.id.rl_root));
+		modifierWindow = new WaiterModifierWindow(context, handler, findViewById(R.id.rl_root));
 //		searchPopUp.setParams(this, handler, findViewById(R.id.rl_root));
 //		searchPopUp.setParams(currentOrder,CoreData.getInstance().getItemDetails());
 		setItemCountWindow = new SetItemCountWindow(this, findViewById(R.id.rl_root),
@@ -250,7 +257,15 @@ public class MainPage extends BaseActivity {
 				refreshList();
 				break;
 			}
+			case VIEW_EVENT_MODIFIER_COUNT:{
+				Map<String, Object> map = (Map<String, Object>) msg.obj;
+				int count = (Integer)map.get("count");
+				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
+				ModifierVariance modifierVariance = (ModifierVariance) map.get("modifierVariance");
+				modifierWindow.setList(modifierVariance);
 
+				break;
+			}
 			case VIEW_EVENT_SET_PERSON_INDEX: {
 				currentGroupId = (Integer) msg.obj;
 				if (currentGroupId == 0) {//TODO
@@ -335,9 +350,9 @@ public class MainPage extends BaseActivity {
 			case VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER:
 				Map<String, Object> map = (Map<String, Object>) msg.obj;
 				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
-				List<Integer> modifierIds = (List<Integer>) map.get("modifierIds");
+				List<ModifierVariance> variances = (List<ModifierVariance>) map.get("variances");
 				String description = (String) map.get("description");
-				addOrderDetailAndOrderModifier(itemDetail, 1, modifierIds, description);
+				addOrderDetailAndOrderModifier(itemDetail, 1, variances, description);
                 refreshTotal();
                 refreshList();
 				break;
@@ -385,7 +400,7 @@ public class MainPage extends BaseActivity {
 		}
 	}
 
-	private void addOrderDetailAndOrderModifier(ItemDetail itemDetail,int count, List<Integer> modifierIds, String description){
+	private void addOrderDetailAndOrderModifier(ItemDetail itemDetail,int count, List<ModifierVariance> modifierIds, String description){
         currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
         OrderSQL.update(currentOrder);
 		OrderDetail orderDetail = ObjectFactory.getInstance()
@@ -393,8 +408,8 @@ public class MainPage extends BaseActivity {
 						currentGroupId, App.instance.getUser());
 		orderDetail.setItemNum(count);
 		orderDetail.setReason(description);
-		for(Integer id : modifierIds){
-			Modifier modifier = CoreData.getInstance().getModifier(id);
+		for(ModifierVariance modifierVariance : modifierIds){
+			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId1());
 			OrderModifier orderModifier = new OrderModifier();
 			orderModifier.setId(CommonSQL
 					.getNextSeq(TableNames.OrderModifier));
@@ -405,7 +420,7 @@ public class MainPage extends BaseActivity {
 			orderModifier.setUserId(currentOrder.getUserId());
 			orderModifier.setItemId(orderDetail.getItemId());
 			orderModifier.setModifierId(modifier.getId());
-			orderModifier.setModifierNum(modifier.getQty());
+			orderModifier.setModifierNum(modifierVariance.getModQty());
 			orderModifier
 					.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
 			orderModifier.setModifierPrice(modifier.getPrice());

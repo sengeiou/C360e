@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp" >
+    android:layout_height="80dp"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/img_icon"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:scaleType="centerCrop"
+        android:layout_centerVertical="true"/>
 
     <LinearLayout
         android:id="@+id/ll_item"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginLeft="10dp"
+        android:paddingLeft="10dp"
+        android:background="@color/white"
+        android:layout_toRightOf="@+id/img_icon"
         android:layout_toLeftOf="@+id/count_view"
         android:orientation="vertical" >
 

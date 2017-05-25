@@ -10,6 +10,24 @@ public class ModifierVariance {
     private int modifierId2;
     private String modifierName2;
     private boolean isModifier;
+    private int mustDefault;
+    private int modQty = 0;
+
+    public int getModQty() {
+        return modQty;
+    }
+
+    public void setModQty(int modQty) {
+        this.modQty = modQty;
+    }
+
+    public int getMustDefault() {
+        return mustDefault;
+    }
+
+    public void setMustDefault(int mustDefault) {
+        this.mustDefault = mustDefault;
+    }
 
     public int getModifierId1() {
         return modifierId1;
@@ -59,6 +77,8 @@ public class ModifierVariance {
                 ", modifierId2=" + modifierId2 +
                 ", modifierName2='" + modifierName2 + '\'' +
                 ", isModifier=" + isModifier +
+                ", mustDefault=" + mustDefault +
+                ", modQty=" + modQty +
                 '}';
     }
 }

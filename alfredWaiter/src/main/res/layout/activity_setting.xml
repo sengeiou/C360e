@@ -172,8 +172,14 @@
         <RelativeLayout 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/box_setting"
+            android:background="@drawable/box_double_setting"
             android:layout_marginTop="10dp">
+
+			<RelativeLayout
+				android:id="@+id/rl_version"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/tv_version_name"
 	            android:layout_width="wrap_content"
@@ -195,6 +201,33 @@
 	            android:textColor="@color/black"
 	            android:textSize="@dimen/text_size_m" />
         </RelativeLayout>
+
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/rl_version">
+
+				<TextView
+					android:id="@+id/tv_top_screen_lock"
+					android:layout_width="wrap_content"
+					android:layout_height="43dp"
+					android:gravity="left|center_vertical"
+					android:layout_marginLeft="10dp"
+					android:text="Enable Screen Lock"
+					android:textColor="@color/black"
+					android:textSize="@dimen/text_size_m" />
+
+				<com.alfredbase.view.SlipButton
+					android:id="@+id/sb_top_screen_lock"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentRight="true"
+					android:layout_centerVertical="true"
+					android:gravity="center_vertical"
+					android:layout_marginRight="20dp" />
+			</RelativeLayout>
+
+		</RelativeLayout>
         
         <RelativeLayout 
             android:layout_width="match_parent"

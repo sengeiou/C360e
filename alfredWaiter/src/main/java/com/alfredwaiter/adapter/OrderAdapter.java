@@ -1,12 +1,15 @@
 package com.alfredwaiter.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,6 +25,8 @@ import com.alfredwaiter.javabean.ItemCategoryAndDetails;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.view.CountView;
 import com.alfredwaiter.view.CountView.OnCountChange;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
@@ -88,6 +93,22 @@ public class OrderAdapter extends BaseExpandableListAdapter {
 		TextView tv_price = (TextView) view.findViewById(R.id.tv_price);
 		tv_price.setText(App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
 		textTypeFace.setTrajanProRegular(tv_price);
+		ImageView img_icon = (ImageView) view.findViewById(R.id.img_icon);
+		String url = itemDetail.getImgUrl();
+		if (!TextUtils.isEmpty(url)){
+			//显示图片的配置  
+			DisplayImageOptions options = new DisplayImageOptions.Builder()
+					.showImageOnLoading(R.drawable.default_itemmenu)
+					.showImageOnFail(R.drawable.default_itemmenu)
+					.cacheInMemory(true)
+					.cacheOnDisk(true)
+					.bitmapConfig(Bitmap.Config.RGB_565)
+					.build();
+			ImageLoader.getInstance().displayImage(url, img_icon, options);
+		}else {
+			img_icon.setBackgroundResource(R.drawable.default_itemmenu);
+		}
+
 		final CountView count_view = (CountView) view
 				.findViewById(R.id.count_view);
 		count_view.setIsCanClick(getOrderDetailStatus(itemDetail));

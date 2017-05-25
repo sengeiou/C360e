@@ -35,6 +35,7 @@ public class Setting extends BaseActivity {
 	private LinearLayout ll_setting_content;
 	private SlipButton sb_kot_notification;
 	private SlipButton sb_zone_notification;
+	private SlipButton sb_top_screen_lock;
 	private TextView tv_version;
 	private WaiterReloginDialog waiterReloginDialog;
 
@@ -81,8 +82,16 @@ public class Setting extends BaseActivity {
 		ll_setting_content = (LinearLayout) findViewById(R.id.ll_setting_content);
 //		sb_kot_notification = (SlipButton) findViewById(R.id.sb_kot_notification);
 //		sb_zone_notification = (SlipButton) findViewById(R.id.sb_zone_notification);
+		sb_top_screen_lock = (SlipButton) findViewById(R.id.sb_top_screen_lock);
 		tv_version = (TextView) findViewById(R.id.tv_version);
-		
+
+		boolean flag = Store.getBoolean(this, Store.WAITER_SET_LOCK, true);
+		if (flag){
+			sb_top_screen_lock.setChecked(true);
+		}else {
+			sb_top_screen_lock.setChecked(false);
+		}
+
 		findViewById(R.id.tv_order_history).setOnClickListener(this);
 		findViewById(R.id.tv_bump_mob_app).setOnClickListener(this);
 		findViewById(R.id.tv_connect_pos).setOnClickListener(this);
@@ -91,6 +100,22 @@ public class Setting extends BaseActivity {
 		findViewById(R.id.iv_back).setOnClickListener(this);
 		findViewById(R.id.tv_logout).setOnClickListener(this);
 		findViewById(R.id.tv_clock).setOnClickListener(this);
+
+		sb_top_screen_lock.setOnChangedListener(new SlipButton.OnChangedListener() {
+			@Override
+			public void OnChanged(SlipButton slipButton, boolean checkState) {
+				if (checkState){
+					sb_top_screen_lock.setChecked(true);
+					Store.putBoolean(Setting.this, Store.WAITER_SET_LOCK, true);
+					App.instance.startAD();
+				}else {
+					sb_top_screen_lock.setChecked(false);
+					Store.putBoolean(Setting.this, Store.WAITER_SET_LOCK, false);
+					App.instance.stopAD();
+				}
+			}
+		});
+
 		//		sb_kot_notification.SetOnChangedListener(new SlipButtonChangeListener() {
 //			
 //			@Override
@@ -205,5 +230,6 @@ public class Setting extends BaseActivity {
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_version_name));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_version));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_logout));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_top_screen_lock));
 	}
 }

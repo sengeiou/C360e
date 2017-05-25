@@ -25,10 +25,12 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -319,8 +321,6 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 							printBill(null);
 						}
 					}, true);
-
-
 		}
 			break;
 		case R.id.iv_add:
@@ -420,7 +420,6 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				handler.sendEmptyMessage(MainPage.TRANSFER_TABLE_NOTIFICATION);
 			}
 		}
-
 	};
 
 	@Override
@@ -466,6 +465,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				holder.price = (TextView) arg1.findViewById(R.id.price);
 				holder.tv_qty = (TextView) arg1.findViewById(R.id.tv_qty);
 				holder.subtotal = (TextView) arg1.findViewById(R.id.subtotal);
+				holder.tv_modifier = (TextView) arg1.findViewById(R.id.tv_modifier);
 				arg1.setTag(holder);
 			} else {
 				holder = (ViewHolder) arg1.getTag();
@@ -474,6 +474,20 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			final OrderDetail orderDetail = orderDetails.get(position);
 			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
 					orderDetail.getItemId());
+
+			List<OrderModifier> modifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
+			if (modifiers.size() > 0) {
+				holder.tv_modifier.setVisibility(View.VISIBLE);
+				StringBuffer stringBuffer = new StringBuffer();
+				for (OrderModifier orderModifier : modifiers) {
+					Modifier modifier = ModifierSQL.getModifierById(orderModifier.getModifierId());
+					stringBuffer = stringBuffer.append(modifier.getModifierName() + "  ");
+					holder.tv_modifier.setText(stringBuffer.toString());
+				}
+			}else {
+				holder.tv_modifier.setVisibility(View.GONE);
+			}
+
 			if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE) {
 				holder.ll_title.setBackgroundColor(context.getResources()
 						.getColor(R.color.white));
@@ -535,6 +549,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			public TextView tv_qty;
 			public TextView subtotal;
 			public LinearLayout ll_title;
+			public TextView tv_modifier;
 		}
 	}
 	

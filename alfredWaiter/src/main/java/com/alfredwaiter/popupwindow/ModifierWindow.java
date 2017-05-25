@@ -199,7 +199,7 @@ public class ModifierWindow {
 
             ModifierVariance modifierVariance = modifierVariances.get(position);
             viewHold.tv_item1 = (TextView) convertView.findViewById(R.id.tv_item1);
-            viewHold.tv_item2 = (TextView) convertView.findViewById(R.id.tv_item2);
+//            viewHold.tv_item2 = (TextView) convertView.findViewById(R.id.tv_item2);
 
             if(modifierVariance.isModifier()){
                 if(!IntegerUtils.isEmptyOrZero(modifierVariance.getModifierId1()) && !TextUtils.isEmpty(modifierVariance.getModifierName1())){
@@ -208,12 +208,12 @@ public class ModifierWindow {
                 }else{
                     viewHold.tv_item1.setText("");
                 }
-                if (modifierVariance.isModifier() && !IntegerUtils.isEmptyOrZero(modifierVariance.getModifierId2()) && !TextUtils.isEmpty(modifierVariance.getModifierName2())) {
-                    viewHold.tv_item2.setText(modifierVariance.getModifierName2());
-                    viewHold.tv_item2.setTag(modifierVariance.getModifierId2());
-                }else{
-                    viewHold.tv_item2.setText("");
-                }
+//                if (modifierVariance.isModifier() && !IntegerUtils.isEmptyOrZero(modifierVariance.getModifierId2()) && !TextUtils.isEmpty(modifierVariance.getModifierName2())) {
+//                    viewHold.tv_item2.setText(modifierVariance.getModifierName2());
+//                    viewHold.tv_item2.setTag(modifierVariance.getModifierId2());
+//                }else{
+//                    viewHold.tv_item2.setText("");
+//                }
                 if(modifierIds.contains(viewHold.tv_item1.getTag())){
                     viewHold.tv_item1.setBackground(context.getResources().getDrawable(R.drawable.modifier_bg_selected));
                     viewHold.tv_item1.setTextColor(context.getResources().getColor(R.color.white));
@@ -221,13 +221,13 @@ public class ModifierWindow {
                     viewHold.tv_item1.setBackground(context.getResources().getDrawable(R.drawable.modifier_bg));
                     viewHold.tv_item1.setTextColor(context.getResources().getColor(R.color.black));
                 }
-                if(modifierIds.contains(viewHold.tv_item2.getTag())){
-                    viewHold.tv_item2.setBackground(context.getResources().getDrawable(R.drawable.modifier_bg_selected));
-                    viewHold.tv_item2.setTextColor(context.getResources().getColor(R.color.white));
-                }else{
-                    viewHold.tv_item2.setBackground(context.getResources().getDrawable(R.drawable.modifier_bg));
-                    viewHold.tv_item2.setTextColor(context.getResources().getColor(R.color.black));
-                }
+//                if(modifierIds.contains(viewHold.tv_item2.getTag())){
+//                    viewHold.tv_item2.setBackground(context.getResources().getDrawable(R.drawable.modifier_bg_selected));
+//                    viewHold.tv_item2.setTextColor(context.getResources().getColor(R.color.white));
+//                }else{
+//                    viewHold.tv_item2.setBackground(context.getResources().getDrawable(R.drawable.modifier_bg));
+//                    viewHold.tv_item2.setTextColor(context.getResources().getColor(R.color.black));
+//                }
                 viewHold.tv_item1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -239,32 +239,32 @@ public class ModifierWindow {
                         notifyDataSetChanged();
                     }
                 });
-                viewHold.tv_item2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(modifierIds.contains(v.getTag())){
-                            modifierIds.remove(v.getTag());
-                        }else{
-                            modifierIds.add((Integer)v.getTag());
-                        }
-                        notifyDataSetChanged();
-                    }
-                });
+//                viewHold.tv_item2.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if(modifierIds.contains(v.getTag())){
+//                            modifierIds.remove(v.getTag());
+//                        }else{
+//                            modifierIds.add((Integer)v.getTag());
+//                        }
+//                        notifyDataSetChanged();
+//                    }
+//                });
 
             }else{
                 viewHold.tv_item1.setText(modifierVariance.getModifierName1());
                 viewHold.tv_item1.setTextColor(context.getResources().getColor(R.color.black));
                 viewHold.tv_item1.setOnClickListener(null);
-                viewHold.tv_item2.setOnClickListener(null);
+//                viewHold.tv_item2.setOnClickListener(null);
                 viewHold.tv_item1.setBackground(null);
-                viewHold.tv_item2.setBackground(null);
+//                viewHold.tv_item2.setBackground(null);
 
             }
             return convertView;
         }
         class ViewHold{
             TextView tv_item1;
-            TextView tv_item2;
+//            TextView tv_item2;
         }
     }
 }

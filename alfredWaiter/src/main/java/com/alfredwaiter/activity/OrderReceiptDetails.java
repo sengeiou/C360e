@@ -17,9 +17,13 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.utils.WaiterUtils;
@@ -116,6 +120,7 @@ public class OrderReceiptDetails extends BaseActivity {
 				holder.price = (TextView) arg1.findViewById(R.id.price);
 				holder.tv_qty = (TextView) arg1.findViewById(R.id.tv_qty);
 				holder.subtotal = (TextView) arg1.findViewById(R.id.subtotal);
+				holder.tv_modifier = (TextView) arg1.findViewById(R.id.tv_modifier);
 				arg1.setTag(holder);
 			} else {
 				holder = (ViewHolder) arg1.getTag();
@@ -124,9 +129,23 @@ public class OrderReceiptDetails extends BaseActivity {
 			final OrderDetail orderDetail = orderDetails.get(arg0);
 			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
 					orderDetail.getItemId());
-				holder.tv_qty.setOnClickListener(null);
-				holder.tv_qty.setBackgroundColor(context.getResources().getColor(R.color.gray));
-				holder.ll_title.setBackgroundColor(context.getResources().getColor(R.color.gray));
+
+			List<OrderModifier> modifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
+			if (modifiers.size() > 0) {
+				holder.tv_modifier.setVisibility(View.VISIBLE);
+				StringBuffer stringBuffer = new StringBuffer();
+				for (OrderModifier orderModifier : modifiers) {
+					Modifier modifier = ModifierSQL.getModifierById(orderModifier.getModifierId());
+					stringBuffer = stringBuffer.append(modifier.getModifierName() + "  ");
+					holder.tv_modifier.setText(stringBuffer.toString());
+				}
+			}else {
+				holder.tv_modifier.setVisibility(View.GONE);
+			}
+
+			holder.tv_qty.setOnClickListener(null);
+			holder.tv_qty.setBackgroundColor(context.getResources().getColor(R.color.gray));
+			holder.ll_title.setBackgroundColor(context.getResources().getColor(R.color.gray));
 			holder.name.setText(itemDetail.getItemName());
 			holder.price.setText(App.instance.getCurrencySymbol() + orderDetail.getItemPrice());
 			holder.tv_qty.setText(orderDetail.getItemNum() + "");
@@ -141,6 +160,7 @@ public class OrderReceiptDetails extends BaseActivity {
 			public TextView tv_qty;
 			public TextView subtotal;
 			public LinearLayout ll_title;
+			public TextView tv_modifier;
 		}
 	}
 }

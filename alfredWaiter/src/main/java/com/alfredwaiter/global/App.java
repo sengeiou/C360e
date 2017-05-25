@@ -66,8 +66,11 @@ public class App extends BaseApplication {
 			@Override
 			public void call(Object object) {
 				if (getUser() != null && !TextUtils.isEmpty(Store.getString(instance, Store.EMPLOYEE_ID))){
+					boolean flag = Store.getBoolean(getTopActivity(), Store.WAITER_SET_LOCK, true);
+					if (flag){
 						WaiterReloginDialog reloginDialog = new WaiterReloginDialog(getTopActivity(), true);
 						reloginDialog.show();
+					}
 				}else {
 					return;
 				}
