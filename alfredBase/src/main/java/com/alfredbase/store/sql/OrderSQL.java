@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.javabeanforhtml.DashboardTotalDetailInfo;
 import com.alfredbase.javabean.model.SessionStatus;
@@ -169,6 +170,12 @@ public class OrderSQL {
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);
 		OrderHelper.setOrderInclusiveTaxPrice(order);
+		List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
+		if(orderSplits != null && orderSplits.size() > 0){
+			for(OrderSplit orderSplit : orderSplits){
+				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
+			}
+		}
 	}
 	/**
 	 * 修改订单Order折扣，调用这个方法

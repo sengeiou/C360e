@@ -1,7 +1,7 @@
 package com.alfredbase.javabean;
 
 public class AlipaySettlement {
-	
+
 	private Integer id;
 	private Integer paymentId;
 	private Integer paymentSettId;
@@ -76,5 +76,5 @@ public class AlipaySettlement {
 				+ ", createTime=" + createTime + ", updateTime=" + updateTime
 				+ ", isActive=" + isActive + "]";
 	}
-	
+
 }

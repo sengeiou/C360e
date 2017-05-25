@@ -480,13 +480,41 @@ public class OrderHelper {
 	}
 	
 	public static void setOrderSplitTax(Order order, OrderSplit orderSplit, List<OrderDetail> orderDetails){
+		/*
+		BigDecimal tax = BH.getBD(ParamConst.DOUBLE_ZERO);
+		if (orderDetails.size() > 0) {
+			for (OrderDetail orderDetail : orderDetails) {
+				if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+					tax = BH.add(tax,
+							BH.getBD(orderDetail.getTaxPrice()),
+							false);
+				}else {
+					BigDecimal orderDetailTax = OrderHelper.getOrderDetailTax(order, orderDetail);
+					tax = BH.add(tax,
+							orderDetailTax,
+							false);
+					OrderDetailSQL.updateOrderDetailTaxById(orderDetailTax.toString(), orderDetail.getId().intValue());
+				}
+			}
+		}
+		order.setTaxAmount(BH.doubleFormat.format(tax));
+		 */
 		BigDecimal orderSplitTax = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if(!orderDetails.isEmpty()){
 			for (OrderDetail orderDetail : orderDetails) {
 				if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()){
+					if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+						orderSplitTax = BH.add(orderSplitTax,
+							BH.getBD(orderDetail.getTaxPrice()),false);
+					}
+//					orderSplitTax = BH.add(orderSplitTax,
+//							OrderHelper.getOrderDetailTax(order, orderDetail),
+//							false);
+					BigDecimal orderDetailTax = OrderHelper.getOrderDetailTax(order, orderDetail);
 					orderSplitTax = BH.add(orderSplitTax,
-							OrderHelper.getOrderDetailTax(order, orderDetail),
+							orderDetailTax,
 							false);
+					OrderDetailSQL.updateOrderDetailTaxById(orderDetailTax.toString(), orderDetail.getId().intValue());
 				}
 			}
 		}

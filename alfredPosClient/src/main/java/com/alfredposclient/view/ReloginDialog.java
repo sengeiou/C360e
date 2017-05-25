@@ -105,50 +105,51 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
 
     @Override
     public void onKeyBoardClick(String key) {
-        if (keyBuf.length() >= KEY_LENGTH)
-            return;
         if (key.equals("X")) {
             if (keyBuf.length() > 0) {
                 keyBuf.deleteCharAt(keyBuf.length() - 1);
             }
         } else {
+            if (keyBuf.length() >= KEY_LENGTH)
+                return;
             keyBuf.append(key);
-        }
-        int key_len = keyBuf.length();
-        setPassword(key_len);
-        if (key_len == KEY_LENGTH) {
-            employee_ID = keyBuf.toString();
-            setPassword(keyBuf.length());
-            User user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
-            if (user != null) {
-                RevenueCenter revenueCenter = App.instance
-                        .getRevenueCenter();
-                boolean cashierAccess = CoreData.getInstance()
-                        .checkUserCashierAccessInRevcenter(user,
-                                revenueCenter.getRestaurantId(),
-                                revenueCenter.getId());
+            int key_len = keyBuf.length();
+            if (key_len == KEY_LENGTH) {
+                employee_ID = keyBuf.toString();
+                setPassword(keyBuf.length());
+                User user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
+                if (user != null) {
+                    RevenueCenter revenueCenter = App.instance
+                            .getRevenueCenter();
+                    boolean cashierAccess = CoreData.getInstance()
+                            .checkUserCashierAccessInRevcenter(user,
+                                    revenueCenter.getRestaurantId(),
+                                    revenueCenter.getId());
 
-                if (cashierAccess) {
-                    App.instance.setUser(user);
-                    RxBus.getInstance().post(RxBus.RX_MSG_1, new Integer(1));
-                    contentView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            dissmiss();
-                        }
-                    },200);
-                    return;
+                    if (cashierAccess) {
+                        App.instance.setUser(user);
+                        RxBus.getInstance().post(RxBus.RX_MSG_1, new Integer(1));
+                        contentView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dissmiss();
+                            }
+                        }, 200);
+                        return;
+                    } else {
+                        UIHelp.showToast(parent, parent.getResources().getString(R.string.login_required));
+                        employee_ID = null;
+                        keyBuf.delete(0,keyBuf.length());
+                    }
                 } else {
-                    UIHelp.showToast(parent, parent.getResources().getString(R.string.login_required));
+                    UIHelp.showToast(parent, parent.getResources().getString(R.string.invalid_employee));
                     employee_ID = null;
+                    keyBuf.delete(0,keyBuf.length());
                 }
-            }else{
-                UIHelp.showToast(parent, parent.getResources().getString(R.string.invalid_employee));
-                employee_ID = null;
             }
 
-
         }
+        setPassword(keyBuf.length());
     }
     private void setPassword(int key_len) {
         switch (key_len) {

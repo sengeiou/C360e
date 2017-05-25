@@ -756,6 +756,9 @@ public class MainPageOrderView extends LinearLayout {
 						adapter.addPageIndex();
 						adapter.notifyDataSetChanged();
 					} else {
+//						if(orderDetail.getGroupId().intValue() > 0){
+//
+//						}
 						int groupId = orderDetail.getGroupId().intValue();
 						int index = (arg2 + adapter.getPageIndex() * 6);
 						
@@ -780,6 +783,10 @@ public class MainPageOrderView extends LinearLayout {
 							if(count == 1 && groupId != index){
 								OrderSplitSQL.deleteOrderSplitByOrderAndGroupId(order.getId(), groupId);
 								RoundAmountSQL.deleteRoundAmount(oldOrderSplit);
+							}else{
+								orderDetail.setOrderSplitId(orderSplit.getId());
+								OrderDetailSQL.updateOrderDetail(orderDetail);
+								OrderSplitSQL.updateOrderSplitByOrder(order, oldOrderSplit);
 							}
 						}
 						((RingTextView)arg0.getTag()).setCircleColor(parent.getResources().getColor(ColorUtils.ColorGroup.getColor(index)), index);

@@ -341,7 +341,7 @@ public class ObjectFactory {
 
 	Object lock_table = new Object();
 
-	public TableInfo addNewTable(String imageName, int restaurantId, int revenueId, int placeId, int width){
+	public TableInfo addNewTable(String imageName, int restaurantId, int revenueId, int placeId, int width, int height){
 		synchronized (lock_table){
 			TableInfo newTable = new TableInfo();
 			newTable.setPosId(CommonSQL.getNextSeq(TableNames.TableInfo));
@@ -355,6 +355,8 @@ public class ObjectFactory {
 			newTable.setUnionId(restaurantId + "_" + revenueId + "_" + newTable.getPosId());
 			newTable.setIsActive(ParamConst.ACTIVE_NOMAL);
 			newTable.setResolution(width);
+			newTable.setResolutionWidth(width);
+			newTable.setResolutionHeight(height);
 			newTable.setName("table" + newTable.getPosId().intValue());
 //			if(imageName.startsWith("table_1"))
 //				newTable.setPacks(1);

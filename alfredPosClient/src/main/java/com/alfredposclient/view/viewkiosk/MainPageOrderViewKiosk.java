@@ -41,6 +41,7 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -746,6 +747,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 									OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
 								}else{
 									OrderSplitSQL.delete(orderSplit);
+									RoundAmountSQL.deleteRoundAmount(orderSplit);
 								}
 								handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
 							}
@@ -781,6 +783,11 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 							int count = OrderDetailSQL.getOrderDetailCountByGroupId(groupId, order.getId());
 							if(count == 1 && groupId != index){
 								OrderSplitSQL.deleteOrderSplitByOrderAndGroupId(order.getId(), groupId);
+								RoundAmountSQL.deleteRoundAmount(oldOrderSplit);
+							}else{
+								orderDetail.setOrderSplitId(orderSplit.getId());
+								OrderDetailSQL.updateOrderDetail(orderDetail);
+								OrderSplitSQL.updateOrderSplitByOrder(order, oldOrderSplit);
 							}
 						}
 						((RingTextView)arg0.getTag()).setCircleColor(parent.getResources().getColor(ColorUtils.ColorGroup.getColor(index)), index);

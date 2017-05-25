@@ -48,6 +48,7 @@ public class DataHelper {
 				onUpgradeForOldVersion11(db);
 				onUpgradeForOldVersion12(db);
 				onUpgradeForOldVersion13(db);
+				onUpgradeForOldVersion14(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -75,6 +76,7 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
@@ -89,6 +91,7 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
@@ -102,6 +105,7 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 4:
 						onUpgradeForOldVersion4(db);
@@ -114,6 +118,7 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 5:
 						onUpgradeForOldVersion5(db);
@@ -125,6 +130,7 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 6:
 						onUpgradeForOldVersion6(db);
@@ -135,6 +141,7 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 7:
 						onUpgradeForOldVersion7(db);
@@ -144,6 +151,7 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 8:
 						onUpgradeForOldVersion8(db);
@@ -152,6 +160,7 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 9:
 						onUpgradeForOldVersion9(db);
@@ -159,24 +168,32 @@ public class DataHelper {
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 10:
 						onUpgradeForOldVersion10(db);
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 11:
 						onUpgradeForOldVersion11(db);
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 12:
 						onUpgradeForOldVersion12(db);
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
 						break;
 					case 13:
 						onUpgradeForOldVersion13(db);
+						onUpgradeForOldVersion14(db);
+						break;
+					case 14:
+						onUpgradeForOldVersion14(db);
 						break;
 				default:
 					break;
@@ -815,6 +832,13 @@ public class DataHelper {
 					+ " ADD COLUMN voucher TEXT default '0.00'");
 			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
 					+ " ADD COLUMN voucherQty INTEGER default 0");
+		}
+		private void onUpgradeForOldVersion14(SQLiteDatabase db){
+
+			db.execSQL("ALTER TABLE " + TableNames.TableInfo
+					+ " ADD COLUMN resolutionWidth INTEGER");
+			db.execSQL("ALTER TABLE " + TableNames.TableInfo
+					+ " ADD COLUMN resolutionHeight INTEGER");
 		}
 	}
 }
