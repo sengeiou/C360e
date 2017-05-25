@@ -33,6 +33,10 @@ public class TableInfo {
 
     private Integer isKiosk = 0;
 
+    private Integer resolutionWidth;
+
+    private Integer resolutionHeight;
+
     public Integer getPosId() {
         return posId;
     }
@@ -201,6 +205,22 @@ public class TableInfo {
         this.isKiosk = isKiosk;
     }
 
+    public Integer getResolutionWidth() {
+        return resolutionWidth;
+    }
+
+    public void setResolutionWidth(Integer resolutionWidth) {
+        this.resolutionWidth = resolutionWidth;
+    }
+
+    public Integer getResolutionHeight() {
+        return resolutionHeight;
+    }
+
+    public void setResolutionHeight(Integer resolutionHeight) {
+        this.resolutionHeight = resolutionHeight;
+    }
+
     @Override
     public String toString() {
         return "TableInfo{" +
@@ -225,6 +245,8 @@ public class TableInfo {
                 ", rotate=" + rotate +
                 ", orders=" + orders +
                 ", isKiosk=" + isKiosk +
+                ", resolutionX='" + resolutionWidth + '\'' +
+                ", resolutionY='" + resolutionHeight + '\'' +
                 '}';
     }
 }

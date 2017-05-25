@@ -29,8 +29,9 @@ public class TableInfoSQL {
             String sql = "insert into "
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
-                    + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
+                    + " resolutionX, resolutionY)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[] { newTable.getPosId(), newTable.getName(), newTable.getImageName(),
@@ -39,7 +40,8 @@ public class TableInfoSQL {
                             newTable.getShape(), newTable.getType(), newTable.getStatus(),
                             newTable.getIsDecorate(), newTable.getUnionId(), newTable.getIsActive(),
                             newTable.getPacks(), newTable.getRotate(), newTable.getCreateTime(),
-                            newTable.getUpdateTime(), newTable.getOrders(), newTable.getIsKiosk()});
+                            newTable.getUpdateTime(), newTable.getOrders(), newTable.getIsKiosk(),
+                            newTable.getResolutionWidth(), newTable.getResolutionHeight()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,8 +59,9 @@ public class TableInfoSQL {
             String sql = "replace into "
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
-                    + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
+                    + " resolutionX, resolutionY)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[] { newTable.getPosId(), newTable.getName(), newTable.getImageName(),
@@ -67,7 +70,8 @@ public class TableInfoSQL {
                             newTable.getShape(), newTable.getType(), newTable.getStatus(),
                             newTable.getIsDecorate(), newTable.getUnionId(), newTable.getIsActive(),
                             newTable.getPacks(), newTable.getRotate(), newTable.getCreateTime(),
-                            newTable.getUpdateTime(), newTable.getOrders(), newTable.getIsKiosk()});
+                            newTable.getUpdateTime(), newTable.getOrders(), newTable.getIsKiosk(),
+                            newTable.getResolutionWidth(), newTable.getResolutionHeight()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,8 +87,9 @@ public class TableInfoSQL {
             String sql = "replace into "
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
-                    + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
+                    + " resolutionX, resolutionY)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (TableInfo newTable : newTablesList) {
@@ -130,6 +135,10 @@ public class TableInfoSQL {
                         newTable.getOrders());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 21,
                         newTable.getIsKiosk());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 22,
+                        newTable.getResolutionWidth());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 23,
+                        newTable.getResolutionHeight());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -176,6 +185,8 @@ public class TableInfoSQL {
                 newTable.setUpdateTime(cursor.getLong(18));
                 newTable.setOrders(cursor.getInt(19));
                 newTable.setIsKiosk(cursor.getInt(20));
+                newTable.setResolutionWidth(cursor.getInt(21));
+                newTable.setResolutionHeight(cursor.getInt(22));
                 result.add(newTable);
             }
         } catch (Exception e) {
@@ -225,6 +236,8 @@ public class TableInfoSQL {
                 newTable.setUpdateTime(cursor.getLong(18));
                 newTable.setOrders(cursor.getInt(19));
                 newTable.setIsKiosk(cursor.getInt(20));
+                newTable.setResolutionWidth(cursor.getInt(21));
+                newTable.setResolutionHeight(cursor.getInt(22));
                 result.add(newTable);
             }
         } catch (Exception e) {
@@ -274,6 +287,8 @@ public class TableInfoSQL {
                 newTable.setUpdateTime(cursor.getLong(18));
                 newTable.setOrders(cursor.getInt(19));
                 newTable.setIsKiosk(cursor.getInt(20));
+                newTable.setResolutionWidth(cursor.getInt(21));
+                newTable.setResolutionHeight(cursor.getInt(22));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -315,6 +330,8 @@ public class TableInfoSQL {
                 newTable.setUpdateTime(cursor.getLong(18));
                 newTable.setOrders(cursor.getInt(19));
                 newTable.setIsKiosk(cursor.getInt(20));
+                newTable.setResolutionWidth(cursor.getInt(21));
+                newTable.setResolutionHeight(cursor.getInt(22));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -356,6 +373,8 @@ public class TableInfoSQL {
                 newTable.setUpdateTime(cursor.getLong(18));
                 newTable.setOrders(cursor.getInt(19));
                 newTable.setIsKiosk(cursor.getInt(20));
+                newTable.setResolutionWidth(cursor.getInt(21));
+                newTable.setResolutionHeight(cursor.getInt(22));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -397,6 +416,8 @@ public class TableInfoSQL {
                 newTable.setUpdateTime(cursor.getLong(18));
                 newTable.setOrders(cursor.getInt(19));
                 newTable.setIsKiosk(cursor.getInt(20));
+                newTable.setResolutionWidth(cursor.getInt(21));
+                newTable.setResolutionHeight(cursor.getInt(22));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -457,6 +478,8 @@ public class TableInfoSQL {
                 newTable.setUpdateTime(cursor.getLong(18));
                 newTable.setOrders(cursor.getInt(19));
                 newTable.setIsKiosk(cursor.getInt(20));
+                newTable.setResolutionWidth(cursor.getInt(21));
+                newTable.setResolutionHeight(cursor.getInt(22));
                 result.add(newTable);
             }
         } catch (Exception e) {

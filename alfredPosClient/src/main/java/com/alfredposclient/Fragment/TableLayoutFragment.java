@@ -88,6 +88,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
     private BaseActivity mainPage;
     private LoadingDialog loadingDialog;
+    private LinearLayout ll_table_right;
 //    private RelativeLayout rl_table_area;
     private int width;
     @Override
@@ -112,7 +113,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 LinearLayout.LayoutParams.MATCH_PARENT);
         width = (int) ScreenSizeUtil.width * 4 / 5;
         view.findViewById(R.id.ll_table_left).setLayoutParams(ps2);
-
+        ll_table_right = (LinearLayout) view.findViewById(R.id.ll_table_right);
 
 //        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 //            @Override
@@ -145,7 +146,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 TableInfo newTable = ObjectFactory.getInstance().addNewTable(images[position],
                         App.instance.getRevenueCenter().getRestaurantId(),
                         App.instance.getRevenueCenter().getId(),
-                        places.get(selectPlaceIndex).getId(), width);
+                        places.get(selectPlaceIndex).getId(), ll_table_right.getMeasuredWidth(),ll_table_right.getMeasuredHeight());
                 newTables.add(newTable);
                 addTable(newTable);
             }
@@ -277,7 +278,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         TableInfoSQL.deleteTableInfo(newTable.getPosId().intValue());
                         break;
                     case R.id.iv_copy:
-                        TableInfo copNewTable = ObjectFactory.getInstance().addNewTable(newTable.getImageName(), newTable.getRestaurantId(), newTable.getRevenueId(), newTable.getPlacesId(), width);
+                        TableInfo copNewTable = ObjectFactory.getInstance().addNewTable(newTable.getImageName(), newTable.getRestaurantId(), newTable.getRevenueId(), newTable.getPlacesId(), newTable.getResolutionWidth(), newTable.getResolutionHeight());
                         addTable(copNewTable);
                         break;
                     case R.id.iv_rotate:
@@ -424,6 +425,8 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         selfView.setY(y > 0 ? y : 0);
                         newTable.setxAxis(selfView.getX() + "");
                         newTable.setyAxis(selfView.getY() + "");
+                        newTable.setResolutionWidth(ll_table_right.getMeasuredWidth());
+                        newTable.setResolutionHeight(ll_table_right.getMeasuredHeight());
                         Log.e("TAG", "mx:"+x+",my:"+y);
                         selfView.invalidate();
                         break;
