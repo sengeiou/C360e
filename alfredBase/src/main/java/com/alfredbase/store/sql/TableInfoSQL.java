@@ -30,7 +30,7 @@ public class TableInfoSQL {
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
                     + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
-                    + " resolutionX, resolutionY)"
+                    + " resolutionWidth, resolutionHeight)"
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
@@ -60,7 +60,7 @@ public class TableInfoSQL {
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
                     + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
-                    + " resolutionX, resolutionY)"
+                    + " resolutionWidth, resolutionHeight)"
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
@@ -88,7 +88,7 @@ public class TableInfoSQL {
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
                     + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
-                    + " resolutionX, resolutionY)"
+                    + " resolutionWidth, resolutionHeight)"
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
