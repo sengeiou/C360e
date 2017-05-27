@@ -230,6 +230,7 @@
     <string name="no_items">No items in order list!</string>
     <string name="receipt_printing">Receipt is Printing</string>
     <string name="table_transfer">Table Transfer</string>
+    <string name="table_transfer_from">*** Transferred from %s ***</string>
     <string name="transfer_">Are you sure to transfer the </string>
     <string name="to">to</string>
     <string name="no_set_kds_printer">No KDS or Printer Devices are set for Kitchens</string>

@@ -20,6 +20,7 @@ import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.LogUtil;
+import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
 import com.path.android.jobqueue.JobManager;
@@ -331,7 +332,7 @@ public class KotJobManager {
 				if (prntd != null) {
 					prntd.setGroupId(prgid.intValue());
 					String fromTableName = (String) orderMap.get("fromTableName");
-					printKotSummary.setDescription("*** Transferred from " + fromTableName + " ***");
+					printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
 					printed = App.instance.remoteKotPrint(prntd, printKotSummary,
 							kots.get(prgid), mods.get(prgid));
 
