@@ -226,6 +226,7 @@
     <string name="no_items">订单为空</string>
     <string name="receipt_printing">凭条打印中</string>
     <string name="table_transfer">换台</string>
+    <string name="table_transfer_from">*** 从 %s 转桌过来 ***</string>
     <string name="transfer_">你确定交换桌子</string><!-- 待定 -->
     <string name="to">与</string><!-- 待定 -->
     <string name="no_set_kds_printer">厨房未配置打印机或者显示设备</string>
