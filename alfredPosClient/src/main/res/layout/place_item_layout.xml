@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:lines="1"
             android:layout_toLeftOf="@+id/ll_palce_item_action"
             android:textSize="18sp"
             android:text="123123" />

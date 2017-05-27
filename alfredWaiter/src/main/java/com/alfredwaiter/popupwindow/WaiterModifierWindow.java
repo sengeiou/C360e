@@ -123,6 +123,7 @@ public class WaiterModifierWindow {
         modifierIds.clear();
         modifierVariances.clear();
         variances.clear();
+        remark_et.setText("");
         varianceModifiers();
     }
 

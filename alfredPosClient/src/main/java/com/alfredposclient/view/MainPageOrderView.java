@@ -761,24 +761,33 @@ public class MainPageOrderView extends LinearLayout {
 //						}
 						int groupId = orderDetail.getGroupId().intValue();
 						int index = (arg2 + adapter.getPageIndex() * 6);
-						
-						orderDetail.setGroupId(index);
+						if(groupId == index) {
+							collapseLastOpen();
+							return;
+						}
+//						if(orderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED){
+//							UIHelp.showToast(parent   , parent.getResources().getString(R.string.order_split_) +
+//									orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
+//							handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+//							return;
+//						}
+						OrderSplit oldOrderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, groupId);
+						if(oldOrderSplit != null && oldOrderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED){
+							UIHelp.showToast(parent,  parent.getResources().getString(R.string.order_split_) +
+									oldOrderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
+							collapseLastOpen();
+							return;
+						}
 						OrderSplit orderSplit = ObjectFactory.getInstance().getOrderSplit(order, index, App.instance.getLocalRestaurantConfig()
 								.getIncludedTax().getTax());
 						if(orderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED){
-							UIHelp.showToast(parent   , parent.getResources().getString(R.string.order_split_) + 
+							UIHelp.showToast(parent,  parent.getResources().getString(R.string.order_split_) +
 									orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
-							handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+							collapseLastOpen();
 							return;
 						}
+						orderDetail.setGroupId(index);
 						if(groupId > 0){
-							OrderSplit oldOrderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, groupId);
-							if(oldOrderSplit == null || oldOrderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED){
-								UIHelp.showToast(parent,  parent.getResources().getString(R.string.order_split_) + 
-										orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
-								handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-								return;
-							}
 							int count = OrderDetailSQL.getOrderDetailCountByGroupId(groupId, order.getId());
 							if(count == 1 && groupId != index){
 								OrderSplitSQL.deleteOrderSplitByOrderAndGroupId(order.getId(), groupId);
@@ -789,6 +798,7 @@ public class MainPageOrderView extends LinearLayout {
 								OrderSplitSQL.updateOrderSplitByOrder(order, oldOrderSplit);
 							}
 						}
+
 						((RingTextView)arg0.getTag()).setCircleColor(parent.getResources().getColor(ColorUtils.ColorGroup.getColor(index)), index);
 						orderDetail.setOrderSplitId(orderSplit.getId());
 						OrderDetailSQL.updateOrderDetail(orderDetail);
@@ -930,7 +940,15 @@ public class MainPageOrderView extends LinearLayout {
 					} else if(!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())){
 						UIHelp.showShortToast(parent, "Cannot delete order item from diner app!");
 						return;
-					}else if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+					} else if(tag.getOrderSplitId() != null && tag.getOrderSplitId().intValue() != 0){
+						OrderSplit orderSplit = OrderSplitSQL.get(tag.getOrderSplitId().intValue());
+						if(orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
+							UIHelp.showToast(parent, parent.getResources().getString(R.string.order_split_) +
+									orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
+							return;
+						}
+					}
+					if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),
 								parent.getResources().getString(R.string.remove_item), 
 								parent.getResources().getString(R.string.no), 
@@ -961,7 +979,15 @@ public class MainPageOrderView extends LinearLayout {
 						return;
 					} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 						return;
-					} else if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+					} else if(orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0){
+						OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
+						if(orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+							UIHelp.showToast(parent, parent.getResources().getString(R.string.order_split_) +
+									orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
+							return;
+						}
+					}
+					if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("orderDetail", orderDetail);
 						map.put("type", new Integer(
@@ -982,7 +1008,15 @@ public class MainPageOrderView extends LinearLayout {
 						return;
 					} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 						return;
-					} else if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_ADDED) {
+					} else if(orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0){
+						OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
+						if(orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+							UIHelp.showToast(parent, parent.getResources().getString(R.string.order_split_) +
+									orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
+							return;
+						}
+					}
+					if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_ADDED) {
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("orderDetail", orderDetail);
 						map.put("type", new Integer(
@@ -1001,14 +1035,20 @@ public class MainPageOrderView extends LinearLayout {
 					final OrderDetail orderDetail = (OrderDetail) view.getTag();
 					if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
 						return;
-					}
-					if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+					} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 						return;
-					}
-					if (orderDetail.getOrderDetailStatus() > ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+					} else if (orderDetail.getOrderDetailStatus() > ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						UIHelp.showToast(parent, parent.getResources().getString(R.string.item_complete));
 						return;
+					} else if(orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0){
+						OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
+						if(orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+							UIHelp.showToast(parent, parent.getResources().getString(R.string.order_split_) +
+									orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
+							return;
+						}
 					}
+
 					if (orderDetail.getIsTakeAway() == ParamConst.TAKE_AWAY) {
 						handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TAKE_AWAY,orderDetail));
 						handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_MODIFIER_VIEW);
@@ -1037,7 +1077,15 @@ public class MainPageOrderView extends LinearLayout {
 						return;
 					} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 						return;
-					} else if (orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+					} else if(orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0){
+						OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
+						if(orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+							UIHelp.showToast(parent, parent.getResources().getString(R.string.order_split_) +
+									orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
+							return;
+						}
+					}
+					if (orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 						handler.sendMessage(handler
 								.obtainMessage(
 										MainPage.VIEW_EVENT_SET_WEIGHT,

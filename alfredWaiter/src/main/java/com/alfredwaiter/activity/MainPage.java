@@ -407,7 +407,7 @@ public class MainPage extends BaseActivity {
 				.createOrderDetailForWaiter(currentOrder, itemDetail,
 						currentGroupId, App.instance.getUser());
 		orderDetail.setItemNum(count);
-		orderDetail.setReason(description);
+		orderDetail.setSpecialInstractions(description);
 		for(ModifierVariance modifierVariance : modifierIds){
 			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId1());
 			OrderModifier orderModifier = new OrderModifier();

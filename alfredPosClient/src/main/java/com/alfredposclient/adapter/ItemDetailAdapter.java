@@ -1,14 +1,8 @@
 package com.alfredposclient.adapter;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.StateListDrawable;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +19,10 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class ItemDetailAdapter extends BaseAdapter {
 	private Context context;
@@ -135,11 +133,7 @@ public class ItemDetailAdapter extends BaseAdapter {
 			}
 			imageViewHolder.item_name_tv.setText(itemDetails.get(arg0).getItemName());
 			String url = itemDetails.get(arg0).getImgUrl();
-//			if (!TextUtils.isEmpty(url)) {
-				ImageLoader.getInstance().displayImage(url, imageViewHolder.item_name_img, options);
-//			}else {
-//				imageViewHolder.item_name_img.setBackgroundResource(R.drawable.default_itemmenu);
-//			}
+			ImageLoader.getInstance().displayImage(url, imageViewHolder.item_name_img, options);
 		}
 		return arg1;
 	}
