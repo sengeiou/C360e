@@ -320,7 +320,7 @@ public class RoundAmountSQL {
 	
 	public static double getAllRoundBalancePriceByTime(long businessDate){
 		double totalBalancePrice = 0.00;
-		String sql = "select sum(roundBalancePrice) from " + TableNames.RoundAmount +" where businessDate = ? and orderSplitId = 0";
+		String sql = "select sum(roundBalancePrice) from " + TableNames.RoundAmount +" where businessDate = ?";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql,

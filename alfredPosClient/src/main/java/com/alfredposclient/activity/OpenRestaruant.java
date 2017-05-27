@@ -1649,22 +1649,24 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private Handler handler = new Handler() {
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
-			case CAN_CLOSE:
+			case CAN_CLOSE: {
+				final View msgView = (View)msg.obj;
 				DialogFactory.commonTwoBtnInputDialog(context, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
 						new OnClickListener() {
 							@Override
 							public void onClick(View view) {
-								close(((View) msg.obj), "0.00");
+								close(msgView, "0.00");
 							}
 						},
 						new OnClickListener() {
 							@Override
 							public void onClick(View view) {
-								EditText editText = (EditText)view;
+								EditText editText = (EditText) view;
 								String actual = editText.getText().toString();
-								close(((View) msg.obj), actual);
+								close(msgView, actual);
 							}
 						});
+			}
 				break;
 			case CAN_NOT_CLOSE:{
 				final View view = (View) msg.obj;
