@@ -41,12 +41,24 @@ public class OrderAdapter extends BaseExpandableListAdapter {
 	private TextTypeFace textTypeFace = TextTypeFace.getInstance();
 	private SetItemCountWindow setItemCountWindow;
 	private OnCountChange onCountChange;
+	private DisplayImageOptions options;
+
 	public OrderAdapter(Context context, List<ItemCategoryAndDetails> tables,
 			Handler handler,SetItemCountWindow setItemCountWindow, OnCountChange onCountChange) {
 		this.itemCategoryAndDetailsList = tables;
 		mContext = context;
 		inflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		//显示图片的配置  
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.default_itemmenu)
+				.showImageOnFail(R.drawable.default_itemmenu)
+				.showImageForEmptyUri(R.drawable.default_itemmenu)
+				.cacheInMemory(true)
+				.cacheOnDisk(true)
+				.bitmapConfig(Bitmap.Config.RGB_565)
+				.build();
+
 		this.handler = handler;
 		this.setItemCountWindow = setItemCountWindow;
 		this.onCountChange = onCountChange;
@@ -95,19 +107,11 @@ public class OrderAdapter extends BaseExpandableListAdapter {
 		textTypeFace.setTrajanProRegular(tv_price);
 		ImageView img_icon = (ImageView) view.findViewById(R.id.img_icon);
 		String url = itemDetail.getImgUrl();
-		if (!TextUtils.isEmpty(url)){
-			//显示图片的配置  
-			DisplayImageOptions options = new DisplayImageOptions.Builder()
-					.showImageOnLoading(R.drawable.default_itemmenu)
-					.showImageOnFail(R.drawable.default_itemmenu)
-					.cacheInMemory(true)
-					.cacheOnDisk(true)
-					.bitmapConfig(Bitmap.Config.RGB_565)
-					.build();
+//		if (!TextUtils.isEmpty(url)) {
 			ImageLoader.getInstance().displayImage(url, img_icon, options);
-		}else {
-			img_icon.setBackgroundResource(R.drawable.default_itemmenu);
-		}
+//		}else {
+//			img_icon.setBackgroundResource(R.drawable.default_itemmenu);
+//		}
 
 		final CountView count_view = (CountView) view
 				.findViewById(R.id.count_view);

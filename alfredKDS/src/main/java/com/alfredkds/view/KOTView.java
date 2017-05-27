@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
@@ -20,6 +21,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Chronometer;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,7 +44,9 @@ import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.javabean.Kot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +77,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private TextView tv_remark;
 	private LinearLayout ll_orderRemark;
 	private View kotView;
-	public TextView tv_progress;
+	public Chronometer tv_progress;
 
 	private TextView complete_all_tv;
 	private TextView call_num_tv;
@@ -84,6 +88,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
 	private TextTypeFace textTypeFace;
 	private Handler handler;
+	private int hour;
 	
 	public KOTView(Context context) {
 		super(context);
@@ -98,6 +103,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.context = context;
 		init();
 
+	}
+
+	public Long getTime(){
+		return tv_progress.getBase();
 	}
 	
 	public void setParams(Context context, Handler handler){
@@ -116,7 +125,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		posName = (TextView) kotView.findViewById(R.id.tv_pos);
 		date = (TextView) kotView.findViewById(R.id.tv_createDate);
 		time = (TextView) kotView.findViewById(R.id.tv_createTime);
-		tv_progress = (TextView) kotView.findViewById(R.id.tv_progress);
+		tv_progress = (Chronometer) kotView.findViewById(R.id.tv_progress);
 		lv_dishes = (ListView) kotView.findViewById(R.id.lv_dishes);
 		tv_kiosk_order_id = (TextView) kotView.findViewById(R.id.tv_kiosk_order_id);
 		tv_orderremark = (TextView) kotView.findViewById(R.id.tv_orderremark);
@@ -235,7 +244,27 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
 		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
-		tv_progress.setText(TimeUtil.getSubTimeFormat(kot.getKotSummary().getUpdateTime())+"");
+
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		long currentTime = System.currentTimeMillis();
+		long createTime = kot.getKotSummary().getUpdateTime();
+		final String str = sdf.format(new Date(currentTime - createTime));
+
+		tv_progress.setBase(SystemClock.elapsedRealtime() - System.currentTimeMillis() + createTime);
+//		int hour = (int) ((System.currentTimeMillis() - createTime) / 1000 / 60/60);
+//		tv_progress.setFormat("0"+String.valueOf(hour)+":%s");
+//		tv_progress.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+//			@Override
+//			public void onChronometerTick(Chronometer chronometer) {
+//				chronometer.setText(str);
+//
+//			}
+//		});
+		tv_progress.start();
+//		tv_progress.setText(str);
+
+
+
 		if(lv_dishes.getAdapter() == null){
 			lv_dishes.setAdapter(adapter);
 		}else{

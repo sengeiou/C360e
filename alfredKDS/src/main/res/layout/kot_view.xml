@@ -173,12 +173,11 @@
                 android:src="@drawable/icon_clock"
                 android:layout_marginRight="8dp"/>
 
-            <TextView
+            <Chronometer
                 android:id="@+id/tv_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="10:10mins"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_s"
                 android:layout_centerInParent="true"/>

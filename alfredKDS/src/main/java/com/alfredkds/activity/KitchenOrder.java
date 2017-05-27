@@ -266,9 +266,9 @@ public class KitchenOrder extends BaseActivity {
 		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
 		mainPosInfo = App.instance.getCurrentConnectedMainPos();
 		App.instance.setRing();
-		filter = new IntentFilter();
-		filter.addAction(Intent.ACTION_TIME_TICK);
-		registerReceiver(receiver, filter);
+//		filter = new IntentFilter();
+//		filter.addAction(Intent.ACTION_TIME_TICK);
+//		registerReceiver(receiver, filter);
 
 		//ll_progress_list = (LinearLayout) findViewById(R.id.ll_progress_list);
 		//initProgressList();
@@ -279,13 +279,13 @@ public class KitchenOrder extends BaseActivity {
 		initTextTypeFace();
 	}
 
-	private BroadcastReceiver receiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context arg0, Intent arg1) {
-			adapter.notifyDataSetChanged();
-		}
-	};
+//	private BroadcastReceiver receiver = new BroadcastReceiver() {
+//
+//		@Override
+//		public void onReceive(Context arg0, Intent arg1) {
+//			adapter.notifyDataSetChanged();
+//		}
+//	};
 
 	@Override
 	protected void onResume() {
@@ -305,7 +305,7 @@ public class KitchenOrder extends BaseActivity {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(receiver);
+//		unregisterReceiver(receiver);
 		super.onDestroy();
 	}
 

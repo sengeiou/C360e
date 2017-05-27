@@ -1,7 +1,9 @@
 package com.alfredkds.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.os.Handler;
@@ -18,9 +20,11 @@ public class KOTArrayAdapter extends BaseAdapter {
 	private List<Kot> kots = new ArrayList<Kot>();
 	private boolean addFirstItem = false;
 	private Handler handler;
+	private Map<Integer, Long> times = new HashMap<Integer, Long>();
 
 	public KOTArrayAdapter(Context mContext, Handler handler) {
 		super();
+		times.clear();
 		this.mContext = mContext;
 		this.handler = handler;
 	}
@@ -62,6 +66,12 @@ public class KOTArrayAdapter extends BaseAdapter {
 //			kotView = (KOTView) convertView.getTag();
 		}
 		holder.kotView.setData(kots.get(position));
+		if (times.containsKey(position)){
+			Long tm = times.get(position);
+			tm = holder.kotView.getTime();
+		}else {
+			times.put(position, holder.kotView.getTime());
+		}
 		if (addFirstItem && position == 0) {
 			holder.kotView.showNewKOT();
 			addFirstItem = false;

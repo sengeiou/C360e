@@ -29,7 +29,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class ItemDetailAdapter extends BaseAdapter {
 	private Context context;
 	private List<ItemDetail> itemDetails;
-
+	private DisplayImageOptions options;
 	public static final int ITEM_WIDTH_HEIGHT = 100;
 	private TextTypeFace textTypeFace = TextTypeFace.getInstance();
 	private LayoutInflater inflater;
@@ -39,7 +39,15 @@ public class ItemDetailAdapter extends BaseAdapter {
 		if (itemDetails == null)
 			itemDetails = Collections.emptyList();
 		this.itemDetails = itemDetails;
-
+		//显示图片的配置  
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.default_itemmenu)
+				.showImageOnFail(R.drawable.default_itemmenu)
+				.showImageForEmptyUri(R.drawable.default_itemmenu)
+				.cacheInMemory(true)
+				.cacheOnDisk(true)
+				.bitmapConfig(Bitmap.Config.RGB_565)
+				.build();
 	}
 	
 	public void setItemDetails(List<ItemDetail> itemDetails) {
@@ -127,20 +135,11 @@ public class ItemDetailAdapter extends BaseAdapter {
 			}
 			imageViewHolder.item_name_tv.setText(itemDetails.get(arg0).getItemName());
 			String url = itemDetails.get(arg0).getImgUrl();
-			if (!TextUtils.isEmpty(url)){
-				//显示图片的配置  
-				DisplayImageOptions options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.default_itemmenu)
-				.showImageOnFail(R.drawable.default_itemmenu)
-				.cacheInMemory(true)
-				.cacheOnDisk(true)
-				.bitmapConfig(Bitmap.Config.RGB_565)
-				.build();
+//			if (!TextUtils.isEmpty(url)) {
 				ImageLoader.getInstance().displayImage(url, imageViewHolder.item_name_img, options);
-			}else {
-				imageViewHolder.item_name_img.setBackgroundResource(R.drawable.default_itemmenu);
-			}
-
+//			}else {
+//				imageViewHolder.item_name_img.setBackgroundResource(R.drawable.default_itemmenu);
+//			}
 		}
 		return arg1;
 	}
