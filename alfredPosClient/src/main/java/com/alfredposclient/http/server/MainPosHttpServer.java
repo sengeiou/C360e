@@ -63,6 +63,7 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.global.UIHelp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.umeng.analytics.MobclickAgent;
@@ -1005,6 +1006,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			Map<String, Object> orderMap = new HashMap<String, Object>();
 			orderMap.put("orderId", order.getId());
 			orderMap.put("orderDetailIds", orderDetailIds);
+			if(!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()){
+				PrinterDevice printer = App.instance.getCahierPrinter();
+				if (printer == null) {
+					UIHelp.showToast(
+							App.getTopActivity(),App.getTopActivity().getResources().getString(R.string.setting_printer));
+				} else {
+					App.instance.remoteOrderSummaryPrint(printer, kotSummary, kotItemDetails, kotItemModifiers);
+				}
+			}
 			App.instance.getKdsJobManager()
 					.tearDownKot(kotSummary, kotItemDetails, kotItemModifiers,
 							kotCommitStatus, orderMap);
