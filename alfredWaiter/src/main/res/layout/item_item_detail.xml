@@ -4,13 +4,23 @@
     android:layout_height="80dp"
     android:background="@color/white">
 
+    <LinearLayout
+        android:id="@+id/ll_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:padding="1dp"
+        android:background="@drawable/menu_img_shape"
+        android:layout_centerVertical="true">
+
     <ImageView
         android:id="@+id/img_icon"
         android:layout_width="70dp"
         android:layout_height="60dp"
-        android:layout_marginLeft="10dp"
         android:scaleType="centerCrop"
         android:layout_centerVertical="true"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_item"
@@ -18,7 +28,7 @@
         android:layout_height="80dp"
         android:paddingLeft="10dp"
         android:background="@color/white"
-        android:layout_toRightOf="@+id/img_icon"
+        android:layout_toRightOf="@+id/ll_icon"
         android:layout_toLeftOf="@+id/count_view"
         android:orientation="vertical" >
 

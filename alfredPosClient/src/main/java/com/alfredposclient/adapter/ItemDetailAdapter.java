@@ -39,7 +39,6 @@ public class ItemDetailAdapter extends BaseAdapter {
 		this.itemDetails = itemDetails;
 		//显示图片的配置  
 		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.default_itemmenu)
 				.showImageOnFail(R.drawable.default_itemmenu)
 				.showImageForEmptyUri(R.drawable.default_itemmenu)
 				.cacheInMemory(true)
