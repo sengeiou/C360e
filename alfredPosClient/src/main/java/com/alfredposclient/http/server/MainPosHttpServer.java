@@ -1158,7 +1158,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					@Override
 					public void run() {
 						if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-							SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getOrderNo().toString());
+							String orderNo = kotSummary.getOrderNo().toString();
+							if(App.instance.isRevenueKiosk()){
+								orderNo = IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
+							}
+							SyncCentre.getInstance().callAppNo(App.instance, orderNo);
 
 						}
 						int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId());

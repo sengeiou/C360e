@@ -56,7 +56,7 @@ public class ModifierDetailAnalysisReportPrint extends ReportBasePrint{
 			String col3Title, String col4Title) {
 		
 		StringBuffer ret = new StringBuffer();
-		BillPrint.COL4_ITEMNAME = this.charSize - BillPrint.FIXED_COL4_PRICE - BillPrint.FIXED_COL4_QTY - BillPrint.FIXED_COL4_PRICE;
+		BillPrint.COL4_ITEMNAME = this.charSize - BillPrint.FIXED_COL4_PRICE - BillPrint.FIXED_COL4_QTY - BillPrint.FIXED_COL4_TOTAL;
 		String title1 = StringUtil.padRight(col1Title, BillPrint.COL4_ITEMNAME);
 		String title2 = StringUtil.padRight(col2Title, BillPrint.FIXED_COL4_PRICE);
 		String title3 = StringUtil.padRight(col3Title, BillPrint.FIXED_COL4_QTY);

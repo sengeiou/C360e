@@ -192,7 +192,7 @@ public class DaySalesReportPrint extends ReportBasePrint{
 	public void AddContentListHeader(String itemName, String qty, String total){
 		PrintData header = new PrintData();
 		header.setDataFormat(PrintData.FORMAT_TXT);
-		header.setText(this.getThreeColHeader(itemName, qty, total));
+		header.setText(this.GetThreeColContent(itemName, qty, total, 1));
 		this.data.add(header);
 		addHortionalLine(this.charSize);
 	}
