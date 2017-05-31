@@ -1,5 +1,6 @@
 package com.alfredbase.http;
 
+import com.alfredbase.javabean.NanoHTTPD;
 import com.alfredbase.utils.LogUtil;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class AlfredHttpServer extends NanoHTTPD implements AlfredHttpHandler{
+    public class AlfredHttpServer extends NanoHTTPD implements AlfredHttpHandler{
 
 	public AlfredHttpServer(int port) {
 		super(port);

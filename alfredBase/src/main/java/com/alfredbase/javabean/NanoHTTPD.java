@@ -1,4 +1,4 @@
-package com.alfredbase.http;
+package com.alfredbase.javabean;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

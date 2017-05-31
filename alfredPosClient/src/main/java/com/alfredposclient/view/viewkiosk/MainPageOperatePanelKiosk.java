@@ -179,7 +179,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 	}
 	
 	private void setData() {
-		tv_order_no.setText(ParamHelper.getPrintOrderNO(order.getId()));
+		tv_order_no.setText(ParamHelper.getPrintOrderNO(order.getOrderNo()));
 //		tv_pax.setText(order.getPersons() + "");
 	}
 

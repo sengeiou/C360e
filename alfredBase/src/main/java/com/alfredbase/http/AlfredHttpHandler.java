@@ -3,8 +3,8 @@ package com.alfredbase.http;
 import java.io.IOException;
 import java.util.Map;
 
-import com.alfredbase.http.NanoHTTPD.Method;
-import com.alfredbase.http.NanoHTTPD.Response;
+import com.alfredbase.javabean.NanoHTTPD.Method;
+import com.alfredbase.javabean.NanoHTTPD.Response;
 
 public interface AlfredHttpHandler {
    public Response doPost(String uri, Method mothod, Map<String, String> params, String body);

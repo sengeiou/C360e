@@ -1,8 +1,8 @@
 package com.alfredbase.javabean;
 
-import java.io.Serializable;
-
 import com.alfredbase.utils.CommonUtil;
+
+import java.io.Serializable;
 
 public class User implements Serializable{
 	/**
