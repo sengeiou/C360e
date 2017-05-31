@@ -89,6 +89,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private TextTypeFace textTypeFace;
 	private Handler handler;
 	private int hour;
+	private MainPosInfo mainPosInfo;
 	
 	public KOTView(Context context) {
 		super(context);
@@ -116,7 +117,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	}
 	
 	public void init() {
-		MainPosInfo mainPosInfo = App.instance.getCurrentConnectedMainPos();
+		mainPosInfo = App.instance.getCurrentConnectedMainPos();
 		kotView = View.inflate(context, R.layout.kot_view, this);
 		/*---kotTop显示---*/
 		kotId = (TextView) kotView.findViewById(R.id.tv_kotId);
@@ -303,7 +304,12 @@ public class KOTView extends LinearLayout implements AnimationListener,
 					return;
 				}
 				Message message = new Message();
-				message.arg1 = kot.getKotSummary().getOrderId();
+				if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+					int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo());
+					message.arg1 = orderNoStr;
+				}else {
+					message.arg1 = kot.getKotSummary().getOrderNo();
+				}
 				message.what = App.HANDLER_KOT_CALL_NUM;
 				handler.sendMessage(message);
 			}
