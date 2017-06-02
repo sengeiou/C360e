@@ -86,18 +86,18 @@ public class OrderAdapter extends BaseExpandableListAdapter {
 		final ItemDetail itemDetail = itemCategoryAndDetailsList.get(groupPosition)
 				.getItemDetails().get(childPosition);
 		View view = inflater.inflate(R.layout.item_item_detail, null);
-		LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.ll_item);
-		linearLayout.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-//				OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
-//						currentOrder, itemDetail, currentGroupId,
-//						ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
-//				UIHelp.startOrderDetail((BaseActivity)mContext, currentOrder, itemDetail,
-//						orderDetail, currentGroupId);
-			}
-		});
+//		LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.ll_item);
+//		linearLayout.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+////				OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+////						currentOrder, itemDetail, currentGroupId,
+////						ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
+////				uihelp.startorderdetail((baseactivity)mcontext, currentorder, itemdetail,
+////						orderDetail, currentGroupId);
+//			}
+//		});
 		TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
 		tv_name.setText(itemDetail.getItemName());
 		textTypeFace.setTrajanProRegular(tv_name);
