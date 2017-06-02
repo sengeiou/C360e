@@ -1293,7 +1293,7 @@ public class OrderSQL {
 	/*计算流水*/
 	public static int getSumCountByBizDate(long bizDate){
 		int sumCount = 0;
-		String sql = "select max(orderNo) from "+ TableNames.Order + " where businessDate = ?";
+		String sql = "select orderNo from "+ TableNames.Order + " where id in (select max(id) from " + TableNames.Order + " where businessDate = ?)";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(bizDate)});

@@ -582,5 +582,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_top_screen_lock));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_top_masking_use));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_max_order_no_str));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_cash_close_print));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_auto_receive_app));
 	}
 }

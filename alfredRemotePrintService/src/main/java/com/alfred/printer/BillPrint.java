@@ -27,7 +27,7 @@ public class BillPrint extends PrintJob{
 	public static int FIXED_COL4_SPACE = 2;
 	public static int FIXED_COL4_PRICE = 10; //in case of 48 dots width, QTY col = 10dots
 	public static int FIXED_COL4_QTY = 6; //in case of 48 dots width, QTY col = 10dots
-	public static int FIXED_COL4_TOTAL = 10; //in case of 48 dots width, QTY col = 10dots
+	public static int FIXED_COL4_TOTAL = 12; //in case of 48 dots width, QTY col = 10dots
 	
 	public static int COL4_ITEMNAME; // Width = CharSize/scale - FIXED_COL2_QTY/scale - 
 	                                      // FIXED_COL2_PRICE/scale- FIXED_COL2_TOTAL/scale- FIXED_COL2_SPACE *3

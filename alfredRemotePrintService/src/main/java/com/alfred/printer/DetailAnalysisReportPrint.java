@@ -205,7 +205,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 		int pad = 0;
 		StringBuffer ret = new StringBuffer();
-		BillPrint.COL4_ITEMNAME = this.charSize - BillPrint.FIXED_COL4_PRICE - BillPrint.FIXED_COL4_QTY - BillPrint.FIXED_COL4_PRICE;
+		BillPrint.COL4_ITEMNAME = this.charSize - BillPrint.FIXED_COL4_PRICE - BillPrint.FIXED_COL4_QTY - BillPrint.FIXED_COL4_TOTAL;
 		if (App.instance.countryCode == ParamConst.CHINA)
 			pad = 2;
 		String title1 = StringUtil.padRight(col1Title, BillPrint.COL4_ITEMNAME-pad);
@@ -216,6 +216,8 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 		return ret.toString();
 	}
+
+
 
 	/* Four columns layout (Width = 48dots)
 	 * |item Name   Dynamical | Price |  |2| QTY 10/scale  | Total|
