@@ -15,6 +15,7 @@ import com.alfredposclient.activity.BOHSettlementActivity;
 import com.alfredposclient.activity.CashInOutHtml;
 import com.alfredposclient.activity.ClockInOROut;
 import com.alfredposclient.activity.DashboardHtml;
+import com.alfredposclient.activity.DevicesActivity;
 import com.alfredposclient.activity.DevicesHtml;
 import com.alfredposclient.activity.EditOrderHtml;
 import com.alfredposclient.activity.EditSettlementPage;
@@ -31,6 +32,7 @@ import com.alfredposclient.activity.SunmiActivity;
 import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.XZReportHtml;
+import com.alfredposclient.activity.XZRerortActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 
 public class UIHelp {
@@ -57,7 +59,7 @@ public class UIHelp {
 	}
 
 	public static void startDevicesHtml(BaseActivity context) {
-		Intent intent = new Intent(context, DevicesHtml.class);
+		Intent intent = new Intent(context, DevicesActivity.class);
 		context.startActivity(intent);
 //		context.overridePendingTransition(R.anim.slide_bottom_in,
 //				R.anim.centre_close_70);
@@ -98,7 +100,7 @@ public class UIHelp {
 	}
 
 	public static void startXZReportHtml(BaseActivity context) {
-		Intent intent = new Intent(context, XZReportHtml.class);
+		Intent intent = new Intent(context, XZRerortActivity.class);
 		context.startActivity(intent);
 //		context.overridePendingTransition(R.anim.slide_bottom_in,
 //				R.anim.centre_close_70);

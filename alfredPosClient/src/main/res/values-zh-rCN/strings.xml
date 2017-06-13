@@ -378,5 +378,15 @@
     <string name="welcome">欢迎光临</string>
     
     <string name="bill_manage">账单管理</string>
-    
+    <!--Zun-->
+    <string name="device_scan_tips">服务员和厨房设备扫描此二维码\n与收银机相连接</string>
+    <string name="unassign">解除</string>
+    <string name="assign">绑定</string>
+    <string name="manually_add">手动添加</string>
+    <string name="or_manually">或者\n手动连接IP</string>
+    <string name="printer">打印机</string>
+    <string name="kds">厨房</string>
+    <string name="waiter_">服务员</string>
+    <string name="devices_">设备</string>
+    <string name="day_sales_report">日销售报表</string>
 </resources>

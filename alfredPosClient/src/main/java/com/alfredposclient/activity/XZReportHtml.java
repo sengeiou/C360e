@@ -184,20 +184,16 @@ public class XZReportHtml extends BaseActivity {
 					bizDate = jsonObject.optLong("bizDate");
 					zFlag = jsonObject.optBoolean("z");
 					xSessionId = jsonObject.optInt("x");
-
 					if (zFlag) {
 						reportData = getZReportData(bizDate);
 					} else {
 						SessionStatus session = App.instance.getSessionStatus();
 						reportData = getXReportData(bizDate, session);
 					}
-					// getDataSync();
-
 					LogUtil.w(TAG, "businessDate" + TimeUtil.getMDY(bizDate));
 					web.loadUrl(ParamConst.JS_CONNECT_ANDROID + "('"
 							+ JSONUtil.getJSCallBackName(str) + "','"
 							+ reportData + "')");
-
 					LogUtil.i(TAG, ParamConst.JS_CONNECT_ANDROID + "('"
 							+ JSONUtil.getJSCallBackName(str) + "','"
 							+ reportData + "')");
@@ -205,11 +201,8 @@ public class XZReportHtml extends BaseActivity {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-
 			}
 				break;
-
-			// load 1 month XZReport summary
 			case JavaConnectJS.ACTION_LOAD_ALL_XZ_REPORT: {
 				String str = (String) msg.obj;
 				long businessDate = (Long) Store.getLong(XZReportHtml.this,
@@ -224,9 +217,8 @@ public class XZReportHtml extends BaseActivity {
 				web.loadUrl(ParamConst.JS_CONNECT_ANDROID + "('"
 						+ JSONUtil.getJSCallBackName(str) + "','" + jsonDate
 						+ "')");
-			}
+				}
 				break;
-			// Download Z report if no report stores locally
 			case JavaConnectJS.ACTION_DOWNLOAD_Z_REPORT: {
 				JSONObject jsonObject;
 				String str = (String) msg.obj;
@@ -242,7 +234,6 @@ public class XZReportHtml extends BaseActivity {
 						param.put("revenueId", rc.getId().intValue());
 						SyncCentre.getInstance().loadCloudDaySalesReport(
 								context, param, mHandler);
-
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
@@ -255,7 +246,7 @@ public class XZReportHtml extends BaseActivity {
 				web.loadUrl(ParamConst.JS_CONNECT_ANDROID
 						+ "('ShowZReportDetail','"
 						+ JSONUtil.getJSONFromEncode(str) + "')");
-			}
+				}
 				break;
 			case JavaConnectJS.ACTION_CLICK_BACK:
 				XZReportHtml.this.finish();
@@ -263,8 +254,6 @@ public class XZReportHtml extends BaseActivity {
 			case JavaConnectJS.ACTION_CLICK_PRINT: {
 				String str = (String) msg.obj;
 				JSONObject jsonObject;
-				// final Long bizDate = 0L;
-
 				try {
 					jsonObject = new JSONObject(str);
 					final Long bizDate = jsonObject.optLong("bizDate");
@@ -312,7 +301,6 @@ public class XZReportHtml extends BaseActivity {
 										R.string.no_sales_print));
 					}
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

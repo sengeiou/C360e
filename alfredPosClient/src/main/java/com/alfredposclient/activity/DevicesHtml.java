@@ -18,6 +18,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.WaiterDevice;
@@ -46,6 +47,13 @@ public class DevicesHtml extends BaseActivity {
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_common_web);
+		List<Printer> kdss = CoreData.getInstance().getKDSPhysicalPrinters();
+		List<LocalDevice> localDevices = CoreData.getInstance().getLocalDevices();
+		List<Printer> phys = CoreData.getInstance().getPhysicalPrinters();
+		List<PrinterGroup> groups = CoreData.getInstance().getPrinterGroups();
+		List<Printer> printers = CoreData.getInstance().getPrinters();
+		PrinterDevice device = App.instance.getCahierPrinter();
+
 		web = (WebView) findViewById(R.id.web);
 		selectPrintWindow = new SelectPrintWindow(context, findViewById(R.id.rl_root),handler);
 		WebViewConfig.setDefaultConfig(web);
@@ -113,7 +121,7 @@ public class DevicesHtml extends BaseActivity {
 		map.put("kds", CoreData.getInstance().getKDSPhysicalPrinters());
 		map.put("printers", CoreData.getInstance().getPhysicalPrinters());
 		map.put("mainPosInfo", App.instance.getMainPosInfo());
-		
+
 		Gson gson = new Gson();
 		String str = gson.toJson(map);
 		Log.d(TAG, str);

@@ -69,12 +69,13 @@
             android:layout_marginRight="20dp"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <ImageView
                 android:id="@+id/iv_print"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/setting_print_selector" />
 
             <TextView

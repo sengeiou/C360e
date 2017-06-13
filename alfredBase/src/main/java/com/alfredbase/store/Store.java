@@ -109,7 +109,9 @@ public class Store {
 	public static final String DISCOUNT_SELECTED_ITEM = "DISCOUNT_SELECTED_ITEM";
 
 	public static final String MAX_ORDER_NO = "MAX_ORDER_NO";
+	public static final String LABEL_DEVICE = "LABEL_DEVICE";
 	public static final String WAITER_SET_LOCK = "WAITER_SET_LOCK";
+
 
 	private Store() {
 	};

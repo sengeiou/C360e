@@ -28,6 +28,7 @@ import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.KotNotification;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
@@ -88,6 +89,8 @@ public class CoreData {
 	private List<KotNotification> kotNotifications;
 	private List<LocalDevice> localDevices;
 
+	private PrinterDevice device;
+
 	public RoundRule getRoundRule() {
 		return roundRule;
 	}
@@ -131,6 +134,14 @@ public class CoreData {
 		kotNotifications = KotNotificationSQL.getAllKotNotification();
 		localDevices = LocalDeviceSQL.getAllLocalDevice();
 		restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
+	}
+
+	public PrinterDevice getDevice() {
+		return device;
+	}
+
+	public void setDevice(PrinterDevice device) {
+		this.device = device;
 	}
 
 	public List<ItemModifier> getItemModifiers(ItemDetail itemDetail) {

@@ -12,6 +12,7 @@
 	<color name="green">#00CC00</color>
 	<color name="white">#FFFFFF</color>
 	<color name="black">#000000</color>
+	<color name="devices_red">#ad0020</color>
 
     <color name="possible_result_points">#c0ffff00</color>
     <color name="result_view">#b0000000</color>
@@ -47,6 +48,9 @@
 	<color name="gray_line_bg">#d1d1d1</color>
 	<color name="fb_bg">#fbfbfb</color>
 	<color name="dark_gray">#767676</color>
+
+	<color name="grid_bg">#FFFFFFFF</color>
+	<color name="grid_border">#EDEDED</color>
 
 
 </resources>

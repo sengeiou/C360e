@@ -386,6 +386,17 @@
 
     <string name="index">Index</string>
     <string name="welcome">Welcome</string>
-
     <string name="bill_manage">Bill Manage</string>
+
+    <!--Zun-->
+    <string name="device_scan_tips">Scan the QR code to get Tablets paired with the POS</string>
+    <string name="unassign">Unassign</string>
+    <string name="assign">Assign</string>
+    <string name="manually_add">Manually Add</string>
+    <string name="or_manually">OR \n manually set POS IP in Tablet</string>
+    <string name="printer">Printer</string>
+    <string name="kds">KDS</string>
+    <string name="waiter_">Waiter</string>
+    <string name="devices_">Devices</string>
+    <string name="day_sales_report">Day Sales Report</string>
 </resources>

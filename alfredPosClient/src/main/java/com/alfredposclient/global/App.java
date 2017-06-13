@@ -237,6 +237,8 @@ public class App extends BaseApplication {
     private IConnectionCallback.ConnState connState;
 
     private boolean hasSecondScreen = false;
+
+    private Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
     // // 动态session类型
     // private List<Integer> sessionConfigType;
     //
@@ -460,6 +462,14 @@ public class App extends BaseApplication {
 //        return pushThread;
 //    }
 
+
+    public Map<Integer, List<PrinterDevice>> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<Integer, List<PrinterDevice>> map) {
+        this.map = map;
+    }
 
     public boolean isUsbScannerLink() {
         return isUsbScannerLink;
@@ -1348,7 +1358,6 @@ public class App extends BaseApplication {
                 return devPrinter;
         }
         return null;
-
     }
 
     /**
