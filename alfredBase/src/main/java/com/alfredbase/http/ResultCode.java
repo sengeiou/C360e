@@ -188,7 +188,13 @@ public class ResultCode {
 	public static final int APP_VERSION_UNREAL = -997;
 	
 	public static final int ORDER_FINISHED = -996;
-	
+
+	public static final int REVENUE_EMPLY = -995;
+
+	public static final int ORDER_ERROR = -994;
+
+	public static final int REVENUE_IS_KIOSK = -993;
+
 	/**
 	 * waiter提交的拆单在POS机上已经结账的返回
 	 */

@@ -34,7 +34,7 @@ public class PushServer {
     private Channel channel;
     QueueingConsumer consumer;
     public PushServer (){
-        mListener = new PushListenerClient(App.instance);
+//        mListener = new PushListenerClient(App.instance);
         LogUtil.d(TAG, "Creating Alfred Push Service " + this.toString());
         if (factory == null) {
             factory = new ConnectionFactory();

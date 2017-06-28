@@ -303,7 +303,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		}
 			break;
 		case R.id.btn_print_bill: {
-			DialogFactory.commonTwoBtnDialog(context, "Waring", "Use the default Cashier Printer ?", "Other", "OK",
+			DialogFactory.commonTwoBtnDialog(context, "Warning", "Use the default Cashier Printer ?", "Other", "OK",
 					new OnClickListener() {
 						@Override
 						public void onClick(View v) {

@@ -9,15 +9,21 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.http.AlfredHttpServer;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.ItemCategory;
+import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.ItemMainCategory;
+import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.LocalDevice;
+import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.PrinterTitle;
@@ -37,11 +43,15 @@ import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
+import com.alfredbase.store.sql.ItemMainCategorySQL;
+import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
@@ -52,6 +62,7 @@ import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
+import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
@@ -83,7 +94,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	public MainPosHttpServer() {
 		super(APPConfig.HTTP_SERVER_PORT);
 	}
-	
+
 	private Object lockObject = new Object();
 
 	public static final String MIME_JAVASCRIPT = "text/javascript";
@@ -96,6 +107,314 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	@Override
 	public Response doGet(String uri, Method mothod, final Map<String, String> params, String body){
 		return super.doGet(uri,mothod,params,body);
+	}
+
+	@Override
+	public Response doDesktopPost(String apiName, Method mothod, Map<String, String> params, String body) {
+		LogUtil.d(TAG, "apiName : " + apiName + " body : " + body);
+		Map<String, Object> result = new HashMap<String, Object>();
+		if(App.instance.isRevenueKiosk()){
+			result.put("resultCode", ResultCode.REVENUE_IS_KIOSK);
+			return this.getJsonResponse(new Gson().toJson(result));
+		}
+		JSONObject jsonObject;
+		try {
+			jsonObject = new JSONObject(body);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return this.getForbiddenResponse("");
+		}
+		if (TextUtils.isEmpty(apiName)) {
+			return this.getForbiddenResponse("");
+		} else {
+			int deviceType = jsonObject.optInt("deviceType");
+			if (deviceType != 5) {
+				result.put("resultCode", ResultCode.JSON_DATA_ERROR);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}
+			SessionStatus sessionStatus = App.instance.getSessionStatus();
+			if (sessionStatus == null) {
+				result.put("resultCode", ResultCode.SESSION_IS_CLOSED);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}
+			if (apiName.equals(APIName.DESKTOP_LOGIN)) {
+				int employee_Id = 0;
+				try {
+					String employeeId = jsonObject.optString("employeeId");
+					employee_Id = Integer.parseInt(employeeId);
+				} catch (Exception e) {
+					result.put("resultCode", ResultCode.JSON_DATA_ERROR);
+				}
+				User user = CoreData.getInstance().getUserByEmpId(employee_Id);
+				if (user != null) {
+					result.put("resultCode", ResultCode.SUCCESS);
+					result.put("revenue", App.instance.getRevenueCenter());
+					result.put("user", user);
+				} else {
+					result.put("resultCode", ResultCode.USER_EMPTY);
+				}
+				return this.getJsonResponse(new Gson().toJson(result));
+			} else {
+				int revenueId = 0;
+				int userId = 0;
+				try {
+					revenueId = jsonObject.optInt("revenueId");
+					userId = jsonObject.optInt("userId");
+				} catch (Exception e) {
+					result.put("resultCode", ResultCode.JSON_DATA_ERROR);
+					return this.getJsonResponse(new Gson().toJson(result));
+				}
+				User user = UserSQL.getUserById(userId);
+				if (user == null) {
+					result.put("resultCode", ResultCode.USER_EMPTY);
+					return this.getJsonResponse(new Gson().toJson(result));
+				}
+				if (apiName.equals(APIName.DESKTOP_GETTABLE)) {
+					if (revenueId == App.instance.getRevenueCenter().getId().intValue()) {
+						List<PlaceInfo> placeList = PlaceInfoSQL.getAllPlaceInfo();
+						List<TableInfo> tableInfoList = TableInfoSQL.getAllTables();
+						result.put("resultCode", ResultCode.SUCCESS);
+						result.put("placeList", placeList);
+						result.put("tableList", tableInfoList);
+					} else {
+						result.put("resultCode", ResultCode.REVENUE_EMPLY);
+					}
+					return this.getJsonResponse(new Gson().toJson(result));
+				} else if (apiName.equals(APIName.DESKTOP_SELECTTABLE)) {
+					int tableId = 0;
+					int persons = 0;
+
+					try {
+						tableId = jsonObject.optInt("tableId");
+						persons = jsonObject.optInt("persons");
+
+					} catch (Exception e) {
+						result.put("resultCode", ResultCode.JSON_DATA_ERROR);
+					}
+					if (tableId != 0 || persons != 0) {
+						TableInfo tableInfo = TableInfoSQL.getTableById(tableId);
+						tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
+						TableInfoSQL.updateTables(tableInfo);
+						tableInfo.setPacks(persons);
+//						Order order = ObjectFactory.getInstance().getOrder
+						Order order = ObjectFactory.getInstance().getOrder(
+								ParamConst.ORDER_ORIGIN_TABLE, tableInfo,
+								App.instance.getRevenueCenter(),
+								user,
+								App.instance.getSessionStatus(),
+								App.instance.getBusinessDate(),
+								App.instance.getIndexOfRevenueCenter(),
+								ParamConst.ORDER_STATUS_OPEN_IN_WAITER,
+								App.instance.getLocalRestaurantConfig()
+										.getIncludedTax().getTax());
+						result.put("resultCode", ResultCode.SUCCESS);
+						result.put("order", order);
+						App.getTopActivity().httpRequestAction(
+								MainPage.REFRESH_TABLES_STATUS, tableInfo);
+					} else {
+						result.put("resultCode", ResultCode.JSON_DATA_ERROR);
+					}
+					return this.getJsonResponse(new Gson().toJson(result));
+				} else if (apiName.equals(APIName.DESKTOP_GETITEM)) {
+					List<ItemMainCategory> itemMainCategoryList = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenter();
+					List<ItemCategory> itemCategoryList = ItemCategorySQL.getAllItemCategory();
+					List<ItemDetail> itemDetailList = ItemDetailSQL.getAllItemDetail();
+					List<ItemModifier> itemModifierList = ItemModifierSQL.getAllItemModifier();
+					List<Modifier> modifierList = ModifierSQL.getAllModifier();
+					result.put("resultCode", ResultCode.SUCCESS);
+					result.put("itemMainCategoryList", itemMainCategoryList);
+					result.put("itemCategoryList", itemCategoryList);
+					result.put("itemDetailList", itemDetailList);
+					result.put("itemModifierList", itemModifierList);
+					result.put("modifierList", modifierList);
+					return this.getJsonResponse(new Gson().toJson(result));
+				} else if (apiName.equals(APIName.DESKTOP_COMMITORDER)) {
+					Response resp;
+					if (App.instance.isRevenueKiosk()) {
+						result.put("resultCode", ResultCode.USER_NO_PERMIT);
+						return this.getJsonResponse(new Gson().toJson(result));
+					}
+
+					try {
+						Gson gson = new Gson();
+						Order order = gson.fromJson(jsonObject.optJSONObject("order")
+								.toString(), Order.class);
+						Order loadOrder = OrderSQL.getUnfinishedOrder(order.getId());
+						if (loadOrder == null) {
+							result.put("resultCode", ResultCode.ORDER_FINISHED);
+							resp = this.getJsonResponse(new Gson().toJson(result));
+							return resp;
+						}
+						if ((App.instance.orderInPayment != null && App.instance.orderInPayment.getId().intValue() == order.getId().intValue())) {
+							result.put("resultCode", ResultCode.NONEXISTENT_ORDER);
+							resp = this.getJsonResponse(new Gson().toJson(result));
+							return resp;
+						}
+						ArrayList<OrderDetail> waiterOrderDetails = gson.fromJson(
+								jsonObject.optString("orderDetailList"),
+								new TypeToken<ArrayList<OrderDetail>>() {
+								}.getType());
+						ArrayList<OrderModifier> waiterOrderModifiers = gson.fromJson(
+								jsonObject.optString("orderModifierList"),
+								new TypeToken<ArrayList<OrderModifier>>() {
+								}.getType());
+						// 检测是否有 订单是已经完成的拆单中的
+						for (OrderDetail orderDetail : waiterOrderDetails) {
+							OrderSplit loadOrderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
+							if (loadOrderSplit != null && loadOrderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED) {
+								result.put("resultCode", ResultCode.ORDER_FINISHED);
+								resp = this.getJsonResponse(new Gson().toJson(result));
+								return resp;
+							}
+						}
+
+						// waiter 过来的数据 存到 pos的DB中 不带Id存储
+						for (OrderDetail orderDetail : waiterOrderDetails) {
+							synchronized (lockObject) {
+								OrderDetail orderDetailFromPOS = OrderDetailSQL
+										.getOrderDetailByCreateTime(
+												System.currentTimeMillis(),
+												orderDetail.getOrderId());
+								if (orderDetailFromPOS != null) {
+									continue;
+								} else {
+
+									int orderDetailId = CommonSQL
+											.getNextSeq(TableNames.OrderDetail);
+									int oldOrderDetailId = orderDetail.getId();
+									orderDetail
+											.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+									orderDetail.setId(orderDetailId);
+									OrderDetailSQL.addOrderDetailETC(orderDetail);
+									if (orderDetail.getGroupId().intValue() > 0) {
+										OrderSplit orderSplit = ObjectFactory.getInstance().getOrderSplit(order, orderDetail.getGroupId(), App.instance.getLocalRestaurantConfig()
+												.getIncludedTax().getTax());
+										OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
+										orderDetail.setOrderSplitId(orderSplit.getId());
+										OrderDetailSQL.updateOrderDetail(orderDetail);
+										OrderDetailTaxSQL.updateOrderSplitIdbyOrderDetail(orderDetail);
+									}
+									if (waiterOrderModifiers != null
+											&& !waiterOrderModifiers.isEmpty()) {
+										for (OrderModifier orderModifier : waiterOrderModifiers) {
+											if (orderModifier.getOrderDetailId().intValue() == oldOrderDetailId) {
+												orderModifier.setOrderDetailId(orderDetailId);
+												orderModifier.setId(CommonSQL
+														.getNextSeq(TableNames.OrderModifier));
+												orderModifier.setOrderId(order.getId().intValue());
+												OrderModifierSQL
+														.updateOrderModifier(orderModifier);
+											}
+										}
+									}
+								}
+							}
+						}
+
+						order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
+
+						//	当前Order未完成时更新状态
+						OrderSQL.updateUnFinishedOrderFromWaiter(order);
+						//	这边重新从数据中获取OrderDetail 不依赖于waiter过来的数据
+						List<OrderDetail> orderDetails = OrderDetailSQL
+								.getOrderDetails(order.getId());
+						if (!orderDetails.isEmpty()) {
+							Order placedOrder = OrderSQL.getOrder(order.getId());
+							if (placedOrder.getOrderNo().intValue() == 0) {
+								order.setOrderNo(OrderHelper.calculateOrderNo(order.getBusinessDate()));
+								OrderSQL.updateOrderNo(order);
+							}
+							OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+									order, App.instance.getRevenueCenter());
+							OrderBillSQL.add(orderBill);
+						}
+						String kotCommitStatus;
+						KotSummary kotSummary = ObjectFactory.getInstance().getKotSummary(
+								TableInfoSQL.getTableById(order.getTableId()).getName(),
+								order, App.instance.getRevenueCenter(), App.instance.getBusinessDate());
+						List<Integer> orderDetailIds = new ArrayList<Integer>();
+						ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+						ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+						kotCommitStatus = ParamConst.JOB_NEW_KOT;
+						for (OrderDetail orderDetail : orderDetails) {
+							if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_PREPARED) {
+								continue;
+							}
+							if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+								kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+							} else {
+								KotItemDetail kotItemDetail = ObjectFactory
+										.getInstance()
+										.getKotItemDetail(
+												order,
+												orderDetail,
+												CoreData.getInstance().getItemDetailById(
+														orderDetail.getItemId()),
+												kotSummary, App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+								kotItemDetail.setItemNum(orderDetail.getItemNum());
+								if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
+									kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+									kotItemDetail
+											.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+								}
+								KotItemDetailSQL.update(kotItemDetail);
+								kotItemDetails.add(kotItemDetail);
+								orderDetailIds.add(orderDetail.getId());
+								ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+										.getOrderModifiers(order, orderDetail);
+								for (OrderModifier orderModifier : orderModifiers) {
+									KotItemModifier kotItemModifier = ObjectFactory
+											.getInstance().getKotItemModifier(
+													kotItemDetail,
+													orderModifier,
+													CoreData.getInstance().getModifier(
+															orderModifier.getModifierId()));
+									KotItemModifierSQL.update(kotItemModifier);
+									kotItemModifiers.add(kotItemModifier);
+								}
+							}
+						}
+						KotSummarySQL.update(kotSummary);
+						List<OrderDetail> orderDetailListR = OrderDetailSQL.getAllOrderDetailsByOrder(order);
+						List<OrderModifier> orderModifierListR = OrderModifierSQL.getAllOrderModifier(order);
+						result.put("order", order);
+						result.put("orderDetailList", orderDetailListR);
+						result.put("orderModifierList", orderModifierListR);
+						result.put("resultCode", ResultCode.SUCCESS);
+						resp = this.getJsonResponse(new Gson().toJson(result));
+						// App.getTopActivity().httpRequestAction(MainPage.WAITER_SEND_KDS,
+						// kotMap);
+						Map<String, Object> orderMap = new HashMap<String, Object>();
+						orderMap.put("orderId", order.getId());
+						orderMap.put("orderDetailIds", orderDetailIds);
+						if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
+							PrinterDevice printer = App.instance.getCahierPrinter();
+							if (printer == null) {
+								UIHelp.showToast(
+										App.getTopActivity(), App.getTopActivity().getResources().getString(R.string.setting_printer));
+							} else {
+								App.instance.remoteOrderSummaryPrint(printer, kotSummary, kotItemDetails, kotItemModifiers);
+							}
+						}
+
+						App.instance.getKdsJobManager()
+								.tearDownKot(kotSummary, kotItemDetails, kotItemModifiers,
+										kotCommitStatus, orderMap);
+						App.getTopActivity().httpRequestAction(
+								MainPage.VIEW_EVENT_SET_DATA, order.getId());
+					} catch (Exception e) {
+						e.printStackTrace();
+						result.clear();
+						result.put("resultCode", ResultCode.ORDER_ERROR);
+						resp = this.getJsonResponse(new Gson().toJson(result));
+					}
+					return resp;
+				}else{
+					return this.getNotFoundResponse();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -1439,6 +1758,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		try {
 			JSONObject jsonObject = new JSONObject(params);
 			int orderId = jsonObject.getInt("orderId");
+			Order loadOrder = OrderSQL.getUnfinishedOrder(orderId);
+			if (loadOrder == null) {
+				result.put("resultCode", ResultCode.ORDER_FINISHED);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+				return resp;
+			}
 			String tableName = jsonObject.getString("tableName");
 			int deviceId = 0;
 			if(jsonObject.has("deviceId")) {

@@ -139,7 +139,7 @@ public class KotJobManager {
 					if (printed) {
 						List<Integer> orderDetailIds = (List<Integer>) orderMap
 								.get("orderDetailIds");
-						if (orderDetailIds.size() != 0) {
+						if (orderDetailIds != null && orderDetailIds.size() != 0) {
 							ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 							synchronized (orderDetails) {
 								for (int i = 0; i < orderDetailIds.size(); i++) {

@@ -11,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,7 +20,6 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.Modifier;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredwaiter.R;
@@ -303,7 +301,7 @@ public class WaiterModifierWindow {
                 viewHold.countView_item1.setVisibility(View.GONE);
                 viewHold.tv_item1.setText(modifierVariance.getModifierName1());
                 viewHold.tv_item1.setTextColor(context.getResources().getColor(R.color.black));
-                viewHold.tv_item1.setOnClickListener(null);
+                viewHold.rl_item1.setOnClickListener(null);
                 viewHold.rl_item1.setBackground(null);
             }
             return convertView;

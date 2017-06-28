@@ -22,7 +22,7 @@ public class RabbitMqPushService extends Service {
 	private static final String TAG = RabbitMqPushService.class.getName();
 	private final IBinder mBinder = new Binder();
 	private boolean mShutDown = false;
-	private PushService.PushListener mListener;
+	private PushListener mListener;
 	private Handler mHandler;
 	private ConnectionFactory factory;
 	private static final String  PUSH_USERNAME = "alfred_B_A";
@@ -208,18 +208,18 @@ public class RabbitMqPushService extends Service {
 		}
 	}
 
-	public synchronized void setListener(PushService.PushListener listener) {
+	public synchronized void setListener(PushListener listener) {
 		mListener = listener;
 	}
 
-//	public interface PushListener {
-//		public void onPushMessageReceived(PushMessage msg);
-//
-//		public void onNetworkError();
-//
-//		public void onNetworkDisconnected();
-//
-//		public void onNetworkConnected();
-//	}
+	public interface PushListener {
+		public void onPushMessageReceived(PushMessage msg);
+
+		public void onNetworkError();
+
+		public void onNetworkDisconnected();
+
+		public void onNetworkConnected();
+	}
 
 }

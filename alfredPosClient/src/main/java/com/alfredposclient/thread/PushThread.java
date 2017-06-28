@@ -7,7 +7,6 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
-import com.alfredposclient.push.PushListenerClient;
 import com.alfredposclient.push.PushServer;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
@@ -38,7 +37,7 @@ public class PushThread extends Thread {
     private String key;
 
     public PushThread() {
-        mListener = new PushListenerClient(App.instance);
+//        mListener = new PushListenerClient(App.instance);
         LogUtil.d(TAG, "Creating Alfred Push Service " + this.toString());
         if (factory == null) {
             factory = new ConnectionFactory();

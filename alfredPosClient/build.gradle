@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.alfredposclient"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion rootProject.ext.posMinSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
@@ -62,6 +62,10 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    mavenCentral()
 }
 dependencies {
     compile project(':alfredBase')
@@ -80,4 +84,6 @@ dependencies {
     compile 'com.sunmi:DS_Lib:1.0.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile(name:'barcode_scanner_library_v2.0.8.0', ext:'aar')
+    compile "org.igniterealtime.smack:smack-android-extensions:4.2.0"
+    compile "org.igniterealtime.smack:smack-tcp:4.2.0"
 }

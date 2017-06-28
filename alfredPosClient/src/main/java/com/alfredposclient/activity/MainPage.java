@@ -111,6 +111,7 @@ import com.alfredposclient.view.MainPageSearchView;
 import com.alfredposclient.view.SelectOrderSplitDialog;
 import com.alfredposclient.view.SettingView;
 import com.alfredposclient.view.TopMenuView;
+import com.alfredposclient.xmpp.XMPP;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -415,7 +416,7 @@ public class MainPage extends BaseActivity {
 			}
 		});
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
-		App.instance.getPushServer().setCanCheckAppOrder(true);
+		XMPP.getInstance().setCanCheckAppOrder(true);
 	}
 
 //    private void showStoredCard(){
@@ -1961,7 +1962,7 @@ public class MainPage extends BaseActivity {
 	protected void onDestroy() {
 		unregisterReceiver(receiver);
 //		App.instance.unBindPushWebSocketService();
-		App.instance.getPushServer().setCanCheckAppOrder(false);
+		XMPP.getInstance().setCanCheckAppOrder(false);
 		if(observable != null){
 			RxBus.getInstance().unregister(RxBus.RX_MSG_1, observable);
 		}

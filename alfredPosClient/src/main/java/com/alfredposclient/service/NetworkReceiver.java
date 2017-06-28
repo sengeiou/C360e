@@ -1,7 +1,5 @@
 package com.alfredposclient.service;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,12 +24,12 @@ public void onReceive(Context context, Intent intent) {
 	    }
 	    else {
 	        Log.i("AlfredPushService", "lost connection");
-	        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-			PendingIntent operation = PendingIntent.getService(context, 0, PushService.pingIntent(context), PendingIntent.FLAG_NO_CREATE);  
-	        if(operation != null){
-	        	am.cancel(operation);
-	        	operation.cancel();
-	        }
+//	        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+//			PendingIntent operation = PendingIntent.getService(context, 0, PushService.pingIntent(context), PendingIntent.FLAG_NO_CREATE);
+//	        if(operation != null){
+//	        	am.cancel(operation);
+//	        	operation.cancel();
+//	        }
 //	        context.startService(PushService.closeIntent(context));
 	    }
 	}

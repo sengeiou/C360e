@@ -161,8 +161,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.PushService"></service>
-        <service android:name=".service.RabbitMqPushService"></service>
+        <!--<service android:name=".service.RabbitMqPushService"></service>-->
 
         <receiver android:name="sunmi.ds.MsgReceiver">
             <intent-filter>

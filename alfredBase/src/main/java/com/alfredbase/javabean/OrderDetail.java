@@ -283,6 +283,9 @@ public class OrderDetail implements Serializable {
 	}
 
 	public Integer getGroupId() {
+		if(groupId == null){
+			groupId = 0;
+		}
 		return groupId;
 	}
 

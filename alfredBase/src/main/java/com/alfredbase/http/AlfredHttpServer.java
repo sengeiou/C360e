@@ -32,7 +32,12 @@ import java.util.Map;
 			return getInternalErrorResponse("");
 		}
         if (Method.POST.equals(method)){
-        	return this.doPost(apiName, method, params, body.get("postData"));
+            if(apiName.startsWith("desktop")){
+
+                return this.doDesktopPost(apiName, method, params, body.get("postData"));
+            }else {
+                return this.doPost(apiName, method, params, body.get("postData"));
+            }
         }else if(Method.GET.equals(method)){
             return this.doGet(apiName, method, params, body.get("getData"));
         }
@@ -87,7 +92,12 @@ import java.util.Map;
 		return getForbiddenResponse("Not Support yet");
 	}
 
-	@Override
+    @Override
+    public Response doDesktopPost(String uri, Method mothod, Map<String, String> params, String body) {
+        return getForbiddenResponse("Not Support yet");
+    }
+
+        @Override
 	public Response doGet(String uri, Method mothod,
 			Map<String, String> params, String body){
 

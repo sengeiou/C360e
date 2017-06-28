@@ -105,6 +105,7 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
@@ -116,11 +117,12 @@ import com.alfredposclient.javabean.SecondScreenBean;
 import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
-import com.alfredposclient.push.PushServer;
+//import com.alfredposclient.push.PushServer;
 import com.alfredposclient.service.RabbitMqPushService;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
+import com.alfredposclient.xmpp.XmppThread;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.moonearly.model.GoodsModel;
@@ -237,6 +239,8 @@ public class App extends BaseApplication {
     private IConnectionCallback.ConnState connState;
 
     private boolean hasSecondScreen = false;
+
+    private XmppThread xmppThread;
     // // 动态session类型
     // private List<Integer> sessionConfigType;
     //
@@ -317,7 +321,7 @@ public class App extends BaseApplication {
     private IntentFilter intentFilter;
 
     private Observable<Object> observable;
-    private PushServer pushServer;
+//    private PushServer pushServer;
     private SDKHandler sdkHandler;
     private boolean  isUsbScannerLink = false;
     @Override
@@ -408,7 +412,7 @@ public class App extends BaseApplication {
 
 //        pushThread = new PushThread();
 //        pushThread.start();
-        pushServer = new PushServer();
+//        pushServer = new PushServer();
 //        checkoutVersion();
 
         // 设置主题
@@ -435,10 +439,14 @@ public class App extends BaseApplication {
             sdkHandler.dcssdkSetDelegate(iDcsSdkApiDelegate);
             initializeDcsSdk();
         }
+        xmppThread = new XmppThread();
     }
 
+    public XmppThread getXmppThread() {
+        return xmppThread;
+    }
 
-//    public void checkoutVersion() {
+    //    public void checkoutVersion() {
 //        if(pi == null)
 //            return;
 //        try {
@@ -538,9 +546,9 @@ public class App extends BaseApplication {
         }
     };
 
-    public PushServer getPushServer(){
-        return  pushServer;
-    }
+//    public PushServer getPushServer(){
+//        return  pushServer;
+//    }
     @Override
     public void onTerminate() {
         if(observable != null){
@@ -1116,15 +1124,15 @@ public class App extends BaseApplication {
         }
     }
 
-    public void startPushServer(String key){
-        try {
-            if(!pushServer.isAlive()){
-                this.pushServer.start(key);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void startPushServer(String key){
+//        try {
+//            if(!pushServer.isAlive()){
+//                this.pushServer.start(key);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public RevenueCenter getRevenueCenter() {
         if (revenueCenter == null)
@@ -2293,6 +2301,7 @@ public class App extends BaseApplication {
 
             Order order = ObjectFactory.getInstance().getOrderFromAppOrder(appOrder, getUser(),
                     getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant(), App.instance.isRevenueKiosk());
+            OrderHelper.setOrderInclusiveTaxPrice(order);
             tables.setStatus(ParamConst.TABLE_STATUS_DINING);
 //            TablesSQL.updateTables(tables);
             TableInfoSQL.updateTables(tables);
