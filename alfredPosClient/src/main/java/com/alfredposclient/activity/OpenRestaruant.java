@@ -1453,7 +1453,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		case R.id.rl_dinner_session_bg:
 		case R.id.rl_supper_session_bg:
 			mSettingView.initOptionsSessionOpen();
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
 			if (App.instance.isRevenueKiosk()) {
 				UIHelp.startMainPageKiosk(context);
 			} else {
@@ -1603,7 +1603,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 			}
 		}).start();
-		App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+		App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
 		if (App.instance.isRevenueKiosk()) {
 			UIHelp.startMainPageKiosk(context);
 		} else {
@@ -1685,7 +1685,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 					@Override
 					public void onClick(View arg0) {
-						App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+						App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
 						if (App.instance.isRevenueKiosk()) {
 							UIHelp.startMainPageKiosk(context);
 						} else {

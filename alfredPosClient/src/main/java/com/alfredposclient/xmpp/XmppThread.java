@@ -12,9 +12,9 @@ public class XmppThread extends Thread {
     public void run() {
         super.run();
         RevenueCenter revenueCenter = App.instance.getRevenueCenter();
-        String name = "alfred_" + revenueCenter.getId().intValue() + "_B";
-        String roomName = "alfred" + revenueCenter.getRestaurantId().intValue() + "G";
-        String pass = "AMP" + name;
+        String name = "alfred_" + revenueCenter.getId().intValue() + "_b";
+        String roomName = "alfred" + revenueCenter.getRestaurantId().intValue() + "g";
+        String pass = "amp" + name;
         try {
             XMPP.getInstance().login(name, pass, revenueCenter.getId().toString(), roomName);
         } catch (Exception e) {

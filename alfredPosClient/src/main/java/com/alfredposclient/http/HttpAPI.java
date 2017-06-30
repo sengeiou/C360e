@@ -1165,7 +1165,7 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
-                                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+                                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
                                 handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.CANCEL_APPORDER_SUCCESS, resultCode));
                                 return;
                             }else if(resultCode == ResultCode.APP_REFUND_FAILD){

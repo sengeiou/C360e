@@ -208,8 +208,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								ParamConst.ORDER_STATUS_OPEN_IN_WAITER,
 								App.instance.getLocalRestaurantConfig()
 										.getIncludedTax().getTax());
+						List<OrderDetail> orderDetailListR = OrderDetailSQL.getAllOrderDetailsByOrder(order);
+						List<OrderModifier> orderModifierListR = OrderModifierSQL.getAllOrderModifier(order);
 						result.put("resultCode", ResultCode.SUCCESS);
 						result.put("order", order);
+						result.put("orderDetailList", orderDetailListR);
+						result.put("orderModifierList", orderModifierListR);
 						App.getTopActivity().httpRequestAction(
 								MainPage.REFRESH_TABLES_STATUS, tableInfo);
 					} else {
@@ -299,12 +303,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 											&& !waiterOrderModifiers.isEmpty()) {
 										for (OrderModifier orderModifier : waiterOrderModifiers) {
 											if (orderModifier.getOrderDetailId().intValue() == oldOrderDetailId) {
-												orderModifier.setOrderDetailId(orderDetailId);
-												orderModifier.setId(CommonSQL
-														.getNextSeq(TableNames.OrderModifier));
-												orderModifier.setOrderId(order.getId().intValue());
+												Modifier modifier = ModifierSQL.getModifierById(orderModifier.getModifierId().intValue());
+												OrderModifier localOrderModifier =
+														ObjectFactory.getInstance().getOrderModifier(order, orderDetail,modifier,0);
 												OrderModifierSQL
-														.updateOrderModifier(orderModifier);
+														.updateOrderModifier(localOrderModifier);
 											}
 										}
 									}

@@ -30,26 +30,21 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.model.MainPosInfo;
-import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
-import com.alfredkds.global.SyncCentre;
 import com.alfredkds.javabean.Kot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * KOT信息，每桌菜品展示ScrollView
@@ -226,13 +221,15 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemDetails = kot.getKotItemDetails();
 		this.kotItemModifiers = kot.getKotItemModifiers();
 		kotId.setText(kot.getKotSummary().getId() + "");
-		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo() + "");
-		String orderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
+		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo();
+		String kioskOrderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
 		if(kot.getKotSummary() != null && kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.TAKE_AWAY){
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
+			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}
-		tv_kiosk_order_id.setText(orderNoStr);
-		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName() + "");
+		orderId.setText(orderNoStr);
+		tv_kiosk_order_id.setText(kioskOrderNoStr);
+		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
 		posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
 
 		String remark = kot.getKotSummary().getOrderRemark();

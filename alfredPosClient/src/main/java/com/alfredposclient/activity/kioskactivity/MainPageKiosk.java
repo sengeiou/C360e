@@ -1399,6 +1399,8 @@ public class MainPageKiosk extends BaseActivity {
 					kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
 					KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
 							.getOrderId());
+					kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
+					KotSummarySQL.update(kotSummary);
 					KotItemDetailSQL.update(kotItemDetail);
 					ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 					kotItemDetails.add(kotItemDetail);

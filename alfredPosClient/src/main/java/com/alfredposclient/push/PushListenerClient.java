@@ -70,7 +70,7 @@ public class PushListenerClient implements XMPP.PushListener {
 
 						if(type == -2016){
 							AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
-							App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+							App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
 							if(App.getTopActivity() instanceof NetWorkOrderActivity){
 								App.getTopActivity().httpRequestAction(type, null);
 							}

@@ -2450,7 +2450,7 @@ public class App extends BaseApplication {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
             }
         }).start();
         if(getTopActivity() instanceof MainPage){
@@ -2620,9 +2620,9 @@ public class App extends BaseApplication {
         return appOrderNum;
     }
 
-    public void setAppOrderNum(int appOrderNum) {
+    public void setAppOrderNum(int appOrderNum, int type) {
         this.appOrderNum = appOrderNum;
-        RxBus.getInstance().post(RxBus.RX_MSG_1, 2);
+        RxBus.getInstance().post(RxBus.RX_MSG_1, type);
     }
 
     /**

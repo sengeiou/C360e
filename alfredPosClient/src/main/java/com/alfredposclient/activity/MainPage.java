@@ -403,6 +403,8 @@ public class MainPage extends BaseActivity {
 						topMenuView.refreshUserName();
 					else if (object.intValue() == 2){
 						topMenuView.showAppOrderReciving();
+					}else if(object.intValue() == 3){
+						topMenuView.showAppOrderReciving();
 					}
 				}else {
 					UIHelp.startSoredCardActivity(context);
@@ -1576,7 +1578,9 @@ public class MainPage extends BaseActivity {
 					kotItemDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
 					kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
 					KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-							.getOrderId()); 
+							.getOrderId());
+					kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
+					KotSummarySQL.update(kotSummary);
 					KotItemDetailSQL.update(kotItemDetail);
 					ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 					kotItemDetails.add(kotItemDetail);
