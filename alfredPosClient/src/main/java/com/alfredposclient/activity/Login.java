@@ -1,12 +1,12 @@
 package com.alfredposclient.activity;
 
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
@@ -248,7 +248,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		    this.doubleBackToExitPressedOnce = true;
 		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-		    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 		        @Override
 		        public void run() {

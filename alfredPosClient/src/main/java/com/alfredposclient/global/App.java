@@ -440,6 +440,7 @@ public class App extends BaseApplication {
             initializeDcsSdk();
         }
         xmppThread = new XmppThread();
+        wifiPolicyNever();
     }
 
     public XmppThread getXmppThread() {

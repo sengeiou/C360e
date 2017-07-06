@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
@@ -182,7 +183,7 @@ public class SyncData extends BaseActivity {
 				break;
 			case HANDLER_GET_PLACE_INFO: {
 				// 延迟3秒，保证数据库存储完成
-				postDelayed(new Runnable() {
+				BaseApplication.postHandler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
 						StringBuffer warn = new StringBuffer();
@@ -369,7 +370,7 @@ public class SyncData extends BaseActivity {
 		    this.doubleBackToExitPressedOnce = true;
 		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-		    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 		        @Override
 		        public void run() {

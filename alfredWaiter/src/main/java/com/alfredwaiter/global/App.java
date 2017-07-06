@@ -76,6 +76,7 @@ public class App extends BaseApplication {
 				}
 			}
 		});
+		wifiPolicyNever();
 	}
     
 	public void startHttpServer() {

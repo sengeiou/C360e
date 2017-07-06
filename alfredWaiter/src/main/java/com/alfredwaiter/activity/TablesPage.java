@@ -13,6 +13,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
@@ -105,7 +106,7 @@ public class TablesPage extends BaseActivity {
 				loadingDialog.dismiss();
 				Order order = (Order) msg.obj;
 				OrderSQL.update(order);
-				ArrayList<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
+				ArrayList<OrderDetail> orderDetails = OrderDetailSQL.getCreatedOrderDetails(order.getId());
 				for (OrderDetail orderDetail : orderDetails) {
 					if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE) {
 						order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
@@ -297,7 +298,7 @@ public class TablesPage extends BaseActivity {
 	    this.doubleBackToExitPressedOnce = true;
 	    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-	    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 	        @Override
 	        public void run() {

@@ -2,6 +2,7 @@ package com.alfredbase;
 
 import android.app.Application;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,6 +13,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
@@ -38,11 +40,12 @@ public class BaseApplication extends Application {
 	 */
 
 	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = true;	//	release 时设置为false
+	public static boolean isOpenLog = false;	//	release 时设置为false
 
 
 
 	private Handler reLoginHandler = new Handler();
+	public static Handler postHandler = new Handler();
 	/**x
 	 * 国家电话代码
 	 * 用于区别不通过的代码逻辑
@@ -114,6 +117,15 @@ public class BaseApplication extends Application {
 
 		System.out.println("fingerprint*******" + fingerprint);
 		System.out.println("serial*******" + serial);
+	}
+
+	protected void wifiPolicyNever(){
+		ContentResolver resolver = instance.getContentResolver();
+		int value = Settings.System.getInt(resolver, Settings.Global.WIFI_SLEEP_POLICY,  Settings.Global.WIFI_SLEEP_POLICY_DEFAULT);
+		if(Settings.Global.WIFI_SLEEP_POLICY_NEVER != value){
+			Settings.System.putInt(resolver, Settings.Global.WIFI_SLEEP_POLICY, Settings.Global.WIFI_SLEEP_POLICY_NEVER);
+
+		}
 	}
 
 

@@ -315,7 +315,7 @@ public class ObjectFactory {
 		orderDetail.setItemName(itemDetail.getItemName());
 		orderDetail.setItemNum(1);
 		orderDetail
-				.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
+				.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
 		orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_GENERAL);
 		orderDetail.setReason("");
 		orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);

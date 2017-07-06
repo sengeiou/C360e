@@ -31,6 +31,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
+import com.alfredbase.BaseApplication;
 import com.alfredbase.R;
 
 /**
@@ -69,7 +70,7 @@ public class UnderlinePageIndicator extends View implements PageIndicator {
 			mPaint.setAlpha(alpha);
 			invalidate();
 			if (alpha > 0) {
-				postDelayed(this, FADE_FRAME_MS);
+				BaseApplication.instance.postHandler.postDelayed(this, FADE_FRAME_MS);
 			}
 		}
 	};
@@ -354,7 +355,7 @@ public class UnderlinePageIndicator extends View implements PageIndicator {
 				removeCallbacks(mFadeRunnable);
 				mPaint.setAlpha(0xFF);
 			} else if (mScrollState != ViewPager.SCROLL_STATE_DRAGGING) {
-				postDelayed(mFadeRunnable, mFadeDelay);
+				BaseApplication.instance.postHandler.postDelayed(mFadeRunnable, mFadeDelay);
 			}
 		}
 		invalidate();

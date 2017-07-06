@@ -752,13 +752,13 @@ public class MainPageMenuView extends LinearLayout {
 		});
 		if (hsv.getId() == R.id.hsv_two_level_menu) {
 			current_index = index;
-			postDelayed(new Runnable() {
-
-				@Override
-				public void run() {
-//					initItemCategory(current_index);
-				}
-			}, 200);
+//			postDelayed(new Runnable() {
+//
+//				@Override
+//				public void run() {
+////					initItemCategory(current_index);
+//				}
+//			}, 200);
 		}
 		
 	}

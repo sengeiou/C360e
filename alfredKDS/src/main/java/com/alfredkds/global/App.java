@@ -96,6 +96,7 @@ public class App extends BaseApplication {
 		UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);  
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);
 		CrashReport.initCrashReport(getApplicationContext(), "900043724", isOpenLog);
+		wifiPolicyNever();
 	}
 	
 	public void setRing(){

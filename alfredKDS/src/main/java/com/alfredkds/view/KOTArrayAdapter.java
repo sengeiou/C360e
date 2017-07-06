@@ -1,20 +1,18 @@
 package com.alfredkds.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.alfredkds.R;
 import com.alfredkds.javabean.Kot;
 
-public class KOTArrayAdapter extends BaseAdapter {
+import java.util.ArrayList;
+import java.util.List;
+
+public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHolder>{
 
 	private Context mContext;
 	private List<Kot> kots = new ArrayList<Kot>();
@@ -33,15 +31,28 @@ public class KOTArrayAdapter extends BaseAdapter {
 		this.addFirstItem = addFirstItem;
 	}
 
+
+
 	@Override
-	public int getCount() {
-		return kots.size();
+	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View convertView = View.inflate(mContext,R.layout.kot_array_view, null);
+		ViewHolder viewHolder = new ViewHolder(convertView);
+		viewHolder.kotView = (KOTView) convertView.findViewById(R.id.kotview);
+		viewHolder.kotView.setParams(mContext, handler);
+		return viewHolder;
 	}
 
 	@Override
-	public Object getItem(int position) {
-		return kots.get(position);
+	public void onBindViewHolder(ViewHolder holder, int position) {
+
+		Kot originKot = kots.get(position);
+		holder.kotView.setData(originKot);
+		if (addFirstItem && position == 0) {
+			holder.kotView.showNewKOT();
+			addFirstItem = false;
+		}
 	}
+
 
 	@Override
 	public long getItemId(int position) {
@@ -49,38 +60,48 @@ public class KOTArrayAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder;
-//		KOTView kotView;
-		if (convertView == null) {
-			convertView = View.inflate(mContext,R.layout.kot_array_view, null);
-			holder = new ViewHolder();
-			holder.kotView = (KOTView) convertView.findViewById(R.id.kotview);
-			holder.kotView.setParams(mContext, handler);
-			convertView.setTag(holder);
-//			kotView = new KOTView(mContext, mHandler);
-//			convertView = kotView;
-//			convertView.setTag(kotView);
-		} else {
-			holder = (ViewHolder) convertView.getTag();
-//			kotView = (KOTView) convertView.getTag();
-		}
-		holder.kotView.setData(kots.get(position));
-//		if (times.containsKey(position)){
-//			Long tm = times.get(position);
-//			tm = holder.kotView.getTime();
-//		}else {
-//			times.put(position, holder.kotView.getTime());
-//		}
-		if (addFirstItem && position == 0) {
-			holder.kotView.showNewKOT();
-			addFirstItem = false;
-		}
-		return convertView;
+	public int getItemCount() {
+		return kots.size();
 	}
+
+//	@Override
+//	public View getView(int position, View convertView, ViewGroup parent) {
+//		ViewHolder holder;
+////		KOTView kotView;
+//		if (convertView == null) {
+//			convertView = View.inflate(mContext,R.layout.kot_array_view, null);
+//			holder = new ViewHolder();
+//			holder.kotView = (KOTView) convertView.findViewById(R.id.kotview);
+//			holder.kotView.setParams(mContext, handler);
+//			convertView.setTag(holder);
+////			kotView = new KOTView(mContext, mHandler);
+////			convertView = kotView;
+////			convertView.setTag(kotView);
+//		} else {
+//			holder = (ViewHolder) convertView.getTag();
+////			kotView = (KOTView) convertView.getTag();
+//		}
+//		Kot originKot = kots.get(position);
+//		holder.kotView.setData(originKot);
+////		if (times.containsKey(position)){
+////			Long tm = times.get(position);
+////			tm = holder.kotView.getTime();
+////		}else {
+////			times.put(position, holder.kotView.getTime());
+////		}
+//		if (addFirstItem && position == 0) {
+//			holder.kotView.showNewKOT();
+//			addFirstItem = false;
+//		}
+//		return convertView;
+//	}
 	
-	class ViewHolder{
+	class ViewHolder extends  RecyclerView.ViewHolder{
 		public KOTView kotView;
+
+		public ViewHolder(View itemView) {
+			super(itemView);
+		}
 	}
 
 	/**

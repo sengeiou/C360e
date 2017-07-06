@@ -1,12 +1,10 @@
 package com.alfredwaiter.activity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.os.Handler;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.store.Store;
@@ -17,6 +15,9 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 //	public static final int CONNECT_FAILED = 0x10;
@@ -184,7 +185,7 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 		    this.doubleBackToExitPressedOnce = true;
 		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-		    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 		        @Override
 		        public void run() {

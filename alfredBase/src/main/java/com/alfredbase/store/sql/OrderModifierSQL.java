@@ -74,7 +74,7 @@ public class OrderModifierSQL {
 							orderModifier.getUpdateTime(),
 							orderModifier.getPrinterId(),
 							orderModifier.getModifierItemPrice()});
-			updateOrderDetailForWaiter(orderModifier);
+//			updateOrderDetailForWaiter(orderModifier);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -298,6 +298,38 @@ public class OrderModifierSQL {
 				}
 			}
 			return result;
+	}
+
+	public static int getOrderModifierCountByOrderDetailAndNormal(OrderDetail orderDetail){
+		int result = 0;
+		String sql = "select count(0) from " + TableNames.OrderModifier
+				+ " o,"
+				+ TableNames.Modifier
+				+ " m"
+				+ " where o.orderDetailId = ? and o.status = "
+				+ ParamConst.ORDER_MODIFIER_STATUS_NORMAL
+				+ " and o.modifierId = m.id and m.type = 1 order by m.categoryId ";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql,
+					new String[] { orderDetail.getId() + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			if(cursor.moveToFirst()){
+				result = cursor.getInt(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
 	}
 	
 	public static ArrayList<OrderModifier> getAllOrderModifierByOrderAndNormal(Order order){

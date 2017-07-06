@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
 import com.alfredbase.PrinterLoadingDialog;
@@ -268,7 +269,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		filter.addAction(Intent.ACTION_TIME_TICK);
 //		App.instance.startPushServer("B." + App.instance.getRevenueCenter().getRestaurantId().intValue());
 		setDateView();
-		BuglyLog.d("OpenRestaruant", "RestaurantName" + CoreData.getInstance().getRestaurant().getRestaurantName());
+		try {
+			BuglyLog.d("OpenRestaruant", "RestaurantName" + CoreData.getInstance().getRestaurant().getRestaurantName());
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		rl_slideUnlockView.post(new Runnable() {
 			@Override
 			public void run() {
@@ -1984,7 +1989,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		mDrawerLayout.postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
@@ -2009,7 +2014,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	    this.doubleBackToExitPressedOnce = true;
 	    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-	    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 	        @Override
 	        public void run() {

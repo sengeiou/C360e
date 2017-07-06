@@ -100,6 +100,7 @@ public class ParamConst {
 	// OrderDetail的订单详情的状态 1added、2Kotprinterd、发送到厨房 3prepared、 厨房已经做好了 4served、
 	// 服务员已经送菜
 	// * 5removed、 还没有送到厨房之前退单 6cancelled 退单
+	public static final int ORDERDETAIL_STATUS_WAITER_ADD = -1;
 	public static final int ORDERDETAIL_STATUS_WAITER_CREATE = 0;
 	public static final int ORDERDETAIL_STATUS_ADDED = 1;
 	public static final int ORDERDETAIL_STATUS_KOTPRINTERD = 2;

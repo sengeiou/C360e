@@ -142,9 +142,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		}
 
 	}
-	
+
+
 	public class KotItemDetailAdapter extends BaseAdapter{
-		
+
 		@Override
 		public int getCount() {
 			return kotItemDetails.size();
@@ -218,8 +219,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	
 	public void setData(Kot originKot) {
 		this.kot = originKot;
-		this.kotItemDetails = kot.getKotItemDetails();
-		this.kotItemModifiers = kot.getKotItemModifiers();
+		this.kotItemDetails.clear();
+		this.kotItemDetails.addAll(kot.getKotItemDetails());
+		this.kotItemModifiers.clear();
+		this.kotItemModifiers.addAll(kot.getKotItemModifiers());
 		kotId.setText(kot.getKotSummary().getId() + "");
 		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo();
 		String kioskOrderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");

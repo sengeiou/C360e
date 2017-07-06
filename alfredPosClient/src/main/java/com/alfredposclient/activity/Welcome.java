@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -82,7 +83,7 @@ public class Welcome extends BaseActivity {
 		loadingDialog.setTitle("Downloading");
 		TextTypeFace.getInstance().init(context);
 //		check();
-		rootView.postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
 //				if(!checkVersion()){

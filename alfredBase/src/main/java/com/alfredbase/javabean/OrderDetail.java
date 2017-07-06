@@ -28,7 +28,7 @@ public class OrderDetail implements Serializable {
 	private Integer itemNum;
 
 	/**
-	 * 订单详情状态(1added、2Kotprinterd、发送到厨房 3prepared、 厨房已经做好了 4served、 服务员已经送菜
+	 * 订单详情状态(0waiter用表示还没有概念上的保存,1added用于Pos点菜和waiter那边save之后的状态、2Kotprinterd、发送到厨房 3prepared、 厨房已经做好了 4served、 服务员已经送菜
 	 * 5removed、 还没有送到厨房之前退单 6cancelled 退单)
 	 */
 	private Integer orderDetailStatus;
@@ -82,7 +82,7 @@ public class OrderDetail implements Serializable {
 	/**
 	 * 手动存入的指令，如饭前上餐前酒、饭后上水果等
 	 */
-	private String specialInstractions;
+	private String specialInstractions = "";
 
 	private Integer orderSplitId;
 

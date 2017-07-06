@@ -1,13 +1,12 @@
 package com.alfredkds.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
@@ -15,11 +14,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
@@ -27,7 +26,6 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
-import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -40,7 +38,6 @@ import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 import com.alfredkds.javabean.Kot;
 import com.alfredkds.view.FinishQtyWindow;
-import com.alfredkds.view.HorizontalListView;
 import com.alfredkds.view.KOTArrayAdapter;
 import com.alfredkds.view.PopItemAdapter;
 import com.alfredkds.view.PopItemListView;
@@ -62,7 +59,7 @@ public class KitchenOrder extends BaseActivity {
 	public static final int HANDLER_MERGER_KOT = 4;
 
 	private LinearLayout ll_progress_list;
-	private HorizontalListView ll_orders;    //水平列表
+	private RecyclerView ll_orders;    //水平列表
 	public KOTArrayAdapter adapter;
 	private List<Kot> kots = new ArrayList<Kot>();
 
@@ -272,7 +269,10 @@ public class KitchenOrder extends BaseActivity {
 
 		//ll_progress_list = (LinearLayout) findViewById(R.id.ll_progress_list);
 		//initProgressList();
-		ll_orders = (HorizontalListView) findViewById(R.id.ll_orders);
+		ll_orders = (RecyclerView) findViewById(R.id.ll_orders);
+		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+		linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+		ll_orders.setLayoutManager(linearLayoutManager);
 		finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
 		initKOTList();
 		initTopBarView();
@@ -520,7 +520,7 @@ public class KitchenOrder extends BaseActivity {
 		this.doubleBackToExitPressedOnce = true;
 		UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-		new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 			@Override
 			public void run() {

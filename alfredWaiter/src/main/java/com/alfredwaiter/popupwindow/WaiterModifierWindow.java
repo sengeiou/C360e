@@ -95,7 +95,7 @@ public class WaiterModifierWindow {
                         }
                     }
                 }
-                map.put("itemDetail", itemDetail);
+//                map.put("itemDetail", itemDetail);
                 map.put("variances", variances);
                 map.put("description", remark_et.getText().toString());
                 handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER, map));
@@ -105,23 +105,31 @@ public class WaiterModifierWindow {
     }
 
     public void show(ItemDetail itemDetail) {
+        show(itemDetail, null, "");
 
+    }
+    public void show(ItemDetail itemDetail, List<Integer> modifierIds, String description){
         if(itemDetail == null)
             return;
         this.itemDetail = itemDetail;
-        popupWindow.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
-        popupWindow.setFocusable(true);
-        popupWindow.setOutsideTouchable(true);
+        if(!popupWindow.isShowing()) {
+            popupWindow.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
+            popupWindow.setFocusable(true);
+            popupWindow.setOutsideTouchable(true);
 //        backgroundAlpha(0.5f);//设置半透明
-        popupWindow.update();
+            popupWindow.update();
+        }
         initData();
         setItemCountWindow = new ModifierSetItemCountWindow(context, parentView, handler);
         modifierAdapter = new ModifierAdapter();
         lv_modifier.setAdapter(modifierAdapter);
-        modifierIds.clear();
+        this.modifierIds.clear();
+        if(modifierIds != null && modifierIds.size() > 0){
+            this.modifierIds.addAll(modifierIds);
+        }
         modifierVariances.clear();
         variances.clear();
-        remark_et.setText("");
+        remark_et.setText(description);
         varianceModifiers();
     }
 
@@ -171,7 +179,9 @@ public class WaiterModifierWindow {
             }
         }
     }
-
+    public boolean isShowing(){
+        return popupWindow.isShowing();
+    }
     private void backgroundAlpha(float alpha) {
         WindowManager.LayoutParams lp = context.getWindow().getAttributes();
         lp.alpha = alpha;

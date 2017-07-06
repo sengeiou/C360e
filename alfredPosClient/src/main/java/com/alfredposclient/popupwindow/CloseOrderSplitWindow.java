@@ -284,6 +284,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //		swipe.setOnClickListener(this);
 
 		contentView.findViewById(R.id.tv_Others).setOnClickListener(this);
+		contentView.findViewById(R.id.tv_exact).setOnClickListener(this);
 		contentView.findViewById(R.id.iv_VISA).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_cash_200).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_cash_150).setOnClickListener(this);
@@ -497,6 +498,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		tv_cash_100.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "100");
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_Others));
+		textTypeFace.setTrajanProRegular((TextView) view
+				.findViewById(R.id.tv_exact));
 
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_media));
@@ -1512,6 +1515,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				isFirstClickCash = true;
 				break;
 			}
+			case R.id.tv_exact:{
+				openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
+				isFirstClickCash = true;
+				clickEnterAction();
+
+
+				break;
+			}
 			case R.id.iv_VISA: {
 				openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_VISA);
 				break;
@@ -2024,7 +2035,19 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		show.append(num * 100);
 		tv_total_amount_num
 				.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(BH.getBD(num)));
-		showCashChange();
+//		showCashChange();
+		BigDecimal cashNum = BH.getBD(String.valueOf(Double.parseDouble(show
+				.toString()) / 100.0));
+		BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+		int change = cashNum.compareTo(remainTotalAfterRound);
+		if (change > 0) {
+			BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
+			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
+					+ BH.doubleFormat.format(changeNum));
+			clickEnterAction();
+		} else {
+			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
+		}
 	}
 
 	private void showCashChange() {

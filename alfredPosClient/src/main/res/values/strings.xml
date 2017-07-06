@@ -125,6 +125,7 @@
     <string name="rounding">Rounding</string>
     <string name="sub_total_bill">Sub Total:</string>
     <string name="cash_other">Others</string>
+    <string name="exact_$">Exact $</string>
     <string name="settlement_void">VOID</string>
 
     <!-- MainPageOrderView -->

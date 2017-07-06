@@ -194,6 +194,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					}
 					if (tableId != 0 || persons != 0) {
 						TableInfo tableInfo = TableInfoSQL.getTableById(tableId);
+						if(tableInfo == null){
+							result.put("resultCode", ResultCode.TABLE_EMPLY);
+							return this.getJsonResponse(new Gson().toJson(result));
+						}
 						tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
 						TableInfoSQL.updateTables(tableInfo);
 						tableInfo.setPacks(persons);
@@ -314,6 +318,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								}
 							}
 						}
+
+						order = OrderSQL.getOrder(order.getId().intValue());
 
 						order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
 

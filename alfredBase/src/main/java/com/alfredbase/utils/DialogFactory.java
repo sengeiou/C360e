@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.R;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
@@ -226,7 +227,7 @@ public class DialogFactory {
 			@Override
 			public void run() {
 				final Dialog dialog = new Dialog(activity, R.style.base_dialog);
-				View view = LayoutInflater.from(activity).inflate(
+				final View view = LayoutInflater.from(activity).inflate(
 						R.layout.dialog_input, null);
 				((TextView) view.findViewById(R.id.tv_title)).setText(title);
 				((TextView) view.findViewById(R.id.tv_content)).setText(content);
@@ -243,7 +244,7 @@ public class DialogFactory {
 							public void onClick(final View v) {
 								dialog.dismiss();
 								CommonUtil.hideSoftkeyBoard(activity);
-								v.postDelayed(new Runnable() {
+								BaseApplication.postHandler.postDelayed(new Runnable() {
 									@Override
 									public void run() {
 								if (leftListener != null)
@@ -259,7 +260,7 @@ public class DialogFactory {
 							public void onClick(View v) {
 								dialog.dismiss();
 								CommonUtil.hideSoftkeyBoard(activity);
-								v.postDelayed(new Runnable() {
+								BaseApplication.postHandler.postDelayed(new Runnable() {
 									@Override
 									public void run() {
 										if (rghtListener != null)
@@ -480,7 +481,7 @@ public class DialogFactory {
 				if (activity == null || activity.isFinishing())
 					return;
 				dialog.show();
-				view.postDelayed(new Runnable() {
+				BaseApplication.postHandler.postDelayed(new Runnable() {
 
 					@Override
 					public void run() {
