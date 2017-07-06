@@ -47,10 +47,10 @@ public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHo
 
 		Kot originKot = kots.get(position);
 		holder.kotView.setData(originKot);
-		if (addFirstItem && position == 0) {
-			holder.kotView.showNewKOT();
-			addFirstItem = false;
-		}
+//		if (addFirstItem && position == 0) {
+//			holder.kotView.showNewKOT();
+//			addFirstItem = false;
+//		}
 	}
 
 

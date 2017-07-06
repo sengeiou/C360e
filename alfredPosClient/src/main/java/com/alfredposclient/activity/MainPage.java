@@ -1332,7 +1332,7 @@ public class MainPage extends BaseActivity {
 												.getId());
 								kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
 								KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-										.getOrderId()); 
+										.getOrderId());
 								KotItemDetailSQL.update(kotItemDetail);
 								ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 								kotItemDetails.add(kotItemDetail);

@@ -42,7 +42,9 @@ public class KotJob extends Job {
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
         //group the order, we don't want to send two in parallel
         //use a negative id so that it cannot collide w/ twitter ids
-        localId = -System.currentTimeMillis();
+		long time = System.currentTimeMillis();
+		kotSummary.setUpdateTime(time);
+        localId = -time;
         apiName = APIName.SUBMIT_NEW_KOT;
         data.put("kotItemDetails", itemDetails);
         data.put("kotItemModifiers", modifiers);
@@ -50,16 +52,28 @@ public class KotJob extends Job {
         data.put("method", method);
         this.kds = kds;
         this.kotMap = kotMap;
+		try {
+			KotSummarySQL.updateKotSummaryTimeById(time, kotSummary.getId().intValue());
+		}catch (Exception e){
+			e.printStackTrace();
+		}
     }
     public KotJob(KDSDevice kds, String action, KotSummary toKotSummary, KotSummary fromKotSummary, Map<String, Object> kotMap){
     	 super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
-    	 localId = -System.currentTimeMillis();
+		long time = System.currentTimeMillis();
+		toKotSummary.setUpdateTime(time);
+		localId = -time;
     	 data.put("action", action);
     	 data.put("toKotSummary", toKotSummary);
     	 data.put("fromKotSummary", fromKotSummary);
     	 this.kds = kds;
     	 this.kotMap = kotMap;
     	 apiName = APIName.TRANSFER_KOT;
+		try {
+			KotSummarySQL.updateKotSummaryTimeById(time, toKotSummary.getId().intValue());
+		}catch (Exception e){
+			e.printStackTrace();
+		}
     }
     
     @Override
@@ -84,7 +98,7 @@ public class KotJob extends Job {
 	    			return;
 	    		if (updatedkot.getStatus() == ParamConst.KOTS_STATUS_DONE)
 	    			return;
-	    					
+
 	    		SyncCentre.getInstance().syncSubmitKotToKDS(kds, context, data,null);
 	    		if(kotMap == null){
 	    			return;

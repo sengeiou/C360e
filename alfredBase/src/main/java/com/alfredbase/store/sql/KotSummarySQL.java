@@ -145,7 +145,7 @@ public class KotSummarySQL {
 	
 	public static ArrayList<KotSummary> getUndoneKotSummary() {
 		ArrayList<KotSummary> result = new ArrayList<KotSummary>();
-		String sql = "select * from " + TableNames.KotSummary + " where status = 0 order by id desc";
+		String sql = "select * from " + TableNames.KotSummary + " where status = 0 order by updateTime ";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -399,7 +399,15 @@ public class KotSummarySQL {
 			e.printStackTrace();
 		}
 	}
-	
+	public static void updateKotSummaryTimeById(long updateTime, int kotSummayId){
+		String sql = "update " + TableNames.KotSummary + " set updateTime = ? where id = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {updateTime, kotSummayId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void deleteAllKotSummary() {
 		String sql = "delete from " + TableNames.KotSummary;
 		String sssql = "select * from sqlite_sequence";
