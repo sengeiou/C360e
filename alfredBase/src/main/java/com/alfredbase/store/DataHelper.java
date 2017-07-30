@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
-import com.alfredbase.store.sql.StoreValueSQL;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -874,7 +873,10 @@ public class DataHelper {
 			while (iter.hasNext()) {
 				Map.Entry entry = (Map.Entry) iter.next();
 				String key = (String) entry.getKey();
-				StoreValueSQL.updateStore(key, entry.getValue().toString());
+				db.execSQL("insert into "
+						+ TableNames.StoreValue
+						+ " (id, type, storeValue)"
+						+ " values ("+ key +",0,"+entry.getValue().toString() + ")");
 			}
 		}
 	}
