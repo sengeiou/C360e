@@ -1,15 +1,11 @@
 package com.alfredbase.store;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
-
-import java.util.Iterator;
-import java.util.Map;
 
 public class DataHelper {
 	private SQLiteDatabase db;
@@ -867,17 +863,6 @@ public class DataHelper {
 			db.execSQL("CREATE TABLE "
 					+ TableNames.StoreValue
 					+ "(id TEXT PRIMARY KEY,type INTEGER, storeValue TEXT)");
-			SharedPreferences sharedPreferences = Store.getSharedPreferences(context);
-			Map<String, ?> map = sharedPreferences.getAll();
-			Iterator iter = map.entrySet().iterator();
-			while (iter.hasNext()) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				String key = (String) entry.getKey();
-				db.execSQL("insert into "
-						+ TableNames.StoreValue
-						+ " (id, type, storeValue)"
-						+ " values ("+ key +",0,"+entry.getValue().toString() + ")");
-			}
 		}
 	}
 }

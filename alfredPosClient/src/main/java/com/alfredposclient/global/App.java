@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
@@ -94,6 +95,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
+import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
@@ -331,6 +333,7 @@ public class App extends BaseApplication {
         instance = this;
 
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+
         systemSettings = new SystemSettings(this);
 
         kdsJobManager = new KotJobManager(this);
@@ -442,6 +445,7 @@ public class App extends BaseApplication {
         xmppThread = new XmppThread();
         xmppThread.start();
         wifiPolicyNever();
+        update15to16();
     }
 
     public XmppThread getXmppThread() {
@@ -473,6 +477,21 @@ public class App extends BaseApplication {
 
     public boolean isUsbScannerLink() {
         return isUsbScannerLink;
+    }
+
+    private void update15to16(){
+        String update = App.class.getSimpleName().toString();
+        if(StoreValueSQL.getValue(update) == null) {
+            SharedPreferences sharedPreferences = Store.getSharedPreferences(this);
+            Map<String, ?> map = sharedPreferences.getAll();
+            Iterator iter = map.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                String key = (String) entry.getKey();
+                StoreValueSQL.updateStore(key, entry.getValue().toString());
+            }
+            StoreValueSQL.updateStore(update, update);
+        }
     }
 
     private void initializeDcsSdk(){
