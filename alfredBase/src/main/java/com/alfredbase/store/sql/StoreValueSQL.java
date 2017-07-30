@@ -22,7 +22,7 @@ public class StoreValueSQL {
         try {
             String sql = "replace into "
                     + TableNames.StoreValue
-                    + "(id, type, value)"
+                    + " (id, type, storeValue)"
                     + " values (?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
@@ -34,7 +34,7 @@ public class StoreValueSQL {
 
     public static String getValue(String id) {
         String result = "";
-        String sql = "select value from " + TableNames.StoreValue + " where id = ?";
+        String sql = "select storeValue from " + TableNames.StoreValue + " where id = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {

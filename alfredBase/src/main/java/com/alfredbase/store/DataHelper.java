@@ -867,7 +867,7 @@ public class DataHelper {
 		private void onUpgradeForOldVersion15(SQLiteDatabase db){
 			db.execSQL("CREATE TABLE "
 					+ TableNames.StoreValue
-					+ "(id TEXT PRIMARY KEY,type INTEGER, value TEXT)");
+					+ "(id TEXT PRIMARY KEY,type INTEGER, storeValue TEXT)");
 			SharedPreferences sharedPreferences = Store.getSharedPreferences(context);
 			Map<String, ?> map = sharedPreferences.getAll();
 			Iterator iter = map.entrySet().iterator();
