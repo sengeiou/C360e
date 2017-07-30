@@ -496,7 +496,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		IntentFilter downFilter = new IntentFilter();
 		downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
 		registerReceiver(downReceiver, downFilter);
-		App.instance.getXmppThread().start();
+//		if (!App.instance.getXmppThread().isAlive()) {
+//			App.instance.getXmppThread().start();
+//		}
 	}
 
 	@Override

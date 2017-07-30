@@ -172,7 +172,6 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				// }
 				orderDetails = OrderDetailSQL.getCreatedOrderDetails(currentOrder.getId());
 				
-				refreshOrder();
 				refreshList();
 				UIHelp.showToast(context, context.getResources().getString(R.string.place_succ));
 
@@ -300,6 +299,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		orderDetails.addAll(oldOrderDetails);
 		adapter.notifyDataSetChanged();
 		refreshOrderTotal();
+		refreshOrder();
 	}
 
 	private void refreshOrderTotal() {
@@ -450,12 +450,26 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	}
 
 	private void refreshOrder() {
+		boolean showPlace = false;
+		if(orderDetails != null && orderDetails.size() > 0){
+			for(OrderDetail orderDetail : orderDetails){
+				if(orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE){
+					showPlace = true;
+				}
+			}
+		}
 		if (currentOrder.getOrderStatus() >= ParamConst.ORDER_STATUS_OPEN_IN_POS) {
 			tv_place_order.setVisibility(View.GONE);
 			ll_bill_action.setVisibility(View.VISIBLE);
 		} else {
-			tv_place_order.setVisibility(View.VISIBLE);
-			ll_bill_action.setVisibility(View.GONE);
+			if(showPlace){
+				tv_place_order.setVisibility(View.VISIBLE);
+				ll_bill_action.setVisibility(View.GONE);
+			}else{
+				tv_place_order.setVisibility(View.GONE);
+				ll_bill_action.setVisibility(View.VISIBLE);
+			}
+
 		}
 	}
 

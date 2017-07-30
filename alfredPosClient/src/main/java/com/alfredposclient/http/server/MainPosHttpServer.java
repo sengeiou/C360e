@@ -190,6 +190,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						persons = jsonObject.optInt("persons");
 
 					} catch (Exception e) {
+						e.printStackTrace();
 						result.put("resultCode", ResultCode.JSON_DATA_ERROR);
 					}
 					if (tableId != 0 || persons != 0) {

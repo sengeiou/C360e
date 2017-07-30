@@ -220,7 +220,14 @@ public class ConnectPOS extends BaseActivity implements Callback,
 				file.close();
 				mediaPlayer.setVolume(BEEP_VOLUME, BEEP_VOLUME);
 				mediaPlayer.prepare();
-			} catch (IOException e) {
+//				if(mediaPlayer.isPlaying()){
+//					mediaPlayer.stop();
+//					mediaPlayer.release();
+//					mediaPlayer = MediaPlayer.create(this, R.raw.beep);
+//				}
+//
+//				mediaPlayer.start();
+			} catch (Exception e) {
 				mediaPlayer = null;
 			}
 		}

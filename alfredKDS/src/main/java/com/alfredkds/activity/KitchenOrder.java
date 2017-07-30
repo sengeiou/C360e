@@ -58,7 +58,6 @@ public class KitchenOrder extends BaseActivity {
 	public static final int HANDLER_TRANSFER_KOT = 3;
 	public static final int HANDLER_MERGER_KOT = 4;
 
-	private LinearLayout ll_progress_list;
 	private RecyclerView ll_orders;    //水平列表
 	public KOTArrayAdapter adapter;
 	private List<Kot> kots = new ArrayList<Kot>();
@@ -71,7 +70,32 @@ public class KitchenOrder extends BaseActivity {
 	private FinishQtyWindow finishQtyPop;
 	private MainPosInfo mainPosInfo;
 	private boolean doubleBackToExitPressedOnce = false;
+	private TextView tv_order_qyt;
+	@Override
+	protected void initView() {
+		super.initView();
+		setContentView(R.layout.activity_kitchen_order);
+		loadingDialog = new LoadingDialog(context);
+		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
+		mainPosInfo = App.instance.getCurrentConnectedMainPos();
+		App.instance.setRing();
+//		filter = new IntentFilter();
+//		filter.addAction(Intent.ACTION_TIME_TICK);
+//		registerReceiver(receiver, filter);
 
+		//ll_progress_list = (LinearLayout) findViewById(R.id.ll_progress_list);
+		//initProgressList();
+		ll_orders = (RecyclerView) findViewById(R.id.ll_orders);
+		tv_order_qyt = (TextView) findViewById(R.id.tv_order_qyt);
+		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+		linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+		ll_orders.setLayoutManager(linearLayoutManager);
+		finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
+		initKOTList();
+		initTopBarView();
+		initTextTypeFace();
+		client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+	}
 	public Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -80,6 +104,7 @@ public class KitchenOrder extends BaseActivity {
 					adapter.setKots(kots);
 					adapter.setAddFirstItem(true);
 					adapter.notifyDataSetChanged();
+					tv_order_qyt.setText(kots.size()+"");
 					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 						popItemAdapter.setKot(App.instance.getKot(kotSummary));
 						popItemAdapter.notifyDataSetChanged();
@@ -89,6 +114,7 @@ public class KitchenOrder extends BaseActivity {
 					kots = App.instance.getRefreshKots();
 					adapter.setKots(kots);
 					adapter.notifyDataSetChanged();
+					tv_order_qyt.setText(kots.size()+"");
 					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 						popItemAdapter.setKot(App.instance.getKot(kotSummary));
 						popItemAdapter.notifyDataSetChanged();
@@ -208,6 +234,7 @@ public class KitchenOrder extends BaseActivity {
 
 		;
 	};
+
 	/**
 	 * ATTENTION: This was auto-generated to implement the App Indexing API.
 	 * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -221,6 +248,7 @@ public class KitchenOrder extends BaseActivity {
 		List<Kot> kots = App.instance.getRefreshKots();
 		adapter.setKots(kots);
 		adapter.notifyDataSetChanged();
+		tv_order_qyt.setText(kots.size()+"");
 		if (kots.isEmpty()) {
 //			itemPopupWindow.dismiss();
 			if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
@@ -255,30 +283,6 @@ public class KitchenOrder extends BaseActivity {
 		handler.sendMessage(handler.obtainMessage(action, null));
 	}
 
-	@Override
-	protected void initView() {
-		super.initView();
-		setContentView(R.layout.activity_kitchen_order);
-		loadingDialog = new LoadingDialog(context);
-		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
-		mainPosInfo = App.instance.getCurrentConnectedMainPos();
-		App.instance.setRing();
-//		filter = new IntentFilter();
-//		filter.addAction(Intent.ACTION_TIME_TICK);
-//		registerReceiver(receiver, filter);
-
-		//ll_progress_list = (LinearLayout) findViewById(R.id.ll_progress_list);
-		//initProgressList();
-		ll_orders = (RecyclerView) findViewById(R.id.ll_orders);
-		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-		linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-		ll_orders.setLayoutManager(linearLayoutManager);
-		finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
-		initKOTList();
-		initTopBarView();
-		initTextTypeFace();
-	}
-
 //	private BroadcastReceiver receiver = new BroadcastReceiver() {
 //
 //		@Override
@@ -292,6 +296,7 @@ public class KitchenOrder extends BaseActivity {
 		doubleBackToExitPressedOnce = false;
 		adapter.setKots(App.instance.getRefreshKots());
 		adapter.notifyDataSetChanged();
+		tv_order_qyt.setText(kots.size()+"");
 		if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 			popItemAdapter.setKot(App.instance.getKot(kotSummary));
 			popItemAdapter.notifyDataSetChanged();
@@ -315,24 +320,9 @@ public class KitchenOrder extends BaseActivity {
 		kots = App.instance.getInitKots();
 		adapter.setKots(kots);
 		ll_orders.setAdapter(adapter);
+		tv_order_qyt.setText(kots.size()+"");
 	}
 
-	private void initProgressList() {
-		View view = null;
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(80, 80);
-		params.rightMargin = 5;
-		params.leftMargin = 5;
-		params.gravity = Gravity.CENTER_VERTICAL;
-		for (int i = 0; i < 10; i++) {
-			view = getLayoutInflater().inflate(R.layout.order_progress_view,
-					null);
-			view.setLayoutParams(params);
-			TextView tv_progress = (TextView) view
-					.findViewById(R.id.tv_progress);
-			tv_progress.setText(((10 - i) * 10 - 1) + "%");
-			ll_progress_list.addView(view);
-		}
-	}
 
 	@Override
 	public void handlerClickEvent(View v) {
@@ -529,14 +519,6 @@ public class KitchenOrder extends BaseActivity {
 		}, 2000);
 	}
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		// ATTENTION: This was auto-generated to implement the App Indexing API.
-		// See https://g.co/AppIndexing/AndroidStudio for more information.
-		client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-	}
 
 	/**
 	 * ATTENTION: This was auto-generated to implement the App Indexing API.

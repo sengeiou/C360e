@@ -23,6 +23,16 @@ android {
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                // 修改apk文件名
+                def fileName = "Waiter.apk"
+                output.outputFile = new File(output.outputFile.parent, fileName)
+            }
+        }
+    }
 }
 
 dependencies {

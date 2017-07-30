@@ -31,7 +31,7 @@ public class SyncCentre {
 
 			httpClient = new AsyncHttpClient();
 			httpClient.addHeader("Connection", "close");
-			httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
+			httpClient.setMaxRetriesAndTimeout(0, 15 * 1000);
 		}
 	}
 	

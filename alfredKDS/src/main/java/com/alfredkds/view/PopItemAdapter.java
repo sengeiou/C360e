@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredkds.R;
 import com.alfredkds.javabean.Kot;
@@ -69,15 +71,16 @@ public class PopItemAdapter extends BaseAdapter{
 		}else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-			holder.itemNum.setText(kot.getKotItemDetails().get(position).getUnFinishQty()+"");
-			holder.itemName.setText(kot.getKotItemDetails().get(position).getItemName());
-			if (kot.getKotItemDetails().get(position).getKotStatus()==ParamConst.KOT_STATUS_DONE) {
+		KotItemDetail kotItemDetail = kot.getKotItemDetails().get(position);
+			holder.itemNum.setText(kotItemDetail.getUnFinishQty()+"");
+			holder.itemName.setText(kotItemDetail.getItemName());
+			if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_DONE) {
 				convertView.setBackgroundResource(R.color.bg_complete_item);
 				holder.itemName.getPaint().setFlags(0);
-			}else if (kot.getKotItemDetails().get(position).getKotStatus()==ParamConst.KOT_STATUS_UPDATE) {
+			}else if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_UPDATE) {
 				convertView.setBackgroundResource(R.color.bg_update_item);
 				holder.itemName.getPaint().setFlags(0);
-			}else if (kot.getKotItemDetails().get(position).getKotStatus()==ParamConst.KOT_STATUS_VOID) {
+			}else if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_VOID) {
 				convertView.setBackgroundResource(R.color.white);
 				holder.itemName.setPaintFlags(holder.itemName.getPaintFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
 			}else {
@@ -87,16 +90,17 @@ public class PopItemAdapter extends BaseAdapter{
 			/*---kotModifier显示---*/
 			StringBuffer sBuffer = new StringBuffer();;
 			for (int j = 0; j < kot.getKotItemModifiers().size(); j++) {
-				if (kot.getKotItemModifiers().get(j) != null && !kot.getKotItemModifiers().equals("")&&
-						kot.getKotItemDetails().get(position).getId() == kot.getKotItemModifiers().get(j).getKotItemDetailId()) {
-					sBuffer.append(kot.getKotItemModifiers().get(j).getModifierName()+";");
+				KotItemModifier kotItemModifier = kot.getKotItemModifiers().get(j) ;
+				if (kotItemModifier != null
+						&& kotItemDetail.getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+					sBuffer.append("--" + kotItemModifier.getModifierName() + "\n");
 				}
 			}
 			/* show special instructions */
-		    if (!TextUtils.isEmpty(kot.getKotItemDetails().get(position).getSpecialInstractions())) {
-					sBuffer.append(kot.getKotItemDetails().get(position).getSpecialInstractions()
-							+ "");
-			}			
+		    if (!TextUtils.isEmpty(kotItemDetail.getSpecialInstractions())) {
+					sBuffer.append("*"+kotItemDetail.getSpecialInstractions()
+							+ "*");
+			}
 			if (sBuffer !=null && !sBuffer.equals("")) {
 				holder.modifiers.setText(sBuffer+"");
 			}else {

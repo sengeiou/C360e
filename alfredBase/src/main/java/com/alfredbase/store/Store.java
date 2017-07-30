@@ -2,8 +2,9 @@ package com.alfredbase.store;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.text.TextUtils;
 
+import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LogUtil;
 import com.google.gson.Gson;
 
@@ -124,52 +125,89 @@ public class Store {
 	public static final int SUNMI_VIDEO = -121;
 	public static final int SUNMI_VIDEO_TEXT = -125;
 
+	private static final int TYPE_INT = 1;
+	private static final int TYPE_STRING = 1;
+	private static final int TYPE_DOUBLE = 1;
+	private static final int TYPE_LONG = 1;
+
+
+
 	public static final String DEFAULT_STRING_TYPE = "";
-	private static SharedPreferences getSharedPreferences(Context context) {
+	public static SharedPreferences getSharedPreferences(Context context) {
 		SharedPreferences sharedPreferences = context.getSharedPreferences(
 				PACK_NAME, Context.MODE_PRIVATE);
 		return sharedPreferences;
 	}
 
 	public static void putString(Context context, String key, String value) {
-		SharedPreferences sharedPreferences = getSharedPreferences(context);
-		sharedPreferences.edit().putString(key, value).commit();
+//		SharedPreferences sharedPreferences = getSharedPreferences(context);
+//		sharedPreferences.edit().putString(key, value).commit();
+		StoreValueSQL.updateStore(key, value);
 	}
 	
 	// 默认值为 "" 所以做判断的时候 注意用TextUtils
 	public static String getString(Context context, String key) {
-		return getSharedPreferences(context).getString(key, DEFAULT_STRING_TYPE);
+//		return getSharedPreferences(context).getString(key, DEFAULT_STRING_TYPE);
+		return StoreValueSQL.getValue(key);
 	}
 	
 	public static void putLong(Context context, String key, long value) {
-		SharedPreferences sharedPreferences = getSharedPreferences(context);
-		sharedPreferences.edit().putLong(key, value).commit();
+//		SharedPreferences sharedPreferences = getSharedPreferences(context);
+//		sharedPreferences.edit().putLong(key, value).commit();
+		StoreValueSQL.updateStore(key, value+"");
+
 	}
 	// 默认值为 -1L 注意做判断是时候多加个 为-1L的判断
 	public static long getLong(Context context, String key) {
-		return getSharedPreferences(context).getLong(key, DEFAULT_LONG_TYPE);
+//		return getSharedPreferences(context).getLong(key, DEFAULT_LONG_TYPE);
+		String value = StoreValueSQL.getValue(key);
+		if(TextUtils.isEmpty(value)){
+			return -1l;
+		}else{
+			return Long.parseLong(value);
+		}
 	}
 	
 	public static void putInt(Context context, String key, int value) {
-		SharedPreferences sharedPreferences = getSharedPreferences(context);
-		sharedPreferences.edit().putInt(key, value).commit();
+//		SharedPreferences sharedPreferences = getSharedPreferences(context);
+//		sharedPreferences.edit().putInt(key, value).commit();
+		StoreValueSQL.updateStore(key,value+"");
 	}
 	// 默认值为 -123 注意做判断的时候 多加个 为-123的判断
 	public static int getInt(Context context, String key) {
-		return getSharedPreferences(context).getInt(key, DEFAULT_INT_TYPE);
+//		return getSharedPreferences(context).getInt(key, DEFAULT_INT_TYPE);
+		String value = StoreValueSQL.getValue(key);
+		if(TextUtils.isEmpty(value)){
+			return -123;
+		}else{
+			return Integer.parseInt(value);
+		}
 	}
 
 	public static int getInt(Context context, String key, int defVal) {
-		return getSharedPreferences(context).getInt(key, defVal);
+//		return getSharedPreferences(context).getInt(key, defVal);
+		String value = StoreValueSQL.getValue(key);
+		if(TextUtils.isEmpty(value)){
+			return defVal;
+		}else{
+			return Integer.parseInt(value);
+		}
 	}
 	
 	public static void putBoolean(Context context, String key, boolean value) {
-		SharedPreferences sharedPreferences = getSharedPreferences(context);
-		sharedPreferences.edit().putBoolean(key, value).commit();
+//		SharedPreferences sharedPreferences = getSharedPreferences(context);
+//		sharedPreferences.edit().putBoolean(key, value).commit();
+		StoreValueSQL.updateStore(key, value+"");
 	}
 	
 	public static boolean getBoolean(Context context, String key, boolean defVal) {
-		return getSharedPreferences(context).getBoolean(key, defVal);
+//		return getSharedPreferences(context).getBoolean(key, defVal);
+		String value = StoreValueSQL.getValue(key);
+		if(TextUtils.isEmpty(value)){
+			return defVal;
+		}else{
+			return Boolean.parseBoolean(value);
+		}
 	}
 	
 	public static void putFloat(Context context, String key, float value) {
@@ -186,25 +224,26 @@ public class Store {
 			Object obj) {
 		if (obj == null)
 			return false;
-		SharedPreferences sharedPreferences = getSharedPreferences(context);
-		Editor editor = sharedPreferences.edit();
+//		SharedPreferences sharedPreferences = getSharedPreferences(context);
+//		Editor editor = sharedPreferences.edit();
 		try {
 			Gson gson = new Gson();
 			String value = gson.toJson(obj);
-			editor.putString(key, value);
-
+//			editor.putString(key, value);
+			StoreValueSQL.updateStore(key, value);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
-		return editor.commit();
+		return true;
 	}
 
 	// 获取对象类型
 	public static <Object> Object getObject(Context context, String key,
 			Class<Object> classOfT) {
-		SharedPreferences preferences = getSharedPreferences(context);
-		String str = preferences.getString(key, "");
-
+//		SharedPreferences preferences = getSharedPreferences(context);
+//		String str = preferences.getString(key, "");
+		String str = StoreValueSQL.getValue(key);
 		if (str.length() == 0)
 			return null;
 		try {
@@ -220,9 +259,9 @@ public class Store {
 	// 获取对象类型
 		public static <Object> Object getObject(Context context, String key,
 				Type classOfT) {
-			SharedPreferences preferences = getSharedPreferences(context);
-			String str = preferences.getString(key, "");
-
+//			SharedPreferences preferences = getSharedPreferences(context);
+//			String str = preferences.getString(key, "");
+			String str = StoreValueSQL.getValue(key);
 			if (str.length() == 0)
 				return null;
 			try {
@@ -236,10 +275,11 @@ public class Store {
 		}
 
 	public static void remove(Context context, String key) {
-		SharedPreferences preferences = getSharedPreferences(context);
-		Editor editor = preferences.edit();
-		editor.remove(key);
-		editor.commit();
+//		SharedPreferences preferences = getSharedPreferences(context);
+//		Editor editor = preferences.edit();
+//		editor.remove(key);
+//		editor.commit();
+		StoreValueSQL.deleteStore(key);
 	}
 
 	/**

@@ -1464,10 +1464,15 @@ public class MainPage extends BaseActivity {
 			}
 				break;
 			// kot Print status
-			case KOT_PRINT_FAILED:
+			case KOT_PRINT_FAILED: {
 				loadingDialog.dismiss();
 				printerLoadingDialog.dismiss();
-				UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
+				if(msg.obj instanceof String && "KDS".equals((String)msg.obj)){
+					UIHelp.showToast(context, "Please log in KDS");
+				}else {
+					UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
+				}
+			}
 				break;
 			case KOT_PRINT_SUCCEED:
 				// if(!orderDetails.isEmpty()){
@@ -2009,7 +2014,7 @@ public class MainPage extends BaseActivity {
 	public void kotPrintStatus(int action, Object obj) {
 		switch (action) {
 		case KOT_PRINT_FAILED:
-			handler.sendMessage(handler.obtainMessage(action));
+			handler.sendMessage(handler.obtainMessage(action, obj));
 			break;
 		case KOT_PRINT_SUCCEED:
 			handler.sendMessage(handler.obtainMessage(action, obj));

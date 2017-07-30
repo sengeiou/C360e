@@ -189,12 +189,11 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			for (int j = 0; j < kotItemModifiers.size(); j++) {
 				KotItemModifier kotItemModifier = kotItemModifiers.get(j) ;
 				if (kotItemModifier != null
-//						&& kotItemModifier.equals("")
 						&& kotItemDetail.getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
 					sBuffer.append("--" + kotItemModifier.getModifierName() + "\n");
 				}
 			}
-			if (kotItemDetail.getSpecialInstractions() != null) {
+			if (!TextUtils.isEmpty(kotItemDetail.getSpecialInstractions())) {
 				sBuffer.append("*" + kotItemDetail.getSpecialInstractions() + "*");
 			}
 			if(sBuffer.toString().endsWith("\n")){

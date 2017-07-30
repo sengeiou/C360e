@@ -11,14 +11,12 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Printer;
-import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -183,14 +181,13 @@ public class KotJobManager {
 							fromKotSummary, orderMap);
 					kotJobManager.addJob(kotjob);
 				}
-
-				boolean ret = transferItemToPrinter(fromKotSummary,
-						toKotSummary, orderMap);
-				if (!ret) {
-					App.getTopActivity().kotPrintStatus(
-							MainPage.KOT_PRINT_FAILED, null);
-				}
 			}
+		}
+		boolean ret = transferItemToPrinter(fromKotSummary,
+				toKotSummary, orderMap);
+		if (!ret) {
+			App.getTopActivity().kotPrintStatus(
+					MainPage.KOT_PRINT_FAILED, null);
 		}
 	}
 
@@ -209,10 +206,10 @@ public class KotJobManager {
 		String transferAction = (String) orderMap.get("action");
 		if (ParamConst.JOB_MERGER_KOT.equals(transferAction)) {
 
-			Order oldOrder = (Order) orderMap.get("fromOrder");
+//			Order oldOrder = (Order) orderMap.get("fromOrder");
 
-			TableInfo currentTable = TableInfoSQL.getTableById((Integer) orderMap
-					.get("currentTableId"));
+//			TableInfo currentTable = TableInfoSQL.getTableById((Integer) orderMap
+//					.get("currentTableId"));
 			kotItemDetails = KotItemDetailSQL
 					.getKotItemDetailBySummaryId(fromKotSummary.getId());
 			kotItemModifiers = new ArrayList<KotItemModifier>();
@@ -272,10 +269,11 @@ public class KotJobManager {
 //			OrderSQL.update(order);
 			kotItemDetails = KotItemDetailSQL
 					.getKotItemDetailBySummaryId(fromKotSummary.getId());
-			for (KotItemDetail kotItemDetail : kotItemDetails)
+			for (KotItemDetail kotItemDetail : kotItemDetails ){
 				kotItemModifiers.addAll(KotItemModifierSQL
 						.getKotItemModifiersByKotItemDetail(kotItemDetail
 								.getId()));
+			}
 			context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE,
 					order);
 			printKotSummary = KotSummarySQL.getKotSummary(fromKotSummary.getOrderId());
