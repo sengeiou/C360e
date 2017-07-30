@@ -481,7 +481,7 @@ public class App extends BaseApplication {
 
     private void update15to16(){
         String update = App.class.getSimpleName().toString();
-        if(StoreValueSQL.getValue(update) == null) {
+        if(TextUtils.isEmpty(StoreValueSQL.getValue(update))) {
             SharedPreferences sharedPreferences = Store.getSharedPreferences(this);
             Map<String, ?> map = sharedPreferences.getAll();
             Iterator iter = map.entrySet().iterator();
