@@ -30,7 +30,7 @@ import rx.functions.Action1;
 public class App extends BaseApplication {
 
 	public static final int VIEW_EVENT_SET_QTY = 10;
-	private static final int DATABASE_VERSION = 15;
+	private static final int DATABASE_VERSION = 16;
 	private static final String DATABASE_NAME = "com.alfredwaiter";
 	public static App instance;
 	private RevenueCenter revenueCenter;
@@ -53,12 +53,13 @@ public class App extends BaseApplication {
 		super.onCreate();
 		instance = this;
 		SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+		update15to16();
 		//HTTPServer.start();
-        VERSION = getAppVersionName();
+		VERSION = getAppVersionName();
 		httpServer = new WaiterHttpServer();
 		startHttpServer();
 		UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);
-        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+		Thread.setDefaultUncaughtExceptionHandler(catchExcep);
 		CrashReport.initCrashReport(getApplicationContext(), "900042909", isOpenLog);
 
 		observable = RxBus.getInstance().register("showRelogin");

@@ -21,6 +21,7 @@ public class App extends BaseApplication {
 		SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
 		oldIp = CommonUtil.getLocalIpAddress();
 		CrashReport.initCrashReport(getApplicationContext(), "900042907", isOpenLog);
+		update15to16();
 //		this.printJobMgr = new PrintJobManager(this);
 //		instance = this;
 	}

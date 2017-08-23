@@ -1,6 +1,5 @@
 package com.alfredposclient.xmpp;
 
-import com.alfredbase.BaseApplication;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredposclient.activity.OpenRestaruant;
 import com.alfredposclient.global.App;
@@ -13,7 +12,7 @@ public class XmppThread extends Thread {
     @Override
     public void run() {
         super.run();
-        while(!BaseApplication.activitys.contains(OpenRestaruant.class)){
+        while(App.instance.getIndexOfActivity(OpenRestaruant.class) == -1){
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

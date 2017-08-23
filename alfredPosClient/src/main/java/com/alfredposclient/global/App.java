@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
@@ -95,7 +94,6 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
-import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
@@ -107,19 +105,18 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
-import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
+import com.alfredposclient.activity.OpenRestaruant;
 import com.alfredposclient.activity.Welcome;
 import com.alfredposclient.http.server.MainPosHttpServer;
 import com.alfredposclient.javabean.SecondScreenBean;
 import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
-//import com.alfredposclient.push.PushServer;
 import com.alfredposclient.service.RabbitMqPushService;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
@@ -174,6 +171,8 @@ import sunmi.ds.data.DSData;
 import sunmi.ds.data.DSFile;
 import sunmi.ds.data.DSFiles;
 import sunmi.ds.data.DataPacket;
+
+//import com.alfredposclient.push.PushServer;
 
 public class App extends BaseApplication {
     private static final  String TAG = App.class.getSimpleName();
@@ -394,8 +393,11 @@ public class App extends BaseApplication {
             public void call(Object object) {
                 boolean isScreenLock = systemSettings.isScreenLock();
                 if(isScreenLock) {
-                    ReloginDialog reloginDialog = new ReloginDialog(getTopActivity());
-                    reloginDialog.show();
+                    BaseActivity activity = getTopActivity();
+                    if(activity != null && getIndexOfActivity(OpenRestaruant.class) != -1){
+                        ReloginDialog reloginDialog = new ReloginDialog(activity);
+                        reloginDialog.show();
+                    }
                 }
             }
         });
@@ -477,21 +479,6 @@ public class App extends BaseApplication {
 
     public boolean isUsbScannerLink() {
         return isUsbScannerLink;
-    }
-
-    private void update15to16(){
-        String update = App.class.getSimpleName().toString();
-        if(TextUtils.isEmpty(StoreValueSQL.getValue(update))) {
-            SharedPreferences sharedPreferences = Store.getSharedPreferences(this);
-            Map<String, ?> map = sharedPreferences.getAll();
-            Iterator iter = map.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                String key = (String) entry.getKey();
-                StoreValueSQL.updateStore(key, entry.getValue().toString());
-            }
-            StoreValueSQL.updateStore(update, update);
-        }
     }
 
     private void initializeDcsSdk(){
@@ -2306,13 +2293,16 @@ public class App extends BaseApplication {
 //                    tables = TableInfoSQL.getAllUsedOneTables();
                     return;
                 }
-                if (tables != null && tables.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
-//                    appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
-//                    AppOrderSQL.updateAppOrder(appOrder);
-                    Order order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), getBusinessDate());
-                    if(OrderDetailSQL.getOrderDetails(order.getId().intValue()).size() > 0){
-                        return;
-                    }
+//                if (tables != null && tables.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
+////                    appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
+////                    AppOrderSQL.updateAppOrder(appOrder);
+//                    Order order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), getBusinessDate());
+//                    if(OrderDetailSQL.getOrderDetails(order.getId().intValue()).size() > 0){
+//                        return;
+//                    }
+//                }
+                if(tables == null){
+                    return;
                 }
             }
 
@@ -2321,11 +2311,14 @@ public class App extends BaseApplication {
 //            AppOrderSQL.updateAppOrder(appOrder);
 
             Order order = ObjectFactory.getInstance().getOrderFromAppOrder(appOrder, getUser(),
-                    getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant(), App.instance.isRevenueKiosk());
-            OrderHelper.setOrderInclusiveTaxPrice(order);
-            tables.setStatus(ParamConst.TABLE_STATUS_DINING);
+                    getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant(),
+                    App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), App.instance.isRevenueKiosk());
+//            OrderHelper.setOrderInclusiveTaxPrice(order);
+//            tables.setStatus(ParamConst.TABLE_STATUS_DINING);
+
 //            TablesSQL.updateTables(tables);
-            TableInfoSQL.updateTables(tables);
+//            TableInfoSQL.updateTables(tables);
+            order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
             OrderSQL.update(order);
             OrderBill orderBill = ObjectFactory.getInstance()
                     .getOrderBill(order, getRevenueCenter());
@@ -2366,13 +2359,11 @@ public class App extends BaseApplication {
                             printId = prints.get(0).getId().intValue();
                         }
                     }
-                    OrderModifier orderModifier = ObjectFactory
+                   ObjectFactory
                             .getInstance()
                             .getOrderModifierFromTempAppOrderModifier(
                                     order, orderDetail, printId,
                                     appOrderModifier);
-                    OrderModifierSQL
-                            .addOrderModifier(orderModifier);
                 }
             }
             List<OrderDetail> placedOrderDetails
@@ -2487,12 +2478,13 @@ public class App extends BaseApplication {
             Order paidOrder = OrderSQL.getOrderByAppOrderId(appOrder
                     .getId().intValue());
             PrinterDevice printer = App.instance.getCahierPrinter();
+            TableInfo tableInfo = TableInfoSQL.getTableById(paidOrder.getTableId().intValue());
             PrinterTitle title = ObjectFactory.getInstance().getPrinterTitle(
                     getRevenueCenter(),
                     paidOrder,
                     getUser().getFirstName()
                             + getUser().getLastName(),
-                    TableInfoSQL.getKioskTable().getName(), 1);
+                    tableInfo.getName(), 1);
 
             ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
                     .getItemList(

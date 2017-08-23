@@ -302,6 +302,48 @@ public class KotSummarySQL {
 		}
 		return kotSummary;
 	}
+
+	public static ArrayList<KotSummary> getKotSummaryForTransfer(int orderId) {
+		ArrayList<KotSummary> result = new ArrayList<KotSummary>();
+		String sql = "select * from " + TableNames.KotSummary + " where orderId = ?";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {orderId+""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			KotSummary kotSummary = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				kotSummary = new KotSummary();
+				kotSummary.setId(cursor.getInt(0));
+				kotSummary.setOrderId(cursor.getInt(1));
+				kotSummary.setRevenueCenterId(cursor.getInt(2));
+				kotSummary.setTableId(cursor.getInt(3));
+				kotSummary.setTableName(cursor.getString(4));
+				kotSummary.setRevenueCenterName(cursor.getString(5));
+				kotSummary.setStatus(cursor.getInt(6));
+				kotSummary.setCreateTime(cursor.getLong(7));
+				kotSummary.setUpdateTime(cursor.getLong(8));
+				kotSummary.setBusinessDate(cursor.getLong(9));
+				kotSummary.setIsTakeAway(cursor.getInt(10));
+				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
+				kotSummary.setOrderRemark(cursor.getString(13));
+				result.add(kotSummary);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
 	
 	public static KotSummary getKotSummaryByTable(int tableId) {
 		KotSummary kotSummary = null;
@@ -336,7 +378,7 @@ public class KotSummarySQL {
 		}
 		return kotSummary;
 	}
-	
+
 	public static KotSummary getKotSummaryById(int id) {
 		KotSummary kotSummary = null;
 		String sql = "select * from " + TableNames.KotSummary + " where id = ?";

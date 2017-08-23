@@ -49,6 +49,35 @@ public class OrderModifierSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void addOrderModifierForDiner(OrderModifier orderModifier) {
+		if (orderModifier == null) {
+			return;
+		}
+		try {
+			String sql = "insert into "
+					+ TableNames.OrderModifier
+					+ "(orderId, orderDetailId, orderOriginId, userId, itemId, modifierId, modifierNum, status, modifierPrice, createTime, updateTime, printerId,modifierItemPrice)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] { orderModifier.getOrderId(),
+							orderModifier.getOrderDetailId(),
+							orderModifier.getOrderOriginId(),
+							orderModifier.getUserId(),
+							orderModifier.getItemId(),
+							orderModifier.getModifierId(),
+							orderModifier.getModifierNum(),
+							orderModifier.getStatus(),
+							orderModifier.getModifierPrice(),
+							orderModifier.getCreateTime(),
+							orderModifier.getUpdateTime(),
+							orderModifier.getPrinterId(),
+							orderModifier.getModifierItemPrice()});
+//			updateOrderDetailForWaiter(orderModifier);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public static void addOrderModifierForWaiter(OrderModifier orderModifier) {
 		if (orderModifier == null) {

@@ -149,7 +149,8 @@ public class ObjectFactory {
 
 	public Order getOrderFromAppOrder(AppOrder appOrder, User user,
 									  SessionStatus sessionStatus, RevenueCenter revenueCenter,
-									  TableInfo tables, long businessDate, Restaurant restaurant, boolean isKiosk) {
+									  TableInfo tables, long businessDate, Restaurant restaurant,
+									  Tax inclusiveTax, boolean isKiosk) {
 		Order order = null;
 		if (appOrder != null) {
 			synchronized (lock_order) {
@@ -187,6 +188,12 @@ public class ObjectFactory {
 					}else{
 						order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 					}
+					if(inclusiveTax != null){
+						order.setInclusiveTaxName(inclusiveTax.getTaxName());
+						order.setInclusiveTaxPercentage(inclusiveTax.getTaxPercentage());
+					}
+					order.setDiscountAmount("0.00");
+					OrderHelper.setOrderInclusiveTaxPrice(order);
 					OrderSQL.update(order);
 				}
 			}
@@ -683,6 +690,8 @@ public class ObjectFactory {
 			orderModifier.setPrinterId(printerId);
 			orderModifier.setModifierItemPrice(appOrderModifier
 					.getModifierPrice());
+			OrderModifierSQL
+					.addOrderModifierForDiner(orderModifier);
 		}
 		return orderModifier;
 	}
@@ -1314,14 +1323,45 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		return list;
 	}
 
-	//bob add:thread safe
-	Object lock_getKotSummary = new Object();		
+	Object lock_getKotSummary = new Object();
 	public KotSummary getKotSummary(String tableName, Order order,
 			RevenueCenter revenueCenter, long businessDate) {
 		
 		KotSummary kotSummary = null;
 		synchronized(lock_getKotSummary) {
 			kotSummary =  KotSummarySQL.getKotSummary(order.getId());
+			long time = System.currentTimeMillis();
+			if (kotSummary == null) {
+				kotSummary = new KotSummary();
+				kotSummary.setId(CommonSQL.getNextSeq(TableNames.KotSummary));
+				kotSummary.setOrderId(order.getId());
+				kotSummary.setOrderNo(order.getOrderNo());//流水号
+				kotSummary.setRevenueCenterId(revenueCenter.getId());
+				kotSummary.setRevenueCenterName(revenueCenter.getRevName());
+				if(revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
+					kotSummary.setTableName(order.getTableName());
+				}else{
+					kotSummary.setTableName(tableName);
+				}
+				kotSummary.setCreateTime(time);
+				kotSummary.setUpdateTime(time);
+				kotSummary.setBusinessDate(businessDate);
+				kotSummary.setIsTakeAway(order.getIsTakeAway());
+				kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
+				kotSummary.setOrderRemark(order.getOrderRemark());
+				KotSummarySQL.update(kotSummary);
+			}
+		}
+		return kotSummary;
+	}
+
+
+//	Object lock_getKotSummary = new Object();
+	public KotSummary getKotSummaryForPlace(String tableName, Order order,
+									RevenueCenter revenueCenter, long businessDate) {
+
+		KotSummary kotSummary = null;
+		synchronized(lock_getKotSummary) {
 			long time = System.currentTimeMillis();
 			if (kotSummary == null) {
 				kotSummary = new KotSummary();

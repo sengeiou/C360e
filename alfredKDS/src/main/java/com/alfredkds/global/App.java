@@ -55,7 +55,7 @@ public class App extends BaseApplication {
 	public static final int HANDLER_NEW_KOT = 20;
 	public static final int HANDLER_UPDATE_KOT = 8;
 	public static final int HANDLER_DELETE_KOT = 2;
-	private static final int DATABASE_VERSION = 15;
+	private static final int DATABASE_VERSION = 16;
 	private static final String DATABASE_NAME = "com.alfredkds";
 	public static App instance;
     //for pairing
@@ -77,26 +77,29 @@ public class App extends BaseApplication {
 	public void onCreate() {
 		super.onCreate();
 		instance = this;
-		kdsDevice = Store.getObject(this, Store.KDS_DEVICE, KDSDevice.class);
-  		if (kdsDevice == null) 
-  			kdsDevice = new KDSDevice();
+		SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+		update15to16();
+		if (kdsDevice == null) {
+			kdsDevice = new KDSDevice();
+		}
 
-        VERSION = getAppVersionName();
-  		
-  		
-  		SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+		VERSION = getAppVersionName();
+
+
 
 		KdsHttpServer kdssrv = new KdsHttpServer();
 		try {
-			if (!kdssrv.isAlive())
+			if (!kdssrv.isAlive()) {
 				kdssrv.start();
+			}
 		} catch (IOException e) {
 			kdssrv.stop();
 		}
-		UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);  
-        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+		UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);
+		Thread.setDefaultUncaughtExceptionHandler(catchExcep);
 		CrashReport.initCrashReport(getApplicationContext(), "900043724", isOpenLog);
 		wifiPolicyNever();
+		kdsDevice = Store.getObject(this, Store.KDS_DEVICE, KDSDevice.class);
 	}
 	
 	public void setRing(){

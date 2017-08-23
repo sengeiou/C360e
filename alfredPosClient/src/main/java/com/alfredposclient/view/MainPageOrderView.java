@@ -206,7 +206,7 @@ public class MainPageOrderView extends LinearLayout {
 						}
 						KotSummarySQL.update(kotSummary);
 						if (!kotItemDetails.isEmpty()) {
-							
+
 							if(!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()){
 								PrinterDevice printer = App.instance.getCahierPrinter();
 								if (printer == null) {
