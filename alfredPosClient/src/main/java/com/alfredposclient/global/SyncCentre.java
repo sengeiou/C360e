@@ -307,7 +307,7 @@ public class SyncCentre {
 			return "http://139.224.17.126/alfred-api/" + relativeUrl;
 		} else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-			return "http://www.servedbyalfred.com/alfred-api/" + relativeUrl;
+			return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
 		}
 	}
 
@@ -449,7 +449,7 @@ public class SyncCentre {
 			if (App.instance.countryCode == ParamConst.CHINA) {
 				url =  "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
 			}else {
-			    url =  "http://www.servedbyalfred.com/alfred-api/" + APIName.REQUEST_ALIPAY;
+			    url =  "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
 			}
 			param.append("amount="+parameters.get("amount")+"&");
 		}

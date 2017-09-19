@@ -148,7 +148,7 @@ public class MainPageOrderView extends LinearLayout {
 						List<OrderDetail> placedOrderDetails 
 									= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
 						KotSummary kotSummary = ObjectFactory.getInstance()
-								.getKotSummary(
+								.getKotSummaryForPlace(
 										TableInfoSQL.getTableById(
 												placedOrder.getTableId()).getName(), placedOrder,
 										App.instance.getRevenueCenter(),
@@ -204,9 +204,8 @@ public class MainPageOrderView extends LinearLayout {
 								}
 							}
 						}
-						KotSummarySQL.update(kotSummary);
 						if (!kotItemDetails.isEmpty()) {
-
+							KotSummarySQL.update(kotSummary);
 							if(!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()){
 								PrinterDevice printer = App.instance.getCahierPrinter();
 								if (printer == null) {
@@ -241,6 +240,7 @@ public class MainPageOrderView extends LinearLayout {
 										orderMap);
 							}
 						} else {
+							KotSummarySQL.deleteKotSummary(kotSummary);
 							parent.runOnUiThread(new Runnable() {
 
 								@Override

@@ -109,6 +109,8 @@ public class OrderDetail implements Serializable {
 
 	private int mainCategoryId;
 
+	private int fireStatus;
+
 	public OrderDetail() {
 		// set openItem False
 		this.isOpenItem = 0;
@@ -373,6 +375,14 @@ public class OrderDetail implements Serializable {
 		this.mainCategoryId = mainCategoryId;
 	}
 
+	public int getFireStatus() {
+		return fireStatus;
+	}
+
+	public void setFireStatus(int fireStatus) {
+		this.fireStatus = fireStatus;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderDetail{" +
@@ -408,6 +418,7 @@ public class OrderDetail implements Serializable {
 				", isSet=" + isSet +
 				", appOrderDetailId=" + appOrderDetailId +
 				", mainCategoryId=" + mainCategoryId +
+				", fireStatus=" + fireStatus +
 				'}';
 	}
 

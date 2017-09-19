@@ -74,19 +74,24 @@ public class PopItemAdapter extends BaseAdapter{
 		KotItemDetail kotItemDetail = kot.getKotItemDetails().get(position);
 			holder.itemNum.setText(kotItemDetail.getUnFinishQty()+"");
 			holder.itemName.setText(kotItemDetail.getItemName());
-			if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_DONE) {
-				convertView.setBackgroundResource(R.color.bg_complete_item);
-				holder.itemName.getPaint().setFlags(0);
-			}else if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_UPDATE) {
+
+		if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE) {
+			convertView.setBackgroundResource(R.color.bg_complete_item);
+			holder.itemName.getPaint().setFlags(0);
+		} else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
+			convertView.setBackgroundResource(R.color.white);
+			holder.itemName.setPaintFlags(holder.itemName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+		} else if (kotItemDetail.getFireStatus() == 1) {
+			convertView.setBackgroundResource(R.color.viewfinder_laser);
+		} else {
+			if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
 				convertView.setBackgroundResource(R.color.bg_update_item);
 				holder.itemName.getPaint().setFlags(0);
-			}else if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_VOID) {
-				convertView.setBackgroundResource(R.color.white);
-				holder.itemName.setPaintFlags(holder.itemName.getPaintFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
-			}else {
+			} else {
 				convertView.setBackgroundResource(R.color.white);
 				holder.itemName.getPaint().setFlags(0);
 			}
+		}
 			/*---kotModifier显示---*/
 			StringBuffer sBuffer = new StringBuffer();;
 			for (int j = 0; j < kot.getKotItemModifiers().size(); j++) {

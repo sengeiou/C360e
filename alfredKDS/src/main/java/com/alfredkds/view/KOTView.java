@@ -175,15 +175,20 @@ public class KOTView extends LinearLayout implements AnimationListener,
 				holder = (ViewHolder) convertView.getTag();
 			}
 			KotItemDetail kotItemDetail = kotItemDetails.get(position);
+
 			if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE) {
 				convertView.setBackgroundResource(R.color.bg_complete_item);
-			} else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
-				convertView.setBackgroundResource(R.color.bg_update_item);
+			} else if (kotItemDetail.getFireStatus() == 1) {
+				convertView.setBackgroundResource(R.color.viewfinder_laser);
 			} else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
 				convertView.setBackgroundResource(R.color.white);
 				holder.tv_text.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-			} else{
-				convertView.setBackgroundResource(R.color.white);
+			} else {
+				if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
+					convertView.setBackgroundResource(R.color.bg_update_item);
+				} else {
+					convertView.setBackgroundResource(R.color.white);
+				}
 			}
 			StringBuffer sBuffer = new StringBuffer();
 			for (int j = 0; j < kotItemModifiers.size(); j++) {

@@ -240,35 +240,39 @@ public class ObjectFactory {
 
 	public OrderDetail getOrderDetailFromTempAppOrderDetail(Order order,
 															AppOrderDetail appOrderDetail) {
-		OrderDetail orderDetail = new OrderDetail();
+		OrderDetail orderDetail;
 		synchronized (lock_orderDetail) {
 			long time = System.currentTimeMillis();
-			orderDetail.setCreateTime(time);
-			orderDetail.setUpdateTime(time);
-			orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
-			orderDetail.setOrderId(order.getId());
-			orderDetail.setOrderOriginId(ParamConst.ORDER_ORIGIN_APP);
-			orderDetail.setUserId(order.getUserId());
-			orderDetail.setItemId(appOrderDetail.getItemId().intValue());
-			orderDetail.setItemName(appOrderDetail.getItemName());
-			orderDetail.setItemNum(appOrderDetail.getItemNum().intValue());
-			orderDetail
-					.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
-			orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_GENERAL);
-			orderDetail.setReason("");
-			orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
-			orderDetail.setItemPrice(appOrderDetail.getItemPrice());
-			String taxPrice = AppOrderDetailTaxSQL.getAppOrderDetailTaxSumByAppOrderDetailId(appOrderDetail.getId().intValue());
-			orderDetail.setTaxPrice(taxPrice);
-			orderDetail.setFromOrderDetailId(0);
-			orderDetail.setIsFree(ParamConst.NOT_FREE);
-			orderDetail.setIsItemDiscount(1);
-			orderDetail.setRealPrice(appOrderDetail.getTotalItemPrice());
-			orderDetail.setGroupId(0);
-			orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-			ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(appOrderDetail.getItemId().intValue());
-			orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
-			orderDetail.setAppOrderDetailId(appOrderDetail.getId());
+			orderDetail = OrderDetailSQL.getOrderDetailByAppOrderDetailId(appOrderDetail.getId());
+			if(orderDetail == null) {
+				orderDetail = new OrderDetail();
+				orderDetail.setCreateTime(time);
+				orderDetail.setUpdateTime(time);
+				orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+				orderDetail.setOrderId(order.getId());
+				orderDetail.setOrderOriginId(ParamConst.ORDER_ORIGIN_APP);
+				orderDetail.setUserId(order.getUserId());
+				orderDetail.setItemId(appOrderDetail.getItemId().intValue());
+				orderDetail.setItemName(appOrderDetail.getItemName());
+				orderDetail.setItemNum(appOrderDetail.getItemNum().intValue());
+				orderDetail
+						.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+				orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_GENERAL);
+				orderDetail.setReason("");
+				orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
+				orderDetail.setItemPrice(appOrderDetail.getItemPrice());
+				String taxPrice = AppOrderDetailTaxSQL.getAppOrderDetailTaxSumByAppOrderDetailId(appOrderDetail.getId().intValue());
+				orderDetail.setTaxPrice(taxPrice);
+				orderDetail.setFromOrderDetailId(0);
+				orderDetail.setIsFree(ParamConst.NOT_FREE);
+				orderDetail.setIsItemDiscount(1);
+				orderDetail.setRealPrice(appOrderDetail.getTotalItemPrice());
+				orderDetail.setGroupId(0);
+				orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+				ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(appOrderDetail.getItemId().intValue());
+				orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
+				orderDetail.setAppOrderDetailId(appOrderDetail.getId());
+			}
 		}
 		return orderDetail;
 	}
@@ -1457,6 +1461,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotItemDetail.setUnFinishQty(mainKotItemDetail.getUnFinishQty());
 				kotItemDetail.setCategoryId(ParamConst.KOTITEMDETAIL_CATEGORYID_SUB);
 				kotItemDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+				kotItemDetail.setFireStatus(kotItemDetail.getFireStatus());
 				KotItemDetailSQL.update(kotItemDetail);
 			}
 		}

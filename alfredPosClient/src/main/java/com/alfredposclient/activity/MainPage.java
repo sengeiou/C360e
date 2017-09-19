@@ -18,7 +18,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -38,7 +37,6 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
@@ -99,6 +97,7 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.popupwindow.OpenItemWindow;
+import com.alfredposclient.popupwindow.OrderDetailFireWindow;
 import com.alfredposclient.popupwindow.OrderSplitPrintWindow;
 import com.alfredposclient.popupwindow.SetPAXWindow;
 import com.alfredposclient.popupwindow.SetWeightWindow;
@@ -126,6 +125,8 @@ import java.util.Map;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+
+//import com.alfredposclient.popupwindow.OrderDetailFireWindow;
 
 
 public class MainPage extends BaseActivity {
@@ -192,7 +193,7 @@ public class MainPage extends BaseActivity {
 	
 	public static final int VIEW_EVENT_SET_APPORDER_TABLE_PACKS = 148;
 	public static final int VIEW_EVENT_UNSEAT_ORDER = 149;
-
+	public static final int VIEW_EVENT_FIRE = 150;
 
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
 	public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
@@ -1140,24 +1141,28 @@ public class MainPage extends BaseActivity {
 									currentOrder.setTableId(currentTable
 											.getPosId());
 									OrderSQL.update(currentOrder);
-									KotSummary fromKotSummary = KotSummarySQL
-											.getKotSummary(currentOrder.getId());
-									fromKotSummary.setTableName(currentTable
-											.getName());
-									Map<String, Object> parameters = new HashMap<String, Object>();
-									parameters.put("fromOrder", currentOrder);
-									parameters.put("fromTableName",
-											oldTable.getName());
-									parameters.put("toTableName",
-											currentTable.getName());
-									parameters.put("action",
-											ParamConst.JOB_TRANSFER_KOT);
-									App.instance
-											.getKdsJobManager()
-											.transferTableDownKot(
-													ParamConst.JOB_TRANSFER_KOT,
-													null, fromKotSummary,
-													parameters);
+									List<KotSummary> kotSummaryList = KotSummarySQL.getKotSummaryForTransfer(currentOrder.getId());
+									if(kotSummaryList != null){
+										for(KotSummary fromKotSummary : kotSummaryList){
+											fromKotSummary.setTableName(currentTable
+													.getName());
+											Map<String, Object> parameters = new HashMap<String, Object>();
+											parameters.put("fromOrder", currentOrder);
+											parameters.put("fromTableName",
+													oldTable.getName());
+											parameters.put("toTableName",
+													currentTable.getName());
+											parameters.put("action",
+													ParamConst.JOB_TRANSFER_KOT);
+											App.instance
+													.getKdsJobManager()
+													.transferTableDownKot(
+															ParamConst.JOB_TRANSFER_KOT,
+															null, fromKotSummary,
+															parameters);
+										}
+									}
+
 								} else {
 									transferOrder(currentTable.getPosId());
 								}
@@ -1619,6 +1624,11 @@ public class MainPage extends BaseActivity {
 				tableShowAction = SHOW_TABLES;
 				currentOrder = null;
 				showTables();
+				break;
+			case VIEW_EVENT_FIRE:{
+				OrderDetailFireWindow orderDetailFireWindow = new OrderDetailFireWindow(MainPage.this, findViewById(R.id.lv_order), handler);
+				orderDetailFireWindow.show(currentOrder, handler);
+			}
 				break;
 			default:
 				break;

@@ -74,6 +74,19 @@ public class KOTPrint extends PrintJob{
 	}
 
 
+	public  void AddFire(){
+		StringBuilder sbr = new StringBuilder();
+		sbr.append("FIRE");
+		sbr.append(reNext);
+		PrintData fire = new PrintData();
+		fire.setDataFormat(PrintData.FORMAT_TXT);
+		fire.setTextAlign(PrintData.ALIGN_CENTRE);
+		fire.setFontsize(2);
+		fire.setText(sbr.toString());
+		this.data.add(fire);
+		addHortionalLine(this.charSize);
+	}
+
 	public void AddKioskHeader(KotSummary kotSummary, String orderId) {
 		addFeed();
 		StringBuilder sbr = new StringBuilder();

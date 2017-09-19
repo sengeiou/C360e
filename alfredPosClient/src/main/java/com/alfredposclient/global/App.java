@@ -117,7 +117,6 @@ import com.alfredposclient.javabean.SecondScreenBean;
 import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
-import com.alfredposclient.service.RabbitMqPushService;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
@@ -284,20 +283,20 @@ public class App extends BaseApplication {
     /*
      * Alfred PUSH Service
      */
-    private RabbitMqPushService rabbitMqPushService;
-    private ServiceConnection rabbitMqPushConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            rabbitMqPushService = ((RabbitMqPushService.Binder) service).getService();
-//            rabbitMqPushService.setListener(new PushListenerClient(App.instance));
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            rabbitMqPushService = null;
-        }
-    };
+//    private RabbitMqPushService rabbitMqPushService;
+//    private ServiceConnection rabbitMqPushConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            rabbitMqPushService = ((RabbitMqPushService.Binder) service).getService();
+////            rabbitMqPushService.setListener(new PushListenerClient(App.instance));
+//
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            rabbitMqPushService = null;
+//        }
+//    };
 
 //    private PushService pushService;
 //    private ServiceConnection pushConnection = new ServiceConnection() {
@@ -1412,7 +1411,8 @@ public class App extends BaseApplication {
 
     public boolean remoteKotPrint(PrinterDevice printer, KotSummary kotsummary,
                                   ArrayList<KotItemDetail> itemDetailsList,
-                                  ArrayList<KotItemModifier> modifiersList) {
+                                  ArrayList<KotItemModifier> modifiersList,
+                                  boolean isFire) {
         if (!isKotPrint()) {
             return true;
         }
@@ -1444,7 +1444,7 @@ public class App extends BaseApplication {
                     size = 2;
                 mRemoteService.printKOT(printstr, kotsumStr, kdlstr, modstr,
                         this.systemSettings.isKotPrintTogether(),
-                        this.systemSettings.isKotDoublePrint(), size);
+                        this.systemSettings.isKotDoublePrint(), size, isFire);
             }
             return true;
         } catch (RemoteException e) {

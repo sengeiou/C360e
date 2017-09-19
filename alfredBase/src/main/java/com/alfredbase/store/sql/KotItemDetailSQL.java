@@ -27,8 +27,8 @@ public class KotItemDetailSQL {
 					+ TableNames.KotItemDetail
 					+ "(id, restaurantId, revenueId, orderId, orderDetailId, printerGroupId, kotSummaryId, "
 					+ "itemName,itemNum,finishQty,sessionStatus,kotStatus,specialInstractions ,version,createTime,"
-					+ "updateTime, unFinishQty, categoryId,isTakeAway)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "updateTime, unFinishQty, categoryId,isTakeAway, fireStatus)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { kotItemDetail.getId(),
@@ -49,7 +49,8 @@ public class KotItemDetailSQL {
 							kotItemDetail.getUpdateTime(),
 							kotItemDetail.getUnFinishQty(),
 							kotItemDetail.getCategoryId(),
-							kotItemDetail.getIsTakeAway()});
+							kotItemDetail.getIsTakeAway(),
+							kotItemDetail.getFireStatus()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,8 +68,8 @@ public class KotItemDetailSQL {
 					+ "(id, restaurantId, revenueId, orderId, orderDetailId,  printerGroupId, kotSummaryId, "
 					+ "itemName,itemNum,finishQty,sessionStatus,"
 					+ "kotStatus,specialInstractions ,version," +
-					"createTime,updateTime, unFinishQty, categoryId,isTakeAway)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					"createTime,updateTime, unFinishQty, categoryId,isTakeAway, fireStatus)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (KotItemDetail kotItemDetail : kotItemDetails) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
@@ -109,6 +110,8 @@ public class KotItemDetailSQL {
 						kotItemDetail.getCategoryId());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 19,
 						kotItemDetail.getIsTakeAway());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 20,
+						kotItemDetail.getFireStatus());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -154,6 +157,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -202,6 +206,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -242,6 +247,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -282,6 +288,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -321,6 +328,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -369,6 +377,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -418,6 +427,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -466,6 +476,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -509,6 +520,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -551,6 +563,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				kotItemDetails.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -568,7 +581,7 @@ public class KotItemDetailSQL {
 			int kotSummaryId) {
 		ArrayList<KotItemDetail> result = new ArrayList<KotItemDetail>();
 		String sql = "select * from " + TableNames.KotItemDetail
-				+ " where kotSummaryId = ? and categoryId = 0 order by id desc";
+				+ " where kotSummaryId = ? and categoryId = 0 order by fireStatus desc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -600,6 +613,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -640,7 +654,7 @@ public class KotItemDetailSQL {
 			int kotSummaryId, int orderId) {
 		ArrayList<KotItemDetail> result = new ArrayList<KotItemDetail>();
 		String sql = "select * from " + TableNames.KotItemDetail
-				+ " where kotSummaryId = ? and orderId=? and categoryId = 0 order by id desc";
+				+ " where kotSummaryId = ? and orderId=? and categoryId = 0 order by fireStatus desc, kotStatus asc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -672,6 +686,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -720,6 +735,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setUnFinishQty(cursor.getInt(16));
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
+				kotItemDetail.setFireStatus(cursor.getInt(19));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {

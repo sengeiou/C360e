@@ -65,13 +65,10 @@ public class XMPP implements ConnectionListener, PingFailedListener{
     private static String TAG = "XMPP";
 
     private XMPPTCPConnectionConfiguration buildConfiguration() throws XmppStringprepException {
-        XMPPTCPConnectionConfiguration.Builder builder =
-                XMPPTCPConnectionConfiguration.builder();
-
-
+        XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
         builder.setHost(HOST);
         builder.setPort(PORT);
-        builder.setCompressionEnabled(false);
+//        builder.setCompressionEnabled(false);
         builder.setDebuggerEnabled(true);
         builder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         builder.setSendPresence(true);
@@ -94,6 +91,18 @@ public class XMPP implements ConnectionListener, PingFailedListener{
 
         return builder.build();
     }
+
+//    private void bulidConfig(){
+//        XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
+////                .setServiceName("machine")
+////                .setUsernameAndPassword("admin", "admin")
+//                .setCompressionEnabled(false)
+//                .setHost(HOST)
+//                .setPort(PORT)
+//                .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
+//                .setSendPresence(true)
+//                .build();
+//    }
 
     private XMPPTCPConnection connect() throws XMPPException, SmackException, IOException, InterruptedException {
         Log.i(TAG, "Getting XMPP Connect");
@@ -210,10 +219,17 @@ public class XMPP implements ConnectionListener, PingFailedListener{
         return (this.connection != null) && (this.connection.isConnected());
     }
     public void login(final String user, final String pass, final String username, final String roomName){
-        this.user = user;
-        this.pass = pass;
-        this.username = username;
-        this.roomName = roomName;
+        if(App.isOpenLog){
+            this.user = "TEST" + user;
+            this.pass = "TEST" + pass;
+            this.username = "TEST" + username;
+            this.roomName = "TEST" + roomName;
+        }else {
+            this.user = user;
+            this.pass = pass;
+            this.username = username;
+            this.roomName = roomName;
+        }
         try {
             Log.i(TAG, "inside XMPP getlogin Method");
             long l = System.currentTimeMillis();
@@ -247,9 +263,10 @@ public class XMPP implements ConnectionListener, PingFailedListener{
             pingManager.setPingInterval(30);
             pingManager.registerPingFailedListener(this);
             connect.sendStanza(p);
-            connect.addPacketListener(new StanzaListener() {
+
+            connect.addAsyncStanzaListener(new StanzaListener() {
                 @Override
-                public void processStanza(Stanza packet) throws SmackException.NotConnectedException, InterruptedException {
+                public void processPacket(Stanza packet) throws SmackException.NotConnectedException, InterruptedException {
                     if ((packet instanceof Message)) {
                         String body  = ((Message) packet).getBody();
                         if(!TextUtils.isEmpty(body)) {
@@ -287,6 +304,46 @@ public class XMPP implements ConnectionListener, PingFailedListener{
                         }
                     }
                 }
+
+//                @Override
+//                public void processStanza(Stanza packet) throws SmackException.NotConnectedException, InterruptedException {
+//                    if ((packet instanceof Message)) {
+//                        String body  = ((Message) packet).getBody();
+//                        if(!TextUtils.isEmpty(body)) {
+//                            LogUtil.i(TAG, body);
+//                            {
+//                                try {
+//                                    JSONObject jsonObject = new JSONObject(body);
+//                                    PushMessage pushMessage = new PushMessage();
+//                                    if(jsonObject.has("push")){
+//                                        pushMessage.setMsg(jsonObject.getString("push"));
+//                                    }
+//                                    if(jsonObject.has("content")){
+//                                        pushMessage.setContent(jsonObject.getString("content"));
+//                                    }
+//                                    if(jsonObject.has("restId")){
+//                                        pushMessage.setRestId(jsonObject.getInt("restId"));
+//                                    }
+//                                    if(jsonObject.has("revenueId")){
+//                                        pushMessage.setRevenueId(jsonObject.getInt("revenueId"));
+//                                    }
+//                                    if(jsonObject.has("businessStr")){
+//                                        pushMessage.setBusinessStr(jsonObject.getString("businessStr"));
+//                                    }
+//                                    if(!TextUtils.isEmpty(pushMessage.getMsg())){
+//                                        if (pushListener != null)
+//                                            pushListener.onPushMessageReceived(pushMessage, canCheckAppOrder);
+//                                        else
+//                                            LogUtil.d(TAG, "回调是空的");
+//                                    }
+//                                } catch (Exception e) {
+//                                    LogUtil.d(TAG, "设置监听出错");
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
             }, null);
             connect.addConnectionListener(this);
             createMessageGroup(connection, roomName, username);
@@ -321,7 +378,11 @@ public class XMPP implements ConnectionListener, PingFailedListener{
 
     public void createMessageGroup(XMPPTCPConnection connection, String roomName, String userName) throws XmppStringprepException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, MultiUserChatException.NotAMucServiceException, MultiUserChatException.MissingMucCreationAcknowledgeException, MultiUserChatException.MucAlreadyJoinedException {
         MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor(connection);
-        EntityBareJid room = JidCreate.entityBareFrom(roomName + "@alfred." + HOST);
+        String name = roomName;
+        if(App.isOpenLog){
+            name = "Test" + name;
+        }
+        EntityBareJid room = JidCreate.entityBareFrom(name + "@alfred." + HOST);
         RoomInfo roomInfo = null;
         try{
             roomInfo = multiUserChatManager.getRoomInfo(room);

@@ -1186,7 +1186,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 //					.getRoundAmount(order, orderBill, App.instance.getLocalRestaurantConfig().getRoundType());
 //			RoundAmountSQL.update(roundAmount);
 			String kotCommitStatus;
-			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummary(
+			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForPlace(
 					TableInfoSQL.getTableById(order.getTableId()).getName(),
 					order, App.instance.getRevenueCenter(), App.instance.getBusinessDate());
 			List<Integer> orderDetailIds = new ArrayList<Integer>();
@@ -1231,7 +1231,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					}
 				}
 			}
-			KotSummarySQL.update(kotSummary);
 			result.put("order", order);
 			result.put("orderDetails", OrderDetailSQL.getOrderDetails(order.getId()));
 			result.put("orderModifiers",
@@ -1245,20 +1244,25 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			Map<String, Object> orderMap = new HashMap<String, Object>();
 			orderMap.put("orderId", order.getId());
 			orderMap.put("orderDetailIds", orderDetailIds);
-			if(!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()){
-				PrinterDevice printer = App.instance.getCahierPrinter();
-				if (printer == null) {
-					UIHelp.showToast(
-							App.getTopActivity(),App.getTopActivity().getResources().getString(R.string.setting_printer));
-				} else {
-					App.instance.remoteOrderSummaryPrint(printer, kotSummary, kotItemDetails, kotItemModifiers);
+			if (!kotItemDetails.isEmpty()) {
+				KotSummarySQL.update(kotSummary);
+				if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
+					PrinterDevice printer = App.instance.getCahierPrinter();
+					if (printer == null) {
+						UIHelp.showToast(
+								App.getTopActivity(), App.getTopActivity().getResources().getString(R.string.setting_printer));
+					} else {
+						App.instance.remoteOrderSummaryPrint(printer, kotSummary, kotItemDetails, kotItemModifiers);
+					}
 				}
+				App.instance.getKdsJobManager()
+						.tearDownKot(kotSummary, kotItemDetails, kotItemModifiers,
+								kotCommitStatus, orderMap);
+				App.getTopActivity().httpRequestAction(
+						MainPage.VIEW_EVENT_SET_DATA, order.getId());
+			}else{
+				KotSummarySQL.deleteKotSummary(kotSummary);
 			}
-			App.instance.getKdsJobManager()
-					.tearDownKot(kotSummary, kotItemDetails, kotItemModifiers,
-							kotCommitStatus, orderMap);
-			 App.getTopActivity().httpRequestAction(
-					 MainPage.VIEW_EVENT_SET_DATA, order.getId());
 		} catch (JSONException e) {
 			e.printStackTrace();
 			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
@@ -1465,6 +1469,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				}else if (kotItemDetail.getUnFinishQty() == 0){
 					kotItemDetail.setFinishQty(kotItemDetail.getItemNum());
 					kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+					kotItemDetail.setFireStatus(ParamConst.FIRE_STATUS_DEFAULT);
 				}
 				KotItemDetail subKotItemDetail = ObjectFactory.getInstance()
 						.getSubKotItemDetail(kotItemDetail);

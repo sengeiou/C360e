@@ -15,6 +15,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.alfredbase.store.Store;
@@ -46,7 +47,7 @@ public class BaseApplication extends Application {
 	 */
 
 	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = false;	//	release 时设置为false
+	public static boolean isOpenLog = true;	//	release 时设置为false
 
 
 
@@ -88,7 +89,13 @@ public class BaseApplication extends Application {
 	public static int IMAGE_DISK_CACHE_SIZE = 80 * 1024 * 1024;	//	总共的存储的空间
 	public static int IMAGE_ENGINE_SCALE_FOR_SDCARD = 1000; // 缓存图片的大小
 	public static int IMAGE_ENGINE_SCALE_FOR_MEMECACHE = 1000;
-	
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
