@@ -1068,8 +1068,14 @@ public class MainPageOrderView extends LinearLayout {
 					}
 				}
 					break;
-				case R.id.ll_transfer:
-
+				case R.id.ll_transfer: {
+					OrderDetail orderDetail = (OrderDetail) view.getTag();
+					if(!IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
+						UIHelp.showShortToast(parent, "Orders from Diner App Cannot be Transferred");
+						return;
+					}
+					handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_ITEM, orderDetail));
+				}
 					break;
 				case R.id.ll_weight:{
 					OrderDetail orderDetail = (OrderDetail) view.getTag();

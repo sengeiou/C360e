@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.javabean.javabeanforhtml.DashboardItemDetail;
 import com.alfredbase.javabean.javabeanforhtml.DashboardSales;
 import com.alfredbase.store.SQLExe;
@@ -221,6 +222,8 @@ public class GeneralSQL {
 		String deleteOrder = "delete from " + TableNames.Order
 				+ " where businessDate < ?";
 
+		String deleteMsg = "delete from " + TableNames.SyncMsg + " where businessDate < ? & status = " + ParamConst.SYNC_MSG_SUCCESS;
+
 		try {
 			db.beginTransaction();
 			// 删除KotSummary等的信息
@@ -255,7 +258,11 @@ public class GeneralSQL {
 			db.execSQL(deleteOrderModifier, new Object[] { businessDate + "" });
 			db.execSQL(deleteOrderDetail, new Object[] { businessDate + "" });
 			db.execSQL(deleteOrder, new Object[] { businessDate + "" });
-			
+
+			// 删除同步成功的数据
+			db.execSQL(deleteMsg, new Object[] { businessDate + "" });
+
+
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();

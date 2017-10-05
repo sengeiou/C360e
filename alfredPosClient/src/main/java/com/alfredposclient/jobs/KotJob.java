@@ -82,7 +82,30 @@ public class KotJob extends Job {
 		apiName = APIName.TRANSFER_KOT;
 		failCount = 0;
     }
-    
+    public KotJob(KDSDevice kds, KotSummary toKotSummary, KotSummary fromKotSummary, Map<String, Object> kotMap, KotItemDetail kotItemDetail){
+    	 super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
+		long time = System.currentTimeMillis();
+		try {
+			if(toKotSummary != null ){
+				toKotSummary.setUpdateTime(time);
+				KotSummarySQL.updateKotSummaryTimeById(time, toKotSummary.getId().intValue());
+			}else{
+				fromKotSummary.setUpdateTime(time);
+				KotSummarySQL.updateKotSummaryTimeById(time, fromKotSummary.getId().intValue());
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		localId = -time;
+		data.put("toKotSummary", toKotSummary);
+		data.put("fromKotSummary", fromKotSummary);
+		data.put("tansferKotItem", kotItemDetail);
+		this.kds = kds;
+		this.kotMap = kotMap;
+		apiName = APIName.TRANSFER_ITEM_KOT;
+		failCount = 0;
+    }
+
     @Override
     public void onAdded() {
         //job has been secured to disk, add item to database
@@ -160,7 +183,9 @@ public class KotJob extends Job {
 		    	}
 		    	
 				SyncCentre.getInstance().transferTable(context, kotMap);
-	    	}
+	    	}else if(APIName.TRANSFER_ITEM_KOT.equals(apiName)){
+				SyncCentre.getInstance().syncTransferItem(kds, context, data, null);
+			}
 	    	LogUtil.d(TAG, "KOT JOB Successful");
     	}catch(Throwable e) {
     		LogUtil.d(TAG, "KOT JOB Failed:" + e.getMessage());

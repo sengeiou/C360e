@@ -9,7 +9,7 @@ public class App extends BaseApplication {
 //    public static App instance;
 //    private PrintJobManager printJobMgr;  
 	public final String VERSION = "1.0.6";
-	private static final int DATABASE_VERSION = 16;
+	private static final int DATABASE_VERSION = 17;
 	
 	private static final String DATABASE_NAME = "com.alfred.fb.printerservice";
 	String oldIp;

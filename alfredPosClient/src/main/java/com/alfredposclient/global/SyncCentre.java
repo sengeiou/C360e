@@ -301,8 +301,8 @@ public class SyncCentre {
 	// Backend Server IP
 	private String getAbsoluteUrl(String relativeUrl) {
 		if (App.instance.isDebug) {
-			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
-//			return "http://192.168.0.120:8083/alfred-api/" + relativeUrl;
+//			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
+			return "http://192.168.1.104:8083/alfred-api/" + relativeUrl;
 		} else if (App.instance.isOpenLog) {
 			return "http://139.224.17.126/alfred-api/" + relativeUrl;
 		} else {
@@ -419,7 +419,11 @@ public class SyncCentre {
 			final Map<String, Object> parameters, Handler handler) {
 		String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_KOT);
 		HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(),syncHttpClient);
-
+	}
+	public void syncTransferItem(KDSDevice kdsDevice, BaseActivity context,
+			final Map<String, Object> parameters, Handler handler) {
+		String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_ITEM_KOT);
+		HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(),syncHttpClient);
 	}
 
 	/**

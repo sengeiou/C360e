@@ -219,17 +219,17 @@ public class XMPP implements ConnectionListener, PingFailedListener{
         return (this.connection != null) && (this.connection.isConnected());
     }
     public void login(final String user, final String pass, final String username, final String roomName){
-        if(App.isOpenLog){
-            this.user = "TEST" + user;
-            this.pass = "TEST" + pass;
-            this.username = "TEST" + username;
-            this.roomName = "TEST" + roomName;
-        }else {
+//        if(App.isOpenLog){
+//            this.user = "TEST" + user;
+//            this.pass = "TEST" + pass;
+//            this.username = "TEST" + username;
+//            this.roomName = "TEST" + roomName;
+//        }else {
             this.user = user;
             this.pass = pass;
             this.username = username;
             this.roomName = roomName;
-        }
+//        }
         try {
             Log.i(TAG, "inside XMPP getlogin Method");
             long l = System.currentTimeMillis();
@@ -379,9 +379,9 @@ public class XMPP implements ConnectionListener, PingFailedListener{
     public void createMessageGroup(XMPPTCPConnection connection, String roomName, String userName) throws XmppStringprepException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, MultiUserChatException.NotAMucServiceException, MultiUserChatException.MissingMucCreationAcknowledgeException, MultiUserChatException.MucAlreadyJoinedException {
         MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor(connection);
         String name = roomName;
-        if(App.isOpenLog){
-            name = "Test" + name;
-        }
+//        if(App.isOpenLog){
+//            name = "Test" + name;
+//        }
         EntityBareJid room = JidCreate.entityBareFrom(name + "@alfred." + HOST);
         RoomInfo roomInfo = null;
         try{

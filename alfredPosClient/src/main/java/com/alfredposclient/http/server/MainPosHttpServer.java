@@ -184,14 +184,23 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				} else if (apiName.equals(APIName.DESKTOP_SELECTTABLE)) {
 					int tableId = 0;
 					int persons = 0;
-
+					int orderId = -1;
 					try {
 						tableId = jsonObject.optInt("tableId");
 						persons = jsonObject.optInt("persons");
-
+						if(!jsonObject.isNull("orderId")){
+							orderId = jsonObject.optInt("orderId");
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 						result.put("resultCode", ResultCode.JSON_DATA_ERROR);
+					}
+					if(orderId != -1){
+						Order order = OrderSQL.getOrder(orderId);
+						if(order != null && order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
+							result.put("resultCode", ResultCode.ORDER_FINISHED);
+							return this.getJsonResponse(new Gson().toJson(result));
+						}
 					}
 					if (tableId != 0 || persons != 0) {
 						TableInfo tableInfo = TableInfoSQL.getTableById(tableId);

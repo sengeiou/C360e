@@ -284,7 +284,7 @@ public class KotJobManager {
 				}
 			}
 		}
-		boolean ret = transferItemToPrinter(fromKotSummary,
+		boolean ret = transferTableItemToPrinter(fromKotSummary,
 				toKotSummary, orderMap);
 		if (!ret) {
 			App.getTopActivity().kotPrintStatus(
@@ -292,8 +292,8 @@ public class KotJobManager {
 		}
 	}
 
-	/* transfer item to printer */
-	private boolean transferItemToPrinter(KotSummary fromKotSummary,
+	/* transfer table`s item to printer */
+	private boolean transferTableItemToPrinter(KotSummary fromKotSummary,
 			KotSummary toKotSummary, Map<String, Object> orderMap) {
 		BaseActivity context = App.getTopActivity();
 		ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
@@ -436,6 +436,109 @@ public class KotJobManager {
 							kots.get(prgid), mods.get(prgid), false);
 
 				}else{
+					printed = true;
+				}
+			}
+		}
+		return printed;
+	}
+	/* convert KOT to kot jobs */
+	public void transferItemDownKot(KotSummary toKotSummary,
+			KotSummary fromKotSummary, Map<String, Object> orderMap, KotItemDetail kotItemDetail) {
+
+		List<Integer> printerGrougIds = KotItemDetailSQL
+				.getPrinterGroupIds(fromKotSummary);
+		// add job to send it to KDS
+		for (Integer prgid : printerGrougIds) {
+			ArrayList<Printer> printers = CoreData.getInstance()
+					.getPrintersInGroup(prgid.intValue());
+			for (Printer prnt : printers) {
+				KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
+				if (kds1 != null) {
+					KotJob kotjob = new KotJob(kds1, toKotSummary,
+							fromKotSummary, orderMap, kotItemDetail);
+					kotJobManager.addJob(kotjob);
+				}
+			}
+		}
+		boolean ret = transferItemToPrinter(fromKotSummary,
+				toKotSummary, orderMap, kotItemDetail);
+		if (!ret) {
+			App.getTopActivity().kotPrintStatus(
+					MainPage.KOT_PRINT_FAILED, null);
+		}
+	}
+
+	/* transfer item to printer */
+	private boolean transferItemToPrinter(KotSummary fromKotSummary,
+			KotSummary toKotSummary, Map<String, Object> orderMap, KotItemDetail kotItemDetail) {
+		BaseActivity context = App.getTopActivity();
+		ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
+		KotSummary printKotSummary = null;
+		// map printergroudId to Kot: Group ID --> Details
+		Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<Integer, ArrayList<KotItemDetail>>();
+		// map printerGroudId to Modifiers
+		Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<Integer, ArrayList<KotItemModifier>>();
+		List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+		kotItemModifiers.addAll(KotItemModifierSQL
+				.getKotItemModifiersByKotItemDetail(kotItemDetail
+						.getId()));
+		KotSummarySQL.deleteKotSummary(fromKotSummary);
+		context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
+		printKotSummary = toKotSummary;
+		Integer pgid = kotItemDetail.getPrinterGroupId();
+		int kotItemDetailId = kotItemDetail.getId().intValue();
+
+		// Get all Group ids that KOT blongs to
+		if (!printerGrougIds.contains(pgid))
+			printerGrougIds.add(pgid);
+
+		// kot
+		if (kots.containsKey(pgid)) {
+			ArrayList<KotItemDetail> tmp = kots.get(pgid);
+			tmp.add(kotItemDetail);
+		} else {
+			ArrayList<KotItemDetail> tmp = new ArrayList<KotItemDetail>();
+			tmp.add(kotItemDetail);
+			kots.put(pgid, tmp);
+		}
+
+		// modifier
+		if (mods.containsKey(pgid)) {
+			ArrayList<KotItemModifier> tmp = mods.get(pgid);
+			for (KotItemModifier mof : kotItemModifiers) {
+				if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+					tmp.add(mof);
+				}
+			}
+		} else {
+			ArrayList<KotItemModifier> tmp = new ArrayList<KotItemModifier>();
+			for (KotItemModifier mof : kotItemModifiers) {
+				if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+					tmp.add(mof);
+				}
+			}
+			mods.put(kotItemDetail.getPrinterGroupId(), tmp);
+		}
+		boolean printed = false;
+		if (App.countryCode == ParamConst.CHINA) {
+			return true;
+		}
+		for (Integer prgid : printerGrougIds) {
+			ArrayList<Printer> printers = CoreData.getInstance()
+					.getPrintersInGroup(prgid.intValue());
+			for (Printer prnt : printers) {
+				// physical printer
+				PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
+						.getId());
+				if (prntd != null) {
+					prntd.setGroupId(prgid.intValue());
+					String fromTableName = (String) orderMap.get("fromTableName");
+					printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
+					printed = App.instance.remoteKotPrint(prntd, printKotSummary,
+							kots.get(prgid), mods.get(prgid), false);
+
+				} else {
 					printed = true;
 				}
 			}

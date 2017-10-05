@@ -1240,6 +1240,36 @@ public class PaymentSettlementSQL {
 	
 	}
 
+
+	public static void deleteAllSettlement(Payment payment) {
+
+		String sql = "delete from " + TableNames.PaymentSettlement
+				+ " where paymentId = ? ";
+		String sql1 = "delete from " + TableNames.CardsSettlement
+				+ " where paymentId = ? ";
+		String sql2 = "delete from " + TableNames.BohHoldSettlement
+				+ " where paymentId = ? ";
+		String sql4 = "delete from " + TableNames.NonChargableSettlement
+				+ " where paymentId = ? ";
+		String sql5 = "delete from " + TableNames.NetsSettlement
+				+ " where paymentId = ? ";
+		try {
+			SQLExe.getDB().execSQL(sql,
+					new Object[] { payment.getId() });
+			SQLExe.getDB().execSQL(sql1,
+					new Object[] { payment.getId() });
+			SQLExe.getDB().execSQL(sql2,
+					new Object[] { payment.getId() });
+			SQLExe.getDB().execSQL(sql4,
+					new Object[] { payment.getId() });
+			SQLExe.getDB().execSQL(sql5,
+					new Object[] { payment.getId() });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public static void regainPaymentSettlementByPayment(Payment payment) {
 		String sql = "delete from " + TableNames.PaymentSettlement
 				+ " where paymentId = ? and isActive = " + ParamConst.PAYMENT_SETT_IS_ACTIVE;
@@ -1250,6 +1280,27 @@ public class PaymentSettlementSQL {
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] { payment.getId() });
 			SQLExe.getDB().execSQL(sql1, new Object[] { payment.getId() });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void updatePaymentAmount( String paymentAmount, int paymentId){
+
+		String sql = "update " + TableNames.PaymentSettlement + " set paidAmount = ?, totalAmount = ? where paymentId = ? " ;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {paymentAmount, paymentAmount, paymentId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void updateSplitOrderPaymentAmount( String paymentAmount, int paymentId){
+
+		String sql = "update " + TableNames.PaymentSettlement + " set paidAmount = ?, totalAmount = ? where paymentId = ? " ;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {paymentAmount, paymentAmount, paymentId});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

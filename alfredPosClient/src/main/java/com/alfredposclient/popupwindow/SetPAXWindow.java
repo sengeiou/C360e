@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -35,6 +36,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 	public static final int APP_ORDER = 1;
 	public static final int GENERAL_ORDER = 0;
 	public static final int MAX_ORDER_NO = 2;
+	public static final int TRANSFER_ITEM= 3;
 	private BaseActivity parent;
 	private View parentView;
 	private Handler handler;
@@ -45,6 +47,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 	private RelativeLayout rl_pax_panel;
 	private MoneyKeyboard paxKeyboard;
 	private TextView tv_pax_tips;
+	private TableInfo transferItemTable;
 	private TextView tv_pax;
 	private boolean flag = false;
 	private String str;
@@ -82,6 +85,11 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 
 		popupWindow.setContentView(contentView);
 		popupWindow.setFocusable(true);
+	}
+
+	public void showForTransferItem(int type, String title, TableInfo tableInfo){
+		transferItemTable = tableInfo;
+		show(type, title);
 	}
 
 	public void show(int type, String title) {
@@ -192,12 +200,19 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 				msg.obj = tv_pax.getText().toString();
 				handler.sendMessage(msg);
 				dismiss();
+			}else if(type == TRANSFER_ITEM){
+				if (transferItemTable != null) {
+					transferItemTable.setPacks(Integer.parseInt(tv_pax.getText().toString()));
+					handler.sendMessage(handler
+							.obtainMessage(
+									MainPage.ACTION_TRANSFER_ITEM,
+									transferItemTable));
+				}
+				dismiss();
 			} else {
 				if(order != null){
-					if (order != null) {
-						order.setPersons(Integer.parseInt((String) tv_pax.getText().toString()));
-						OrderSQL.updateOrderPersions(Integer.parseInt((String) tv_pax.getText().toString()),order.getId());
-					}
+					order.setPersons(Integer.parseInt((String) tv_pax.getText().toString()));
+					OrderSQL.updateOrderPersions(Integer.parseInt((String) tv_pax.getText().toString()),order.getId());
 				}
 				Message msg = handler.obtainMessage();
 				msg.what = MainPage.VIEW_EVENT_SET_TABLE_PACKS;

@@ -890,6 +890,9 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE "
 					+ TableNames.KotItemDetail
 					+ " ADD COLUMN fireStatus INTEGER default 0");
+//			db.execSQL("ALTER TABLE "
+//					+ TableNames.Order
+//					+ " ADD COLUMN oldTotal TEXT default '0.00'");
 		}
 	}
 }
