@@ -234,6 +234,7 @@ public class DevicesHtml extends BaseActivity {
 		                   'assignTo':SELECTED_LEVEL_2,
 		                   'js_callback':xxx};
 		             */
+
 				    Gson gson= new Gson();
 					Map<String, String> printer = (Map<String, String>) gson.fromJson((String) msg.obj, 
 															new TypeToken<Map<String, String>>(){}.getType());
@@ -251,16 +252,16 @@ public class DevicesHtml extends BaseActivity {
 																				   		    			printer.get("printerIp"),
 																				   		    			"");
 					   		    CoreData.getInstance().addLocalDevice(localDevice);
-					   		    
+					   		    App.instance.loadPrinters();
 					   		    //add to printer
-					   		    PrinterDevice prtDev = new PrinterDevice();
-					   		    prtDev.setDevice_id(prt.getId());
-					   		    prtDev.setIP(printer.get("printerIp"));
-					   		    prtDev.setIsCahierPrinter(cashDrawer);
-					   		    prtDev.setMac(localDevice.getMacAddress());
-					   		    prtDev.setModel(printerModel);
-					   		    prtDev.setName(assignToName);
-					   		    App.instance.setPrinterDevice(prt.getId(), prtDev);
+//					   		    PrinterDevice prtDev = new PrinterDevice();
+//					   		    prtDev.setDevice_id(prt.getId());
+//					   		    prtDev.setIP(printer.get("printerIp"));
+//					   		    prtDev.setIsCahierPrinter(cashDrawer);
+//					   		    prtDev.setMac(localDevice.getMacAddress());
+//					   		    prtDev.setModel(printerModel);
+//					   		    prtDev.setName(assignToName);
+//					   		    App.instance.setPrinterDevice(prt.getId(), prtDev);
 							}
 						}
 					}

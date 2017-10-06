@@ -1119,6 +1119,30 @@ public class App extends BaseApplication {
         }
     }
 
+    public void loadPrinters() {
+        List<LocalDevice> devices = CoreData.getInstance().getLocalDevices();
+        for (LocalDevice item : devices) {
+            int type = item.getDeviceType();
+            // load physical printer
+            if (type == ParamConst.DEVICE_TYPE_PRINTER) {
+                int devid = item.getDeviceId();
+                String ip = item.getIp();
+                String mac = item.getMacAddress();
+                String name = item.getDeviceName();
+                String model = item.getDeviceMode();
+                PrinterDevice pdev = new PrinterDevice();
+                pdev.setDevice_id(devid);
+                pdev.setIP(ip);
+                pdev.setMac(mac);
+                pdev.setName(name);
+                pdev.setModel(model);
+                pdev.setIsCahierPrinter(CoreData.getInstance()
+                        .isCashierPrinter(devid));
+                printerDevices.put(devid, pdev);
+            }
+        }
+    }
+
     /* HTTP Server */
     public void startHttpServer() {
         try {
