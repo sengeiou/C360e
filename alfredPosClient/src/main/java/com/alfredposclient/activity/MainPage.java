@@ -18,7 +18,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -38,7 +37,6 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
@@ -99,6 +97,7 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.popupwindow.OpenItemWindow;
+import com.alfredposclient.popupwindow.OrderDetailFireWindow;
 import com.alfredposclient.popupwindow.OrderSplitPrintWindow;
 import com.alfredposclient.popupwindow.SetPAXWindow;
 import com.alfredposclient.popupwindow.SetWeightWindow;
@@ -111,8 +110,10 @@ import com.alfredposclient.view.MainPageSearchView;
 import com.alfredposclient.view.SelectOrderSplitDialog;
 import com.alfredposclient.view.SettingView;
 import com.alfredposclient.view.TopMenuView;
+import com.alfredposclient.xmpp.XMPP;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.moonearly.utils.service.TcpUdpFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -125,6 +126,8 @@ import java.util.Map;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+
+//import com.alfredposclient.popupwindow.OrderDetailFireWindow;
 
 
 public class MainPage extends BaseActivity {
@@ -191,17 +194,21 @@ public class MainPage extends BaseActivity {
 	
 	public static final int VIEW_EVENT_SET_APPORDER_TABLE_PACKS = 148;
 	public static final int VIEW_EVENT_UNSEAT_ORDER = 149;
-
+	public static final int VIEW_EVENT_FIRE = 150;
+	public static final int VIEW_EVENT_TANSFER_ITEM= 151;
+	public static final int ACTION_TRANSFER_ITEM = 152;
 
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
 	public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
 	private static final String SHOW_TABLES = "SHOW_TABLES";
 	private static final String TRANSFER_TABLE = "TRANSFER_TABLE";
+	private static final String TRANSFER_ITEM = "TRANSFER_ITEM";
 	private static final String HANDLER_MSG_OBJECT_DISCOUNT = "DISCOUNT";
 	public static final String HANDLER_MSG_OBJECT_BILL_ON_HOLD = "BILL_ON_HOLD";
 	public static final String HANDLER_MSG_OBJECT_VOID = "VOID";
 	public static final String HANDLER_MSG_OBJECT_ENTERTAINMENT = "ENTERTAINMENT";
 	private static final String HANDLER_MSG_OBJECT_TRANSFER_TABLE = "TRANSFERTABLE";
+	private static final String HANDLER_MSG_OBJECT_TRANSFER_ITEM = "TRANSFERITEM";
 	private static final String HANDLER_MSG_OBJECT_ITEM_QTY = "ITEM_QTY";
 	private static final String HANDLER_MSG_OBJECT_VOID_OR_FREE = "VOID_OR_FREE";
 	public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
@@ -258,6 +265,7 @@ public class MainPage extends BaseActivity {
 	
 	private View animatorView;
 	private View view_top_line;
+	private OrderDetail transfItemOrderDetail;
 
 //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
@@ -291,68 +299,9 @@ public class MainPage extends BaseActivity {
 		printerLoadingDialog.setTitle(context.getResources().getString(R.string.send_kitchen));
 		view_top_line = findViewById(R.id.view_top_line);
 		selectOrderSplitDialog = new SelectOrderSplitDialog(context, handler);
-//		web_tables = (WebView) findViewById(R.id.web_tables);
 		FragmentManager fragmentManager = this.getSupportFragmentManager();
-//		FragmentTransaction transaction = fragmentManager.beginTransaction();
-//		closeOrderWindow = new CloseOrderWindow();
-//		closeOrderWindow = (CloseOrderWindow) fragmentManager.findFragmentById(R.id.fl_content);
-//		closeOrderWindow.setHandler(handler);
-//		f_tables = new TableLayoutFragment();
 		f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
-//        f_stored_card = (StoredCardActivity) fragmentManager.findFragmentById(R.id.f_stored_card);
-//		f_stored_card.setMainPageHandler(handler);
-//		closeCloseOrderWindow();
-//		transaction.replace(R.id.fl_content, f_tables);
-//		transaction.commitAllowingStateLoss();
-//        hideStoredCard();
-//        f_tables.
-//		WebViewConfig.setDefaultConfig(web_tables);
-//		javaConnectJS = new JavaConnectJS() {
-//			@Override
-//			@JavascriptInterface
-//			public void send(String action, String param) {
-//				if (JavaConnectJS.LOAD_TABLES.equals(action)) {
-//					isShowTables = true;
-//					handler.sendEmptyMessage(JavaConnectJS.ACTION_LOAD_TABLES);
-//				}
-//				if (ButtonClickTimer.canClick(web_tables)) {
-//					if (JavaConnectJS.CLICK_BACK.equals(action)) {
-//						handler.sendEmptyMessage(JavaConnectJS.ACTION_CLICK_BACK);
-//					} else if (JavaConnectJS.CLICK_TABLE.equals(action)) {
-//						if (!TextUtils.isEmpty(param)) {
-//							if(activityRequestCode == NetWorkOrderActivity.CHECK_REQUEST_CODE){
-//								oldTable = null;
-//								handler.sendMessage(handler
-//										.obtainMessage(
-//												JavaConnectJS.ACTION_CLICK_TABLE_APPORDER,
-//												param));
-//							}else if (TRANSFER_TABLE.equals(tableShowAction)) {
-//								oldTable = currentTable;
-//								handler.sendMessage(handler
-//										.obtainMessage(
-//												JavaConnectJS.ACTION_CLICK_TABLE_TRANSFER,
-//												param));
-//							} else {
-//								oldTable = null;
-//								handler.sendMessage(handler
-//										.obtainMessage(
-//												JavaConnectJS.ACTION_CLICK_TABLE,
-//												param));
-//							}
-//						}
-//					} else if (JavaConnectJS.CLICK_REFRESH.equals(action)) {
-//						isShowTables = true;
-//						handler.sendEmptyMessage(JavaConnectJS.ACTION_CLICK_REFRESH);
-//					}
-//				}
-//			}
-//		};
-//		web_tables.addJavascriptInterface(javaConnectJS, "JavaConnectJS");
-//		if (SystemUtil.isZh(context))
-//			web_tables.loadUrl(WebViewConfig.ROOT_DIRECTORY + "tables_zh.html");
-//		else
-//			web_tables.loadUrl(WebViewConfig.ROOT_DIRECTORY + "tables.html");
-		
+
 		topMenuView = (TopMenuView) findViewById(R.id.topMenuView);
 		topMenuView.setParams(this, handler,mDrawerLayout,settingView);
 		topMenuView.setGetBillNum(App.instance.getGetTingBillNotifications()
@@ -402,6 +351,8 @@ public class MainPage extends BaseActivity {
 						topMenuView.refreshUserName();
 					else if (object.intValue() == 2){
 						topMenuView.showAppOrderReciving();
+					}else if(object.intValue() == 3){
+						topMenuView.showAppOrderReciving();
 					}
 				}else {
 					UIHelp.startSoredCardActivity(context);
@@ -415,41 +366,19 @@ public class MainPage extends BaseActivity {
 			}
 		});
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
-		App.instance.getPushServer().setCanCheckAppOrder(true);
+		XMPP.getInstance().setCanCheckAppOrder(true);
 	}
 
-//    private void showStoredCard(){
-//        findViewById(R.id.rl_stored_card_fragment_father).setVisibility(View.VISIBLE);
-//
-////        transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
-//		FragmentManager fragmentManager = this.getSupportFragmentManager();
-//		FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.show(f_stored_card);
-//        transaction.commitAllowingStateLoss();
-//    }
-
-//    private void hideStoredCard(){
-//        findViewById(R.id.rl_stored_card_fragment_father).setVisibility(View.GONE);
-//		FragmentManager fragmentManager = this.getSupportFragmentManager();
-//		FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
-//        transaction.hide(f_stored_card);
-//        transaction.commitAllowingStateLoss();
-//    }
-
-//	public void
 
 	public void tableAction(TableInfo tableInfo){
 		if (tableInfo != null) {
-//			if(activityRequestCode == NetWorkOrderActivity.CHECK_REQUEST_CODE){
-//				oldTable = null;
-//				handler.sendMessage(handler
-//						.obtainMessage(
-//								JavaConnectJS.ACTION_CLICK_TABLE_APPORDER,
-//								tableInfo));
-//			}else
-
-            if (TRANSFER_TABLE.equals(tableShowAction)) {
+			if(TRANSFER_ITEM.equals(tableShowAction)){
+				oldTable = currentTable;
+				handler.sendMessage(handler
+						.obtainMessage(
+								JavaConnectJS.ACTION_CLICK_TABLE_ITEM,
+								tableInfo));
+			}else if (TRANSFER_TABLE.equals(tableShowAction)) {
 				oldTable = currentTable;
 				handler.sendMessage(handler
 						.obtainMessage(
@@ -855,6 +784,10 @@ public class MainPage extends BaseActivity {
 						.getGetTingBillNotifications().size());
 //				final Order sendOrder = currentOrder;
 				/**
+				 通知桌面系统 菜已经做完
+				  */
+				TcpUdpFactory.sendUdpMsg(100, "{\"id\":" + paidOrder.getId().intValue() + ",\"status\":" + paidOrder.getOrderStatus().intValue() + "}" , null);
+				/**
 				 * 给后台发送log 信息
 				 */
 				new Thread(new Runnable() {
@@ -1041,15 +974,6 @@ public class MainPage extends BaseActivity {
 			}
 				break;
 			case JavaConnectJS.ACTION_CLICK_TABLE_TRANSFER: {
-//				Gson gson = new Gson();
-//				String json = (String) msg.obj;
-//				JSONObject jsonject;
-//				try {
-//					jsonject = new JSONObject(json);
-//					final Tables newTable = gson.fromJson(
-//							jsonject.getString("table"),
-//							new TypeToken<Tables>() {
-//							}.getType());
                 final TableInfo newTable = (TableInfo) msg.obj;
 					if (newTable.getPosId().intValue() == oldTable.getPosId()
 							.intValue()) {
@@ -1065,9 +989,9 @@ public class MainPage extends BaseActivity {
 								context,
 								context.getResources().getString(R.string.table_transfer),
 								context.getResources().getString(R.string.transfer_) + 
-									oldTable.getName() +
+									oldTable.getName() + " " +
 								context.getResources().getString(R.string.to) + 
-									newTable.getName() + "?",
+									" " + newTable.getName() + "?",
 								context.getResources().getString(R.string.no),
 								context.getResources().getString(R.string.yes), null, new OnClickListener() {
 									@Override
@@ -1080,9 +1004,39 @@ public class MainPage extends BaseActivity {
 									}
 								});
 					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
+			}
+				break;
+			case JavaConnectJS.ACTION_CLICK_TABLE_ITEM:{
+				final TableInfo newTable = (TableInfo) msg.obj;
+				if (newTable.getPosId().intValue() == oldTable.getPosId()
+						.intValue()) {
+					currentTable = newTable;
+					if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
+						setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+					} else {
+						handler.sendMessage(handler
+								.obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
+					}
+				} else {
+					DialogFactory.commonTwoBtnDialog(
+							context,
+							context.getResources().getString(R.string.table_transfer),
+							context.getResources().getString(R.string.transfer_) +
+									oldTable.getName() + ": " + transfItemOrderDetail.getItemName() + " " +
+									context.getResources().getString(R.string.to) +
+									" " + newTable.getName() + "?",
+							context.getResources().getString(R.string.no),
+							context.getResources().getString(R.string.yes), null, new OnClickListener() {
+								@Override
+								public void onClick(View arg0) {
+									setPAXWindow.showForTransferItem(SetPAXWindow.TRANSFER_ITEM, context.getResources().getString(R.string.no_pax), newTable);
+//									handler.sendMessage(handler
+//											.obtainMessage(
+//													ACTION_TRANSFER_ITEM,
+//													newTable));
+								}
+							});
+				}
 			}
 				break;
 			case JavaConnectJS.ACTION_CLICK_TABLE_APPORDER:{
@@ -1122,6 +1076,7 @@ public class MainPage extends BaseActivity {
 				}
 			}
 				break;
+
 			case ACTION_TRANSFER_TABLE: {
 				currentTable = (TableInfo) msg.obj;
 				if (currentTable != null) {
@@ -1137,24 +1092,28 @@ public class MainPage extends BaseActivity {
 									currentOrder.setTableId(currentTable
 											.getPosId());
 									OrderSQL.update(currentOrder);
-									KotSummary fromKotSummary = KotSummarySQL
-											.getKotSummary(currentOrder.getId());
-									fromKotSummary.setTableName(currentTable
-											.getName());
-									Map<String, Object> parameters = new HashMap<String, Object>();
-									parameters.put("fromOrder", currentOrder);
-									parameters.put("fromTableName",
-											oldTable.getName());
-									parameters.put("toTableName",
-											currentTable.getName());
-									parameters.put("action",
-											ParamConst.JOB_TRANSFER_KOT);
-									App.instance
-											.getKdsJobManager()
-											.transferTableDownKot(
-													ParamConst.JOB_TRANSFER_KOT,
-													null, fromKotSummary,
-													parameters);
+									List<KotSummary> kotSummaryList = KotSummarySQL.getKotSummaryForTransfer(currentOrder.getId());
+									if(kotSummaryList != null){
+										for(KotSummary fromKotSummary : kotSummaryList){
+											fromKotSummary.setTableName(currentTable
+													.getName());
+											Map<String, Object> parameters = new HashMap<String, Object>();
+											parameters.put("fromOrder", currentOrder);
+											parameters.put("fromTableName",
+													oldTable.getName());
+											parameters.put("toTableName",
+													currentTable.getName());
+											parameters.put("action",
+													ParamConst.JOB_TRANSFER_KOT);
+											App.instance
+													.getKdsJobManager()
+													.transferTableDownKot(
+															ParamConst.JOB_TRANSFER_KOT,
+															null, fromKotSummary,
+															parameters);
+										}
+									}
+
 								} else {
 									transferOrder(currentTable.getPosId());
 								}
@@ -1211,6 +1170,67 @@ public class MainPage extends BaseActivity {
 //								TablesSQL.updateTables(oldTable);
                                 TableInfoSQL.updateTables(oldTable);
 							}
+						}
+					}).start();
+				}
+			}
+				break;
+			case ACTION_TRANSFER_ITEM: {
+				currentTable = (TableInfo) msg.obj;
+				if (currentTable != null) {
+					new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							oldOrder = currentOrder;
+							if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
+								currentOrder = null;
+							}else{
+								currentOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), App.instance.getBusinessDate());
+							}
+							initOrder(currentTable);
+							setTablePacks(currentTable.getPacks()+"");
+							transfItemOrderDetail.setOrderId(currentOrder.getId().intValue());
+							OrderDetailSQL.updateOrderDetailOrderIdById(currentOrder.getId().intValue(), transfItemOrderDetail.getId().intValue());
+							OrderSQL.updateOrder(oldOrder);
+							OrderSQL.updateOrder(currentOrder);
+							if(transfItemOrderDetail.getOrderDetailStatus().intValue() > ParamConst.ORDERDETAIL_STATUS_ADDED){
+								KotSummary toKotSummary = KotSummarySQL
+										.getKotSummary(currentOrder.getId());
+								if (toKotSummary == null) {
+									toKotSummary = ObjectFactory
+											.getInstance()
+											.getKotSummary(
+													currentTable.getName(),
+													currentOrder,
+													App.instance
+															.getRevenueCenter(),
+													App.instance
+															.getBusinessDate());
+									KotSummarySQL.update(toKotSummary);
+								}
+								KotSummary fromKotSummary = KotSummarySQL
+										.getKotSummary(oldOrder.getId());
+								KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(transfItemOrderDetail.getId().intValue());
+								Map<String, Object> parameters = new HashMap<String, Object>();
+								parameters.put("action",
+										ParamConst.JOB_MERGER_KOT);
+								parameters.put("fromOrder", oldOrder);
+								parameters.put("fromTableName",
+										oldTable.getName());
+								parameters.put("toTableName",
+										currentTable.getName());
+								parameters.put("currentTableId",
+										currentTable.getPosId());
+								kotItemDetail.setKotSummaryId(toKotSummary.getId().intValue());
+								kotItemDetail.setOrderId(toKotSummary.getOrderId().intValue());
+								KotItemDetailSQL.update(kotItemDetail);
+								App.instance.getKdsJobManager()
+										.transferItemDownKot(
+												toKotSummary,
+												fromKotSummary, parameters, kotItemDetail);
+							}
+							handler.sendEmptyMessage(VIEW_EVENT_DISMISS_TABLES);
 						}
 					}).start();
 				}
@@ -1307,6 +1327,13 @@ public class MainPage extends BaseActivity {
 						showTables();
 					}
 				} else if (result.get("MsgObject").equals(
+						HANDLER_MSG_OBJECT_TRANSFER_ITEM)) {
+					if (!verifyDialog.isShowing()) {
+						tableShowAction = TRANSFER_ITEM;
+						activityRequestCode = 0;
+						showTables();
+					}
+				} else if (result.get("MsgObject").equals(
 						HANDLER_MSG_OBJECT_VOID_OR_FREE)) {
 					Map<String, Object> voidOrFreeMap = (Map<String, Object>) result
 							.get("Object");
@@ -1329,7 +1356,7 @@ public class MainPage extends BaseActivity {
 												.getId());
 								kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
 								KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-										.getOrderId()); 
+										.getOrderId());
 								KotItemDetailSQL.update(kotItemDetail);
 								ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 								kotItemDetails.add(kotItemDetail);
@@ -1430,6 +1457,11 @@ public class MainPage extends BaseActivity {
 			case VIEW_EVENT_TANSFER_TABLE:
 				verifyDialog.show(HANDLER_MSG_OBJECT_TRANSFER_TABLE, null);
 				break;
+			case VIEW_EVENT_TANSFER_ITEM: {
+				transfItemOrderDetail = (OrderDetail) msg.obj;
+				verifyDialog.show(HANDLER_MSG_OBJECT_TRANSFER_ITEM, null);
+			}
+				break;
 			case VIEW_EVENT_KICK_CASHDRAWER: {
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				if (printer == null) {
@@ -1461,10 +1493,15 @@ public class MainPage extends BaseActivity {
 			}
 				break;
 			// kot Print status
-			case KOT_PRINT_FAILED:
+			case KOT_PRINT_FAILED: {
 				loadingDialog.dismiss();
 				printerLoadingDialog.dismiss();
-				UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
+				if(msg.obj instanceof String && "KDS".equals((String)msg.obj)){
+					UIHelp.showToast(context, "Please log in KDS");
+				}else {
+					UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
+				}
+			}
 				break;
 			case KOT_PRINT_SUCCEED:
 				// if(!orderDetails.isEmpty()){
@@ -1575,7 +1612,9 @@ public class MainPage extends BaseActivity {
 					kotItemDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
 					kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
 					KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-							.getOrderId()); 
+							.getOrderId());
+					kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
+					KotSummarySQL.update(kotSummary);
 					KotItemDetailSQL.update(kotItemDetail);
 					ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 					kotItemDetails.add(kotItemDetail);
@@ -1609,6 +1648,11 @@ public class MainPage extends BaseActivity {
 				tableShowAction = SHOW_TABLES;
 				currentOrder = null;
 				showTables();
+				break;
+			case VIEW_EVENT_FIRE:{
+				OrderDetailFireWindow orderDetailFireWindow = new OrderDetailFireWindow(MainPage.this, findViewById(R.id.lv_order), handler);
+				orderDetailFireWindow.show(currentOrder, handler);
+			}
 				break;
 			default:
 				break;
@@ -1961,7 +2005,7 @@ public class MainPage extends BaseActivity {
 	protected void onDestroy() {
 		unregisterReceiver(receiver);
 //		App.instance.unBindPushWebSocketService();
-		App.instance.getPushServer().setCanCheckAppOrder(false);
+		XMPP.getInstance().setCanCheckAppOrder(false);
 		if(observable != null){
 			RxBus.getInstance().unregister(RxBus.RX_MSG_1, observable);
 		}
@@ -2004,7 +2048,7 @@ public class MainPage extends BaseActivity {
 	public void kotPrintStatus(int action, Object obj) {
 		switch (action) {
 		case KOT_PRINT_FAILED:
-			handler.sendMessage(handler.obtainMessage(action));
+			handler.sendMessage(handler.obtainMessage(action, obj));
 			break;
 		case KOT_PRINT_SUCCEED:
 			handler.sendMessage(handler.obtainMessage(action, obj));

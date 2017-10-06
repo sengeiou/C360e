@@ -59,6 +59,9 @@ public class KdsHttpServer extends AlfredHttpServer {
 			}else if (uri.equals(APIName.TRANSFER_KOT)) {
 				App.instance.ringUtil.playRingOnce();				
 				resp = handlerTransferKot(body);
+			}else if (uri.equals(APIName.TRANSFER_ITEM_KOT)) {
+				App.instance.ringUtil.playRingOnce();
+				resp = handlerTransferKotItem(body);
 			} else if (uri.equals(APIName.CLOSE_SESSION)){
 				App.instance.ringUtil.playRingOnce();
 				resp = handlerSessionClose(body);
@@ -112,6 +115,22 @@ public class KdsHttpServer extends AlfredHttpServer {
 				result.put("resultCode", ResultCode.SUCCESS);
 				resp = getJsonResponse(new Gson().toJson(result));
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return resp;
+	}
+	private Response handlerTransferKotItem(String params) {
+		Response resp = null;
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			Gson gson = new Gson();
+			KotItemDetail kotItemDetail = gson.fromJson(jsonObject.optString("tansferKotItem"), KotItemDetail.class);
+			KotItemDetailSQL.update(kotItemDetail);
+			App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = getJsonResponse(new Gson().toJson(result));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -14,31 +14,48 @@
         android:background="@color/white"
         android:gravity="center"/>
 
-    <LinearLayout
-        android:id="@+id/ll_progress_list"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:visibility="gone">
-    </LinearLayout>
-    
-    <com.alfredkds.view.HorizontalListView 
+    <TextView
+        android:id="@+id/tv_order_qyt"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="@+id/tv_title"
+        android:layout_alignParentBottom="@+id/tv_title"
+        android:layout_marginLeft="50dp"
+        android:textSize="40sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="0"
+        android:textColor="@android:color/holo_orange_dark"
+        />
+
+    <!--<com.alfredkds.view.HorizontalListView-->
+        <!--android:id="@+id/ll_orders"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:divider="#e00"-->
+        <!--android:fadingEdgeLength="5dp"-->
+        <!--android:requiresFadingEdge="horizontal"-->
+        <!--android:background="@color/white"-->
+        <!--widget:dividerWidth="3dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true">-->
+    <!--</com.alfredkds.view.HorizontalListView>-->
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/ll_orders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tv_title"
-        android:layout_marginTop="10dp"
         android:divider="#e00"
         android:fadingEdgeLength="5dp"
-        android:requiresFadingEdge="horizontal" 
+        android:requiresFadingEdge="horizontal"
         android:background="@color/white"
-        widget:dividerWidth="3dp"        
-        android:layout_above="@+id/ll_progress_list">
-    </com.alfredkds.view.HorizontalListView>
-    
-    <ImageView 
+        widget:dividerWidth="3dp"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/tv_title"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        />
+    <ImageView
         android:id="@+id/iv_shadow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

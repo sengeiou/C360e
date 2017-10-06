@@ -13,6 +13,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.KOTNotification;
@@ -21,6 +22,7 @@ import com.alfredwaiter.activity.OrderDetailsTotal;
 import com.alfredwaiter.activity.SelectRevenue;
 import com.alfredwaiter.activity.Setting;
 import com.alfredwaiter.activity.TablesPage;
+import com.alfredwaiter.activity.Welcome;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.UIHelp;
 import com.google.gson.Gson;
@@ -811,7 +813,9 @@ public class HttpAPI {
 							super.onSuccess(statusCode, headers, responseBody);
 							if (resultCode == ResultCode.SUCCESS) {
 								handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_BILL);
-							} else {
+							} else if(resultCode == ResultCode.ORDER_FINISHED){
+								handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
+							}else {
 								elseResultCodeAction(resultCode, statusCode, headers, responseBody);
 							}
 						}
@@ -855,6 +859,20 @@ public class HttpAPI {
 						e.printStackTrace();
 					}
 					App.getTopActivity().dismissLoadingDialog();
+					if(resultCode == ResultCode.USER_NO_PERMIT){
+
+						DialogFactory.commonTwoBtnDialog(App.getTopActivity(),
+								"Warning",
+								App.instance.getResources().getString(com.alfredbase.R.string.user_no_permission) + "\n Relogin?",
+								"OK", "NO", new View.OnClickListener() {
+									@Override
+									public void onClick(View v) {
+										OrderDetailSQL.deleteAllOrderDetail();
+										Store.remove(App.instance, Store.WAITER_USER);
+										App.instance.popAllActivityExceptOne(Welcome.class);
+									}
+								}, null);
+					}
 					UIHelp.showToast(App.getTopActivity(), ResultCode.getErrorResultStrByCode(App.instance, resultCode, information));
 
 

@@ -392,7 +392,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 
 	@Override
 	public void printKOT(String printer,String summary,
-			 String detail, String modifiers, boolean oneprint, boolean doublePrint, int kotFontSize ) throws RemoteException{
+			 String detail, String modifiers, boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire ) throws RemoteException{
 
 		Gson gson = new Gson();
 
@@ -434,6 +434,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							}
 						}
 						kot.AddHeader(kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+						if(isFire){
+							kot.AddFire();
+						}
 						kot.setPrinterIp(prtDevice.getIP());
 						kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
 								PrintService.instance.getResources().getString(R.string.qty));
@@ -464,7 +467,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							       kot.AddModifierItem("-"+mod,1);
 							   }
 						   }
-							if (item.getSpecialInstractions() != null) {
+							if (!TextUtils.isEmpty(item.getSpecialInstractions())) {
 								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*",1);
 							}
 							kot.addLineSpace(1);
@@ -507,6 +510,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										 kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
 									}
 							    	kot.AddHeader(kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+									 if(isFire){
+										 kot.AddFire();
+									 }
 									kot.setPrinterIp(prtDevice.getIP());
 									kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
 											PrintService.instance.getResources().getString(R.string.qty));
@@ -525,7 +531,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 											 kot.AddModifierItem("-" + kotGeneralItemModifier.getModifierName(), 1);
 										 }
 									}
-									if (item.getSpecialInstractions() != null) {
+									if (!TextUtils.isEmpty(item.getSpecialInstractions())) {
 										kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 									}
 									if (i==1) {
@@ -559,6 +565,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							}
 							kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
 					    	kot.AddHeader(kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+							if(isFire){
+								kot.AddFire();
+							}
 							kot.setPrinterIp(prtDevice.getIP());
 							kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
 									PrintService.instance.getResources().getString(R.string.qty));
@@ -568,7 +577,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							for (String mod : mods) {
 								kot.AddModifierItem("-" + mod, 1);
 							}
-							if (item.getSpecialInstractions() != null) {
+							if (!TextUtils.isEmpty(item.getSpecialInstractions())) {
 								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 							}
 							if (i==1) {
@@ -1302,7 +1311,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							       kot.AddModifierItem("-" + mod, 1);
 							   }
 						   }
-						   if (item.getSpecialInstractions() != null) {
+						   if (!TextUtils.isEmpty(item.getSpecialInstractions())) {
 								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 							}
 						   kot.addLineSpace(1);
@@ -1367,7 +1376,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 										}
 										
 									}
-									if (item.getSpecialInstractions() != null) {
+									if (!TextUtils.isEmpty(item.getSpecialInstractions())) {
 										kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 									}
 									if (i==1) {
@@ -1409,7 +1418,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							for (String mod : mods) {
 								kot.AddModifierItem(mod);
 							}
-							if (item.getSpecialInstractions() != null) {
+							if (!TextUtils.isEmpty(item.getSpecialInstractions())) {
 								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*", 1);
 							}
 							if (i==1) {
@@ -1779,7 +1788,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 							       kot.AddModifierItem("-" + mod,1);
 							   }
 //						   }
-							if (item.getSpecialInstractions() != null) {
+							if (!TextUtils.isEmpty(item.getSpecialInstractions())) {
 								kot.AddModifierItem("*" + item.getSpecialInstractions() + "*",1);
 							}	
 							kot.addLineSpace(1);

@@ -103,6 +103,7 @@ import com.alfredposclient.view.viewkiosk.MainPageOperatePanelKiosk;
 import com.alfredposclient.view.viewkiosk.MainPageOrderViewKiosk;
 import com.alfredposclient.view.viewkiosk.MainPageSearchViewKiosk;
 import com.alfredposclient.view.viewkiosk.TopMenuViewKiosk;
+import com.alfredposclient.xmpp.XMPP;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -336,7 +337,7 @@ public class MainPageKiosk extends BaseActivity {
 			}
 		});
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
-		App.instance.getPushServer().setCanCheckAppOrder(true);
+		XMPP.getInstance().setCanCheckAppOrder(true);
 	}
 
 //	private void showStoredCard(){
@@ -1398,6 +1399,8 @@ public class MainPageKiosk extends BaseActivity {
 					kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
 					KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
 							.getOrderId());
+					kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
+					KotSummarySQL.update(kotSummary);
 					KotItemDetailSQL.update(kotItemDetail);
 					ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 					kotItemDetails.add(kotItemDetail);
@@ -1695,7 +1698,7 @@ public class MainPageKiosk extends BaseActivity {
 			RxBus.getInstance().unregister("open_drawer", observable1);
 		}
 //		App.instance.unBindPushWebSocketService();
-		App.instance.getPushServer().setCanCheckAppOrder(false);
+		XMPP.getInstance().setCanCheckAppOrder(false);
 		super.onDestroy();
 	}
 

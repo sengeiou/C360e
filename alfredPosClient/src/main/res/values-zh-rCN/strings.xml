@@ -292,6 +292,7 @@
 	<string name="alipay_settlement">支付宝支付</string>	
 	<string name="rounding">抹零</string>
 	<string name="cash_other">其他</string>
+    <string name="exact_$">Exact $</string>
     <string name="amount_auth_by">授权人</string>
     <string name="due_days">时长</string>
     <string name="bill_date">BOH时间</string>

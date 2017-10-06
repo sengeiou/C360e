@@ -52,6 +52,8 @@ public class KotItemDetail implements Serializable{
 	 */
 	private int isTakeAway;
 
+	private int fireStatus;
+
 	public KotItemDetail() {
 	}
 
@@ -185,22 +187,6 @@ public class KotItemDetail implements Serializable{
 		this.updateTime = updateTime;
 	}
 
-
-	@Override
-	public String toString() {
-		return "KotItemDetail [id=" + id + ", restaurantId=" + restaurantId
-				+ ", revenueId=" + revenueId + ", orderId=" + orderId
-				+ ", orderDetailId=" + orderDetailId + ", printerGroupId="
-				+ printerGroupId + ", kotSummaryId=" + kotSummaryId
-				+ ", itemName=" + itemName + ", itemNum=" + itemNum
-				+ ", finishQty=" + finishQty + ", sessionStatus="
-				+ sessionStatus + ", kotStatus=" + kotStatus
-				+ ", specialInstractions=" + specialInstractions + ", version="
-				+ version + ", createTime=" + createTime + ", updateTime="
-				+ updateTime + ", unFinishQty=" + unFinishQty + ", categoryId="
-				+ categoryId + ", isTakeAway=" + isTakeAway + "]";
-	}
-
 	public Integer getUnFinishQty() {
 		return unFinishQty;
 	}
@@ -223,5 +209,39 @@ public class KotItemDetail implements Serializable{
 
 	public void setIsTakeAway(int isTakeAway) {
 		this.isTakeAway = isTakeAway;
+	}
+
+	public int getFireStatus() {
+		return fireStatus;
+	}
+
+	public void setFireStatus(int fireStatus) {
+		this.fireStatus = fireStatus;
+	}
+
+	@Override
+	public String toString() {
+		return "KotItemDetail{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", revenueId=" + revenueId +
+				", orderId=" + orderId +
+				", orderDetailId=" + orderDetailId +
+				", printerGroupId=" + printerGroupId +
+				", kotSummaryId=" + kotSummaryId +
+				", itemName='" + itemName + '\'' +
+				", itemNum=" + itemNum +
+				", finishQty=" + finishQty +
+				", sessionStatus=" + sessionStatus +
+				", kotStatus=" + kotStatus +
+				", specialInstractions='" + specialInstractions + '\'' +
+				", version=" + version +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", unFinishQty=" + unFinishQty +
+				", categoryId=" + categoryId +
+				", isTakeAway=" + isTakeAway +
+				", fireStatus=" + fireStatus +
+				'}';
 	}
 }

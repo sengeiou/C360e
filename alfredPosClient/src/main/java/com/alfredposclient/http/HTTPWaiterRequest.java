@@ -1,11 +1,5 @@
 package com.alfredposclient.http;
 
-import java.net.ConnectException;
-import java.util.Map;
-
-import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
-
 import android.content.Context;
 
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
@@ -15,12 +9,19 @@ import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.SyncHttpClient;
+
+import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
+
+import java.net.ConnectException;
+import java.util.Map;
 
 public class HTTPWaiterRequest {
 	
 	/* Notify waiter to get all notifications*/
 	public static void sendKotNotification(Context context, Map<String, Object> parameters, String url,
-			final WaiterDevice waiter, AsyncHttpClient httpClient){
+			final WaiterDevice waiter, SyncHttpClient httpClient){
 		    try {
 		    	//Bob: add main POS Info. 
 		    	//Waiter APP can filter out messages from unconnected main pos, because waiter app might change ip

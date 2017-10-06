@@ -1,11 +1,14 @@
 package com.alfredposclient.view;
 
 import android.app.Dialog;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
@@ -55,6 +58,11 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(contentView);
+        WindowManager windowManager = parent.getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+        lp.width = (int)(display.getWidth() * 0.5); //设置宽度
+        dialog.getWindow().setAttributes(lp);
         Numerickeyboard numerickeyboard = (Numerickeyboard) contentView.findViewById(R.id.view_numerickeyboard);
         numerickeyboard.setParams(parent);
         numerickeyboard.setKeyBoardClickListener(this);
@@ -129,7 +137,7 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
                     if (cashierAccess) {
                         App.instance.setUser(user);
                         RxBus.getInstance().post(RxBus.RX_MSG_1, new Integer(1));
-                        contentView.postDelayed(new Runnable() {
+                        BaseApplication.postHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 dissmiss();

@@ -13,7 +13,7 @@ interface IAlfredRemotePrintService {
 	void deleteOldPrinterMsg(String businessDate);
 
 	void printKOT(String printer,String summary, String detail, String modifiers, 
-						boolean oneprint, boolean doublePrint, int kotFontSize);
+						boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire);
 
 	void printKioskKOT(String printer,String summary, String detail, String modifiers, 
 						boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize );

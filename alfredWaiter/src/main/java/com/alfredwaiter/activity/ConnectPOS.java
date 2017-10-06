@@ -1,16 +1,7 @@
 package com.alfredwaiter.activity;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -30,6 +21,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.utils.NetUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
@@ -43,6 +35,14 @@ import com.alfredwaiter.zxing.ConnectPOSHandler;
 import com.alfredwaiter.zxing.InactivityTimer;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 二维码参照：http://www.cnblogs.com/mythou/p/3280023.html
@@ -477,7 +477,7 @@ public class ConnectPOS extends BaseActivity implements Callback,
 		    this.doubleBackToExitPressedOnce = true;
 		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-		    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 		        @Override
 		        public void run() {

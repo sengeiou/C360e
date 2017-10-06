@@ -568,6 +568,7 @@ public class EditSettlementPage extends BaseActivity {
         switch (editSettlementInfo.getType().intValue()) {
             case ParamConst.BILL_TYPE_UN_SPLIT:
                 currentOrder = OrderSQL.getOrder(editSettlementInfo.getOrderId());
+                currentOrder.setOldTotal(currentOrder.getTotal());
                 OrderBill orderBill = OrderBillSQL.getOrderBillByOrder(currentOrder);
                 List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
                 closeOrderWindow.show(view_top_line,currentOrder, 250.0f, orderBill, orderDetails);
@@ -576,6 +577,7 @@ public class EditSettlementPage extends BaseActivity {
                 Payment payment = PaymentSQL.getPayment(editSettlementInfo.getPaymentId());
                 if(payment.getOrderSplitId() != null && payment.getOrderSplitId().intValue() != 0){
                     orderSplit = OrderSplitSQL.get(payment.getOrderSplitId());
+                    orderSplit.setOldTotal(orderSplit.getTotal());
                     currentOrder = OrderSQL.getOrder(editSettlementInfo.getOrderId());
                     closeOrderSplitWindow.show(view_top_line, OrderSQL.getOrder(payment.getOrderId()), orderSplit);
                 }

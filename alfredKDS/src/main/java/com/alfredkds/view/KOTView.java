@@ -30,26 +30,21 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.model.MainPosInfo;
-import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
-import com.alfredkds.global.SyncCentre;
 import com.alfredkds.javabean.Kot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * KOT信息，每桌菜品展示ScrollView
@@ -147,9 +142,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		}
 
 	}
-	
+
+
 	public class KotItemDetailAdapter extends BaseAdapter{
-		
+
 		@Override
 		public int getCount() {
 			return kotItemDetails.size();
@@ -179,26 +175,30 @@ public class KOTView extends LinearLayout implements AnimationListener,
 				holder = (ViewHolder) convertView.getTag();
 			}
 			KotItemDetail kotItemDetail = kotItemDetails.get(position);
+
 			if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE) {
 				convertView.setBackgroundResource(R.color.bg_complete_item);
-			} else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
-				convertView.setBackgroundResource(R.color.bg_update_item);
+			} else if (kotItemDetail.getFireStatus() == 1) {
+				convertView.setBackgroundResource(R.color.viewfinder_laser);
 			} else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
 				convertView.setBackgroundResource(R.color.white);
 				holder.tv_text.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-			} else{
-				convertView.setBackgroundResource(R.color.white);
+			} else {
+				if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
+					convertView.setBackgroundResource(R.color.bg_update_item);
+				} else {
+					convertView.setBackgroundResource(R.color.white);
+				}
 			}
 			StringBuffer sBuffer = new StringBuffer();
 			for (int j = 0; j < kotItemModifiers.size(); j++) {
 				KotItemModifier kotItemModifier = kotItemModifiers.get(j) ;
 				if (kotItemModifier != null
-//						&& kotItemModifier.equals("")
 						&& kotItemDetail.getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
 					sBuffer.append("--" + kotItemModifier.getModifierName() + "\n");
 				}
 			}
-			if (kotItemDetail.getSpecialInstractions() != null) {
+			if (!TextUtils.isEmpty(kotItemDetail.getSpecialInstractions())) {
 				sBuffer.append("*" + kotItemDetail.getSpecialInstractions() + "*");
 			}
 			if(sBuffer.toString().endsWith("\n")){
@@ -223,16 +223,20 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	
 	public void setData(Kot originKot) {
 		this.kot = originKot;
-		this.kotItemDetails = kot.getKotItemDetails();
-		this.kotItemModifiers = kot.getKotItemModifiers();
+		this.kotItemDetails.clear();
+		this.kotItemDetails.addAll(kot.getKotItemDetails());
+		this.kotItemModifiers.clear();
+		this.kotItemModifiers.addAll(kot.getKotItemModifiers());
 		kotId.setText(kot.getKotSummary().getId() + "");
-		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo() + "");
-		String orderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
+		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo();
+		String kioskOrderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
 		if(kot.getKotSummary() != null && kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.TAKE_AWAY){
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
+			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}
-		tv_kiosk_order_id.setText(orderNoStr);
-		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName() + "");
+		orderId.setText(orderNoStr);
+		tv_kiosk_order_id.setText(kioskOrderNoStr);
+		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
 		posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
 
 		String remark = kot.getKotSummary().getOrderRemark();

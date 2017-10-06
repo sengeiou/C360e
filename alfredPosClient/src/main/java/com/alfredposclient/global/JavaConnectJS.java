@@ -123,7 +123,8 @@ public interface JavaConnectJS {
 	
 	public static final String LOAD_MONTHLY_PLU_REPORT="LoadMonthlyPLUReport";
 	public static final int ACTION_LOAD_MONTHLY_PLU_REPORT = 10059;
-	
+	public static final int ACTION_CLICK_TABLE_ITEM = 10060;
+
 	
 	
 	public void send(String action, String param);

@@ -1,12 +1,6 @@
 package com.alfredwaiter.popupwindow;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -31,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
@@ -41,6 +36,12 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.MainPage;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class SearchMenuItemWindow implements OnClickListener {
@@ -111,7 +112,7 @@ public class SearchMenuItemWindow implements OnClickListener {
 			
 			@Override
 			public void onClick(View v) {
-				v.postDelayed(new Runnable() {
+				BaseApplication.postHandler.postDelayed(new Runnable() {
 					
 					@Override
 					public void run() {

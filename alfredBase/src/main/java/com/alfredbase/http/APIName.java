@@ -58,12 +58,21 @@ public class APIName {
 	public static final String CONNECT_POS = "connect_pos";
 	public static final String UPDATE_EXISTING_KOT = "update_existing_kot";
 	public static final String TRANSFER_KOT = "transfer_kot";
+	public static final String TRANSFER_ITEM_KOT = "transfer_item_kot";
 	public static final String KOT_ITEM_COMPLETE = "kot_item_complete";
 	public static final String KOT_COMPLETE = "kot_complete";
 	public static final String CANCEL_COMPLETE = "cancel_complete";
 	public static final String SUMMARY_COMPLETE = "summary_complete";
 	public static final String CALL_SPECIFY_THE_NUMBER = "call_specify_the_number";
-	
+
+	// 以下是桌面设备专用
+
+	public static final String DESKTOP_LOGIN= "desktop/login";
+	public static final String DESKTOP_GETTABLE= "desktop/getTable";
+	public static final String DESKTOP_SELECTTABLE= "desktop/selectTable";
+	public static final String DESKTOP_GETITEM= "desktop/getItem";
+	public static final String DESKTOP_COMMITORDER= "desktop/commitOrder";
+
 	/**
 	 * 以kds作为服务器
 	 */
@@ -76,4 +85,6 @@ public class APIName {
 	public static final String SYSTEM_MESSAGE = "system_msg";
 	public static final String CLOSE_SESSION = "close_session";
 	public static final String TRANSFER_TABLE = "transfer_table";
+
+
 }

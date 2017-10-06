@@ -2,9 +2,11 @@ package com.alfredbase;
 
 import android.app.Application;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
@@ -12,7 +14,12 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.multidex.MultiDex;
+import android.text.TextUtils;
 
+import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -24,7 +31,9 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class BaseApplication extends Application {
 
@@ -37,12 +46,13 @@ public class BaseApplication extends Application {
 	 * 当 isDebug == true， isOpenLog == true 为本地的服务器
 	 */
 
-	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
+	public static boolean isDebug = true;	//	Debug开关 release的时候设置为false
 	public static boolean isOpenLog = true;	//	release 时设置为false
 
 
 
 	private Handler reLoginHandler = new Handler();
+	public static Handler postHandler = new Handler();
 	/**x
 	 * 国家电话代码
 	 * 用于区别不通过的代码逻辑
@@ -79,7 +89,13 @@ public class BaseApplication extends Application {
 	public static int IMAGE_DISK_CACHE_SIZE = 80 * 1024 * 1024;	//	总共的存储的空间
 	public static int IMAGE_ENGINE_SCALE_FOR_SDCARD = 1000; // 缓存图片的大小
 	public static int IMAGE_ENGINE_SCALE_FOR_MEMECACHE = 1000;
-	
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -114,6 +130,15 @@ public class BaseApplication extends Application {
 
 		System.out.println("fingerprint*******" + fingerprint);
 		System.out.println("serial*******" + serial);
+	}
+
+	protected void wifiPolicyNever(){
+		ContentResolver resolver = instance.getContentResolver();
+		int value = Settings.System.getInt(resolver, Settings.Global.WIFI_SLEEP_POLICY,  Settings.Global.WIFI_SLEEP_POLICY_DEFAULT);
+		if(Settings.Global.WIFI_SLEEP_POLICY_NEVER != value){
+			Settings.System.putInt(resolver, Settings.Global.WIFI_SLEEP_POLICY, Settings.Global.WIFI_SLEEP_POLICY_NEVER);
+
+		}
 	}
 
 
@@ -151,6 +176,21 @@ public class BaseApplication extends Application {
 			e1.printStackTrace();
 		}
   		return version;
+	}
+
+	protected void update15to16(){
+		String update = this.getClass().getSimpleName().toString();
+		if(TextUtils.isEmpty(StoreValueSQL.getValue(update))) {
+			SharedPreferences sharedPreferences = Store.getSharedPreferences(this);
+			Map<String, ?> map = sharedPreferences.getAll();
+			Iterator iter = map.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				String key = (String) entry.getKey();
+				StoreValueSQL.updateStore(key, entry.getValue().toString());
+			}
+			StoreValueSQL.updateStore(update, update);
+		}
 	}
 
 	public int getAppVersionCode() {

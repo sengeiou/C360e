@@ -37,12 +37,14 @@ public class KotJob extends Job {
     private KDSDevice kds;
     private Map<String, Object> kotMap = new HashMap<String, Object>();
     private Map<String, Object> data = new HashMap<String, Object>();
-    
+    private int failCount = 0;
     public KotJob(KDSDevice kds, KotSummary kotSummary, ArrayList<KotItemDetail> itemDetails, ArrayList<KotItemModifier> modifiers, String method, Map<String, Object> kotMap) {
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
         //group the order, we don't want to send two in parallel
         //use a negative id so that it cannot collide w/ twitter ids
-        localId = -System.currentTimeMillis();
+		long time = System.currentTimeMillis();
+		kotSummary.setUpdateTime(time);
+        localId = -time;
         apiName = APIName.SUBMIT_NEW_KOT;
         data.put("kotItemDetails", itemDetails);
         data.put("kotItemModifiers", modifiers);
@@ -50,18 +52,60 @@ public class KotJob extends Job {
         data.put("method", method);
         this.kds = kds;
         this.kotMap = kotMap;
+		try {
+			KotSummarySQL.updateKotSummaryTimeById(time, kotSummary.getId().intValue());
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		failCount = 0;
     }
     public KotJob(KDSDevice kds, String action, KotSummary toKotSummary, KotSummary fromKotSummary, Map<String, Object> kotMap){
     	 super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
-    	 localId = -System.currentTimeMillis();
-    	 data.put("action", action);
-    	 data.put("toKotSummary", toKotSummary);
-    	 data.put("fromKotSummary", fromKotSummary);
-    	 this.kds = kds;
-    	 this.kotMap = kotMap;
-    	 apiName = APIName.TRANSFER_KOT;
+		long time = System.currentTimeMillis();
+		try {
+			if(toKotSummary != null ){
+				toKotSummary.setUpdateTime(time);
+				KotSummarySQL.updateKotSummaryTimeById(time, toKotSummary.getId().intValue());
+			}else{
+				fromKotSummary.setUpdateTime(time);
+				KotSummarySQL.updateKotSummaryTimeById(time, fromKotSummary.getId().intValue());
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		localId = -time;
+		data.put("action", action);
+		data.put("toKotSummary", toKotSummary);
+		data.put("fromKotSummary", fromKotSummary);
+		this.kds = kds;
+		this.kotMap = kotMap;
+		apiName = APIName.TRANSFER_KOT;
+		failCount = 0;
     }
-    
+    public KotJob(KDSDevice kds, KotSummary toKotSummary, KotSummary fromKotSummary, Map<String, Object> kotMap, KotItemDetail kotItemDetail){
+    	 super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
+		long time = System.currentTimeMillis();
+		try {
+			if(toKotSummary != null ){
+				toKotSummary.setUpdateTime(time);
+				KotSummarySQL.updateKotSummaryTimeById(time, toKotSummary.getId().intValue());
+			}else{
+				fromKotSummary.setUpdateTime(time);
+				KotSummarySQL.updateKotSummaryTimeById(time, fromKotSummary.getId().intValue());
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		localId = -time;
+		data.put("toKotSummary", toKotSummary);
+		data.put("fromKotSummary", fromKotSummary);
+		data.put("tansferKotItem", kotItemDetail);
+		this.kds = kds;
+		this.kotMap = kotMap;
+		apiName = APIName.TRANSFER_ITEM_KOT;
+		failCount = 0;
+    }
+
     @Override
     public void onAdded() {
         //job has been secured to disk, add item to database
@@ -84,7 +128,7 @@ public class KotJob extends Job {
 	    			return;
 	    		if (updatedkot.getStatus() == ParamConst.KOTS_STATUS_DONE)
 	    			return;
-	    					
+
 	    		SyncCentre.getInstance().syncSubmitKotToKDS(kds, context, data,null);
 	    		if(kotMap == null){
 	    			return;
@@ -124,41 +168,10 @@ public class KotJob extends Job {
 							.getKotItemDetailBySummaryId(fromKotSummary.getId());
 					for (KotItemDetail kotItemDetail : kotItemDetails) {
 						kotItemDetail.setKotSummaryId(toKotSummary.getId());
+						kotItemDetail.setOrderId(toKotSummary.getOrderId().intValue());
 						KotItemDetailSQL.update(kotItemDetail);
 					}
 					KotSummarySQL.deleteKotSummary(fromKotSummary);
-//					Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
-//					OrderBill newOrderBill = ObjectFactory.getInstance().getOrderBill(newOrder, App.instance.getRevenueCenter());
-//					List<OrderDetail> orderDetails = OrderDetailSQL
-//							.getUnFreeOrderDetails(oldOrder);
-//					if (!orderDetails.isEmpty()) {
-//						for (OrderDetail orderDetail : orderDetails) {
-//							OrderDetail newOrderDetail = ObjectFactory.getInstance()
-//									.getOrderDetailForTransferTable(newOrder, orderDetail);
-//							OrderDetailSQL.addOrderDetailETC(newOrderDetail);
-//							OrderDetailTaxSQL.updateOrderDetailTaxForTransation(newOrderDetail, orderDetail);
-//							List<OrderModifier> orderModifiers = OrderModifierSQL
-//									.getOrderModifiers(orderDetail);
-//							if (orderModifiers.isEmpty()) {
-//								continue;
-//							}
-//							for (OrderModifier orderModifier : orderModifiers) {
-//								OrderModifier newOrderModifier = ObjectFactory
-//										.getInstance().getOrderModifier(
-//												newOrder,
-//												newOrderDetail,
-//												CoreData.getInstance().getModifier(
-//														orderModifier.getModifierId()),
-//												orderModifier.getPrinterId().intValue());
-//								OrderModifierSQL.addOrderModifier(newOrderModifier);
-//							}
-//						}
-//					}
-//					OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-//					OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-//					OrderBillSQL.deleteOrderBillByOrder(oldOrder);
-//					OrderBillSQL.add(newOrderBill);
-//					OrderSQL.deleteOrder(oldOrder);
 					context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
 		    	}else if(ParamConst.JOB_TRANSFER_KOT.equals(action)){
 		    		KotSummary fromKotSummary = (KotSummary) data.get("fromKotSummary");
@@ -170,11 +183,16 @@ public class KotJob extends Job {
 		    	}
 		    	
 				SyncCentre.getInstance().transferTable(context, kotMap);
-	    	}
+	    	}else if(APIName.TRANSFER_ITEM_KOT.equals(apiName)){
+				SyncCentre.getInstance().syncTransferItem(kds, context, data, null);
+			}
 	    	LogUtil.d(TAG, "KOT JOB Successful");
     	}catch(Throwable e) {
     		LogUtil.d(TAG, "KOT JOB Failed:" + e.getMessage());
-    		context.kotPrintStatus(MainPage.KOT_PRINT_FAILED, e);
+			if(failCount < 2) {
+				failCount++;
+				context.kotPrintStatus(MainPage.KOT_PRINT_FAILED, "KDS");
+			}
     		throw new RuntimeException("KOT failed");
     	}
     }

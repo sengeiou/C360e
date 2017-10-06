@@ -629,7 +629,7 @@ public class HttpAnalysis {
 				if(App.instance.getSystemSettings().isAutoRecevingOnlineOrder())
 					App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
 			}
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -694,7 +694,7 @@ public class HttpAnalysis {
 				}
 //				App.instance.appOrderShowDialog(false, appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
 			}
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

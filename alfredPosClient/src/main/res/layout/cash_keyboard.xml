@@ -107,15 +107,27 @@
             android:textSize="@dimen/text_size_big" />
 
         <TextView
+            android:id="@+id/tv_exact"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/box_number_selector"
+            android:gravity="center"
+            android:text="@string/exact_$"
+            android:textColor="@color/text_color_selector"
+            android:textSize="@dimen/text_size_big" />
+
+        <TextView
             android:id="@+id/tv_Others"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:background="@drawable/box_number_selector"
             android:gravity="center"
             android:text="@string/cash_other"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_big" />
+
     </LinearLayout>
 
 </LinearLayout>

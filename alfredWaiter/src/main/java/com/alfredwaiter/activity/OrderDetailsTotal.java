@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +31,8 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.store.TableNames;
+import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
@@ -42,7 +45,9 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
+import com.alfredwaiter.javabean.ModifierVariance;
 import com.alfredwaiter.popupwindow.SelectGroupWindow;
+import com.alfredwaiter.popupwindow.WaiterModifierWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.MoneyKeyboard;
 import com.alfredwaiter.view.MoneyKeyboard.KeyBoardClickListener;
@@ -85,12 +90,16 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	private StringBuffer buffer = new StringBuffer();
 	private DismissCall dismissCall;
 	private LinearLayout ll_bill_action;
+	private WaiterModifierWindow modifierWindow;
+
+	private OrderDetail selectedOrderDetail;
 	@Override
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_order_detail_total);
 		getIntentData();
 		lv_dishes = (ListView) findViewById(R.id.lv_dishes);
+		modifierWindow = new WaiterModifierWindow(context, handler, findViewById(R.id.rl_root));
 		tv_place_order = (TextView) findViewById(R.id.tv_place_order);
 		btn_get_bill = (Button) findViewById(R.id.btn_get_bill);
 		btn_print_bill = (Button) findViewById(R.id.btn_print_bill);
@@ -131,6 +140,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		refreshOrder();
 	}
 
+
+
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -159,9 +170,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				// }
 				// OrderDetailSQL.addOrderDetailList(orderDetails);
 				// }
-				orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
+				orderDetails = OrderDetailSQL.getCreatedOrderDetails(currentOrder.getId());
 				
-				refreshOrder();
 				refreshList();
 				UIHelp.showToast(context, context.getResources().getString(R.string.place_succ));
 
@@ -214,11 +224,58 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			case VIEW_EVENT_PRINT_BILL_FAILED:
 				UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_failed));
 				break;
+			case MainPage.VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER:
+				if(selectedOrderDetail == null)
+					return;
+				Map<String, Object> map = (Map<String, Object>) msg.obj;
+//				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
+				List<ModifierVariance> variances = (List<ModifierVariance>) map.get("variances");
+				String description = (String) map.get("description");
+				OrderDetail orderDetail = selectedOrderDetail;
+				addOrderDetailAndOrderModifier(orderDetail, 1, variances, description);
+//				refreshTotal();
+				refreshList();
+				break;
 			default:
 				break;
 			}
 		};
 	};
+
+	private void addOrderDetailAndOrderModifier(OrderDetail orderDetail,int count, List<ModifierVariance> modifierIds, String description){
+		currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+		orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
+//		OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getItemId().intValue());
+		OrderSQL.update(currentOrder);
+//		OrderDetail orderDetail = ObjectFactory.getInstance()
+//				.createOrderDetailForWaiter(currentOrder, itemDetail,
+//						currentGroupId, App.instance.getUser());
+		orderDetail.setItemNum(count);
+		orderDetail.setSpecialInstractions(description);
+		for(ModifierVariance modifierVariance : modifierIds){
+			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId1());
+			OrderModifier orderModifier = new OrderModifier();
+			orderModifier.setId(CommonSQL
+					.getNextSeq(TableNames.OrderModifier));
+			orderModifier.setOrderId(currentOrder.getId());
+			orderModifier.setOrderDetailId(orderDetail.getId());
+			orderModifier
+					.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
+			orderModifier.setUserId(currentOrder.getUserId());
+			orderModifier.setItemId(orderDetail.getItemId());
+			orderModifier.setModifierId(modifier.getId());
+			orderModifier.setModifierNum(modifierVariance.getModQty());
+			orderModifier
+					.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
+			orderModifier.setModifierPrice(modifier.getPrice());
+			Long time = System.currentTimeMillis();
+			orderModifier.setCreateTime(time);
+			orderModifier.setUpdateTime(time);
+			OrderModifierSQL.addOrderModifierForWaiter(orderModifier);
+		}
+		OrderDetailSQL.addOrderDetailETCForWaiter(orderDetail);
+
+	}
 
 	private void refreshList() {
 		orderDetails.clear();
@@ -242,6 +299,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		orderDetails.addAll(oldOrderDetails);
 		adapter.notifyDataSetChanged();
 		refreshOrderTotal();
+		refreshOrder();
 	}
 
 	private void refreshOrderTotal() {
@@ -303,7 +361,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		}
 			break;
 		case R.id.btn_print_bill: {
-			DialogFactory.commonTwoBtnDialog(context, "Waring", "Use the default Cashier Printer ?", "Other", "OK",
+			DialogFactory.commonTwoBtnDialog(context, "Warning", "Use the default Cashier Printer ?", "Other", "OK",
 					new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -392,12 +450,26 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	}
 
 	private void refreshOrder() {
+		boolean showPlace = false;
+		if(orderDetails != null && orderDetails.size() > 0){
+			for(OrderDetail orderDetail : orderDetails){
+				if(orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE){
+					showPlace = true;
+				}
+			}
+		}
 		if (currentOrder.getOrderStatus() >= ParamConst.ORDER_STATUS_OPEN_IN_POS) {
 			tv_place_order.setVisibility(View.GONE);
 			ll_bill_action.setVisibility(View.VISIBLE);
 		} else {
-			tv_place_order.setVisibility(View.VISIBLE);
-			ll_bill_action.setVisibility(View.GONE);
+			if(showPlace){
+				tv_place_order.setVisibility(View.VISIBLE);
+				ll_bill_action.setVisibility(View.GONE);
+			}else{
+				tv_place_order.setVisibility(View.GONE);
+				ll_bill_action.setVisibility(View.VISIBLE);
+			}
+
 		}
 	}
 
@@ -431,8 +503,6 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	class OrderDetailListAdapter extends BaseAdapter {
 		private LayoutInflater inflater;
 
-		public OrderDetailListAdapter() {
-		}
 
 		public OrderDetailListAdapter(Context context) {
 			inflater = LayoutInflater.from(context);
@@ -472,18 +542,21 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			}
 
 			final OrderDetail orderDetail = orderDetails.get(position);
-			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
+			final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
 					orderDetail.getItemId());
 
-			List<OrderModifier> modifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
+			final List<OrderModifier> modifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
+			StringBuffer stringBuffer = new StringBuffer();
 			if (modifiers.size() > 0) {
-				holder.tv_modifier.setVisibility(View.VISIBLE);
-				StringBuffer stringBuffer = new StringBuffer();
 				for (OrderModifier orderModifier : modifiers) {
 					Modifier modifier = ModifierSQL.getModifierById(orderModifier.getModifierId());
-					stringBuffer = stringBuffer.append(modifier.getModifierName() + "  ");
-					holder.tv_modifier.setText(stringBuffer.toString());
+					stringBuffer.append(modifier.getModifierName() + "  ");
 				}
+			}
+			stringBuffer.append(orderDetail.getSpecialInstractions());
+			if(!TextUtils.isEmpty(stringBuffer.toString())){
+				holder.tv_modifier.setVisibility(View.VISIBLE);
+				holder.tv_modifier.setText(stringBuffer.toString());
 			}else {
 				holder.tv_modifier.setVisibility(View.GONE);
 			}
@@ -540,6 +613,19 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			holder.tv_qty.setTag(orderDetail);
 			holder.subtotal.setText( App.instance.getCurrencySymbol()
 					+ BH.getBD(orderDetail.getRealPrice()).toString());
+			arg1.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (orderDetail.getOrderDetailStatus().intValue() == ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE) {
+						List<Integer> modifierIds = new ArrayList<Integer>();
+						for (OrderModifier orderModifier : modifiers) {
+							modifierIds.add(orderModifier.getModifierId().intValue());
+						}
+						selectedOrderDetail = orderDetail;
+						modifierWindow.show(itemDetail, modifierIds, orderDetail.getSpecialInstractions() == null ? "" : orderDetail.getSpecialInstractions());
+					}
+				}
+			});
 			return arg1;
 		}
 

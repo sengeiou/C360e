@@ -76,6 +76,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 		findViewById(R.id.tv_kick_cashdrawer).setOnClickListener(this);
 		findViewById(R.id.rl_pax).setOnClickListener(this);
 		findViewById(R.id.tv_take_away).setOnClickListener(this);
+		findViewById(R.id.tv_fire).setOnClickListener(this);
 		tv_order_no = (TextView) findViewById(R.id.tv_order_no);
 		tv_pax = (TextView) findViewById(R.id.tv_pax);
 		
@@ -102,6 +103,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_misc));
 //		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_edit_kot));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_take_away));
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_fire));
 	}
 	
 	private void setData() {
@@ -200,6 +202,10 @@ public class MainPageOperatePanel extends LinearLayout implements
 				}
 				OrderSQL.updateOrder(order);
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+				break;
+			case R.id.tv_fire:{
+				handler.sendEmptyMessage(MainPage.VIEW_EVENT_FIRE);
+			}
 				break;
 			default:
 				break;

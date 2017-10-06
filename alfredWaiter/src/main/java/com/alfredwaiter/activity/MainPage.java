@@ -40,7 +40,6 @@ import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.javabean.ItemCategoryAndDetails;
 import com.alfredwaiter.javabean.ModifierVariance;
-import com.alfredwaiter.popupwindow.ModifierWindow;
 import com.alfredwaiter.popupwindow.SearchMenuItemWindow;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.popupwindow.WaiterModifierWindow;
@@ -86,11 +85,14 @@ public class MainPage extends BaseActivity {
 	private SlidePanelView panel;
 	private LinearLayout container;
 	private TextView tv_person_index;
-	private TextView table_name;
+	private TextView tv_title_name;
+	private TextView tv_detail_qty;
 	private SelectPersonDialog dialog;
 	private Order currentOrder;
 	private SetItemCountWindow setItemCountWindow;
-
+	private LinearLayout ll_last_detail;
+	private TextView tv_last_order_detail;
+	private TextView tv_more_detail;
 	private int currentGroupId = 0;
 
 	private List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
@@ -124,20 +126,20 @@ public class MainPage extends BaseActivity {
 			@Override
 			public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
 				Map<String, Object> map = new HashMap<String, Object>();
-				if(CoreData.getInstance()
-						.getItemModifiers(selectedItemDetail).size() > 0){
-					if(isAdd){
-						modifierWindow.show(selectedItemDetail);
-					}else{
-                        refreshList();
-					}
-				}else{
+//				if(CoreData.getInstance()
+//						.getItemModifiers(selectedItemDetail).size() > 0){
+//					if(isAdd){
+//						modifierWindow.show(selectedItemDetail);
+//					}else{
+//                        refreshList();
+//					}
+//				}else{
 					map.put("itemDetail", selectedItemDetail);
 					map.put("count", count);
 					map.put("isAdd", isAdd);
 					handler.sendMessage(handler.obtainMessage(
 							MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, map));
-				}
+//				}
 			}
 		});
 		expandableListView.setGroupIndicator(null);
@@ -145,11 +147,12 @@ public class MainPage extends BaseActivity {
 		for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
 			expandableListView.expandGroup(i);
 		}
-		table_name = (TextView)findViewById(R.id.tv_table_name);
+		tv_title_name = (TextView)findViewById(R.id.tv_title_name);
+		tv_detail_qty = (TextView)findViewById(R.id.tv_detail_qty);
 		//get table name
 		TableInfo currentTable = TableInfoSQL.getTableById(currentOrder.getTableId());
 		if (currentTable!=null)
-		  table_name.setText(currentTable.getName());
+			tv_title_name.setText(currentTable.getName());
 
 		expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
@@ -189,6 +192,10 @@ public class MainPage extends BaseActivity {
 //		findViewById(R.id.iv_kot_notification).setOnClickListener(this);
 		findViewById(R.id.ll_dish_total).setOnClickListener(this);
 		findViewById(R.id.iv_person_index).setOnClickListener(this);
+		ll_last_detail = (LinearLayout) findViewById(R.id.ll_last_detail);
+		tv_last_order_detail = (TextView) findViewById(R.id.tv_last_order_detail);
+		tv_more_detail = (TextView) findViewById(R.id.tv_more_detail);
+		tv_more_detail.setOnClickListener(this);
 //		findViewById(R.id.iv_setting).setOnClickListener(this);
 		container = (LinearLayout) findViewById(R.id.ll_container);
 		panel = new SlidePanelView(this, expandableListView, 200,
@@ -208,6 +215,7 @@ public class MainPage extends BaseActivity {
 		parameters.put("order", currentOrder);
 		SyncCentre.getInstance().handlerGetOrderDetails(context, parameters,
 				handler);
+
 	}
 
 	private void getIntentData() {
@@ -349,10 +357,11 @@ public class MainPage extends BaseActivity {
 				break;
 			case VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER:
 				Map<String, Object> map = (Map<String, Object>) msg.obj;
-				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
+//				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
 				List<ModifierVariance> variances = (List<ModifierVariance>) map.get("variances");
 				String description = (String) map.get("description");
-				addOrderDetailAndOrderModifier(itemDetail, 1, variances, description);
+				OrderDetail orderDetail = (OrderDetail) tv_more_detail.getTag();
+				addOrderDetailAndOrderModifier(orderDetail, 1, variances, description);
                 refreshTotal();
                 refreshList();
 				break;
@@ -372,12 +381,21 @@ public class MainPage extends BaseActivity {
 	private void refreshList() {
 		adapter.setParams(currentOrder,orderDetails, currentGroupId);
 		adapter.notifyDataSetChanged();
+		if(orderDetails != null && orderDetails.size() > 0){
+			ll_last_detail.setVisibility(View.VISIBLE);
+			OrderDetail orderDetail = orderDetails.get(orderDetails.size() - 1);
+			tv_more_detail.setTag(orderDetail);
+			tv_last_order_detail.setText(orderDetail.getItemName());
+		}else{
+			ll_last_detail.setVisibility(View.GONE);
+			tv_more_detail.setTag(null);
+		}
 	}
 
 	private void updateOrderDetail(ItemDetail itemDetail, int count) {
 		OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
 				currentOrder, itemDetail, currentGroupId,
-				ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
+				ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
 //		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
 //				currentOrder, itemDetail, currentGroupId);
 		if (count == 0){// 删除
@@ -395,17 +413,20 @@ public class MainPage extends BaseActivity {
 				OrderDetailSQL.addOrderDetailETCForWaiter(orderDetail);
 			} else {
 				orderDetail.setItemNum(count);
+				orderDetail.setUpdateTime(System.currentTimeMillis());
 				OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
 			}
 		}
 	}
 
-	private void addOrderDetailAndOrderModifier(ItemDetail itemDetail,int count, List<ModifierVariance> modifierIds, String description){
+	private void addOrderDetailAndOrderModifier(OrderDetail orderDetail,int count, List<ModifierVariance> modifierIds, String description){
         currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+		orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
+//		OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getItemId().intValue());
         OrderSQL.update(currentOrder);
-		OrderDetail orderDetail = ObjectFactory.getInstance()
-				.createOrderDetailForWaiter(currentOrder, itemDetail,
-						currentGroupId, App.instance.getUser());
+//		OrderDetail orderDetail = ObjectFactory.getInstance()
+//				.createOrderDetailForWaiter(currentOrder, itemDetail,
+//						currentGroupId, App.instance.getUser());
 		orderDetail.setItemNum(count);
 		orderDetail.setSpecialInstractions(description);
 		for(ModifierVariance modifierVariance : modifierIds){
@@ -435,16 +456,13 @@ public class MainPage extends BaseActivity {
 
 	private void refreshTotal() {
 		orderDetails = OrderDetailSQL.getUnFreeOrderDetailsForWaiter(currentOrder);
-		List<OrderDetail> orderDetailList = OrderDetailSQL
-				.getOrderDetails(currentOrder.getId());
-		int itemCount = 0;
-		if (!orderDetailList.isEmpty()) {
-			for (OrderDetail orderDetail : orderDetailList) {
-				itemCount += orderDetail.getItemNum();
-			}
+		int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForWaiter(currentOrder.getId().intValue());
+		if(itemCount > 0) {
+			tv_detail_qty.setVisibility(View.VISIBLE);
+			tv_detail_qty.setText("Item:" + itemCount);
+		}else{
+			tv_detail_qty.setVisibility(View.INVISIBLE);
 		}
-//		((TextView) findViewById(R.id.tv_item_count)).setText(itemCount
-//				+ " Saved items");
 	}
 
 	private void search(String key) {
@@ -520,12 +538,21 @@ public class MainPage extends BaseActivity {
 			map.put("visibilityMap", View.VISIBLE);
 			UIHelp.startSetting(context, map);
 			break;
+		case R.id.tv_more_detail: {
+			OrderDetail orderDetail = (OrderDetail) v.getTag();
+			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId().intValue());
+			modifierWindow.show(itemDetail);
+		}
+			break;
 		default:
 			break;
 		}
 	}
 
 	private void OpenOrderDetailsTotal() {
+		for(OrderDetail orderDetail : orderDetails){
+			OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getId().intValue());
+		}
 		UIHelp.startOrderDetailsTotal(context, currentOrder);
 //		this.finish();
 	}

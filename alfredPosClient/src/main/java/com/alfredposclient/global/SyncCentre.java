@@ -33,7 +33,6 @@ public class SyncCentre {
 	private TimerTask timerTask;
 
 	private static AsyncHttpClient httpClient;
-	private static SyncHttpClient shttpClient;
 
 	private static SyncCentre instance;
 	private static SyncHttpClient syncHttpClient;
@@ -302,13 +301,13 @@ public class SyncCentre {
 	// Backend Server IP
 	private String getAbsoluteUrl(String relativeUrl) {
 		if (App.instance.isDebug) {
-			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
-//			return "http://192.168.0.120:8083/alfred-api/" + relativeUrl;
+//			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
+			return "http://192.168.1.104:8083/alfred-api/" + relativeUrl;
 		} else if (App.instance.isOpenLog) {
 			return "http://139.224.17.126/alfred-api/" + relativeUrl;
 		} else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-			return "http://www.servedbyalfred.com/alfred-api/" + relativeUrl;
+			return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
 		}
 	}
 
@@ -366,7 +365,7 @@ public class SyncCentre {
 			String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.KOT_NOTIFICATION;
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("total", KotNotificationqty);
-			HTTPWaiterRequest.sendKotNotification(context, parameters, url, waiterDevice.clone(), shttpClient);
+			HTTPWaiterRequest.sendKotNotification(context, parameters, url, waiterDevice.clone(), syncHttpClient);
 		}
 
 	}
@@ -420,7 +419,11 @@ public class SyncCentre {
 			final Map<String, Object> parameters, Handler handler) {
 		String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_KOT);
 		HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(),syncHttpClient);
-
+	}
+	public void syncTransferItem(KDSDevice kdsDevice, BaseActivity context,
+			final Map<String, Object> parameters, Handler handler) {
+		String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_ITEM_KOT);
+		HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(),syncHttpClient);
 	}
 
 	/**
@@ -450,7 +453,7 @@ public class SyncCentre {
 			if (App.instance.countryCode == ParamConst.CHINA) {
 				url =  "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
 			}else {
-			    url =  "http://www.servedbyalfred.com/alfred-api/" + APIName.REQUEST_ALIPAY;
+			    url =  "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
 			}
 			param.append("amount="+parameters.get("amount")+"&");
 		}

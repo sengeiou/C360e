@@ -65,6 +65,8 @@ public class OrderSplit {
 	private String inclusiveTaxPrice;
 	
 	private String inclusiveTaxPercentage;
+	// 在已经结账的订单上面做修改的时候 用到 临时用 不存数据库
+	private String oldTotal;
 
 	public OrderSplit() {
 	}
@@ -271,20 +273,40 @@ public class OrderSplit {
 		this.inclusiveTaxPercentage = inclusiveTaxPercentage;
 	}
 
+	public String getOldTotal() {
+		return oldTotal;
+	}
+
+	public void setOldTotal(String oldTotal) {
+		this.oldTotal = oldTotal;
+	}
+
 	@Override
 	public String toString() {
-		return "OrderSplit [id=" + id + ", orderId=" + orderId
-				+ ", orderOriginId=" + orderOriginId + ", userId=" + userId
-				+ ", persons=" + persons + ", orderStatus=" + orderStatus
-				+ ", subTotal=" + subTotal + ", taxAmount=" + taxAmount
-				+ ", discountAmount=" + discountAmount + ", total=" + total
-				+ ", sessionStatus=" + sessionStatus + ", restId=" + restId
-				+ ", revenueId=" + revenueId + ", tableId=" + tableId
-				+ ", createTime=" + createTime + ", updateTime=" + updateTime
-				+ ", sysCreateTime=" + sysCreateTime + ", sysUpdateTime="
-				+ sysUpdateTime + ", groupId=" + groupId
-				+ ", inclusiveTaxName=" + inclusiveTaxName
-				+ ", inclusiveTaxPrice=" + inclusiveTaxPrice
-				+ ", inclusiveTaxPercentage=" + inclusiveTaxPercentage + "]";
+		return "OrderSplit{" +
+				"id=" + id +
+				", orderId=" + orderId +
+				", orderOriginId=" + orderOriginId +
+				", userId=" + userId +
+				", persons=" + persons +
+				", orderStatus=" + orderStatus +
+				", subTotal='" + subTotal + '\'' +
+				", taxAmount='" + taxAmount + '\'' +
+				", discountAmount='" + discountAmount + '\'' +
+				", total='" + total + '\'' +
+				", sessionStatus=" + sessionStatus +
+				", restId=" + restId +
+				", revenueId=" + revenueId +
+				", tableId=" + tableId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", sysCreateTime='" + sysCreateTime + '\'' +
+				", sysUpdateTime='" + sysUpdateTime + '\'' +
+				", groupId=" + groupId +
+				", inclusiveTaxName='" + inclusiveTaxName + '\'' +
+				", inclusiveTaxPrice='" + inclusiveTaxPrice + '\'' +
+				", inclusiveTaxPercentage='" + inclusiveTaxPercentage + '\'' +
+				", oldTotal='" + oldTotal + '\'' +
+				'}';
 	}
 }

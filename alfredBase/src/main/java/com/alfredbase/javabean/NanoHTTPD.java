@@ -176,12 +176,13 @@ public abstract class NanoHTTPD {
                         final Socket finalAccept = myServerSocket.accept();
                         registerConnection(finalAccept);
                         finalAccept.setSoTimeout(SOCKET_READ_TIMEOUT);
-                        final InputStream inputStream = finalAccept.getInputStream();
                         asyncRunner.exec(new Runnable() {
                             @Override
                             public void run() {
                                 OutputStream outputStream = null;
+                                InputStream inputStream = null;
                                 try {
+                                    inputStream = finalAccept.getInputStream();
                                     outputStream = finalAccept.getOutputStream();
                                     TempFileManager tempFileManager = tempFileManagerFactory.create();
                                     HTTPSession session = new HTTPSession(tempFileManager, inputStream, outputStream, finalAccept.getInetAddress());

@@ -191,20 +191,20 @@ public class NetWorkOrderActivity extends BaseActivity {
 				tv_preparing_order.setTextColor(getResources().getColor(R.color.white));
 				appOrders = AppOrderSQL.getPreparAppOrder(App.instance.getBusinessDate());
 				btn_check.setText(getResources().getText(R.string.completed_order));
-				if(!App.instance.isRevenueKiosk()){
-					btn_check.setVisibility(View.INVISIBLE);
-					btn_cancel.setVisibility(View.GONE);
-				}
+//				if(!App.instance.isRevenueKiosk()){
+//					btn_check.setVisibility(View.INVISIBLE);
+//					btn_cancel.setVisibility(View.GONE);
+//				}
 				break;
 			case R.id.tv_completed_order:
 				tv_completed_order.setBackgroundColor(getResources().getColor(R.color.brownness));
 				tv_completed_order.setTextColor(getResources().getColor(R.color.white));
 				appOrders = AppOrderSQL.getAppOrderByOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED, App.instance.getBusinessDate());
 				btn_check.setText(getResources().getText(R.string.reprint_bill));
-				if(!App.instance.isRevenueKiosk()){
-					btn_check.setVisibility(View.INVISIBLE);
-					btn_cancel.setVisibility(View.GONE);
-				}
+//				if(!App.instance.isRevenueKiosk()){
+//					btn_check.setVisibility(View.INVISIBLE);
+//					btn_cancel.setVisibility(View.GONE);
+//				}
 				break;
 		}
 		if(appOrders.size() > 0){
@@ -264,7 +264,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 		switch (v.getId()) {
 		case R.id.btn_check:{
 			final AppOrder appOrder = (AppOrder)v.getTag();
-			if(App.instance.isRevenueKiosk()){
+//			if(App.instance.isRevenueKiosk()){
 				selectOrderItem = 0;
 				if (appOrder == null) {
 					return;
@@ -276,10 +276,13 @@ public class NetWorkOrderActivity extends BaseActivity {
 //					parameters.put("orderNum", appOrder.getOrderNo());
 
 //					appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARED);
-					loadingDialog.setTitle("Loading");
-					loadingDialog.show();
-					SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
-
+					if(App.instance.isRevenueKiosk()) {
+						loadingDialog.setTitle("Loading");
+						loadingDialog.show();
+						SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
+					}else{
+						showTables();
+					}
 				}else {
 					appOrder
 							.setOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED);
@@ -303,9 +306,9 @@ public class NetWorkOrderActivity extends BaseActivity {
 						}
 					}, 3000);
 				}
-			}else{
-				showTables();
-			}
+//			}else{
+//				showTables();
+//			}
 
 			/*
 			final AppOrder appOrder = (AppOrder)v.getTag();

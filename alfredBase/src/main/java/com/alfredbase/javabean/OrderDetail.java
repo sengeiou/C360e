@@ -28,7 +28,7 @@ public class OrderDetail implements Serializable {
 	private Integer itemNum;
 
 	/**
-	 * 订单详情状态(1added、2Kotprinterd、发送到厨房 3prepared、 厨房已经做好了 4served、 服务员已经送菜
+	 * 订单详情状态(0waiter用表示还没有概念上的保存,1added用于Pos点菜和waiter那边save之后的状态、2Kotprinterd、发送到厨房 3prepared、 厨房已经做好了 4served、 服务员已经送菜
 	 * 5removed、 还没有送到厨房之前退单 6cancelled 退单)
 	 */
 	private Integer orderDetailStatus;
@@ -82,7 +82,7 @@ public class OrderDetail implements Serializable {
 	/**
 	 * 手动存入的指令，如饭前上餐前酒、饭后上水果等
 	 */
-	private String specialInstractions;
+	private String specialInstractions = "";
 
 	private Integer orderSplitId;
 
@@ -108,6 +108,8 @@ public class OrderDetail implements Serializable {
 	private int appOrderDetailId = 0;
 
 	private int mainCategoryId;
+
+	private int fireStatus;
 
 	public OrderDetail() {
 		// set openItem False
@@ -283,6 +285,9 @@ public class OrderDetail implements Serializable {
 	}
 
 	public Integer getGroupId() {
+		if(groupId == null){
+			groupId = 0;
+		}
 		return groupId;
 	}
 
@@ -370,6 +375,14 @@ public class OrderDetail implements Serializable {
 		this.mainCategoryId = mainCategoryId;
 	}
 
+	public int getFireStatus() {
+		return fireStatus;
+	}
+
+	public void setFireStatus(int fireStatus) {
+		this.fireStatus = fireStatus;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderDetail{" +
@@ -405,6 +418,7 @@ public class OrderDetail implements Serializable {
 				", isSet=" + isSet +
 				", appOrderDetailId=" + appOrderDetailId +
 				", mainCategoryId=" + mainCategoryId +
+				", fireStatus=" + fireStatus +
 				'}';
 	}
 

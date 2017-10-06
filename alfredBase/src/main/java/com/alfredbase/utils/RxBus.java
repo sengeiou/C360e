@@ -72,12 +72,16 @@ public class RxBus {
      * @param o
      */
     public void post(@NonNull String tag, Object o) {
-        List<Subject> subjects = maps.get(tag);
-        if (subjects != null && !subjects.isEmpty()) {
-            for (Subject s : subjects) {
+        try {
+            List<Subject> subjects = maps.get(tag);
+            if (subjects != null && !subjects.isEmpty()) {
+                for (Subject s : subjects) {
 //                s.delay(100, TimeUnit.MILLISECONDS);
-                s.onNext(o);
+                    s.onNext(o);
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

@@ -882,18 +882,18 @@ public class CoreData {
 	public void addLocalDevice(LocalDevice localDevice) {
 		LocalDeviceSQL.addLocalDevice(localDevice);
 
-		if (localDevices == null)
+//		if (localDevices == null)
 			localDevices = LocalDeviceSQL.getAllLocalDevice();
 
-		boolean found = false;
-		for (LocalDevice item : localDevices) {
-			if (item.getDeviceType() == localDevice.getDeviceType()
-					&& item.getIp().equals(localDevice.getIp())) {
-				found = true;
-			}
-		}
-		if (!found)
-			this.localDevices.add(localDevice);
+//		boolean found = false;
+//		for (LocalDevice item : localDevices) {
+//			if (item.getDeviceType().intValue() == localDevice.getDeviceType().intValue()
+//					&& item.getIp().equals(localDevice.getIp())) {
+//				found = true;
+//			}
+//		}
+//		if (!found)
+//			this.localDevices.add(localDevice);
 	}
 
 	public void removeLocalDeviceByDeviceIdAndIP(int deviceId, String ip) {

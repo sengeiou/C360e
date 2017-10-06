@@ -12,17 +12,17 @@ android {
 
     defaultConfig {
         applicationId "com.alfredposclient"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion rootProject.ext.posMinSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
-
+        multiDexEnabled true
 //        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
-        sourceCompatibility javaVersion
-        targetCompatibility javaVersion
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
 
     lintOptions {
@@ -53,6 +53,17 @@ android {
 //        }
     }
 
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                // 修改apk文件名
+                def fileName = "Pos.apk"
+                output.outputFile = new File(output.outputFile.parent, fileName)
+            }
+        }
+    }
+
 //    packagingOptions {
 //        exclude 'LICENSE.txt'
 //    }
@@ -62,6 +73,10 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    mavenCentral()
 }
 dependencies {
     compile project(':alfredBase')
@@ -70,14 +85,18 @@ dependencies {
 //    compile rootProject.ext.libSupportV4
 //    compile 'com.path:android-priority-jobqueue:1.1.2'
 //    compile 'com.birbit:android-priority-jobqueue:2.0.0'
-    compile files('libs/android-websockets.jar')
+//    compile files('libs/android-websockets.jar')
 //    compile files('libs/core-3.2.1.jar')
+    compile 'com.android.support:recyclerview-v7:22.2.1'
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
 
     compile(name: 'barcode_scanner_library_v2.0.8.0', ext: 'aar')
     compile 'com.tencent.bugly:crashreport:latest.release'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
-    compile 'com.rabbitmq:amqp-client:3.6.5'
+//    compile 'com.rabbitmq:amqp-client:3.6.5'
     compile 'com.sunmi:DS_Lib:1.0.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile(name:'barcode_scanner_library_v2.0.8.0', ext:'aar')
+    compile "org.igniterealtime.smack:smack-android-extensions:4.2.0-alpha3"
+    compile "org.igniterealtime.smack:smack-tcp:4.2.0-alpha3"
 }

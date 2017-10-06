@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
@@ -198,7 +199,7 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 		    this.doubleBackToExitPressedOnce = true;
 		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-		    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 		        @Override
 		        public void run() {

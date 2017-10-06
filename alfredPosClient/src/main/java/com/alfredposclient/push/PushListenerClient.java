@@ -1,4 +1,5 @@
 package com.alfredposclient.push;
+
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -18,6 +19,7 @@ import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.xmpp.XMPP;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -25,7 +27,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PushListenerClient implements PushServer.PushListener {
+public class PushListenerClient implements XMPP.PushListener {
 	private String TAG = PushListenerClient.class.getSimpleName();
 	Context context;
 	
@@ -68,7 +70,7 @@ public class PushListenerClient implements PushServer.PushListener {
 
 						if(type == -2016){
 							AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
-							App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+							App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
 							if(App.getTopActivity() instanceof NetWorkOrderActivity){
 								App.getTopActivity().httpRequestAction(type, null);
 							}
@@ -156,24 +158,6 @@ public class PushListenerClient implements PushServer.PushListener {
 		}
 		App.instance.setPushMsgMap(pushMsgMap);
 		Store.saveObject(context, Store.PUSH_MESSAGE, App.instance.getPushMsgMap());
-	}
-
-	@Override
-	public void onNetworkError() {
-		// TODO Auto-generated method stub
-		//Toast.makeText(context, "Push Server ERROR", Toast.LENGTH_LONG).show();
-	}
-
-	@Override
-	public void onNetworkDisconnected() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onNetworkConnected() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

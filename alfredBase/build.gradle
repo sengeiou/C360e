@@ -42,11 +42,12 @@ dependencies {
     compile files('libs/core-3.2.1.jar')
     compile 'io.reactivex:rxjava:1.1.5'
     compile 'io.reactivex:rxandroid:1.2.0'
-    compile 'com.moonearly.utils:app:1.0.13'
+    compile 'com.moonearly.utils:app:1.0.15'
 //    compile 'org.greenrobot:greendao:3.2.0'
 //    compile 'org.greenrobot:greendao-generator:3.2.0'
 //    runtime(
 //            [group: 'org.nanohttpd', name: 'nanohttpd-webserver', version: 'CURRENT_VERSION']
 //    )
     compile 'org.nanohttpd:nanohttpd-webserver:2.2.0'
+    compile 'com.android.support:multidex:1.0.0'
 }

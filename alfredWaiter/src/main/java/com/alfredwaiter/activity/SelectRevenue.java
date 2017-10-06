@@ -1,11 +1,5 @@
 package com.alfredwaiter.activity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -19,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
@@ -35,6 +30,12 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SelectRevenue extends BaseActivity {
 	public static final int HANDLER_PAIRING_COMPLETE = 1;
@@ -139,7 +140,7 @@ public class SelectRevenue extends BaseActivity {
 			}
 			case TablesPage.HANDLER_GET_PLACE_INFO: {
 				// 预留2秒让数据存下数据库
-				postDelayed(new Runnable() {
+				BaseApplication.postHandler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
 						Map<String, Object> parameters = new HashMap<String, Object>();
@@ -257,7 +258,7 @@ public class SelectRevenue extends BaseActivity {
 		    this.doubleBackToExitPressedOnce = true;
 		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-		    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 		        @Override
 		        public void run() {

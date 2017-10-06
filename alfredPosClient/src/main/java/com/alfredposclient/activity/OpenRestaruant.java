@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
 import com.alfredbase.PrinterLoadingDialog;
@@ -266,9 +267,13 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		rl_openbg.setOnClickListener(this);
 		filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_TIME_TICK);
-		App.instance.startPushServer("B." + App.instance.getRevenueCenter().getRestaurantId().intValue());
+//		App.instance.startPushServer("B." + App.instance.getRevenueCenter().getRestaurantId().intValue());
 		setDateView();
-		BuglyLog.d("OpenRestaruant", "RestaurantName" + CoreData.getInstance().getRestaurant().getRestaurantName());
+		try {
+			BuglyLog.d("OpenRestaruant", "RestaurantName" + CoreData.getInstance().getRestaurant().getRestaurantName());
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		rl_slideUnlockView.post(new Runnable() {
 			@Override
 			public void run() {
@@ -491,6 +496,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		IntentFilter downFilter = new IntentFilter();
 		downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
 		registerReceiver(downReceiver, downFilter);
+//		if (!App.instance.getXmppThread().isAlive()) {
+//			App.instance.getXmppThread().start();
+//		}
 	}
 
 	@Override
@@ -1452,7 +1460,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		case R.id.rl_dinner_session_bg:
 		case R.id.rl_supper_session_bg:
 			mSettingView.initOptionsSessionOpen();
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
 			if (App.instance.isRevenueKiosk()) {
 				UIHelp.startMainPageKiosk(context);
 			} else {
@@ -1602,7 +1610,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 			}
 		}).start();
-		App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+		App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
 		if (App.instance.isRevenueKiosk()) {
 			UIHelp.startMainPageKiosk(context);
 		} else {
@@ -1684,7 +1692,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 					@Override
 					public void onClick(View arg0) {
-						App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+						App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
 						if (App.instance.isRevenueKiosk()) {
 							UIHelp.startMainPageKiosk(context);
 						} else {
@@ -1983,7 +1991,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		mDrawerLayout.postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
@@ -2008,7 +2016,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	    this.doubleBackToExitPressedOnce = true;
 	    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-	    new Handler().postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 	        @Override
 	        public void run() {

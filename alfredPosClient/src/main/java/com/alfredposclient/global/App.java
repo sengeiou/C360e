@@ -110,17 +110,17 @@ import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
+import com.alfredposclient.activity.OpenRestaruant;
 import com.alfredposclient.activity.Welcome;
 import com.alfredposclient.http.server.MainPosHttpServer;
 import com.alfredposclient.javabean.SecondScreenBean;
 import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
-import com.alfredposclient.push.PushServer;
-import com.alfredposclient.service.RabbitMqPushService;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
+import com.alfredposclient.xmpp.XmppThread;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.moonearly.model.GoodsModel;
@@ -171,13 +171,15 @@ import sunmi.ds.data.DSFile;
 import sunmi.ds.data.DSFiles;
 import sunmi.ds.data.DataPacket;
 
+//import com.alfredposclient.push.PushServer;
+
 public class App extends BaseApplication {
     private static final  String TAG = App.class.getSimpleName();
     public static App instance;
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 17;
     private static final String DATABASE_NAME = "com.alfredposclient";
 
     private String callAppIp;
@@ -239,6 +241,7 @@ public class App extends BaseApplication {
     private boolean hasSecondScreen = false;
 
     private Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
+    private XmppThread xmppThread;
     // // 动态session类型
     // private List<Integer> sessionConfigType;
     //
@@ -281,20 +284,20 @@ public class App extends BaseApplication {
     /*
      * Alfred PUSH Service
      */
-    private RabbitMqPushService rabbitMqPushService;
-    private ServiceConnection rabbitMqPushConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            rabbitMqPushService = ((RabbitMqPushService.Binder) service).getService();
-//            rabbitMqPushService.setListener(new PushListenerClient(App.instance));
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            rabbitMqPushService = null;
-        }
-    };
+//    private RabbitMqPushService rabbitMqPushService;
+//    private ServiceConnection rabbitMqPushConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            rabbitMqPushService = ((RabbitMqPushService.Binder) service).getService();
+////            rabbitMqPushService.setListener(new PushListenerClient(App.instance));
+//
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            rabbitMqPushService = null;
+//        }
+//    };
 
 //    private PushService pushService;
 //    private ServiceConnection pushConnection = new ServiceConnection() {
@@ -319,7 +322,7 @@ public class App extends BaseApplication {
     private IntentFilter intentFilter;
 
     private Observable<Object> observable;
-    private PushServer pushServer;
+//    private PushServer pushServer;
     private SDKHandler sdkHandler;
     private boolean  isUsbScannerLink = false;
     @Override
@@ -329,6 +332,7 @@ public class App extends BaseApplication {
         instance = this;
 
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+
         systemSettings = new SystemSettings(this);
 
         kdsJobManager = new KotJobManager(this);
@@ -389,8 +393,11 @@ public class App extends BaseApplication {
             public void call(Object object) {
                 boolean isScreenLock = systemSettings.isScreenLock();
                 if(isScreenLock) {
-                    ReloginDialog reloginDialog = new ReloginDialog(getTopActivity());
-                    reloginDialog.show();
+                    BaseActivity activity = getTopActivity();
+                    if(activity != null && getIndexOfActivity(OpenRestaruant.class) != -1){
+                        ReloginDialog reloginDialog = new ReloginDialog(activity);
+                        reloginDialog.show();
+                    }
                 }
             }
         });
@@ -410,7 +417,7 @@ public class App extends BaseApplication {
 
 //        pushThread = new PushThread();
 //        pushThread.start();
-        pushServer = new PushServer();
+//        pushServer = new PushServer();
 //        checkoutVersion();
 
         // 设置主题
@@ -437,10 +444,17 @@ public class App extends BaseApplication {
             sdkHandler.dcssdkSetDelegate(iDcsSdkApiDelegate);
             initializeDcsSdk();
         }
+        xmppThread = new XmppThread();
+        xmppThread.start();
+        wifiPolicyNever();
+        update15to16();
     }
 
+    public XmppThread getXmppThread() {
+        return xmppThread;
+    }
 
-//    public void checkoutVersion() {
+    //    public void checkoutVersion() {
 //        if(pi == null)
 //            return;
 //        try {
@@ -548,9 +562,9 @@ public class App extends BaseApplication {
         }
     };
 
-    public PushServer getPushServer(){
-        return  pushServer;
-    }
+//    public PushServer getPushServer(){
+//        return  pushServer;
+//    }
     @Override
     public void onTerminate() {
         if(observable != null){
@@ -1114,6 +1128,30 @@ public class App extends BaseApplication {
         }
     }
 
+    public void loadPrinters() {
+        List<LocalDevice> devices = CoreData.getInstance().getLocalDevices();
+        for (LocalDevice item : devices) {
+            int type = item.getDeviceType();
+            // load physical printer
+            if (type == ParamConst.DEVICE_TYPE_PRINTER) {
+                int devid = item.getDeviceId();
+                String ip = item.getIp();
+                String mac = item.getMacAddress();
+                String name = item.getDeviceName();
+                String model = item.getDeviceMode();
+                PrinterDevice pdev = new PrinterDevice();
+                pdev.setDevice_id(devid);
+                pdev.setIP(ip);
+                pdev.setMac(mac);
+                pdev.setName(name);
+                pdev.setModel(model);
+                pdev.setIsCahierPrinter(CoreData.getInstance()
+                        .isCashierPrinter(devid));
+                printerDevices.put(devid, pdev);
+            }
+        }
+    }
+
     /* HTTP Server */
     public void startHttpServer() {
         try {
@@ -1126,15 +1164,15 @@ public class App extends BaseApplication {
         }
     }
 
-    public void startPushServer(String key){
-        try {
-            if(!pushServer.isAlive()){
-                this.pushServer.start(key);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void startPushServer(String key){
+//        try {
+//            if(!pushServer.isAlive()){
+//                this.pushServer.start(key);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public RevenueCenter getRevenueCenter() {
         if (revenueCenter == null)
@@ -1405,7 +1443,8 @@ public class App extends BaseApplication {
 
     public boolean remoteKotPrint(PrinterDevice printer, KotSummary kotsummary,
                                   ArrayList<KotItemDetail> itemDetailsList,
-                                  ArrayList<KotItemModifier> modifiersList) {
+                                  ArrayList<KotItemModifier> modifiersList,
+                                  boolean isFire) {
         if (!isKotPrint()) {
             return true;
         }
@@ -1437,7 +1476,7 @@ public class App extends BaseApplication {
                     size = 2;
                 mRemoteService.printKOT(printstr, kotsumStr, kdlstr, modstr,
                         this.systemSettings.isKotPrintTogether(),
-                        this.systemSettings.isKotDoublePrint(), size);
+                        this.systemSettings.isKotDoublePrint(), size, isFire);
             }
             return true;
         } catch (RemoteException e) {
@@ -2286,13 +2325,16 @@ public class App extends BaseApplication {
 //                    tables = TableInfoSQL.getAllUsedOneTables();
                     return;
                 }
-                if (tables != null && tables.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
-//                    appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
-//                    AppOrderSQL.updateAppOrder(appOrder);
-                    Order order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), getBusinessDate());
-                    if(OrderDetailSQL.getOrderDetails(order.getId().intValue()).size() > 0){
-                        return;
-                    }
+//                if (tables != null && tables.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
+////                    appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_USED);
+////                    AppOrderSQL.updateAppOrder(appOrder);
+//                    Order order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), getBusinessDate());
+//                    if(OrderDetailSQL.getOrderDetails(order.getId().intValue()).size() > 0){
+//                        return;
+//                    }
+//                }
+                if(tables == null){
+                    return;
                 }
             }
 
@@ -2301,10 +2343,14 @@ public class App extends BaseApplication {
 //            AppOrderSQL.updateAppOrder(appOrder);
 
             Order order = ObjectFactory.getInstance().getOrderFromAppOrder(appOrder, getUser(),
-                    getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant(), App.instance.isRevenueKiosk());
-            tables.setStatus(ParamConst.TABLE_STATUS_DINING);
+                    getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant(),
+                    App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), App.instance.isRevenueKiosk());
+//            OrderHelper.setOrderInclusiveTaxPrice(order);
+//            tables.setStatus(ParamConst.TABLE_STATUS_DINING);
+
 //            TablesSQL.updateTables(tables);
-            TableInfoSQL.updateTables(tables);
+//            TableInfoSQL.updateTables(tables);
+            order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
             OrderSQL.update(order);
             OrderBill orderBill = ObjectFactory.getInstance()
                     .getOrderBill(order, getRevenueCenter());
@@ -2345,13 +2391,11 @@ public class App extends BaseApplication {
                             printId = prints.get(0).getId().intValue();
                         }
                     }
-                    OrderModifier orderModifier = ObjectFactory
+                   ObjectFactory
                             .getInstance()
                             .getOrderModifierFromTempAppOrderModifier(
                                     order, orderDetail, printId,
                                     appOrderModifier);
-                    OrderModifierSQL
-                            .addOrderModifier(orderModifier);
                 }
             }
             List<OrderDetail> placedOrderDetails
@@ -2450,7 +2494,7 @@ public class App extends BaseApplication {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()));
+                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
             }
         }).start();
         if(getTopActivity() instanceof MainPage){
@@ -2466,12 +2510,13 @@ public class App extends BaseApplication {
             Order paidOrder = OrderSQL.getOrderByAppOrderId(appOrder
                     .getId().intValue());
             PrinterDevice printer = App.instance.getCahierPrinter();
+            TableInfo tableInfo = TableInfoSQL.getTableById(paidOrder.getTableId().intValue());
             PrinterTitle title = ObjectFactory.getInstance().getPrinterTitle(
                     getRevenueCenter(),
                     paidOrder,
                     getUser().getFirstName()
                             + getUser().getLastName(),
-                    TableInfoSQL.getKioskTable().getName(), 1);
+                    tableInfo.getName(), 1);
 
             ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
                     .getItemList(
@@ -2524,16 +2569,16 @@ public class App extends BaseApplication {
                 }
             }
         }
-        boolean hasApk = copyApkFromAssets(this, "printServiceApk/alfredRemotePrintService-release.apk", Environment
+        boolean hasApk = copyApkFromAssets(this, "printServiceApk/Print.apk", Environment
                 .getExternalStorageDirectory().getAbsolutePath()
-                + "/alfredRemotePrintService-release.apk");
+                + "/Print.apk");
         if (printVersionCode < posVersionCode && hasApk) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setDataAndType(
                         Uri.parse("file://"
                                 + Environment.getExternalStorageDirectory()
-                                .getAbsolutePath() + "/alfredRemotePrintService-release.apk"),
+                                .getAbsolutePath() + "/Print.apk"),
                         "application/vnd.android.package-archive");
                 intentFilter = new IntentFilter();
                 intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
@@ -2620,9 +2665,9 @@ public class App extends BaseApplication {
         return appOrderNum;
     }
 
-    public void setAppOrderNum(int appOrderNum) {
+    public void setAppOrderNum(int appOrderNum, int type) {
         this.appOrderNum = appOrderNum;
-        RxBus.getInstance().post(RxBus.RX_MSG_1, 2);
+        RxBus.getInstance().post(RxBus.RX_MSG_1, type);
     }
 
     /**
