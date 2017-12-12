@@ -16,7 +16,6 @@ import com.alfredposclient.activity.CashInOutHtml;
 import com.alfredposclient.activity.ClockInOROut;
 import com.alfredposclient.activity.DashboardHtml;
 import com.alfredposclient.activity.DevicesActivity;
-import com.alfredposclient.activity.DevicesHtml;
 import com.alfredposclient.activity.EditOrderHtml;
 import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.EntVoidReportHtml;
@@ -32,7 +31,6 @@ import com.alfredposclient.activity.SunmiActivity;
 import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.XZReportHtml;
-import com.alfredposclient.activity.XZRerortActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 
 public class UIHelp {
@@ -100,7 +98,7 @@ public class UIHelp {
 	}
 
 	public static void startXZReportHtml(BaseActivity context) {
-		Intent intent = new Intent(context, XZRerortActivity.class);
+		Intent intent = new Intent(context, XZReportHtml.class);
 		context.startActivity(intent);
 //		context.overridePendingTransition(R.anim.slide_bottom_in,
 //				R.anim.centre_close_70);
@@ -145,7 +143,7 @@ public class UIHelp {
 	}	
 	public static void startSystemSetting(BaseActivity context){
 		Intent intent = new Intent(context,SystemSetting.class);
-		context.startActivity(intent);
+		context.startActivityForResult(intent, 0);
 	}
 	
 	public static void startNetWorkOrderActivity(BaseActivity context, int requestCode){

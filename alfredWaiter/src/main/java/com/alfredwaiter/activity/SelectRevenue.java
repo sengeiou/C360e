@@ -1,8 +1,6 @@
 package com.alfredwaiter.activity;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,30 +13,24 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
-import com.alfredbase.ParamConst;
-import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.RevenueCenter;
-import com.alfredbase.javabean.model.WaiterDevice;
-import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderDetailTaxSQL;
-import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
-import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
+import com.moonearly.model.UdpMsg;
+import com.moonearly.utils.service.UdpServiceCallBack;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class SelectRevenue extends BaseActivity {
-	public static final int HANDLER_PAIRING_COMPLETE = 1;
+//	public static final int HANDLER_PAIRING_COMPLETE = 1;
 	public static final String CAN_SELECT_REVENUEID = "CAN_SELECT_REVENUEID";
 	// public static final int HANDLER_CONN_ERROR = 4;
 	// public static final int HANDLER_CONN_REFUSED = 5;
@@ -52,61 +44,62 @@ public class SelectRevenue extends BaseActivity {
 	private boolean doubleBackToExitPressedOnce = false;
 	private TextTypeFace textTypeFace;
 	
-	public static final int SYNC_DATA_TAG = 2015;
+//	public static final int SYNC_DATA_TAG = 2015;
 	
 	private int syncDataCount = 0;
 	@Override
 	protected void initView() {
 		super.initView();
-		loadingDialog = new LoadingDialog(context);
+//		loadingDialog = new LoadingDialog(context);
 		setContentView(R.layout.activity_select_revenue);
 		lv_revenue_centre = (ListView) findViewById(R.id.lv_revenue_centre);
-		Intent intent = getIntent();
-		HashMap<String, Object> map = (HashMap<String, Object>) intent
-				.getSerializableExtra("revenueMap");
-		kitchens = (List<RevenueCenter>) map.get("revenueCenters");
-		revenue = (RevenueCenter) map.get("revenue");
-		revenueListAdapter = new RevenueListAdapter(context, kitchens);
-		lv_revenue_centre.setAdapter(revenueListAdapter);
+//		Intent intent = getIntent();
+//		HashMap<String, Object> map = (HashMap<String, Object>) intent
+//				.getSerializableExtra("revenueMap");
+//		kitchens = (List<RevenueCenter>) map.get("revenueCenters");
+//		revenue = (RevenueCenter) map.get("revenue");
 		syncDataCount = 0;
 		lv_revenue_centre.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				RevenueCenter revenueCenter = (RevenueCenter) parent
-						.getItemAtPosition(position);
-				if (revenueCenter.getId().intValue() == revenue.getId()
-						.intValue()) {
-					App.instance.setRevenueCenter(revenueCenter);
-					Store.saveObject(context, Store.CURRENT_REVENUE_CENTER,
-							revenueCenter);
-					loadingDialog.setTitle(context.getResources().getString(R.string.loading));
-					loadingDialog.show();
-					new Thread(new Runnable() {
-						
-						@Override
-						public void run() {
-							OrderSQL.deleteAllOrder();
-							OrderDetailSQL.deleteAllOrderDetail();
-							OrderModifierSQL.deleteAllOrderModifier();
-							OrderDetailTaxSQL.deleteAllOrderDetailTax();
-						}
-					}).start();
-					syncDataCount = 0;
-					SyncData();
-					getPlaces();
-				} else {
-					UIHelp.showToast(context,
-							context.getResources().getString(R.string.link) + revenue.getRevName());
+				UdpMsg udpMsg = (UdpMsg) parent.getItemAtPosition(position);
+				App.instance.setPairingIp(udpMsg.getIp());
+				UIHelp.startEmployeeID(context);
+				finish();
+			}
+		});
+		findViewById(R.id.btn_manually).setOnClickListener(this);
+		findViewById(R.id.iv_refresh).setOnClickListener(this);
 
+		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
+		initTextTypeFace();
+		loadingDialog = new LoadingDialog(this);
+		loadingDialog.setTitle("Search Revenue ...");
+		loadingDialog.showByTime(5000);
+		Observable<UdpMsg> observable = RxBus.getInstance().register("RECEIVE_IP_ACTION");
+		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
+			@Override
+			public void call(UdpMsg udpMsg) {
+				if(revenueListAdapter == null) {
+					List<UdpMsg> udpMsgList = new ArrayList<>();
+					udpMsgList.add(udpMsg);
+					revenueListAdapter = new RevenueListAdapter(udpMsgList, context);
+					lv_revenue_centre.setAdapter(revenueListAdapter);
+				}else {
+					revenueListAdapter.notifyData(udpMsg);
 				}
 			}
 		});
-		findViewById(R.id.iv_setting).setOnClickListener(this);
-		
-		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
-		initTextTypeFace();
+		App.instance.startUDPService(App.UDP_INDEX_WAITER, "Waiter", new UdpServiceCallBack() {
+			@Override
+			public void callBack(UdpMsg udpMsg) {
+				RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
+			}
+		});
+		App.instance.searchRevenueIp();
+
 	}
 
 	private void initTextTypeFace() {
@@ -114,112 +107,42 @@ public class SelectRevenue extends BaseActivity {
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_version));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_select_rev_tips));
 	}
-	
-	private void SyncData() {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		SyncCentre.getInstance().syncCommonData(context,
-				App.instance.getPairingIp(), parameters, handler);
-	}
-
-	private void getPlaces() {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("revenueId", App.instance.getRevenueCenter().getId());
-		SyncCentre.getInstance().getPlaceInfo(context,
-				App.instance.getPairingIp(), parameters, handler);
-
-	}
-
-	private Handler handler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case HANDLER_PAIRING_COMPLETE: {
-				loadingDialog.dismiss();
-				UIHelp.startLogin(context);
-				finish();
-				break;
-			}
-			case TablesPage.HANDLER_GET_PLACE_INFO: {
-				// 预留2秒让数据存下数据库
-				BaseApplication.postHandler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						Map<String, Object> parameters = new HashMap<String, Object>();
-						WaiterDevice waiterDevice = new WaiterDevice();
-						waiterDevice
-								.setWaiterId(App.instance.getUser().getId());
-						waiterDevice.setIP(CommonUtil.getLocalIpAddress());
-						waiterDevice.setMac(CommonUtil
-								.getLocalMacAddress(context));
-						Store.saveObject(context, Store.WAITER_DEVICE,
-								waiterDevice);
-						parameters.put("device", waiterDevice);
-						parameters.put("deviceType",
-								ParamConst.DEVICE_TYPE_WAITER);
-						SyncCentre.getInstance().pairingComplete(context,
-								App.instance.getPairingIp(), parameters,
-								handler);
-					}
-				}, 2 * 1000);
-			}
-				break;
-			case ResultCode.CONNECTION_FAILED:
-				loadingDialog.dismiss();
-				UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
-						(Throwable) msg.obj, context.getResources().getString(R.string.revenue_center)));
-				break;
-			case SYNC_DATA_TAG:
-				if(syncDataCount == 5){
-					handler.sendEmptyMessage(TablesPage.HANDLER_GET_PLACE_INFO);
-				}else{
-					syncDataCount++;
-				}
-			break;
-			default:
-				break;
-			}
-		};
-	};
 
 	@Override
 	public void handlerClickEvent(View v) {
 		super.handlerClickEvent(v);
 		switch (v.getId()) {
-		case R.id.iv_setting: {
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("visibilityMap", View.GONE);
-			UIHelp.startSetting(context,map);
-			break;
-		}
+			case R.id.btn_manually:
+				UIHelp.startConnectPOS(context);
+				break;
+			case R.id.iv_refresh:
+				loadingDialog.setTitle("Search Revenue ...");
+				loadingDialog.showByTime(5000);
+				App.instance.searchRevenueIp();
+				break;
 		default:
 			break;
 		}
 	}
 
 	class RevenueListAdapter extends BaseAdapter {
-		private List<RevenueCenter> revenueCentres;
-
+		List<UdpMsg> udpMsgList;
 		private LayoutInflater inflater;
 
-		public RevenueListAdapter() {
-
-		}
-
-		public RevenueListAdapter(Context context,
-				List<RevenueCenter> revenueCentres) {
-			if (revenueCentres == null)
-				revenueCentres = Collections.emptyList();
-			this.revenueCentres = revenueCentres;
+		public RevenueListAdapter(List<UdpMsg> udpMsgList, Context context) {
+			this.udpMsgList = new ArrayList<>();
+			this.udpMsgList.addAll(udpMsgList);
 			inflater = LayoutInflater.from(context);
 		}
 
 		@Override
 		public int getCount() {
-			return revenueCentres.size();
+			return udpMsgList.size();
 		}
 
 		@Override
 		public Object getItem(int arg0) {
-			return revenueCentres.get(arg0);
+			return udpMsgList.get(arg0);
 		}
 
 		@Override
@@ -238,9 +161,23 @@ public class SelectRevenue extends BaseActivity {
 			} else {
 				holder = (ViewHolder) arg1.getTag();
 			}
-			holder.tv_text.setText(revenueCentres.get(arg0).getRevName());
+			UdpMsg udpMsg = udpMsgList.get(arg0);
+			holder.tv_text.setText(udpMsg.getName() + "\n" + udpMsg.getIp());
 			textTypeFace.setTrajanProRegular(holder.tv_text);
 			return arg1;
+		}
+
+		private void  addData(UdpMsg udpMsg){
+			for(UdpMsg udpMsg1 : this.udpMsgList){
+				if(udpMsg1.getIp().equals(udpMsg.getIp())){
+					return;
+				}
+			}
+			this.udpMsgList.add(udpMsg);
+		}
+		public void notifyData(UdpMsg udpMsg) {
+			addData(udpMsg);
+			notifyDataSetChanged();
 		}
 
 		class ViewHolder {
@@ -251,8 +188,9 @@ public class SelectRevenue extends BaseActivity {
 	@Override
 	public void onBackPressed() {
 		 if (doubleBackToExitPressedOnce) {
-		        super.onBackPressed();
-		        return;
+			 revenueListAdapter = null;
+			super.onBackPressed();
+			return;
 		    }
 
 		    this.doubleBackToExitPressedOnce = true;
@@ -262,7 +200,7 @@ public class SelectRevenue extends BaseActivity {
 
 		        @Override
 		        public void run() {
-		            doubleBackToExitPressedOnce=false;                       
+		            doubleBackToExitPressedOnce=false;
 		        }
 		    }, 2000);
 	}

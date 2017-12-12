@@ -173,6 +173,7 @@ public abstract class NanoHTTPD {
             public void run() {
                 do {
                     try {
+                        System.out.println("准备接受请求");
                         final Socket finalAccept = myServerSocket.accept();
                         registerConnection(finalAccept);
                         finalAccept.setSoTimeout(SOCKET_READ_TIMEOUT);
@@ -186,15 +187,15 @@ public abstract class NanoHTTPD {
                                     outputStream = finalAccept.getOutputStream();
                                     TempFileManager tempFileManager = tempFileManagerFactory.create();
                                     HTTPSession session = new HTTPSession(tempFileManager, inputStream, outputStream, finalAccept.getInetAddress());
-                                    while (!finalAccept.isClosed()) {
+//                                    while (!finalAccept.isClosed()) {
                                         session.execute();
-                                    }
+//                                    }
                                 } catch (Exception e) {
                                     // When the socket is closed by the client, we throw our own SocketException
                                     // to break the  "keep alive" loop above.
-                                    if (!(e instanceof SocketException && "NanoHttpd Shutdown".equals(e.getMessage()))) {
+//                                    if (!(e instanceof SocketException && "NanoHttpd Shutdown".equals(e.getMessage()))) {
                                         e.printStackTrace();
-                                    }
+//                                    }
                                 } finally {
                                     safeClose(outputStream);
                                     safeClose(inputStream);
@@ -204,6 +205,7 @@ public abstract class NanoHTTPD {
                             }
                         });
                     } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 } while (!myServerSocket.isClosed());
             }
@@ -889,6 +891,7 @@ public abstract class NanoHTTPD {
                     } catch (Exception e) {
                         safeClose(inputStream);
                         safeClose(outputStream);
+                        e.printStackTrace();
                         throw new SocketException("NanoHttpd Shutdown");
                     }
                     if (read == -1) {

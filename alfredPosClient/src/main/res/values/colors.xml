@@ -51,6 +51,7 @@
 
 	<color name="grid_bg">#FFFFFFFF</color>
 	<color name="grid_border">#EDEDED</color>
+	<color name="transparence_back">#4D000000</color>
 
 
 </resources>

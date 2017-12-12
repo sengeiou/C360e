@@ -110,7 +110,8 @@ public class Welcome extends BaseActivity {
 		MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
 		User user = Store.getObject(context, Store.WAITER_USER, User.class);
 		if (mainPosInfo == null) {
-			UIHelp.startConnectPOS(context);
+			UIHelp.startSelectRevenue(context);
+//			UIHelp.startConnectPOS(context);
 			finish();
 		} else if (user == null) {
 			App.instance.setPairingIp(mainPosInfo.getIP());

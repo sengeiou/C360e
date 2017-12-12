@@ -85,7 +85,7 @@ public class EditSettlementPage extends BaseActivity {
     public static final String EDIT_ITEM_ACTION = "EDIT_ITEM_ACTION";
     private VerifyDialog verifyDialog;
     private View view_top_line;
-
+    EditSettlementAdapter editSettlementAdapter;
     @Override
     protected void initView() {
         super.initView();
@@ -96,7 +96,7 @@ public class EditSettlementPage extends BaseActivity {
                 findViewById(R.id.rl_root), mHandler);
         verifyDialog = new VerifyDialog(context, mHandler);
         view_top_line = findViewById(R.id.view_top_line);
-        EditSettlementAdapter editSettlementAdapter = new EditSettlementAdapter(context, getSettlementList(), verifyDialog);
+        editSettlementAdapter = new EditSettlementAdapter(context, getSettlementList(), verifyDialog);
         ListView lv_payment = (ListView) findViewById(R.id.lv_payment);
         lv_payment.setAdapter(editSettlementAdapter);
         lv_payment.setOnItemClickListener(new OnItemClickListener() {
@@ -169,7 +169,10 @@ public class EditSettlementPage extends BaseActivity {
                 break;
 
                 case MainPage.VIEW_EVENT_CLOSE_BILL: {
-                    Intent intentCloseBill = new Intent();
+//                    Intent intentCloseBill = new Intent();
+                    currentOrder = OrderSQL.getOrder(currentOrder.getId().intValue());
+                    editSettlementAdapter.setEditSettlementInfos(getSettlementList());
+                    editSettlementAdapter.notifyDataSetChanged();
                     HashMap<String, String> map = (HashMap<String, String>) msg.obj;
                     TableInfo table = TableInfoSQL.getTableById(
                             currentOrder.getTableId());

@@ -21,7 +21,7 @@
     <string name="online_order">Online Order</string>
     <string name="have_online_order">You have a new online order</string>
     <string name="color_select_goods">Menu background setting</string>
-
+    <string name="select_revenue_center">Your are eligible to serve\nin those revenue centers</string>
     <!-- ResultCode -->
     <string name="failed_connect_server">Failed to connect to </string> 
     <string name="try_later">,Please try later</string> 

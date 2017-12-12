@@ -140,6 +140,8 @@ public class ParamConst {
 	// 是否是赠送(0非赠送、1赠送)
 	public static final int NOT_FREE = 0;
 	public static final int FREE = 1;
+
+
 	
 	// 是否外带(0不外带、1外带)
 	public static final int NOT_TAKE_AWAY = 0;
@@ -152,7 +154,7 @@ public class ParamConst {
 	public static final int SYNC_MSG_SUCCESS = 2; // success processed in
 													// backend
 	public static final int SYNC_MSG_MALDATA = 3; // data failed processed at
-													// backend, no need send any
+					 								// backend, no need send any
 													// more
 
 	// 0:没有发送，1：发送了，但是没有成功，2：发送成功

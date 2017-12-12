@@ -161,7 +161,7 @@ public class ObjectFactory {
 					order.setId(CommonSQL.getNextSeq(TableNames.Order));
 					order.setOrderOriginId(ParamConst.ORDER_ORIGIN_APP);
 					order.setUserId(user.getId());
-					order.setPersons(4);
+					order.setPersons(appOrder.getPerson() > 0 ? appOrder.getPerson() : 4);
 					if(isKiosk)
 						order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
 					else
@@ -313,6 +313,7 @@ public class ObjectFactory {
 
 	public OrderDetail createOrderDetailForWaiter(Order order,
 			ItemDetail itemDetail, int groupId, User user) {
+		long time = Math.abs(System.currentTimeMillis());
 		int orderDetailId = CommonSQL.getNextSeq(TableNames.OrderDetail);
 		if (orderDetailId < 1000000) {
 			orderDetailId += 1000000;
@@ -333,7 +334,6 @@ public class ObjectFactory {
 		orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
 		orderDetail.setItemPrice(itemDetail.getPrice());
 		orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
-		long time = System.currentTimeMillis();
 		orderDetail.setCreateTime(time);
 		orderDetail.setUpdateTime(time);
 		orderDetail.setFromOrderDetailId(0);

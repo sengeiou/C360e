@@ -23,6 +23,7 @@ public class AppOrder {
     private String orderRemark;
     private int eatType; // 0 堂吃, 1 打包
     private int payStatus;
+    private int person;
 
     public Integer getId() {
         return id;
@@ -208,6 +209,15 @@ public class AppOrder {
         this.payStatus = payStatus;
     }
 
+    public int getPerson() {
+        return person;
+    }
+
+    public void setPerson(int person) {
+        this.person = person;
+    }
+
+
     @Override
     public String toString() {
         return "AppOrder{" +
@@ -233,6 +243,7 @@ public class AppOrder {
                 ", orderRemark='" + orderRemark + '\'' +
                 ", eatType=" + eatType +
                 ", payStatus=" + payStatus +
+                ", person=" + person +
                 '}';
     }
 }

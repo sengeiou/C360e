@@ -6,8 +6,16 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
@@ -30,6 +38,9 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 	private TextView tv_id_5;
 	private Numerickeyboard employee_id_keyboard;
 	private TextTypeFace textTypeFace;
+	public static final int SYNC_DATA_TAG = 2015;
+	public static final int HANDLER_PAIRING_COMPLETE = 1001;
+	private int syncDataCount = 0;
 	/**
 	 * 当前键盘输入对应的状态，0表示输入的员工ID，1表示输入的密码
 	 */
@@ -70,11 +81,31 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
-			case ResultCode.SUCCESS:
+			case ResultCode.SUCCESS: {
 				loadingDialog.dismiss();
 				HashMap<String, Object> map = (HashMap<String, Object>) msg.obj;
-				UIHelp.startSelectRevenue(context, map);
-				finish();
+//				UIHelp.startSelectRevenue(context, map);
+				RevenueCenter revenueCenter = (RevenueCenter) map.get("revenue");
+				App.instance.setRevenueCenter(revenueCenter);
+				Store.saveObject(context, Store.CURRENT_REVENUE_CENTER,
+						revenueCenter);
+				loadingDialog.setTitle(context.getResources().getString(R.string.loading));
+				loadingDialog.show();
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						OrderSQL.deleteAllOrder();
+						OrderDetailSQL.deleteAllOrderDetail();
+						OrderModifierSQL.deleteAllOrderModifier();
+						OrderDetailTaxSQL.deleteAllOrderDetailTax();
+					}
+				}).start();
+				syncDataCount = 0;
+				SyncData();
+				getPlaces();
+//				finish();
+			}
 				break;
 			case ResultCode.USER_NO_PERMIT:
 				loadingDialog.dismiss();
@@ -85,6 +116,43 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 				UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable)msg.obj, 
 						context.getResources().getString(R.string.revenue_center)));
 				break;
+			case HANDLER_PAIRING_COMPLETE: {
+				loadingDialog.dismiss();
+				UIHelp.startLogin(context);
+				finish();
+				break;
+			}
+				case TablesPage.HANDLER_GET_PLACE_INFO: {
+					// 预留2秒让数据存下数据库
+					BaseApplication.postHandler.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							Map<String, Object> parameters = new HashMap<String, Object>();
+							WaiterDevice waiterDevice = new WaiterDevice();
+							waiterDevice
+									.setWaiterId(App.instance.getUser().getId());
+							waiterDevice.setIP(CommonUtil.getLocalIpAddress());
+							waiterDevice.setMac(CommonUtil
+									.getLocalMacAddress(context));
+							Store.saveObject(context, Store.WAITER_DEVICE,
+									waiterDevice);
+							parameters.put("device", waiterDevice);
+							parameters.put("deviceType",
+									ParamConst.DEVICE_TYPE_WAITER);
+							SyncCentre.getInstance().pairingComplete(context,
+									App.instance.getPairingIp(), parameters,
+									handler);
+						}
+					}, 2 * 1000);
+				}
+				break;
+				case SYNC_DATA_TAG:
+					if(syncDataCount == 5){
+						handler.sendEmptyMessage(TablesPage.HANDLER_GET_PLACE_INFO);
+					}else{
+						syncDataCount++;
+					}
+					break;
 			default:
 				break;
 			}
@@ -119,6 +187,18 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 		}
 	}
 
+	private void SyncData() {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		SyncCentre.getInstance().syncCommonData(context,
+				App.instance.getPairingIp(), parameters, handler);
+	}
+	private void getPlaces() {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("revenueId", App.instance.getRevenueCenter().getId());
+		SyncCentre.getInstance().getPlaceInfo(context,
+				App.instance.getPairingIp(), parameters, handler);
+
+	}
 
 	private void setPassword(int key_len) {
 		switch (key_len) {

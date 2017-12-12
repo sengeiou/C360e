@@ -461,6 +461,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		});
 		// 系统初始化工作
 		App.instance.startHttpServer();
+		App.instance.startUDPService(App.UDP_INDEX_POS, App.instance.getRevenueCenter().getRevName(), null);
 		observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
 		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
 			@Override

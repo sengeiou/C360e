@@ -1180,15 +1180,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		DialogFactory.commonTwoBtnDialog(parent, "Warring", "This action is irreversible,\n Are you sure ?", "YES", "NO", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail);
+				OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail, oldTotal);
 				order = OrderSQL.getOrder(order.getId());
 				orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
-				RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
-				if(roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BigDecimal.ZERO) == 1){
-					roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, BH.getBD(order.getTotal()), App.instance.getLocalRestaurantConfig().getRoundType());
-					OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
-					OrderSQL.update(order);
-				}
 				tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.sub(BH.getBD(oldTotal), BH.getBD(order.getTotal()), true).toString());
 				initBillSummary();
 			}

@@ -19,7 +19,6 @@ import com.SlideExpandable.AbstractSlideExpandableListAdapter;
 import com.SlideExpandable.SlideExpandableListView;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
@@ -474,22 +473,22 @@ public class MainPageOrderView extends LinearLayout {
 				}
 			});
 
-			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-					orderDetail.getItemId());
+//			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
+//					orderDetail.getItemId());
 			// bob: itemDetails will be null in case that wait app keep old
 			// wrong menu
 			// if (itemDetail == null) {
 			// return arg1;
 			// }
-			if(itemDetail == null){
-				return arg1;
-			}
+//			if(itemDetail == null){
+//				return arg1;
+//			}
 			if (modifiers != null) {
 				holder.modifier.setText(modifiers);
 			}
 			holder.specialInstract
 					.setText(orderDetail.getSpecialInstractions());
-			holder.name.setText(itemDetail.getItemName());
+			holder.name.setText(orderDetail.getItemName());
 			holder.price.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()));
 			holder.tv_qty.setText(orderDetail.getItemNum() + "");
 			holder.tv_qty.setBackgroundColor(context.getResources().getColor(

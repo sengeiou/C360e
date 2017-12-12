@@ -1,4 +1,5 @@
 package com.alfredposclient.activity;
+
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -10,44 +11,31 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
-import com.alfredbase.ParamHelper;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.RevenueCenter;
-import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
-import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportHourlySQL;
 import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
 import com.alfredbase.store.sql.ReportPluDayItemSQL;
-import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
-import com.alfredbase.utils.CommonUtil;
-import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.Calendar.CalendarCard;
 import com.alfredposclient.Calendar.CardGridItem;
 import com.alfredposclient.Calendar.OnCellItemClick;
 import com.alfredposclient.R;
+import com.alfredposclient.adapter.XZReportDetailAdapter;
 import com.alfredposclient.adapter.XZReportHourlyAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
-import com.alfredposclient.utils.AlertToDeviceSetting;
-import com.alfredposclient.utils.DialogSelectReportPrint;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,7 +56,7 @@ public class XZRerortActivity extends BaseActivity {
     private RevenueCenter revenueCenter;
     private LoadingDialog loadingDialog;
     private ReportDaySales reportDaySales;
-    private XZReportHourlyAdapter hourlyAdapter;
+//    private XZReportHourlyAdapter hourlyAdapter;
     private ListView lv_hourly_analsis;
     private SimpleDateFormat yearMonthDayFormater = new SimpleDateFormat("yyyy年MM月dd日");
     private String curStr;
@@ -318,13 +306,16 @@ public class XZRerortActivity extends BaseActivity {
             ((TextView) findViewById(R.id.tv_total_temp_menu)).setText(reportDaySales.getOpenCount().toString());
 
             List<ReportHourly> reportHourlies = ReportHourlySQL.getReportHourlysByTime(time);
-            if (reportHourlies != null) {
-                if (reportHourlies.size() > 0) {
-                    hourlyAdapter = new XZReportHourlyAdapter(reportHourlies, XZRerortActivity.this);
-                    lv_hourly_analsis.setAdapter(hourlyAdapter);
-                }
+            if (reportHourlies != null && reportHourlies.size() > 0) {
+                XZReportHourlyAdapter hourlyAdapter = new XZReportHourlyAdapter(reportHourlies, XZRerortActivity.this);
+                lv_hourly_analsis.setAdapter(hourlyAdapter);
             }
             List<ReportPluDayItem> pluDayItems = ReportPluDayItemSQL.getReportPluDayItemsByTime(time);
+            if(pluDayItems != null && pluDayItems.size() > 0){
+                XZReportDetailAdapter xzReportDetailAdapter = new XZReportDetailAdapter(pluDayItems, context);
+                ((ListView) findViewById(R.id.lv_detail_analsis)).setAdapter(xzReportDetailAdapter);
+            }
+
             List<ReportPluDayComboModifier> pluDayComboModifiers = ReportPluDayComboModifierSQL.getReportPluDayComboModifiersByTime(time);
 
         }else {
@@ -425,7 +416,7 @@ public class XZRerortActivity extends BaseActivity {
                 loadingDialog.show();
                 Map<String, Object> param = new HashMap<String, Object>();
                 param.put("businessDate", TimeUtil.getMDY(date));
-                param.put("bizDate", date);
+                param.put("bizDate", TimeUtil.getBusinessDateByDay(date, 0));
                 param.put("revenueId", revenueCenter.getId().intValue());
                 SyncCentre.getInstance().loadCloudDaySalesReport(
                         context, param, handler);

@@ -20,7 +20,7 @@
     <string name="online_order">新的网络订单</string>
     <string name="have_online_order">你有一个新的网络订单,请注意查收</string>
     <string name="color_select_goods">菜品背景设置</string>
-
+    <string name="select_revenue_center">请选择你要工作的收银中心</string>
     <!-- ResultCode -->
     <string name="failed_connect_server">连接失败至</string> 
     <string name="try_later">,请稍后在试</string> 

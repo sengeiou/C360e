@@ -16,10 +16,10 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredwaiter.R;
+import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.activity.KOTNotification;
 import com.alfredwaiter.activity.Login;
 import com.alfredwaiter.activity.OrderDetailsTotal;
-import com.alfredwaiter.activity.SelectRevenue;
 import com.alfredwaiter.activity.Setting;
 import com.alfredwaiter.activity.TablesPage;
 import com.alfredwaiter.activity.Welcome;
@@ -169,7 +169,7 @@ public class HttpAPI {
 //									public void run() {
 										HttpAnalysis.getUsers(statusCode,
 												headers, responseBody);
-										handler.sendEmptyMessage(SelectRevenue.SYNC_DATA_TAG);
+										handler.sendEmptyMessage(EmployeeID.SYNC_DATA_TAG);
 //									}
 //								}).start();
 							} else {
@@ -236,7 +236,7 @@ public class HttpAPI {
 										HttpAnalysis.getItemCategory(
 												statusCode, headers,
 												responseBody);
-										handler.sendEmptyMessage(SelectRevenue.SYNC_DATA_TAG);
+										handler.sendEmptyMessage(EmployeeID.SYNC_DATA_TAG);
 //									}
 //								}).start();
 							} else {
@@ -309,7 +309,7 @@ public class HttpAPI {
 //									public void run() {
 										HttpAnalysis.getAllModifier(statusCode,
 												headers, responseBody);
-										handler.sendEmptyMessage(SelectRevenue.SYNC_DATA_TAG);
+										handler.sendEmptyMessage(EmployeeID.SYNC_DATA_TAG);
 //									}
 //								}).start();
 							} else {
@@ -346,7 +346,7 @@ public class HttpAPI {
 //									public void run() {
 										HttpAnalysis.getTax(statusCode,
 												headers, responseBody);
-										handler.sendEmptyMessage(SelectRevenue.SYNC_DATA_TAG);
+										handler.sendEmptyMessage(EmployeeID.SYNC_DATA_TAG);
 //									}
 //								}).start();
 							} else {
@@ -385,7 +385,7 @@ public class HttpAPI {
 //									public void run() {
 										HttpAnalysis.getHappyHour(statusCode,
 												headers, responseBody);
-										handler.sendEmptyMessage(SelectRevenue.SYNC_DATA_TAG);
+										handler.sendEmptyMessage(EmployeeID.SYNC_DATA_TAG);
 //									}
 //								}).start();
 							} else {
@@ -424,7 +424,7 @@ public class HttpAPI {
 									public void run() {
 										HttpAnalysis.getPlaceInfo(statusCode,
 												headers, responseBody);
-										mHandler.sendEmptyMessage(SelectRevenue.SYNC_DATA_TAG);
+										mHandler.sendEmptyMessage(EmployeeID.SYNC_DATA_TAG);
 									}
 								}).start();
 								

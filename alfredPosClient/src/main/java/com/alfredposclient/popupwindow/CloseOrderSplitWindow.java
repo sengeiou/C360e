@@ -1391,16 +1391,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		DialogFactory.commonTwoBtnDialog(parent, "Warring", "This operation is irreversible,\n Are you sure ?", "YES", "NO", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail);
+				OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail, oldTotal);
 				order = OrderSQL.getOrder(order.getId());
 				orderSplit = OrderSplitSQL.get(orderSplit.getId().intValue());
 				orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
-				RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
-				if(roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BigDecimal.ZERO) == 1){
-					roundAmount = ObjectFactory.getInstance().getRoundAmountByOrderSplit(orderSplit, orderBill, BH.getBD(order.getTotal()), App.instance.getLocalRestaurantConfig().getRoundType(), App.instance.getBusinessDate());
-					OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
-					OrderSplitSQL.update(orderSplit);
-				}
 				tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.sub(BH.getBD(oldTotal), BH.getBD(orderSplit.getTotal()), true).toString());
 				initBillSummary();
 			}

@@ -127,7 +127,6 @@ import com.moonearly.model.GoodsModel;
 import com.moonearly.model.OrderModel;
 import com.moonearly.utils.service.TcpSendCallBack;
 import com.moonearly.utils.service.TcpUdpFactory;
-import com.moonearly.utils.service.UdpSendCallBack;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -179,7 +178,6 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
-    private static final int DATABASE_VERSION = 17;
     private static final String DATABASE_NAME = "com.alfredposclient";
 
     private String callAppIp;
@@ -401,13 +399,13 @@ public class App extends BaseApplication {
                 }
             }
         });
-        TcpUdpFactory.startUdpServer(1);
-        TcpUdpFactory.getServiceIp(5, new UdpSendCallBack() {
-            @Override
-            public void call(boolean isSucceed) {
 
-            }
-        });
+//        TcpUdpFactory.getServiceIp(5, new UdpSendCallBack() {
+//            @Override
+//            public void call(boolean isSucceed) {
+//
+//            }
+//        });
 //        TcpUdpFactory.tcpSend(5, "{}", new TcpSendCallBack() {
 //            @Override
 //            public void call(boolean isSucceed) {
@@ -453,28 +451,6 @@ public class App extends BaseApplication {
     public XmppThread getXmppThread() {
         return xmppThread;
     }
-
-    //    public void checkoutVersion() {
-//        if(pi == null)
-//            return;
-//        try {
-//            PackageInfo pi = getBaseContext().getPackageManager().getPackageInfo(
-//                    getBaseContext().getPackageName(),
-//                    PackageManager.GET_CONFIGURATIONS);
-//            Map<String, Object> map = new HashMap<String, Object>();
-//            map.put("versionCode", pi.versionCode);
-//            SyncCentre.getInstance().getAppVersion(getBaseContext(), map, 0);
-//            SyncCentre.getInstance().getAppVersion(getBaseContext(), map, 5);
-//            SyncCentre.getInstance().getAppVersion(getBaseContext(), map, 6);
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-
-//    public PushThread getPushThread() {
-//        return pushThread;
-//    }
 
 
     public Map<Integer, List<PrinterDevice>> getMap() {

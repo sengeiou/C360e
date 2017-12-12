@@ -123,7 +123,7 @@ public class TablesPage extends BaseActivity {
 				}
 				break;
 			}
-			case SelectRevenue.SYNC_DATA_TAG :
+			case EmployeeID.SYNC_DATA_TAG :
 				loadingDialog.dismiss();
 				placesList = PlaceInfoSQL.getAllPlaceInfo();
 				adapter.notifyDataSetChanged();

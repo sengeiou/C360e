@@ -40,8 +40,8 @@ public class AppOrderSQL {
 					+ TableNames.AppOrder
 					+ " (id, orderNo, custId, restId, revenueId, sourceType, tableId, orderStatus, subTotal, taxAmount, "
 					+ " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType,"
-					+ " orderRemark, eatType, payStatus)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " orderRemark, eatType, payStatus, person)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { appOrder.getId(), appOrder.getOrderNo(),
@@ -54,7 +54,8 @@ public class AppOrderSQL {
 					appOrder.getCreateTime(), appOrder.getUpdateTime(),
 					appOrder.getTableType(), appOrder.getTableNo(),
 					appOrder.getBizType(), appOrder.getOrderRemark(),
-					appOrder.getEatType(), appOrder.getPayStatus()});
+					appOrder.getEatType(), appOrder.getPayStatus(),
+					appOrder.getPerson()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -70,8 +71,8 @@ public class AppOrderSQL {
 					+ TableNames.AppOrder
 					+ " (id, orderNo, custId, restId, revenueId, sourceType, tableId, orderStatus, subTotal, taxAmount, "
 					+ " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType,"
-					+ " orderRemark, eatType, payStatus)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " orderRemark, eatType, payStatus, person)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { appOrder.getId(), appOrder.getOrderNo(),
@@ -84,7 +85,8 @@ public class AppOrderSQL {
 							appOrder.getCreateTime(), appOrder.getUpdateTime(),
 							appOrder.getTableType(), appOrder.getTableNo(),
 							appOrder.getBizType(), appOrder.getOrderRemark(),
-							appOrder.getEatType(), appOrder.getPayStatus()});
+							appOrder.getEatType(), appOrder.getPayStatus(),
+							appOrder.getPerson()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -124,6 +126,7 @@ public class AppOrderSQL {
 				appOrder.setOrderRemark(cursor.getString(19));
 				appOrder.setEatType(cursor.getInt(20));
 				appOrder.setPayStatus(cursor.getInt(21));
+				appOrder.setPerson(cursor.getInt(22));
 				result.add(appOrder);
 			}
 		} catch (Exception e) {
@@ -168,6 +171,7 @@ public class AppOrderSQL {
 				appOrder.setOrderRemark(cursor.getString(19));
 				appOrder.setEatType(cursor.getInt(20));
 				appOrder.setPayStatus(cursor.getInt(21));
+				appOrder.setPerson(cursor.getInt(22));
 				result.add(appOrder);
 			}
 		} catch (Exception e) {
@@ -214,6 +218,7 @@ public class AppOrderSQL {
 				appOrder.setOrderRemark(cursor.getString(19));
 				appOrder.setEatType(cursor.getInt(20));
 				appOrder.setPayStatus(cursor.getInt(21));
+				appOrder.setPerson(cursor.getInt(22));
 				result.add(appOrder);
 			}
 		} catch (Exception e) {
@@ -258,6 +263,7 @@ public class AppOrderSQL {
 				appOrder.setOrderRemark(cursor.getString(19));
 				appOrder.setEatType(cursor.getInt(20));
 				appOrder.setPayStatus(cursor.getInt(21));
+				appOrder.setPerson(cursor.getInt(22));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

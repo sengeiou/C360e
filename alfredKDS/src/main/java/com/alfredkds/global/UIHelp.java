@@ -1,7 +1,5 @@
 package com.alfredkds.global;
 
-import java.util.ArrayList;
-
 import android.content.Intent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,9 +19,12 @@ import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.activity.KotHistory;
 import com.alfredkds.activity.Login;
 import com.alfredkds.activity.SelectKitchen;
+import com.alfredkds.activity.SelectRevenue;
 import com.alfredkds.activity.Setting;
 import com.alfredkds.activity.Summary;
 import com.alfredkds.activity.Welcome;
+
+import java.util.ArrayList;
 
 public class UIHelp {
 	
@@ -34,6 +35,10 @@ public class UIHelp {
 	
 	public static void startConnectPOS(BaseActivity context) {
 		Intent intent = new Intent(context, ConnectPOS.class);
+		context.startActivity(intent);
+	}
+	public static void startSelectRevenue(BaseActivity context) {
+		Intent intent = new Intent(context, SelectRevenue.class);
 		context.startActivity(intent);
 	}
 

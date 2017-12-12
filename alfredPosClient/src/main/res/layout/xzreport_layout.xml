@@ -2804,7 +2804,7 @@
             </LinearLayout>
 
             <ListView
-                android:id="@+id/lv_hourly_sales"
+                android:id="@+id/lv_summary_sales"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/ll_summary_bottom"

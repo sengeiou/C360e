@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.BaseApplication;
 import com.alfredbase.utils.NetUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
@@ -273,6 +272,7 @@ public class ConnectPOS extends BaseActivity implements Callback,
     		playBeepSoundAndVibrate();
     		UIHelp.startEmployeeID(context);
     		finish();
+			App.instance.finishTheActivity(SelectRevenue.class);
     	} else {
     		UIHelp.showToast(context, context.getResources().getString(R.string.invalid_ip));
     	}		
@@ -467,23 +467,23 @@ public class ConnectPOS extends BaseActivity implements Callback,
 
 	}
 	
-	@Override
-	public void onBackPressed() {
-		 if (doubleBackToExitPressedOnce) {
-		        super.onBackPressed();
-		        return;
-		    }
-
-		    this.doubleBackToExitPressedOnce = true;
-		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
-
-		BaseApplication.postHandler.postDelayed(new Runnable() {
-
-		        @Override
-		        public void run() {
-		            doubleBackToExitPressedOnce=false;                       
-		        }
-		    }, 2000);
-	}
+//	@Override
+//	public void onBackPressed() {
+//		 if (doubleBackToExitPressedOnce) {
+//		        super.onBackPressed();
+//		        return;
+//		    }
+//
+//		    this.doubleBackToExitPressedOnce = true;
+//		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
+//
+//		BaseApplication.postHandler.postDelayed(new Runnable() {
+//
+//		        @Override
+//		        public void run() {
+//		            doubleBackToExitPressedOnce=false;
+//		        }
+//		    }, 2000);
+//	}
 
 }

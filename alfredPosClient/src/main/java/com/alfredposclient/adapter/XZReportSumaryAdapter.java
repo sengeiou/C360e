@@ -18,12 +18,12 @@ import java.util.List;
  * Created by Zun on 2017/6/12 0012.
  */
 
-public class XZReportHourlyAdapter extends BaseAdapter {
+public class XZReportSumaryAdapter extends BaseAdapter {
 
     private List<ReportHourly> list;
     private BaseActivity activity;
 
-    public XZReportHourlyAdapter(List<ReportHourly> list, BaseActivity activity) {
+    public XZReportSumaryAdapter(List<ReportHourly> list, BaseActivity activity) {
         this.list = list;
         this.activity = activity;
     }

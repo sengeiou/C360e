@@ -22,6 +22,8 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
+import com.moonearly.utils.service.TcpUdpFactory;
+import com.moonearly.utils.service.UdpServiceCallBack;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -39,6 +41,7 @@ public class BaseApplication extends Application {
 
 	public static BaseApplication instance;
 	public static List<BaseActivity> activitys;
+	public static final int DATABASE_VERSION = 18;
 	/**
 	 * 注意 
 	 * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
@@ -46,14 +49,16 @@ public class BaseApplication extends Application {
 	 * 当 isDebug == true， isOpenLog == true 为本地的服务器
 	 */
 
-	public static boolean isDebug = true;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = true;	//	release 时设置为false
+	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
+	public static boolean isOpenLog = false;	//	release 时设置为false
 
 
-
+	public static int UDP_INDEX_POS = 1;
+	public static int UDP_INDEX_WAITER = 2;
+	public static int UDP_INDEX_KDS = 3;
 	private Handler reLoginHandler = new Handler();
 	public static Handler postHandler = new Handler();
-	/**x
+	/**
 	 * 国家电话代码
 	 * 用于区别不通过的代码逻辑
 	 */
@@ -130,6 +135,22 @@ public class BaseApplication extends Application {
 
 		System.out.println("fingerprint*******" + fingerprint);
 		System.out.println("serial*******" + serial);
+	}
+
+
+	public void startUDPService(int index, String serviceName , UdpServiceCallBack udpServiceCallBack){
+		TcpUdpFactory.startUdpServer(index, serviceName, udpServiceCallBack);
+	}
+
+	public void searchRevenueIp(){
+		TcpUdpFactory.getServiceIp(1,null);
+		postHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				TcpUdpFactory.getServiceIp(1,null);
+			}
+		}, 1000);
+
 	}
 
 	protected void wifiPolicyNever(){
@@ -348,6 +369,22 @@ public class BaseApplication extends Application {
             activitys.remove(oldActivity);
         }
     }
+
+
+	public void finishTheActivity(Class cls) {
+		while (true) {
+			BaseActivity oldActivity = activitys.get(0);
+			if (oldActivity == null) {
+				break;
+			}
+			if (oldActivity.getClass().equals(cls)) {
+				oldActivity.finish();
+				activitys.remove(oldActivity);
+				return;
+			}
+
+		}
+	}
 	
 	
 	public void finishAllActivity() {

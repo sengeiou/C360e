@@ -122,7 +122,7 @@ public class Welcome extends BaseActivity {
 		User user = Store.getObject(context, Store.KDS_USER, User.class);
 		App.instance.setRing();
 		if (mainPosInfo == null) {
-			UIHelp.startConnectPOS(context);
+			UIHelp.startSelectRevenue(context);
 			finish();
 		} else if (user == null) {
 			App.instance.setPairingIp(mainPosInfo.getIP());

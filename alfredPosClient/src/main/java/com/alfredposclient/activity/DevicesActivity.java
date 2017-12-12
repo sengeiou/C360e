@@ -30,7 +30,7 @@ import com.alfredbase.view.CustomListView;
 import com.alfredbase.view.HorizontalListView;
 import com.alfredposclient.R;
 import com.alfredposclient.adapter.DeviceGroupAdapter;
-import com.alfredposclient.adapter.DivicesAdapter;
+import com.alfredposclient.adapter.DevicesAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.UIHelp;
@@ -49,6 +49,7 @@ import java.util.Map;
 public class DevicesActivity extends BaseActivity {
     public static final int ASSIGN_PRINTER_DEVICE = 1;
     public static final int UNASSIGN_PRINTER_DEVICE = -1;
+    public static final int MANUALLY_ADD_PRINTER = -100;
 
     final static String TAG = "DevicesActivity";
 
@@ -66,12 +67,10 @@ public class DevicesActivity extends BaseActivity {
     //KDS
     private LinearLayout devices_transfer_lyt;
 
-    //手动添加打印机
-    private LinearLayout devices_add_ll;
 
     //waiter
     private LinearLayout devices_waiter_lyt;
-    private DivicesAdapter adapter;
+    private DevicesAdapter adapter;
 
     private HorizontalListView hv_printer_group;
 
@@ -79,10 +78,9 @@ public class DevicesActivity extends BaseActivity {
 
     private DeviceGroupAdapter deviceGroupAdapter;
 
-    private View view;
     private List<PrinterDevice> printerDBModelList = new ArrayList<PrinterDevice>();
     private List<Printer> printerDeptModelList = new ArrayList<Printer>();
-
+    private int selectedViewId;
     private SelectPrintWindow selectPrintWindow;
     private int dex = 0;
 
@@ -97,6 +95,10 @@ public class DevicesActivity extends BaseActivity {
     Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
+                case MANUALLY_ADD_PRINTER:
+                    selectPrintWindow = new SelectPrintWindow(DevicesActivity.this, devices_customlistview, handler);
+                    selectPrintWindow.show("TM-T81", "TM-T81");
+                    break;
                 case UNASSIGN_PRINTER_DEVICE: //解绑打印机
                     PrinterDevice device = (PrinterDevice) msg.obj;
                     unassignDevice(device);
@@ -135,33 +137,43 @@ public class DevicesActivity extends BaseActivity {
                             }
                     break;
                 case JavaConnectJS.ACTION_NEW_KDS_ADDED: // 连接KDS设备
-                    KDSDevice kds = (KDSDevice)msg.obj;
-                    Map<Integer, KDSDevice> map1 = new HashMap<Integer, KDSDevice>();
-                    map1.put(kds.getDevice_id(), kds);
-                    App.instance.addKDSDevice(kds.getDevice_id(), kds);
+//                    KDSDevice kds = (KDSDevice)msg.obj;
+//                    Map<Integer, KDSDevice> map1 = new HashMap<Integer, KDSDevice>();
+//                    map1.put(kds.getDevice_id(), kds);
+//                    App.instance.addKDSDevice(kds.getDevice_id(), kds);
+                    if(selectedViewId == R.id.devices_transfer_lyt){
+                        MViews(selectedViewId);
+                    }
                     break;
                 case JavaConnectJS.ACTION_NEW_WAITER_ADDED: // 连接Waiter设备
-                    WaiterDevice waiter = (WaiterDevice)msg.obj;
-                    Map<Integer, WaiterDevice> map2 = new HashMap<Integer, WaiterDevice>();
-                    map2.put(waiter.getWaiterId(), waiter);
-                    App.instance.setWaiterDevices(map2);
+//                    WaiterDevice waiter = (WaiterDevice)msg.obj;
+//                    Map<Integer, WaiterDevice> map2 = new HashMap<Integer, WaiterDevice>();
+//                    map2.put(waiter.getWaiterId(), waiter);
+//                    App.instance.setWaiterDevices(map2);
+                    if(selectedViewId == R.id.devices_waiter_lyt){
+                        MViews(selectedViewId);
+                    }
                     break;
                 case RemotePrintServiceCallback.PRINTERS_DISCOVERIED: // 同一局域网内搜索可绑定的打印机
                     refreshPrinterDevices((Map<String, String>) msg.obj);
                     break;
                 case ASSIGN_PRINTER_DEVICE: // 绑定打印机
                     PrinterDevice printerDevice = (PrinterDevice) msg.obj;
-                    printerDevice.setDevice_id(printerDeptModelList.get(dex).getId());
-                    List<PrinterDevice> list = new ArrayList<PrinterDevice>();
-                    list.add(printerDevice);
-                    adapter.setList(list, 1);
-                    App.instance.setPrinterDevice(printerDeptModelList.get(dex).getId(), printerDevice);
+                    Printer prt = printerDeptModelList.get(dex);
+                    printerDevice.setDevice_id(prt.getId());
+                    printerDevice.setIsCahierPrinter(prt.getIsCashdrawer());
+//                    List<PrinterDevice> list = new ArrayList<PrinterDevice>();
+//                    list.add(printerDevice);
+//                    adapter.setList(list, 1);
+//                    App.instance.setPrinterDevice(prt.getId(), printerDevice);
                     LocalDevice localDevice = ObjectFactory.getInstance().getLocalDevice(printerDevice.getName(), printerDevice.getModel(),
                             ParamConst.DEVICE_TYPE_PRINTER,
                             printerDeptModelList.get(dex).getId(),
                             printerDevice.getIP(),
                             printerDevice.getMac());
                     CoreData.getInstance().addLocalDevice(localDevice);
+                    App.instance.loadPrinters();
+                    refreshPrinterDevices(null);
                     App.instance.discoverPrinter(handler);
                     break;
                 default:
@@ -205,18 +217,13 @@ public class DevicesActivity extends BaseActivity {
         }else{
             printerDBModelList = map.get(-1);
         }
-        if (printerDBModelList != null && printerDBModelList.size() > 0) {
-            devices_customlistview.setVisibility(View.VISIBLE);
-            devices_add_ll.setVisibility(View.GONE);
+        if(selectedViewId == R.id.devices_printe_lyt) {
             if (adapter != null) {
                 adapter.setList(printerDBModelList, 1);
             }else {
-                adapter = new DivicesAdapter(this, printerDBModelList, handler);
+                adapter = new DevicesAdapter(this, printerDBModelList, handler);
                 devices_customlistview.setAdapter(adapter);
             }
-        }else {
-            devices_customlistview.setVisibility(View.GONE);
-            devices_add_ll.setVisibility(View.VISIBLE);
         }
     }
 
@@ -238,26 +245,6 @@ public class DevicesActivity extends BaseActivity {
     }
 
     @Override
-    public void httpRequestAction(int action, Object obj) {
-        switch (action) {
-            case ParamConst.HTTP_REQ_CALLBACK_KDS_PAIRED:
-                if (obj != null) {
-                    UIHelp.showToast(this, context.getResources().getString(R.string.kds_paired));
-                    KDSDevice kds = (KDSDevice) obj;
-                    handler.sendMessage(handler.obtainMessage(JavaConnectJS.ACTION_NEW_KDS_ADDED, kds));
-                }
-                break;
-            case ParamConst.HTTP_REQ_CALLBACK_WAITER_PAIRED:
-                if (obj != null) {
-                    UIHelp.showToast(this, context.getResources().getString(R.string.waiter_paired));
-                    WaiterDevice wds = (WaiterDevice)obj;
-                    handler.sendMessage(handler.obtainMessage(JavaConnectJS.ACTION_NEW_WAITER_ADDED, wds));
-                }
-                break;
-            }
-    }
-
-    @Override
     public void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
         switch (v.getId()) {
@@ -265,23 +252,22 @@ public class DevicesActivity extends BaseActivity {
                 DevicesActivity.this.finish();
                 break;
             case R.id.devices_printe_lyt:
+                selectedViewId = v.getId();
                 float f1 = devices_printe_lyt.getY();
                 initAnimation(f1);
                 MViews(R.id.devices_printe_lyt);
                 break;
             case R.id.devices_transfer_lyt:
+                selectedViewId = v.getId();
                 float f5 = devices_transfer_lyt.getY();
                 initAnimation(f5);
                 MViews(R.id.devices_transfer_lyt);
                 break;
             case R.id.devices_waiter_lyt:
+                selectedViewId = v.getId();
                 float f9 = devices_waiter_lyt.getY();
                 initAnimation(f9);
                 MViews(R.id.devices_waiter_lyt);
-                break;
-            case R.id.devices_add_ll:
-                selectPrintWindow = new SelectPrintWindow(DevicesActivity.this, devices_customlistview, handler);
-                selectPrintWindow.show("TM-T81", "TM-T81");
                 break;
             default:
                 break;
@@ -292,41 +278,34 @@ public class DevicesActivity extends BaseActivity {
         switch (id){
             case R.id.devices_printe_lyt:
                 hv_printer_group.setVisibility(View.VISIBLE);
-                devices_customlistview.setVisibility(View.VISIBLE);
-                devices_add_ll.setVisibility(View.GONE);
                 List<PrinterDevice> devices = new ArrayList<PrinterDevice>();
                 Map<Integer, List<PrinterDevice>> hash = App.instance.getMap();
                 if (hash.containsKey(printerDeptModelList.get(dex).getId())) {
                     devices = hash.get(printerDeptModelList.get(dex).getId());
                 }else {
                     List<PrinterDevice> list = hash.get(-1);
-                    for (int i = 0; i < list.size(); i++) {
-                        PrinterDevice device = list.get(i);
-                        PrinterDevice printerDevice = new PrinterDevice();
-                        printerDevice.setDevice_id(-1);
-                        printerDevice.setName(device.getName());
-                        printerDevice.setGroupId(device.getGroupId());
-                        printerDevice.setIP(device.getIP());
-                        printerDevice.setMac(device.getMac());
-                        printerDevice.setModel(device.getModel());
-                        devices.add(printerDevice);
+                    if(list != null) {
+                        for (PrinterDevice device : list) {
+                            PrinterDevice printerDevice = new PrinterDevice();
+                            printerDevice.setDevice_id(-1);
+                            printerDevice.setName(device.getName());
+                            printerDevice.setGroupId(device.getGroupId());
+                            printerDevice.setIP(device.getIP());
+                            printerDevice.setMac(device.getMac());
+                            printerDevice.setModel(device.getModel());
+                            devices.add(printerDevice);
+                        }
                     }
                 }
-                    if (devices.size() > 0) {
-                        if (adapter != null) {
-                            adapter.setList(devices, 1);
-                        }else {
-                            adapter = new DivicesAdapter(DevicesActivity.this, devices, handler);
-                            devices_customlistview.setAdapter(adapter);
-                        }
-                    } else {
-                        devices_customlistview.setVisibility(View.GONE);
-                        devices_add_ll.setVisibility(View.VISIBLE);
+                    if (adapter != null) {
+                        adapter.setList(devices, 1);
+                    }else {
+                        adapter = new DevicesAdapter(DevicesActivity.this, devices, handler);
+                        devices_customlistview.setAdapter(adapter);
                     }
                 break;
             case R.id.devices_transfer_lyt:
                 hv_printer_group.setVisibility(View.GONE);
-                devices_add_ll.setVisibility(View.GONE);
                 Map<Integer, KDSDevice> map = App.instance.getKDSDevices();
                 List<PrinterDevice> KDSDevices = new ArrayList<PrinterDevice>();
                 if (map.size() > 0){
@@ -340,38 +319,33 @@ public class DevicesActivity extends BaseActivity {
                         printerDevice.setMac(device.getMac());
                         KDSDevices.add(printerDevice);
                     }
-                    if (adapter != null){
-                        adapter.setList(KDSDevices, 2);
-                    }else {
-                        adapter = new DivicesAdapter(DevicesActivity.this, KDSDevices, handler);
-                        devices_customlistview.setAdapter(adapter);
-                    }
+                }
+                if (adapter != null){
+                    adapter.setList(KDSDevices, 2);
                 }else {
-                    devices_customlistview.setVisibility(View.GONE);
+                    adapter = new DevicesAdapter(DevicesActivity.this, KDSDevices, handler);
+                    devices_customlistview.setAdapter(adapter);
                 }
                 break;
             case R.id.devices_waiter_lyt:
                 hv_printer_group.setVisibility(View.GONE);
-                devices_add_ll.setVisibility(View.GONE);
                 Map<Integer, WaiterDevice> wmap = App.instance.getWaiterDevices();
                 List<PrinterDevice> WaiterDevices = new ArrayList<PrinterDevice>();
-                if (wmap.size() > 0){
+                if (wmap.size() > 0) {
                     List<WaiterDevice> waiterDevices = new ArrayList<WaiterDevice>(wmap.values());
-                    for (WaiterDevice device : waiterDevices){
+                    for (WaiterDevice device : waiterDevices) {
                         PrinterDevice printerDevice = new PrinterDevice();
                         printerDevice.setDevice_id(device.getWaiterId());
                         printerDevice.setIP(device.getIP());
                         printerDevice.setMac(device.getMac());
                         WaiterDevices.add(printerDevice);
                     }
-                    if (adapter != null){
-                        adapter.setList(WaiterDevices, 2);
-                    }else {
-                        adapter = new DivicesAdapter(DevicesActivity.this, WaiterDevices, handler);
-                        devices_customlistview.setAdapter(adapter);
-                    }
+                }
+                if (adapter != null){
+                    adapter.setList(WaiterDevices, 2);
                 }else {
-                    devices_customlistview.setVisibility(View.GONE);
+                    adapter = new DevicesAdapter(DevicesActivity.this, WaiterDevices, handler);
+                    devices_customlistview.setAdapter(adapter);
                 }
                 break;
             }
@@ -421,15 +395,14 @@ public class DevicesActivity extends BaseActivity {
         devices_revenueCenter_tv.setText(App.instance.getMainPosInfo().getName());
 
         devices_printe_lyt = (LinearLayout) findViewById(R.id.devices_printe_lyt);
-
+        selectedViewId = R.id.devices_printe_lyt;
         devices_transfer_lyt = (LinearLayout) findViewById(R.id.devices_transfer_lyt);
 
         devices_waiter_lyt = (LinearLayout) findViewById(R.id.devices_waiter_lyt);
 
         devices_customlistview = (CustomListView) findViewById(R.id.devices_customlistview);
 
-        devices_add_ll = (LinearLayout) findViewById(R.id.devices_add_ll);
-        view = findViewById(R.id.device_view);
+
         devices_customlistview.setDividerWidth(20);
         devices_customlistview.setDividerHeight(20);
     }
@@ -441,7 +414,6 @@ public class DevicesActivity extends BaseActivity {
         devices_printe_lyt.setOnClickListener(this);
         devices_transfer_lyt.setOnClickListener(this);
         devices_waiter_lyt.setOnClickListener(this);
-        devices_add_ll.setOnClickListener(this);
 
         hv_printer_group.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
@@ -459,8 +431,7 @@ public class DevicesActivity extends BaseActivity {
                     } else {
                         List<PrinterDevice> list = map.get(-1);
                         if (list != null) {
-                            for (int i = 0; i < list.size(); i++) {
-                                PrinterDevice device = list.get(i);
+                            for (PrinterDevice device : list) {
                                 PrinterDevice printerDevice = new PrinterDevice();
                                 printerDevice.setDevice_id(-1);
                                 printerDevice.setName(device.getName());
@@ -470,27 +441,14 @@ public class DevicesActivity extends BaseActivity {
                                 printerDevice.setModel(device.getModel());
                                 devices.add(printerDevice);
                             }
-                        }else {
-                            devices_customlistview.setVisibility(View.GONE);
-                            devices_add_ll.setVisibility(View.VISIBLE);
                         }
                     }
-                    if (devices.size() > 0) {
-                        devices_customlistview.setVisibility(View.VISIBLE);
-                        devices_add_ll.setVisibility(View.GONE);
-                        if (adapter != null) {
-                            adapter.setList(devices, 1);
-                            } else {
-                                adapter = new DivicesAdapter(DevicesActivity.this, devices, handler);
-                                devices_customlistview.setAdapter(adapter);
-                            }
-                        }else {
-                        devices_customlistview.setVisibility(View.GONE);
-                        devices_add_ll.setVisibility(View.VISIBLE);
-                    }
-                }else {
-                    devices_customlistview.setVisibility(View.GONE);
-                    devices_add_ll.setVisibility(View.VISIBLE);
+                }
+                if (adapter != null) {
+                    adapter.setList(devices, 1);
+                } else {
+                    adapter = new DevicesAdapter(DevicesActivity.this, devices, handler);
+                    devices_customlistview.setAdapter(adapter);
                 }
             }
             @Override
@@ -500,9 +458,33 @@ public class DevicesActivity extends BaseActivity {
     }
 
     private void initAnimation(float values) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationY",
+        ObjectAnimator animator = ObjectAnimator.ofFloat(findViewById(R.id.device_view), "translationY",
                 values);
         animator.setDuration(300);
         animator.start();
+    }
+
+    @Override
+    public void httpRequestAction(int action, Object obj) {
+        switch (action) {
+            case ParamConst.HTTP_REQ_CALLBACK_KDS_PAIRED:
+                if (obj != null) {
+                    UIHelp.showToast(this, context.getResources().getString(R.string.kds_paired));
+                    handler.sendEmptyMessage(JavaConnectJS.ACTION_NEW_KDS_ADDED);
+                }
+                break;
+            case ParamConst.HTTP_REQ_CALLBACK_WAITER_PAIRED:
+                if (obj != null) {
+                    UIHelp.showToast(this, context.getResources().getString(R.string.waiter_paired));
+                    handler.sendEmptyMessage(JavaConnectJS.ACTION_NEW_WAITER_ADDED);
+                }
+                break;
+            case ParamConst.HTTP_REQ_REFRESH_KDS_PAIRED:
+                handler.sendEmptyMessage(JavaConnectJS.ACTION_NEW_KDS_ADDED);
+                break;
+            case ParamConst.HTTP_REQ_REFRESH_WAITER_PAIRED:
+                handler.sendEmptyMessage(JavaConnectJS.ACTION_NEW_WAITER_ADDED);
+                break;
+        }
     }
 }

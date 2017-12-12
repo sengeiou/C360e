@@ -1,6 +1,5 @@
 package com.alfredposclient.adapter;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.javabean.ReportHourly;
+import com.alfredbase.javabean.ReportPluDayItem;
+import com.alfredbase.utils.BH;
 import com.alfredposclient.R;
 
 import java.util.List;
@@ -18,12 +18,12 @@ import java.util.List;
  * Created by Zun on 2017/6/12 0012.
  */
 
-public class XZReportHourlyAdapter extends BaseAdapter {
+public class XZReportDetailAdapter extends BaseAdapter {
 
-    private List<ReportHourly> list;
+    private List<ReportPluDayItem> list;
     private BaseActivity activity;
 
-    public XZReportHourlyAdapter(List<ReportHourly> list, BaseActivity activity) {
+    public XZReportDetailAdapter(List<ReportPluDayItem> list, BaseActivity activity) {
         this.list = list;
         this.activity = activity;
     }
@@ -57,11 +57,11 @@ public class XZReportHourlyAdapter extends BaseAdapter {
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        ReportHourly reportHourly = list.get(position);
-        viewHolder.xarepurt_item.setBackgroundColor(Color.parseColor("#B4EEB4"));
-        viewHolder.xzreport_item_name.setText(reportHourly.getHour() + "");
-        viewHolder.xzreport_item_num.setText(reportHourly.getAmountQty() + "");
-        viewHolder.xzreport_item_total.setText(reportHourly.getAmountPrice());
+        ReportPluDayItem reportPluDayItem = list.get(position);
+//        viewHolder.xarepurt_item.setBackgroundColor(Color.parseColor("#B4EEB4"));
+        viewHolder.xzreport_item_name.setText(reportPluDayItem.getItemName());
+        viewHolder.xzreport_item_num.setText(reportPluDayItem.getItemCount() + "");
+        viewHolder.xzreport_item_total.setText(BH.getBD(reportPluDayItem.getItemAmount()).toString());
 
         return convertView;
     }

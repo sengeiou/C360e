@@ -258,6 +258,16 @@ public class DialogFactory {
 
 							@Override
 							public void onClick(View v) {
+
+								String num = editText.getText().toString();
+								try{
+									if(BH.getBD(num).compareTo(BH.getBD(100000)) > 0){
+										((EditText) view.findViewById(R.id.et_input)).setText("");
+										return;
+									}
+								}catch (Exception e){
+									return;
+								}
 								dialog.dismiss();
 								CommonUtil.hideSoftkeyBoard(activity);
 								BaseApplication.postHandler.postDelayed(new Runnable() {

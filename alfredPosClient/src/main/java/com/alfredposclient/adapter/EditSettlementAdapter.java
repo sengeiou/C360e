@@ -59,6 +59,13 @@ public class EditSettlementAdapter extends BaseAdapter {
 		this.editSettlementInfos = editSettlementInfos;
 		this.verifyDialog = verifyDialog;
 	}
+
+	public void setEditSettlementInfos(List<EditSettlementInfo> editSettlementInfos){
+		if (editSettlementInfos == null)
+			this.editSettlementInfos = Collections.emptyList();
+		else
+			this.editSettlementInfos = editSettlementInfos;
+	}
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub

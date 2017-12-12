@@ -12,9 +12,11 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
+import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.SQLiteStatementHelper;
@@ -2035,7 +2037,7 @@ public class OrderDetailSQL {
 	/**
 	 * 已经结账的订单修改OrderDetail
      */
-	public static void setOrderDetailToVoidOrFreeForClosedOrder(OrderDetail orderDetail) {
+	public static void setOrderDetailToVoidOrFreeForClosedOrder(OrderDetail orderDetail, String oldTotal) {
 		if (orderDetail != null) {
 				orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_VOID);
 				orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
@@ -2054,15 +2056,25 @@ public class OrderDetailSQL {
 			if (orderDetail.getGroupId().intValue() > 0) {
 				OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
 				if (orderSplit != null) {
+					RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
+					if(roundAmount != null){
+						OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
+						OrderSplitSQL.update(orderSplit);
+					}
 					OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
 					PaymentSQL.updateSplitOrderPaymentAmount(orderSplit.getTotal(), orderSplit.getId());
 					Payment payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId());
-					PaymentSettlementSQL.updateSplitOrderPaymentAmount(orderSplit.getTotal(), payment.getId());
+					PaymentSettlementSQL.updateSplitOrderPaymentAmount(orderSplit.getTotal(), BH.sub(BH.getBD(oldTotal), BH.getBD(orderSplit.getTotal()), true).toString(), payment.getId());
 				}
 			}else{
+				RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
+				if(roundAmount != null){
+					OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
+					OrderSQL.update(order);
+				}
 				PaymentSQL.updatePaymentAmount(order.getTotal(), order.getId());
 				Payment payment = PaymentSQL.getPaymentByOrderId(order.getId());
-				PaymentSettlementSQL.updatePaymentAmount(order.getTotal(), payment.getId());
+				PaymentSettlementSQL.updatePaymentAmount(order.getTotal(), BH.sub(BH.getBD(oldTotal), BH.getBD(order.getTotal()), true).toString(), payment.getId());
 			}
 
 		}

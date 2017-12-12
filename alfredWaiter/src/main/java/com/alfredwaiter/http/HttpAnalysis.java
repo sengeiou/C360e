@@ -49,9 +49,9 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserSQL;
+import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.activity.KOTNotification;
 import com.alfredwaiter.activity.MainPage;
-import com.alfredwaiter.activity.SelectRevenue;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.google.gson.Gson;
@@ -387,7 +387,7 @@ public class HttpAnalysis {
 					object.optString("mainPosInfo"), MainPosInfo.class);
 			App.instance.setMainPosInfo(mainPosInfo);
 			SyncCentre.getInstance().setIp(mainPosInfo.getIP());
-			handler.sendEmptyMessage(SelectRevenue.HANDLER_PAIRING_COMPLETE);
+			handler.sendEmptyMessage(EmployeeID.HANDLER_PAIRING_COMPLETE);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

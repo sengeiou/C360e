@@ -1615,6 +1615,11 @@ public class MainPageKiosk extends BaseActivity {
 		initOrder(currentTable);
 		orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 		mainPageMenuView.setParam(currentOrder, handler);
+		if(App.instance.getSystemSettings().isTopMaskingIsUser()){
+			view_top.setVisibility(View.VISIBLE);
+		}else{
+			view_top.setVisibility(View.INVISIBLE);
+		}
 		view_top.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {

@@ -673,20 +673,22 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			    			PrintService.instance.getResources().getString(R.string.qty), 
 			    			PrintService.instance.getResources().getString(R.string.total));//("Item Name", "QTY");
 					
-			    	
-			    	for(PrintOrderItem item:printOrderItemList) {
-						billPrint.AddOrderItem(item.getItemName(), item.getPrice(), 
-												item.getQty(), item.getAmount(), 1, item.getWeight());
-						//getModifiersByDetailId()
-						//// 
-						if (orderModifiers !=null) {
-							for (int m=0; m<orderModifiers.size(); m++) {
-								PrintOrderModifier om =  orderModifiers.get(m);
-								if (om.getOrderDetailId() == item.getOrderDetailId()) {
-									if(om.getQty() > 1){
-										billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(),1, om.getPrice());
-									}else{
-										billPrint.addOrderModifier(om.getItemName(),1, om.getPrice());
+			    	if(printOrderItemList != null && printOrderItemList.size() > 0) {
+						for (int index = printOrderItemList.size() - 1;index >= 0;index--) {
+							PrintOrderItem item = printOrderItemList.get(index);
+							billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
+									item.getQty(), item.getAmount(), 1, item.getWeight());
+							//getModifiersByDetailId()
+							////
+							if (orderModifiers != null) {
+								for (int m = 0; m < orderModifiers.size(); m++) {
+									PrintOrderModifier om = orderModifiers.get(m);
+									if (om.getOrderDetailId() == item.getOrderDetailId()) {
+										if (om.getQty() > 1) {
+											billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+										} else {
+											billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+										}
 									}
 								}
 							}
@@ -747,21 +749,23 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			    			PrintService.instance.getResources().getString(R.string.price), 
 			    			PrintService.instance.getResources().getString(R.string.qty), 
 			    			PrintService.instance.getResources().getString(R.string.total));
-			    	
 
-			    	for(PrintOrderItem item:printOrderItemList) {
-						billPrint.AddOrderItem(item.getItemName(), item.getPrice(), 
-												item.getQty(), item.getAmount(), 1, item.getWeight());
+				if(printOrderItemList != null && printOrderItemList.size() > 0) {
+					for (int index = printOrderItemList.size() - 1; index >= 0; index--) {
+						PrintOrderItem item = printOrderItemList.get(index);
+						billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
+								item.getQty(), item.getAmount(), 1, item.getWeight());
 						////add modifier print
-						if (orderModifiers !=null) {
-							for (int m=0; m<orderModifiers.size(); m++) {
-								PrintOrderModifier om =  orderModifiers.get(m);
+						if (orderModifiers != null) {
+							for (int m = 0; m < orderModifiers.size(); m++) {
+								PrintOrderModifier om = orderModifiers.get(m);
 								if (om.getOrderDetailId() == item.getOrderDetailId()) {
-									billPrint.addOrderModifier(om.getItemName(),1, om.getPrice());
+									billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
 								}
-							}	
+							}
 						}
 					}
+				}
 		
 		////////////// Bill Summary
 					String subTotal = BH.doubleFormat.format(BH.getBD(theOrder.getSubTotal()));
@@ -1513,26 +1517,29 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			    			PrintService.instance.getResources().getString(R.string.price), 
 			    			PrintService.instance.getResources().getString(R.string.qty), 
 			    			PrintService.instance.getResources().getString(R.string.total));//("Item Name", "QTY");
-					
-			    	
-			    	for(PrintOrderItem item:printOrderItemList) {
-						billPrint.AddOrderItem(item.getItemName(), item.getPrice(), 
-												item.getQty(), item.getAmount(), 1, item.getWeight());
+
+
+				if(printOrderItemList != null && printOrderItemList.size() > 0) {
+					for (int index = printOrderItemList.size() - 1; index >= 0; index--) {
+						PrintOrderItem item = printOrderItemList.get(index);
+						billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
+								item.getQty(), item.getAmount(), 1, item.getWeight());
 						//getModifiersByDetailId()
 						//// 
-						if (orderModifiers !=null) {
-							for (int m=0; m<orderModifiers.size(); m++) {
-								PrintOrderModifier om =  orderModifiers.get(m);
+						if (orderModifiers != null) {
+							for (int m = 0; m < orderModifiers.size(); m++) {
+								PrintOrderModifier om = orderModifiers.get(m);
 								if (om.getOrderDetailId() == item.getOrderDetailId()) {
-									if(om.getQty() > 1){
-										billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(),1, om.getPrice());
-									}else{
-										billPrint.addOrderModifier(om.getItemName(),1, om.getPrice());
+									if (om.getQty() > 1) {
+										billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+									} else {
+										billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
 									}
 								}
 							}
 						}
 					}
+				}
 	
 		////////////// Bill Summary
 					String subTotal = BH.doubleFormat.format(BH.getBD(theOrder.getSubTotal()));
@@ -1589,22 +1596,24 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			    			PrintService.instance.getResources().getString(R.string.price), 
 			    			PrintService.instance.getResources().getString(R.string.qty), 
 			    			PrintService.instance.getResources().getString(R.string.total));
-			    	
 
-			    	for(PrintOrderItem item:printOrderItemList) {
-						billPrint.AddOrderItem(item.getItemName(), item.getPrice(), 
-												item.getQty(), item.getAmount(), 1, item.getWeight());
+
+				if(printOrderItemList != null && printOrderItemList.size() > 0) {
+					for (int index = printOrderItemList.size() - 1; index >= 0; index--) {
+						PrintOrderItem item = printOrderItemList.get(index);
+						billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
+								item.getQty(), item.getAmount(), 1, item.getWeight());
 						////add modifier print
-						if (orderModifiers !=null) {
-							for (int m=0; m<orderModifiers.size(); m++) {
-								PrintOrderModifier om =  orderModifiers.get(m);
+						if (orderModifiers != null) {
+							for (int m = 0; m < orderModifiers.size(); m++) {
+								PrintOrderModifier om = orderModifiers.get(m);
 								if (om.getOrderDetailId() == item.getOrderDetailId()) {
-									billPrint.addOrderModifier(om.getItemName(),1, om.getPrice());
+									billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
 								}
-							}	
+							}
 						}
 					}
-		
+				}
 		////////////// Bill Summary
 					String subTotal = BH.doubleFormat.format(BH.getBD(theOrder.getSubTotal()));
 		            String discount = BH.doubleFormat.format(BH.getBD(theOrder.getDiscountAmount()));

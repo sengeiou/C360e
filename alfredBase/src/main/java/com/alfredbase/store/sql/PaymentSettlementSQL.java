@@ -1285,22 +1285,22 @@ public class PaymentSettlementSQL {
 		}
 	}
 
-	public static void updatePaymentAmount( String paymentAmount, int paymentId){
+	public static void updatePaymentAmount( String paymentAmount, String cashChange,  int paymentId){
 
-		String sql = "update " + TableNames.PaymentSettlement + " set paidAmount = ?, totalAmount = ? where paymentId = ? " ;
+		String sql = "update " + TableNames.PaymentSettlement + " set paidAmount = ?, totalAmount = ?, cashChange = ? where paymentId = ? " ;
 		try {
-			SQLExe.getDB().execSQL(sql, new Object[] {paymentAmount, paymentAmount, paymentId});
+			SQLExe.getDB().execSQL(sql, new Object[] {paymentAmount, paymentAmount, cashChange, paymentId});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public static void updateSplitOrderPaymentAmount( String paymentAmount, int paymentId){
+	public static void updateSplitOrderPaymentAmount( String paymentAmount, String cashChange, int paymentId){
 
-		String sql = "update " + TableNames.PaymentSettlement + " set paidAmount = ?, totalAmount = ? where paymentId = ? " ;
+		String sql = "update " + TableNames.PaymentSettlement + " set paidAmount = ?, totalAmount = ?, cashChange = ? where paymentId = ? " ;
 		try {
-			SQLExe.getDB().execSQL(sql, new Object[] {paymentAmount, paymentAmount, paymentId});
+			SQLExe.getDB().execSQL(sql, new Object[] {paymentAmount, paymentAmount, cashChange, paymentId});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
