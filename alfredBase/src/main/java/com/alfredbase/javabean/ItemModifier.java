@@ -13,6 +13,8 @@ public class ItemModifier {
 	private Integer modifierId;
 
 	private Integer modifierCategoryId;
+
+	private Integer itemCategoryId;
 	
 	public Integer getId() {
 		if (CommonUtil.isNull(id))
@@ -64,11 +66,25 @@ public class ItemModifier {
 		this.modifierCategoryId = modifierCategoryId;
 	}
 
+	public Integer getItemCategoryId() {
+		return itemCategoryId;
+	}
+
+	public void setItemCategoryId(Integer itemCategoryId) {
+		this.itemCategoryId = itemCategoryId;
+	}
+
 	@Override
 	public String toString() {
-		return "ItemModifier [id=" + id + ", restaurantId=" + restaurantId
-				+ ", itemId=" + itemId + ", modifierId=" + modifierId
-				+ ", modifierCategoryId=" + modifierCategoryId + "]";
+		return "ItemModifier{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", itemId=" + itemId +
+				", modifierId=" + modifierId +
+				", modifierCategoryId=" + modifierCategoryId +
+				", itemCategoryId=" + itemCategoryId +
+				'}';
 	}
+
 
 }

@@ -11,18 +11,30 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.ParamHelper;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.ItemCategory;
+import com.alfredbase.javabean.ItemMainCategory;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.ReportDaySales;
+import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
+import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportHourlySQL;
 import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
 import com.alfredbase.store.sql.ReportPluDayItemSQL;
+import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
+import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.Calendar.CalendarCard;
 import com.alfredposclient.Calendar.CardGridItem;
@@ -34,8 +46,11 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.utils.AlertToDeviceSetting;
+import com.alfredposclient.utils.DialogSelectReportPrint;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,12 +70,21 @@ public class XZRerortActivity extends BaseActivity {
     private Map<String, Object> data = new HashMap<String, Object>();
     private RevenueCenter revenueCenter;
     private LoadingDialog loadingDialog;
-    private ReportDaySales reportDaySales;
-//    private XZReportHourlyAdapter hourlyAdapter;
     private ListView lv_hourly_analsis;
     private SimpleDateFormat yearMonthDayFormater = new SimpleDateFormat("yyyy年MM月dd日");
     private String curStr;
     private long date;
+    private ReportDaySales reportDaySales;
+    private List<ReportDayTax> reportDayTaxs;
+    private ArrayList<ReportPluDayItem> reportPluDayItems;
+    private List<ReportPluDayItem> filteredPluDayItems;
+    private List<ReportPluDayModifier> reportPluDayModifiers;
+    private List<ReportHourly> reportHourlys;
+    private List<ItemCategory> itemCategorys;
+    private List<ItemMainCategory> itemMainCategorys;
+    private List<ReportPluDayComboModifier> reportPluDayComboModifiers;
+    private Map<String, Object> map = new HashMap<String, Object>();
+    private long businessDate;
 
     @Override
     protected void initView() {
@@ -68,6 +92,7 @@ public class XZRerortActivity extends BaseActivity {
         setContentView(R.layout.activity_xzrerort);
         VerifyDialog verifyDialog = new VerifyDialog(context, handler);
         verifyDialog.show("initData",null);
+        findViewById(R.id.tv_print).setOnClickListener(this);
     }
 
     Handler handler = new Handler(){
@@ -525,7 +550,158 @@ public class XZRerortActivity extends BaseActivity {
 
     @Override
     protected void handlerClickEvent(View v) {
+        switch (v.getId()){
+            case R.id.tv_print:
+
+                break;
+        }
         super.handlerClickEvent(v);
+    }
+
+
+    private void showPrintDialog(final Long bizDate, final boolean zPrint){
+            if (reportDaySales != null) {
+                DialogSelectReportPrint.show(context,
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                switch (v.getId()) {
+                                    case R.id.btn_report_all: {
+                                        sendPrintData(
+                                                XZReportHtml.REPORT_PRINT_ALL,
+                                                zPrint, bizDate);
+                                    }
+                                    break;
+                                    case R.id.btn_report_sales: {
+                                        sendPrintData(
+                                                XZReportHtml.REPORT_PRINT_SALES,
+                                                zPrint, bizDate);
+                                    }
+                                    break;
+                                    case R.id.btn_report_detail_analysis: {
+                                        sendPrintData(
+                                                XZReportHtml.REPORT_PRINT_DETAILS,
+                                                zPrint, bizDate);
+                                    }
+                                    break;
+                                    case R.id.btn_report_summary_analysis: {
+                                        sendPrintData(
+                                                XZReportHtml.REPORT_PRINT_SUMMARY,
+                                                zPrint, bizDate);
+                                    }
+                                    break;
+                                }
+                            }
+                        });
+            } else {
+                DialogFactory.alertDialog(
+                        context,
+                        context.getResources().getString(
+                                R.string.warning),
+                        context.getResources().getString(
+                                R.string.no_sales_print));
+            }
+    }
+
+    private void sendPrintData(int type, boolean zPrint, long bzDate) {
+        String bizDate = TimeUtil.getPrintingDate(bzDate);
+        String rptType = CommonUtil.getReportType(context, 999);
+
+        SessionStatus session = App.instance.getSessionStatus();
+
+        String label = "YX";
+        if (zPrint) {
+            label = "YZ";
+        } else {
+            rptType = CommonUtil.getReportType(context,
+                    session.getSession_status());
+            bizDate = TimeUtil.getPrintingDate(businessDate);
+        }
+
+        PrinterTitle title = ObjectFactory.getInstance()
+                .getPrinterTitleForReport(
+                        App.instance.getRevenueCenter().getId(),
+                        label
+                                + ParamHelper.getPrintOrderBillNo(
+                                App.instance.getIndexOfRevenueCenter(),
+                                reportDaySales.getId()),
+                        App.instance.getUser().getFirstName()
+                                + App.instance.getUser().getLastName(), null,
+                        bizDate);
+
+        PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
+        List<ReportUserOpenDrawer> reportUserOpenDrawers = new ArrayList<ReportUserOpenDrawer>();
+        if(zPrint){
+            reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawerByTime(businessDate);
+        }else{
+            reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawer(session.getSession_status(), bzDate);
+        }
+        if (cashierPrinter == null) {
+            AlertToDeviceSetting.noKDSorPrinter(context, context.getResources()
+                    .getString(R.string.no_printer_devices));
+        } else {
+            if (type == XZReportHtml.REPORT_PRINT_ALL) {
+
+                // sales report
+                App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
+                        title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
+                // detail analysis
+                App.instance.remotePrintDetailAnalysisReport(rptType,
+                        cashierPrinter, title, reportDaySales,
+                        filteredPluDayItems, reportPluDayModifiers,
+                        reportPluDayComboModifiers, itemMainCategorys,
+                        itemCategorys);
+                // summary
+                App.instance
+                        .remotePrintSummaryAnalysisReport(rptType,
+                                cashierPrinter, title, filteredPluDayItems,
+                                reportPluDayModifiers, itemMainCategorys,
+                                itemCategorys);
+                // hourly sales
+                App.instance.remotePrintHourlyReport(rptType, cashierPrinter,
+                        title, reportHourlys);
+            }
+            if (type == XZReportHtml.REPORT_PRINT_SALES) {
+                // sales report
+                App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
+                        title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
+            }
+            if (type == XZReportHtml.REPORT_PRINT_DETAILS) {
+                if (zPrint)
+                    App.instance.remotePrintDetailAnalysisReport(rptType,
+                            cashierPrinter, title, reportDaySales,
+                            filteredPluDayItems, reportPluDayModifiers,
+                            reportPluDayComboModifiers, itemMainCategorys,
+                            itemCategorys);
+                else
+                    App.instance.remotePrintDetailAnalysisReport(rptType,
+                            cashierPrinter, title, null, filteredPluDayItems,
+                            reportPluDayModifiers, reportPluDayComboModifiers,
+                            itemMainCategorys, itemCategorys);
+
+                // if(reportPluDayComboModifiers != null &&
+                // reportPluDayComboModifiers.size() > 0) {
+                // App.instance.remotePrintComboDetailAnalysisReport(rptType,
+                // cashierPrinter, title,
+                // filteredPluDayItems, reportPluDayComboModifiers);
+                // }
+
+            }
+            if (type == XZReportHtml.REPORT_PRINT_SUMMARY) {
+                // sales report
+                App.instance
+                        .remotePrintSummaryAnalysisReport(rptType,
+                                cashierPrinter, title, filteredPluDayItems,
+                                reportPluDayModifiers, itemMainCategorys,
+                                itemCategorys);
+            }
+            if (type == XZReportHtml.REPORT_PRINT_HOURLY) {
+                // hourly sales
+                App.instance.remotePrintHourlyReport(rptType, cashierPrinter,
+                        title, reportHourlys);
+            }
+        }
     }
 
     @Override

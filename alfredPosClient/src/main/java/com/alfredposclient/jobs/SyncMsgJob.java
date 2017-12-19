@@ -72,11 +72,13 @@ public class SyncMsgJob extends Job {
                 if (content == null)
                     return;
 
-                if (this.msgType == HttpAPI.ORDER_DATA) {
+                if (this.msgType == HttpAPI.ORDER_DATA
+                        || this.msgType == HttpAPI.LOG_DATA) {
                     //sync order data
                     SyncCentre.getInstance().cloudSyncUploadOrderInfo(context, content, null);
                 }
-                if (this.msgType == HttpAPI.REPORT_DATA) {
+                if (this.msgType == HttpAPI.REPORT_DATA||
+                        this.msgType == HttpAPI.OPEN_CLOSE_SESSION_RESTAURANT) {
                     SyncCentre.getInstance().cloudSyncUploadReportInfo(context, content, null);
                 }
                 LogUtil.d(TAG, "Cloud MSG SYNC JOB Successful");

@@ -150,7 +150,10 @@ public class CoreData {
 			return result;
 		}
 		for (ItemModifier itemModifier : getItemModifiers()) {
-			if (itemModifier.getItemId().intValue() == itemDetail
+			if(itemModifier.getItemCategoryId() != null
+					&& itemModifier.getItemCategoryId().intValue() == itemDetail.getItemCategoryId().intValue()){
+				result.add(itemModifier);
+			}else if (itemModifier.getItemId().intValue() == itemDetail
 					.getItemTemplateId().intValue()) {
 				result.add(itemModifier);
 			}

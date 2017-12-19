@@ -221,7 +221,7 @@ public class CloudSyncJobManager {
 		syncMsg.setRevenueId(revenueCenterId);
 		syncMsg.setBusinessDate(bizDate);
 		SyncMsgSQL.add(syncMsg);
-		syncXReportJob = new SyncMsgJob(revenueCenterId, HttpAPI.ORDER_DATA, uuid, 
+		syncXReportJob = new SyncMsgJob(revenueCenterId, HttpAPI.OPEN_CLOSE_SESSION_RESTAURANT, uuid,
 				0, bizDate,syncMsg.getCreateTime());
 		this.syncJobManager.addJobInBackground(syncXReportJob);
     }
