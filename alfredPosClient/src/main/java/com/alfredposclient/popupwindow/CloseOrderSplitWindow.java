@@ -179,6 +179,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 	private OrderDetailAdapter orderDetailAdapter;
 	private List<PaymentSettlement> paymentSettlements = new ArrayList<>();
 	private String oldTotal;
+	private boolean splitPax = false;
 	public CloseOrderSplitWindow(BaseActivity parent, View parentView,
 			Handler handler) {
 		this.parent = parent;
@@ -672,7 +673,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		if (settlementNum.compareTo(BH.getBD(orderSplit.getTotal())) == 0) {
 			orderSplit.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
 			OrderSplitSQL.update(orderSplit);
-			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 			if(upDoneOrderSplitCount == 0){
 				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 			}
@@ -745,7 +746,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					if (!(parent instanceof EditSettlementPage)) {
 						orderSplit.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
 						OrderSplitSQL.update(orderSplit);
-						int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+						int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 						if(upDoneOrderSplitCount == 0){
 							OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 						}
@@ -1173,6 +1174,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 	}
 
 
+
 	public void show(View view, Order order, OrderSplit orderSplit) {
 		if (isShowing()) {
 			return;
@@ -1181,6 +1183,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		this.order = order;
 		this.orderSplit = orderSplit;
 		this.oldTotal = this.orderSplit.getTotal();
+		this.splitPax = orderSplit.getSplitByPax() > ParamConst.SPLIT_BY_PAX_FALSE ? true : false;
 		if (parent instanceof EditSettlementPage) {
 			this.newPaymentMapList = new ArrayList<Map<String,Object>>();
 			this.oldPaymentMapList = new ArrayList<Map<String,Object>>();
@@ -1243,7 +1246,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			}
 		}, 100);
 		ll_bill_layout.postDelayed((new Runnable() {
-//
+			//
 			@Override
 			public void run() {
 
@@ -1351,7 +1354,11 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					handler.sendEmptyMessage(MainPage.VIEW_EVENT_SHOW_TABLES_AFTER_CLOSE_BILL);
 
 				} else {
-					handler.sendEmptyMessageDelayed(MainPage.VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW, 2500);
+					if(splitPax){
+						handler.sendEmptyMessageDelayed(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW, 2500);
+					}else {
+						handler.sendEmptyMessageDelayed(MainPage.VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW, 2500);
+					}
 				}
 			};
 		});
@@ -1372,9 +1379,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
 				map.put("orderSplitId", String.valueOf(paidOrderId));
 				map.put("paymentId", String.valueOf(payment.getId().intValue()));
-				// to print close receipt
-				handler.sendMessage(handler.obtainMessage(
-						MainPage.VIEW_EVENT_CLOSE_SPLIT_BILL, map));
+				if (splitPax) {
+					handler.sendMessage(handler.obtainMessage(
+							MainPage.ACTION_PRINT_PAX_SPLIT_BY_PAX, map));
+				} else{
+					// to print close receipt
+					handler.sendMessage(handler.obtainMessage(
+							MainPage.VIEW_EVENT_CLOSE_SPLIT_BILL, map));
+			 	}
 				parent.runOnUiThread(new Runnable() {
 
 					@Override
@@ -1434,7 +1446,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				paymentType = viewTag;
 				orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
 				OrderSplitSQL.update(orderSplit);
-				int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+				int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 				if(upDoneOrderSplitCount == 0){
 					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 				}
@@ -2184,7 +2196,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
 				OrderSplitSQL.update(orderSplit);
 				PaymentSQL.updateSplitOrderPaymentAmount(orderSplit.getTotal(), orderSplit.getId().intValue());
-				int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+				int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 				if(upDoneOrderSplitCount == 0){
 					double roundBalancePrice = RoundAmountSQL.getSumRoundWhenSplitByOrder(order);
 					BigDecimal roundAlfterPrice = BH.sub(BH.getBD(order.getTotal()), BH.getBD(roundBalancePrice), true);
@@ -2237,7 +2249,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				if (paidBD.compareTo(remainTotal) > -1) {
 					orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
 					OrderSplitSQL.update(orderSplit);
-					int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+					int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 					if(upDoneOrderSplitCount == 0){
 						OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 					}
@@ -2333,7 +2345,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //				}
 //			}
 			OrderSplitSQL.update(orderSplit);
-			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 			if(upDoneOrderSplitCount == 0){
 				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 			}
@@ -2383,7 +2395,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //				}
 //			}
 			OrderSplitSQL.update(orderSplit);
-			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 			if(upDoneOrderSplitCount == 0){
 				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 			}
@@ -2407,7 +2419,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			paymentType = viewTag;
 			orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
 			OrderSplitSQL.update(orderSplit);
-			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 			if(upDoneOrderSplitCount == 0){
 				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 			}
@@ -2440,7 +2452,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			paymentType = viewTag;
 			orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
 			OrderSplitSQL.update(orderSplit);
-			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 			if(upDoneOrderSplitCount == 0){
 				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 			}
@@ -2473,7 +2485,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			paymentType = viewTag;
 			orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
 			OrderSplitSQL.update(orderSplit);
-			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+			int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 			if(upDoneOrderSplitCount == 0){
 				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 			}
@@ -2501,7 +2513,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					if (paidBD.compareTo(remainTotal) > -1) {
 						orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
 						OrderSplitSQL.update(orderSplit);
-						int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+						int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 						if(upDoneOrderSplitCount == 0){
 							OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 						}
@@ -2619,7 +2631,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		paymentType = viewTag;
 		orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
 		OrderSplitSQL.update(orderSplit);
-		int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId());
+		int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
 		if(upDoneOrderSplitCount == 0){
 			OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 		}

@@ -36,6 +36,7 @@ public class PrinterTitle implements Serializable{
 	private String groupNum;
 	private Integer isKiosk;
 	private Integer copy;
+	private int spliteByPax = 0;
 
 	public Integer getIsKiosk() {
 		return isKiosk;
@@ -189,6 +190,14 @@ public class PrinterTitle implements Serializable{
 	}
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+
+	public Integer getSpliteByPax() {
+		return spliteByPax;
+	}
+
+	public void setSpliteByPax(Integer spliteByPax) {
+		this.spliteByPax = spliteByPax;
 	}
 
 	@Override

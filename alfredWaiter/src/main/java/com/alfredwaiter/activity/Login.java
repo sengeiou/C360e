@@ -126,6 +126,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		WaiterDevice waiterDevice = App.instance.getWaiterdev();
 		waiterDevice.setIP(CommonUtil.getLocalIpAddress());
+		Store.putString(context,Store.WIFI_STR, waiterDevice.getIP());
 		App.instance.setWaiterdev(waiterDevice);
 		parameters.put("employee_ID", old_employee_ID);
 		parameters.put("password", password);

@@ -25,6 +25,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.utils.RxBus;
 import com.alfredwaiter.R;
 import com.alfredwaiter.adapter.TablesAdapter;
 import com.alfredwaiter.global.App;
@@ -33,14 +34,20 @@ import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.popupwindow.SetPAXWindow;
 import com.viewpagerindicator.TabPageIndicator;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
 public class TablesPage extends BaseActivity {
 	public static final int VIEW_EVENT_SET_PAX = 0;
-	public static final int VIEW_EVENT_SELECT_TABLES = 1;
+	public static final int VIEW_EVENT_SELECT_TABLES = 110;
 	public static final int HANDLER_GET_PLACE_INFO = 2;
 	public static final int HANDLER_ERROR_INFO = 3;
 	
@@ -54,7 +61,7 @@ public class TablesPage extends BaseActivity {
 	private Adapter adapter;
 	private TextView tv_kot_notification_qty;
 	private boolean doubleBackToExitPressedOnce = false;
-	
+	private Observable<String> observable;
 	@Override
 	protected void initView() {
 		super.initView();
@@ -71,6 +78,31 @@ public class TablesPage extends BaseActivity {
 		indicator = (TabPageIndicator) findViewById(R.id.tabPageIndicator);
 		indicator.setViewPager(pager);
 		tv_kot_notification_qty = (TextView) findViewById(R.id.tv_notification_qty);
+
+		observable = RxBus.getInstance().register(RxBus.RX_REFRESH_TABLE);
+		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+			@Override
+			public void call(String data) {
+				try {
+					JSONObject jsonObject = new JSONObject(data);
+					int tableId = jsonObject.getInt("tableId");
+					int status = jsonObject.getInt("status");
+					TableInfoSQL.updateTableStatusById(tableId, status);
+					placesList = PlaceInfoSQL.getAllPlaceInfo();
+					adapter.notifyDataSetChanged();
+					indicator.notifyDataSetChanged();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	@Override
+	protected void onDestroy() {
+		if(observable != null)
+			RxBus.getInstance().unregister(RxBus.RX_REFRESH_TABLE, observable);
+		super.onDestroy();
 	}
 
 	public void initTitle(){
@@ -81,7 +113,16 @@ public class TablesPage extends BaseActivity {
 		findViewById(R.id.ll_kot_notification).setOnClickListener(this);
 		findViewById(R.id.iv_refresh).setOnClickListener(this);
 	}
-	
+
+	private void loadOrder(){
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("tables", currenTables);
+		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
+		loadingDialog.show();
+		SyncCentre.getInstance().selectTables(context, parameters,
+				handler);
+	}
+
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -94,12 +135,7 @@ public class TablesPage extends BaseActivity {
 				}
 				currenTables.setPacks(persons);
 				currenTables.setStatus(ParamConst.TABLE_STATUS_DINING);
-				Map<String, Object> parameters = new HashMap<String, Object>();
-				parameters.put("tables", currenTables);
-				loadingDialog.setTitle(context.getResources().getString(R.string.loading));
-				loadingDialog.show();
-				SyncCentre.getInstance().selectTables(context, parameters,
-						handler);
+				loadOrder();
 				break;
 			}
 			case VIEW_EVENT_SELECT_TABLES: {

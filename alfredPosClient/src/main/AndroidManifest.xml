@@ -196,7 +196,7 @@
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
         <activity
-            android:name=".activity.XZRerortActivity"
+            android:name=".activity.XZReportActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme"/>

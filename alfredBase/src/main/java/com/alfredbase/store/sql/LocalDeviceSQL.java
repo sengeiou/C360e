@@ -18,8 +18,8 @@ public class LocalDeviceSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.LocalDevice
-					+ "(id, deviceId, deviceName, userName, deviceType, ip, macAddress, connected, cashierPrinter,deviceMode)"
-					+ " values (?,?,?,?,?,?,?,?,?,?)";
+					+ "(id, deviceId, deviceName, userName, deviceType, ip, macAddress, connected, cashierPrinter,deviceMode, printerName)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] {localDevice.getId(),
@@ -30,7 +30,8 @@ public class LocalDeviceSQL {
 							localDevice.getMacAddress(),
 							localDevice.getConnected(),
 							localDevice.getCashierPrinter(),
-							localDevice.getDeviceMode()});
+							localDevice.getDeviceMode(),
+							localDevice.getPrinterName()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,6 +104,7 @@ public class LocalDeviceSQL {
 				localDevice.setConnected(cursor.getInt(7));
 				localDevice.setCashierPrinter(cursor.getInt(8));
 				localDevice.setDeviceMode(cursor.getString(9));
+				localDevice.setPrinterName(cursor.getString(10));
 				result.add(localDevice);
 			}
 		} catch (Exception e) {
@@ -141,6 +143,7 @@ public class LocalDeviceSQL {
 				localDevice.setConnected(cursor.getInt(7));
 				localDevice.setCashierPrinter(cursor.getInt(8));
 				localDevice.setDeviceMode(cursor.getString(9));
+				localDevice.setPrinterName(cursor.getString(10));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

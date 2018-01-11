@@ -15,6 +15,8 @@ public class LocalDevice {
 	private Integer connected; // 0 false; 1 true
     
 	private Integer cashierPrinter;//0:false; 1 true;
+
+	private String  printerName;
 	
 	public LocalDevice(){
 		this.deviceMode = "";
@@ -95,13 +97,29 @@ public class LocalDevice {
 	public void setDeviceMode(String deviceMode) {
 		this.deviceMode = deviceMode;
 	}
-	
+
+	public String getPrinterName() {
+		return printerName;
+	}
+
+	public void setPrinterName(String printerName) {
+		this.printerName = printerName;
+	}
+
 	@Override
 	public String toString() {
-		return "LocalDevice [id=" + id + ", deviceId=" + deviceId
-				+ ", deviceName=" + deviceName + ", userName=" + userName
-				+ ", deviceMode=" + deviceMode + ", deviceType=" + deviceType
-				+ ", ip=" + ip + ", macAddress=" + macAddress + ", connected="
-				+ connected + ", cashierPrinter=" + cashierPrinter + "]";
+		return "LocalDevice{" +
+				"id=" + id +
+				", deviceId=" + deviceId +
+				", deviceName='" + deviceName + '\'' +
+				", userName='" + userName + '\'' +
+				", deviceMode='" + deviceMode + '\'' +
+				", deviceType=" + deviceType +
+				", ip='" + ip + '\'' +
+				", macAddress='" + macAddress + '\'' +
+				", connected=" + connected +
+				", cashierPrinter=" + cashierPrinter +
+				", printerName='" + printerName + '\'' +
+				'}';
 	}
 }

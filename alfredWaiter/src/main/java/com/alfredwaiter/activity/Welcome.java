@@ -64,6 +64,7 @@ public class Welcome extends BaseActivity {
 		downFilter = new IntentFilter();
 		downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
 		registerReceiver(downReceiver, downFilter);
+		App.instance.finishAllActivityExceptOne(Welcome.class);
 	}
 
 	

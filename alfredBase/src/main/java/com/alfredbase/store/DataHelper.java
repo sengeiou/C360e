@@ -942,6 +942,12 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE "
 					+ TableNames.ItemModifier
 					+ " ADD COLUMN itemCategoryId INTEGER");
+			db.execSQL("ALTER TABLE "
+					+ TableNames.OrderSplit
+					+ " ADD COLUMN splitByPax INTEGER default 0");
+			db.execSQL("ALTER TABLE "
+					+ TableNames.LocalDevice
+					+ " ADD COLUMN printerName TEXT");
 		}
 	}
 }

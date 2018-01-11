@@ -129,7 +129,7 @@ public class SearchMenuItemWindow implements OnClickListener {
 		});
 		initTextTypeFace();
 		initListView();
-		
+
 		popupWindow = new PopupWindow(parentView,
 				RelativeLayout.LayoutParams.MATCH_PARENT,
 				RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -276,7 +276,7 @@ public class SearchMenuItemWindow implements OnClickListener {
 		
 		public void setItemDetails(List<ItemDetail> itemDetails) {
 			this.itemDetails = itemDetails;
-			this.notifyDataSetChanged();	
+			this.notifyDataSetChanged();
 		}
 		
 		@Override

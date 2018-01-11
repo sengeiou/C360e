@@ -54,6 +54,9 @@ public class DashboardHtml extends BaseActivity {
 				case VerifyDialog.DIALOG_RESPONSE:
 					init();
 					break;
+				case VerifyDialog.DIALOG_DISMISS:
+					DashboardHtml.this.finish();
+					break;
 			}
 		}
 	};

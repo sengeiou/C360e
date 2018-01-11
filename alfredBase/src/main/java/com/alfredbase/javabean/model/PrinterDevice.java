@@ -15,6 +15,7 @@ public class PrinterDevice   implements Serializable{
 	String IP;
 	Integer isCahierPrinter=0;
 	private int groupId;
+	private String printerName;
 	public int getDevice_id() {
 		return device_id;
 	}
@@ -44,12 +45,6 @@ public class PrinterDevice   implements Serializable{
 	}
 	public void setIsCahierPrinter(int isCahierPrinter) {
 		this.isCahierPrinter = isCahierPrinter;
-	}	
-	@Override
-	public String toString() {
-		return "PrinterDevice [device_id=" + device_id + ", name=" + name
-				+ ", mac=" + mac + ", IP=" + IP + ", isCahierPrinter="
-				+ isCahierPrinter + "]";
 	}
 	public String getModel() {
 		return model;
@@ -66,5 +61,26 @@ public class PrinterDevice   implements Serializable{
 	public void setIsCahierPrinter(Integer isCahierPrinter) {
 		this.isCahierPrinter = isCahierPrinter;
 	}
-	
+
+	public String getPrinterName() {
+		return printerName;
+	}
+
+	public void setPrinterName(String printerName) {
+		this.printerName = printerName;
+	}
+
+	@Override
+	public String toString() {
+		return "PrinterDevice{" +
+				"device_id=" + device_id +
+				", name='" + name + '\'' +
+				", model='" + model + '\'' +
+				", mac='" + mac + '\'' +
+				", IP='" + IP + '\'' +
+				", isCahierPrinter=" + isCahierPrinter +
+				", groupId=" + groupId +
+				", printerName=" + printerName +
+				'}';
+	}
 }

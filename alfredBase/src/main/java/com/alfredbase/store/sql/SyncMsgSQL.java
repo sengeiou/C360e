@@ -122,17 +122,17 @@ public class SyncMsgSQL {
 	/*Sync 10 msg in cloud scheduler 
 	 * This only used in SYNC Scheduler
 	 * */
-	public static ArrayList<SyncMsg> getTenUnsentSyncMsg(int revenueId) {
+	public static ArrayList<SyncMsg> getTenUnsentSyncMsg(int revenueId, int msgType) {
 		ArrayList<SyncMsg> result = new ArrayList<SyncMsg>();
 		String sql = "select * from " + TableNames.SyncMsg
-				+ " where status =  ?  and revenueId=? LIMIT 10";
+				+ " where status =  ?  and revenueId=? and msg_type = ? LIMIT 10";
 		;
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
 			cursor = db.rawQuery(sql,
 					new String[] { ParamConst.SYNC_MSG_UN_SEND + "", 
-									revenueId+"" });
+									revenueId+"", msgType+"" });
 			int count = cursor.getCount();
 			if (count < 1) {
 				return result;

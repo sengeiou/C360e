@@ -64,16 +64,24 @@ public class CloudSyncJobManager {
 	         public void run() {
 	         	RevenueCenter rvc = App.instance.getRevenueCenter();
 	        	if (rvc != null) {
-	    	    	ArrayList<SyncMsg> messages = SyncMsgSQL.getTenUnsentSyncMsg(rvc.getId());
+	    	    	ArrayList<SyncMsg> messages = SyncMsgSQL.getTenUnsentSyncMsg(rvc.getId(), HttpAPI.REPORT_DATA);
 	    	    	for (SyncMsg msg:messages) {
-	    	
-	    	    		SyncMsgJob syncOrderJob = new SyncMsgJob(msg.getRevenueId(), 
+	    	    		SyncMsgJob syncOrderJob = new SyncMsgJob(msg.getRevenueId(),
 	    	    													msg.getMsgType(), msg.getId(),
 	    	    															msg.getOrderId(), 
 	    	    															msg.getBusinessDate(), 
 	    	    															msg.getCreateTime());
 	    	    		syncJobManager.addJob(syncOrderJob);  
 	    	    	}
+					ArrayList<SyncMsg> orderMessages = SyncMsgSQL.getTenUnsentSyncMsg(rvc.getId(), HttpAPI.ORDER_DATA);
+					for (SyncMsg msg:orderMessages) {
+						SyncMsgJob syncOrderJob = new SyncMsgJob(msg.getRevenueId(),
+								msg.getMsgType(), msg.getId(),
+								msg.getOrderId(),
+								msg.getBusinessDate(),
+								msg.getCreateTime());
+						syncJobManager.addJob(syncOrderJob);
+					}
 	        	}	        	 
 	         }
 	      }, 0, 20, TimeUnit.SECONDS);	    	

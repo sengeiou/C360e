@@ -20,7 +20,7 @@
     <string name="discount">Discount : </string>
     <string name="total_">Total : </string>
     <string name="rounding_print">Rounding : </string>
-    <string name="grand_total">Grand Total : </string>
+    <string name="grand_total">Grand Total</string>
     <string name="cash_">Cash</string>
     <string name="changes">Change</string>
     <string name="mastercard">MasterCard</string>

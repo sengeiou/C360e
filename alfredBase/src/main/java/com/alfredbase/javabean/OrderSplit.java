@@ -68,6 +68,8 @@ public class OrderSplit {
 	// 在已经结账的订单上面做修改的时候 用到 临时用 不存数据库
 	private String oldTotal;
 
+	private int splitByPax;
+
 	public OrderSplit() {
 	}
 
@@ -281,6 +283,14 @@ public class OrderSplit {
 		this.oldTotal = oldTotal;
 	}
 
+	public Integer getSplitByPax() {
+		return splitByPax;
+	}
+
+	public void setSplitByPax(Integer splitByPax) {
+		this.splitByPax = splitByPax;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderSplit{" +
@@ -307,6 +317,7 @@ public class OrderSplit {
 				", inclusiveTaxPrice='" + inclusiveTaxPrice + '\'' +
 				", inclusiveTaxPercentage='" + inclusiveTaxPercentage + '\'' +
 				", oldTotal='" + oldTotal + '\'' +
+				", splitByPax=" + splitByPax +
 				'}';
 	}
 }

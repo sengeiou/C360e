@@ -83,22 +83,13 @@ public class ReportObjectFactory {
 		return instance;
 	}
 
-	// Z-report
-	public ReportDaySales loadReportDaySales(long businessDate) {
-		ReportDaySales reportDaySales = null;
-		if (App.instance.getBusinessDate() != businessDate) {
-			reportDaySales = ReportDaySalesSQL
-					.getReportDaySalesByTime(businessDate);
-			return reportDaySales;
-		}
-
-		reportDaySales = ReportDaySalesSQL
-				.getReportDaySalesByTime(businessDate);
-		if (reportDaySales == null) {
-			reportDaySales = new ReportDaySales();
-			reportDaySales.setId(CommonSQL
-					.getNextSeq(TableNames.ReportDaySales));
-		}
+	/**
+	 * 只限显示当前营业时间的 不会存入数据库
+	 * @param businessDate
+	 * @return
+     */
+	public ReportDaySales loadShowReportDaySales(long businessDate) {
+		ReportDaySales reportDaySales = new ReportDaySales();
 		Map<String, Object> taxPriceSumMap = OrderDetailTaxSQL
 				.getTaxDetail(businessDate);
 		String refundTax = BH.getBD(OrderDetailTaxSQL.getRefundTax(businessDate)).toString();
@@ -158,14 +149,14 @@ public class ReportObjectFactory {
 		String nets = BH.doubleFormat
 				.format(BH.getBD(netsMap.get("sumAmount")));
 		String netsQty = netsMap.get("count");
-		
+
 		Map<String, String> alipayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_ALIPAY, businessDate);
 		String alipay = BH.doubleFormat
 				.format(BH.getBD(alipayMap.get("sumAmount")));
 		String alipayQty = alipayMap.get("count");
-		
+
 		Map<String, String> weixinpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate);
@@ -195,7 +186,7 @@ public class ReportObjectFactory {
 		Map<String, String> cashTopUpsMap = ConsumingRecordsSQL.getSumCashTopUPByBusinessDate(businessDate);
 		String cashTopUps = BH.doubleFormat
 				.format(BH.getBD(cashTopUpsMap.get("sumCashAmount")));
-		
+
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VISA, businessDate);
@@ -302,108 +293,108 @@ public class ReportObjectFactory {
 			// BH.getBD(order.getSubTotal()), true);
 			orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(order);
 			switch (order.getDiscountType()) {
-			case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER:
-			case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY: {
-				for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
-						.size(); orderDetailIndex++) {
-					OrderDetail orderDetail = orderDetailList
-							.get(orderDetailIndex);
-					itemSalesQty += orderDetail.getItemNum();
-					itemSalesDicimal = BH.add(itemSalesDicimal,
-							BH.getBD(orderDetail.getRealPrice()), true);
-					if(orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL){
-						if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-							discount = BH.add(discount, 
-									BH.getBD(orderDetail.getDiscountPrice()),
-									true);
-							discountQty++;
-						} else{ 
-							if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
+				case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER:
+				case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY: {
+					for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
+							.size(); orderDetailIndex++) {
+						OrderDetail orderDetail = orderDetailList
+								.get(orderDetailIndex);
+						itemSalesQty += orderDetail.getItemNum();
+						itemSalesDicimal = BH.add(itemSalesDicimal,
+								BH.getBD(orderDetail.getRealPrice()), true);
+						if(orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL){
+							if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+								discount = BH.add(discount,
+										BH.getBD(orderDetail.getDiscountPrice()),
+										true);
+								discountQty++;
+							} else{
+								if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
+									discountPerQty++;
+								}
+								discountPer = BH.add(discountPer, BH.mul(
+										BH.getBD(orderDetail.getRealPrice()),
+										BH.getBD(orderDetail.getDiscountRate()), false),
+										true);
+							}
+						}
+						if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+							takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+							takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+							takeawayQty += orderDetail.getItemNum();
+						}
+					}
+					discountPerQty++;
+				}
+				break;
+				case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER:
+				case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY: {
+					for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
+							.size(); orderDetailIndex++) {
+						OrderDetail orderDetail = orderDetailList
+								.get(orderDetailIndex);
+						itemSalesQty += orderDetail.getItemNum();
+						itemSalesDicimal = BH.add(itemSalesDicimal,
+								BH.getBD(orderDetail.getRealPrice()), true);
+						if(orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL){
+							if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+								discount = BH.add(discount,
+										BH.getBD(orderDetail.getDiscountPrice()),
+										true);
+								discountQty++;
+							} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
+								discountPer = BH.add(discountPer, BH.mul(
+										BH.getBD(orderDetail.getRealPrice()),
+										BH.getBD(orderDetail.getDiscountRate()), false),
+										true);
 								discountPerQty++;
 							}
-							discountPer = BH.add(discountPer, BH.mul(
-									BH.getBD(orderDetail.getRealPrice()),
-									BH.getBD(orderDetail.getDiscountRate()), false),
-									true);
+						}
+						if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+							takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+							takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+							takeawayQty += orderDetail.getItemNum();
 						}
 					}
-					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
-						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
-						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
-						takeawayQty += orderDetail.getItemNum();
-					}
-				}
-				discountPerQty++;
-			}
-				break;
-			case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER:
-			case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY: {
-				for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
-						.size(); orderDetailIndex++) {
-					OrderDetail orderDetail = orderDetailList
-							.get(orderDetailIndex);
-					itemSalesQty += orderDetail.getItemNum();
-					itemSalesDicimal = BH.add(itemSalesDicimal,
-							BH.getBD(orderDetail.getRealPrice()), true);
-					if(orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL){
-						if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-							discount = BH.add(discount, 
-									BH.getBD(orderDetail.getDiscountPrice()),
-									true);
-							discountQty++;
-						} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
-							discountPer = BH.add(discountPer, BH.mul(
-									BH.getBD(orderDetail.getRealPrice()),
-									BH.getBD(orderDetail.getDiscountRate()), false),
-									true);
-							discountPerQty++;
-						}
-					}
-					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
-						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
-						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
-						takeawayQty += orderDetail.getItemNum();
-					}
-				}
 //				discountPer = BH.add(discountPer, BH.getBD(order.getDiscountPrice()), true);
-				discount = BH.add(discount,
-						BH.getBD(order.getDiscountPrice()), true);
-				discountQty++;
-			}
+					discount = BH.add(discount,
+							BH.getBD(order.getDiscountPrice()), true);
+					discountQty++;
+				}
 				break;
-			case ParamConst.ORDER_DISCOUNT_TYPE_NULL:
-			case ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL: {
-				for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
-						.size(); orderDetailIndex++) {
-					OrderDetail orderDetail = orderDetailList
-							.get(orderDetailIndex);
-					itemSalesQty += orderDetail.getItemNum();
-					itemSalesDicimal = BH.add(itemSalesDicimal,
-							BH.getBD(orderDetail.getRealPrice()), true);
-					if(orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL){
-						if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
-							discountPer = BH
-									.add(discountPer,
-											BH.mul(BH.getBD(orderDetail
-													.getRealPrice()), BH
-													.getBD(orderDetail
-															.getDiscountRate()),
-													false), true);
-							discountPerQty++;
-						} else if (orderDetailList.get(orderDetailIndex)
-								.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-							discount = BH.add(discount,
-									BH.getBD(orderDetail.getDiscountPrice()), true);
-							discountQty++;
+				case ParamConst.ORDER_DISCOUNT_TYPE_NULL:
+				case ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL: {
+					for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
+							.size(); orderDetailIndex++) {
+						OrderDetail orderDetail = orderDetailList
+								.get(orderDetailIndex);
+						itemSalesQty += orderDetail.getItemNum();
+						itemSalesDicimal = BH.add(itemSalesDicimal,
+								BH.getBD(orderDetail.getRealPrice()), true);
+						if(orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL){
+							if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
+								discountPer = BH
+										.add(discountPer,
+												BH.mul(BH.getBD(orderDetail
+																.getRealPrice()), BH
+																.getBD(orderDetail
+																		.getDiscountRate()),
+														false), true);
+								discountPerQty++;
+							} else if (orderDetailList.get(orderDetailIndex)
+									.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+								discount = BH.add(discount,
+										BH.getBD(orderDetail.getDiscountPrice()), true);
+								discountQty++;
+							}
+						}
+						if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
+							takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
+							takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
+							takeawayQty += orderDetail.getItemNum();
 						}
 					}
-					if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
-						takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
-						takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
-						takeawayQty += orderDetail.getItemNum();
-					}
 				}
-			}
 				break;
 //			case ParamConst.ORDER_DISCOUNT_TYPE_NULL: {
 //				for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
@@ -416,8 +407,8 @@ public class ReportObjectFactory {
 //				}
 //			}
 //				break;
-			default:
-				break;
+				default:
+					break;
 			}
 			orderQty++;
 			personQty += order.getPersons();
@@ -428,18 +419,18 @@ public class ReportObjectFactory {
 				inclusiveTaxAmt = BH.add(inclusiveTaxAmt, BH.getBD(inclusiveTaxPrice), true);
 			} else {
 				PaymentSettlement paymentSettlement = PaymentSettlementSQL.getPaymentSettlementsByOrderId(order.getId());
-				if(paymentSettlement != null 
-						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT 
+				if(paymentSettlement != null
+						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT
 						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_VOID
 						&& paymentSettlement.getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_REFUND)
-				inclusiveTaxAmt = BH.add(BH.getBD(order.getInclusiveTaxPrice()), inclusiveTaxAmt, true);
+					inclusiveTaxAmt = BH.add(BH.getBD(order.getInclusiveTaxPrice()), inclusiveTaxAmt, true);
 				billNoQty++;
 			}
 		}
 
 		// itemSalesDicimal = BH.add(itemSalesDicimal, BH.getBD(iVoid),
 		// true);
-		
+
 
 		BigDecimal discountAmt = BH.add(discountPer, discount, true);
 		BigDecimal totalBalancePrice = BH.getBD(RoundAmountSQL
@@ -581,13 +572,74 @@ public class ReportObjectFactory {
 		reportDaySales.setFoodpandaQty(Integer.parseInt(foodpandaQty));
 		reportDaySales.setVoucher(voucher);
 		reportDaySales.setVoucherQty(Integer.parseInt(voucherQty));
-		ReportDaySalesSQL.addReportDaySales(reportDaySales);
+		return reportDaySales;
+	}
+
+	// Z-report
+	public ReportDaySales loadReportDaySales(long businessDate) {
+		ReportDaySales reportDaySales = null;
+		if (App.instance.getBusinessDate() != businessDate) {
+			reportDaySales = ReportDaySalesSQL
+					.getReportDaySalesByTime(businessDate);
+			return reportDaySales;
+		}
+
+		reportDaySales = ReportDaySalesSQL
+				.getReportDaySalesByTime(businessDate);
+		if (reportDaySales == null) {
+			reportDaySales = loadShowReportDaySales(businessDate);
+//			reportDaySales.setId(CommonSQL
+//					.getNextSeq(TableNames.ReportDaySales));
+		}
+//		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 		return reportDaySales;
 	}
 
 	/*
 	 * Z report:
 	 */
+	public ArrayList<ReportDayTax> loadShowReportDayTax(
+			ReportDaySales reportDaySales, long businessDate) {
+		ArrayList<ReportDayTax> reportDayTaxs = new ArrayList<ReportDayTax>();
+			ReportDayTax reportDayTax = null;
+			Map<String, Object> map = OrderDetailTaxSQL
+					.getTaxDetail(businessDate);
+			ArrayList<String> taxPriceSum = null;
+			ArrayList<String> taxNames = null;
+			ArrayList<String> taxPercentages = null;
+			ArrayList<Integer> taxIds = null;
+			ArrayList<Integer> taxCounts = null;
+			if (map != null) {
+				taxPriceSum = (ArrayList<String>) map.get("taxPriceSum");
+				taxNames = (ArrayList<String>) map.get("taxNames");
+				taxPercentages = (ArrayList<String>) map.get("taxPercentages");
+				taxIds = (ArrayList<Integer>) map.get("taxIds");
+				taxCounts = (ArrayList<Integer>) map.get("taxCounts");
+			}
+			if (taxPriceSum != null && taxNames != null
+					&& taxPercentages != null && taxIds != null
+					&& taxCounts != null) {
+				for (int i = 0; i < taxCounts.size(); i++) {
+					reportDayTax = new ReportDayTax();
+					reportDayTax.setId(CommonSQL
+							.getNextSeq(TableNames.ReportDayTax));
+					reportDayTax.setDaySalesId(reportDaySales.getId());
+					reportDayTax.setRestaurantId(restaurant.getId());
+					reportDayTax.setRestaurantName(restaurant
+							.getRestaurantName());
+					reportDayTax.setRevenueId(revenueCenter.getId());
+					reportDayTax.setRevenueName(revenueCenter.getRevName());
+					reportDayTax.setBusinessDate(businessDate);
+					reportDayTax.setTaxId(taxIds.get(i));
+					reportDayTax.setTaxName(taxNames.get(i));
+					reportDayTax.setTaxPercentage(taxPercentages.get(i));
+					reportDayTax.setTaxQty(taxCounts.get(i));
+					reportDayTax.setTaxAmount(BH.getBD(taxPriceSum.get(i)).toString());
+					reportDayTaxs.add(reportDayTax);
+				}
+			}
+		return reportDayTaxs;
+	}
 	public ArrayList<ReportDayTax> loadReportDayTax(
 			ReportDaySales reportDaySales, long businessDate) {
 		ArrayList<ReportDayTax> reportDayTaxs = new ArrayList<ReportDayTax>();
@@ -746,9 +798,7 @@ public class ReportObjectFactory {
 //		return reportPluDayItems;
 //	}
 
-	/*
-	 * Bob ADD
-	 */
+
 	public ArrayList<ReportPluDayItem> loadReportPluDayItem(long businessDate) {
 
 		ArrayList<ReportPluDayItem> reportPluDayItems = new ArrayList<ReportPluDayItem>();
@@ -917,6 +967,163 @@ public class ReportObjectFactory {
 		return reportPluDayItems;
 	}
 
+
+	public List<ReportPluDayItem> loadShowReportPluDayItem(long businessDate) {
+
+		// Get Void Items before settlement 1
+		Map<Integer, Map<String, String>> voidItemsBeforeSettlementMap = OrderDetailSQL
+				.getVoidItemsByBusinessDate(businessDate);
+		// Get Free Items before settlement 2
+		Map<Integer, Map<String, String>> focItemsBeforeSettlementMap = OrderDetailSQL
+				.getFocItemsByBusinessDate(businessDate);
+
+		// Item in void bill 3
+		Map<Integer, Map<String, String>> voidItemsAfterSettlementMap = PaymentSettlementSQL
+				.getItemsInVoidBillByBusinessDate(businessDate);
+		Map<Integer, Map<String, String>> voidSplitItemsAfterSettlementMap = PaymentSettlementSQL
+				.getItemsInVoidSplitBillByBusinessDate(businessDate);
+
+		// Item in Free bill 4
+		Map<Integer, Map<String, String>> focItemsAfterSettlementMap = PaymentSettlementSQL
+				.getItemsInFocBillByBusinessDate(businessDate);
+		Map<Integer, Map<String, String>> focSplitItemsAfterSettlementMap = PaymentSettlementSQL
+				.getItemsInFocSplitBillByBusinessDate(businessDate);
+		// Item in BOH bill 5
+		Map<Integer, Map<String, String>> bohItemAfterSettlement = PaymentSettlementSQL
+				.getItemsByBusinessDateAndPaymentType(
+						ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate);
+		Map<Integer, Map<String, String>> bohSplitItemAfterSettlement = PaymentSettlementSQL
+				.getSplitItemsByBusinessDateAndPaymentType(
+						ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate);
+
+
+		Map<Integer, Map<String, String>> itemCountAndAmountMap = OrderDetailSQL
+				.getItemCountAndItemAmountByBusinessDate( businessDate);
+			List <ReportPluDayItem> reportPluDayItems = new ArrayList<>();
+			ArrayList<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
+			itemDetails = ItemDetailSQL.getAllItemDetailForReport();
+			for (ItemDetail itemDetail : itemDetails) {
+				ItemCategory itemCategory = ItemCategorySQL
+						.getItemCategoryByIdForReport(itemDetail.getItemCategoryId());
+				ItemMainCategory itemMainCategory = ItemMainCategorySQL
+						.getItemMainCategoryByIdForReport(itemDetail
+								.getItemMainCategoryId());
+				// 1
+				String itemVoidQty = "0";
+				String itemVoidPrice = "0.00";
+				if (voidItemsBeforeSettlementMap
+						.containsKey(itemDetail.getId())) {
+					Map<String, String> map = voidItemsBeforeSettlementMap
+							.get(itemDetail.getId());
+					itemVoidQty = map.get("sumItemNum");
+					itemVoidPrice = map.get("sumRealPrice");
+				}
+				// 2
+				String itemFocQty = "0";
+				String itemFocPrice = "0.00";
+				if (focItemsBeforeSettlementMap.containsKey(itemDetail.getId())) {
+					Map<String, String> map = focItemsBeforeSettlementMap
+							.get(itemDetail.getId());
+					itemFocQty = map.get("sumItemNum");
+					itemFocPrice = map.get("sumRealPrice");
+				}
+				// 3
+				int billVoidQty = 0;
+				BigDecimal billVoidPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
+				if (voidItemsAfterSettlementMap.containsKey(itemDetail.getId())) {
+					Map<String, String> map = voidItemsAfterSettlementMap
+							.get(itemDetail.getId());
+					billVoidQty += Integer.parseInt(map.get("sumItemNum"));
+					billVoidPrice = BH.add(billVoidPrice, BH.getBD(map.get("sumRealPrice")), true);
+				}
+				if (voidSplitItemsAfterSettlementMap.containsKey(itemDetail.getId())) {
+					Map<String, String> map = voidSplitItemsAfterSettlementMap
+							.get(itemDetail.getId());
+					billVoidQty += Integer.parseInt(map.get("sumItemNum"));
+					billVoidPrice = BH.add(billVoidPrice, BH.getBD(map.get("sumRealPrice")), true);
+				}
+				// 4
+				int billFocQty = 0;
+				BigDecimal billFocPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
+				if (focItemsAfterSettlementMap.containsKey(itemDetail.getId())) {
+					Map<String, String> map = focItemsAfterSettlementMap
+							.get(itemDetail.getId());
+					billFocQty += Integer.parseInt(map.get("sumItemNum"));
+					billFocPrice = BH.add(billFocPrice, BH.getBD(map.get("sumRealPrice")), true);
+				}
+				if (focSplitItemsAfterSettlementMap.containsKey(itemDetail.getId())) {
+					Map<String, String> map = focSplitItemsAfterSettlementMap
+							.get(itemDetail.getId());
+					billFocQty += Integer.parseInt(map.get("sumItemNum"));
+					billFocPrice = BH.add(billFocPrice, BH.getBD(map.get("sumRealPrice")), true);
+				}
+				// 5
+				int itemHoldQty = 0;
+				BigDecimal itemHoldPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
+				if (bohItemAfterSettlement.containsKey(itemDetail.getId())) {
+					Map<String, String> map = bohItemAfterSettlement
+							.get(itemDetail.getId());
+					itemHoldQty += Integer.parseInt(map.get("sumItemNum"));
+					itemHoldPrice = BH.add(itemHoldPrice, BH.getBD(map.get("sumRealPrice")), true);
+				}
+				if (bohSplitItemAfterSettlement.containsKey(itemDetail.getId())) {
+					Map<String, String> map = bohSplitItemAfterSettlement
+							.get(itemDetail.getId());
+					itemHoldQty += Integer.parseInt(map.get("sumItemNum"));
+					itemHoldPrice = BH.add(itemHoldPrice, BH.getBD(map.get("sumRealPrice")), true);
+				}
+				int sumItemNum = 0;
+				String itemAmount = "0.00";
+				if(itemCountAndAmountMap.containsKey(itemDetail.getId().intValue())){
+					Map<String, String> itemCountAndAmount = itemCountAndAmountMap.get(itemDetail.getId().intValue());
+					sumItemNum = Integer.parseInt(itemCountAndAmount
+							.get("sumItemNum"));
+					itemAmount = itemCountAndAmount.get("sumRealPrice");
+				}
+
+
+				if (sumItemNum != 0) {
+					ReportPluDayItem reportPluDayItem = new ReportPluDayItem();
+					reportPluDayItem.setReportNo(0); // TODO
+					reportPluDayItem.setRestaurantId(restaurant.getId());
+					reportPluDayItem.setRestaurantName(restaurant
+							.getRestaurantName());
+					reportPluDayItem.setRevenueId(revenueCenter.getId());
+					reportPluDayItem.setRevenueName(revenueCenter.getRevName());
+					reportPluDayItem.setBusinessDate(businessDate);
+					reportPluDayItem.setItemMainCategoryId(itemDetail
+							.getItemMainCategoryId());
+					reportPluDayItem.setItemMainCategoryName(itemMainCategory
+							.getMainCategoryName());
+					reportPluDayItem.setItemCategoryId(itemDetail
+							.getItemCategoryId());
+					reportPluDayItem.setItemCategoryName(itemCategory
+							.getItemCategoryName());
+					reportPluDayItem.setItemDetailId(itemDetail.getId());
+					reportPluDayItem.setItemName(itemDetail.getItemName());
+					reportPluDayItem.setItemPrice(BH.getBD(
+							itemDetail.getPrice()).toString());
+					reportPluDayItem.setItemCount(sumItemNum);
+					reportPluDayItem.setItemAmount(itemAmount.toString());
+					reportPluDayItem.setItemVoidQty(Integer
+							.parseInt(itemVoidQty));
+					reportPluDayItem.setItemVoidPrice(itemVoidPrice.toString());
+					reportPluDayItem.setBillVoidQty(billVoidQty);
+					reportPluDayItem.setBillVoidPrice(billVoidPrice.toString());
+					reportPluDayItem.setItemHoldQty(itemHoldQty);
+					reportPluDayItem.setItemHoldPrice(itemHoldPrice.toString());
+					reportPluDayItem
+							.setItemFocQty(Integer.parseInt(itemFocQty));
+					reportPluDayItem.setItemFocPrice(itemFocPrice.toString());
+					reportPluDayItem
+							.setBillFocQty(billFocQty);
+					reportPluDayItem.setBillFocPrice(billFocPrice.toString());
+					reportPluDayItems.add(reportPluDayItem);
+				}
+			}
+		return reportPluDayItems;
+	}
+
 	public ArrayList<ReportPluDayModifier> loadReportPluDayModifier(
 			long businessDate) {
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
@@ -929,9 +1136,9 @@ public class ReportObjectFactory {
 				.deleteReportPluDayModifierByBusinessDate(businessDate);
 		if (reportPluDayModifiers.isEmpty()) {
 //			Map<Integer, Map<String, String>> voidBeforeSelettmentMap = OrderModifierSQL.getModifiersByBusinessDateAndOrderDetailType(businessDate, ParamConst.ORDERDETAIL_TYPE_VOID);
-//			
+//
 //			Map<Integer, Map<String, String>> focBeforeSelettmentMap = OrderModifierSQL.getModifiersByBusinessDateAndOrderDetailType(businessDate, ParamConst.ORDERDETAIL_TYPE_FREE);
-//			
+//
 //			// Item in void bill 3
 //			Map<Integer, Map<String, String>> voidModifiersAfterSettlementMap = PaymentSettlementSQL
 //					.getModifiersInBillByBusinessDate(ParamConst.SETTLEMENT_TYPE_VOID, businessDate);
@@ -942,7 +1149,7 @@ public class ReportObjectFactory {
 //			Map<Integer, Map<String, String>> bohModifierAfterSettlement = PaymentSettlementSQL
 //					.getModifiersInBillByBusinessDate(
 //							ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate);
-			
+
 			ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 			modifiers = ModifierSQL.getAllModifierForReport();
 			for (Modifier modifier : modifiers) {
@@ -971,7 +1178,7 @@ public class ReportObjectFactory {
 					String billVoidCount = billVoidPriceMap
 							.get("sumModifierNum") == null ? "0"
 							: billVoidPriceMap.get("sumModifierNum");
-//					Map<String, String> billSqlpitVoidPriceMap = 
+//					Map<String, String> billSqlpitVoidPriceMap =
 					Map<String, String> voidModifierPriceMap = OrderModifierSQL
 							.getAllOrderModifierByOrderDetailType(
 									modifier.getId(),
@@ -999,7 +1206,7 @@ public class ReportObjectFactory {
 									modifier.getId(),
 									businessDate,
 									ParamConst.ORDERDETAIL_TYPE_FREE);
-					
+
 					Map<String, String> billFocPriceMap = OrderModifierSQL
 							.getAllOrderModifierByOrderDetailType(
 									modifier.getId(),
@@ -1062,26 +1269,273 @@ public class ReportObjectFactory {
 		}
 		return reportPluDayModifiers;
 	}
-	
-	
+
 	public Map<String, Object> loadReportPluDayModifierInfo(
 			long businessDate) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>();
-		ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
-		if (App.instance.getBusinessDate().longValue() != businessDate) {
-			reportPluDayComboModifiers = ReportPluDayComboModifierSQL
-					.getReportPluDayComboModifiersByTime(businessDate);
-			reportPluDayModifiers = ReportPluDayModifierSQL
-					.getReportPluDayModifiersByTime(businessDate);
+		{
+			Map<String, Object> map = new HashMap<String, Object>();
+			ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>();
+			ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
+			if (App.instance.getBusinessDate().longValue() != businessDate) {
+				reportPluDayComboModifiers = ReportPluDayComboModifierSQL
+						.getReportPluDayComboModifiersByTime(businessDate);
+				reportPluDayModifiers = ReportPluDayModifierSQL
+						.getReportPluDayModifiersByTime(businessDate);
+				map.put("reportPluDayModifiers", reportPluDayModifiers);
+				map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
+				return map;
+			}
+			ReportPluDayComboModifierSQL
+					.deleteReportPluDayComboModifierByBusinessDate(businessDate);
+			ReportPluDayModifierSQL
+					.deleteReportPluDayModifierByBusinessDate(businessDate);
+			Map<Integer, ReportPluDayModifier> reportPluDayModifierMap = new HashMap<Integer, ReportPluDayModifier>();
+			Map<Integer, ReportPluDayComboModifier> reportPluDayComboModifierMap = new HashMap<Integer, ReportPluDayComboModifier>();
+			if (map.isEmpty()) {
+
+				List<ItemDetail> itemDetails = ItemDetailSQL.getAllItemDetailForReport();
+				ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+				modifiers = ModifierSQL.getAllModifierForReport();
+				for (ItemDetail itemDetail : itemDetails) {
+//				if(itemDetail.getItemType().intValue() != ParamConst.ITEMDETAIL_COMBO_ITEM){
+//					continue;
+//				}
+					Map<Integer, Map<String, String>> voidBeforeSelettmentMap = OrderModifierSQL.getModifiersByBusinessDateAndOrderDetailType(itemDetail.getId().intValue(), businessDate, ParamConst.ORDERDETAIL_TYPE_VOID);
+
+					Map<Integer, Map<String, String>> focBeforeSelettmentMap = OrderModifierSQL.getModifiersByBusinessDateAndOrderDetailType(itemDetail.getId().intValue(),businessDate, ParamConst.ORDERDETAIL_TYPE_FREE);
+
+					// Item in void bill 3
+					Map<Integer, Map<String, String>> voidModifiersAfterSettlementMap = PaymentSettlementSQL
+							.getModifiersInBillByBusinessDate(itemDetail.getId().intValue(), ParamConst.SETTLEMENT_TYPE_VOID, businessDate);
+					// Item in Free bill 4
+					Map<Integer, Map<String, String>> focModifiersAfterSettlementMap = PaymentSettlementSQL
+							.getModifiersInBillByBusinessDate(itemDetail.getId().intValue(), ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT, businessDate);
+					// Item in BOH bill 5
+					Map<Integer, Map<String, String>> bohModifierAfterSettlement = PaymentSettlementSQL
+							.getModifiersInBillByBusinessDate(itemDetail.getId().intValue(),
+									ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate);
+					for(Modifier modifier : modifiers) {
+						if (modifier.getType() == ParamConst.ORDER_MODIFIER_TYPE_CATEGORY) {
+//					ReportPluDayComboModifier reportPluDayComboModifier = new ReportPluDayComboModifier();
+							Map<String, String> modifierPriceMap = OrderModifierSQL
+									.getOrderModifierByItemAndModifier(itemDetail.getId().intValue(), modifier.getId().intValue(),
+											businessDate);
+							String modifierPrice = modifierPriceMap
+									.get("sumModifierPrice") == null ? "0.00"
+									: modifierPriceMap.get("sumModifierPrice");
+							String modifierCount = modifierPriceMap
+									.get("sumModifierNum") == null ? "0"
+									: modifierPriceMap.get("sumModifierNum");
+							String modifierItemPrice = modifierPriceMap
+									.get("modifierItemPrice") == null ? "0.00"
+									: modifierPriceMap.get("modifierItemPrice");
+
+							if (modifierCount.equals("0")) {
+								continue;
+							}
+							String billVoidPrice = "0.00";
+							String billVoidCount = "0";
+							if(voidModifiersAfterSettlementMap.containsKey(modifier.getId().intValue())){
+								Map<String, String> billVoidPriceMap = voidModifiersAfterSettlementMap.get(modifier.getId().intValue());
+								billVoidPrice = billVoidPriceMap
+										.get("sumModifierPrice") == null ? "0.00"
+										: billVoidPriceMap.get("sumModifierPrice");
+								billVoidCount = billVoidPriceMap
+										.get("sumModifierNum") == null ? "0"
+										: billVoidPriceMap.get("sumModifierNum");
+							}
+							String voidModifierPrice = "0.00";
+							String voidModifierCount = "0";
+							if(voidBeforeSelettmentMap.containsKey(modifier.getId().intValue())){
+								Map<String, String> voidModifierPriceMap = voidBeforeSelettmentMap.get(modifier.getId().intValue());
+								voidModifierPrice = voidModifierPriceMap
+										.get("sumModifierPrice") == null ? "0.00"
+										: voidModifierPriceMap.get("sumModifierPrice");
+								voidModifierCount = voidModifierPriceMap
+										.get("sumModifierNum") == null ? "0"
+										: voidModifierPriceMap.get("sumModifierNum");
+							}
+
+							String bohModifierPrice = "0.00";
+							String bohModifierCount = "0";
+							if(bohModifierAfterSettlement.containsKey(modifier.getId().intValue())){
+								Map<String, String> bohModifierPriceMap = bohModifierAfterSettlement.get(modifier.getId().intValue());
+								bohModifierPrice = bohModifierPriceMap
+										.get("sumModifierPrice") == null ? "0.00"
+										: bohModifierPriceMap.get("sumModifierPrice");
+								bohModifierCount = bohModifierPriceMap
+										.get("sumModifierNum") == null ? "0"
+										: bohModifierPriceMap.get("sumModifierNum");
+							}
+
+
+							String focModifierPrice = "0.00";
+							String focModifierCount = "0";
+							if(focBeforeSelettmentMap.containsKey(modifier.getId().intValue())){
+								Map<String, String> focModifierPriceMap = focBeforeSelettmentMap.get(modifier.getId().intValue());
+								focModifierPrice = focModifierPriceMap
+										.get("sumModifierPrice") == null ? "0.00"
+										: focModifierPriceMap.get("sumModifierPrice");
+								focModifierCount = focModifierPriceMap
+										.get("sumModifierNum") == null ? "0"
+										: focModifierPriceMap.get("sumModifierNum");
+							}
+
+							String billFocPrice = "0.00";
+							String billFocCount = "0";
+							if(focModifiersAfterSettlementMap.containsKey(modifier.getId().intValue())){
+								Map<String, String> billFocPriceMap = focModifiersAfterSettlementMap.get(modifier.getId().intValue());
+								billFocPrice = billFocPriceMap
+										.get("sumModifierPrice") == null ? "0.00"
+										: billFocPriceMap.get("sumModifierPrice");
+								billFocCount = billFocPriceMap
+										.get("sumModifierNum") == null ? "0"
+										: billFocPriceMap.get("sumModifierNum");
+							}
+
+							BigDecimal realPrice = BH.getBD(modifierPrice);
+							int realCount = Integer.parseInt(modifierCount);
+							if(Integer.parseInt(billVoidCount) > 0 ) {
+								realPrice = BH.sub(realPrice, BH.getBD(billVoidPrice), true);
+								realCount =- Integer.parseInt(billVoidCount);
+							}else if(Integer.parseInt(voidModifierCount) > 0){
+								realPrice = BH.sub(realPrice, BH.getBD(voidModifierPrice),true);
+								realCount =- Integer.parseInt(voidModifierCount);
+							}else if(Integer.parseInt(focModifierCount) > 0){
+								realPrice = BH.sub(realPrice, BH.getBD(focModifierPrice), true);
+								realCount =- Integer.parseInt(focModifierCount);
+							}else if(Integer.parseInt(billFocCount) > 0){
+								realPrice = BH.sub(realPrice, BH.getBD(billFocPrice), true);
+								realCount =- Integer.parseInt(billFocCount);
+							}
+							if(itemDetail.getItemType().intValue() != ParamConst.ITEMDETAIL_COMBO_ITEM){
+								if(reportPluDayModifierMap.containsKey(modifier.getId().intValue())){
+									ReportPluDayModifier reportPluDayModifier = reportPluDayModifierMap.get(modifier.getId().intValue());
+									reportPluDayModifier.setModifierPrice(BH.add(BH.getBD(reportPluDayModifier.getModifierPrice()), BH.getBD(modifierPrice), false).toString());
+									reportPluDayModifier.setModifierCount(Integer.parseInt(modifierCount) + reportPluDayModifier.getModifierCount());
+									reportPluDayModifier.setBillVoidPrice(BH.add(BH.getBD(reportPluDayModifier.getBillVoidPrice()), BH.getBD(billVoidPrice), false).toString());
+									reportPluDayModifier.setBillVoidCount(Integer.parseInt(billVoidCount) + reportPluDayModifier.getBillVoidCount());
+									reportPluDayModifier.setVoidModifierPrice(BH.add(BH.getBD(reportPluDayModifier.getVoidModifierPrice()), BH.getBD(voidModifierPrice), false).toString());
+									reportPluDayModifier.setVoidModifierCount(Integer.parseInt(voidModifierCount) + reportPluDayModifier.getVoidModifierCount());
+									reportPluDayModifier.setBohModifierPrice(BH.add(BH.getBD(reportPluDayModifier.getBohModifierPrice()), BH.getBD(bohModifierPrice), false).toString());
+									reportPluDayModifier.setBohModifierCount(Integer.parseInt(bohModifierCount) + reportPluDayModifier.getBohModifierCount());
+									reportPluDayModifier.setFocModifierPrice(BH.add(BH.getBD(reportPluDayModifier.getFocModifierPrice()), BH.getBD(focModifierPrice), false).toString());
+									reportPluDayModifier.setFocModifierCount(Integer.parseInt(focModifierCount) + 	reportPluDayModifier.getFocModifierCount());
+									reportPluDayModifier.setBillFocPrice(BH.add(BH.getBD(reportPluDayModifier.getBillFocPrice()), BH.getBD(billFocPrice), false).toString());
+									reportPluDayModifier.setBillFocCount(Integer.parseInt(billFocCount) + reportPluDayModifier.getBillFocCount());
+									reportPluDayModifier.setRealPrice(BH.add(BH.getBD(reportPluDayModifier.getRealPrice()), realPrice, false).toString());
+									reportPluDayModifier.setRealCount(realCount + reportPluDayModifier.getRealCount());
+								}else{
+									ReportPluDayModifier reportPluDayModifier = new ReportPluDayModifier();
+//							reportPluDayModifier.setId(CommonSQL
+//									.getNextSeq(TableNames.ReportPluDayModifier));
+									reportPluDayModifier.setReportNo(0);
+									reportPluDayModifier.setRestaurantId(restaurant.getId().intValue());
+									reportPluDayModifier.setRestaurantName(restaurant.getRestaurantName());
+									reportPluDayModifier.setRevenueId(revenueCenter.getId().intValue());
+									reportPluDayModifier.setRevenueName(revenueCenter.getRevName());
+									reportPluDayModifier.setBusinessDate(businessDate);
+									reportPluDayModifier.setModifierCategoryId(modifier.getCategoryId());
+									reportPluDayModifier.setModifierCategoryName(modifier.getCategoryName());
+									reportPluDayModifier.setModifierId(modifier.getId().intValue());
+									reportPluDayModifier.setModifierName(modifier.getModifierName());
+									reportPluDayModifier.setModifierPrice(modifierPrice);
+									reportPluDayModifier.setModifierCount(Integer.parseInt(modifierCount));
+									reportPluDayModifier.setBillVoidPrice(billVoidPrice);
+									reportPluDayModifier.setBillVoidCount(Integer.parseInt(billVoidCount));
+									reportPluDayModifier.setVoidModifierPrice(voidModifierPrice);
+									reportPluDayModifier.setVoidModifierCount(Integer.parseInt(voidModifierCount));
+									reportPluDayModifier.setBohModifierPrice(bohModifierPrice);
+									reportPluDayModifier.setBohModifierCount(Integer.parseInt(bohModifierCount));
+									reportPluDayModifier.setFocModifierPrice(focModifierPrice);
+									reportPluDayModifier.setFocModifierCount(Integer.parseInt(focModifierCount));
+									reportPluDayModifier.setBillFocPrice(billFocPrice);
+									reportPluDayModifier.setBillFocCount(Integer.parseInt(billFocCount));
+									reportPluDayModifier.setComboItemId(0);
+									reportPluDayModifier.setModifierItemPrice(modifierItemPrice);
+									reportPluDayModifier.setRealPrice(realPrice.toString());
+									reportPluDayModifier.setRealCount(realCount);
+									reportPluDayModifierMap.put(modifier.getId().intValue(), reportPluDayModifier);
+								}
+
+//						reportPluDayModifiers.add(reportPluDayModifier);
+//						ReportPluDayModifierSQL.addReportPluDayModifier(reportPluDayModifier);
+							}else {
+								if(reportPluDayComboModifierMap.containsKey(modifier.getId().intValue())){
+									ReportPluDayComboModifier reportPluDayComboModifier = reportPluDayComboModifierMap.get(modifier.getId().intValue());
+									reportPluDayComboModifier.setModifierPrice(BH.add(BH.getBD(reportPluDayComboModifier.getModifierPrice()), BH.getBD(modifierPrice), false).toString());
+									reportPluDayComboModifier.setModifierCount(Integer.parseInt(modifierCount) + reportPluDayComboModifier.getModifierCount());
+									reportPluDayComboModifier.setBillVoidPrice(BH.add(BH.getBD(reportPluDayComboModifier.getBillVoidPrice()), BH.getBD(billVoidPrice), false).toString());
+									reportPluDayComboModifier.setBillVoidCount(Integer.parseInt(billVoidCount) + reportPluDayComboModifier.getBillVoidCount());
+									reportPluDayComboModifier.setVoidModifierPrice(BH.add(BH.getBD(reportPluDayComboModifier.getVoidModifierPrice()), BH.getBD(voidModifierPrice), false).toString());
+									reportPluDayComboModifier.setVoidModifierCount(Integer.parseInt(voidModifierCount) + reportPluDayComboModifier.getVoidModifierCount());
+									reportPluDayComboModifier.setBohModifierPrice(BH.add(BH.getBD(reportPluDayComboModifier.getBohModifierPrice()), BH.getBD(bohModifierPrice), false).toString());
+									reportPluDayComboModifier.setBohModifierCount(Integer.parseInt(bohModifierCount) + reportPluDayComboModifier.getBohModifierCount());
+									reportPluDayComboModifier.setFocModifierPrice(BH.add(BH.getBD(reportPluDayComboModifier.getFocModifierPrice()), BH.getBD(focModifierPrice), false).toString());
+									reportPluDayComboModifier.setFocModifierCount(Integer.parseInt(focModifierCount) + 	reportPluDayComboModifier.getFocModifierCount());
+									reportPluDayComboModifier.setBillFocPrice(BH.add(BH.getBD(reportPluDayComboModifier.getBillFocPrice()), BH.getBD(billFocPrice), false).toString());
+									reportPluDayComboModifier.setBillFocCount(Integer.parseInt(billFocCount) + reportPluDayComboModifier.getBillFocCount());
+									reportPluDayComboModifier.setRealPrice(BH.add(BH.getBD(reportPluDayComboModifier.getRealPrice()), realPrice, false).toString());
+									reportPluDayComboModifier.setRealCount(realCount + reportPluDayComboModifier.getRealCount());
+								}else{
+									ReportPluDayComboModifier reportPluDayComboModifier = new ReportPluDayComboModifier();
+//							reportPluDayComboModifier.setId(CommonSQL.getNextSeq(TableNames.ReportPluDayComboModifier));
+									reportPluDayComboModifier.setReportNo(0); // TODO
+									reportPluDayComboModifier.setRestaurantId(restaurant.getId().intValue());
+									reportPluDayComboModifier.setRestaurantName(restaurant.getRestaurantName());
+									reportPluDayComboModifier.setRevenueId(revenueCenter.getId().intValue());
+									reportPluDayComboModifier.setRevenueName(revenueCenter.getRevName());
+									reportPluDayComboModifier.setBusinessDate(businessDate);
+									reportPluDayComboModifier.setModifierCategoryId(modifier.getCategoryId());
+									reportPluDayComboModifier.setModifierCategoryName(modifier.getCategoryName());
+									reportPluDayComboModifier.setModifierId(modifier.getId().intValue());
+									reportPluDayComboModifier.setModifierName(modifier.getModifierName());
+									reportPluDayComboModifier.setModifierPrice(modifierPrice);
+									reportPluDayComboModifier.setModifierCount(Integer.parseInt(modifierCount));
+									reportPluDayComboModifier.setBillVoidPrice(billVoidPrice);
+									reportPluDayComboModifier.setBillVoidCount(Integer.parseInt(billVoidCount));
+									reportPluDayComboModifier.setVoidModifierPrice(voidModifierPrice);
+									reportPluDayComboModifier.setVoidModifierCount(Integer.parseInt(voidModifierCount));
+									reportPluDayComboModifier.setBohModifierPrice(bohModifierPrice);
+									reportPluDayComboModifier.setBohModifierCount(Integer.parseInt(bohModifierCount));
+									reportPluDayComboModifier.setFocModifierPrice(focModifierPrice);
+									reportPluDayComboModifier.setFocModifierCount(Integer.parseInt(focModifierCount));
+									reportPluDayComboModifier.setBillFocPrice(billFocPrice);
+									reportPluDayComboModifier.setBillFocCount(Integer.parseInt(billFocCount));
+									reportPluDayComboModifier.setComboItemId(modifier.getItemId());
+									reportPluDayComboModifier.setItemId(itemDetail.getId());
+									reportPluDayComboModifier.setItemName(itemDetail.getItemName());
+									reportPluDayComboModifier.setModifierItemPrice(modifierItemPrice);
+									reportPluDayComboModifier.setRealPrice(realPrice.toString());
+									reportPluDayComboModifier.setRealCount(realCount);
+									reportPluDayComboModifierMap.put(modifier.getId().intValue(), reportPluDayComboModifier);
+								}
+
+//						reportPluDayComboModifiers.add(reportPluDayComboModifier);
+//						ReportPluDayComboModifierSQL
+//								.addReportPluDayModifier(reportPluDayComboModifier);
+							}
+
+						}
+					}
+				}
+			}
+			Collection<ReportPluDayModifier> valueCollectionReportPluDayModifier = reportPluDayModifierMap.values();
+			Collection<ReportPluDayComboModifier> valueCollectionReportPluDayComboModifier = reportPluDayComboModifierMap.values();
+			reportPluDayModifiers = new ArrayList<ReportPluDayModifier>(valueCollectionReportPluDayModifier);
+			reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>(valueCollectionReportPluDayComboModifier);
+//		ReportPluDayModifierSQL.addReportPluDayModifierList(reportPluDayModifiers);
+//		ReportPluDayComboModifierSQL.addReportPluDayModifierList(reportPluDayComboModifiers);
 			map.put("reportPluDayModifiers", reportPluDayModifiers);
 			map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
 			return map;
 		}
-		ReportPluDayComboModifierSQL
-				.deleteReportPluDayComboModifierByBusinessDate(businessDate);
-		ReportPluDayModifierSQL
-				.deleteReportPluDayModifierByBusinessDate(businessDate);
+	}
+	public Map<String, Object> loadShowReportPluDayModifierInfo(
+			long businessDate) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>();
+		ArrayList<ReportPluDayModifier> reportPluDayModifiers = new ArrayList<ReportPluDayModifier>();
 		Map<Integer, ReportPluDayModifier> reportPluDayModifierMap = new HashMap<Integer, ReportPluDayModifier>();
 		Map<Integer, ReportPluDayComboModifier> reportPluDayComboModifierMap = new HashMap<Integer, ReportPluDayComboModifier>();
 		if (map.isEmpty()) {
@@ -1323,6 +1777,38 @@ public class ReportObjectFactory {
 		map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
 		return map;
 	}
+
+	public List<ReportHourly> loadShowReportHourlys(long businessDate) {
+		List<ReportHourly> reportHourlyList = new ArrayList<>();
+		long nowTime = System.currentTimeMillis();
+		for (long i = businessDate; i < nowTime; i = TimeUtil
+				.getCalendarNextPoint(i)) {
+			// Calendar hourCal = Calendar.getInstance();
+			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
+			// hourCal.set(Calendar.HOUR_OF_DAY, i);
+			// Calendar netHourCal = Calendar.getInstance();
+			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
+			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
+			Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
+					businessDate, i, TimeUtil.getCalendarNextPoint(i));
+			if (amountMap == null || amountMap.size() < 1) {
+				continue;
+			} else {
+				ReportHourly reportHourly = new ReportHourly();
+				reportHourly.setRestaurantId(restaurant.getId());
+				reportHourly.setRevenueId(revenueCenter.getId());
+				reportHourly.setRevenueName(revenueCenter.getRevName());
+				reportHourly.setBusinessDate(businessDate);
+				reportHourly.setHour(TimeUtil.getTimeHour(i));
+				reportHourly.setAmountPrice(amountMap.get("sum"));
+				reportHourly.setAmountQty(Integer.parseInt(amountMap
+						.get("count")));
+				reportHourlyList.add(reportHourly);
+			}
+		}
+		return  reportHourlyList;
+	}
+
 
 	public ArrayList<ReportHourly> loadReportHourlys(long businessDate) {
 		ArrayList<ReportHourly> reportHourlys = new ArrayList<ReportHourly>();

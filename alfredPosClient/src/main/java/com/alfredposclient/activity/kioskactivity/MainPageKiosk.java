@@ -1115,6 +1115,9 @@ public class MainPageKiosk extends BaseActivity {
 				topMenuView.setGetBillNum(App.instance
 						.getGetTingBillNotifications().size());
 				break;
+			case VerifyDialog.DIALOG_DISMISS:
+
+				break;
 			case VerifyDialog.DIALOG_RESPONSE:{
 				Map<String, Object> result = (Map<String, Object>) msg.obj;
 				User user = (User) result.get("User");

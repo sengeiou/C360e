@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.alfredposclient.activity.XZRerortActivity">
+    tools:context="com.alfredposclient.activity.XZReportActivity">
 
     <include
         android:id="@+id/in_xz_title"

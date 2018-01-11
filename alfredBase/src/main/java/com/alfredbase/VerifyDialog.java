@@ -22,6 +22,7 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 	private static final int STATE_IN_ENTER_ID = 0;
 	private static final int STATE_IN_ENTER_PASSWORD = 1;
 	public static final int DIALOG_RESPONSE = -10;
+	public static final int DIALOG_DISMISS = -11;
 	/**
 	 * 当前键盘输入对应的状态，0表示输入的员工ID，1表示输入的密码
 	 */
@@ -93,6 +94,9 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 				password = null;
 			} else {
 				dismiss();
+			}
+			if(handler != null){
+				handler.sendEmptyMessage(DIALOG_DISMISS);
 			}
 		} else{
 			keyBuf.append(key);

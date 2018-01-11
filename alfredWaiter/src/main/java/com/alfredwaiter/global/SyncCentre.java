@@ -31,10 +31,15 @@ public class SyncCentre {
 
 			httpClient = new AsyncHttpClient();
 			httpClient.addHeader("Connection", "close");
-			httpClient.setMaxRetriesAndTimeout(0, 15 * 1000);
+			httpClient.setMaxRetriesAndTimeout(0, 30 * 1000);
+			httpClient.setTimeout(30 * 1000);
 		}
 	}
-	
+
+	public void cancelAllRequests(){
+		if(httpClient != null)
+			httpClient.cancelAllRequests(true);
+	}
 	public void employeeId(Context context, String ip, Map<String, Object> parameters,
 			Handler handler){
 		HttpAPI.employeeId(context, parameters,

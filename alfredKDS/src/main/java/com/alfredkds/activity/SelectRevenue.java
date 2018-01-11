@@ -34,6 +34,7 @@ public class SelectRevenue extends BaseActivity {
     private ListView listView;
     private RevenueListAdapter revenueListAdapter;
     private TextTypeFace textTypeFace;
+    private Observable<UdpMsg> observable;
     @Override
     protected void initView() {
         super.initView();
@@ -48,7 +49,7 @@ public class SelectRevenue extends BaseActivity {
         loadingDialog = new LoadingDialog(this);
         loadingDialog.setTitle("Search Revenue ...");
         loadingDialog.showByTime(5000);
-        Observable<UdpMsg> observable = RxBus.getInstance().register("RECEIVE_IP_ACTION");
+        observable = RxBus.getInstance().register("RECEIVE_IP_ACTION");
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
             @Override
             public void call(UdpMsg udpMsg) {
@@ -68,6 +69,13 @@ public class SelectRevenue extends BaseActivity {
             }
         });
         App.instance.searchRevenueIp();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(observable != null)
+            RxBus.getInstance().unregister("RECEIVE_IP_ACTION", observable);
+        super.onDestroy();
     }
 
     private void initTextTypeFace() {

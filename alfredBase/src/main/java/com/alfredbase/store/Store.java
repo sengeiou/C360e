@@ -49,6 +49,8 @@ public class Store {
 	public static final String KDS_USER = "KDS_USER";
 
 	public static final String WAITER_USER = "waiter_user";
+	public static final String WAITER_PRINTER_DEVICE = "WAITER_PRINTER_DEVICE";
+	public static final String WIFI_STR = "WIFI_STR";
 
 	public static final String MAINPOSINFO_MAP = "MAINPOSINFO_MAP";
 

@@ -37,6 +37,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 	public static final int GENERAL_ORDER = 0;
 	public static final int MAX_ORDER_NO = 2;
 	public static final int TRANSFER_ITEM= 3;
+	public static final int SPLITE_BY_PAX = 4;
 	private BaseActivity parent;
 	private View parentView;
 	private Handler handler;
@@ -208,6 +209,9 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 									MainPage.ACTION_TRANSFER_ITEM,
 									transferItemTable));
 				}
+				dismiss();
+			} else if(type == SPLITE_BY_PAX) {
+				handler.sendMessage(handler.obtainMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX, tv_pax.getText().toString()));
 				dismiss();
 			} else {
 				if(order != null){

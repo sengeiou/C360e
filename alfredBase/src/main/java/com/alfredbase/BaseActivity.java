@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +13,9 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.store.Store;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.RxBus;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.umeng.analytics.MobclickAgent;
@@ -75,6 +78,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 	protected void onResume() {
 		super.onResume();
 		MobclickAgent.onResume(this);
+		String wifiStr = Store.getString(context, Store.WIFI_STR);
+		if(!TextUtils.isEmpty(wifiStr)){
+			RxBus.getInstance().post(RxBus.RX_WIFI_STORE, wifiStr);
+		}
 	}
 
 	@Override

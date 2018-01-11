@@ -30,7 +30,9 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.ModifierSQL;
@@ -40,6 +42,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
 import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
@@ -52,10 +55,16 @@ import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.MoneyKeyboard;
 import com.alfredwaiter.view.MoneyKeyboard.KeyBoardClickListener;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickListener{
 	public static final int VIEW_EVENT_SELECT_GROUP = 0;
@@ -91,7 +100,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	private DismissCall dismissCall;
 	private LinearLayout ll_bill_action;
 	private WaiterModifierWindow modifierWindow;
-
+	private Observable<String> observable;
 	private OrderDetail selectedOrderDetail;
 	@Override
 	protected void initView() {
@@ -138,6 +147,23 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		moneyKeyboard.setKeyBoardClickListener(this);
 		refreshOrderTotal();
 		refreshOrder();
+		observable = RxBus.getInstance().register(RxBus.RX_REFRESH_ORDER);
+		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+			@Override
+			public void call(String data) {
+				if (currentOrder != null) {
+					try {
+						JSONObject jsonObject = new JSONObject(data);
+						int orderId = jsonObject.getInt("orderId");
+						if(orderId == currentOrder.getId().intValue()) {
+							loadOrder(TableInfoSQL.getTableById(currentOrder.getTableId().intValue()));
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 
@@ -145,6 +171,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
+			case TablesPage.VIEW_EVENT_SELECT_TABLES:
+				dismissLoadingDialog();
+				currentOrder = (Order) msg.obj;
+				refreshList();
+				break;
 			case VIEW_EVENT_SELECT_GROUP:
 				groupId = (Integer) msg.obj;
 				if(groupId < 0){
@@ -242,6 +273,15 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		};
 	};
 
+	private void loadOrder(TableInfo tableInfo){
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("tables", tableInfo);
+		loadingDialog.setTitle("updating...");
+		loadingDialog.show();
+		SyncCentre.getInstance().selectTables(context, parameters,
+				handler);
+	}
+
 	private void addOrderDetailAndOrderModifier(OrderDetail orderDetail,int count, List<ModifierVariance> modifierIds, String description){
 		currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
 		orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
@@ -331,6 +371,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				.getOrderDetailByOrderIdAndOrderDetailStatus(currentOrder
 						.getId());
 		// orderDetails = OrderDetailSQL.getOrderDetails(currentOrder);
+		orderDetails.clear();
 		orderDetails.addAll(newOrderDetails);
 		orderDetails.addAll(oldOrderDetails);
 	}
@@ -361,14 +402,20 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		}
 			break;
 		case R.id.btn_print_bill: {
-			DialogFactory.commonTwoBtnDialog(context, "Warning", "Use the default Cashier Printer ?", "Other", "OK",
+			final PrinterDevice printerDevice = Store.getObject(context, Store.WAITER_PRINTER_DEVICE,PrinterDevice.class);
+			String str = "Use the default Cashier Printer ?";
+			if(printerDevice != null){
+				str = "Use the \"" + (TextUtils.isEmpty(printerDevice.getPrinterName()) ? printerDevice.getName() : printerDevice.getPrinterName()) + "\" Printer ?\nIP:"+printerDevice.getIP();
+			}
+			DialogFactory.commonTwoBtnDialog(context, "Warning", str, "Other", "OK",
 					new OnClickListener() {
 						@Override
 						public void onClick(View v) {
 							DialogFactory.showSelectPrinterDialog(context, new DialogFactory.DialogCallBack() {
 								@Override
 								public void callBack(PrinterDevice printerDevice) {
-									printBill(printerDevice);
+									printBill(printerDevice.getDevice_id());
+									Store.saveObject(context, Store.WAITER_PRINTER_DEVICE,printerDevice);
 								}
 							},App.instance.getPrinterDevices());
 						}
@@ -376,7 +423,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 					new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							printBill(null);
+							if(printerDevice != null){
+								printBill(printerDevice.getDevice_id());
+							}else{
+								printBill(0);
+							}
+
 						}
 					}, true);
 		}
@@ -389,13 +441,13 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		}
 	}
 
-	private void printBill(PrinterDevice printer){
+	private void printBill(int printerDeviceId){
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("orderId",currentOrder.getId().intValue());
 		parameters.put("tableName",TableInfoSQL.getTableById(
 				currentOrder.getTableId()).getName());
-		if(printer != null){
-			parameters.put("deviceId", printer.getDevice_id());
+		if(printerDeviceId > 0){
+			parameters.put("deviceId", printerDeviceId);
 		}
 		SyncCentre.getInstance().printBill(context, parameters, handler);
 	}
@@ -497,6 +549,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	@Override
 	protected void onDestroy() {
 		VibrationUtil.cancel();
+		if(observable != null)
+			RxBus.getInstance().unregister(RxBus.RX_REFRESH_ORDER, observable);
 		super.onDestroy();
 	}
 

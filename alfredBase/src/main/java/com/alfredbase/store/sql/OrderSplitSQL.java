@@ -29,8 +29,8 @@ public class OrderSplitSQL {
 					+ "(id,orderId,orderOriginId,userId,persons,orderStatus,subTotal,"
 					+ "taxAmount,discountAmount,total,sessionStatus,restId, "
 					+ "revenueId,tableId,createTime,updateTime, sysCreateTime, sysUpdateTime, groupId,"
-					+ "inclusiveTaxName, inclusiveTaxPrice, inclusiveTaxPercentage)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxName, inclusiveTaxPrice, inclusiveTaxPercentage, splitByPax)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { orderSplit.getId(), orderSplit.getOrderId(),
@@ -51,7 +51,8 @@ public class OrderSplitSQL {
 							orderSplit.getGroupId(),
 							orderSplit.getInclusiveTaxName(),
 							orderSplit.getInclusiveTaxPrice(),
-							orderSplit.getInclusiveTaxPercentage()});
+							orderSplit.getInclusiveTaxPercentage(),
+							orderSplit.getSplitByPax()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -72,8 +73,8 @@ public class OrderSplitSQL {
 					+ "(id,orderId,orderOriginId,userId,persons,orderStatus,subTotal,"
 					+ "taxAmount,discountAmount,total,sessionStatus,restId, "
 					+ "revenueId,tableId,createTime,updateTime, sysCreateTime, sysUpdateTime, groupId,"
-					+ "inclusiveTaxName, inclusiveTaxPrice, inclusiveTaxPercentage)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxName, inclusiveTaxPrice, inclusiveTaxPercentage, splitByPax)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { orderSplit.getId(), orderSplit.getOrderId(),
@@ -94,7 +95,8 @@ public class OrderSplitSQL {
 							orderSplit.getGroupId(),
 							orderSplit.getInclusiveTaxName(),
 							orderSplit.getInclusiveTaxPrice(),
-							orderSplit.getInclusiveTaxPercentage()});
+							orderSplit.getInclusiveTaxPercentage(),
+							orderSplit.getSplitByPax()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -130,7 +132,7 @@ public class OrderSplitSQL {
 				orderSplit.setInclusiveTaxName(cursor.getString(19));
 				orderSplit.setInclusiveTaxPrice(cursor.getString(20));
 				orderSplit.setInclusiveTaxPercentage(cursor.getString(21));
-				
+				orderSplit.setSplitByPax(cursor.getInt(22));
 				return orderSplit;
 			}
 		} catch (Exception e) {
@@ -156,8 +158,8 @@ public class OrderSplitSQL {
 					+ "(id,orderId,orderOriginId,userId,persons,orderStatus,subTotal,"
 					+ "taxAmount,discountAmount,total,sessionStatus,restId, "
 					+ "revenueId,tableId,createTime,updateTime, sysCreateTime, sysUpdateTime, groupId,"
-					+ "inclusiveTaxName, inclusiveTaxPrice, inclusiveTaxPercentage)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxName, inclusiveTaxPrice, inclusiveTaxPercentage, splitByPax)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (OrderSplit orderSplit : orderSplits) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
@@ -204,6 +206,8 @@ public class OrderSplitSQL {
 						orderSplit.getInclusiveTaxPrice());
 				SQLiteStatementHelper.bindString(sqLiteStatement, 22,
 						orderSplit.getInclusiveTaxPercentage());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 23,
+						orderSplit.getSplitByPax());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -252,6 +256,7 @@ public class OrderSplitSQL {
 				orderSplit.setInclusiveTaxName(cursor.getString(19));
 				orderSplit.setInclusiveTaxPrice(cursor.getString(20));
 				orderSplit.setInclusiveTaxPercentage(cursor.getString(21));
+				orderSplit.setSplitByPax(cursor.getInt(22));
 				result.add(orderSplit);
 			}
 		} catch (Exception e) {
@@ -310,6 +315,7 @@ public class OrderSplitSQL {
 				orderSplit.setInclusiveTaxName(cursor.getString(19));
 				orderSplit.setInclusiveTaxPrice(cursor.getString(20));
 				orderSplit.setInclusiveTaxPercentage(cursor.getString(21));
+				orderSplit.setSplitByPax(cursor.getInt(22));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -398,12 +404,18 @@ public class OrderSplitSQL {
 		return result;
 	}
 	
-	public static int getUnDoneOrderSplitsCountByOrder(int orderId) {
-		String sql = "select count(s.id) from " 
+	public static int getUnDoneOrderSplitsCountByOrder(int orderId, boolean splitPax) {
+		String sql = "select count(s.id) from "
 				+ TableNames.OrderSplit
-				+ " s, " + TableNames.OrderDetail  
-				+ " d where s.orderId = ? and d.groupId = s.groupId and d.orderId = s.orderId and s.orderStatus <> " 
+				+ " s, " + TableNames.OrderDetail
+				+ " d where s.orderId = ? and d.groupId = s.groupId and d.orderId = s.orderId and s.orderStatus <> "
 				+ ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED + " group by s.groupId ";
+		if(splitPax) {
+			sql = "select count(id) from "
+					+ TableNames.OrderSplit
+					+ " where orderId = ? and orderStatus <> "
+					+ ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED;
+		}
 		Cursor cursor = null;
 		int orderQty = 0;
 		SQLiteDatabase db = SQLExe.getDB();
@@ -442,6 +454,14 @@ public class OrderSplitSQL {
 		String sql = "delete from " + TableNames.OrderSplit + " where orderId = ? and groupId = ?";
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] {orderId + "",  groupId + ""});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void deleteOrderSplitByOrderId(int orderId){
+		String sql = "delete from " + TableNames.OrderSplit + " where orderId = ? ";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {orderId});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

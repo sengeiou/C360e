@@ -301,7 +301,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			changePasswordDialog.show();
 			break;
 		case R.id.ll_set_callnum:
-			selectPrintWindow.show();
+			selectPrintWindow.show("");
 			break;
 		case R.id.ll_set_color:
 			colorPickerDialog = new ColorPickerDialog(SystemSetting.this, Store.getInt(SystemSetting.this, Store.COLOR_PICKER, Color.WHITE), getString(R.string.color_select), new ColorPickerDialog.OnColorChangedListener() {

@@ -82,7 +82,7 @@
         android:paddingTop="2dp"
         android:text="@string/bill"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_small" />
+        android:textSize="@dimen/text_size_s" />
 
     <RelativeLayout
         android:id="@+id/rl_print_colse_bill"
@@ -103,7 +103,7 @@
             android:gravity="center"
             android:text="@string/print_bill"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_s" />
 
         <!--         <TextView -->
         <!--             android:id="@+id/tv_split" -->
@@ -115,7 +115,7 @@
         <!--             android:gravity="center" -->
         <!--             android:text="Split" -->
         <!--             android:textColor="@color/height_gray" -->
-        <!--             android:textSize="@dimen/text_size_small" /> -->
+        <!--             android:textSize="@dimen/text_size_s" /> -->
 
 
         <TextView
@@ -128,7 +128,7 @@
             android:gravity="center"
             android:text="@string/discount"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_s" />
 
         <TextView
             android:id="@+id/tv_unseat"
@@ -141,7 +141,7 @@
             android:gravity="center"
             android:text="@string/unseat"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_s" />
 
         <TextView
             android:id="@+id/tv_close_bill"
@@ -153,7 +153,7 @@
             android:gravity="center"
             android:text="@string/colse_bill"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_s" />
     </RelativeLayout>
 
     <TextView
@@ -167,7 +167,7 @@
         android:paddingTop="2dp"
         android:text="@string/table"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_small" />
+        android:textSize="@dimen/text_size_s" />
 
     <RelativeLayout
         android:id="@+id/rl_table_and_transfer"
@@ -188,7 +188,7 @@
             android:gravity="center"
             android:text="@string/table"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_s" />
 
         <TextView
             android:id="@+id/tv_transfer_table"
@@ -201,7 +201,7 @@
             android:gravity="center"
             android:text="@string/transfer_table"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_s" />
     </RelativeLayout>
 
     <TextView
@@ -215,7 +215,7 @@
         android:paddingTop="2dp"
         android:text="@string/misc"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_small" />
+        android:textSize="@dimen/text_size_s" />
 
     <RelativeLayout
         android:id="@+id/rl_misc"
@@ -236,7 +236,7 @@
             android:gravity="center"
             android:text="@string/open_item"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_s" />
 
         <TextView
             android:id="@+id/tv_kick_cashdrawer"
@@ -248,7 +248,7 @@
             android:gravity="center"
             android:text="@string/open_drawer"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small"
+            android:textSize="@dimen/text_size_s"
             android:visibility="gone" />
 
         <TextView
@@ -262,21 +262,43 @@
             android:gravity="center"
             android:text="@string/take_away"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_s" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_fire"
-        android:layout_width="160dp"
-        android:layout_height="90dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/rl_misc"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="-15dp"
-        android:background="@drawable/box_bill_selector"
         android:gravity="center"
-        android:text="Fire"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_big" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_split_by_pax"
+            android:layout_width="@dimen/dp70"
+            android:layout_height="@dimen/dp80"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/box_bill_selector"
+            android:gravity="center"
+            android:text="Split by pax"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_s" />
+
+        <TextView
+            android:id="@+id/tv_fire"
+            android:layout_width="@dimen/dp70"
+            android:layout_height="@dimen/dp80"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/tv_split_by_pax"
+            android:background="@drawable/box_bill_selector"
+            android:gravity="center"
+            android:text="Fire"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_s" />
+    </RelativeLayout>
 
 </RelativeLayout>

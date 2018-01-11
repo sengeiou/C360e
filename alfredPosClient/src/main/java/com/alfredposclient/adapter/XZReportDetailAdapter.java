@@ -8,9 +8,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.javabean.ReportPluDayItem;
-import com.alfredbase.utils.BH;
 import com.alfredposclient.R;
+import com.alfredposclient.javabean.ReportDetailAnalysisItem;
 
 import java.util.List;
 
@@ -20,22 +19,22 @@ import java.util.List;
 
 public class XZReportDetailAdapter extends BaseAdapter {
 
-    private List<ReportPluDayItem> list;
+    private List<ReportDetailAnalysisItem> reportDetailAnalysisItems;
     private BaseActivity activity;
 
-    public XZReportDetailAdapter(List<ReportPluDayItem> list, BaseActivity activity) {
-        this.list = list;
+    public XZReportDetailAdapter(List<ReportDetailAnalysisItem> reportDetailAnalysisItems, BaseActivity activity) {
+        this.reportDetailAnalysisItems = reportDetailAnalysisItems;
         this.activity = activity;
     }
 
     @Override
     public int getCount() {
-        return list.size();
+        return reportDetailAnalysisItems.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return list.get(position);
+        return reportDetailAnalysisItems.get(position);
     }
 
     @Override
@@ -57,11 +56,20 @@ public class XZReportDetailAdapter extends BaseAdapter {
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        ReportPluDayItem reportPluDayItem = list.get(position);
+        ReportDetailAnalysisItem reportDetailAnalysisItem = reportDetailAnalysisItems.get(position);
 //        viewHolder.xarepurt_item.setBackgroundColor(Color.parseColor("#B4EEB4"));
-        viewHolder.xzreport_item_name.setText(reportPluDayItem.getItemName());
-        viewHolder.xzreport_item_num.setText(reportPluDayItem.getItemCount() + "");
-        viewHolder.xzreport_item_total.setText(BH.getBD(reportPluDayItem.getItemAmount()).toString());
+        viewHolder.xzreport_item_name.setText(reportDetailAnalysisItem.getName());
+        if(reportDetailAnalysisItem.isShowOther()){
+            viewHolder.xzreport_item_num.setVisibility(View.VISIBLE);
+            viewHolder.xzreport_item_total.setVisibility(View.VISIBLE);
+            viewHolder.xzreport_item_num.setText(reportDetailAnalysisItem.getQty() + "");
+            viewHolder.xzreport_item_total.setText(reportDetailAnalysisItem.getAmount().toString());
+        }else{
+            viewHolder.xzreport_item_num.setVisibility(View.INVISIBLE);
+            viewHolder.xzreport_item_total.setVisibility(View.INVISIBLE);
+        }
+
+
 
         return convertView;
     }

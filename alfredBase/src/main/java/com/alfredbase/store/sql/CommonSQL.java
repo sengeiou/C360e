@@ -8,23 +8,25 @@ import com.alfredbase.store.TableNames;
 public class CommonSQL {
 
 	public static int getNextSeq(String table) {
-		int seq = 0;
-		String sql = "select seq from " + TableNames.SQLITE_SEQUENCE
-				+ " where name = ?";
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(sql, new String[] { table });
-			if (cursor.moveToFirst()) {
-				seq = cursor.getInt(0);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		synchronized (table) {
+			int seq = 0;
+			String sql = "select seq from " + TableNames.SQLITE_SEQUENCE
+					+ " where name = ?";
+			Cursor cursor = null;
+			try {
+				cursor = SQLExe.getDB().rawQuery(sql, new String[]{table});
+				if (cursor.moveToFirst()) {
+					seq = cursor.getInt(0);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
+			} finally {
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
 			}
+			return seq + 1;
 		}
-		return seq + 1;
 	}
 }

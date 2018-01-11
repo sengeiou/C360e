@@ -1,10 +1,6 @@
 package com.alfredposclient.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,25 +11,33 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.utils.ColorUtils;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelectOrderSplitDialog extends Dialog {
 	private LayoutInflater inflater;
 	private GridView gv_person_index;
 	private Adapter adapter;
 	private Handler handler;
-	private Context context;
+	private BaseActivity context;
 	private TextTypeFace textTypeFace;
 	private List<OrderSplit> orderSplits = new ArrayList<OrderSplit>();
+	private Order order;
+	private boolean canDelete = false;
 
-	public SelectOrderSplitDialog(Context context, Handler handler) {
+	public SelectOrderSplitDialog(BaseActivity context, Handler handler) {
 		super(context, R.style.Dialog_transparent);
 		inflater = LayoutInflater.from(context);
 		this.context = context;
@@ -58,8 +62,12 @@ public class SelectOrderSplitDialog extends Dialog {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				OrderSplit orderSplit = orderSplits.get(arg2);
-				if(orderSplit.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED){
-					handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_SHOW_CLOSE_SPLIT_BILL, arg1.getTag()));
+				if(orderSplit.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
+					if (canDelete) {
+						handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_SHOW_CLOSE_SPLIT_BY_PAX_BILL, arg1.getTag()));
+					} else{
+						handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_SHOW_CLOSE_SPLIT_BILL, arg1.getTag()));
+					}
 					dismiss();
 				}
 				
@@ -70,10 +78,17 @@ public class SelectOrderSplitDialog extends Dialog {
 	}
 
 	public void show(List<OrderSplit> orderSplits, Order order) {
+		show(orderSplits, order, false);
+	}
+
+	public void show(List<OrderSplit> orderSplits, Order order, boolean canDelete){
 		this.orderSplits = orderSplits;
+		this.order = order;
 		adapter.notifyDataSetChanged();
 		super.show();
 		App.instance.orderInPayment = order;
+		this.canDelete = canDelete;
+
 	}
 
 	@Override
@@ -114,5 +129,19 @@ public class SelectOrderSplitDialog extends Dialog {
 			return arg1;
 		}
 
+	}
+
+	@Override
+	public void onBackPressed() {
+		if(canDelete){
+			OrderSplitSQL.deleteOrderSplitByOrderId(App.instance.orderInPayment.getId().intValue());
+			DialogFactory.showOneButtonCompelDialog(context, "Warning", "The splits will been deleted", new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					dismiss();
+				}
+			});
+		}
+		super.onBackPressed();
 	}
 }

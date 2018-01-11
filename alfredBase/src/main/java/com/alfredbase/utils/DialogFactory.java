@@ -574,7 +574,7 @@ public class DialogFactory {
 			}
 
 			PrinterDevice printerDevice = list.get(position);
-			holder.tv_printer_name.setText(printerDevice.getName());
+			holder.tv_printer_name.setText(TextUtils.isEmpty(printerDevice.getPrinterName()) ? printerDevice.getName() : printerDevice.getPrinterName() + "\nIP:" + printerDevice.getIP());
 			return convertView;
 		}
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.http.ResultCode;
@@ -27,11 +28,16 @@ import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
+import com.alfredbase.store.sql.ItemCategorySQL;
+import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
+import com.alfredbase.store.sql.ReportDayTaxSQL;
 import com.alfredbase.store.sql.ReportHourlySQL;
 import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
 import com.alfredbase.store.sql.ReportPluDayItemSQL;
+import com.alfredbase.store.sql.ReportPluDayModifierSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ObjectFactory;
@@ -42,29 +48,33 @@ import com.alfredposclient.Calendar.OnCellItemClick;
 import com.alfredposclient.R;
 import com.alfredposclient.adapter.XZReportDetailAdapter;
 import com.alfredposclient.adapter.XZReportHourlyAdapter;
+import com.alfredposclient.adapter.XZReportSumaryAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.javabean.ReportDetailAnalysisItem;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.DialogSelectReportPrint;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class XZRerortActivity extends BaseActivity {
+public class XZReportActivity extends BaseActivity {
 
     private CalendarCard calendarCard;
     private TextView tv_title_name;
     private LinearLayout ll_print;
     private ImageButton btn_back;
     private LinearLayout ll_xz_analsis;
-    private long bussinessDate;
+    private long businessDate;
     private SessionStatus session;
     private Calendar calendar;
     private Map<String, Object> data = new HashMap<String, Object>();
@@ -76,15 +86,20 @@ public class XZRerortActivity extends BaseActivity {
     private long date;
     private ReportDaySales reportDaySales;
     private List<ReportDayTax> reportDayTaxs;
-    private ArrayList<ReportPluDayItem> reportPluDayItems;
-    private List<ReportPluDayItem> filteredPluDayItems;
+    private List<ReportPluDayItem> reportPluDayItems;
+    private List<ReportDetailAnalysisItem> reportDetailAnalysisItems;
+    private List<ReportDetailAnalysisItem> reportDetailAnalysisItemList;
     private List<ReportPluDayModifier> reportPluDayModifiers;
     private List<ReportHourly> reportHourlys;
     private List<ItemCategory> itemCategorys;
     private List<ItemMainCategory> itemMainCategorys;
     private List<ReportPluDayComboModifier> reportPluDayComboModifiers;
     private Map<String, Object> map = new HashMap<String, Object>();
-    private long businessDate;
+    private long showBusinessDate;
+    private BigDecimal detailTotalAmount;
+    private int detailTotalQty;
+    private BigDecimal hourlyTotalAmount;
+    private int hourlyTotalQty;
 
     @Override
     protected void initView() {
@@ -93,6 +108,11 @@ public class XZRerortActivity extends BaseActivity {
         VerifyDialog verifyDialog = new VerifyDialog(context, handler);
         verifyDialog.show("initData",null);
         findViewById(R.id.tv_print).setOnClickListener(this);
+        showBusinessDate = 0;
+        reportDetailAnalysisItems = new ArrayList<>();
+        reportDetailAnalysisItemList = new ArrayList<>();
+        detailTotalAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+        hourlyTotalAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
     }
 
     Handler handler = new Handler(){
@@ -103,23 +123,143 @@ public class XZRerortActivity extends BaseActivity {
                 case VerifyDialog.DIALOG_RESPONSE:
                     init();
                     break;
+                case VerifyDialog.DIALOG_DISMISS:
+                    XZReportActivity.this.finish();
+                    break;
                 case XZReportHtml.LOAD_CLOUD_REPORT_COMPLETE:
-                    loadingDialog.dismiss();
                     Map<String, Object> param = (Map<String, Object>) msg.obj;
                     Long date = (Long) param.get("bizDate");
-                    reportDaySales = ReportDaySalesSQL.getReportDaySalesByTime(date);
-                    initData(date);
+                    showBusinessDate = date.longValue();
+                    loadOldReport(date);
+                    if(loadingDialog != null && loadingDialog.isShowing())
+                        loadingDialog.dismiss();
+                    initData(businessDate);
+
                     break;
                 case ResultCode.CONNECTION_FAILED:
                     if (loadingDialog!= null && loadingDialog.isShowing()) {
                         loadingDialog.dismiss();
                     }
-                    UIHelp.showShortToast(XZRerortActivity.this, "No Data");
+                    UIHelp.showShortToast(XZReportActivity.this, "No Data");
                     break;
             }
         }
     };
 
+    private void loadNewReport(long businessDate){
+        reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(businessDate);
+        if(reportDaySales != null) {
+            itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
+            itemMainCategorys = ItemMainCategorySQL
+                    .getAllItemMainCategoryForReport();
+            reportPluDayItems = ReportObjectFactory.getInstance().loadShowReportPluDayItem(businessDate);
+            Map<String, Object> map = ReportObjectFactory.getInstance().loadShowReportPluDayModifierInfo(businessDate);
+            reportPluDayModifiers = (List<ReportPluDayModifier>) map.get("reportPluDayModifiers");
+            reportPluDayComboModifiers = (List<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
+            reportHourlys = ReportObjectFactory.getInstance().loadShowReportHourlys(businessDate);
+            reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(reportDaySales,businessDate);
+            loadModel();
+        }else{
+            reportDayTaxs = Collections.emptyList();
+            reportPluDayItems = new ArrayList<ReportPluDayItem>();
+            reportPluDayModifiers = Collections.emptyList();
+            reportHourlys = Collections.emptyList();
+            itemCategorys = Collections.emptyList();
+            itemMainCategorys = Collections.emptyList();
+            reportDetailAnalysisItems = Collections.emptyList();
+            reportDetailAnalysisItemList = Collections.emptyList();
+
+        }
+
+    }
+    private void loadOldReport(long businessDate){
+        reportDaySales = ReportDaySalesSQL.getReportDaySalesByTime(businessDate);
+        if(reportDaySales != null) {
+            itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
+            itemMainCategorys = ItemMainCategorySQL
+                    .getAllItemMainCategoryForReport();
+            reportPluDayItems = ReportPluDayItemSQL.getReportPluDayItemsByTime(businessDate);
+            reportPluDayComboModifiers = ReportPluDayComboModifierSQL.getReportPluDayComboModifiersByTime(businessDate);
+            reportPluDayModifiers = ReportPluDayModifierSQL.getReportPluDayModifiersByTime(businessDate);
+            reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
+            reportDayTaxs = ReportDayTaxSQL.getReportDayTaxsByNowTime(businessDate);
+            loadModel();
+        }else{
+            reportDayTaxs = Collections.emptyList();
+            reportPluDayItems = new ArrayList<ReportPluDayItem>();
+            reportPluDayModifiers = Collections.emptyList();
+            reportHourlys = Collections.emptyList();
+            itemCategorys = Collections.emptyList();
+            itemMainCategorys = Collections.emptyList();
+            reportDetailAnalysisItems = Collections.emptyList();
+            reportDetailAnalysisItemList = Collections.emptyList();
+        }
+    }
+
+    private void loadModel(){
+        reportDetailAnalysisItems.clear();
+        reportDetailAnalysisItemList.clear();
+        detailTotalAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+        hourlyTotalAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+        detailTotalQty = 0;
+        hourlyTotalQty = 0;
+        if(reportPluDayItems != null && reportPluDayItems.size() > 0) {
+            Collections.sort(reportPluDayItems);
+            int mainId = 0;
+            int id = 0;
+            for(ReportPluDayItem reportPluDayItem : reportPluDayItems){
+                if(mainId == reportPluDayItem.getItemMainCategoryId().intValue()){
+                    ReportDetailAnalysisItem reportDetailAnalysisItem = new ReportDetailAnalysisItem();
+                    reportDetailAnalysisItem.setName(reportPluDayItem.getItemName());
+                    reportDetailAnalysisItem.setQty(reportPluDayItem.getItemCount());
+                    reportDetailAnalysisItem.setAmount(BH.getBD(reportPluDayItem.getItemAmount()));
+                    reportDetailAnalysisItem.setShowOther(true);
+                    reportDetailAnalysisItems.add(reportDetailAnalysisItem);
+                }else{
+                    mainId = reportPluDayItem.getItemMainCategoryId().intValue();
+                    ReportDetailAnalysisItem reportDetailAnalysisItem1 = new ReportDetailAnalysisItem();
+                    reportDetailAnalysisItem1.setName(reportPluDayItem.getItemMainCategoryName());
+                    reportDetailAnalysisItem1.setShowOther(false);
+
+                    ReportDetailAnalysisItem reportDetailAnalysisItem = new ReportDetailAnalysisItem();
+                    reportDetailAnalysisItem.setName(reportPluDayItem.getItemName());
+                    reportDetailAnalysisItem.setQty(reportPluDayItem.getItemCount());
+                    reportDetailAnalysisItem.setAmount(BH.getBD(reportPluDayItem.getItemAmount()));
+                    reportDetailAnalysisItem.setShowOther(true);
+
+                    reportDetailAnalysisItems.add(reportDetailAnalysisItem1);
+                    reportDetailAnalysisItems.add(reportDetailAnalysisItem);
+                }
+                if(id == reportPluDayItem.getItemCategoryId().intValue()){
+                    ReportDetailAnalysisItem reportDetailAnalysisItem = reportDetailAnalysisItemList.get(reportDetailAnalysisItemList.size() - 1);
+                    reportDetailAnalysisItem.setQty(reportDetailAnalysisItem.getQty() + reportPluDayItem.getItemCount());
+                    reportDetailAnalysisItem.setAmount(BH.add(BH.getBD(reportPluDayItem.getItemAmount()), reportDetailAnalysisItem.getAmount(), true));
+                }else{
+                    mainId = reportPluDayItem.getItemMainCategoryId().intValue();
+                    ReportDetailAnalysisItem reportDetailAnalysisItem1 = new ReportDetailAnalysisItem();
+                    reportDetailAnalysisItem1.setName(reportPluDayItem.getItemMainCategoryName());
+                    reportDetailAnalysisItem1.setShowOther(false);
+
+                    ReportDetailAnalysisItem reportDetailAnalysisItem = new ReportDetailAnalysisItem();
+                    reportDetailAnalysisItem.setName(reportPluDayItem.getItemCategoryName());
+                    reportDetailAnalysisItem.setQty(reportPluDayItem.getItemCount());
+                    reportDetailAnalysisItem.setAmount(BH.getBD(reportPluDayItem.getItemAmount()));
+                    reportDetailAnalysisItem.setShowOther(true);
+
+                    reportDetailAnalysisItemList.add(reportDetailAnalysisItem1);
+                    reportDetailAnalysisItemList.add(reportDetailAnalysisItem);
+                }
+                detailTotalAmount = BH.add(detailTotalAmount, BH.getBD(reportPluDayItem.getItemAmount()), true);
+                detailTotalQty += reportPluDayItem.getItemCount().intValue();
+            }
+        }
+        if(reportHourlys != null && reportHourlys.size() > 0){
+            for (ReportHourly reportHourly : reportHourlys){
+                hourlyTotalAmount = BH.add(hourlyTotalAmount, BH.getBD(reportHourly.getAmountPrice()), true);
+                hourlyTotalQty += reportHourly.getAmountQty().intValue();
+            }
+        }
+    }
     private void init(){
         calendarCard = (CalendarCard) findViewById(R.id.calendarCard);
         tv_title_name = (TextView) findViewById(R.id.tv_title_name);
@@ -132,12 +272,12 @@ public class XZRerortActivity extends BaseActivity {
         loadingDialog = new LoadingDialog(this);
 
         calendar = Calendar.getInstance();
-        bussinessDate = App.instance.getBusinessDate();
-        Date date = new Date(bussinessDate);
+        businessDate = App.instance.getBusinessDate();
+        Date date = new Date(businessDate);
         curStr = yearMonthDayFormater.format(date);
-        session = App.instance.getSessionStatus();
+//        session = App.instance.getSessionStatus();
         revenueCenter = App.instance.getRevenueCenter();
-        reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(bussinessDate);
+        reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(businessDate);
         if (reportDaySales != null) {
             String nettsSales = reportDaySales.getNettSales();
             calendarCard.setAmount(nettsSales);
@@ -147,6 +287,7 @@ public class XZRerortActivity extends BaseActivity {
         calendarCard.setOnCellItemClick(onCellItemClick);
         btn_back.setOnClickListener(onClickListener);
     }
+
 
     private void initData(long time){
         if (reportDaySales != null) {
@@ -329,22 +470,25 @@ public class XZRerortActivity extends BaseActivity {
 
             ((TextView) findViewById(R.id.tv_total_bill)).setText(reportDaySales.getTotalBills().toString());
             ((TextView) findViewById(R.id.tv_total_temp_menu)).setText(reportDaySales.getOpenCount().toString());
-
-            List<ReportHourly> reportHourlies = ReportHourlySQL.getReportHourlysByTime(time);
-            if (reportHourlies != null && reportHourlies.size() > 0) {
-                XZReportHourlyAdapter hourlyAdapter = new XZReportHourlyAdapter(reportHourlies, XZRerortActivity.this);
+            ((TextView)findViewById(R.id.tv_detail_total_num)).setText(detailTotalQty + "");
+            ((TextView)findViewById(R.id.tv_detail_total)).setText(detailTotalAmount.toString());
+            ((TextView)findViewById(R.id.tv_summary_total_num)).setText(detailTotalQty + "");
+            ((TextView)findViewById(R.id.tv_summary_total)).setText(detailTotalAmount.toString());
+            ((TextView)findViewById(R.id.tv_hourly_total_num)).setText(hourlyTotalQty + "");
+            ((TextView)findViewById(R.id.tv_hourly_total)).setText(hourlyTotalAmount.toString());
+            if (reportHourlys != null && reportHourlys.size() > 0) {
+                XZReportHourlyAdapter hourlyAdapter = new XZReportHourlyAdapter(reportHourlys, XZReportActivity.this);
                 lv_hourly_analsis.setAdapter(hourlyAdapter);
             }
-            List<ReportPluDayItem> pluDayItems = ReportPluDayItemSQL.getReportPluDayItemsByTime(time);
-            if(pluDayItems != null && pluDayItems.size() > 0){
-                XZReportDetailAdapter xzReportDetailAdapter = new XZReportDetailAdapter(pluDayItems, context);
+            if(reportPluDayItems != null && reportPluDayItems.size() > 0){
+                XZReportDetailAdapter xzReportDetailAdapter = new XZReportDetailAdapter(reportDetailAnalysisItems, context);
                 ((ListView) findViewById(R.id.lv_detail_analsis)).setAdapter(xzReportDetailAdapter);
+                XZReportSumaryAdapter xzReportSumaryAdapter = new XZReportSumaryAdapter(reportDetailAnalysisItemList, context);
+                ((ListView) findViewById(R.id.lv_summary_sales)).setAdapter(xzReportSumaryAdapter);
             }
 
-            List<ReportPluDayComboModifier> pluDayComboModifiers = ReportPluDayComboModifierSQL.getReportPluDayComboModifiersByTime(time);
-
         }else {
-            UIHelp.showShortToast(XZRerortActivity.this, "No Data");
+            UIHelp.showShortToast(XZReportActivity.this, "No Data");
             calendarCard.setVisibility(View.VISIBLE);
             ll_xz_analsis.setVisibility(View.GONE);
             ll_print.setVisibility(View.GONE);
@@ -358,7 +502,7 @@ public class XZRerortActivity extends BaseActivity {
             switch (v.getId()) {
                 case R.id.btn_back:
                 if (calendarCard.getVisibility() == View.VISIBLE && ll_xz_analsis.getVisibility() == View.GONE) {
-                    XZRerortActivity.this.finish();
+                    XZReportActivity.this.finish();
                 } else if (calendarCard.getVisibility() == View.GONE && ll_xz_analsis.getVisibility() == View.VISIBLE) {
                     ll_xz_analsis.setVisibility(View.GONE);
                     calendarCard.setVisibility(View.VISIBLE);
@@ -433,12 +577,29 @@ public class XZRerortActivity extends BaseActivity {
             Date date1 = new Date(item.getDate().getTimeInMillis());
             SimpleDateFormat yearMonthDayFormater = new SimpleDateFormat("yyyy年MM月dd日");
             String str = yearMonthDayFormater.format(date1);
+            loadingDialog.setTitle("Loading");
+            loadingDialog.show();
             if (str.equals(curStr)) {
-                date = bussinessDate;
-            }
-            if (revenueCenter != null) {
-                loadingDialog.setTitle("加载");
-                loadingDialog.show();
+                date = businessDate;
+                showBusinessDate = date;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadNewReport(showBusinessDate);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(loadingDialog != null && loadingDialog.isShowing())
+                                    loadingDialog.dismiss();
+                                initData(businessDate);
+                            }
+                        });
+                    }
+                }).start();
+
+
+            }else if (revenueCenter != null) {
+
                 Map<String, Object> param = new HashMap<String, Object>();
                 param.put("businessDate", TimeUtil.getMDY(date));
                 param.put("bizDate", TimeUtil.getBusinessDateByDay(date, 0));
@@ -449,110 +610,12 @@ public class XZRerortActivity extends BaseActivity {
         }
     };
 
-    /**
-     * 获取某日的销售数据
-     */
-    private void getDataOfDay(){
-
-    }
-
-//    private void sendPrintData(int type, boolean zPrint, long bzDate) {
-//        String bizDate = TimeUtil.getPrintingDate(bzDate);
-//        String rptType = CommonUtil.getReportType(context, 999);
-//
-//        SessionStatus session = App.instance.getSessionStatus();
-//
-//        String label = "YX";
-//        if (zPrint) {
-//            label = "YZ";
-//        } else {
-//            rptType = CommonUtil.getReportType(context,
-//                    session.getSession_status());
-//            bizDate = TimeUtil.getPrintingDate(bussinessDate);
-//        }
-//
-//        PrinterTitle title = ObjectFactory.getInstance()
-//                .getPrinterTitleForReport(
-//                        App.instance.getRevenueCenter().getId(),
-//                        label
-//                                + ParamHelper.getPrintOrderBillNo(
-//                                App.instance.getIndexOfRevenueCenter(),
-//                                reportDaySales.getId()),
-//                        App.instance.getUser().getFirstName()
-//                                + App.instance.getUser().getLastName(), null,
-//                        bizDate);
-//
-//        PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
-//        List<ReportUserOpenDrawer> reportUserOpenDrawers = new ArrayList<ReportUserOpenDrawer>();
-//        if(zPrint){
-//            reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawerByTime(bussinessDate);
-//        }else{
-//            reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawer(session.getSession_status(), bzDate);
-//        }
-//        if (cashierPrinter == null) {
-//            AlertToDeviceSetting.noKDSorPrinter(context, context.getResources()
-//                    .getString(R.string.no_printer_devices));
-//        } else {
-//            if (type == XZReportHtml.REPORT_PRINT_ALL) {
-//
-//                // sales report
-//                App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-//                        title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
-//                // detail analysis
-//                App.instance.remotePrintDetailAnalysisReport(rptType,
-//                        cashierPrinter, title, reportDaySales,
-//                        filteredPluDayItems, reportPluDayModifiers,
-//                        reportPluDayComboModifiers, itemMainCategorys,
-//                        itemCategorys);
-//                // summary
-//                App.instance
-//                        .remotePrintSummaryAnalysisReport(rptType,
-//                                cashierPrinter, title, filteredPluDayItems,
-//                                reportPluDayModifiers, itemMainCategorys,
-//                                itemCategorys);
-//                // hourly sales
-//                App.instance.remotePrintHourlyReport(rptType, cashierPrinter,
-//                        title, reportHourlys);
-//            }
-//            if (type == XZReportHtml.REPORT_PRINT_SALES) {
-//                // sales report
-//                App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-//                        title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
-//            }
-//            if (type == XZReportHtml.REPORT_PRINT_DETAILS) {
-//                if (zPrint)
-//                    App.instance.remotePrintDetailAnalysisReport(rptType,
-//                            cashierPrinter, title, reportDaySales,
-//                            filteredPluDayItems, reportPluDayModifiers,
-//                            reportPluDayComboModifiers, itemMainCategorys,
-//                            itemCategorys);
-//                else
-//                    App.instance.remotePrintDetailAnalysisReport(rptType,
-//                            cashierPrinter, title, null, filteredPluDayItems,
-//                            reportPluDayModifiers, reportPluDayComboModifiers,
-//                            itemMainCategorys, itemCategorys);
-//            }
-//            if (type == XZReportHtml.REPORT_PRINT_SUMMARY) {
-//                // sales report
-//                App.instance
-//                        .remotePrintSummaryAnalysisReport(rptType,
-//                                cashierPrinter, title, filteredPluDayItems,
-//                                reportPluDayModifiers, itemMainCategorys,
-//                                itemCategorys);
-//            }
-//            if (type == XZReportHtml.REPORT_PRINT_HOURLY) {
-//                // hourly sales
-//                App.instance.remotePrintHourlyReport(rptType, cashierPrinter,
-//                        title, reportHourlys);
-//            }
-//        }
-//    }
 
     @Override
     protected void handlerClickEvent(View v) {
         switch (v.getId()){
             case R.id.tv_print:
-
+                showPrintDialog(showBusinessDate, showBusinessDate == businessDate ? true:false);
                 break;
         }
         super.handlerClickEvent(v);
@@ -625,7 +688,7 @@ public class XZRerortActivity extends BaseActivity {
                         label
                                 + ParamHelper.getPrintOrderBillNo(
                                 App.instance.getIndexOfRevenueCenter(),
-                                reportDaySales.getId()),
+                                0),
                         App.instance.getUser().getFirstName()
                                 + App.instance.getUser().getLastName(), null,
                         bizDate);
@@ -649,13 +712,13 @@ public class XZRerortActivity extends BaseActivity {
                 // detail analysis
                 App.instance.remotePrintDetailAnalysisReport(rptType,
                         cashierPrinter, title, reportDaySales,
-                        filteredPluDayItems, reportPluDayModifiers,
+                        reportPluDayItems, reportPluDayModifiers,
                         reportPluDayComboModifiers, itemMainCategorys,
                         itemCategorys);
                 // summary
                 App.instance
                         .remotePrintSummaryAnalysisReport(rptType,
-                                cashierPrinter, title, filteredPluDayItems,
+                                cashierPrinter, title, reportPluDayItems,
                                 reportPluDayModifiers, itemMainCategorys,
                                 itemCategorys);
                 // hourly sales
@@ -671,12 +734,12 @@ public class XZRerortActivity extends BaseActivity {
                 if (zPrint)
                     App.instance.remotePrintDetailAnalysisReport(rptType,
                             cashierPrinter, title, reportDaySales,
-                            filteredPluDayItems, reportPluDayModifiers,
+                            reportPluDayItems, reportPluDayModifiers,
                             reportPluDayComboModifiers, itemMainCategorys,
                             itemCategorys);
                 else
                     App.instance.remotePrintDetailAnalysisReport(rptType,
-                            cashierPrinter, title, null, filteredPluDayItems,
+                            cashierPrinter, title, null, reportPluDayItems,
                             reportPluDayModifiers, reportPluDayComboModifiers,
                             itemMainCategorys, itemCategorys);
 
@@ -692,7 +755,7 @@ public class XZRerortActivity extends BaseActivity {
                 // sales report
                 App.instance
                         .remotePrintSummaryAnalysisReport(rptType,
-                                cashierPrinter, title, filteredPluDayItems,
+                                cashierPrinter, title, reportPluDayItems,
                                 reportPluDayModifiers, itemMainCategorys,
                                 itemCategorys);
             }

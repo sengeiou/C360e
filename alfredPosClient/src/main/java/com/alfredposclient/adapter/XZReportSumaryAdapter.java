@@ -9,8 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.javabean.ReportHourly;
 import com.alfredposclient.R;
+import com.alfredposclient.javabean.ReportDetailAnalysisItem;
 
 import java.util.List;
 
@@ -20,22 +20,22 @@ import java.util.List;
 
 public class XZReportSumaryAdapter extends BaseAdapter {
 
-    private List<ReportHourly> list;
+    private List<ReportDetailAnalysisItem> reportDetailAnalysisItemList;
     private BaseActivity activity;
 
-    public XZReportSumaryAdapter(List<ReportHourly> list, BaseActivity activity) {
-        this.list = list;
+    public XZReportSumaryAdapter(List<ReportDetailAnalysisItem> reportDetailAnalysisItemList, BaseActivity activity) {
+        this.reportDetailAnalysisItemList = reportDetailAnalysisItemList;
         this.activity = activity;
     }
 
     @Override
     public int getCount() {
-        return list.size();
+        return reportDetailAnalysisItemList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return list.get(position);
+        return reportDetailAnalysisItemList.get(position);
     }
 
     @Override
@@ -57,11 +57,18 @@ public class XZReportSumaryAdapter extends BaseAdapter {
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        ReportHourly reportHourly = list.get(position);
         viewHolder.xarepurt_item.setBackgroundColor(Color.parseColor("#B4EEB4"));
-        viewHolder.xzreport_item_name.setText(reportHourly.getHour() + "");
-        viewHolder.xzreport_item_num.setText(reportHourly.getAmountQty() + "");
-        viewHolder.xzreport_item_total.setText(reportHourly.getAmountPrice());
+        ReportDetailAnalysisItem reportDetailAnalysisItem = reportDetailAnalysisItemList.get(position);
+        viewHolder.xzreport_item_name.setText(reportDetailAnalysisItem.getName());
+        if(reportDetailAnalysisItem.isShowOther()){
+            viewHolder.xzreport_item_num.setVisibility(View.VISIBLE);
+            viewHolder.xzreport_item_total.setVisibility(View.VISIBLE);
+            viewHolder.xzreport_item_num.setText(reportDetailAnalysisItem.getQty() + "");
+            viewHolder.xzreport_item_total.setText(reportDetailAnalysisItem.getAmount().toString());
+        }else{
+            viewHolder.xzreport_item_num.setVisibility(View.INVISIBLE);
+            viewHolder.xzreport_item_total.setVisibility(View.INVISIBLE);
+        }
 
         return convertView;
     }

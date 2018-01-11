@@ -536,6 +536,9 @@ public class OrderSplitPrintWindow implements OnClickListener {
 				BigDecimal orderRoundBalancePrice = BH.getBD(ParamConst.DOUBLE_ZERO);
 
 				for (OrderSplit orderSplit : orderSplits) {
+					if(orderSplit.getOrderStatus().intValue() >= ParamConst.ORDERSPLIT_ORDERSTATUS_PAYED) {
+						continue;
+					}
 					OrderBill orderBill = ObjectFactory.getInstance()
 							.getOrderBillByOrderSplit(orderSplit,
 									App.instance.getRevenueCenter());
@@ -564,9 +567,10 @@ public class OrderSplitPrintWindow implements OnClickListener {
 									TableInfoSQL.getTableById(
 											orderSplit.getTableId())
 											.getName(), orderBill, order.getBusinessDate().toString(), 1);
-					orderSplit
-							.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY);
-					OrderSplitSQL.update(orderSplit);
+
+						orderSplit
+								.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY);
+						OrderSplitSQL.update(orderSplit);
 					ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 							.getInstance().getItemModifierListByOrderDetail(
 									orderDetails);

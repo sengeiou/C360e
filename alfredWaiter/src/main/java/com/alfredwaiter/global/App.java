@@ -1,7 +1,10 @@
 package com.alfredwaiter.global;
 
+import android.content.Intent;
 import android.text.TextUtils;
+import android.view.View;
 
+import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.javabean.RevenueCenter;
@@ -12,12 +15,23 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
+import com.alfredwaiter.activity.ConnectPOS;
+import com.alfredwaiter.activity.EmployeeID;
+import com.alfredwaiter.activity.Login;
+import com.alfredwaiter.activity.SelectRevenue;
 import com.alfredwaiter.activity.Welcome;
 import com.alfredwaiter.http.server.WaiterHttpServer;
 import com.alfredwaiter.view.WaiterReloginDialog;
+import com.moonearly.model.UdpMsg;
+import com.moonearly.utils.service.TcpUdpFactory;
+import com.moonearly.utils.service.UdpServiceCallBack;
 import com.tencent.bugly.crashreport.CrashReport;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Map;
@@ -45,7 +59,8 @@ public class App extends BaseApplication {
 	public  String VERSION = "1.0.0";
 	private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<Integer, PrinterDevice>();
 	private Observable<Object> observable;
-	
+	private Observable<String> observable1;
+
 	private String currencySymbol = "$";
 	@Override
 	public void onCreate() {
@@ -76,9 +91,55 @@ public class App extends BaseApplication {
 				}
 			}
 		});
+
+		observable1 = RxBus.getInstance().register(RxBus.RX_WIFI_STORE);
+		observable1.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+			@Override
+			public void call(String object) {
+				BaseActivity baseActivity = getTopActivity();
+				if(baseActivity instanceof Welcome
+						|| baseActivity instanceof ConnectPOS
+						|| baseActivity instanceof Login
+						|| baseActivity instanceof EmployeeID
+						|| baseActivity instanceof SelectRevenue) {
+					return;
+				}
+				if(!object.equals(CommonUtil.getLocalIpAddress())){
+					DialogFactory.showOneButtonCompelDialog(getTopActivity(), "Warning", "Your IP has changed.\nPlease ReLogin", new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							SyncCentre.getInstance().cancelAllRequests();
+							getTopActivity().dismissLoadingDialog();
+							getTopActivity().startActivity(new Intent(getTopActivity(),Welcome.class));
+
+						}
+					});
+				}
+			}
+		});
 		wifiPolicyNever();
+		TcpUdpFactory.startUdpServer(App.UDP_INDEX_WAITER, "Waiter", new UdpServiceCallBack() {
+			@Override
+			public void callBack(final UdpMsg udpMsg) {
+				try {
+					if (udpMsg != null) {
+						if (udpMsg.getType() == 1) {
+							RxBus.getInstance().post(RxBus.RECEIVE_IP_ACTION, udpMsg);
+						} else {
+							JSONObject jsonObject = new JSONObject(udpMsg.getName());
+							RxBus.getInstance().post(jsonObject.getString("RX"), udpMsg.getName());
+						}
+
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
 	}
-    
+
+
 	public void startHttpServer() {
 		try {
 			if (!httpServer.isAlive())

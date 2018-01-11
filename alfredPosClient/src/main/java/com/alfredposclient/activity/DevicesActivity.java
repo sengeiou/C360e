@@ -113,14 +113,14 @@ public class DevicesActivity extends BaseActivity {
                             if (printer != null) {
                                 String assignToName = printer.get("assignTo");
                                 if (assignToName != null && assignToName.length()>0) {
-                                        String printerModel = printer.get("printerName");
-
+                                        String printerModel = printer.get("deviceName");
+                                        String printerName = printer.get("printerName");
                                         LocalDevice localDevice = ObjectFactory
                                                 .getInstance().getLocalDevice(assignToName,
                                                         printerModel,
                                                         ParamConst.DEVICE_TYPE_PRINTER,
                                                         printerDeptModelList.get(dex).getId(),
-                                                        printer.get("printerIp"), "");
+                                                        printer.get("printerIp"), "",printerName);
                                         CoreData.getInstance().addLocalDevice(localDevice);
 
                                         PrinterDevice prtDev = new PrinterDevice();
@@ -130,6 +130,7 @@ public class DevicesActivity extends BaseActivity {
                                         prtDev.setMac(localDevice.getMacAddress());
                                         prtDev.setModel(printerModel);
                                         prtDev.setName(assignToName);
+                                        prtDev.setPrinterName(printerName);
                                         App.instance.setPrinterDevice(printerDeptModelList.get(dex).getId(), prtDev);
                                         refreshPrinterDevices(null);
                                         App.instance.discoverPrinter(handler);
@@ -162,6 +163,7 @@ public class DevicesActivity extends BaseActivity {
                     Printer prt = printerDeptModelList.get(dex);
                     printerDevice.setDevice_id(prt.getId());
                     printerDevice.setIsCahierPrinter(prt.getIsCashdrawer());
+                    printerDevice.setPrinterName(prt.getPrinterName());
 //                    List<PrinterDevice> list = new ArrayList<PrinterDevice>();
 //                    list.add(printerDevice);
 //                    adapter.setList(list, 1);
@@ -170,7 +172,8 @@ public class DevicesActivity extends BaseActivity {
                             ParamConst.DEVICE_TYPE_PRINTER,
                             printerDeptModelList.get(dex).getId(),
                             printerDevice.getIP(),
-                            printerDevice.getMac());
+                            printerDevice.getMac(),
+                            printerDevice.getPrinterName());
                     CoreData.getInstance().addLocalDevice(localDevice);
                     App.instance.loadPrinters();
                     refreshPrinterDevices(null);

@@ -148,12 +148,65 @@ public class EditSettlementAdapter extends BaseAdapter {
 		}
 		int orderDetailCount = OrderDetailSQL.getOrderDetailCountByGroupId(
 				ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID, order.getId());
-
-		PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(context);
+		List<OrderSplit> orderSplitList = OrderSplitSQL.getOrderSplits(order);
+ 		PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(context);
 		printerLoadingDialog.setTitle(context.getResources().getString(R.string.bill_printing));
 		printerLoadingDialog.showByTime(3000);
 		PrinterDevice printer = App.instance.getCahierPrinter();
-		if (orderDetailCount != 0) {
+		if(orderDetailCount == 0 || (orderSplitList.size() > 0 && orderSplitList.get(0).getSplitByPax() > 0)){
+			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
+			for (OrderSplit orderSplit : orderSplits) {
+				OrderBill orderBill = ObjectFactory.getInstance()
+						.getOrderBillByOrderSplit(orderSplit,
+								App.instance.getRevenueCenter());
+				ArrayList<OrderDetail> orderDetails;
+				if(orderSplit.getSplitByPax() > 0){
+					orderDetails = OrderDetailSQL.getOrderDetails(order
+							.getId());
+				}else{
+					orderDetails = (ArrayList<OrderDetail>) OrderDetailSQL
+							.getOrderDetailsByOrderAndOrderSplit(orderSplit);
+				}
+
+				if (orderDetails.isEmpty()) {
+					continue;
+				}
+				List<Map<String, String>> taxMap = OrderDetailTaxSQL
+						.getOrderSplitTaxPriceSUMForPrint(App.instance
+								.getLocalRestaurantConfig().getIncludedTax()
+								.getTax(), orderSplit);
+				ArrayList<PrintOrderItem> orderItems = ObjectFactory
+						.getInstance().getItemList(orderDetails);
+
+				PrinterTitle title = ObjectFactory.getInstance()
+						.getPrinterTitleByOrderSplit(
+								App.instance.getRevenueCenter(),
+								order,
+								orderSplit,
+								App.instance.getUser().getFirstName()
+										+ App.instance.getUser().getLastName(),
+								TableInfoSQL.getTableById(orderSplit.getTableId())
+										.getName(), orderBill, order.getBusinessDate().toString(), 2);
+				title.setSpliteByPax(orderSplit.getSplitByPax());
+				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+						.getInstance().getItemModifierListByOrderDetail(
+								orderDetails);
+				Order temporaryOrder = new Order();
+				temporaryOrder.setPersons(orderSplit.getPersons());
+				temporaryOrder.setSubTotal(orderSplit.getSubTotal());
+				temporaryOrder
+						.setDiscountAmount(orderSplit.getDiscountAmount());
+				temporaryOrder.setTotal(orderSplit.getTotal());
+				temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
+				temporaryOrder.setOrderNo(order.getOrderNo());
+				RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit, orderBill);
+				Payment payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId().intValue());
+				List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getPaymentSettlementsBypaymentId(payment.getId().intValue());
+				App.instance.remoteBillPrint(printer, title, temporaryOrder,
+						orderItems, orderModifiers, taxMap, paymentSettlements,
+						roundAmount, false);
+			}
+		}else{
 			ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 					.getInstance().getItemModifierList(order, OrderDetailSQL.getOrderDetails(order.getId()));
 			OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
@@ -177,51 +230,6 @@ public class EditSettlementAdapter extends BaseAdapter {
 							App.instance.getLocalRestaurantConfig()
 									.getIncludedTax().getTax(), order), paymentSettlements,
 					roundAmount, false);
-		} else {
-			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
-			for (OrderSplit orderSplit : orderSplits) {
-				OrderBill orderBill = ObjectFactory.getInstance()
-						.getOrderBillByOrderSplit(orderSplit,
-								App.instance.getRevenueCenter());
-				ArrayList<OrderDetail> orderDetails = (ArrayList<OrderDetail>) OrderDetailSQL
-						.getOrderDetailsByOrderAndOrderSplit(orderSplit);
-				if (orderDetails.isEmpty()) {
-					continue;
-				}
-				List<Map<String, String>> taxMap = OrderDetailTaxSQL
-						.getOrderSplitTaxPriceSUMForPrint(App.instance
-								.getLocalRestaurantConfig().getIncludedTax()
-								.getTax(), orderSplit);
-				ArrayList<PrintOrderItem> orderItems = ObjectFactory
-						.getInstance().getItemList(orderDetails);
-
-				PrinterTitle title = ObjectFactory.getInstance()
-						.getPrinterTitleByOrderSplit(
-								App.instance.getRevenueCenter(),
-								order,
-								orderSplit,
-								App.instance.getUser().getFirstName()
-										+ App.instance.getUser().getLastName(),
-								TableInfoSQL.getTableById(orderSplit.getTableId())
-										.getName(), orderBill, order.getBusinessDate().toString(), 2);
-				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
-						.getInstance().getItemModifierListByOrderDetail(
-								orderDetails);
-				Order temporaryOrder = new Order();
-				temporaryOrder.setPersons(orderSplit.getPersons());
-				temporaryOrder.setSubTotal(orderSplit.getSubTotal());
-				temporaryOrder
-						.setDiscountAmount(orderSplit.getDiscountAmount());
-				temporaryOrder.setTotal(orderSplit.getTotal());
-				temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
-				temporaryOrder.setOrderNo(order.getOrderNo());
-				RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit, orderBill);
-				Payment payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId().intValue());
-				List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getPaymentSettlementsBypaymentId(payment.getId().intValue());
-				App.instance.remoteBillPrint(printer, title, temporaryOrder,
-						orderItems, orderModifiers, taxMap, paymentSettlements,
-						roundAmount, false);
-			}
 		}
 	}
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.AlipaySettlement;
@@ -483,6 +484,9 @@ public class EditSettlementPage extends BaseActivity {
                 case MainPage.VIEW_EVENT_SHOW_ENTERTAINMENT:
                     verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_ENTERTAINMENT, null);
                     break;
+                case VerifyDialog.DIALOG_DISMISS:
+
+                    break;
                 case VerifyDialog.DIALOG_RESPONSE: {
                     Map<String, Object> result = (Map<String, Object>) msg.obj;
                     User user = (User) result.get("User");
@@ -533,6 +537,72 @@ public class EditSettlementPage extends BaseActivity {
                             showCloseBillWindow(editSettlementInfo);
                         }
                     }
+                }
+                break;
+                case MainPage.ACTION_PRINT_PAX_SPLIT_BY_PAX: {
+                    HashMap<String, String> paymentMap = (HashMap<String, String>) msg.obj;
+                    OrderSplit paidOrderSplit = OrderSplitSQL.get(Integer.valueOf(paymentMap.get("orderSplitId")));
+                    List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
+                            .getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
+                    OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(paidOrderSplit, App.instance.getRevenueCenter());
+                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                            context);
+                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+                    printerLoadingDialog.showByTime(3000);
+                    PrinterDevice printer = App.instance.getCahierPrinter();
+                    TableInfo table = TableInfoSQL.getTableById(
+                            orderSplit.getTableId());
+                    PrinterTitle title = ObjectFactory.getInstance()
+                            .getPrinterTitleByOrderSplit(
+                                    App.instance.getRevenueCenter(),
+                                    currentOrder,
+                                    paidOrderSplit,
+                                    App.instance.getUser().getFirstName()
+                                            + App.instance.getUser().getLastName(),
+                                    table.getName(), orderBill, App.instance.getBusinessDate().toString(), 1);
+                    title.setSpliteByPax(paidOrderSplit.getSplitByPax());
+                    ArrayList<OrderDetail> orderSplitDetails = OrderDetailSQL.getOrderDetails(currentOrder
+                            .getId());
+                    ArrayList<PrintOrderItem> orderItems = ObjectFactory
+                            .getInstance().getItemList(orderSplitDetails);
+                    List<Map<String, String>> taxMap = OrderDetailTaxSQL
+                            .getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
+
+                    ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                            .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
+                    Order temporaryOrder = new Order();
+                    temporaryOrder.setPersons(paidOrderSplit.getPersons());
+                    temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
+                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
+                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
+                    temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+                    temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    if (orderItems.size() > 0 && printer != null) {
+                        RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                    }
+                    // remove get bill notification
+                    /**
+                     * 给后台发送log 信息
+                     */
+                    if (OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
+                        new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                                if (cloudSync != null) {
+                                    int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(currentOrder.getId());
+                                    cloudSync.syncOrderInfoForLog(currentOrder.getId(),
+                                            App.instance.getRevenueCenter().getId(),
+                                            App.instance.getBusinessDate(), currCount + 1);
+
+                                }
+                            }
+                        }).start();
+                    }
+
                 }
                 break;
                 default:

@@ -253,12 +253,13 @@ public class DevicesHtml extends BaseActivity {
 							if (prt!=null) {
 					   		    //add to local device
 								int cashDrawer = prt.getIsCashdrawer();
-								String printerModel = printer.get("printerName");
+								String printerModel = printer.get("deviceName");
+								String printerName = printer.get("printerName");
 								LocalDevice localDevice = ObjectFactory.getInstance().getLocalDevice(assignToName, printerModel,
 																				   		    			ParamConst.DEVICE_TYPE_PRINTER,
 																				   		    			prt.getId(), 
 																				   		    			printer.get("printerIp"),
-																				   		    			"");
+																				   		    			"", printerName);
 					   		    CoreData.getInstance().addLocalDevice(localDevice);
 					   		    App.instance.loadPrinters();
 					   		    //add to printer

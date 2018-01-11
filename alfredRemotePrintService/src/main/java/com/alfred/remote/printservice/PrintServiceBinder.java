@@ -700,7 +700,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 		            String discount = BH.doubleFormat.format(BH.getBD(theOrder.getDiscountAmount()));
 		            String grandTotal = BH.doubleFormat.format(BH.getBD(theOrder.getTotal()));
 					
-		            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
+		            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax());
 		            billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
 		            billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
 		            pqMgr.queuePrint(billPrint.getJobForQueue());
@@ -772,7 +772,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 		            String discount = BH.doubleFormat.format(BH.getBD(theOrder.getDiscountAmount()));
 		            String grandTotal = BH.doubleFormat.format(BH.getBD(theOrder.getTotal()));
 					
-		            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
+		            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax());
 		            List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String,String>>();
 					if (settlement != null) {
 						String paymentType = "";

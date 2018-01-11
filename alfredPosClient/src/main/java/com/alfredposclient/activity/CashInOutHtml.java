@@ -58,6 +58,9 @@ public class CashInOutHtml extends BaseActivity {
 					user = (User) map.get("User");
 					init();
 					break;
+				case VerifyDialog.DIALOG_DISMISS:
+					CashInOutHtml.this.finish();
+					break;
 			}
 		}
 	};

@@ -2,7 +2,7 @@ package com.alfredbase.javabean;
 
 import java.io.Serializable;
 
-public class ReportPluDayItem implements Serializable{
+public class ReportPluDayItem implements Serializable, Comparable<ReportPluDayItem>{
 
 	/**
 	 * 
@@ -291,5 +291,12 @@ public class ReportPluDayItem implements Serializable{
 	}
 
 
-
+	@Override
+	public int compareTo(ReportPluDayItem another) {
+		int i = this.getItemMainCategoryId() - another.getItemMainCategoryId();//先按照年龄排序
+		if(i == 0){
+			return this.getItemMainCategoryId() - another.getItemCategoryId();//如果年龄相等了再用分数进行排序
+		}
+		return i;
+	}
 }

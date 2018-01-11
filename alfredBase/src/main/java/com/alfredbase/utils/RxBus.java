@@ -16,6 +16,10 @@ public class RxBus {
 
     public static final String RX_MSG_1 = "RX_MSG_1";
     public static final String RX_MSG_2 = "RX_MSG_2";
+    public static final String RECEIVE_IP_ACTION = "RECEIVE_IP_ACTION";
+    public static final String RX_REFRESH_TABLE = "RX_REFRESH_TABLE";
+    public static final String RX_REFRESH_ORDER = "RX_REFRESH_ORDER";
+    public static final String RX_WIFI_STORE = "RX_WIFI_STORE";
     private static RxBus instance;
     private ConcurrentHashMap<Object, List<Subject>> maps = new ConcurrentHashMap<Object, List<Subject>>();
 

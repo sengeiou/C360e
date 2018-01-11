@@ -77,6 +77,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 		findViewById(R.id.rl_pax).setOnClickListener(this);
 		findViewById(R.id.tv_take_away).setOnClickListener(this);
 		findViewById(R.id.tv_fire).setOnClickListener(this);
+		findViewById(R.id.tv_split_by_pax).setOnClickListener(this);
 		tv_order_no = (TextView) findViewById(R.id.tv_order_no);
 		tv_pax = (TextView) findViewById(R.id.tv_pax);
 		
@@ -104,6 +105,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 //		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_edit_kot));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_take_away));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_fire));
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_split_by_pax));
 	}
 	
 	private void setData() {
@@ -205,6 +207,10 @@ public class MainPageOperatePanel extends LinearLayout implements
 				break;
 			case R.id.tv_fire:{
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_FIRE);
+			}
+				break;
+			case R.id.tv_split_by_pax:{
+				handler.sendEmptyMessage(MainPage.VIEW_EVENT_SPLIT_BY_PAX);
 			}
 				break;
 			default:

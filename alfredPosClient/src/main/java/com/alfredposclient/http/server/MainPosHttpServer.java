@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import com.alfredbase.APPConfig;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
@@ -69,6 +70,7 @@ import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
+import com.alfredbase.utils.RxBus;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
@@ -77,6 +79,7 @@ import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.moonearly.utils.service.TcpUdpFactory;
 import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
@@ -642,7 +645,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								.getInstance()
 								.getLocalDevice("", "waiter", ParamConst.DEVICE_TYPE_WAITER,
 										waiterDevice.getWaiterId(),
-										waiterDevice.getIP(), waiterDevice.getMac());
+										waiterDevice.getIP(), waiterDevice.getMac(), "");
 						CoreData.getInstance().addLocalDevice(localDevice);
 						// Notify Waiter pairing complete
 						App.getTopActivity().runOnUiThread(new Runnable() {
@@ -670,7 +673,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							.getLocalDevice(kdsDevice.getName(),"kds",
 									ParamConst.DEVICE_TYPE_KDS,
 									kdsDevice.getDevice_id(),
-									kdsDevice.getIP(), kdsDevice.getMac());
+									kdsDevice.getIP(), kdsDevice.getMac(), "");
 					CoreData.getInstance().addLocalDevice(localDevice);
 					final String kdsStr = kdsDevice == null ? "空的" : kdsDevice.toString();
 					final String localStr = localDevice == null ? "空的" : localDevice.toString();
@@ -731,7 +734,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								.getLocalDevice(dev.getName(),"kds",
 										ParamConst.DEVICE_TYPE_KDS,
 										dev.getDevice_id(),
-										dev.getIP(), dev.getMac());
+										dev.getIP(), dev.getMac(), "");
 
 						CoreData.getInstance().addLocalDevice(localDevice);
 						App.instance.addKDSDevice(dev.getDevice_id(), dev);
@@ -793,7 +796,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 										.getInstance()
 										.getLocalDevice("", "waiter", ParamConst.DEVICE_TYPE_WAITER,
 												dev.getWaiterId(),
-												dev.getIP(), dev.getMac());
+												dev.getIP(), dev.getMac(), "");
 								CoreData.getInstance().addLocalDevice(localDevice);
 								result.put("user", user);
 								result.put("resultCode", ResultCode.SUCCESS);
@@ -1013,6 +1016,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				result.put("order", order);
 				result.put("resultCode", ResultCode.SUCCESS);
 				resp = this.getJsonResponse(new Gson().toJson(result));
+				try {
+					JSONObject jsonObject1 = new JSONObject();
+					jsonObject.put("tableId", tables.getPosId().intValue());
+					jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
+					jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
 				App.getTopActivity().httpRequestAction(
 						MainPage.REFRESH_TABLES_STATUS, tables);
 			} else {// 错误处理
@@ -1033,7 +1045,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						App.instance.getLocalRestaurantConfig()
 						.getIncludedTax().getTax());
 				ArrayList<OrderDetail> orderDetails = OrderDetailSQL
-						.getOrderDetails(order.getId());
+						.getAllOrderDetailsByOrder(order);
 				result.put("order", order);
 				result.put("resultCode", ResultCode.SUCCESS);
 				result.put("orderDetails", orderDetails);
@@ -1081,6 +1093,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	}
 
 	private Response handlerCommitOrder(String params) {
+		System.out.println("1111111111111");
 		Response resp;
 		Map<String, Object> result = new HashMap<String, Object>();
 		
@@ -1120,20 +1133,21 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					jsonObject.optString("orderModifiers"),
 					new TypeToken<ArrayList<OrderModifier>>() {
 					}.getType());
-			// 检测是否有 订单是已经完成的拆单中的
-			for(OrderDetail orderDetail : waiterOrderDetails){
-				OrderSplit loadOrderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
-				if(loadOrderSplit != null && loadOrderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED){
-					result.put("resultCode", ResultCode.ORDER_SPLIT_IS_SETTLED);
-					result.put("groupId", loadOrderSplit.getGroupId());
-					resp = this.getJsonResponse(new Gson().toJson(result));
-					return resp;
+			if(OrderDetailSQL.getOrderDetailCountByOrder(order) > 0) {
+				// 检测是否有 订单是已经完成的拆单中的
+				for (OrderDetail orderDetail : waiterOrderDetails) {
+					OrderSplit loadOrderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
+					if (loadOrderSplit != null && loadOrderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED) {
+						result.put("resultCode", ResultCode.ORDER_SPLIT_IS_SETTLED);
+						result.put("groupId", loadOrderSplit.getGroupId());
+						resp = this.getJsonResponse(new Gson().toJson(result));
+						return resp;
+					}
 				}
 			}
-			
+			LogUtil.i(TAG, "------11111");
 			// waiter 过来的数据 存到 pos的DB中 不带Id存储
 			for (OrderDetail orderDetail : waiterOrderDetails) {
-				synchronized (lockObject) {
 					OrderDetail orderDetailFromPOS = OrderDetailSQL
 							.getOrderDetailByCreateTime(
 									orderDetail.getCreateTime(),
@@ -1169,10 +1183,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								}
 							}
 						}
-					}
 				}
 			}
-			
+			LogUtil.i(TAG, "=====11111");
 			order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
 			
 			//	当前Order未完成时更新状态
@@ -1190,7 +1203,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						order, App.instance.getRevenueCenter());
 				OrderBillSQL.add(orderBill);
 			}
-			
+			LogUtil.i(TAG, "4444444444");
 //			RoundAmount roundAmount = ObjectFactory.getInstance()
 //					.getRoundAmount(order, orderBill, App.instance.getLocalRestaurantConfig().getRoundType());
 //			RoundAmountSQL.update(roundAmount);
@@ -1253,6 +1266,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			Map<String, Object> orderMap = new HashMap<String, Object>();
 			orderMap.put("orderId", order.getId());
 			orderMap.put("orderDetailIds", orderDetailIds);
+			LogUtil.i(TAG, "3333333333333");
 			if (!kotItemDetails.isEmpty()) {
 				KotSummarySQL.update(kotSummary);
 				if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
@@ -1276,6 +1290,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			e.printStackTrace();
 			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
 		}
+		LogUtil.i(TAG, "22222222222222");
 		return resp;
 	}
 
@@ -1313,7 +1328,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					.getLocalDevice(device.getName(),"kds",
 							ParamConst.DEVICE_TYPE_KDS,
 							device.getDevice_id(),
-							device.getIP(), device.getMac());
+							device.getIP(), device.getMac(), "");
 			
 			CoreData.getInstance().addLocalDevice(localDevice);
 			

@@ -394,9 +394,13 @@ public class BillPrint extends PrintJob{
 		orderMod.setText(this.getFourColContent("  "+itemName+reNext, bigDecimal.toString(), "", "", scale));
 		orderMod.setTextAlign(PrintData.ALIGN_LEFT);
 		this.data.add(orderMod);	
-	}	
+	}
 	public void AddBillSummary(String subtotal, String discount,
-				List<Map<String, String>>taxes, String total, String rounding,String currencySymbol) {
+							   List<Map<String, String>>taxes, String total, String rounding,String currencySymbol) {
+		AddBillSummary(subtotal, discount, taxes, total, rounding, currencySymbol,0);
+	}
+	public void AddBillSummary(String subtotal, String discount,
+				List<Map<String, String>>taxes, String total, String rounding,String currencySymbol, int splitByPax) {
 		if("¥".equals(currencySymbol)){
 			currencySymbol = "￥";
 		}
@@ -484,7 +488,10 @@ public class BillPrint extends PrintJob{
 		//grand total
 		PrintData gtPrint = new PrintData();
 		String gtotalStr = StringUtil.padLeft(total, this.FIXED_COL4_TOTAL);
-		String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + currencySymbol  + gtotalStr+reNext;
+		String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + " : " + currencySymbol  + gtotalStr+reNext;
+		if(splitByPax > 0){
+			padTotal = "Split By Pax " + PrintService.instance.getResources().getString(R.string.grand_total) + "/" + splitByPax + " : " + currencySymbol  + gtotalStr+reNext;
+		}
 		gtPrint.setDataFormat(PrintData.FORMAT_TXT);
 		gtPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 		gtPrint.setMarginTop(10);

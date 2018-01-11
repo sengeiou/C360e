@@ -438,9 +438,13 @@ public class App extends BaseApplication {
         GalleryFinal.init(coreConfig);
 
         if(isSUNMIShow()){
-            sdkHandler = new SDKHandler(this);
-            sdkHandler.dcssdkSetDelegate(iDcsSdkApiDelegate);
-            initializeDcsSdk();
+            try {
+                sdkHandler = new SDKHandler(this);
+                sdkHandler.dcssdkSetDelegate(iDcsSdkApiDelegate);
+                initializeDcsSdk();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         xmppThread = new XmppThread();
         xmppThread.start();
@@ -467,7 +471,7 @@ public class App extends BaseApplication {
 
     private void initializeDcsSdk(){
         sdkHandler.dcssdkEnableAvailableScannersDetection(true);
-//        sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_BT_NORMAL);
+        sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_BT_NORMAL);
         sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_SNAPI);
         int notifications_mask = 0;
         notifications_mask |= (DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_APPEARANCE.value | DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_DISAPPEARANCE.value);
@@ -1074,6 +1078,7 @@ public class App extends BaseApplication {
             String mac = item.getMacAddress();
             String name = item.getDeviceName();
             String model = item.getDeviceMode();
+            String printerName = item.getPrinterName();
             int type = item.getDeviceType();
 
             // load physical printer
@@ -1084,6 +1089,7 @@ public class App extends BaseApplication {
                 pdev.setMac(mac);
                 pdev.setName(name);
                 pdev.setModel(model);
+                pdev.setPrinterName(printerName);
                 pdev.setIsCahierPrinter(CoreData.getInstance()
                         .isCashierPrinter(devid));
                 printerDevices.put(devid, pdev);
@@ -1115,12 +1121,14 @@ public class App extends BaseApplication {
                 String mac = item.getMacAddress();
                 String name = item.getDeviceName();
                 String model = item.getDeviceMode();
+                String printerName = item.getPrinterName();
                 PrinterDevice pdev = new PrinterDevice();
                 pdev.setDevice_id(devid);
                 pdev.setIP(ip);
                 pdev.setMac(mac);
                 pdev.setName(name);
                 pdev.setModel(model);
+                pdev.setPrinterName(printerName);
                 pdev.setIsCahierPrinter(CoreData.getInstance()
                         .isCashierPrinter(devid));
                 printerDevices.put(devid, pdev);

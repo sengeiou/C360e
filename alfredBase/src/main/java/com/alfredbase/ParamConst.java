@@ -39,6 +39,9 @@ public class ParamConst {
 	public static final int TABLE_STATUS_DINING = 1;
 	public static final int TABLE_STATUS_INCHECKOUT = 2;
 
+	//split by pax 1 true, 0 false
+	public static final int SPLIT_BY_PAX_FALSE = 0;
+
 	// revenueCenter isKiosk
 	public static final int REVENUECENTER_ISNOT_KIOSK = 0;
 	public static final int REVENUECENTER_IS_KIOSK = 1;

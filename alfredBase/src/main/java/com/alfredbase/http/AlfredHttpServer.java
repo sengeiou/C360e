@@ -43,7 +43,7 @@ import java.util.Map;
         }
         return new NanoHTTPD.Response("");
     }
-    
+
     protected Response getNotFoundResponse() {
         return createResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_PLAINTEXT,
             "Error 404, file not found.");
@@ -53,7 +53,7 @@ import java.util.Map;
         return createResponse(Response.Status.OK, NanoHTTPD.MIME_JSON,
         		data);
     }
-    
+
     protected Response getForbiddenResponse(String s) {
         return createResponse(Response.Status.FORBIDDEN, NanoHTTPD.MIME_PLAINTEXT, "FORBIDDEN: "
             + s);

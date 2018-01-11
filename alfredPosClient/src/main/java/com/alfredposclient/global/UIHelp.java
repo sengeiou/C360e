@@ -30,7 +30,7 @@ import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.activity.SunmiActivity;
 import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.SystemSetting;
-import com.alfredposclient.activity.XZReportHtml;
+import com.alfredposclient.activity.XZReportActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 
 public class UIHelp {
@@ -98,7 +98,7 @@ public class UIHelp {
 	}
 
 	public static void startXZReportHtml(BaseActivity context) {
-		Intent intent = new Intent(context, XZReportHtml.class);
+		Intent intent = new Intent(context, XZReportActivity.class);
 		context.startActivity(intent);
 //		context.overridePendingTransition(R.anim.slide_bottom_in,
 //				R.anim.centre_close_70);

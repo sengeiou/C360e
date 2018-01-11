@@ -11,7 +11,7 @@
         android:text="Select Printer"
         android:layout_gravity="center_horizontal"
         android:layout_margin="20dp"
-        android:textSize="30sp"
+        android:textSize="@dimen/text_size_b"
         android:gravity="center_horizontal"
         android:textColor="@color/default_line_indicator_selected_color"
         android:textStyle="bold"/>

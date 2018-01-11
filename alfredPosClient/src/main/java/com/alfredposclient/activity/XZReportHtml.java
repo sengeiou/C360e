@@ -104,6 +104,9 @@ public class XZReportHtml extends BaseActivity {
 				case VerifyDialog.DIALOG_RESPONSE:
 					init();
 					break;
+				case VerifyDialog.DIALOG_DISMISS:
+
+					break;
 			}
 		}
 	};

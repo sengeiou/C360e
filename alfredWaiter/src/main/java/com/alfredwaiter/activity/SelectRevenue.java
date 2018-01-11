@@ -20,7 +20,6 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.UIHelp;
 import com.moonearly.model.UdpMsg;
-import com.moonearly.utils.service.UdpServiceCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,7 @@ public class SelectRevenue extends BaseActivity {
 	private RevenueCenter revenue;
 	private boolean doubleBackToExitPressedOnce = false;
 	private TextTypeFace textTypeFace;
-	
+	private Observable<UdpMsg> observable;
 //	public static final int SYNC_DATA_TAG = 2015;
 	
 	private int syncDataCount = 0;
@@ -78,7 +77,7 @@ public class SelectRevenue extends BaseActivity {
 		loadingDialog = new LoadingDialog(this);
 		loadingDialog.setTitle("Search Revenue ...");
 		loadingDialog.showByTime(5000);
-		Observable<UdpMsg> observable = RxBus.getInstance().register("RECEIVE_IP_ACTION");
+		observable = RxBus.getInstance().register(RxBus.RECEIVE_IP_ACTION);
 		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
 			@Override
 			public void call(UdpMsg udpMsg) {
@@ -92,14 +91,21 @@ public class SelectRevenue extends BaseActivity {
 				}
 			}
 		});
-		App.instance.startUDPService(App.UDP_INDEX_WAITER, "Waiter", new UdpServiceCallBack() {
-			@Override
-			public void callBack(UdpMsg udpMsg) {
-				RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
-			}
-		});
+//		App.instance.startUDPService(App.UDP_INDEX_WAITER, "Waiter", new UdpServiceCallBack() {
+//			@Override
+//			public void callBack(UdpMsg udpMsg) {
+//				RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
+//			}
+//		});
 		App.instance.searchRevenueIp();
 
+	}
+
+	@Override
+	protected void onDestroy() {
+		if(observable != null)
+			RxBus.getInstance().unregister(RxBus.RECEIVE_IP_ACTION, observable);
+		super.onDestroy();
 	}
 
 	private void initTextTypeFace() {

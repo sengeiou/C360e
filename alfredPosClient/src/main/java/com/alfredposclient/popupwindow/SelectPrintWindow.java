@@ -42,6 +42,7 @@ public class SelectPrintWindow implements KeyBoardClickListener, OnFocusChangeLi
 	private String assignToName;
 	private String js_callback;
 	private String printerName;
+	private String deviceName;
 	private Handler handler;
 	
 	private RadioGroup rg_printerName;
@@ -63,16 +64,16 @@ public class SelectPrintWindow implements KeyBoardClickListener, OnFocusChangeLi
 		
 		rg_printerName = (RadioGroup) contentView.findViewById(R.id.rg_printerName);
 		rb_TM_T81 = (RadioButton) contentView.findViewById(R.id.rb_TM_T81);
-		printerName = "EPSON TM-T81";
+		deviceName = "EPSON TM-T81";
 		rb_TM_U220 = (RadioButton) contentView.findViewById(R.id.rb_TM_U220);
 		rg_printerName.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
 				if (checkedId == rb_TM_T81.getId()) {
-					printerName = "EPSON TM-T81";
+					deviceName = "EPSON TM-T81";
 				}else {
-					printerName = "EPSON TM-U220";
+					deviceName = "EPSON TM-U220";
 				}
 			}
 		});
@@ -129,6 +130,7 @@ public class SelectPrintWindow implements KeyBoardClickListener, OnFocusChangeLi
 			case R.id.tv_enter:
 				Map<String, String> result = new HashMap<String, String>();
 				result.put("printerName", printerName);
+				result.put("deviceName", deviceName);
 				result.put("assignTo", assignToName);
 				result.put("js_callback", js_callback);
 				if (verifyIp(getInputedIP())) {
@@ -166,10 +168,11 @@ public class SelectPrintWindow implements KeyBoardClickListener, OnFocusChangeLi
 				0,0);
 	}
 
-	public void show() {
+	public void show(String printerName) {
 		if(isShowing()){
 			return;
 		}
+		this.printerName = printerName;
 		init();
 		popupWindow.showAtLocation(parentView,Gravity.CENTER_HORIZONTAL |Gravity.CENTER_VERTICAL,
 				0,0);

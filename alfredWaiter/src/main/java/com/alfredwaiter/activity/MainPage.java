@@ -479,7 +479,7 @@ public class MainPage extends BaseActivity {
 				}
 			}
 		}
-		searchPopUp.setAdapterData(currentOrder,itemDetailList,currentGroupId);	
+		searchPopUp.setAdapterData(currentOrder,itemDetailList,currentGroupId);
 	}
 	
 	private List<ItemCategoryAndDetails> getItemCategoryAndDetails(

@@ -502,6 +502,15 @@ public class TableInfoSQL {
         }
     }
 
+    public static void updateTableStatusById(int posId, int status){
+        String sql = "update " + TableNames.TableInfo + " set status = ? where  posId = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[] {status, posId});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void deleteAllTableInfo() {
         String sql = "delete from " + TableNames.TableInfo;
         try {

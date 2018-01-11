@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
@@ -197,6 +198,11 @@ public class MainPage extends BaseActivity {
 	public static final int VIEW_EVENT_FIRE = 150;
 	public static final int VIEW_EVENT_TANSFER_ITEM= 151;
 	public static final int ACTION_TRANSFER_ITEM = 152;
+	public static final int VIEW_EVENT_SPLIT_BY_PAX = 154;
+	public static final int ACTION_PAX_SPLIT_BY_PAX = 156;
+	public static final int ACTION_PAX_SPLIT_BY_PAX_WINDOW = 157;
+	public static final int ACTION_PRINT_PAX_SPLIT_BY_PAX = 158;
+	public static final int VIEW_EVENT_SHOW_CLOSE_SPLIT_BY_PAX_BILL = 159;
 
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
 	public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
@@ -424,6 +430,15 @@ public class MainPage extends BaseActivity {
 		if (currentTable != null) {
 			currentTable.setPacks(Integer.parseInt(tablePacks));
 			currentTable.setStatus(ParamConst.TABLE_STATUS_DINING);
+			try {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("tableId", currentTable.getPosId().intValue());
+				jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
+				jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+				TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
             TableInfoSQL.updateTables(currentTable);
 //			TablesSQL.updateTables(currentTable);
 		}
@@ -884,6 +899,7 @@ public class MainPage extends BaseActivity {
 				removeNotificationTables();
 				topMenuView.setGetBillNum(App.instance
 						.getGetTingBillNotifications().size());
+				setData();
 				/**
 				 * 给后台发送log 信息
 				 */
@@ -935,17 +951,6 @@ public class MainPage extends BaseActivity {
 			}
 
 			case JavaConnectJS.ACTION_CLICK_TABLE: {
-//				Gson gson = new Gson();
-//				String json = (String) msg.obj;
-//				JSONObject jsonject;
-//				try {
-//					jsonject = new JSONObject(json);
-//					currentTable = gson.fromJson(jsonject.getString("table"),
-//							new TypeToken<Tables>() {
-//							}.getType());
-//				} catch (JSONException e) {
-//					e.printStackTrace();
-//				}
                 currentTable = (TableInfo)msg.obj;
 				if (currentTable != null) {
 					if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
@@ -1268,6 +1273,9 @@ public class MainPage extends BaseActivity {
 				topMenuView.setGetBillNum(App.instance
 						.getGetTingBillNotifications().size());
 				break;
+			case VerifyDialog.DIALOG_DISMISS:
+
+				break;
 			case VerifyDialog.DIALOG_RESPONSE:{
 				Map<String, Object> result = (Map<String, Object>) msg.obj;
 				User user = (User) result.get("User");
@@ -1402,6 +1410,14 @@ public class MainPage extends BaseActivity {
 										kotSummary, kotItemDetails,
 										kotItemModifiers,
 										kotCommitStatus, orderMap);
+								try {
+									JSONObject jsonObject = new JSONObject();
+									jsonObject.put("orderId", orderDetail.getOrderId().intValue());
+									jsonObject.put("RX", RxBus.RX_REFRESH_ORDER);
+									TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+								}catch (Exception e){
+									e.printStackTrace();
+								}
 							}
 						}).start();
 					} else if (type == ParamConst.ORDERDETAIL_TYPE_FREE) {
@@ -1643,6 +1659,15 @@ public class MainPage extends BaseActivity {
 				TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
 				tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
 				TableInfoSQL.updateTables(tables);
+				try {
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("tableId", currentTable.getPosId().intValue());
+					jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
+					jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
 				activityRequestCode = 0;
 				selectOrderSplitDialog.dismiss();
 				tableShowAction = SHOW_TABLES;
@@ -1652,6 +1677,114 @@ public class MainPage extends BaseActivity {
 			case VIEW_EVENT_FIRE:{
 				OrderDetailFireWindow orderDetailFireWindow = new OrderDetailFireWindow(MainPage.this, findViewById(R.id.lv_order), handler);
 				orderDetailFireWindow.show(currentOrder, handler);
+			}
+				break;
+			case VIEW_EVENT_SPLIT_BY_PAX:{
+				List<OrderSplit> orderSplitList = OrderSplitSQL.getOrderSplits(currentOrder);
+				if(orderSplitList.size() > 0 && orderSplitList.get(0).getSplitByPax() == 0){
+					UIHelp.showShortToast(context, "Can not split by pax");
+					return;
+				}
+				if(currentOrder.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_UNPAY) {
+					setPAXWindow.show(SetPAXWindow.SPLITE_BY_PAX, context.getResources().getString(R.string.no_pax));
+				}else{
+					OrderBill orderBill = OrderBillSQL.getOrderBillByOrder(currentOrder);
+					if(App.instance.getSystemSettings().isPrintBeforCloseBill() || orderBill == null || orderBill.getBillNo() == null) {
+						UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_));
+						return;
+					}else{
+						if (OrderDetailSQL
+								.getOrderDetailsCountUnPlaceOrder(currentOrder.getId()) > 0) {
+							UIHelp.showToast(context,
+									context.getResources().getString(R.string.place_before_print));
+							return;
+						}
+					}
+				}
+			}
+				break;
+			case ACTION_PAX_SPLIT_BY_PAX: {
+				int splitPax = Integer.parseInt(((String)msg.obj));
+				OrderSplitSQL.deleteOrderSplitByOrderId(currentOrder.getId().intValue());
+				List<OrderSplit> orderSplitList = ObjectFactory.getInstance().getOrderSplitListForPax(currentOrder, splitPax);
+				selectOrderSplitDialog.show(orderSplitList, currentOrder, true);
+			}
+				break;
+			case ACTION_PAX_SPLIT_BY_PAX_WINDOW:{
+				List<OrderSplit> orderSplitList = OrderSplitSQL.getOrderSplits(currentOrder);
+				selectOrderSplitDialog.show(orderSplitList, currentOrder, true);
+			}
+			break;
+			case ACTION_PRINT_PAX_SPLIT_BY_PAX: {
+				HashMap<String, String> paymentMap = (HashMap<String, String>) msg.obj;
+				OrderSplit paidOrderSplit = OrderSplitSQL.get(Integer.valueOf(paymentMap.get("orderSplitId")));
+				List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
+						.getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
+				OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(paidOrderSplit, App.instance.getRevenueCenter());
+				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+						context);
+				printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+				printerLoadingDialog.showByTime(3000);
+				PrinterDevice printer = App.instance.getCahierPrinter();
+				PrinterTitle title = ObjectFactory.getInstance()
+						.getPrinterTitleByOrderSplit(
+								App.instance.getRevenueCenter(),
+								currentOrder,
+								paidOrderSplit,
+								App.instance.getUser().getFirstName()
+										+ App.instance.getUser().getLastName(),
+								currentTable.getName(), orderBill, App.instance.getBusinessDate().toString(), 1);
+				title.setSpliteByPax(paidOrderSplit.getSplitByPax());
+				ArrayList<OrderDetail> orderSplitDetails = OrderDetailSQL.getOrderDetails(currentOrder
+						.getId());
+				ArrayList<PrintOrderItem> orderItems = ObjectFactory
+						.getInstance().getItemList(orderSplitDetails);
+				List<Map<String, String>> taxMap = OrderDetailTaxSQL
+						.getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
+
+				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+						.getInstance().getItemModifierList(currentOrder, orderSplitDetails);
+				Order temporaryOrder = new Order();
+				temporaryOrder.setPersons(paidOrderSplit.getPersons());
+				temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
+				temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
+				temporaryOrder.setTotal(paidOrderSplit.getTotal());
+				temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+				temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+				if (orderItems.size() > 0 && printer != null) {
+					RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+					App.instance.remoteBillPrint(printer, title, temporaryOrder,
+							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+				}
+				// remove get bill notification
+				removeNotificationTables();
+				topMenuView.setGetBillNum(App.instance
+						.getGetTingBillNotifications().size());
+				setData();
+				/**
+				 * 给后台发送log 信息
+				 */
+				if (OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
+					new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+							if (cloudSync != null) {
+								int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(currentOrder.getId());
+								cloudSync.syncOrderInfoForLog(currentOrder.getId(),
+										App.instance.getRevenueCenter().getId(),
+										App.instance.getBusinessDate(), currCount + 1);
+
+							}
+						}
+					}).start();
+				}
+
+			}
+			break;
+			case VIEW_EVENT_SHOW_CLOSE_SPLIT_BY_PAX_BILL: {
+				closeOrderSplitWindow.show(view_top_line,currentOrder, (OrderSplit)msg.obj);
 			}
 				break;
 			default:
@@ -2084,6 +2217,15 @@ public class MainPage extends BaseActivity {
             TableInfo tableInfo = TableInfoSQL.getTableById(currentTable.getPosId().intValue());
             tableInfo.setStatus(ParamConst.TABLE_STATUS_IDLE);
             TableInfoSQL.updateTables(tableInfo);
+			try {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("tableId", currentTable.getPosId().intValue());
+				jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
+				jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+				TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 		HashMap<String, String> map = new HashMap<String, String>();
 		

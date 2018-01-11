@@ -12,12 +12,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredposclient.R;
+import com.alfredposclient.global.App;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public class CalendarCard extends RelativeLayout {
 	
@@ -120,6 +121,7 @@ public class CalendarCard extends RelativeLayout {
 				boolean boo = v.isEnabled();
 				((CheckedTextView)((RelativeLayout)v.getChildAt(0)).getChildAt(0)).setText(item.getDayOfMonth().toString());
 				Calendar cal = Calendar.getInstance();
+				cal.setTime(new Date(App.instance.getBusinessDate()));
 				String mStr = new SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(cal.getTime());
 				String str = new SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(dateDisplay.getTime());
 
@@ -129,15 +131,17 @@ public class CalendarCard extends RelativeLayout {
 					((TextView)((RelativeLayout)v.getChildAt(0)).getChildAt(1)).setVisibility(VISIBLE);
 					v.setBackgroundColor(Color.parseColor("#EEE685"));
 					if (!TextUtils.isEmpty(amount)) {
-						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("Lunch Sales:" + "\n" + amount);
+						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("Nett Sales:" + "\n" + amount);
 					}else {
 						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("");
 					}
+
 				}else {
 					v.setChecked(false);
 					v.setBackgroundResource(R.drawable.card_item_bg);
 					((TextView)((RelativeLayout)v.getChildAt(0)).getChildAt(1)).setVisibility(INVISIBLE);
 				}
+//				((ScrollView)findViewById(R.id.sv_cardGrid)).arrowScroll(((ScrollView)findViewById(R.id.sv_cardGrid)).getMaxScrollAmount());
 			}
 		};
 		updateCells();

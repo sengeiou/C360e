@@ -701,6 +701,32 @@ public class OrderDetailSQL {
 		}
 		return result;
 	}
+
+	public static int getOrderDetailCountByOrder(Order order) {
+		String sql = "select count(*) from " + TableNames.OrderDetail + " where orderId = ? and orderDetailStatus > "
+				+ ParamConst.ORDERDETAIL_STATUS_ADDED;
+		int result = 0;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {order.getId() + ""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			if(cursor.moveToFirst()){
+				result = cursor.getInt(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
 	
 
 	public static ArrayList<OrderDetail> getAllOrderDetailByTime(
@@ -1116,12 +1142,16 @@ public class OrderDetailSQL {
 	public static ArrayList<OrderDetail> getOrderDetails(int orderId) {
 		ArrayList<OrderDetail> result = new ArrayList<OrderDetail>();
 		String sql = "select * from " + TableNames.OrderDetail
-				+ " where orderId = ? and orderDetailType <> "
+				+ " where orderId = ? and orderSplitId not in (select id from "
+				+ TableNames.OrderSplit
+				+ " where orderId = ? and orderStatus > "
+				+ ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
+		      	+ ") and orderDetailType <> "
 				+ ParamConst.ORDERDETAIL_TYPE_VOID + " order by groupId, id desc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			cursor = db.rawQuery(sql, new String[] { orderId + "" });
+			cursor = db.rawQuery(sql, new String[] {orderId + "", orderId + ""});
 			int count = cursor.getCount();
 			if (count < 1) {
 				return result;

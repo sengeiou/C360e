@@ -83,6 +83,9 @@ public class EntVoidReportHtml extends BaseActivity {
 				case VerifyDialog.DIALOG_RESPONSE:
 					init();
 					break;
+				case VerifyDialog.DIALOG_DISMISS:
+					EntVoidReportHtml.this.finish();
+					break;
 			}
 		}
 	};
