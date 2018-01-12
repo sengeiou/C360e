@@ -17,6 +17,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
+import com.alfredposclient.view.MyGridView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -46,12 +47,14 @@ public class ItemDetailAdapter extends BaseAdapter {
 				.bitmapConfig(Bitmap.Config.RGB_565)
 				.build();
 	}
-	
+
 	public void setItemDetails(List<ItemDetail> itemDetails) {
 		this.itemDetails = itemDetails;
+		i = 0;
 		this.notifyDataSetChanged();
+
 	}
-	
+
     public void filter(int subCategoryId) {
     	Iterator<ItemDetail> iter = itemDetails.iterator();
 
@@ -59,7 +62,7 @@ public class ItemDetailAdapter extends BaseAdapter {
     		ItemDetail item = iter.next();
     	    if (item.getItemCategoryId() != subCategoryId)
     	        iter.remove();
-    	}    	
+    	}
     	this.notifyDataSetChanged();
     }
 	@Override
@@ -107,6 +110,10 @@ public class ItemDetailAdapter extends BaseAdapter {
 			} else {
 				holder = (ViewHolder) arg1.getTag();
 			}
+			if(((MyGridView) arg2).isOnMeasure){
+				//如果是onMeasure调用的就立即返回
+				return arg1;
+			}
 			int color = Store.getInt(context, Store.COLOR_PICKER, 0);
 
 			if (IntegerUtils.isEmptyOrZero(color)) {
@@ -134,9 +141,12 @@ public class ItemDetailAdapter extends BaseAdapter {
 			String url = itemDetails.get(arg0).getImgUrl();
 			ImageLoader.getInstance().displayImage(url, imageViewHolder.item_name_img, options);
 		}
+		System.out.println("=====111111" + i++);
+
 		return arg1;
 	}
 
+	int i = 0;
 	class ViewHolder {
 		public TextView tv_text;
 	}

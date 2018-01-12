@@ -160,14 +160,14 @@ public class XZReportActivity extends BaseActivity {
             reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(reportDaySales,businessDate);
             loadModel();
         }else{
-            reportDayTaxs = Collections.emptyList();
+            reportDayTaxs = new ArrayList<>();
             reportPluDayItems = new ArrayList<ReportPluDayItem>();
-            reportPluDayModifiers = Collections.emptyList();
-            reportHourlys = Collections.emptyList();
-            itemCategorys = Collections.emptyList();
-            itemMainCategorys = Collections.emptyList();
-            reportDetailAnalysisItems = Collections.emptyList();
-            reportDetailAnalysisItemList = Collections.emptyList();
+            reportPluDayModifiers = new ArrayList<>();
+            reportHourlys = new ArrayList<>();
+            itemCategorys = new ArrayList<>();
+            itemMainCategorys = new ArrayList<>();
+            reportDetailAnalysisItems = new ArrayList<>();
+            reportDetailAnalysisItemList = new ArrayList<>();
 
         }
 
@@ -185,14 +185,14 @@ public class XZReportActivity extends BaseActivity {
             reportDayTaxs = ReportDayTaxSQL.getReportDayTaxsByNowTime(businessDate);
             loadModel();
         }else{
-            reportDayTaxs = Collections.emptyList();
+            reportDayTaxs = new ArrayList<>();
             reportPluDayItems = new ArrayList<ReportPluDayItem>();
-            reportPluDayModifiers = Collections.emptyList();
-            reportHourlys = Collections.emptyList();
-            itemCategorys = Collections.emptyList();
-            itemMainCategorys = Collections.emptyList();
-            reportDetailAnalysisItems = Collections.emptyList();
-            reportDetailAnalysisItemList = Collections.emptyList();
+            reportPluDayModifiers = new ArrayList<>();
+            reportHourlys = new ArrayList<>();
+            itemCategorys = new ArrayList<>();
+            itemMainCategorys = new ArrayList<>();
+            reportDetailAnalysisItems = new ArrayList<>();
+            reportDetailAnalysisItemList = new ArrayList<>();
         }
     }
 
@@ -517,59 +517,6 @@ public class XZReportActivity extends BaseActivity {
         }
     };
 
-    // 打印
-//    private void print(){
-//        try {
-//            jsonObject = new JSONObject(str);
-//            final Long bizDate = jsonObject.optLong("bizDate");
-//            final boolean zPrint = jsonObject.optBoolean("z");
-//            if (reportDaySales != null) {
-//                DialogSelectReportPrint.show(context,
-//                        new View.OnClickListener() {
-//
-//                            @Override
-//                            public void onClick(View v) {
-//                                switch (v.getId()) {
-//                                    case R.id.btn_report_all: {
-//                                        sendPrintData(
-//                                                XZReportHtml.REPORT_PRINT_ALL,
-//                                                zPrint, bizDate);
-//                                    }
-//                                    break;
-//                                    case R.id.btn_report_sales: {
-//                                        sendPrintData(
-//                                                XZReportHtml.REPORT_PRINT_SALES,
-//                                                zPrint, bizDate);
-//                                    }
-//                                    break;
-//                                    case R.id.btn_report_detail_analysis: {
-//                                        sendPrintData(
-//                                                XZReportHtml.REPORT_PRINT_DETAILS,
-//                                                zPrint, bizDate);
-//                                    }
-//                                    break;
-//                                    case R.id.btn_report_summary_analysis: {
-//                                        sendPrintData(
-//                                                XZReportHtml.REPORT_PRINT_SUMMARY,
-//                                                zPrint, bizDate);
-//                                    }
-//                                    break;
-//                                }
-//                            }
-//                        });
-//            } else {
-//                DialogFactory.alertDialog(
-//                        XZRerortActivity.this,
-//                        context.getResources().getString(
-//                                R.string.warning),
-//                        context.getResources().getString(
-//                                R.string.no_sales_print));
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     OnCellItemClick onCellItemClick = new OnCellItemClick() {
         @Override
         public void onCellClick(View v, CardGridItem item) {
@@ -615,7 +562,7 @@ public class XZReportActivity extends BaseActivity {
     protected void handlerClickEvent(View v) {
         switch (v.getId()){
             case R.id.tv_print:
-                showPrintDialog(showBusinessDate, showBusinessDate == businessDate ? true:false);
+                showPrintDialog(showBusinessDate, true);
                 break;
         }
         super.handlerClickEvent(v);

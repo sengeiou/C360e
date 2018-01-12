@@ -200,7 +200,7 @@ public class EntVoidReportHtml extends BaseActivity {
 
 		this.reportEntItems = ReportObjectFactory.getInstance().loadReportEntItem(businessDate);
 		this.reportVoidItems = ReportObjectFactory.getInstance().loadReportVoidItem(businessDate);
-		this.reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(businessDate);
+		this.reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(businessDate, false);
 			
 		if (reportDaySales != null) {
 			map.put("total", String.valueOf(BH.add(BH.getBD(reportDaySales.getItemVoid()),
@@ -222,15 +222,15 @@ public class EntVoidReportHtml extends BaseActivity {
 		return JSONUtil.getJSONFromEncode(str);
 	}
 	
-	private void getDataSync() {
-		reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(
-				businessDate);
-		if (reportDaySales != null) {
-			this.reportVoidItems = ReportObjectFactory.getInstance().loadReportVoidItem(businessDate);
-		}else {
-			reportVoidItems = Collections.emptyList();
-		}
-	}
+//	private void getDataSync() {
+//		reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(
+//				businessDate);
+//		if (reportDaySales != null) {
+//			this.reportVoidItems = ReportObjectFactory.getInstance().loadReportVoidItem(businessDate);
+//		}else {
+//			reportVoidItems = Collections.emptyList();
+//		}
+//	}
 
 	private void sendPrintData(int type) {
         String bizDate = TimeUtil.getPrintingDate(this.businessDate);
@@ -238,8 +238,7 @@ public class EntVoidReportHtml extends BaseActivity {
 				.getInstance()
 				.getPrinterTitleForReport(
 						App.instance.getRevenueCenter().getId(),
-						"Z"+ParamHelper.getPrintOrderBillNo(App.instance.getIndexOfRevenueCenter(), reportDaySales
-								.getId()),
+						"ZY"+ParamHelper.getPrintOrderBillNo(App.instance.getIndexOfRevenueCenter(), 0),
 						App.instance.getUser().getFirstName()
 								+ App.instance.getUser().getLastName(), null,bizDate);
 

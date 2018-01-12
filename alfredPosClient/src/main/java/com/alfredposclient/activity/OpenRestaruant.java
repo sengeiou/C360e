@@ -1115,7 +1115,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 	private void sendPrintData(long businessDate, String reportType) {
 		ReportDaySales reportDaySales = ReportObjectFactory.getInstance()
-				.loadReportDaySales(businessDate);
+				.loadReportDaySales(businessDate, true);
 		if (reportDaySales == null) {
 			handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
 			return;

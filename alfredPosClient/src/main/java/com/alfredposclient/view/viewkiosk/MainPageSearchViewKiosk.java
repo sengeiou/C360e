@@ -16,7 +16,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -31,6 +30,7 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.ItemDetailAdapter;
+import com.alfredposclient.view.MyGridView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class MainPageSearchViewKiosk extends LinearLayout implements OnClickList
 	private ImageView iv_cancel;
 	private Order order;
 	private Handler handler;
-	private GridView gv_items;
+	private MyGridView gv_items;
 	private ItemDetailAdapter itemDetailAdapter;
 	private InputMethodManager imm;
 	private List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
@@ -67,7 +67,7 @@ public class MainPageSearchViewKiosk extends LinearLayout implements OnClickList
 		LinearLayout ll_blank_right = (LinearLayout) findViewById(R.id.ll_blank_right);
 		ll_blank_left.setOnClickListener(null);
 		ll_blank_right.setOnClickListener(null);
-		gv_items = (GridView) findViewById(R.id.gv_items);
+		gv_items = (MyGridView) findViewById(R.id.gv_items);
 		et_search = (EditText) findViewById(R.id.et_search);
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod(et_search);

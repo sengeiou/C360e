@@ -59,8 +59,12 @@ public class OrderSplitSQL {
 	}
 
 	public static void updateOrderSplitByOrder(Order order,OrderSplit orderSplit){
-		calculate(order, orderSplit);
-		update(orderSplit);
+		try {
+			calculate(order, orderSplit);
+			update(orderSplit);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public static void update(OrderSplit orderSplit){

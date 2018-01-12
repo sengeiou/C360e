@@ -64,7 +64,7 @@
             android:visibility="visible" />
     </LinearLayout>
 
-    <GridView
+    <com.alfredposclient.view.MyGridView
         android:id="@+id/gv_items"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -396,7 +396,7 @@ public class XZReportHtml extends BaseActivity {
 		// List<ItemMainCategory> itemMainCategorys;
 
 		reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(
-				bizDate);
+				bizDate, false);
 		if (reportDaySales != null) {
 			reportDayTaxs = ReportObjectFactory.getInstance().loadReportDayTax(
 					reportDaySales, bizDate);
@@ -461,7 +461,7 @@ public class XZReportHtml extends BaseActivity {
 						label
 								+ ParamHelper.getPrintOrderBillNo(
 										App.instance.getIndexOfRevenueCenter(),
-										reportDaySales.getId()),
+										0),
 						App.instance.getUser().getFirstName()
 								+ App.instance.getUser().getLastName(), null,
 						bizDate);

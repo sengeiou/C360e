@@ -24,7 +24,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -52,6 +51,7 @@ import com.alfredposclient.adapter.ItemDetailAdapter;
 import com.alfredposclient.view.CustomNoteView;
 import com.alfredposclient.view.HorizontalScrollViewEx;
 import com.alfredposclient.view.ModifierView;
+import com.alfredposclient.view.MyGridView;
 import com.alfredposclient.view.SubMenuView;
 
 import java.util.ArrayList;
@@ -139,7 +139,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 			}
 			View view = inflater.inflate(R.layout.item_menu_detial, null);
 			view.setLayoutParams(params);
-			final GridView gv_menu_detail = (GridView) view
+			final MyGridView gv_menu_detail = (MyGridView) view
 					.findViewById(R.id.gv_menu_detail);
 			gv_menu_detail.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 				
@@ -379,7 +379,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 	private void filterItemsInSubCategory (int maincategoryid) {
 		LinearLayout ll_two_level_menu = (LinearLayout) findViewById(R.id.ll_two_level_menu);
 		View view = ll_two_level_menu.getChildAt(current_index);
-		GridView gv_menu_detail = (GridView)view.findViewById(R.id.gv_menu_detail);	
+		MyGridView gv_menu_detail = (MyGridView)view.findViewById(R.id.gv_menu_detail);
 		ItemDetailAdapter subadp = (ItemDetailAdapter) gv_menu_detail.getAdapter();
 
 		List<ItemDetail>  currentItemDetails = new ArrayList<ItemDetail>();
@@ -394,7 +394,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 	public void filterItemsInSubCategory (int maincategoryid, int subcategoryid) {
 		LinearLayout ll_two_level_menu = (LinearLayout) findViewById(R.id.ll_two_level_menu);
 		View view = ll_two_level_menu.getChildAt(current_index);
-		GridView gv_menu_detail = (GridView)view.findViewById(R.id.gv_menu_detail);	
+		MyGridView gv_menu_detail = (MyGridView)view.findViewById(R.id.gv_menu_detail);
 		ItemDetailAdapter subadp = (ItemDetailAdapter) gv_menu_detail.getAdapter();
 		
 		List<ItemDetail>  currentItemDetails = new ArrayList<ItemDetail>();

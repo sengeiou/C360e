@@ -62,8 +62,15 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 
 		String title = getString(R.string.cashier_login_tips1);
 		Restaurant rest = CoreData.getInstance().getRestaurant();
-		if(rest != null)
-			((TextView)(login_view_2.findViewById(R.id.tv_rest_name))).setText(rest.getRestaurantName()+"");
+		RevenueCenter revenueCenter = App.instance.getRevenueCenter();
+		String name = "";
+		if(rest != null){
+			name = rest.getRestaurantName();
+			if(revenueCenter != null){
+				name = name + "\n" + revenueCenter.getRevName();
+			}
+		}
+		((TextView)(login_view_2.findViewById(R.id.tv_rest_name))).setText(name);
 		((TextView) (login_view_2.findViewById(R.id.tv_login_tips))).setText(title);
 
 		numerickeyboard = (Numerickeyboard) login_view_2

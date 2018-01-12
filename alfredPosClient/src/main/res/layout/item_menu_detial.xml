@@ -5,7 +5,7 @@
     android:paddingLeft="10dp"
 	android:paddingRight="10dp">
 
-    <GridView
+    <com.alfredposclient.view.MyGridView
         android:id="@+id/gv_menu_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

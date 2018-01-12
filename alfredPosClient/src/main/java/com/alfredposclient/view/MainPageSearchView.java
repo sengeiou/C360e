@@ -16,7 +16,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -44,20 +43,23 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 	private ImageView iv_cancel;
 	private Order order;
 	private Handler handler;
-	private GridView gv_items;
+	private MyGridView gv_items;
 	private ItemDetailAdapter itemDetailAdapter;
 	private InputMethodManager imm;
 	private List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
+	private List<ItemDetail> itemDetailList = new ArrayList<ItemDetail>();
 
 	public MainPageSearchView(Context context) {
 		super(context);
 		this.context = context;
+		itemDetailList.clear();
 		init(context);
 	}
 
 	public MainPageSearchView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
+		itemDetailList.clear();
 		init(context);
 	}
 
@@ -67,7 +69,7 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 		LinearLayout ll_blank_right = (LinearLayout) findViewById(R.id.ll_blank_right);
 		ll_blank_left.setOnClickListener(null);
 		ll_blank_right.setOnClickListener(null);
-		gv_items = (GridView) findViewById(R.id.gv_items);
+		gv_items = (MyGridView) findViewById(R.id.gv_items);
 		et_search = (EditText) findViewById(R.id.et_search);
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod(et_search);
@@ -91,7 +93,7 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 		findViewById(R.id.ll_search).setOnClickListener(null);
 		iv_cancel = (ImageView) findViewById(R.id.iv_cancel);
 		iv_cancel.setOnClickListener(this);
-		itemDetailAdapter = new ItemDetailAdapter(context, itemDetails);
+		itemDetailAdapter = new ItemDetailAdapter(context, itemDetailList);
 		gv_items.setAdapter(itemDetailAdapter);
 		gv_items.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -133,12 +135,14 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 
 	public void setParam(BaseActivity parent, Order order,
 			List<ItemDetail> itemDetails, Handler handler, boolean showKey) {
+		System.out.println("111111");
 		if (itemDetails == null)
 			itemDetails = Collections.emptyList();
 		this.parent = parent;
 		this.order = order;
-		this.itemDetails.clear();
-		this.itemDetails.addAll(itemDetails);
+		this.itemDetailList.clear();
+		this.itemDetailList.addAll(itemDetails);
+		this.itemDetails = itemDetails;
 		this.handler = handler;
 		et_search.setFocusable(true);
 		et_search.setFocusableInTouchMode(true);
@@ -161,17 +165,31 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 						gv_items.setNumColumns(numColumns);
 					}
 				});
+		System.out.println("-----111111");
 		refresh();
+		System.out.println("-----111111");
 	}
 
 	private void search() {
 		String key = et_search.getText().toString();
-		if(handler == null || key == null)
-			return;
-		Message msg = handler.obtainMessage();
-		msg.what = MainPage.VIEW_EVENT_SEARCH;
-		msg.obj = key;
-		handler.sendMessage(msg);
+		itemDetailList.clear();
+		if (key != null) {
+			key = key.trim().replaceAll("\\s+","");
+			for (ItemDetail itemDtail : itemDetails) {
+				String name = CommonUtil.getInitial(itemDtail.getItemName());
+				if (name.contains(key) || name.contains(key.toUpperCase())) {
+					itemDetailList.add(itemDtail);
+					continue;
+				}
+			}
+		}
+		refresh();
+//		if(handler == null || key == null)
+//			return;
+//		Message msg = handler.obtainMessage();
+//		msg.what = MainPage.VIEW_EVENT_SEARCH;
+//		msg.obj = key;
+//		handler.sendMessage(msg);
 	}
 	
 	public void cancelSearch() {

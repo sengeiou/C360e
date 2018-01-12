@@ -728,7 +728,7 @@ public class MainPageOrderView extends LinearLayout {
 						if(adapter.getPageIndex() == 0) {
 							if(orderDetail.getGroupId().intValue() > 0){
 								OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
-								if(orderSplit.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED){
+								if(orderSplit != null && orderSplit.getOrderStatus().intValue() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED){
 									UIHelp.showToast(parent, parent.getResources().getString(R.string.order_split_) + 
 											orderSplit.getGroupId() + parent.getResources().getString(R.string._settled));
 									handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);

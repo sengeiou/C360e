@@ -576,7 +576,7 @@ public class ReportObjectFactory {
 	}
 
 	// Z-report
-	public ReportDaySales loadReportDaySales(long businessDate) {
+	public ReportDaySales loadReportDaySales(long businessDate, boolean isSave) {
 		ReportDaySales reportDaySales = null;
 		if (App.instance.getBusinessDate() != businessDate) {
 			reportDaySales = ReportDaySalesSQL
@@ -588,10 +588,12 @@ public class ReportObjectFactory {
 				.getReportDaySalesByTime(businessDate);
 		if (reportDaySales == null) {
 			reportDaySales = loadShowReportDaySales(businessDate);
-//			reportDaySales.setId(CommonSQL
-//					.getNextSeq(TableNames.ReportDaySales));
+			if(isSave) {
+				reportDaySales.setId(CommonSQL
+						.getNextSeq(TableNames.ReportDaySales));
+				ReportDaySalesSQL.addReportDaySales(reportDaySales);
+			}
 		}
-//		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 		return reportDaySales;
 	}
 
