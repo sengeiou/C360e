@@ -78,6 +78,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.JSONUtil;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RxBus;
@@ -293,6 +294,7 @@ public class MainPage extends BaseActivity {
 
 	@Override
 	protected void initView() {
+		System.out.println("========MMMMMM");
 		setContentView(R.layout.activity_main_page);
 		super.initView();
 //		findViewById(R.id.rl_stored_card_fragment_father).setOnClickListener(null);
@@ -329,6 +331,7 @@ public class MainPage extends BaseActivity {
 				findViewById(R.id.rl_root), handler);
 		closeOrderSplitWindow = new CloseOrderSplitWindow(this,
 				findViewById(R.id.rl_root), handler);
+		System.out.println("--window start");
 		setPAXWindow = new SetPAXWindow(context, findViewById(R.id.rl_root),
 				handler);
 		discountWindow = new DiscountWindow(this, findViewById(R.id.rl_root));
@@ -342,6 +345,7 @@ public class MainPage extends BaseActivity {
 				findViewById(R.id.lv_order), handler);
 		setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
 				handler);
+		System.out.println("--window end");
 		filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_TIME_TICK);
 		registerReceiver(receiver, filter);
@@ -1972,6 +1976,7 @@ public class MainPage extends BaseActivity {
 		FragmentManager fragmentManager = this.getSupportFragmentManager();
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
 		transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
+		LogUtil.e(TAG, "before table show");
 		transaction.show(f_tables);
 		transaction.commitAllowingStateLoss();
 		App.instance.showWelcomeToSecondScreen();

@@ -4,8 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +17,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.javabean.ItemDetail;
@@ -31,6 +32,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.adapter.ItemDetailAdapter;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +41,7 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 	private static final String TAG = MainPageSearchView.class.getSimpleName();
 	private BaseActivity parent;
 	private Context context;
-	private EditText et_search;
+	private SearchView et_search;
 	private ImageView iv_cancel;
 	private Order order;
 	private Handler handler;
@@ -48,7 +50,8 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 	private InputMethodManager imm;
 	private List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 	private List<ItemDetail> itemDetailList = new ArrayList<ItemDetail>();
-
+	private int selectNum = 0;
+	private TextView tv_select_num;
 	public MainPageSearchView(Context context) {
 		super(context);
 		this.context = context;
@@ -69,25 +72,75 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 		LinearLayout ll_blank_right = (LinearLayout) findViewById(R.id.ll_blank_right);
 		ll_blank_left.setOnClickListener(null);
 		ll_blank_right.setOnClickListener(null);
-		gv_items = (MyGridView) findViewById(R.id.gv_items);
-		et_search = (EditText) findViewById(R.id.et_search);
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
-		textTypeFace.setTrajanProBlod(et_search);
-		et_search.addTextChangedListener(new TextWatcher() {
+		gv_items = (MyGridView) findViewById(R.id.gv_items);
+		et_search = (SearchView) findViewById(R.id.et_search);
+		tv_select_num = (TextView) findViewById(R.id.tv_select_num);
+		textTypeFace.setTrajanProBlod(tv_select_num);
+//		et_search.findViewById(R.id.submit_area).setBackgroundColor(parent.getResources().getColor(R.color.white));
+//		et_search.performClick();
+		Class<?> argClass = et_search.getClass();
+		try {
+			Field ownField = argClass.getDeclaredField("mSearchPlate");
+			ownField.setAccessible(true);
+			View mSubmitArea = (View) ownField.get(et_search);
+			mSubmitArea.setBackgroundColor(getResources().getColor(R.color.white));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			Field mQueryTextViewField = argClass.getDeclaredField("mSearchSrcTextView");
+			mQueryTextViewField.setAccessible(true);
+			View mQueryTextView = (View) mQueryTextViewField.get(et_search);
 
+			textTypeFace.setTrajanProBlod((EditText)mQueryTextView);
+		} catch (Exception e) {
+			try {
+				Field mQueryTextViewField = argClass.getDeclaredField("mQueryTextView");
+				mQueryTextViewField.setAccessible(true);
+				View mQueryTextView = (View) mQueryTextViewField.get(et_search);
+				textTypeFace.setTrajanProBlod((EditText)mQueryTextView);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+
+//		textTypeFace.setTrajanProBlod((EditText) et_search.findViewById(R.id.search_src_text));
+//		et_search.addTextChangedListener(new TextWatcher() {
+//
+//			@Override
+//			public void onTextChanged(CharSequence s, int start, int before,
+//					int count) {
+//			}
+//
+//			@Override
+//			public void beforeTextChanged(CharSequence s, int start, int count,
+//					int after) {
+//			}
+//
+//			@Override
+//			public void afterTextChanged(Editable s) {
+//				search();
+//			}
+//		});
+		et_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			// 当点击搜索按钮时触发该方法
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			public boolean onQueryTextSubmit(String query) {
+				return false;
 			}
 
+			// 当搜索内容改变时触发该方法
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				search();
+			public boolean onQueryTextChange(String newText) {
+				if (!TextUtils.isEmpty(newText)){
+					search(newText);
+				}else{
+//					mListView.clearTextFilter();
+					search("");
+				}
+				return false;
 			}
 		});
 		findViewById(R.id.ll_search).setOnClickListener(null);
@@ -112,6 +165,8 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 				msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
 				msg.obj = orderDetail;
 				handler.sendMessage(msg);
+				selectNum++;
+				tv_select_num.setText(selectNum+"");
 			}
 		});
 		gv_items.setOnScrollListener(new OnScrollListener() {
@@ -144,9 +199,13 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 		this.itemDetailList.addAll(itemDetails);
 		this.itemDetails = itemDetails;
 		this.handler = handler;
-		et_search.setFocusable(true);
-		et_search.setFocusableInTouchMode(true);
+		this.selectNum = 0;
+//		et_search.setFocusable(true);
+//		et_search.setFocusableInTouchMode(true);
+//		et_search.setQuery("", false);
 		et_search.requestFocus();
+		et_search.onActionViewExpanded();
+		tv_select_num.setText("");
 		if(showKey) {
 			imm = (InputMethodManager) parent.getSystemService(Context.INPUT_METHOD_SERVICE);
 			if (imm != null)
@@ -165,25 +224,32 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 						gv_items.setNumColumns(numColumns);
 					}
 				});
-		System.out.println("-----111111");
 		refresh();
-		System.out.println("-----111111");
 	}
 
-	private void search() {
-		String key = et_search.getText().toString();
+
+
+	private void search(String key) {
+//		String key = et_search.getText().toString();
 		itemDetailList.clear();
 		if (key != null) {
 			key = key.trim().replaceAll("\\s+","");
 			for (ItemDetail itemDtail : itemDetails) {
-				String name = CommonUtil.getInitial(itemDtail.getItemName());
-				if (name.contains(key) || name.contains(key.toUpperCase())) {
+				String name = itemDtail.getItemName();
+//				String name = CommonUtil.getInitial(itemDtail.getItemName());
+//				if (name.contains(key) || name.contains(key.toUpperCase())) {
+				if(name.toLowerCase().contains(key.toLowerCase())){
 					itemDetailList.add(itemDtail);
 					continue;
 				}
 			}
 		}
-		refresh();
+		gv_items.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				refresh();
+			}
+		}, 100);
 //		if(handler == null || key == null)
 //			return;
 //		Message msg = handler.obtainMessage();
@@ -193,8 +259,8 @@ public class MainPageSearchView extends LinearLayout implements OnClickListener{
 	}
 	
 	public void cancelSearch() {
-		et_search.setText("");
-		et_search.clearFocus();
+//		et_search.setText("");
+//		et_search.clearFocus();
 	}
 	
 	private void refresh() {

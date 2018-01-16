@@ -93,6 +93,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private int width;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        System.out.println("-----------tttttttt");
         mainPage = (BaseActivity) getActivity();
         loadingDialog = new LoadingDialog(mainPage);
         loadingDialog.setTitle("loading");

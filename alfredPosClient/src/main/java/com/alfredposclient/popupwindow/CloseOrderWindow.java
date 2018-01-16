@@ -13,8 +13,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -65,7 +63,6 @@ import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
-import com.alfredbase.utils.NetUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
@@ -77,10 +74,7 @@ import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.OrderDetailAdapter;
 import com.alfredposclient.global.App;
-import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
-import com.alfredposclient.global.WebViewConfig;
-import com.alfredposclient.view.AlipayWebView;
 import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
 import com.alfredposclient.view.SettlementDetailItemView;
@@ -167,7 +161,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	private OrderBill orderBill;
 	private float startX;
 	private LinearLayout ll_subtotal_layout;
-	private AlipayWebView web_alipay;
+//	private AlipayWebView web_alipay;
 	private Button btn_void_all_closed;
 	private String oldTotal;
 
@@ -194,7 +188,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				RelativeLayout.LayoutParams.MATCH_PARENT);
 //		rl_pay_panel = (RelativeLayout) contentView
 //				.findViewById(R.id.rl_pay_panel);
-		web_alipay = (AlipayWebView) contentView.findViewById(R.id.web_alipay);
+//		web_alipay = (AlipayWebView) contentView.findViewById(R.id.web_alipay);
 		ll_subtotal_layout = (LinearLayout) contentView.findViewById(R.id.ll_subtotal_layout);
 		tv_change_num = (TextView) contentView
 				.findViewById(R.id.tv_change_num);
@@ -1485,89 +1479,89 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 	}
 
-	public void alipayAction(int payTypeId){
-		viewTag = payTypeId;
-		paymentTypeId = payTypeId;
-		web_alipay.setVisibility(View.VISIBLE);
-		web_alipay.performClick();
-		WebViewConfig.setDefaultConfig(web_alipay);
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("orderId", order.getId());
-		parameters.put("billNo", orderBill.getBillNo());
-		parameters.put("orderCreateTime", orderBill.getCreateTime());
-		parameters.put("amount", BH.doubleFormat.format(remainTotal));
-		parameters.put("appOrderId", order.getAppOrderId());
-		String url = SyncCentre.getInstance().requestAlipayUrl(parameters);
-		web_alipay.loadUrl(url);
-		web_alipay.setWebViewClient(new WebViewClient(){
-			@Override
-			public boolean shouldOverrideUrlLoading(WebView view,
-					String url) {
-//				web_alipay.loadUrl(url);
-				if(url.startsWith(SyncCentre.getInstance().getAlipayVerifyErrorNotifyUrl())){
-					DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
-					web_alipay.setVisibility(View.GONE);
-				}else if(url.startsWith(SyncCentre.getInstance().getAlipayVerifyReturnUrl())){
-					final Map<String, String> localBundle = NetUtil.parseUrl(url);
-					String trade_status = localBundle.get("trade_status");
-					final String trade_no = localBundle.get("trade_no");
-					final String extra_common_param = localBundle.get("extra_common_param");
-					String[] extraCommonArray = extra_common_param.split("_");
-					final String buyer_email = localBundle.get("buyer_email");
-					if(!TextUtils.isEmpty(trade_status) && (trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS")) && extraCommonArray[3].equals(orderBill.getBillNo().toString())){
-						alipayClickEnterAction(trade_no, buyer_email, remainTotal);
-						DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付成功", null);
-
-					}else{
-						DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
-					}
-//					AlipayNotify.verify(localBundle, new AlipayNetWorkCallBack() {
+//	public void alipayAction(int payTypeId){
+//		viewTag = payTypeId;
+//		paymentTypeId = payTypeId;
+//		web_alipay.setVisibility(View.VISIBLE);
+//		web_alipay.performClick();
+//		WebViewConfig.setDefaultConfig(web_alipay);
+//		Map<String, Object> parameters = new HashMap<String, Object>();
+//		parameters.put("orderId", order.getId());
+//		parameters.put("billNo", orderBill.getBillNo());
+//		parameters.put("orderCreateTime", orderBill.getCreateTime());
+//		parameters.put("amount", BH.doubleFormat.format(remainTotal));
+//		parameters.put("appOrderId", order.getAppOrderId());
+//		String url = SyncCentre.getInstance().requestAlipayUrl(parameters);
+//		web_alipay.loadUrl(url);
+//		web_alipay.setWebViewClient(new WebViewClient(){
+//			@Override
+//			public boolean shouldOverrideUrlLoading(WebView view,
+//					String url) {
+////				web_alipay.loadUrl(url);
+//				if(url.startsWith(SyncCentre.getInstance().getAlipayVerifyErrorNotifyUrl())){
+//					DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
+//					web_alipay.setVisibility(View.GONE);
+//				}else if(url.startsWith(SyncCentre.getInstance().getAlipayVerifyReturnUrl())){
+//					final Map<String, String> localBundle = NetUtil.parseUrl(url);
+//					String trade_status = localBundle.get("trade_status");
+//					final String trade_no = localBundle.get("trade_no");
+//					final String extra_common_param = localBundle.get("extra_common_param");
+//					String[] extraCommonArray = extra_common_param.split("_");
+//					final String buyer_email = localBundle.get("buyer_email");
+//					if(!TextUtils.isEmpty(trade_status) && (trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS")) && extraCommonArray[3].equals(orderBill.getBillNo().toString())){
+//						alipayClickEnterAction(trade_no, buyer_email, remainTotal);
+//						DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付成功", null);
 //
-//						@Override
-//						public void onSuccess() {
-//							String trade_status = localBundle.get("trade_status");
-//							final String trade_no = localBundle.get("trade_no");
-//							final String buyer_email = localBundle.get("buyer_email");
-//							if(!TextUtils.isEmpty(trade_status) && (trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS"))){
-//								parent.runOnUiThread(new Runnable() {
+//					}else{
+//						DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
+//					}
+////					AlipayNotify.verify(localBundle, new AlipayNetWorkCallBack() {
+////
+////						@Override
+////						public void onSuccess() {
+////							String trade_status = localBundle.get("trade_status");
+////							final String trade_no = localBundle.get("trade_no");
+////							final String buyer_email = localBundle.get("buyer_email");
+////							if(!TextUtils.isEmpty(trade_status) && (trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS"))){
+////								parent.runOnUiThread(new Runnable() {
+////
+////									@Override
+////									public void run() {
+////										alipayClickEnterAction(trade_no, buyer_email);
+////										DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付成功", null);
+////									}
+////								});
+////
+////							}else{
+////								parent.runOnUiThread(new Runnable() {
+////
+////									@Override
+////									public void run() {
+////										DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
+////									}
+////								});
+////
+////							}
+////						}
+////
+////						@Override
+////						public void onFailure() {
+////							DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
+////						}
+////					});
 //
-//									@Override
-//									public void run() {
-//										alipayClickEnterAction(trade_no, buyer_email);
-//										DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付成功", null);
-//									}
-//								});
+//					web_alipay.setVisibility(View.GONE);
+//				}
+//				return super.shouldOverrideUrlLoading(view, url);
+//			}
 //
-//							}else{
-//								parent.runOnUiThread(new Runnable() {
-//
-//									@Override
-//									public void run() {
-//										DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
-//									}
-//								});
-//
-//							}
-//						}
-//
-//						@Override
-//						public void onFailure() {
-//							DialogFactory.showOneButtonCompelDialog(parent, "注意", "支付失败", null);
-//						}
-//					});
-
-					web_alipay.setVisibility(View.GONE);
-				}
-				return super.shouldOverrideUrlLoading(view, url);
-			}
-
-			@Override
-			public void onPageFinished(WebView view, String url) {
-				super.onPageFinished(view, url);
-				web_alipay.requestFocus();
-			}
-		});
-	}
+//			@Override
+//			public void onPageFinished(WebView view, String url) {
+//				super.onPageFinished(view, url);
+//				web_alipay.requestFocus();
+//			}
+//		});
+//	}
 
 	public void openMoneyKeyboardByVoidRefund(){
 		if(parent instanceof EditSettlementPage){

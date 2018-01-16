@@ -87,7 +87,7 @@ dependencies {
 //    compile 'com.birbit:android-priority-jobqueue:2.0.0'
 //    compile files('libs/android-websockets.jar')
 //    compile files('libs/core-3.2.1.jar')
-    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'com.android.support:recyclerview-v7:25.1.1'
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
 
     compile(name: 'barcode_scanner_library_v2.0.8.0', ext: 'aar')

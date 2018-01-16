@@ -1460,6 +1460,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		case R.id.rl_breakfast_session_bg:
 		case R.id.rl_dinner_session_bg:
 		case R.id.rl_supper_session_bg:
+			System.out.println("====-------000oooooooooo");
 			mSettingView.initOptionsSessionOpen();
 			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
 			if (App.instance.isRevenueKiosk()) {
@@ -1595,6 +1596,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	}
 
 	private void openSession(){
+		System.out.println("====-------000oooooooooo");
 		UIHelp.showShortToast(context, "opening");
 		new Thread(new Runnable() {
 

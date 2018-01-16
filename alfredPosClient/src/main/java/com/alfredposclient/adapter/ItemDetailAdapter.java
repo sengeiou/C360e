@@ -51,7 +51,7 @@ public class ItemDetailAdapter extends BaseAdapter {
 	public void setItemDetails(List<ItemDetail> itemDetails) {
 		this.itemDetails = itemDetails;
 		i = 0;
-		this.notifyDataSetChanged();
+		this.notifyDataSetInvalidated();
 
 	}
 

@@ -98,12 +98,12 @@
             android:layout_height="80dp"
             android:scrollbars="none" >
 
-            <LinearLayout
-                android:id="@+id/ll_one_level_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:orientation="horizontal" >
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:id="@+id/ll_one_level_menu"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="80dp"-->
+                <!--android:orientation="horizontal" >-->
+            <!--</LinearLayout>-->
         </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
         <RelativeLayout 
@@ -116,12 +116,12 @@
             android:background="#ffffff"
             android:scrollbars="none" >
 
-            <LinearLayout
-                android:id="@+id/ll_two_level_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal" >
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:id="@+id/ll_two_level_menu"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:orientation="horizontal" >-->
+            <!--</LinearLayout>-->
         </android.support.v7.widget.RecyclerView>
         <ScrollView 
             android:id="@+id/sv_sub_menu"

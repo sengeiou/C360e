@@ -28,9 +28,9 @@
 -keepclassmembers class * implements com.alfredposclient.global.JavaConnectJS {
    *;
 }
--keepattributes *Annotation*
+#-keepattributes *Annotation*
 -keepattributes *JavascriptInterface*
-
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
 -ignorewarnings
 #-libraryjars libs/android-websockets.jar
 #-libraryjars ../AlfredBase/libs/slf4j-api-1.7.6.jar
@@ -89,7 +89,7 @@
 -keep class rx.internal.**{*;}
 -dontwarn com.squareup.**
 
--keepattributes Signature
+#-keepattributes Signature
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
 -keep public class * extends android.app.Service
