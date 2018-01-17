@@ -204,6 +204,9 @@ public class MainPage extends BaseActivity {
 	public static final int ACTION_PAX_SPLIT_BY_PAX_WINDOW = 157;
 	public static final int ACTION_PRINT_PAX_SPLIT_BY_PAX = 158;
 	public static final int VIEW_EVENT_SHOW_CLOSE_SPLIT_BY_PAX_BILL = 159;
+	public static final int ACTION_TRANSFER_SPLIT_BY_NUM = 160;
+	public static final int ACTION_REMOVE_ORDER_DETAIL = 161;
+	public static final int ACTION_CANCEL_ORDER_DETAIL = 162;
 
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
 	public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
@@ -219,6 +222,7 @@ public class MainPage extends BaseActivity {
 	private static final String HANDLER_MSG_OBJECT_ITEM_QTY = "ITEM_QTY";
 	private static final String HANDLER_MSG_OBJECT_VOID_OR_FREE = "VOID_OR_FREE";
 	public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
+	public static final String HANDLER_MSG_OBJECT_CANCEL_ITEM = "CANCEL_ITEM";
 
 	private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
 	private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
@@ -1199,10 +1203,27 @@ public class MainPage extends BaseActivity {
 							}
 							initOrder(currentTable);
 							setTablePacks(currentTable.getPacks()+"");
+							boolean idNull = false;
 							transfItemOrderDetail.setOrderId(currentOrder.getId().intValue());
-							OrderDetailSQL.updateOrderDetailOrderIdById(currentOrder.getId().intValue(), transfItemOrderDetail.getId().intValue());
-							OrderSQL.updateOrder(oldOrder);
-							OrderSQL.updateOrder(currentOrder);
+							transfItemOrderDetail.setGroupId(0);
+							transfItemOrderDetail.setOrderSplitId(0);
+							if(transfItemOrderDetail.getId() == null){
+								transfItemOrderDetail = ObjectFactory.getInstance().cpOrderDetail(transfItemOrderDetail);
+
+								OrderDetail oldOrderDetail = OrderDetailSQL.getOrderDetail(transfItemOrderDetail.getTransferFromDetailId());
+								if(oldOrderDetail  != null){
+									oldOrderDetail.setItemNum(oldOrderDetail.getItemNum().intValue() - transfItemOrderDetail.getItemNum().intValue());
+									OrderDetailSQL.updateOrderDetailAndOrder(oldOrderDetail);
+								}
+								idNull = true;
+							}else{
+//								OrderDetailSQL.updateOrderDetailOrderIdById(currentOrder.getId().intValue(), transfItemOrderDetail.getId().intValue());
+								OrderDetailSQL.updateOrderDetail(transfItemOrderDetail);
+								OrderSQL.updateOrder(oldOrder);
+								OrderSQL.updateOrder(currentOrder);
+								idNull = false;
+							}
+
 							if(transfItemOrderDetail.getOrderDetailStatus().intValue() > ParamConst.ORDERDETAIL_STATUS_ADDED){
 								KotSummary toKotSummary = KotSummarySQL
 										.getKotSummary(currentOrder.getId());
@@ -1220,7 +1241,10 @@ public class MainPage extends BaseActivity {
 								}
 								KotSummary fromKotSummary = KotSummarySQL
 										.getKotSummary(oldOrder.getId());
-								KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(transfItemOrderDetail.getId().intValue());
+								KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(transfItemOrderDetail.getTransferFromDetailId());
+								if(idNull) {
+									kotItemDetail = ObjectFactory.getInstance().cpKotItemDetail(kotItemDetail, transfItemOrderDetail);
+								}
 								Map<String, Object> parameters = new HashMap<String, Object>();
 								parameters.put("action",
 										ParamConst.JOB_MERGER_KOT);
@@ -1341,9 +1365,33 @@ public class MainPage extends BaseActivity {
 				} else if (result.get("MsgObject").equals(
 						HANDLER_MSG_OBJECT_TRANSFER_ITEM)) {
 					if (!verifyDialog.isShowing()) {
-						tableShowAction = TRANSFER_ITEM;
-						activityRequestCode = 0;
-						showTables();
+						if(transfItemOrderDetail != null
+								&& transfItemOrderDetail.getItemNum() != null
+								&& transfItemOrderDetail.getItemNum().intValue() > 1) {
+							DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning), "Transfer all ?", "Split", "All", new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									if(transfItemOrderDetail.getItemNum().intValue() == 2){
+										transfItemOrderDetail.setItemNum(1);
+										transfItemOrderDetail.setId(null);
+										tableShowAction = TRANSFER_ITEM;
+										activityRequestCode = 0;
+										showTables();
+									}else {
+										int maxNum = transfItemOrderDetail.getItemNum().intValue();
+										setPAXWindow.show(SetPAXWindow.TRANSFER_ITEM_SPLIT, "1", "The number must be less than " + maxNum, maxNum);
+									}
+								}
+							}, new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									tableShowAction = TRANSFER_ITEM;
+									activityRequestCode = 0;
+									showTables();
+								}
+							});
+						}
+
 					}
 				} else if (result.get("MsgObject").equals(
 						HANDLER_MSG_OBJECT_VOID_OR_FREE)) {
@@ -1462,6 +1510,9 @@ public class MainPage extends BaseActivity {
 							App.instance.getSessionStatus().getSession_status());
 //					settingView.openDrawer();
 					App.instance.kickOutCashDrawer(App.instance.getCahierPrinter());
+				}else if(result.get("MsgObject").equals(HANDLER_MSG_OBJECT_CANCEL_ITEM)){
+					OrderDetail tag = (OrderDetail) result.get("Object");
+					removeItem(tag);
 				}
 			}
 				break;
@@ -1479,6 +1530,8 @@ public class MainPage extends BaseActivity {
 				break;
 			case VIEW_EVENT_TANSFER_ITEM: {
 				transfItemOrderDetail = (OrderDetail) msg.obj;
+				transfItemOrderDetail.setTransferFromDetailId(transfItemOrderDetail.getId().intValue());
+				transfItemOrderDetail.setTransferFromDetailNum(transfItemOrderDetail.getItemNum().intValue());
 				verifyDialog.show(HANDLER_MSG_OBJECT_TRANSFER_ITEM, null);
 			}
 				break;
@@ -1789,6 +1842,31 @@ public class MainPage extends BaseActivity {
 			break;
 			case VIEW_EVENT_SHOW_CLOSE_SPLIT_BY_PAX_BILL: {
 				closeOrderSplitWindow.show(view_top_line,currentOrder, (OrderSplit)msg.obj);
+			}
+				break;
+			case ACTION_TRANSFER_SPLIT_BY_NUM: {
+				int splitPax = Integer.parseInt(((String)msg.obj));
+				transfItemOrderDetail.setItemNum(splitPax);
+				transfItemOrderDetail.setId(null);
+				tableShowAction = TRANSFER_ITEM;
+				activityRequestCode = 0;
+				handler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						showTables();
+					}
+				}, 300);
+
+			}
+				break;
+			case ACTION_REMOVE_ORDER_DETAIL: {
+				OrderDetail tag = (OrderDetail) msg.obj;
+				removeItem(tag);
+			}
+				break;
+			case ACTION_CANCEL_ORDER_DETAIL: {
+				OrderDetail tag = (OrderDetail) msg.obj;
+				verifyDialog.show(HANDLER_MSG_OBJECT_CANCEL_ITEM,tag);
 			}
 				break;
 			default:
@@ -2153,11 +2231,11 @@ public class MainPage extends BaseActivity {
 		super.onDestroy();
 	}
 
-	public Handler mmHandler = new Handler() {
-		public void handleMessage(Message msg) {
-
-		};
-	};
+//	public Handler mmHandler = new Handler() {
+//		public void handleMessage(Message msg) {
+//
+//		};
+//	};
 
 	public void httpRequestAction(int action, Object obj) {
 		switch (action) {
@@ -2181,7 +2259,41 @@ public class MainPage extends BaseActivity {
 		default:
 			break;
 		}
-	};
+	}
+
+	private void removeItem(final OrderDetail tag){
+		{
+			DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.warning),
+					context.getResources().getString(R.string.remove_item),
+					context.getResources().getString(R.string.no),
+					context.getResources().getString(R.string.yes), null,
+					new OnClickListener() {
+
+						@Override
+						public void onClick(View arg0) {
+							OrderDetailSQL.deleteOrderDetail(tag);
+							OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
+							try {
+								JSONObject jsonObject = new JSONObject();
+								jsonObject.put("orderId", tag.getOrderId().intValue());
+								jsonObject.put("RX", RxBus.RX_REFRESH_ORDER);
+								TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+							}catch (Exception e){
+								e.printStackTrace();
+							}
+							if(!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && ! IntegerUtils.isEmptyOrZero(tag.getGroupId())){
+								int count = OrderDetailSQL.getOrderDetailCountByGroupId(tag.getGroupId().intValue(), currentOrder.getId().intValue());
+								if(count == 0){
+									OrderSplitSQL.deleteOrderSplitByOrderAndGroupId(currentOrder.getId().intValue(), tag.getGroupId().intValue());
+								}
+							}
+							handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_MODIFIER_VIEW);
+							handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+
+						}
+					});
+		}
+	}
 
 	public void kotPrintStatus(int action, Object obj) {
 		switch (action) {

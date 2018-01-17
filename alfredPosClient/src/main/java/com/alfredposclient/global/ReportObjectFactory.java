@@ -588,7 +588,7 @@ public class ReportObjectFactory {
 				.getReportDaySalesByTime(businessDate);
 		if (reportDaySales == null) {
 			reportDaySales = loadShowReportDaySales(businessDate);
-			if(isSave) {
+			if(isSave && reportDaySales != null) {
 				reportDaySales.setId(CommonSQL
 						.getNextSeq(TableNames.ReportDaySales));
 				ReportDaySalesSQL.addReportDaySales(reportDaySales);

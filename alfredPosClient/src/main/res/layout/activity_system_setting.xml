@@ -143,6 +143,33 @@
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="10dp" />
                         </RelativeLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/black" />
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="60dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_transfer_print"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:padding="10dp"
+                                android:text="Transfer Table, no Print"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_m" />
+
+                            <com.alfredbase.view.SlipButton
+                                android:id="@+id/sb_transfer_print"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="10dp" />
+                        </RelativeLayout>
                     </LinearLayout>
 
                     <LinearLayout
@@ -724,6 +751,33 @@
                                     android:textSize="@dimen/text_size_m" />
 
                             </LinearLayout>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_cancel_order_void"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="Cancel instead of Void"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredbase.view.SlipButton
+                                    android:id="@+id/sb_cancel_order_void"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+                            </RelativeLayout>
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>

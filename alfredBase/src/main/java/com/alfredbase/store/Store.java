@@ -107,6 +107,8 @@ public class Store {
 
 	public static final String TOP_MASKING_IS_USER = "TOP_MASKING_IS_USER";
 	public static final String IS_SCREDDN_LOCK = "IS_SCREDDN_LOCK";
+	public static final String REMOVE_TO_VOID = "REMOVE_TO_VOID";
+	public static final String IS_TRANSFER_PRINT = "IS_TRANSFER_PRINT";
 
 	public static final String LOCK_SCREEN = "LOCK_SCREEN";
 	public static final String DISCOUNT_SELECTED_ITEM = "DISCOUNT_SELECTED_ITEM";

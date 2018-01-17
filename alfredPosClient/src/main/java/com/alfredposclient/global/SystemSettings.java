@@ -23,6 +23,9 @@ public class SystemSettings {
 	private boolean autoRecevingOnlineOrder = false;
 	private boolean topMaskingIsUser = false;
 	private boolean isScreenLock = true;
+	private boolean removeToVoid = false;
+	private boolean isTransferPrint = true;
+
 	private int maxPrintOrderNo = 98;
     
 	public SystemSettings(Context context) {
@@ -363,6 +366,50 @@ public class SystemSettings {
 			this.isScreenLock = true;
 		else
 			this.isScreenLock = false;
+	}
+
+	public boolean isRemoveToVoid() {
+		Integer value = Store.getInt(context,
+				Store.REMOVE_TO_VOID);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1){
+				this.removeToVoid = true;
+			}else{
+				this.removeToVoid = false;
+			}
+		}
+		return removeToVoid;
+	}
+
+	public void setRemoveToVoid(Integer removeToVoid) {
+		Store.putInt(this.context, Store.REMOVE_TO_VOID,
+				removeToVoid.intValue());
+		if(removeToVoid.intValue() == 1)
+			this.removeToVoid = true;
+		else
+			this.removeToVoid = false;
+	}
+
+	public boolean isTransferPrint() {
+		Integer value = Store.getInt(context,
+				Store.IS_TRANSFER_PRINT);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1){
+				this.isTransferPrint = true;
+			}else{
+				this.isTransferPrint = false;
+			}
+		}
+		return isTransferPrint;
+	}
+
+	public void setTransferPrint(Integer transferPrint) {
+		Store.putInt(this.context, Store.IS_TRANSFER_PRINT,
+				transferPrint.intValue());
+		if(transferPrint.intValue() == 1)
+			this.isTransferPrint = true;
+		else
+			this.isTransferPrint = false;
 	}
 
 	public int getMaxPrintOrderNo() {

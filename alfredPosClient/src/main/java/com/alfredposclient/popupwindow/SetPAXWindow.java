@@ -21,6 +21,7 @@ import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
@@ -38,6 +39,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 	public static final int MAX_ORDER_NO = 2;
 	public static final int TRANSFER_ITEM= 3;
 	public static final int SPLITE_BY_PAX = 4;
+	public static final int TRANSFER_ITEM_SPLIT= 5;
 	private BaseActivity parent;
 	private View parentView;
 	private Handler handler;
@@ -52,6 +54,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 	private TextView tv_pax;
 	private boolean flag = false;
 	private String str;
+	private int maxNum;
 	// 用于控制是否是APP订单 1为APP订单，0为正常流程
 	private int type = 0;
 	public SetPAXWindow(BaseActivity parent, View parentView, Handler handler) {
@@ -134,6 +137,10 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 		this.str = str;
 		show(type, title);
 	}
+	public void show(int type, String str, String title, int maxNum) {
+		this.maxNum = maxNum;
+		show(type, str, title);
+	}
 
 
 	
@@ -161,6 +168,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 			
 			this.str = null;
 			this.order = null;
+			this.maxNum = 0;
 		}
 	}
 
@@ -213,6 +221,9 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 			} else if(type == SPLITE_BY_PAX) {
 				handler.sendMessage(handler.obtainMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX, tv_pax.getText().toString()));
 				dismiss();
+			} else if(type == TRANSFER_ITEM_SPLIT){
+				handler.sendMessage(handler.obtainMessage(MainPage.ACTION_TRANSFER_SPLIT_BY_NUM, tv_pax.getText().toString()));
+				dismiss();
 			} else {
 				if(order != null){
 					order.setPersons(Integer.parseInt((String) tv_pax.getText().toString()));
@@ -227,11 +238,26 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 			}
 		} else if ("C".equals(key)) {
 			tv_pax.setText("");
-		} else if (flag) {
-			tv_pax.setText(tv_pax.getText().toString() + key);
 		} else {
-			tv_pax.setText(key);
-			flag = !flag;
+			if(maxNum != 0){
+				if(flag){
+					if(IntegerUtils.isInteger(key) && Integer.parseInt(tv_pax.getText().toString() + key) < maxNum){
+						tv_pax.setText(tv_pax.getText().toString() + key);
+					}
+				}else{
+					if(IntegerUtils.isInteger(key) && Integer.parseInt(key) < maxNum){
+						tv_pax.setText(key);
+						flag = !flag;
+					}
+				}
+			}else {
+				if (flag) {
+					tv_pax.setText(tv_pax.getText().toString() + key);
+				} else {
+					tv_pax.setText(key);
+					flag = !flag;
+				}
+			}
 		}
 	}
 

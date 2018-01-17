@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.SlideExpandable.AbstractSlideExpandableListAdapter;
 import com.SlideExpandable.SlideExpandableListView;
-import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemModifier;
@@ -51,7 +50,6 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
-import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -60,9 +58,6 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
-import com.moonearly.utils.service.TcpUdpFactory;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -952,36 +947,11 @@ public class MainPageOrderView extends LinearLayout {
 							return;
 						}
 					}
-					if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
-						DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),
-								parent.getResources().getString(R.string.remove_item), 
-								parent.getResources().getString(R.string.no), 
-								parent.getResources().getString(R.string.yes), null,
-								new OnClickListener() {
 
-									@Override
-									public void onClick(View arg0) {
-										OrderDetailSQL.deleteOrderDetail(tag);
-										OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
-										try {
-											JSONObject jsonObject = new JSONObject();
-											jsonObject.put("orderId", tag.getOrderId().intValue());
-											jsonObject.put("RX", RxBus.RX_REFRESH_ORDER);
-											TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
-										}catch (Exception e){
-											e.printStackTrace();
-										}
-										if(!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && ! IntegerUtils.isEmptyOrZero(tag.getGroupId())){
-											int count = OrderDetailSQL.getOrderDetailCountByGroupId(tag.getGroupId().intValue(), order.getId().intValue());
-											if(count == 0){
-												OrderSplitSQL.deleteOrderSplitByOrderAndGroupId(order.getId().intValue(), tag.getGroupId().intValue());
-											}
-										}
-										handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_MODIFIER_VIEW);
-										handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-
-									}
-								});
+					if(tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+						handler.sendMessage(handler.obtainMessage(MainPage.ACTION_REMOVE_ORDER_DETAIL, tag));
+					}else if (App.instance.getSystemSettings().isRemoveToVoid()){
+						handler.sendMessage(handler.obtainMessage(MainPage.ACTION_CANCEL_ORDER_DETAIL, tag));
 					}
 				}
 					break;

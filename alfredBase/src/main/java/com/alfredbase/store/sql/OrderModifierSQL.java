@@ -648,6 +648,52 @@ public class OrderModifierSQL {
 		}
 		return result;
 	}
+
+	public static ArrayList<OrderModifier> getOrderModifiersByOrderDetailId(int orderDetailId) {
+		ArrayList<OrderModifier> result = new ArrayList<OrderModifier>();
+		String sql = "select * from " + TableNames.OrderModifier
+				+ " where orderDetailId = ?";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db
+					.rawQuery(
+							sql,
+							new String[] {orderDetailId + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			OrderModifier orderModifier = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				orderModifier = new OrderModifier();
+				orderModifier.setId(cursor.getInt(0));
+				orderModifier.setOrderId(cursor.getInt(1));
+				orderModifier.setOrderDetailId(cursor.getInt(2));
+				orderModifier.setOrderOriginId(cursor.getInt(3));
+				orderModifier.setUserId(cursor.getInt(4));
+				orderModifier.setItemId(cursor.getInt(5));
+				orderModifier.setModifierId(cursor.getInt(6));
+				orderModifier.setModifierNum(cursor.getInt(7));
+				orderModifier.setStatus(cursor.getInt(8));
+				orderModifier.setModifierPrice(cursor.getString(9));
+				orderModifier.setCreateTime(cursor.getLong(10));
+				orderModifier.setUpdateTime(cursor.getLong(11));
+				orderModifier.setPrinterId(cursor.getInt(12));
+				orderModifier.setModifierItemPrice(cursor.getString(13));
+				result.add(orderModifier);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
 	
 	public static ArrayList<OrderModifier> getOrderModifiers(OrderDetail orderDetail) {
 		ArrayList<OrderModifier> result = new ArrayList<OrderModifier>();

@@ -379,66 +379,71 @@ public class KotJobManager {
 					order);
 			printKotSummary = KotSummarySQL.getKotSummary(fromKotSummary.getOrderId());
 		}
-
-		for (KotItemDetail items : kotItemDetails) {
-			Integer pgid = items.getPrinterGroupId();
-			int kotItemDetailId = items.getId().intValue();
-
-			// Get all Group ids that KOT blongs to
-			if (!printerGrougIds.contains(pgid))
-				printerGrougIds.add(pgid);
-
-			// kot
-			if (kots.containsKey(pgid)) {
-				ArrayList<KotItemDetail> tmp = kots.get(pgid);
-				tmp.add(items);
-			} else {
-				ArrayList<KotItemDetail> tmp = new ArrayList<KotItemDetail>();
-				tmp.add(items);
-				kots.put(pgid, tmp);
-			}
-
-			// modifier
-			if (mods.containsKey(pgid)) {
-				ArrayList<KotItemModifier> tmp = mods.get(pgid);
-				for (KotItemModifier mof : kotItemModifiers) {
-					if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
-						tmp.add(mof);
-					}
-				}
-			} else {
-				ArrayList<KotItemModifier> tmp = new ArrayList<KotItemModifier>();
-				for (KotItemModifier mof : kotItemModifiers) {
-					if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
-						tmp.add(mof);
-					}
-				}
-				mods.put(items.getPrinterGroupId(), tmp);
-			}
-		}
-
 		boolean printed = false;
-		if (App.countryCode == ParamConst.CHINA){
-			return true;
-		}
-		for (Integer prgid : printerGrougIds) {
-			ArrayList<Printer> printers = CoreData.getInstance()
-					.getPrintersInGroup(prgid.intValue());
-			for (Printer prnt : printers) {
-				// physical printer
-				PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
-						.getId());
-				if (prntd != null) {
-					prntd.setGroupId(prgid.intValue());
-					String fromTableName = (String) orderMap.get("fromTableName");
-					printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
-					printed = App.instance.remoteKotPrint(prntd, printKotSummary,
-							kots.get(prgid), mods.get(prgid), false);
+		if(App.instance.getSystemSettings().isTransferPrint()) {
+			for (KotItemDetail items : kotItemDetails) {
+				Integer pgid = items.getPrinterGroupId();
+				int kotItemDetailId = items.getId().intValue();
 
-				}else{
-					printed = true;
+				// Get all Group ids that KOT blongs to
+				if (!printerGrougIds.contains(pgid))
+					printerGrougIds.add(pgid);
+
+				// kot
+				if (kots.containsKey(pgid)) {
+					ArrayList<KotItemDetail> tmp = kots.get(pgid);
+					tmp.add(items);
+				} else {
+					ArrayList<KotItemDetail> tmp = new ArrayList<KotItemDetail>();
+					tmp.add(items);
+					kots.put(pgid, tmp);
+				}
+
+				// modifier
+				if (mods.containsKey(pgid)) {
+					ArrayList<KotItemModifier> tmp = mods.get(pgid);
+					for (KotItemModifier mof : kotItemModifiers) {
+						if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+							tmp.add(mof);
+						}
+					}
+				} else {
+					ArrayList<KotItemModifier> tmp = new ArrayList<KotItemModifier>();
+					for (KotItemModifier mof : kotItemModifiers) {
+						if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+							tmp.add(mof);
+						}
+					}
+					mods.put(items.getPrinterGroupId(), tmp);
 				}
 			}
+
+
+			if (App.countryCode == ParamConst.CHINA) {
+				return true;
+			}
+			for (Integer prgid : printerGrougIds) {
+				ArrayList<Printer> printers = CoreData.getInstance()
+						.getPrintersInGroup(prgid.intValue());
+				for (Printer prnt : printers) {
+					// physical printer
+					PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
+							.getId());
+
+					if (prntd != null) {
+						prntd.setGroupId(prgid.intValue());
+						String fromTableName = (String) orderMap.get("fromTableName");
+						printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
+						printed = App.instance.remoteKotPrint(prntd, printKotSummary,
+								kots.get(prgid), mods.get(prgid), false);
+
+					} else {
+						printed = true;
+					}
+				}
+			}
+		}else{
+			printed = true;
 		}
 		return printed;
 	}
@@ -486,62 +491,66 @@ public class KotJobManager {
 		KotSummarySQL.deleteKotSummary(fromKotSummary);
 		context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
 		printKotSummary = toKotSummary;
-		Integer pgid = kotItemDetail.getPrinterGroupId();
-		int kotItemDetailId = kotItemDetail.getId().intValue();
-
-		// Get all Group ids that KOT blongs to
-		if (!printerGrougIds.contains(pgid))
-			printerGrougIds.add(pgid);
-
-		// kot
-		if (kots.containsKey(pgid)) {
-			ArrayList<KotItemDetail> tmp = kots.get(pgid);
-			tmp.add(kotItemDetail);
-		} else {
-			ArrayList<KotItemDetail> tmp = new ArrayList<KotItemDetail>();
-			tmp.add(kotItemDetail);
-			kots.put(pgid, tmp);
-		}
-
-		// modifier
-		if (mods.containsKey(pgid)) {
-			ArrayList<KotItemModifier> tmp = mods.get(pgid);
-			for (KotItemModifier mof : kotItemModifiers) {
-				if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
-					tmp.add(mof);
-				}
-			}
-		} else {
-			ArrayList<KotItemModifier> tmp = new ArrayList<KotItemModifier>();
-			for (KotItemModifier mof : kotItemModifiers) {
-				if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
-					tmp.add(mof);
-				}
-			}
-			mods.put(kotItemDetail.getPrinterGroupId(), tmp);
-		}
 		boolean printed = false;
-		if (App.countryCode == ParamConst.CHINA) {
-			return true;
-		}
-		for (Integer prgid : printerGrougIds) {
-			ArrayList<Printer> printers = CoreData.getInstance()
-					.getPrintersInGroup(prgid.intValue());
-			for (Printer prnt : printers) {
-				// physical printer
-				PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
-						.getId());
-				if (prntd != null) {
-					prntd.setGroupId(prgid.intValue());
-					String fromTableName = (String) orderMap.get("fromTableName");
-					printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
-					printed = App.instance.remoteKotPrint(prntd, printKotSummary,
-							kots.get(prgid), mods.get(prgid), false);
+		if(App.instance.getSystemSettings().isTransferPrint()) {
+			Integer pgid = kotItemDetail.getPrinterGroupId();
+			int kotItemDetailId = kotItemDetail.getId().intValue();
 
-				} else {
-					printed = true;
+			// Get all Group ids that KOT blongs to
+			if (!printerGrougIds.contains(pgid))
+				printerGrougIds.add(pgid);
+
+			// kot
+			if (kots.containsKey(pgid)) {
+				ArrayList<KotItemDetail> tmp = kots.get(pgid);
+				tmp.add(kotItemDetail);
+			} else {
+				ArrayList<KotItemDetail> tmp = new ArrayList<KotItemDetail>();
+				tmp.add(kotItemDetail);
+				kots.put(pgid, tmp);
+			}
+
+			// modifier
+			if (mods.containsKey(pgid)) {
+				ArrayList<KotItemModifier> tmp = mods.get(pgid);
+				for (KotItemModifier mof : kotItemModifiers) {
+					if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+						tmp.add(mof);
+					}
+				}
+			} else {
+				ArrayList<KotItemModifier> tmp = new ArrayList<KotItemModifier>();
+				for (KotItemModifier mof : kotItemModifiers) {
+					if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+						tmp.add(mof);
+					}
+				}
+				mods.put(kotItemDetail.getPrinterGroupId(), tmp);
+			}
+			if (App.countryCode == ParamConst.CHINA) {
+				return true;
+			}
+			for (Integer prgid : printerGrougIds) {
+				ArrayList<Printer> printers = CoreData.getInstance()
+						.getPrintersInGroup(prgid.intValue());
+				for (Printer prnt : printers) {
+					// physical printer
+					PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
+							.getId());
+					if (prntd != null) {
+						prntd.setGroupId(prgid.intValue());
+						String fromTableName = (String) orderMap.get("fromTableName");
+						printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
+						printed = App.instance.remoteKotPrint(prntd, printKotSummary,
+								kots.get(prgid), mods.get(prgid), false);
+
+					} else {
+						printed = true;
+					}
 				}
 			}
+		}else{
+			printed = true;
 		}
 		return printed;
 	}

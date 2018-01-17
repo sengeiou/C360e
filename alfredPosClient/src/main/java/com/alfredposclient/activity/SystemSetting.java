@@ -56,6 +56,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SlipButton sb_cash_close_print;
 	private SlipButton sb_top_masking_use;
 	private SlipButton sb_top_screen_lock;
+	private SlipButton sb_cancel_order_void;
+	private SlipButton sb_transfer_print;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -106,6 +108,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_auto_receive_app = (SlipButton)findViewById(R.id.sb_auto_receive_app);
 		sb_top_masking_use = (SlipButton)findViewById(R.id.sb_top_masking_use);
 		sb_top_screen_lock = (SlipButton)findViewById(R.id.sb_top_screen_lock);
+		sb_cancel_order_void = (SlipButton)findViewById(R.id.sb_cancel_order_void);
+		sb_transfer_print = (SlipButton)findViewById(R.id.sb_transfer_print);
 
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -133,6 +137,8 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_auto_receive_app.setOnChangedListener(this);
 		sb_top_masking_use.setOnChangedListener(this);
 		sb_top_screen_lock.setOnChangedListener(this);
+		sb_cancel_order_void.setOnChangedListener(this);
+		sb_transfer_print.setOnChangedListener(this);
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
@@ -242,6 +248,16 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			sb_top_screen_lock.setChecked(true);
 		}else{
 			sb_top_screen_lock.setChecked(false);
+		}
+		if(settings.isRemoveToVoid()){
+			sb_cancel_order_void.setChecked(true);
+		}else{
+			sb_cancel_order_void.setChecked(false);
+		}
+		if(settings.isTransferPrint()){
+			sb_transfer_print.setChecked(true);
+		}else{
+			sb_transfer_print.setChecked(false);
 		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
@@ -554,6 +570,24 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 				settings.setScreenLock(ParamConst.DEFAULT_FALSE);
 			}
 			break;
+		case R.id.sb_cancel_order_void:
+			if(checkState){
+				sb_cancel_order_void.setChecked(true);
+				settings.setRemoveToVoid(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_cancel_order_void.setChecked(false);
+				settings.setRemoveToVoid(ParamConst.DEFAULT_FALSE);
+			}
+			break;
+		case R.id.sb_transfer_print:
+			if(checkState){
+				sb_transfer_print.setChecked(true);
+				settings.setTransferPrint(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_transfer_print.setChecked(false);
+				settings.setTransferPrint(ParamConst.DEFAULT_FALSE);
+			}
+			break;
 		default:
 			break;
 		}
@@ -584,5 +618,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_max_order_no_str));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_cash_close_print));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_auto_receive_app));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_cancel_order_void));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_transfer_print));
 	}
 }

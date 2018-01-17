@@ -232,6 +232,64 @@ public class ObjectFactory {
 		return orderDetail;
 	}
 
+	public OrderDetail cpOrderDetail(OrderDetail cpOrderDetail) {
+		OrderDetail orderDetail = new OrderDetail();
+		orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+		orderDetail.setCreateTime(cpOrderDetail.getCreateTime());
+		orderDetail.setUpdateTime(cpOrderDetail.getUpdateTime());
+		orderDetail.setOrderId(cpOrderDetail.getOrderId());
+		orderDetail.setOrderOriginId(cpOrderDetail.getOrderOriginId());
+		orderDetail.setUserId(cpOrderDetail.getUserId());
+		orderDetail.setItemId(cpOrderDetail.getItemId());
+		orderDetail.setItemName(cpOrderDetail.getItemName());
+		orderDetail.setItemNum(cpOrderDetail.getItemNum());
+		orderDetail.setOrderDetailStatus(cpOrderDetail.getOrderDetailStatus());
+		orderDetail.setOrderDetailType(cpOrderDetail.getOrderDetailType());
+		orderDetail.setReason(cpOrderDetail.getReason());
+		orderDetail.setPrintStatus(cpOrderDetail.getPrintStatus());
+		orderDetail.setItemPrice(cpOrderDetail.getItemPrice());
+		orderDetail.setTaxPrice(cpOrderDetail.getTaxPrice());
+		orderDetail.setFromOrderDetailId(cpOrderDetail.getFromOrderDetailId());
+		orderDetail.setIsFree(cpOrderDetail.getIsFree());
+		orderDetail.setIsItemDiscount(cpOrderDetail.getIsItemDiscount());
+		orderDetail.setAppOrderDetailId(cpOrderDetail.getAppOrderDetailId());
+		orderDetail.setIsOpenItem(cpOrderDetail.getIsOpenItem());
+		orderDetail.setGroupId(cpOrderDetail.getGroupId());
+		orderDetail.setIsTakeAway(cpOrderDetail.getIsTakeAway());
+		orderDetail.setMainCategoryId(cpOrderDetail.getMainCategoryId());
+		orderDetail.setIsSet(cpOrderDetail.getIsSet());
+		orderDetail.setTransferFromDetailId(cpOrderDetail.getTransferFromDetailId());
+		OrderDetailSQL.updateOrderDetail(orderDetail);
+		int transferId = cpOrderDetail.getTransferFromDetailId();
+		if(transferId > 0) {
+			List<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(transferId);
+			for (OrderModifier orderModifier : orderModifiers) {
+				if(cpOrderDetail.getTransferFromDetailNum() > 0) {
+					int oldOrderModifierNum = orderModifier.getModifierNum();
+					BigDecimal oldOrderModifierPrice = BH.getBD(orderModifier.getModifierPrice());
+					int newNum = oldOrderModifierNum * orderDetail.getItemNum().intValue() / cpOrderDetail.getTransferFromDetailNum();
+					BigDecimal newPrice = BH.div(BH.mul(BH.getBD(orderDetail.getItemNum().intValue()),oldOrderModifierPrice,false),BH.getBD(cpOrderDetail.getTransferFromDetailNum()), true);
+
+					orderModifier.setModifierNum(oldOrderModifierNum - newNum);
+					orderModifier.setModifierPrice(BH.sub(oldOrderModifierPrice, newPrice, true).toString());
+					OrderModifierSQL.updateOrderModifier(orderModifier);
+					orderModifier.setModifierNum(newNum);
+					orderModifier.setModifierPrice(newPrice.toString());
+				}
+				orderModifier.setOrderDetailId(orderDetail.getId());
+				orderModifier.setOrderId(orderDetail.getOrderId());
+				OrderModifierSQL.addOrderModifier(orderModifier);
+			}
+			OrderDetailSQL.updateOrderDetailAndOrder(orderDetail);
+			OrderDetail oldOrderDetail = OrderDetailSQL.getOrderDetail(transferId);
+			if(oldOrderDetail != null) {
+				OrderDetailSQL.updateOrderDetailAndOrder(oldOrderDetail);
+			}
+		}
+
+		return orderDetail;
+	}
+
 	public OrderDetail getOrderDetailFromTempAppOrderDetail(Order order,
 															AppOrderDetail appOrderDetail) {
 		OrderDetail orderDetail;
@@ -1376,6 +1434,31 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotItemDetail.setUnFinishQty(orderDetail.getItemNum());
 				KotItemDetailSQL.update(kotItemDetail);
 			}
+		return kotItemDetail;
+	}
+
+	public KotItemDetail cpKotItemDetail(KotItemDetail cpKotItemDetail, OrderDetail orderDetail) {
+			KotItemDetail kotItemDetail = new KotItemDetail();
+			kotItemDetail.setId(CommonSQL.getNextSeq(TableNames.KotItemDetail));
+			kotItemDetail.setRestaurantId(cpKotItemDetail.getRestaurantId());
+			kotItemDetail.setRevenueId(cpKotItemDetail.getRevenueId());
+			kotItemDetail.setOrderId(orderDetail.getOrderId());
+			kotItemDetail.setOrderDetailId(orderDetail.getId());
+			kotItemDetail.setPrinterGroupId(cpKotItemDetail.getPrinterGroupId());
+			kotItemDetail.setKotSummaryId(cpKotItemDetail.getKotSummaryId());
+			kotItemDetail.setItemName(cpKotItemDetail.getItemName());
+			kotItemDetail.setItemNum(orderDetail.getItemNum());
+			kotItemDetail.setFinishQty(0); // 新创建的都0
+			kotItemDetail.setSessionStatus(cpKotItemDetail.getSessionStatus());
+			kotItemDetail.setKotStatus(cpKotItemDetail.getKotStatus());
+			kotItemDetail.setSpecialInstractions(cpKotItemDetail.getSpecialInstractions());
+			kotItemDetail.setVersion(cpKotItemDetail.getVersion()); // 没用
+			kotItemDetail.setCreateTime(cpKotItemDetail.getCreateTime());
+			kotItemDetail.setUpdateTime(cpKotItemDetail.getUpdateTime());
+			kotItemDetail.setUnFinishQty(orderDetail.getItemNum()); // 新创建的都是跟ItemNum一样
+			kotItemDetail.setCategoryId(cpKotItemDetail.getCategoryId());
+			kotItemDetail.setIsTakeAway(cpKotItemDetail.getIsTakeAway());
+			KotItemDetailSQL.update(kotItemDetail);
 		return kotItemDetail;
 	}
 

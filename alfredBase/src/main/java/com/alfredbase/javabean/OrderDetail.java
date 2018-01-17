@@ -96,14 +96,9 @@ public class OrderDetail implements Serializable {
 	 * 重量 暂时只前端用
 	 */
 	private String weight;
-	
+
 	// 目前只用于前端，从itemDetail过来的数据，方便用做计算和判断（在计算的时候减少数据库的耗时操作）
 	private int isItemDiscount = 1;
-	
-	/**
-	 * 只用于本地计算，方便计算 
-	 */
-	private int isSet = 0;
 
 	private int appOrderDetailId = 0;
 
@@ -111,6 +106,15 @@ public class OrderDetail implements Serializable {
 
 	private int fireStatus;
 
+	/**
+	 * 只用于本地计算，方便计算
+	 */
+	private int isSet = 0;
+	/**
+	 * 不存数据库 临时缓存用
+	 */
+	private int transferFromDetailId = 0;
+	private int transferFromDetailNum = 0;
 	public OrderDetail() {
 		// set openItem False
 		this.isOpenItem = 0;
@@ -383,6 +387,14 @@ public class OrderDetail implements Serializable {
 		this.fireStatus = fireStatus;
 	}
 
+	public int getTransferFromDetailId() {
+		return transferFromDetailId;
+	}
+
+	public void setTransferFromDetailId(int transferFromDetailId) {
+		this.transferFromDetailId = transferFromDetailId;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderDetail{" +
@@ -415,11 +427,21 @@ public class OrderDetail implements Serializable {
 				", isTakeAway=" + isTakeAway +
 				", weight='" + weight + '\'' +
 				", isItemDiscount=" + isItemDiscount +
-				", isSet=" + isSet +
 				", appOrderDetailId=" + appOrderDetailId +
 				", mainCategoryId=" + mainCategoryId +
 				", fireStatus=" + fireStatus +
+				", isSet=" + isSet +
+				", transferFromDetailId=" + transferFromDetailId +
+				", transferFromDetailNum=" + transferFromDetailNum +
 				'}';
+	}
+
+	public int getTransferFromDetailNum() {
+		return transferFromDetailNum;
+	}
+
+	public void setTransferFromDetailNum(int transferFromDetailNum) {
+		this.transferFromDetailNum = transferFromDetailNum;
 	}
 
 }
