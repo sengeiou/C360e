@@ -1148,6 +1148,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			LogUtil.i(TAG, "------11111");
 			// waiter 过来的数据 存到 pos的DB中 不带Id存储
 			for (OrderDetail orderDetail : waiterOrderDetails) {
+				synchronized (lockObject) {
 					OrderDetail orderDetailFromPOS = OrderDetailSQL
 							.getOrderDetailByCreateTime(
 									orderDetail.getCreateTime(),
@@ -1183,6 +1184,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								}
 							}
 						}
+					}
 				}
 			}
 			LogUtil.i(TAG, "=====11111");

@@ -113,6 +113,7 @@ public class ObjectFactory {
 			int orderStatus, Tax inclusiveTax, int appOrderId) {
 
 		Order order = null;
+		synchronized (lock_order) {
 			order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate);
 			if (order == null) {
 
@@ -142,6 +143,7 @@ public class ObjectFactory {
 					}
 					OrderSQL.addOrder(order);
 				}
+		}
 		return order;
 	}
 
@@ -151,6 +153,7 @@ public class ObjectFactory {
 									  Tax inclusiveTax, boolean isKiosk) {
 		Order order = null;
 		if (appOrder != null) {
+			synchronized (lock_order) {
 				order = OrderSQL.getOrderByAppOrderId(appOrder
 						.getId().intValue());
 				if (order == null) {
@@ -193,6 +196,7 @@ public class ObjectFactory {
 					OrderHelper.setOrderInclusiveTaxPrice(order);
 					OrderSQL.update(order);
 				}
+			}
 		}
 		return order;
 	}
@@ -201,6 +205,7 @@ public class ObjectFactory {
 	public OrderDetail getOrderDetail(Order order, ItemDetail itemDetail,
 			int groupId) {
 		OrderDetail orderDetail = new OrderDetail();
+		synchronized (lock_orderDetail) {
 			long time = System.currentTimeMillis();
 			orderDetail.setCreateTime(time);
 			orderDetail.setUpdateTime(time);
@@ -229,70 +234,73 @@ public class ObjectFactory {
 			orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 			if (itemDetail.getItemType() == 3)
 				orderDetail.setIsSet(1);
+		}
 		return orderDetail;
 	}
 
 	public OrderDetail cpOrderDetail(OrderDetail cpOrderDetail) {
 		OrderDetail orderDetail = new OrderDetail();
-		orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
-		orderDetail.setCreateTime(cpOrderDetail.getCreateTime());
-		orderDetail.setUpdateTime(cpOrderDetail.getUpdateTime());
-		orderDetail.setOrderId(cpOrderDetail.getOrderId());
-		orderDetail.setOrderOriginId(cpOrderDetail.getOrderOriginId());
-		orderDetail.setUserId(cpOrderDetail.getUserId());
-		orderDetail.setItemId(cpOrderDetail.getItemId());
-		orderDetail.setItemName(cpOrderDetail.getItemName());
-		orderDetail.setItemNum(cpOrderDetail.getItemNum());
-		orderDetail.setOrderDetailStatus(cpOrderDetail.getOrderDetailStatus());
-		orderDetail.setOrderDetailType(cpOrderDetail.getOrderDetailType());
-		orderDetail.setReason(cpOrderDetail.getReason());
-		orderDetail.setPrintStatus(cpOrderDetail.getPrintStatus());
-		orderDetail.setItemPrice(cpOrderDetail.getItemPrice());
-		orderDetail.setTaxPrice(cpOrderDetail.getTaxPrice());
-		orderDetail.setFromOrderDetailId(cpOrderDetail.getFromOrderDetailId());
-		orderDetail.setIsFree(cpOrderDetail.getIsFree());
-		orderDetail.setIsItemDiscount(cpOrderDetail.getIsItemDiscount());
-		orderDetail.setAppOrderDetailId(cpOrderDetail.getAppOrderDetailId());
-		orderDetail.setIsOpenItem(cpOrderDetail.getIsOpenItem());
-		orderDetail.setGroupId(cpOrderDetail.getGroupId());
-		orderDetail.setIsTakeAway(cpOrderDetail.getIsTakeAway());
-		orderDetail.setMainCategoryId(cpOrderDetail.getMainCategoryId());
-		orderDetail.setIsSet(cpOrderDetail.getIsSet());
-		orderDetail.setTransferFromDetailId(cpOrderDetail.getTransferFromDetailId());
-		OrderDetailSQL.updateOrderDetail(orderDetail);
-		int transferId = cpOrderDetail.getTransferFromDetailId();
-		if(transferId > 0) {
-			List<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(transferId);
-			for (OrderModifier orderModifier : orderModifiers) {
-				if(cpOrderDetail.getTransferFromDetailNum() > 0) {
-					int oldOrderModifierNum = orderModifier.getModifierNum();
-					BigDecimal oldOrderModifierPrice = BH.getBD(orderModifier.getModifierPrice());
-					int newNum = oldOrderModifierNum * orderDetail.getItemNum().intValue() / cpOrderDetail.getTransferFromDetailNum();
-					BigDecimal newPrice = BH.div(BH.mul(BH.getBD(orderDetail.getItemNum().intValue()),oldOrderModifierPrice,false),BH.getBD(cpOrderDetail.getTransferFromDetailNum()), true);
+		synchronized (lock_orderDetail) {
+			orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+			orderDetail.setCreateTime(cpOrderDetail.getCreateTime());
+			orderDetail.setUpdateTime(cpOrderDetail.getUpdateTime());
+			orderDetail.setOrderId(cpOrderDetail.getOrderId());
+			orderDetail.setOrderOriginId(cpOrderDetail.getOrderOriginId());
+			orderDetail.setUserId(cpOrderDetail.getUserId());
+			orderDetail.setItemId(cpOrderDetail.getItemId());
+			orderDetail.setItemName(cpOrderDetail.getItemName());
+			orderDetail.setItemNum(cpOrderDetail.getItemNum());
+			orderDetail.setOrderDetailStatus(cpOrderDetail.getOrderDetailStatus());
+			orderDetail.setOrderDetailType(cpOrderDetail.getOrderDetailType());
+			orderDetail.setReason(cpOrderDetail.getReason());
+			orderDetail.setPrintStatus(cpOrderDetail.getPrintStatus());
+			orderDetail.setItemPrice(cpOrderDetail.getItemPrice());
+			orderDetail.setTaxPrice(cpOrderDetail.getTaxPrice());
+			orderDetail.setFromOrderDetailId(cpOrderDetail.getFromOrderDetailId());
+			orderDetail.setIsFree(cpOrderDetail.getIsFree());
+			orderDetail.setIsItemDiscount(cpOrderDetail.getIsItemDiscount());
+			orderDetail.setAppOrderDetailId(cpOrderDetail.getAppOrderDetailId());
+			orderDetail.setIsOpenItem(cpOrderDetail.getIsOpenItem());
+			orderDetail.setGroupId(cpOrderDetail.getGroupId());
+			orderDetail.setIsTakeAway(cpOrderDetail.getIsTakeAway());
+			orderDetail.setMainCategoryId(cpOrderDetail.getMainCategoryId());
+			orderDetail.setIsSet(cpOrderDetail.getIsSet());
+			orderDetail.setTransferFromDetailId(cpOrderDetail.getTransferFromDetailId());
+			OrderDetailSQL.updateOrderDetail(orderDetail);
+			int transferId = cpOrderDetail.getTransferFromDetailId();
+			if (transferId > 0) {
+				List<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(transferId);
+				for (OrderModifier orderModifier : orderModifiers) {
+					if (cpOrderDetail.getTransferFromDetailNum() > 0) {
+						int oldOrderModifierNum = orderModifier.getModifierNum();
+						BigDecimal oldOrderModifierPrice = BH.getBD(orderModifier.getModifierPrice());
+						int newNum = oldOrderModifierNum * orderDetail.getItemNum().intValue() / cpOrderDetail.getTransferFromDetailNum();
+						BigDecimal newPrice = BH.div(BH.mul(BH.getBD(orderDetail.getItemNum().intValue()), oldOrderModifierPrice, false), BH.getBD(cpOrderDetail.getTransferFromDetailNum()), true);
 
-					orderModifier.setModifierNum(oldOrderModifierNum - newNum);
-					orderModifier.setModifierPrice(BH.sub(oldOrderModifierPrice, newPrice, true).toString());
-					OrderModifierSQL.updateOrderModifier(orderModifier);
-					orderModifier.setModifierNum(newNum);
-					orderModifier.setModifierPrice(newPrice.toString());
+						orderModifier.setModifierNum(oldOrderModifierNum - newNum);
+						orderModifier.setModifierPrice(BH.sub(oldOrderModifierPrice, newPrice, true).toString());
+						OrderModifierSQL.updateOrderModifier(orderModifier);
+						orderModifier.setModifierNum(newNum);
+						orderModifier.setModifierPrice(newPrice.toString());
+					}
+					orderModifier.setOrderDetailId(orderDetail.getId());
+					orderModifier.setOrderId(orderDetail.getOrderId());
+					OrderModifierSQL.addOrderModifier(orderModifier);
 				}
-				orderModifier.setOrderDetailId(orderDetail.getId());
-				orderModifier.setOrderId(orderDetail.getOrderId());
-				OrderModifierSQL.addOrderModifier(orderModifier);
-			}
-			OrderDetailSQL.updateOrderDetailAndOrder(orderDetail);
-			OrderDetail oldOrderDetail = OrderDetailSQL.getOrderDetail(transferId);
-			if(oldOrderDetail != null) {
-				OrderDetailSQL.updateOrderDetailAndOrder(oldOrderDetail);
+				OrderDetailSQL.updateOrderDetailAndOrder(orderDetail);
+				OrderDetail oldOrderDetail = OrderDetailSQL.getOrderDetail(transferId);
+				if (oldOrderDetail != null) {
+					OrderDetailSQL.updateOrderDetailAndOrder(oldOrderDetail);
+				}
 			}
 		}
-
 		return orderDetail;
 	}
 
 	public OrderDetail getOrderDetailFromTempAppOrderDetail(Order order,
 															AppOrderDetail appOrderDetail) {
 		OrderDetail orderDetail;
+		synchronized (lock_orderDetail) {
 			long time = System.currentTimeMillis();
 			orderDetail = OrderDetailSQL.getOrderDetailByAppOrderDetailId(appOrderDetail.getId());
 			if(orderDetail == null) {
@@ -324,6 +332,7 @@ public class ObjectFactory {
 				orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 				orderDetail.setAppOrderDetailId(appOrderDetail.getId());
 			}
+		}
 		return orderDetail;
 	}
 
@@ -403,6 +412,7 @@ public class ObjectFactory {
 	Object lock_table = new Object();
 
 	public TableInfo addNewTable(String imageName, int restaurantId, int revenueId, int placeId, int width, int height){
+		synchronized (lock_table){
 			TableInfo newTable = new TableInfo();
 			newTable.setPosId(CommonSQL.getNextSeq(TableNames.TableInfo));
 			newTable.setImageName(imageName);
@@ -435,11 +445,13 @@ public class ObjectFactory {
 			newTable.setUpdateTime(time);
 			TableInfoSQL.addTables(newTable);
 			return newTable;
+		}
 	}
 
 	Object lock_place = new Object();
 
 	public PlaceInfo addNewPlace(int restaurantId, int revenueId, String placeName){
+		synchronized (lock_place){
 			PlaceInfo placeInfo = new PlaceInfo();
 			placeInfo.setId(CommonSQL.getNextSeq(TableNames.PlaceInfo));
 			placeInfo.setIsActive(ParamConst.ACTIVE_NOMAL);
@@ -450,11 +462,13 @@ public class ObjectFactory {
 			placeInfo.setUnionId(restaurantId+"_"+revenueId+"_"+placeInfo.getId());
 			PlaceInfoSQL.addPlaceInfo(placeInfo);
 			return placeInfo;
+		}
 	}
 
 	Object lock_getRoundAmount = new Object();
 	public RoundAmount getRoundAmount(Order order, OrderBill orderBill, BigDecimal roundBeforePrice, String roundType) {
 		RoundAmount roundAmount = null;
+		synchronized (lock_getRoundAmount) {
 			roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(order,orderBill);
 			long time = System.currentTimeMillis();
 			if (roundAmount == null) {
@@ -486,11 +500,13 @@ public class ObjectFactory {
 				roundAmount.setUpdateTime(time);
 				RoundAmountSQL.update(roundAmount);
 			}
+		}
 		return roundAmount;
 		}
 
 	public RoundAmount getRoundAmountByOrderSplit(OrderSplit orderSplit, OrderBill orderBill, BigDecimal roundBeforePrice, String roundType, long businessDate) {
 		RoundAmount roundAmount = null;
+		synchronized (lock_getRoundAmount) {
 			roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit,orderBill);
 			long time = System.currentTimeMillis();
 			if (roundAmount == null) {
@@ -522,6 +538,7 @@ public class ObjectFactory {
 				roundAmount.setUpdateTime(time);
 				RoundAmountSQL.update(roundAmount);
 			}
+		}
 		return roundAmount;
 		}
 
@@ -582,6 +599,7 @@ public class ObjectFactory {
 			ItemHappyHour itemHappyHour) {
 
 		OrderDetail orderDetail= null;
+		synchronized (lock_free_order_detail) {
 			orderDetail = OrderDetailSQL.getOrderDetail(order.getId(),
 					fromOrderDetail);
 			if (orderDetail == null) {
@@ -624,6 +642,7 @@ public class ObjectFactory {
 						* fromOrderDetail.getItemNum());
 			}
 			OrderDetailSQL.updateOrderDetail(orderDetail);
+		}
 		return orderDetail;
 	}
 
@@ -635,6 +654,7 @@ public class ObjectFactory {
 			ItemHappyHour itemHappyHour) {
 
 		OrderDetail orderDetail = null;
+		synchronized(lock_free_order_detail_for_waiter) {
 			orderDetail = OrderDetailSQL.getOrderDetail(order.getId(),
 					fromOrderDetail);
 			if (orderDetail == null) {
@@ -679,6 +699,7 @@ public class ObjectFactory {
 						* fromOrderDetail.getItemNum());
 			}
 			OrderDetailSQL.updateOrderDetail(orderDetail);
+		}
 		return orderDetail;
 	}
 
@@ -687,6 +708,7 @@ public class ObjectFactory {
 	public OrderModifier getOrderModifier(Order order, OrderDetail orderDetail,
 			Modifier modifier, int printerId) {
 		OrderModifier orderModifier = new OrderModifier();
+		synchronized (lock_order_modifier) {
 			orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
 			orderModifier.setOrderId(order.getId());
 			orderModifier.setOrderDetailId(orderDetail.getId());
@@ -702,6 +724,7 @@ public class ObjectFactory {
 			orderModifier.setUpdateTime(time);
 			orderModifier.setPrinterId(printerId);
 			orderModifier.setModifierItemPrice(modifier.getPrice());
+		}
 		return orderModifier;
 	}
 
@@ -710,6 +733,7 @@ public class ObjectFactory {
 																  OrderDetail orderDetail, int printerId,
 																  AppOrderModifier appOrderModifier) {
 		OrderModifier orderModifier = new OrderModifier();
+		synchronized (lock_order_modifier) {
 			orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
 			orderModifier.setOrderId(order.getId());
 			orderModifier.setOrderDetailId(orderDetail.getId());
@@ -731,6 +755,7 @@ public class ObjectFactory {
 					.getModifierPrice());
 			OrderModifierSQL
 					.addOrderModifierForDiner(orderModifier);
+		}
 		return orderModifier;
 	}
 
@@ -740,6 +765,7 @@ public class ObjectFactory {
 	public OrderBill getOrderBill(Order order, RevenueCenter revenueCenter) {
 
 		OrderBill orderBill = null;
+		synchronized(lock_get_order_bill) {
 			orderBill = OrderBillSQL.getOrderBillByOrder(order);
 			if (orderBill == null) {
 				orderBill = new OrderBill();
@@ -757,12 +783,14 @@ public class ObjectFactory {
 				orderBill.setUpdateTime(time);
 				OrderBillSQL.add(orderBill);
 			}
+		}
 		return orderBill;
 	}
 
 public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter revenueCenter) {
 
 		OrderBill orderBill = null;
+		synchronized(lock_get_order_bill) {
 			orderBill = OrderBillSQL.getOrderBillByOrderSplit(orderSplit);
 			if (orderBill == null) {
 				orderBill = new OrderBill();
@@ -780,6 +808,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				orderBill.setUpdateTime(time);
 				OrderBillSQL.add(orderBill);
 			}
+		}
 		return orderBill;
 	}
 
@@ -789,6 +818,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	public OrderDetailTax getOrderDetailTax(Order order,
 			OrderDetail orderDetail, Tax tax, int indexId) {
 		OrderDetailTax orderDetailTax = null;
+		synchronized (lock_get_order_detail_tax) {
 			orderDetailTax = OrderDetailTaxSQL.getOrderDetailTax(
 					order, orderDetail, tax);
 			if (orderDetailTax == null) {
@@ -819,12 +849,14 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				orderDetailTax.setIsActive(ParamConst.ACTIVE_NOMAL);
 				OrderDetailTaxSQL.updateOrderDetailTax(orderDetailTax);
 			}
+		}
 		return orderDetailTax;
 	}
 
 	public OrderDetailTax getOrderDetailTaxByOnline(Order order,
 													OrderDetail orderDetail, AppOrderDetailTax appOrderDetailTax, int indexId) {
 		OrderDetailTax orderDetailTax = null;
+		synchronized (lock_get_order_detail_tax) {
 			orderDetailTax = OrderDetailTaxSQL.getOrderDetailTaxId(
 					order.getId(), orderDetail.getId(), appOrderDetailTax.getTaxId());
 			if (orderDetailTax == null) {
@@ -846,6 +878,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				orderDetailTax.setIsActive(ParamConst.ACTIVE_NOMAL);
 				orderDetailTax.setTaxPrice(appOrderDetailTax.getTaxPrice());
 				OrderDetailTaxSQL.updateOrderDetailTax(orderDetailTax);
+		}
 		return orderDetailTax;
 	}
 
@@ -860,6 +893,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	public Payment getPayment(Order order, OrderBill orderBill) {
 
 		Payment payment = null;
+		synchronized(lock_get_payment) {
 			payment = PaymentSQL.getPaymentByOrderId(order.getId());
 
 			long time = System.currentTimeMillis();
@@ -881,6 +915,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			payment.setDiscountAmount(order.getDiscountAmount()); // 不拆单 填入 Order信息
 			payment.setUpdateTime(time);
 			PaymentSQL.addPayment(payment);
+		}
 		return payment;
 	}
 
@@ -894,6 +929,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	public Payment getPaymentByOrderSplit(long businessDate ,OrderSplit orderSplit, OrderBill orderBill) {
 
 		Payment payment = null;
+		synchronized(lock_get_payment) {
 			payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId());
 
 			long time = System.currentTimeMillis();
@@ -915,6 +951,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			payment.setDiscountAmount(orderSplit.getDiscountAmount());
 			payment.setUpdateTime(time);
 			PaymentSQL.addPayment(payment);
+		}
 		return payment;
 	}
 
@@ -924,6 +961,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			int paymentTypeId, String paidAmount) {
 		PaymentSettlement paymentSettlement = null;
 
+		synchronized(lock_get_payment_settlement) {
 			paymentSettlement =PaymentSettlementSQL
 					.getPaymentSettlementByPaymentIdAndTypeId(payment,
 							paymentTypeId);
@@ -955,12 +993,14 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			}
 			paymentSettlement.setUpdateTime(time);
 			PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+		}
 		return paymentSettlement;
 	}
 	public PaymentSettlement getPaymentSettlementForCard(Payment payment,
 			int paymentTypeId, String paidAmount) {
 		PaymentSettlement paymentSettlement = null;
 
+		synchronized(lock_get_payment_settlement) {
 //			paymentSettlement =PaymentSettlementSQL
 //					.getPaymentSettlementByPaymentIdAndTypeId(payment,
 //							paymentTypeId);
@@ -980,6 +1020,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			paymentSettlement.setUpdateTime(time);
 			paymentSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
 			PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+		}
 		return paymentSettlement;
 	}
 
@@ -990,6 +1031,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			BohHoldSettlement mBohHoldSettlement) {
 
 		BohHoldSettlement bohHoldSettlement = null;
+		synchronized(lock_get_getBohHoldSettlementByPaymentSettlement) {
 			bohHoldSettlement = BohHoldSettlementSQL
 					.getBohHoldSettlementByPament(paymentSettlement.getPaymentId(),
 							paymentSettlement.getId());
@@ -1018,6 +1060,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				bohHoldSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
 				BohHoldSettlementSQL.addBohHoldSettlement(bohHoldSettlement);
 			}
+		}
 		return bohHoldSettlement;
 	}
 
@@ -1029,6 +1072,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			NonChargableSettlement mNonChargableSettlement) {
 
 		NonChargableSettlement nonChargableSettlement = null;
+		synchronized(lock_get_getNonChargableSettlementByPaymentSettlement) {
 			nonChargableSettlement = NonChargableSettlementSQL
 					.getNonChargableSettlementByPaymentId(payment.getId(),paymentSettlement
 							.getId());
@@ -1061,6 +1105,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				nonChargableSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
 				NonChargableSettlementSQL.addNonChargableSettlement(nonChargableSettlement);
 			}
+		}
 		return nonChargableSettlement;
 	}
 
@@ -1070,6 +1115,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			PaymentSettlement paymentSettlement, VoidSettlement mVoidSettlement) {
 		VoidSettlement voidSettlement = null;
 
+		synchronized(lock_getVoidSettlementByPayment) {
 			voidSettlement = VoidSettlementSQL
 					.getVoidSettlementByPament(payment.getId(),
 							paymentSettlement.getId());
@@ -1095,6 +1141,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				voidSettlement.setType(mVoidSettlement.getType());
 				VoidSettlementSQL.addVoidSettlement(voidSettlement);
 			}
+		}
 		return voidSettlement;
 	}
 
@@ -1105,6 +1152,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			String cashAmount) {
 		NetsSettlement netsSettlement = null;
 
+		synchronized(lock_getNetsSettlementByPayment) {
 			netsSettlement = NetsSettlementSQL
 					.getNetsSettlementByPament(payment.getId(),
 							paymentSettlement.getId());
@@ -1127,6 +1175,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				netsSettlement.setUpdateTime(time);
 			}
 			NetsSettlementSQL.addNetsSettlement(netsSettlement);
+		}
 		return netsSettlement;
 	}
 
@@ -1342,6 +1391,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			RevenueCenter revenueCenter, long businessDate) {
 
 		KotSummary kotSummary = null;
+		synchronized(lock_getKotSummary) {
 			kotSummary =  KotSummarySQL.getKotSummary(order.getId());
 			long time = System.currentTimeMillis();
 			if (kotSummary == null) {
@@ -1364,6 +1414,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotSummary.setOrderRemark(order.getOrderRemark());
 				KotSummarySQL.update(kotSummary);
 			}
+		}
 		return kotSummary;
 	}
 
@@ -1373,6 +1424,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 									RevenueCenter revenueCenter, long businessDate) {
 
 		KotSummary kotSummary = null;
+		synchronized(lock_getKotSummary) {
 			long time = System.currentTimeMillis();
 			if (kotSummary == null) {
 				kotSummary = new KotSummary();
@@ -1394,6 +1446,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotSummary.setOrderRemark(order.getOrderRemark());
 				KotSummarySQL.update(kotSummary);
 			}
+		}
 		return kotSummary;
 	}
 
@@ -1404,6 +1457,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			SessionStatus sessionStatus, int categoryId) {
 
 		KotItemDetail kotItemDetail = null;
+		synchronized(lock_getKotItemDetail) {
 			kotItemDetail = KotItemDetailSQL
 					.getMainKotItemDetailByOrderDetailId(orderDetail.getId());
 			if (kotItemDetail == null) {
@@ -1434,11 +1488,13 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotItemDetail.setUnFinishQty(orderDetail.getItemNum());
 				KotItemDetailSQL.update(kotItemDetail);
 			}
+		}
 		return kotItemDetail;
 	}
 
 	public KotItemDetail cpKotItemDetail(KotItemDetail cpKotItemDetail, OrderDetail orderDetail) {
-			KotItemDetail kotItemDetail = new KotItemDetail();
+		KotItemDetail kotItemDetail = new KotItemDetail();
+		synchronized(lock_getKotItemDetail) {
 			kotItemDetail.setId(CommonSQL.getNextSeq(TableNames.KotItemDetail));
 			kotItemDetail.setRestaurantId(cpKotItemDetail.getRestaurantId());
 			kotItemDetail.setRevenueId(cpKotItemDetail.getRevenueId());
@@ -1459,11 +1515,13 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			kotItemDetail.setCategoryId(cpKotItemDetail.getCategoryId());
 			kotItemDetail.setIsTakeAway(cpKotItemDetail.getIsTakeAway());
 			KotItemDetailSQL.update(kotItemDetail);
+		}
 		return kotItemDetail;
 	}
 
 	public KotItemDetail getSubKotItemDetail(KotItemDetail mainKotItemDetail) {
 		KotItemDetail kotItemDetail = null;
+		synchronized(lock_getKotItemDetail) {
 			kotItemDetail = KotItemDetailSQL
 					.getSubKotItemDetailByMainKotItemDeail(mainKotItemDetail);
 			if (kotItemDetail == null) {
@@ -1492,6 +1550,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotItemDetail.setFireStatus(kotItemDetail.getFireStatus());
 				KotItemDetailSQL.update(kotItemDetail);
 			}
+		}
 		return kotItemDetail;
 	}
 
@@ -1501,6 +1560,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			OrderModifier orderModifier, Modifier modifier) {
 
 		KotItemModifier kotItemModifier = null;
+		synchronized(lock_getKotItemModifier) {
 			kotItemModifier = KotItemModifierSQL
 					.getKotItemModifier(kotItemDetail.getId(), modifier.getId());
 			if (kotItemModifier == null) {
@@ -1515,6 +1575,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotItemModifier.setPrinterId(orderModifier.getPrinterId());
 				KotItemModifierSQL.update(kotItemModifier);
 			}
+		}
 		return kotItemModifier;
 	}
 
@@ -1524,6 +1585,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			KotSummary kotSummary, KotItemDetail kotItemDetail) {
 		KotNotification kotNotification = null;
 
+		synchronized(lock_getKotNotification) {
 			kotNotification = KotNotificationSQL
 					.getKotNotification(kotItemDetail.getOrderDetailId(), kotItemDetail.getId());
 			if (kotNotification == null) {
@@ -1548,6 +1610,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotNotification.setStatus(ParamConst.KOTNOTIFICATION_STATUS_NORMAL);
 				KotNotificationSQL.update(kotNotification);
 			}
+		}
 		return kotNotification;
 	}
 
@@ -1574,6 +1637,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 
 		ReportDiscount reportDiscount = null;
 
+		synchronized(lock_getReportDiscount) {
 			 reportDiscount = ReportDiscountSQL
 					.getReportDiscountByOrderId(order.getId());
 			if (reportDiscount == null) {
@@ -1601,6 +1665,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				// reportDiscount.setGrandTotal("0");//TODO
 				ReportDiscountSQL.update(reportDiscount);
 			}
+		}
 		return reportDiscount;
 	}
 
@@ -1625,6 +1690,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	public LocalDevice getLocalDevice(String name, String model, int type, int deviceId,
 			String ip, String mac, String printerName) {
 		LocalDevice localDevice = null;
+		synchronized (lock_LocalDevice) {
 			localDevice = LocalDeviceSQL.getLocalDeviceByDeviceId(deviceId);
 			if (localDevice == null) {
 				localDevice = new LocalDevice();
@@ -1638,6 +1704,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			localDevice.setIp(ip);
 			localDevice.setMacAddress(mac);
 			localDevice.setPrinterName(printerName);
+		}
 		return localDevice;
 	}
 
@@ -1649,6 +1716,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 
 		CardsSettlement cardsSettlement = null;
 
+		synchronized(lock_getCardsSettlement) {
 			cardsSettlement = CardsSettlementSQL
 					.getCardsSettlementByPament(payment.getId(),
 							paymentSettlement.getId());
@@ -1674,6 +1742,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				cardsSettlement.setUpdateTime(times);
 			}
 			CardsSettlementSQL.addCardsSettlement(cardsSettlement);
+		}
 		return cardsSettlement;
 	}
 
@@ -1683,6 +1752,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 
 		AlipaySettlement alipaySettlement = null;
 
+		synchronized(lock_getAlipaySettlement) {
 			alipaySettlement = AlipaySettlementSQL
 					.getAlipaySettlementByPament(payment.getId(),
 							paymentSettlement.getId());
@@ -1702,6 +1772,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				AlipaySettlementSQL.addAlipaySettlement(alipaySettlement);
 			}
 
+		}
 		return alipaySettlement;
 	}
 
@@ -1711,6 +1782,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 
 		WeixinSettlement weixinSettlement = null;
 
+		synchronized(lock_getAlipaySettlement) {
 			weixinSettlement = WeixinSettlementSQL
 					.getWeixinSettlementByPament(payment.getId(),
 							paymentSettlement.getId());
@@ -1730,6 +1802,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				WeixinSettlementSQL.addWeixinSettlement(weixinSettlement);
 			}
 
+		}
 		return weixinSettlement;
 	}
 
@@ -1741,6 +1814,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	 */
 	public OrderSplit getOrderSplit(Order order,  int groupId, Tax inclusiveTax){
 		OrderSplit orderSplit = null;
+		synchronized (lock_getOrderSplit) {
 			orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, groupId);
 			long times = System.currentTimeMillis();
 			if(orderSplit == null){
@@ -1767,6 +1841,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			}else {
 				orderSplit.setUpdateTime(times);
 			}
+		}
 		return orderSplit;
 	}
 

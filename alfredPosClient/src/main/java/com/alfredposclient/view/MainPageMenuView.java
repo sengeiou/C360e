@@ -189,7 +189,8 @@ public class MainPageMenuView extends LinearLayout {
 		public OneLevelMenuAdapter(){
 			itemMainCategoryList.addAll(CoreData.getInstance().getItemMainCategories());
 			itemMainCategoryList.add(0, null);
-			itemMainCategoryList.add(itemMainCategoryList.size() -1, null);
+			itemMainCategoryList.add(null);
+
 		}
 		@Override
 		public CategoryViewHolder onCreateViewHolder(ViewGroup arg1, int viewType) {
