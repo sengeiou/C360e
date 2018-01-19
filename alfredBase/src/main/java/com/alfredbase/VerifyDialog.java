@@ -76,7 +76,15 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 		textTypeFace.setTrajanProRegular((TextView)view.findViewById(R.id.tv_auth));
 		textTypeFace.setTrajanProRegular((TextView)view.findViewById(R.id.tv_title));
 	}
-	
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		if(handler != null){
+			handler.sendEmptyMessage(DIALOG_DISMISS);
+		}
+	}
+
 	@Override
 	public void onKeyBoardClick(String key) {
 		if (keyBuf.length() >= KEY_LENGTH)

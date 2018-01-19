@@ -21,8 +21,8 @@ public class ItemModifierSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.ItemModifier
-					+ "(id, restaurantId, itemId, modifierId, modifierCategoryId, itemCategoryId)"
-					+ " values (?,?,?,?,?,?)";
+					+ "(id, restaurantId, itemId, modifierId, modifierCategoryId, itemCategoryId, type)"
+					+ " values (?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { itemModifier.getId(),
@@ -30,7 +30,8 @@ public class ItemModifierSQL {
 							itemModifier.getItemId(),
 							itemModifier.getModifierId(),
 							itemModifier.getModifierCategoryId(),
-							itemModifier.getItemCategoryId()
+							itemModifier.getItemCategoryId(),
+							itemModifier.getType()
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -46,8 +47,8 @@ public class ItemModifierSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.ItemModifier
-					+ "(id, restaurantId, itemId, modifierId, modifierCategoryId, itemCategoryId)"
-					+ " values (?,?,?,?,?,?)";
+					+ "(id, restaurantId, itemId, modifierId, modifierCategoryId, itemCategoryId, type)"
+					+ " values (?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (ItemModifier itemModifier : itemModifierList) {
@@ -63,6 +64,8 @@ public class ItemModifierSQL {
 							itemModifier.getModifierCategoryId());
 					SQLiteStatementHelper.bindLong(sqLiteStatement,6,
 							itemModifier.getItemCategoryId());
+					SQLiteStatementHelper.bindLong(sqLiteStatement,7,
+							itemModifier.getType());
 					sqLiteStatement.executeInsert();
 				}
 				db.setTransactionSuccessful();
@@ -94,6 +97,7 @@ public class ItemModifierSQL {
 				itemModifier.setModifierId(cursor.getInt(3));
 				itemModifier.setModifierCategoryId(cursor.getInt(4));
 				itemModifier.setItemCategoryId(cursor.getInt(5));
+				itemModifier.setType(cursor.getInt(6));
 				result.add(itemModifier);
 			}
 		} catch (Exception e) {

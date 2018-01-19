@@ -194,7 +194,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_KICK_CASHDRAWER);
 				break;	
 			case R.id.rl_pax:
-				handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX,(String)tv_pax.getText().toString()));
+				handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX,tv_pax.getText().toString()));
 				break;
 			case R.id.tv_take_away:
 				if(order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY){

@@ -361,7 +361,7 @@ public class MainPage extends BaseActivity {
 				List<ModifierVariance> variances = (List<ModifierVariance>) map.get("variances");
 				String description = (String) map.get("description");
 				OrderDetail orderDetail = (OrderDetail) tv_more_detail.getTag();
-				addOrderDetailAndOrderModifier(orderDetail, 1, variances, description);
+				addOrderDetailAndOrderModifier(orderDetail, orderDetail.getItemNum(), variances, description);
                 refreshTotal();
                 refreshList();
 				break;
@@ -429,6 +429,7 @@ public class MainPage extends BaseActivity {
 //						currentGroupId, App.instance.getUser());
 		orderDetail.setItemNum(count);
 		orderDetail.setSpecialInstractions(description);
+		OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
 		for(ModifierVariance modifierVariance : modifierIds){
 			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId1());
 			OrderModifier orderModifier = new OrderModifier();

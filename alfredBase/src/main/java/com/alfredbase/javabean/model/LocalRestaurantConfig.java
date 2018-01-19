@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.store.Store;
 import com.google.gson.reflect.TypeToken;
@@ -112,11 +113,28 @@ public class LocalRestaurantConfig {
 
 	public void setIncludedTax(RestaurantConfig restaurantConfig) {
 		if (!TextUtils.isEmpty(restaurantConfig.getParaValue1())) {
-			this.includedTax.setId(Integer.valueOf(restaurantConfig
-					.getParaValue1()));
 			this.includedTax.setIncludedTaxName(restaurantConfig
 					.getParaValue2());
+			this.includedTax.setId(Integer.valueOf(restaurantConfig
+					.getParaValue1()));
+			this.includedTax.setTypeName(restaurantConfig.getParaValue2());
+			if(Integer.valueOf(restaurantConfig.getParaValue1()) > 0) {
+				if(ParamConst.ITEM_PRICE_TYPE_VALUE2.equals(restaurantConfig.getParaValue2())){
+					this.includedTax.setTax(null);
+					this.includedTax.setTaxCategory(CoreData.getInstance().getTaxCategory(Integer.parseInt(restaurantConfig
+							.getParaValue1())));
+				}else {
+					if (CoreData.getInstance().getTaxs() != null) {
+						this.includedTax.setTax(
+								CoreData.getInstance().getTax(
+										Integer.parseInt(restaurantConfig
+												.getParaValue1())));
+						this.includedTax.setTaxCategory(null);
+					}
+				}
+			}
 		}
+
 	}
 
 	public String getRoundType() {

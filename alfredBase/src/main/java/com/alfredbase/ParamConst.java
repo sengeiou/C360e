@@ -368,8 +368,8 @@ public class ParamConst {
 	
 	/* Item price is tax inclusive
 	 * */
-	public final static int PRICE_TAX_INCLUSIVE = 1001000; //value1: 0(default) not included, value1 (YES):tax ID; Value2 is Tax name
-	
+	public final static int PRICE_TAX_INCLUSIVE = 1001000; //value1: 0(default) not included, value1 (YES):tax ID; Value2 如果是V1就是用税收组去算,其他的都是用单个税去算
+	public final static String ITEM_PRICE_TYPE_VALUE2 = "V1"; // 从V1开始的所有的包含税都是以组存在，在B端那边需要用税收组去算
 
 	/**  #####################   默认打折比例   ########################  */
 	public final static int DEF_DISCOUNT_TYPE = 1001100;

@@ -150,11 +150,13 @@ public class CoreData {
 			return result;
 		}
 		for (ItemModifier itemModifier : getItemModifiers()) {
-			if(itemModifier.getItemCategoryId() != null
-					&& itemModifier.getItemCategoryId().intValue() == itemDetail.getItemCategoryId().intValue()){
-				result.add(itemModifier);
-			}else if (itemModifier.getItemId().intValue() == itemDetail
-					.getItemTemplateId().intValue()) {
+			if(itemModifier.getType() != null && itemModifier.getItemCategoryId() != null
+					&&itemModifier.getItemCategoryId().intValue() == itemDetail.getItemCategoryId().intValue()
+						&& itemModifier.getType().intValue() == 1) {
+					result.add(itemModifier);
+			}else if (itemModifier.getItemId() != null
+					&& itemDetail.getItemTemplateId() != null
+					&& itemModifier.getItemId().intValue() == itemDetail.getItemTemplateId().intValue()) {
 				result.add(itemModifier);
 			}
 		}

@@ -263,7 +263,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				List<ModifierVariance> variances = (List<ModifierVariance>) map.get("variances");
 				String description = (String) map.get("description");
 				OrderDetail orderDetail = selectedOrderDetail;
-				addOrderDetailAndOrderModifier(orderDetail, 1, variances, description);
+				addOrderDetailAndOrderModifier(orderDetail, orderDetail.getItemNum(), variances, description);
 //				refreshTotal();
 				refreshList();
 				break;
@@ -292,6 +292,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 //						currentGroupId, App.instance.getUser());
 		orderDetail.setItemNum(count);
 		orderDetail.setSpecialInstractions(description);
+		OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
 		for(ModifierVariance modifierVariance : modifierIds){
 			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId1());
 			OrderModifier orderModifier = new OrderModifier();

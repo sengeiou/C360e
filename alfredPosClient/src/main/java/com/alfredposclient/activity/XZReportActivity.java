@@ -722,7 +722,8 @@ public class XZReportActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if (calendarCard.getVisibility() == View.GONE && ll_xz_analsis.getVisibility() == View.VISIBLE) {
+            if (calendarCard != null && ll_xz_analsis != null
+                &&calendarCard.getVisibility() == View.GONE && ll_xz_analsis.getVisibility() == View.VISIBLE) {
                 calendarCard.setVisibility(View.VISIBLE);
                 ll_xz_analsis.setVisibility(View.GONE);
                 ll_print.setVisibility(View.INVISIBLE);

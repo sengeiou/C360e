@@ -2196,11 +2196,6 @@ public class App extends BaseApplication {
                     break;
                 case ParamConst.PRICE_TAX_INCLUSIVE:
                     this.localRestaurantConfig.setIncludedTax(restaurantConfig);
-                    if (CoreData.getInstance().getTaxs() != null)
-                        this.localRestaurantConfig.getIncludedTax().setTax(
-                                CoreData.getInstance().getTax(
-                                        Integer.parseInt(restaurantConfig
-                                                .getParaValue1())));
                     break;
                 case ParamConst.ROUND_RULE_TYPE:
                     this.localRestaurantConfig.setRoundType(restaurantConfig);

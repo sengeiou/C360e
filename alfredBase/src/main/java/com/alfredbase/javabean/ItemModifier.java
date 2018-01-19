@@ -15,6 +15,8 @@ public class ItemModifier {
 	private Integer modifierCategoryId;
 
 	private Integer itemCategoryId;
+
+	private Integer type;
 	
 	public Integer getId() {
 		if (CommonUtil.isNull(id))
@@ -74,6 +76,14 @@ public class ItemModifier {
 		this.itemCategoryId = itemCategoryId;
 	}
 
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemModifier{" +
@@ -83,6 +93,7 @@ public class ItemModifier {
 				", modifierId=" + modifierId +
 				", modifierCategoryId=" + modifierCategoryId +
 				", itemCategoryId=" + itemCategoryId +
+				", type=" + type +
 				'}';
 	}
 

@@ -1365,33 +1365,37 @@ public class MainPage extends BaseActivity {
 				} else if (result.get("MsgObject").equals(
 						HANDLER_MSG_OBJECT_TRANSFER_ITEM)) {
 					if (!verifyDialog.isShowing()) {
-						if(transfItemOrderDetail != null
-								&& transfItemOrderDetail.getItemNum() != null
-								&& transfItemOrderDetail.getItemNum().intValue() > 1) {
-							DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning), "Transfer all ?", "Split", "All", new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									if(transfItemOrderDetail.getItemNum().intValue() == 2){
-										transfItemOrderDetail.setItemNum(1);
-										transfItemOrderDetail.setId(null);
+						if (transfItemOrderDetail != null
+								&& transfItemOrderDetail.getItemNum() != null) {
+							if (transfItemOrderDetail.getItemNum().intValue() > 1) {
+								DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning), "Transfer all ?", "Split", "All", new OnClickListener() {
+									@Override
+									public void onClick(View v) {
+										if (transfItemOrderDetail.getItemNum().intValue() == 2) {
+											transfItemOrderDetail.setItemNum(1);
+											transfItemOrderDetail.setId(null);
+											tableShowAction = TRANSFER_ITEM;
+											activityRequestCode = 0;
+											showTables();
+										} else {
+											int maxNum = transfItemOrderDetail.getItemNum().intValue();
+											setPAXWindow.show(SetPAXWindow.TRANSFER_ITEM_SPLIT, "1", "The number must be less than " + maxNum, maxNum);
+										}
+									}
+								}, new OnClickListener() {
+									@Override
+									public void onClick(View v) {
 										tableShowAction = TRANSFER_ITEM;
 										activityRequestCode = 0;
 										showTables();
-									}else {
-										int maxNum = transfItemOrderDetail.getItemNum().intValue();
-										setPAXWindow.show(SetPAXWindow.TRANSFER_ITEM_SPLIT, "1", "The number must be less than " + maxNum, maxNum);
 									}
-								}
-							}, new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									tableShowAction = TRANSFER_ITEM;
-									activityRequestCode = 0;
-									showTables();
-								}
-							});
+								});
+							} else {
+								tableShowAction = TRANSFER_ITEM;
+								activityRequestCode = 0;
+								showTables();
+							}
 						}
-
 					}
 				} else if (result.get("MsgObject").equals(
 						HANDLER_MSG_OBJECT_VOID_OR_FREE)) {
