@@ -49,7 +49,6 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
-import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.ViewTouchUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -88,9 +87,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
     private BaseActivity mainPage;
     private LoadingDialog loadingDialog;
+    private LinearLayout ll_table_left;
     private LinearLayout ll_table_right;
-//    private RelativeLayout rl_table_area;
-    private int width;
+    //    private RelativeLayout rl_table_area;
+//    private int width;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         System.out.println("-----------tttttttt");
@@ -106,14 +106,15 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         tv_cancel = (TextView) view.findViewById(R.id.tv_cancel);
         rl_tables = (RelativeLayout) view.findViewById(R.id.rl_tables);
         rl_create_table = (RelativeLayout) view.findViewById(R.id.rl_create_table);
+        ll_table_left = (LinearLayout) view.findViewById(R.id.ll_table_left);
 //        rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
 //        ViewTreeObserver vto = rl_table_area.getViewTreeObserver();
 //        width = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(mainPage, 40.0f))*3/2;
-        LinearLayout.LayoutParams ps2 = new LinearLayout.LayoutParams(
-                (int) ScreenSizeUtil.width / 5,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        width = (int) ScreenSizeUtil.width * 4 / 5;
-        view.findViewById(R.id.ll_table_left).setLayoutParams(ps2);
+//        RelativeLayout.LayoutParams ps2 = new RelativeLayout.LayoutParams(
+//                (int) ScreenSizeUtil.width / 5,
+//                RelativeLayout.LayoutParams.MATCH_PARENT);
+//        width = (int) ScreenSizeUtil.width * 4 / 5;
+//        ll_table_left.setLayoutParams(ps2);
         ll_table_right = (LinearLayout) view.findViewById(R.id.ll_table_right);
 
 //        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -158,8 +159,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         tv_cancel.setOnClickListener(this);
         iv_more_table.setOnClickListener(this);
         view.findViewById(R.id.ll_table_root).setOnClickListener(null);
+        view.findViewById(R.id.tv_place).setOnClickListener(this);
         return view;
     }
+
 
 
     private void refreshPlace(){
@@ -227,16 +230,16 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     }
 
     private boolean canDelete(){
-            List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate());
-            if(!orderList.isEmpty()){
-                for (Order order : orderList) {
-                    List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
-                            .getOrderDetails(order.getId());
-                    if (!orderDetailsUnIncludeVoid.isEmpty()){
-                        return false;
-                    }
+        List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate());
+        if(!orderList.isEmpty()){
+            for (Order order : orderList) {
+                List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+                        .getOrderDetails(order.getId());
+                if (!orderDetailsUnIncludeVoid.isEmpty()){
+                    return false;
                 }
             }
+        }
         return true;
     }
 
@@ -545,6 +548,14 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 changeLayoutStatus();
                 refresh();
                 break;
+            case R.id.tv_place:{
+                if(ll_table_left.getVisibility() == View.VISIBLE){
+                    ll_table_left.setVisibility(View.GONE);
+                }else {
+                    ll_table_left.setVisibility(View.VISIBLE);
+                }
+            }
+            break;
         }
     }
 
@@ -614,7 +625,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             inflater = LayoutInflater.from(mainPage);
         }
 
-//        public void updatePlaceArea(){
+        //        public void updatePlaceArea(){
 //            places = PlaceInfoSQL.getAllPlaceInfo();
 //            PlaceInfo place = new PlaceInfo();
 //            place.setPlaceName("");
@@ -680,7 +691,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                                         saveTable();
                                     }
                                 }
-                                );
+                        );
                         return;
                     }
                     switch (v.getId()){
@@ -700,7 +711,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                                 canEdit = false;
                             }
                         }
-                            break;
+                        break;
                         case R.id.rl_add_place: {
                             v.setVisibility(View.GONE);
                             holder.rl_add_edit.setVisibility(View.VISIBLE);
@@ -709,7 +720,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                             showSoftInput(holder.et_add_place);
                             canEdit = false;
                         }
-                            break;
+                        break;
                         case R.id.tv_add_place_cancel: {
                             holder.rl_add_edit.setVisibility(View.GONE);
                             if (IntegerUtils.isEmptyOrZero(place.getId())) {
@@ -719,14 +730,15 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                             }
                             hideInput(holder.et_add_place);
                         }
-                            break;
+                        break;
                         case R.id.tv_place_name: {
                             selectPlaceIndex = position;
                             canEdit = false;
                             refreshPlace();
                             refreshTableLayout();
+                            ll_table_left.setVisibility(View.GONE);
                         }
-                            break;
+                        break;
                         case R.id.iv_place_delete: {
                             if(!canDelete()){
                                 UIHelp.showShortToast(mainPage, mainPage.getResources().getString(R.string.bill_not_closed));
@@ -749,7 +761,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                                     });
 
                         }
-                            break;
+                        break;
                     }
                 }
             };

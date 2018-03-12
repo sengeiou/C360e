@@ -1233,22 +1233,22 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							//show loading dialog
 							handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_START, null));
 							
-							// 未Clock Out员工，在close时系统将自动Clock out
-							ArrayList<UserTimeSheet> userTimeSheets = UserTimeSheetSQL
-									.getUserTimeSheetsByBusinessDate(business_date);
-							LogUtil.i("userTimeSheets", userTimeSheets.toString());
-							if (!userTimeSheets.isEmpty()) {
-								for (UserTimeSheet userTimeSheet : userTimeSheets) {
-									if (userTimeSheet.getLogoutTime().longValue() == 0
-											|| userTimeSheet.getStatus() == ParamConst.USERTIMESHEET_STATUS_LOGIN) {
-										userTimeSheet.setLogoutTime(System
-												.currentTimeMillis());
-										userTimeSheet
-												.setStatus(ParamConst.USERTIMESHEET_STATUS_LOGOUT);
-										UserTimeSheetSQL.addUser(userTimeSheet);
-									}
-								}
-							}
+//							// 未Clock Out员工，在close时系统将自动Clock out
+//							ArrayList<UserTimeSheet> userTimeSheets = UserTimeSheetSQL
+//									.getUserTimeSheetsByBusinessDate(business_date);
+//							LogUtil.i("userTimeSheets", userTimeSheets.toString());
+//							if (!userTimeSheets.isEmpty()) {
+//								for (UserTimeSheet userTimeSheet : userTimeSheets) {
+//									if (userTimeSheet.getLogoutTime().longValue() == 0
+//											|| userTimeSheet.getStatus() == ParamConst.USERTIMESHEET_STATUS_LOGIN) {
+//										userTimeSheet.setLogoutTime(System
+//												.currentTimeMillis());
+//										userTimeSheet
+//												.setStatus(ParamConst.USERTIMESHEET_STATUS_LOGOUT);
+//										UserTimeSheetSQL.addUser(userTimeSheet);
+//									}
+//								}
+//							}
 														
 							new Thread(new Runnable() {
 								@Override

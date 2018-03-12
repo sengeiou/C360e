@@ -61,7 +61,6 @@ import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
-import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.AlipayPushMsgDto;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.LocalRestaurantConfig;
@@ -95,8 +94,6 @@ import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
-import com.alfredbase.store.sql.UserSQL;
-import com.alfredbase.store.sql.UserTimeSheetSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -1298,39 +1295,39 @@ public class App extends BaseApplication {
         this.waiterDevices.put(waiterDevice.getWaiterId(), waiterDevice);
 
         // timesheet: Login
-        boolean login = false;
-        ArrayList<UserTimeSheet> mUserTimeSheets = UserTimeSheetSQL
-                .getUserTimeSheetsByEmpId(waiterDevice.getWaiterId(),
-                        App.instance.getLastBusinessDate());
-        User user = UserSQL.getUserById(waiterDevice.getWaiterId());
-        for (UserTimeSheet userTimeSheet : mUserTimeSheets) {
-            if (userTimeSheet != null
-                    && userTimeSheet.getStatus() == ParamConst.USERTIMESHEET_STATUS_LOGIN) {
-                login = true;
-            }
-        }
-        if (!login) {
-            UserTimeSheet userTimeSheet = ObjectFactory.getInstance()
-                    .getUserTimeSheet(App.instance.getLastBusinessDate(), user,
-                            App.instance.getRevenueCenter());
-            UserTimeSheetSQL.addUser(userTimeSheet);
-        }
+//        boolean login = false;
+//        ArrayList<UserTimeSheet> mUserTimeSheets = UserTimeSheetSQL
+//                .getUserTimeSheetsByEmpId(waiterDevice.getWaiterId(),
+//                        App.instance.getLastBusinessDate());
+//        User user = UserSQL.getUserById(waiterDevice.getWaiterId());
+//        for (UserTimeSheet userTimeSheet : mUserTimeSheets) {
+//            if (userTimeSheet != null
+//                    && userTimeSheet.getStatus() == ParamConst.USERTIMESHEET_STATUS_LOGIN) {
+//                login = true;
+//            }
+//        }
+//        if (!login) {
+//            UserTimeSheet userTimeSheet = ObjectFactory.getInstance()
+//                    .getUserTimeSheet(App.instance.getLastBusinessDate(), user,
+//                            App.instance.getRevenueCenter());
+//            UserTimeSheetSQL.addUser(userTimeSheet);
+//        }
     }
 
     public void removeWaiterDevice(WaiterDevice waiterDevice) {
         this.waiterDevices.remove(waiterDevice.getWaiterId());
-        boolean login = true;
-
-        UserTimeSheet userTimeSheet = UserTimeSheetSQL.getUserTimeSheetByEmpId(
-                waiterDevice.getWaiterId(), App.instance.getLastBusinessDate());
-        if (userTimeSheet == null) {
-            login = false;
-        }
-        if (login) {
-            userTimeSheet.setLogoutTime(System.currentTimeMillis());
-            userTimeSheet.setStatus(ParamConst.USERTIMESHEET_STATUS_LOGOUT);
-            UserTimeSheetSQL.addUser(userTimeSheet);
-        }
+//        boolean login = true;
+//
+//        UserTimeSheet userTimeSheet = UserTimeSheetSQL.getUserTimeSheetByEmpId(
+//                waiterDevice.getWaiterId(), App.instance.getLastBusinessDate());
+//        if (userTimeSheet == null) {
+//            login = false;
+//        }
+//        if (login) {
+//            userTimeSheet.setLogoutTime(System.currentTimeMillis());
+//            userTimeSheet.setStatus(ParamConst.USERTIMESHEET_STATUS_LOGOUT);
+//            UserTimeSheetSQL.addUser(userTimeSheet);
+//        }
     }
 
     public boolean isWaiterLoginAllowed(WaiterDevice dev) {
