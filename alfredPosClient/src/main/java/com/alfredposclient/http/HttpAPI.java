@@ -12,6 +12,7 @@ import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
@@ -24,6 +25,7 @@ import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.BOHSettlementHtml;
+import com.alfredposclient.activity.ClockInOROut;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.MonthlyPLUReportHtml;
 import com.alfredposclient.activity.MonthlySalesReportHtml;
@@ -1667,6 +1669,67 @@ public class HttpAPI {
                         }
                     });
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void getClockInUserTimeSheet(final Context context, String url,
+                                               AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler){
+        try {
+            httpClient.post(context, url,HttpAssembling.getPlaceParam(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if(resultCode == ResultCode.SUCCESS) {
+                                List<UserTimeSheet> userTimeSheetList = HttpAnalysis.getClockInUserTimeSheet(responseBody);
+                                handler.sendMessage(handler.obtainMessage(ClockInOROut.GET_LIST_SUCCESS, userTimeSheetList));
+                            }else {
+                                handler.sendMessage(handler.obtainMessage(ClockInOROut.HTTP_FAIL, resultCode));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody, error);
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void clockInOut(final Context context, String url,
+                                               AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler){
+        try {
+            httpClient.post(context, url,HttpAssembling.getPlaceParam(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if(resultCode == ResultCode.SUCCESS) {
+                                handler.sendEmptyMessage(ClockInOROut.CLOCK_SUCCESS);
+                            }else if(resultCode == ResultCode.USER_LOGIN_EXIST){
+                                handler.sendMessage(handler.obtainMessage(resultCode, parameters.get("type")));
+                            } else {
+                                handler.sendMessage(handler.obtainMessage(ClockInOROut.HTTP_FAIL, resultCode));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody, error);
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                        }
+                    });
+        }catch (Exception e){
             e.printStackTrace();
         }
     }

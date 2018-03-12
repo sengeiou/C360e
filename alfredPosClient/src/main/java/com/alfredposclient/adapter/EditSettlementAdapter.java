@@ -93,6 +93,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 			holder = new ViewHolder();
 			holder.tv_bill_no = (TextView) currentView.findViewById(R.id.tv_bill_no);
 			holder.tv_place_name = (TextView) currentView.findViewById(R.id.tv_place_name);
+			holder.tv_table_name = (TextView) currentView.findViewById(R.id.tv_table_name);
 			holder.tv_total = (TextView) currentView.findViewById(R.id.tv_total);
 			holder.tv_poeple = (TextView) currentView.findViewById(R.id.tv_poeple);
 			holder.tv_time = (TextView) currentView.findViewById(R.id.tv_time);
@@ -106,11 +107,13 @@ public class EditSettlementAdapter extends BaseAdapter {
 		String billNo = editSettlementInfo.getBillNo() + "";
 		holder.tv_bill_no.setText(billNo);
 		holder.tv_place_name.setText(editSettlementInfo.getPlaceName());
+		holder.tv_table_name.setText(editSettlementInfo.getTableName());
 		holder.tv_total.setText(BH.getBD(editSettlementInfo.getTotalAmount()).toString());
 		holder.tv_poeple.setText(editSettlementInfo.getUserName());
 		holder.tv_time.setText(editSettlementInfo.getPaymentCreateTime());
 		if(App.instance.isRevenueKiosk()){
 			holder.tv_place_name.setVisibility(View.GONE);
+			holder.tv_table_name.setVisibility(View.GONE);
 		}
 
 		holder.btn_edit_settlement.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +137,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 	class ViewHolder {
 		public TextView tv_bill_no;
 		public TextView tv_place_name;
+		public TextView tv_table_name;
 		public TextView tv_total;
 		public TextView tv_poeple;
 		public TextView tv_time;

@@ -10,9 +10,9 @@ public class EditSettlementInfo {
 	private int tableId;
 	private String paymentCreateTime;
 	private String userName;
-	
+	private String tableName;
 	private Integer type; // 是否拆单的类型  通过此类型 判断打CloseBillWindow的类型
-	public EditSettlementInfo(int paymentId, int orderId, int billNo, String totalAmount, String placeName, int tableId, String paymentCreateTime, String userName, Integer type) {
+	public EditSettlementInfo(int paymentId, int orderId, int billNo, String totalAmount, String placeName, String tableName, int tableId, String paymentCreateTime, String userName, Integer type) {
 		this.paymentId = paymentId;
 		this.orderId = orderId;
 		this.billNo = billNo;
@@ -22,6 +22,7 @@ public class EditSettlementInfo {
 		this.paymentCreateTime = paymentCreateTime;
 		this.userName = userName;
 		this.type = type;
+		this.tableName = tableName;
 	}
 
 	public EditSettlementInfo() {
@@ -100,13 +101,28 @@ public class EditSettlementInfo {
 		this.type = type;
 	}
 
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
 	@Override
 	public String toString() {
-		return "EditSettlementInfo [paymentId=" + paymentId + ", orderId="
-				+ orderId + ", billNo=" + billNo + ", totalAmount="
-				+ totalAmount + ", placeName=" + placeName + ", tableId="
-				+ tableId + ", paymentCreateTime=" + paymentCreateTime
-				+ ", userName=" + userName + ", type=" + type + "]";
+		return "EditSettlementInfo{" +
+				"paymentId=" + paymentId +
+				", orderId=" + orderId +
+				", billNo=" + billNo +
+				", totalAmount='" + totalAmount + '\'' +
+				", placeName='" + placeName + '\'' +
+				", tableId=" + tableId +
+				", paymentCreateTime='" + paymentCreateTime + '\'' +
+				", userName='" + userName + '\'' +
+				", tableName='" + tableName + '\'' +
+				", type=" + type +
+				'}';
 	}
 
 }

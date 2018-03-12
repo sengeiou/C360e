@@ -664,6 +664,15 @@ public class MainPage extends BaseActivity {
 			}
 				break;
 			case VIEW_EVENT_SHOW_TABLES_AFTER_CLOSE_BILL:{
+				try {
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("tableId", currentTable.getPosId().intValue());
+					jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
+					jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
 				activityRequestCode = 0;
 				selectOrderSplitDialog.dismiss();
 				tableShowAction = SHOW_TABLES;

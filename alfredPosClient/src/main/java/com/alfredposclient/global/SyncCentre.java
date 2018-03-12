@@ -298,11 +298,18 @@ public class SyncCentre {
 //		HttpAPI.downloadApk(url,new AsyncHttpClient());
 //	}
 
+	public void getClockInUserTimeSheet(Context context, Map<String, Object> parameters, Handler handler){
+		HttpAPI.getClockInUserTimeSheet(context, getAbsoluteUrl(APIName.CLOCK_GETUSERTIMESHEET), httpClient, parameters, handler);
+	}
+	public void clockInOut(Context context, Map<String, Object> parameters, Handler handler){
+		HttpAPI.clockInOut(context, getAbsoluteUrl(APIName.CLOCK_CLOCKINOUT), httpClient, parameters, handler);
+	}
+
 	// Backend Server IP
 	private String getAbsoluteUrl(String relativeUrl) {
 		if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
-			return "http://192.168.1.104:8083/alfred-api/" + relativeUrl;
+			return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
 		} else if (App.instance.isOpenLog) {
 			return "http://139.224.17.126/alfred-api/" + relativeUrl;
 		} else {

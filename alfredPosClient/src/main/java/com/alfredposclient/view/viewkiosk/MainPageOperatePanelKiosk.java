@@ -156,26 +156,17 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 
 	private void initTextTypeFace() {
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_close_bill));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_tables));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_discount));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_open_item));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_delete_order));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_take_away));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_table_name));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_print_bill));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_transfer_table));
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_cash_close));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_kick_cashdrawer));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_order_id));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_order_no));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_pax_title));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_pax));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_bill_content));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_split));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_table_content));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_misc));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_edit_kot));
-//		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_take_away));
 	}
 	
 	private void setData() {

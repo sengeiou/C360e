@@ -26,11 +26,8 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
-import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.TextTypeFace;
@@ -152,13 +149,13 @@ public class SearchMenuItemWindow implements OnClickListener {
 				int count = 1;
 				ItemDetail itemDetail = (ItemDetail) parentView
 						.getItemAtPosition(position);
-				List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order, currentGroupId);
-				for(OrderDetail orderDetail : orderDetails){
-					if (orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_PREPARED
-						&& orderDetail.getItemName().toString().equals(itemDetail.getItemName().toString())) {
-						count += orderDetail.getItemNum();
-					}
-				}
+//				List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order, currentGroupId);
+//				for(OrderDetail orderDetail : orderDetails){
+//					if (orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_PREPARED
+//						&& orderDetail.getItemName().toString().equals(itemDetail.getItemName().toString())) {
+//						count += orderDetail.getItemNum();
+//					}
+//				}
 				
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("itemDetail", itemDetail);

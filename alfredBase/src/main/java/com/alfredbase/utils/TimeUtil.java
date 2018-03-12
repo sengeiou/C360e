@@ -38,6 +38,9 @@ public class TimeUtil {
     }
     public static final SimpleDateFormat PRINTER_FORMAT_DATE = new SimpleDateFormat(
 			"dd/MM/yyyy");
+
+	public static final SimpleDateFormat PRINTER_FORMAT_DATE_TIME = new SimpleDateFormat(
+			"dd/MM/yyyy HH:mm");
 	public static final SimpleDateFormat PRINTING_FORMAT_DATE = new SimpleDateFormat(
 			"yyyy-MM-dd");
 	
@@ -56,7 +59,15 @@ public class TimeUtil {
 		else
 			return PRINTER_FORMAT_DATE.format(calendar.getTime());
 	}
-	
+	public static String getPrintDateTime(long time) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(time);
+		if(BaseApplication.countryCode == ParamConst.CHINA)
+			return YMDFORMATTER.format(calendar.getTime());
+		else
+			return PRINTER_FORMAT_DATE_TIME.format(calendar.getTime());
+	}
+
 	public static String getPrintingDate(long time) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(time);

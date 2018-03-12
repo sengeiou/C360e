@@ -62,11 +62,8 @@ public class MainPageMenuView extends LinearLayout {
 	private RelativeLayout ll_menu;
 	private RecyclerView oneLevelMenu;
 	private RecyclerView twoLevelMenu;
-	private HorizontalScrollViewEx threeLevelMenu;
 	private ImageView iv_up;
 	private ImageView iv_down;
-	private ImageView iv_modifier_up;
-	private ImageView iv_modifier_down;
 	private ImageView iv_done;
 	private LinearLayout ll_item_detail;
 	private LinearLayout ll_sub_menu;
@@ -157,6 +154,9 @@ public class MainPageMenuView extends LinearLayout {
 	private void filterItemsInSubCategory (int maincategoryid) {
 //		View view = ;
 		TwoLevelMenuAdapter.MenuViewHolder viewHolder = (TwoLevelMenuAdapter.MenuViewHolder) twoLevelMenu.findViewHolderForAdapterPosition(current_index);
+		if(viewHolder == null) {
+			return;
+		}
 		ItemDetailAdapter subadp = (ItemDetailAdapter) viewHolder.gv_menu_detail.getAdapter();
 
 		List<ItemDetail>  currentItemDetails = new ArrayList<ItemDetail>();
@@ -171,6 +171,9 @@ public class MainPageMenuView extends LinearLayout {
 	public void filterItemsInSubCategory (int maincategoryid, int subcategoryid) {
 //		View view = twoLevelMenu.getChildAt(getIndex(twoLevelMenu));
 		TwoLevelMenuAdapter.MenuViewHolder viewHolder = (TwoLevelMenuAdapter.MenuViewHolder) twoLevelMenu.findViewHolderForAdapterPosition(current_index);
+		if(viewHolder == null) {
+			return;
+		}
 		ItemDetailAdapter subadp = (ItemDetailAdapter) viewHolder.gv_menu_detail.getAdapter();
 		
 		List<ItemDetail>  currentItemDetails = new ArrayList<ItemDetail>();
@@ -352,8 +355,6 @@ public class MainPageMenuView extends LinearLayout {
 		ll_sub_menu = (LinearLayout) findViewById(R.id.ll_sub_menu);
 		iv_up = (ImageView) findViewById(R.id.iv_up);
 		iv_down = (ImageView) findViewById(R.id.iv_down);
-		iv_modifier_up = (ImageView) findViewById(R.id.iv_up);
-		iv_modifier_down = (ImageView) findViewById(R.id.iv_down);
 		oneLevelMenu = (RecyclerView) findViewById(R.id.hsv_one_level_menu);
 		oneLevelMenu.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false));
 		LinearSnapHelper snapHelper = new LinearSnapHelper();
@@ -422,7 +423,6 @@ public class MainPageMenuView extends LinearLayout {
 		});
 
 		twoLevelMenu.setOnTouchListener(new OnTouchListener() {
-			private float x;
 			@Override
 			public boolean onTouch(View arg0, MotionEvent event) {
 				touchRecyclerView = TWOLEVELMENU;

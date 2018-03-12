@@ -37,6 +37,7 @@ import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
+import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
@@ -727,5 +728,17 @@ public class HttpAnalysis {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public static List<UserTimeSheet> getClockInUserTimeSheet(byte[] responseBody){
+		List<UserTimeSheet> userTimeSheetList = new ArrayList<>();
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			userTimeSheetList = gson.fromJson(object.getString("userTimeSheetList"), new TypeToken<List<UserTimeSheet>>(){}.getType());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return userTimeSheetList;
 	}
 }

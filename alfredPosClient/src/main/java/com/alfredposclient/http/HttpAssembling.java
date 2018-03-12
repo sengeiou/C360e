@@ -77,6 +77,19 @@ public class HttpAssembling {
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}
+
+	public static StringEntity getPlaceParam(Map<String, Object> map)
+			throws UnsupportedEncodingException {
+		Gson gson = new Gson();
+		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+				.getRestaurantKey());
+		map.put("version", App.instance.VERSION );
+		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
+		return entity;
+	}
+
 	public static StringEntity getItemParam(RevenueCenter revenueCenter) throws UnsupportedEncodingException{
 		return getPlaceParam(revenueCenter);
 	}

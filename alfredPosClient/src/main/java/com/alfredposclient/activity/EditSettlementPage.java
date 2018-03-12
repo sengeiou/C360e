@@ -119,6 +119,7 @@ public class EditSettlementPage extends BaseActivity {
         });
         if (App.instance.isRevenueKiosk()) {
             findViewById(R.id.tv_place_name_title).setVisibility(View.GONE);
+            findViewById(R.id.tv_table_name_title).setVisibility(View.GONE);
         }
         ((TextView) findViewById(R.id.tv_title_name)).setText(getResources().getString(R.string.edit_settlement));
     }
@@ -622,10 +623,11 @@ public class EditSettlementPage extends BaseActivity {
         for (Payment payment : payments) {
             Order order = OrderSQL.getOrder(payment.getOrderId());
             PlaceInfo place = PlaceInfoSQL.getPlaceInfoById(order.getPlaceId());
+            TableInfo tableInfo = TableInfoSQL.getTableById(order.getTableId());
             User user = UserSQL.getUserById(payment.getUserId());
             EditSettlementInfo editSettlementInfo = new EditSettlementInfo(
                     payment.getId(), payment.getOrderId(), payment.getBillNo(),
-                    payment.getPaymentAmount(), place.getPlaceName(),
+                    payment.getPaymentAmount(), place.getPlaceName(), tableInfo.getName(),
                     order.getTableId(), TimeUtil.getTimeFormat(payment
                     .getCreateTime()), user.getFirstName()
                     + user.getLastName(), payment.getType());
@@ -641,6 +643,9 @@ public class EditSettlementPage extends BaseActivity {
         switch (editSettlementInfo.getType().intValue()) {
             case ParamConst.BILL_TYPE_UN_SPLIT:
                 currentOrder = OrderSQL.getOrder(editSettlementInfo.getOrderId());
+                if(currentOrder == null){
+                    return;
+                }
                 currentOrder.setOldTotal(currentOrder.getTotal());
                 OrderBill orderBill = OrderBillSQL.getOrderBillByOrder(currentOrder);
                 List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());

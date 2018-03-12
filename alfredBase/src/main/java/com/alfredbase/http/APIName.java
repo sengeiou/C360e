@@ -34,6 +34,8 @@ public class APIName {
 	public static final String MEMBERSHIP_QUERYBALANCE = "membership/queryBalance";
 	public static final String TABLE_UPDATETABLESTATUS = "table/updateTableStatus";
 	public static final String SOFTWARE_GETVERSION = "software/getVersion";
+	public static final String CLOCK_CLOCKINOUT = "clock/clockInOut";
+	public static final String CLOCK_GETUSERTIMESHEET = "clock/getUserTimeSheet";
 
 	//3rd-party Serivce
 	public static final String REQUEST_ALIPAY = "alipay/getAlipayUrl";
