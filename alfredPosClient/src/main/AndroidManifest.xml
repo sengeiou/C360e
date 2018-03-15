@@ -200,6 +200,11 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme"/>
+        <activity
+            android:name=".activity.TableSummaryActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme"/>
     </application>
 
 </manifest>

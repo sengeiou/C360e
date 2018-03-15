@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/tv_table_name"
+        android:layout_below="@+id/tv_table_name_cp"
         android:src="@drawable/table_copy"
         android:visibility="invisible" />
 
@@ -18,8 +18,8 @@
         android:id="@+id/iv_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_table_name"
-        android:layout_toRightOf="@+id/iv_table"
+        android:layout_below="@+id/tv_table_name_cp"
+        android:layout_toRightOf="@+id/rl_table"
         android:src="@drawable/table_delete"
         android:visibility="invisible" />
 
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/iv_table"
+        android:layout_below="@+id/rl_table"
         android:src="@drawable/table_rotate"
         android:visibility="invisible" />
 
@@ -37,50 +37,67 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/iv_rotate"
-        android:layout_toRightOf="@+id/iv_table"
+        android:layout_toRightOf="@+id/rl_table"
         android:src="@drawable/table_more"
         android:visibility="invisible" />
 
-    <ImageView
-        android:id="@+id/iv_table"
+    <RelativeLayout
+        android:id="@+id/rl_table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_table_name_cp"
         android:layout_margin="10dp"
-        android:layout_toRightOf="@+id/iv_copy"
-        android:layout_below="@+id/tv_table_name"/>
+        android:layout_toRightOf="@+id/iv_copy">
+
+        <ImageView
+            android:id="@+id/iv_table"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+             />
+
+        <TextView
+            android:id="@+id/tv_table_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/bg_pos_setting"
+            android:textSize="@dimen/text_size_s" />
+    </RelativeLayout>
+
     <TextView
-        android:id="@+id/tv_table_name"
-        android:gravity="center_horizontal"
+        android:id="@+id/tv_table_name_cp"
         android:layout_width="match_parent"
-        android:layout_alignLeft="@+id/iv_copy"
-        android:layout_alignRight="@+id/iv_delete"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/iv_copy"
         android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/iv_delete"
+        android:gravity="center_horizontal"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_size_b"/>
+        android:visibility="gone"
+        android:textSize="@dimen/text_size_b" />
 
     <EditText
         android:id="@+id/et_item_table_name"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_toRightOf="@+id/iv_copy"
-        android:layout_toLeftOf="@+id/btn_table_name_ok"
         android:layout_below="@+id/iv_more"
         android:layout_marginTop="5dp"
+        android:layout_toLeftOf="@+id/btn_table_name_ok"
+        android:layout_toRightOf="@+id/iv_copy"
         android:singleLine="true"
         android:textColor="@color/black"
         android:textSize="12sp"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
+
     <Button
         android:id="@+id/btn_table_name_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ok"
-        android:layout_alignTop="@+id/et_item_table_name"
         android:layout_alignBottom="@+id/et_item_table_name"
+        android:layout_alignTop="@+id/et_item_table_name"
         android:layout_toLeftOf="@+id/iv_delete"
-        android:visibility="invisible"
-        />
+        android:text="@string/ok"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/ll_table_more_action"
@@ -88,34 +105,34 @@
         android:layout_height="40dp"
         android:layout_below="@+id/et_item_table_name"
         android:layout_centerHorizontal="true"
-        android:visibility="invisible"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="invisible">
 
         <Button
             android:id="@+id/btn_table_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="small"
-            android:textSize="14sp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/table_size_small_selector"
-            android:layout_marginRight="5dp"/>
+            android:text="small"
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/btn_table_middle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/table_size_middle_selector"
             android:text="middle"
-            android:textSize="14sp"
-            android:background="@drawable/table_size_middle_selector"/>
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/btn_table_large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="large"
-            android:textSize="14sp"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/table_size_large_selector"/>
+            android:background="@drawable/table_size_large_selector"
+            android:text="large"
+            android:textSize="14sp" />
 
     </LinearLayout>
 </RelativeLayout>

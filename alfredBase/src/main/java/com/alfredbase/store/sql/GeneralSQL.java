@@ -4,13 +4,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.alfredbase.ParamConst;
-import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.javabean.javabeanforhtml.DashboardItemDetail;
 import com.alfredbase.javabean.javabeanforhtml.DashboardSales;
+import com.alfredbase.javabean.posonly.TableSummary;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 本类用于综合查询，多变查询等
@@ -322,5 +323,45 @@ public class GeneralSQL {
 			}
 			db.endTransaction();
 		}
+	}
+
+	public static List<TableSummary> getTableSummary(long businessDate){
+		List<TableSummary> tableSummaryList = new ArrayList<>();
+		String sql = "select t.posId, t.name, u.firstName, u.lastName, o.total, o.createTime, o.id from "
+				+ TableNames.Order
+				+ " o, "
+				+ TableNames.TableInfo
+				+ " t, "
+				+ TableNames.User
+				+ " u "
+				+ "where o.tableId = t.posId and o.userId = u.id and o.orderStatus <> "
+				+ ParamConst.ORDER_STATUS_FINISHED
+				+ " and  o.businessDate = ? and t.status <> 0 group by t.posId";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+
+		try {
+			cursor = db.rawQuery(sql, new String[]{businessDate+""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return tableSummaryList;
+			}
+			TableSummary tableSummary = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				tableSummary = new TableSummary();
+				tableSummary.setTableId(cursor.getInt(0));
+				tableSummary.setTableName(cursor.getString(1));
+				tableSummary.setFirstName(cursor.getString(2));
+				tableSummary.setLastName(cursor.getString(3));
+				tableSummary.setAmount(cursor.getString(4));
+				tableSummary.setStartTime(cursor.getLong(5));
+				tableSummary.setOrderNo(cursor.getInt(6)+"");
+				tableSummaryList.add(tableSummary);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return tableSummaryList;
 	}
 }

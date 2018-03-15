@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,6 +50,7 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.ViewTouchUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -71,6 +73,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private final static String TAG = TableLayoutFragment.class.getSimpleName();
     public final static int UPDATE_PLACE_TABLE_SUCCEED = 10001;
     public final static int UPDATE_PLACE_TABLE_FAILURE = -10001;
+    private int name_w = 60;
     private ListView lv_place;
     private ListView lv_table_list;
     private RelativeLayout rl_tables;
@@ -95,6 +98,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         System.out.println("-----------tttttttt");
         mainPage = (BaseActivity) getActivity();
+        name_w = ScreenSizeUtil.dip2px(mainPage, 85);
         loadingDialog = new LoadingDialog(mainPage);
         loadingDialog.setTitle("loading");
         Log.e(TAG, "onCreateView");
@@ -160,10 +164,9 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         iv_more_table.setOnClickListener(this);
         view.findViewById(R.id.ll_table_root).setOnClickListener(null);
         view.findViewById(R.id.tv_place).setOnClickListener(this);
+        view.findViewById(R.id.tv_summary).setOnClickListener(this);
         return view;
     }
-
-
 
     private void refreshPlace(){
         places.clear();
@@ -243,6 +246,33 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         return true;
     }
 
+    private void initTableName(TextView tv_name, TableInfo newTable){
+        int w;
+        switch (newTable.getShape()){
+            case 1:
+                tv_name.setTextSize(getResources().getDimension(R.dimen.sp10));
+                w = 50;
+                break;
+            case 2:
+                tv_name.setTextSize(getResources().getDimension(R.dimen.sp11));
+                w = 75;
+                break;
+            case 3:
+                tv_name.setTextSize(getResources().getDimension(R.dimen.text_size_s_small));
+                w = 90;
+                break;
+            default:
+                tv_name.setTextSize(getResources().getDimension(R.dimen.text_size_s_small));
+                w = 90;
+                break;
+        }
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(w, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0,5*newTable.getShape(),0,0);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        tv_name.setLayoutParams(layoutParams);
+        tv_name.setGravity(Gravity.CENTER);
+    }
+
     private void addTable(final TableInfo newTable){
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
@@ -259,6 +289,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         final EditText et_item_table_name = (EditText) selfView.findViewById(R.id.et_item_table_name);
         final Button btn_table_name_ok = (Button) selfView.findViewById(R.id.btn_table_name_ok);
         final TextView tv_table_name = (TextView) selfView.findViewById(R.id.tv_table_name);
+
         tv_table_name.setText(newTable.getName());
         final LinearLayout ll_table_more_action = (LinearLayout) selfView.findViewById(R.id.ll_table_more_action);
 //        imageView.setImageBitmap(BitmapUtil.getResizedBitmap(bitmap, newTable.getPosId()%2 == 0 ? (float)(2.0/3) : (float)(5.0/6)));
@@ -266,6 +297,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         Button btn_table_middle = (Button) selfView.findViewById(R.id.btn_table_middle);
         Button btn_table_large = (Button) selfView.findViewById(R.id.btn_table_large);
         imageView.setImageBitmap(BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap));
+        initTableName(tv_table_name, newTable);
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -285,10 +317,12 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         TableInfo copNewTable = ObjectFactory.getInstance().addNewTable(newTable.getImageName(), newTable.getRestaurantId(), newTable.getRevenueId(), newTable.getPlacesId(), newTable.getResolutionWidth(), newTable.getResolutionHeight());
                         addTable(copNewTable);
                         break;
-                    case R.id.iv_rotate:
+                    case R.id.iv_rotate: {
                         newTable.setRotate(newTable.getRotate() + 90 == 360 ? 0 : newTable.getRotate() + 90);
 //                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.getImageResourceId(newTable.getImageName()));
-                        imageView.setImageBitmap(BitmapUtil.getTableBitmap(newTable.getRotate(),newTable.getShape(), bitmap));
+                        imageView.setImageBitmap(BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap));
+                        initTableName(tv_table_name, newTable);
+                    }
                         break;
                     case R.id.iv_more:
                         if(ll_table_more_action.getVisibility() == View.VISIBLE) {
@@ -302,17 +336,23 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                             btn_table_name_ok.setVisibility(View.VISIBLE);
                         }
                         break;
-                    case R.id.btn_table_small:
+                    case R.id.btn_table_small: {
                         newTable.setShape(1);
                         imageView.setImageBitmap(BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap));
+                        initTableName(tv_table_name, newTable);
+                    }
                         break;
-                    case R.id.btn_table_middle:
+                    case R.id.btn_table_middle: {
                         newTable.setShape(2);
                         imageView.setImageBitmap(BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap));
+                        initTableName(tv_table_name, newTable);
+                    }
                         break;
-                    case R.id.btn_table_large:
+                    case R.id.btn_table_large: {
                         newTable.setShape(3);
                         imageView.setImageBitmap(BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap));
+                        initTableName(tv_table_name, newTable);
+                    }
                         break;
                 }
             }
@@ -556,6 +596,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 }
             }
             break;
+            case R.id.tv_summary: {
+                UIHelp.startTableSummaryActivity(mainPage);
+            }
+                break;
         }
     }
 
@@ -570,19 +614,23 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
     }
 
+    private void dismissDialog(){
+        if(loadingDialog != null && loadingDialog.isShowing())
+            loadingDialog.dismiss();
+    }
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case UPDATE_PLACE_TABLE_SUCCEED:
                     TableInfoSQL.addTablesList(newTables);
-                    loadingDialog.dismiss();
+                    dismissDialog();
                     UIHelp.showShortToast(mainPage, "Save success");
                     canEdit = false;
                     changeLayoutStatus();
                     break;
                 case UPDATE_PLACE_TABLE_FAILURE:
-                    loadingDialog.dismiss();
+                    dismissDialog();
 //                    DialogFactory.showOneButtonCompelDialog(mainPage, getActivity().getResources().getString(R.string.warning),
 //                            ResultCode.getErrorResultStrByCode(mainPage,(Integer)msg.obj, null)), new Onc);
                     DialogFactory.showOneButtonCompelDialog(mainPage, mainPage.getResources().getString(R.string.warning),
@@ -590,7 +638,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //                    TableInfoSQL.addTablesList(newTables);
                     break;
                 case ResultCode.CONNECTION_FAILED:
-                    loadingDialog.dismiss();
+                    dismissDialog();
                     DialogFactory.showOneButtonCompelDialog(mainPage, mainPage.getResources().getString(R.string.warning),
                             ResultCode.getErrorResultStr(mainPage,
                                     (Throwable) msg.obj, mainPage.getResources().getString(R.string.server)), null);
