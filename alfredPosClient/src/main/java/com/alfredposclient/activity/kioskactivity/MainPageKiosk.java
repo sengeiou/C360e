@@ -1379,14 +1379,14 @@ public class MainPageKiosk extends BaseActivity {
 				if (orderDetail.getIsTakeAway() != ParamConst.TAKE_AWAY) {
 					orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
 					if(orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())){
-						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " "+context.getResources().getString(R.string.take_away));
+						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " "+context.getResources().getString(R.string.app_take_away));
 					} else {
-						orderDetail.setSpecialInstractions(context.getResources().getString(R.string.take_away));
+						orderDetail.setSpecialInstractions(context.getResources().getString(R.string.app_take_away));
 					}
 				}else {
 					orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 					if(orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())){
-						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.take_away), ""));
+						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.take_away), "").replace(context.getResources().getString(R.string.app_take_away), ""));
 					}
 				}
 				OrderHelper.getOrderDetailTax(currentOrder, orderDetail);

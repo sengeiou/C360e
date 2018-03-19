@@ -1289,8 +1289,8 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 //					BH.getBD(orderDetail.getItemNum()), true);
 			else
 			  amountBH = BH.getBD(orderDetail.getRealPrice());
-			list.add(new PrintOrderItem(orderDetail.getId(), itemDetail
-					.getItemName(), BH.getBD(orderDetail.getItemPrice())
+			list.add(new PrintOrderItem(orderDetail.getId(), orderDetail.getIsTakeAway(), itemDetail.getId(),
+					itemDetail.getItemName(), BH.getBD(orderDetail.getItemPrice())
 					.toString(), orderDetail.getItemNum() + "", amountBH
 					.toString(), orderDetail.getWeight()));
 		}

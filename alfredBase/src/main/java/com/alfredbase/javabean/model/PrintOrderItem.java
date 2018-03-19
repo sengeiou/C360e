@@ -15,14 +15,18 @@ public class PrintOrderItem implements Serializable{
 	private String amount;
 	private int orderDetailId;
 	private String weight;
+	private Integer itemDetailId;
+	private int isTakeAway;
 	
-	public PrintOrderItem(Integer orderDetailId, String itemName, String price, String qty, String amount, String weight){
+	public PrintOrderItem(Integer orderDetailId, int isTakeAway, Integer itemDetailId, String itemName, String price, String qty, String amount, String weight){
 		this.itemName = itemName;
 		this.price =  price;
 		this.qty = qty;
 		this.amount = amount;
 		this.orderDetailId = orderDetailId;
 		this.weight = weight;
+		this.itemDetailId = itemDetailId;
+		this.isTakeAway = isTakeAway;
 	}
 	
 	public String getItemName() {
@@ -66,10 +70,33 @@ public class PrintOrderItem implements Serializable{
 		this.weight = weight;
 	}
 
+	public Integer getItemDetailId() {
+		return itemDetailId;
+	}
+
+	public void setItemDetailId(Integer itemDetailId) {
+		this.itemDetailId = itemDetailId;
+	}
+
+	public int getIsTakeAway() {
+		return isTakeAway;
+	}
+
+	public void setIsTakeAway(int isTakeAway) {
+		this.isTakeAway = isTakeAway;
+	}
+
 	@Override
 	public String toString() {
-		return "PrintOrderItem [itemName=" + itemName + ", price=" + price
-				+ ", qty=" + qty + ", amount=" + amount + ", orderDetailId="
-				+ orderDetailId + ", weight=" + weight + "]";
+		return "PrintOrderItem{" +
+				"itemName='" + itemName + '\'' +
+				", price='" + price + '\'' +
+				", qty='" + qty + '\'' +
+				", amount='" + amount + '\'' +
+				", orderDetailId=" + orderDetailId +
+				", weight='" + weight + '\'' +
+				", itemDetailId=" + itemDetailId +
+				", isTakeAway=" + isTakeAway +
+				'}';
 	}
 }

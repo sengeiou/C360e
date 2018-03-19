@@ -80,6 +80,7 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
         tv_psw_4 = (TextView) contentView.findViewById(R.id.tv_psw_4);
         tv_psw_5 = (TextView) contentView.findViewById(R.id.tv_psw_5);
         tv_logout.setOnClickListener(this);
+        tv_logout.setText("Clock In/Out");
         Restaurant rest = CoreData.getInstance().getRestaurant();
         if(rest != null)
             tv_rest_name.setText(rest.getRestaurantName()+"");
@@ -107,6 +108,7 @@ public class ReloginDialog implements View.OnClickListener, Numerickeyboard.KeyB
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_logout:
+                UIHelp.startClockInOROut(parent);
                 break;
         }
     }

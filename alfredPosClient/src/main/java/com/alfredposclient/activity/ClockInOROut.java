@@ -77,7 +77,9 @@ public class ClockInOROut extends BaseActivity implements KeyBoardClickListener 
 	}
 
 	private void getList(){
-		loadingDialog.show();
+		if(loadingDialog != null && (!loadingDialog.isShowing())) {
+			loadingDialog.show();
+		}
 		long businessDate = TimeUtil.getNewBusinessDate();
 		if(App.instance.getBusinessDate() > businessDate){
 			businessDate = App.instance.getBusinessDate();
@@ -91,9 +93,9 @@ public class ClockInOROut extends BaseActivity implements KeyBoardClickListener 
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			dismissLoadingDialog();
 			switch (msg.what){
 				case GET_LIST_SUCCESS: {
+					dismissLoadingDialog();
 					userTimeSheets = (List<UserTimeSheet>) msg.obj;
 					if (clockInAdapter == null) {
 						clockInAdapter = new ClockInAdapter();
@@ -108,6 +110,7 @@ public class ClockInOROut extends BaseActivity implements KeyBoardClickListener 
 					getList();
 					break;
 				case ResultCode.USER_LOGIN_EXIST: {
+					dismissLoadingDialog();
 					int tyep = (int) msg.obj;
 					if (tyep == 1) {
 						UIHelp.showShortToast(context, "Users already Clocked In");
@@ -117,11 +120,13 @@ public class ClockInOROut extends BaseActivity implements KeyBoardClickListener 
 				}
 					break;
 				case HTTP_FAIL: {
+					dismissLoadingDialog();
 					UIHelp.showShortToast(context, ResultCode.getErrorResultStrByCode(context,
 							(Integer) msg.obj, context.getResources().getString(R.string.server)));
 				}
 					break;
 				case ResultCode.CONNECTION_FAILED:{
+					dismissLoadingDialog();
 					UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
 							(Throwable) msg.obj, context.getResources().getString(R.string.server)));
 				}

@@ -1676,14 +1676,14 @@ public class MainPage extends BaseActivity {
 				if (orderDetail.getIsTakeAway() != ParamConst.TAKE_AWAY) {
 					orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
 					if(orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())){
-						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " "+context.getResources().getString(R.string.take_away));
+						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " "+context.getResources().getString(R.string.app_take_away));
 					} else {
-						orderDetail.setSpecialInstractions(context.getResources().getString(R.string.take_away));
+						orderDetail.setSpecialInstractions(context.getResources().getString(R.string.app_take_away));
 					}
 				}else {
 					orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 					if(orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())){
-						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.take_away), ""));
+						orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.take_away), "").replace(context.getResources().getString(R.string.app_take_away), ""));
 					} 
 				}
 				OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
@@ -1901,18 +1901,22 @@ public class MainPage extends BaseActivity {
 		if(selectOrderSplitDialog != null && selectOrderSplitDialog.isShowing()){
 			selectOrderSplitDialog.dismiss();
 		}
-		if (isShowTables
-				&& !isTableFirstShow
-				&& currentOrder != null
-				&& OrderSQL.getOrder(currentOrder.getId()).getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
-			closeTables();
-			isShowTables = false;
-			return;
-		}
+//		if (isShowTables
+//				&& !isTableFirstShow
+//				&& currentOrder != null
+//				&& OrderSQL.getOrder(currentOrder.getId()).getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
+//			closeTables();
+//			isShowTables = false;
+//			return;
+//		}
 		if (mainPageSearchView.getVisibility() == View.VISIBLE) {
 			Message msg = handler.obtainMessage();
 			msg.what = MainPage.VIEW_EVENT_DISMISS_SEARCH;
 			handler.sendMessage(msg);
+			return;
+		}
+		if(!isShowTables){
+			showTables();
 			return;
 		}
 		super.onBackPressed();
