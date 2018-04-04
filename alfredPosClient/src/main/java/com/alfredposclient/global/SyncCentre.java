@@ -162,6 +162,7 @@ public class SyncCentre {
 	 * */
 	public void cloudSyncUploadOrderInfo( BaseActivity context,
 			SyncMsg syncMsg, Handler handler) {
+		//orderDataMsg
 			HttpAPI.cloudSync(context, syncMsg,
 					getAbsoluteUrl("receive/dataMsg"), bigSyncHttpClient);
 	}
@@ -170,6 +171,7 @@ public class SyncCentre {
 	 * */	
 	public void cloudSyncUploadReportInfo( BaseActivity context,
 			SyncMsg syncMsg, Handler handler) {
+		//reportDataMsg
 				HttpAPI.cloudSync(context, syncMsg,
 						getAbsoluteUrl("receive/dataMsg"), bigSyncHttpClient);
 	}

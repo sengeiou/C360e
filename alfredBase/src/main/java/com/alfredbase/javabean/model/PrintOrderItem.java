@@ -99,4 +99,10 @@ public class PrintOrderItem implements Serializable{
 				", isTakeAway=" + isTakeAway +
 				'}';
 	}
+
+	public PrintOrderItem clone(){
+		PrintOrderItem printOrderItem = new PrintOrderItem(orderDetailId, isTakeAway, itemDetailId, itemName, price, qty, amount, weight);
+		return printOrderItem;
+
+	}
 }

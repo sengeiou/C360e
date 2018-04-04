@@ -207,6 +207,7 @@ public class MainPage extends BaseActivity {
 	public static final int ACTION_TRANSFER_SPLIT_BY_NUM = 160;
 	public static final int ACTION_REMOVE_ORDER_DETAIL = 161;
 	public static final int ACTION_CANCEL_ORDER_DETAIL = 162;
+	public static final int VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER = 163;
 
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
 	public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
@@ -957,6 +958,12 @@ public class MainPage extends BaseActivity {
 			case VIEW_EVENT_SET_DATA:
 				setData();
 				break;
+			case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
+				setData();
+				if(mainPageMenuView.isModifierOpen()){
+					mainPageMenuView.closeModifiers();
+				}
+				break;
 			case DISMISS_SOFT_INPUT:
 				dismissSoftInput();
 				break;
@@ -1227,6 +1234,7 @@ public class MainPage extends BaseActivity {
 								idNull = true;
 							}else{
 //								OrderDetailSQL.updateOrderDetailOrderIdById(currentOrder.getId().intValue(), transfItemOrderDetail.getId().intValue());
+								OrderDetailTaxSQL.deleteOrderDetailTax(transfItemOrderDetail);
 								OrderDetailSQL.updateOrderDetail(transfItemOrderDetail);
 								OrderSQL.updateOrder(oldOrder);
 								OrderSQL.updateOrder(currentOrder);
@@ -1973,19 +1981,15 @@ public class MainPage extends BaseActivity {
 
 	private void showCloseBillWindow() {
 		OrderBill orderBill = OrderBillSQL.getOrderBillByOrder(currentOrder);
-		if (currentOrder.getOrderStatus().intValue() != ParamConst.ORDER_STATUS_UNPAY) {
-			if(App.instance.getSystemSettings().isPrintBeforCloseBill()) {
-				UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_));
-				return;
-			}else{
-				if (OrderDetailSQL
-						.getOrderDetailsCountUnPlaceOrder(currentOrder.getId()) > 0) {
-					UIHelp.showToast(context,
-							context.getResources().getString(R.string.place_before_print));
-					return;
-				}
-			}
-
+		if(currentOrder.getOrderStatus().intValue() != ParamConst.ORDER_STATUS_UNPAY && App.instance.getSystemSettings().isPrintBeforCloseBill()) {
+			UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_));
+			return;
+		}
+		if (OrderDetailSQL
+				.getOrderDetailsCountUnPlaceOrder(currentOrder.getId()) > 0) {
+			UIHelp.showToast(context,
+					context.getResources().getString(R.string.place_before_print));
+			return;
 		}
 		if (orderBill != null && orderBill.getBillNo() != null) {
 //

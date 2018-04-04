@@ -196,6 +196,7 @@ public class ResultCode {
 	public static final int REVENUE_IS_KIOSK = -993;
 
 	public static final int TABLE_EMPLY= -992;
+	public static final int ORDER_HAS_CLOSING= -991;
 
 	/**
 	 * waiter提交的拆单在POS机上已经结账的返回

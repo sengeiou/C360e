@@ -234,6 +234,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 						context.getResources().getString(R.string.warn), 
 						context.getResources().getString(R.string.order_not_edited), null);
 				break;
+			case ResultCode.ORDER_HAS_CLOSING:
+				DialogFactory.showOneButtonCompelDialog(context,
+						context.getResources().getString(R.string.warn),
+						"Order is closing, please select table and replace order again.", null);
+				break;
 			case ResultCode.ORDER_SPLIT_IS_SETTLED:
 				loadingDialog.dismiss();
 				int groupId = (Integer) msg.obj;

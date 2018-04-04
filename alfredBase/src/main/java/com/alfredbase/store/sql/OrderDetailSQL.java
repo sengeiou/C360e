@@ -1147,7 +1147,7 @@ public class OrderDetailSQL {
 				+ " where orderId = ? and orderStatus > "
 				+ ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
 		      	+ ") and orderDetailType <> "
-				+ ParamConst.ORDERDETAIL_TYPE_VOID + " order by groupId, id desc";
+				+ ParamConst.ORDERDETAIL_TYPE_VOID + " order by groupId desc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {

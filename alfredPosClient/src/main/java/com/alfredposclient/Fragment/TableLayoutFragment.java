@@ -553,17 +553,31 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.tv_table_edit:
-
-                if(canEdit){
+            case R.id.tv_table_edit: {
+                if(places == null || places.size() == 0){
+                    UIHelp.showShortToast(mainPage, "Please add places first!");
+                    ll_table_left.setVisibility(View.VISIBLE);
+                    return;
+                }else if(places.size() == 1){
+                    try {
+                        if(places.get(0).getIsKiosk() == ParamConst.REVENUECENTER_ISNOT_KIOSK){
+                            UIHelp.showShortToast(mainPage, "Please add places first!");
+                            ll_table_left.setVisibility(View.VISIBLE);
+                            return;
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                if (canEdit) {
                     saveTable();
-                }else{
+                } else {
                     List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate());
-                    if(!orderList.isEmpty()){
+                    if (!orderList.isEmpty()) {
                         for (Order order : orderList) {
                             List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
                                     .getOrderDetails(order.getId());
-                            if (!orderDetailsUnIncludeVoid.isEmpty()){
+                            if (!orderDetailsUnIncludeVoid.isEmpty()) {
                                 UIHelp.showShortToast(mainPage, "There are some bills not closed yet.");
                                 return;
                             } else {
@@ -574,6 +588,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     canEdit = true;
                     changeLayoutStatus();
                 }
+            }
                 break;
             case R.id.iv_more_table:
                 RelativeLayout rl_table_list = (RelativeLayout) getView().findViewById(R.id.rl_table_list);

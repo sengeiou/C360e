@@ -992,6 +992,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		if (isShowing()) {
 			return;
 		}
+		App.instance.setClosingOrderId(order.getId());
 		this.orderBill = orderBill;
 		this.startX = startX;
 		tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
@@ -1076,6 +1077,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			popupWindow.dismiss();
 			App.instance.orderInPayment = null;
 		}
+		App.instance.setClosingOrderId(0);
 	}
 
 	public boolean isShowing() {

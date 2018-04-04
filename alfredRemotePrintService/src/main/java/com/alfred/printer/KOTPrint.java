@@ -95,7 +95,7 @@ public class KOTPrint extends PrintJob{
 		String orderNo = PrintService.instance.getResources().getString(R.string.order_no_)
 				+IntegerUtils.fromat(revenueIndex, orderId);
 
-		String tableName =PrintService.instance.getResources().getString(R.string.table_name)
+		String tableName =PrintService.instance.getResources().getString(R.string.table_num)
 				+kotSummary.getTableName();
 		if(!TextUtils.isEmpty(kotSummary.getTableName())){
 			sbr.append(tableName)

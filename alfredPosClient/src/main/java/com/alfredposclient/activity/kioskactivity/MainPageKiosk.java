@@ -899,6 +899,12 @@ public class MainPageKiosk extends BaseActivity {
 			case VIEW_EVENT_SET_DATA:
 				setData();
 				break;
+			case MainPage.VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
+				setData();
+				if(mainPageMenuView.isModifierOpen()){
+					mainPageMenuView.closeModifiers();
+				}
+				break;
 			case DISMISS_SOFT_INPUT:
 				dismissSoftInput();
 				break;

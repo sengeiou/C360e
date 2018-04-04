@@ -25,6 +25,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
@@ -44,7 +45,7 @@ import java.util.List;
  * @tags 订单的用户自定义部分：牌号；人数；折扣、备注等等
  * @version 1
  */
-public class CustomNoteView extends LinearLayout implements OnClickListener, OnItemClickListener {
+public class CustomNoteView extends LinearLayout implements OnClickListener, OnItemClickListener, AdapterView.OnItemLongClickListener {
 
 	public static final int DEFAULT_TABLE_COUNT = 100; // 默认牌号数量（可以没有牌号）
 	private Context mContext;
@@ -134,6 +135,7 @@ public class CustomNoteView extends LinearLayout implements OnClickListener, OnI
 		custom_note_close_img.setVisibility(View.VISIBLE);
 		custom_note_close_img.setOnClickListener(this);
 		custom_note_gridview.setOnItemClickListener(this);
+		custom_note_gridview.setOnItemLongClickListener(this);
 		custom_note_input_lable.setOnClickListener(this);
 		cunstom_note_person_clean_img.setOnClickListener(this);
 		findViewById(R.id.custom_cottent_lyt).setOnClickListener(this);
@@ -253,6 +255,30 @@ public class CustomNoteView extends LinearLayout implements OnClickListener, OnI
 
 	public void setShow(boolean isShow) {
 		this.isShow = isShow;
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parentView, View view, final int position, long id) {
+		if(position < 21) {
+			UIHelp.showShortToast(parent, "Can't delete!");
+		} else {
+			DialogFactory.commonTwoBtnDialog(parent, parent.getString(R.string.warning), "Delete the table name '" + playDataList.get(position) + "'?", parent.getString(R.string.cancel), parent.getString(R.string.ok), null, new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					List<String> stringList = Store.getObject(parent, Store.SEND_TABLE_NAME_LIST, new TypeToken<List<String>>(){}.getType());
+					if(stringList == null || stringList.size() == 0){
+						UIHelp.showShortToast(parent, "Can't delete!");
+					}else {
+						stringList.remove(playDataList.get(position));
+						App.instance.getLocalRestaurantConfig().getSendFoodCardNumList().remove(playDataList.get(position));
+						playDataList.remove(position);
+						voidOrFocAdapter.notifyDataSetChanged();
+						Store.saveObject(parent, Store.SEND_TABLE_NAME_LIST, stringList);
+					}
+				}
+			});
+		}
+		return true;
 	}
 
 	public interface CloseCustomNoteView {

@@ -84,6 +84,7 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
                         Store.putInt(SunmiActivity.this, Store.SUNMI_STYLE, styleType);
                         break;
                 }
+                Store.putInt(SunmiActivity.this, Store.SUNMI_STYLE, styleType);
             }
         });
     }
@@ -153,6 +154,7 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
             }
         });
     }
+
 
     /**
      * 修改欢迎页面

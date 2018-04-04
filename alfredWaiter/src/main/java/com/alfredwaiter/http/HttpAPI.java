@@ -532,6 +532,8 @@ public class HttpAPI {
 								handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
 							}else if(resultCode == ResultCode.NONEXISTENT_ORDER){
 								handler.sendEmptyMessage(ResultCode.NONEXISTENT_ORDER);
+							}else if (resultCode == ResultCode.ORDER_HAS_CLOSING){
+								handler.sendEmptyMessage(ResultCode.ORDER_HAS_CLOSING);
 							}else if(resultCode == ResultCode.ORDER_SPLIT_IS_SETTLED){
 								int groupId = 0;
 								try {

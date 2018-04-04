@@ -105,6 +105,7 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
+import com.alfredposclient.activity.ClockInOROut;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.OpenRestaruant;
@@ -180,6 +181,7 @@ public class App extends BaseApplication {
     private String callAppIp;
 
     private int appOrderNum;
+    private int closingOrderId;
     /**
      * User: Current cashier logged in
      */
@@ -390,6 +392,9 @@ public class App extends BaseApplication {
                 if(isScreenLock) {
                     BaseActivity activity = getTopActivity();
                     if(activity != null && getIndexOfActivity(OpenRestaruant.class) != -1){
+                        if(activity instanceof ClockInOROut){
+                            return;
+                        }
                         ReloginDialog reloginDialog = new ReloginDialog(activity);
                         reloginDialog.show();
                     }
@@ -779,7 +784,7 @@ public class App extends BaseApplication {
         mDSKernel.sendFile(DSKernel.getDSDPackageName(), path.get(0), new ISendCallback() {
             @Override
             public void onSendSuccess(long taskId) {
-                String jsonStr = UPacketFactory.createJson(DataModel.SHOW_VIDEO_LIST, getSendData(order, orderDetails));
+                String jsonStr = UPacketFactory.createJson(DataModel.SHOW_VIDEO_LIST, getSendData(order, orderDetails, 0));
                 mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, taskId,null);
             }
             @Override
@@ -801,7 +806,7 @@ public class App extends BaseApplication {
         if (path.size() == 1){
             mDSKernel.sendFile(DSKernel.getDSDPackageName(), path.get(0), new ISendCallback() {
                 public void onSendSuccess(long fileId) {
-                    String jsonStr = UPacketFactory.createJson(DataModel.SHOW_IMG_LIST, getSendData(order, orderDetails));
+                    String jsonStr = UPacketFactory.createJson(DataModel.SHOW_IMG_LIST, getSendData(order, orderDetails, 0));
                     //第一个参数DataModel.SHOW_IMG_LIST为显示布局模式，jsonStr为要显示的内容字符
                     mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, fileId,null);
                 }
@@ -812,7 +817,7 @@ public class App extends BaseApplication {
             mDSKernel.sendFiles(DSKernel.getDSDPackageName(), "", path, new ISendFilesCallback() {
                 @Override
                 public void onAllSendSuccess(long fileid) {
-                    String jsonStr= UPacketFactory.createJson(DataModel.SHOW_IMGS_LIST, getSendData(order, orderDetails));
+                    String jsonStr= UPacketFactory.createJson(DataModel.SHOW_IMGS_LIST, getSendData(order, orderDetails, 0));
                     mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, fileid,null);
                 }
                 @Override
@@ -838,7 +843,7 @@ public class App extends BaseApplication {
      */
     private void showBigScreenData(Order order, List<OrderDetail> orderDetails){
 
-        final String jsonStr = getSendData(order, orderDetails);
+        final String jsonStr = getSendData(order, orderDetails, 1);
 
         DataPacket dsPacket = UPacketFactory.buildShowText(DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
             @Override
@@ -864,9 +869,10 @@ public class App extends BaseApplication {
      * 组合要发送到商米副屏的表格数据
      * @param order
      * @param orderDetails
+     * @param type  0为正常,1为分屏 不显示第一个
      * @return
      */
-    private String getSendData(Order order, List<OrderDetail> orderDetails){
+    private String getSendData(Order order, List<OrderDetail> orderDetails, int type){
         String title = "Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName();
         SecondScreenBean secondScreenDataHead = new SecondScreenBean();
         List<SecondScreenBean> secondScreenBeans = new ArrayList<SecondScreenBean>();
@@ -874,7 +880,7 @@ public class App extends BaseApplication {
             OrderDetail orderDetail = orderDetails.get(i);
             secondScreenBeans.add(
                     new SecondScreenBean(
-                            (orderDetails.size() - 1)+"",
+                            type == 1 ?(i+1)+"" : null,
                             orderDetail.getItemName(),
                             getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString(),
                             orderDetail.getItemNum() + "",
@@ -2712,5 +2718,13 @@ public class App extends BaseApplication {
         @Override
         public void clearMemoryCache() {
         }
+    }
+
+    public int getClosingOrderId() {
+        return closingOrderId;
+    }
+
+    public void setClosingOrderId(int closingOrderId) {
+        this.closingOrderId = closingOrderId;
     }
 }

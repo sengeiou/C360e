@@ -87,7 +87,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		initTextTypeFace(login_view_1,login_view_2);
 		
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version)+": " + App.instance.VERSION);
-
+		App.instance.showWelcomeToSecondScreen();
 	}
 
 	public void initTitle(){

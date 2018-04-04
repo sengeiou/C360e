@@ -1176,6 +1176,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		}
 		tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
 		this.order = order;
+		App.instance.setClosingOrderId(order.getId());
 		this.orderSplit = orderSplit;
 		this.oldTotal = this.orderSplit.getTotal();
 		this.splitPax = orderSplit.getSplitByPax() > ParamConst.SPLIT_BY_PAX_FALSE ? true : false;
@@ -1283,6 +1284,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			App.instance.orderInPayment = null;
 		}
 //		handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_PAY_WINDOW);
+		App.instance.setClosingOrderId(0);
 	}
 
 	public boolean isShowing() {

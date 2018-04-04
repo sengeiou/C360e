@@ -272,6 +272,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							resp = this.getJsonResponse(new Gson().toJson(result));
 							return resp;
 						}
+						if(App.instance.getClosingOrderId() == order.getId()){
+							result.put("resultCode", ResultCode.ORDER_HAS_CLOSING);
+							resp = this.getJsonResponse(new Gson().toJson(result));
+							return resp;
+						}
 						ArrayList<OrderDetail> waiterOrderDetails = gson.fromJson(
 								jsonObject.optString("orderDetailList"),
 								new TypeToken<ArrayList<OrderDetail>>() {
@@ -1122,6 +1127,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			}
 			if((App.instance.orderInPayment != null && App.instance.orderInPayment.getId().intValue() == order.getId().intValue())){
 				result.put("resultCode", ResultCode.NONEXISTENT_ORDER);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+				return resp;
+			}
+			if(App.instance.getClosingOrderId() == order.getId()){
+				result.put("resultCode", ResultCode.ORDER_HAS_CLOSING);
 				resp = this.getJsonResponse(new Gson().toJson(result));
 				return resp;
 			}

@@ -81,7 +81,7 @@ public class MainPageMenuView extends LinearLayout {
 	private PagerSnapHelper pagerSnapHelper;
 	private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
 			.getItemMainCategories();
-	
+
 	public MainPageMenuView(Context context) {
 		super(context);
 		init(context);
@@ -435,8 +435,8 @@ public class MainPageMenuView extends LinearLayout {
 
 
 
-	private void initMenuDetail(Order order, OrderDetail orderDetail,
-			List<ItemModifier> itemModifiers) {
+	private void initMenuModifierDetail(Order order, OrderDetail orderDetail,
+										List<ItemModifier> itemModifiers) {
 		ll_item_detail.removeAllViews();
 		for (ItemModifier itemModifier : itemModifiers) {
 			ModifierView modifierView = new ModifierView(parent);
@@ -497,7 +497,7 @@ public class MainPageMenuView extends LinearLayout {
 	
 	public void openModifiers(Order order, OrderDetail orderDetail,
 			List<ItemModifier> itemModifiers) {
-		initMenuDetail(order, orderDetail, itemModifiers);
+		initMenuModifierDetail(order, orderDetail, itemModifiers);
 		if (AnimatorListenerImpl.isRunning) {
 			return;
 		}

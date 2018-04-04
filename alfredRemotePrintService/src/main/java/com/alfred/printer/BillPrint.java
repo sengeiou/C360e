@@ -181,16 +181,30 @@ public class BillPrint extends PrintJob{
 	/*Kiosk uses only*/
 	public void AddKioskHeader(String table, int pax, String billNo,
 			String posNo, String cashier, String dateTime, String orderNo, String groupNum) {
+		if(!TextUtils.isEmpty(table)) {
+			PrintData tableNamePrint = new PrintData();
+			tableNamePrint.setDataFormat(PrintData.FORMAT_TXT);
+			tableNamePrint.setTextAlign(PrintData.ALIGN_CENTRE);
+			tableNamePrint.setFontsize(1);
+			tableNamePrint.setText("Your table number is" + reNext);
+			this.data.add(tableNamePrint);
+			PrintData tableNumPrint = new PrintData();
+			tableNumPrint.setDataFormat(PrintData.FORMAT_TXT);
+			tableNumPrint.setTextAlign(PrintData.ALIGN_CENTRE);
+			tableNumPrint.setFontsize(3);
+			tableNumPrint.setText(table + reNext + reNext);
+			this.data.add(tableNumPrint);
+			addHortionalLine(this.charSize);
+		}
 		//流水号 NO
 		PrintData orderNoPrint = new PrintData();
-		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL-1);
-		String padorderNo = orderNoStr + orderNo+reNext;
+		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL - 1);
+		String padorderNo = orderNoStr + orderNo + reNext;
 		orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		orderNoPrint.setFontsize(2);
 		orderNoPrint.setText(padorderNo);
 		this.data.add(orderNoPrint);
-
 		//group num
 		if (!TextUtils.isEmpty(groupNum)) {
 			PrintData groupNumPrint = new PrintData();

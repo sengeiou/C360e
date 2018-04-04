@@ -110,6 +110,7 @@ public class App extends BaseApplication {
 						public void onClick(View v) {
 							SyncCentre.getInstance().cancelAllRequests();
 							getTopActivity().dismissLoadingDialog();
+							Store.remove(getTopActivity(),  Store.WAITER_USER);
 							getTopActivity().startActivity(new Intent(getTopActivity(),Welcome.class));
 
 						}

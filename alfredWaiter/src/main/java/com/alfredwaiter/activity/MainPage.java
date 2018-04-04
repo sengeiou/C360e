@@ -30,6 +30,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
@@ -445,7 +446,7 @@ public class MainPage extends BaseActivity {
 			orderModifier.setModifierNum(modifierVariance.getModQty());
 			orderModifier
 					.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
-			orderModifier.setModifierPrice(modifier.getPrice());
+			orderModifier.setModifierPrice(BH.mul(BH.getBD(modifier.getPrice()), BH.getBD(orderDetail.getItemNum()), false).toString());
 			Long time = System.currentTimeMillis();
 			orderModifier.setCreateTime(time);
 			orderModifier.setUpdateTime(time);

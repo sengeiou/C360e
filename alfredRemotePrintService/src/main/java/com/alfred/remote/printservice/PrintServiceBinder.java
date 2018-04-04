@@ -677,9 +677,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 
 			    	if(printOrderItemList != null && printOrderItemList.size() > 0) {
 						LinkedHashMap<String, PrintOrderItem> map = new LinkedHashMap<>();
-			    		for(int index = printOrderItemList.size() - 1;index >= 0;index--){
+			    		for(int index = 0;index < printOrderItemList.size();index++){
 			    			boolean canMerge = true;
-							PrintOrderItem item = printOrderItemList.get(index);
+							PrintOrderItem item = printOrderItemList.get(index).clone();
 							if (orderModifiers != null) {
 								for (int m = 0; m < orderModifiers.size(); m++) {
 									PrintOrderModifier om = orderModifiers.get(m);
@@ -692,15 +692,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								canMerge = true;
 							}
 							if(canMerge){
-								if(map.containsKey(item.getItemDetailId()+"")){
-									PrintOrderItem printOrderItem = map.get(item.getItemDetailId()+"");
+								if(map.containsKey(item.getItemDetailId().intValue()+"")){
+									PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue()+"");
 									printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
 									printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
+									map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
 								}else{
-									map.put(item.getItemDetailId() + "", item);
+									map.put(item.getItemDetailId().intValue() + "", item);
 								}
 							}else{
-								map.put(item.getItemDetailId() + "_" + item.getOrderDetailId(), item);
+								map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
 							}
 						}
 
@@ -800,9 +801,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 			    			PrintService.instance.getResources().getString(R.string.total));
 					if(printOrderItemList != null && printOrderItemList.size() > 0) {
 						LinkedHashMap<String, PrintOrderItem> map = new LinkedHashMap<>();
-						for(int index = printOrderItemList.size() - 1;index >= 0;index--){
+						for(int index = 0;index < printOrderItemList.size();index++){
 							boolean canMerge = true;
-							PrintOrderItem item = printOrderItemList.get(index);
+							PrintOrderItem item = printOrderItemList.get(index).clone();
 							if (orderModifiers != null) {
 								for (int m = 0; m < orderModifiers.size(); m++) {
 									PrintOrderModifier om = orderModifiers.get(m);
@@ -815,15 +816,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								canMerge = true;
 							}
 							if(canMerge){
-								if(map.containsKey(item.getItemDetailId()+"")){
-									PrintOrderItem printOrderItem = map.get(item.getItemDetailId()+"");
+								if(map.containsKey(item.getItemDetailId().intValue()+"")){
+									PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue()+"");
 									printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
 									printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
+									map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
 								}else{
-									map.put(item.getItemDetailId() + "", item);
+									map.put(item.getItemDetailId().intValue() + "", item);
 								}
 							}else{
-								map.put(item.getItemDetailId() + "_" + item.getOrderDetailId(), item);
+								map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
 							}
 						}
 
@@ -866,7 +868,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 //							}
 //						}
 					}
-		
+
 		////////////// Bill Summary
 					String subTotal = BH.doubleFormat.format(BH.getBD(theOrder.getSubTotal()));
 		            String discount = BH.doubleFormat.format(BH.getBD(theOrder.getDiscountAmount()));
@@ -1609,7 +1611,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 
 			    	if(!TextUtils.isEmpty(orderNo))
 			    		billPrint.AddOrderNo(theOrder.getIsTakeAway(), orderNo);
-			    	billPrint.AddKioskHeader(prtTitle.getTableName(), theOrder.getPersons(),
+			    	billPrint.AddKioskHeader(theOrder.getTableName(), theOrder.getPersons(),
 			    							prtTitle.getBill_NO(), prtTitle.getPos(),
 			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), orderNo1, prtTitle.getGroupNum());
 			    	
@@ -1620,9 +1622,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 
 					if(printOrderItemList != null && printOrderItemList.size() > 0) {
 						LinkedHashMap<String, PrintOrderItem> map = new LinkedHashMap<>();
-						for(int index = printOrderItemList.size() - 1;index >= 0;index--){
+						for(int index = 0;index < printOrderItemList.size();index++){
 							boolean canMerge = true;
-							PrintOrderItem item = printOrderItemList.get(index);
+							PrintOrderItem item = printOrderItemList.get(index).clone();
 							if (orderModifiers != null) {
 								for (int m = 0; m < orderModifiers.size(); m++) {
 									PrintOrderModifier om = orderModifiers.get(m);
@@ -1635,15 +1637,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								canMerge = true;
 							}
 							if(canMerge){
-								if(map.containsKey(item.getItemDetailId()+"")){
-									PrintOrderItem printOrderItem = map.get(item.getItemDetailId()+"");
+								if(map.containsKey(item.getItemDetailId().intValue()+"")){
+									PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue()+"");
 									printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
 									printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
+									map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
 								}else{
-									map.put(item.getItemDetailId() + "", item);
+									map.put(item.getItemDetailId().intValue() + "", item);
 								}
 							}else{
-								map.put(item.getItemDetailId() + "_" + item.getOrderDetailId(), item);
+								map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
 							}
 						}
 
@@ -1734,7 +1737,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 
 			    	if(!TextUtils.isEmpty(orderNo))
 			    		billPrint.AddOrderNo(theOrder.getIsTakeAway(), orderNo);
-			    	billPrint.AddKioskHeader(prtTitle.getTableName(), theOrder.getPersons(), 
+			    	billPrint.AddKioskHeader(theOrder.getTableName(), theOrder.getPersons(),
 			    							prtTitle.getBill_NO(), prtTitle.getPos(),
 			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), orderNo1, prtTitle.getGroupNum());
 			    	
@@ -1746,9 +1749,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 
 					if(printOrderItemList != null && printOrderItemList.size() > 0) {
 						LinkedHashMap<String, PrintOrderItem> map = new LinkedHashMap<>();
-						for(int index = printOrderItemList.size() - 1;index >= 0;index--){
+						for(int index = 0;index < printOrderItemList.size();index++){
 							boolean canMerge = true;
-							PrintOrderItem item = printOrderItemList.get(index);
+							PrintOrderItem item = printOrderItemList.get(index).clone();
 							if (orderModifiers != null) {
 								for (int m = 0; m < orderModifiers.size(); m++) {
 									PrintOrderModifier om = orderModifiers.get(m);
@@ -1761,15 +1764,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								canMerge = true;
 							}
 							if(canMerge){
-								if(map.containsKey(item.getItemDetailId()+"")){
-									PrintOrderItem printOrderItem = map.get(item.getItemDetailId()+"");
+								if(map.containsKey(item.getItemDetailId().intValue()+"")){
+									PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue()+"");
 									printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
 									printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
+									map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
 								}else{
-									map.put(item.getItemDetailId() + "", item);
+									map.put(item.getItemDetailId().intValue() + "", item);
 								}
 							}else{
-								map.put(item.getItemDetailId() + "_" + item.getOrderDetailId(), item);
+								map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
 							}
 						}
 

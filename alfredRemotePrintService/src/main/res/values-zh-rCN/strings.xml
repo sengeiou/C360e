@@ -138,7 +138,8 @@
     <string name="void_">*** 退菜 ***</string>
     <string name="kot_copy">KOT副本</string>
     <string name="table_name">牌号:</string>
-    
+    <string name="table_num">牌号:</string>
+
     <!-- WIFI printer -->
     <string name="wifi_printer_connect_success">成功连接网络打印机</string>
     <string name="wifi_printer_disconnect_success">成功于网络打印机断开</string>

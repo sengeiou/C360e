@@ -133,12 +133,13 @@
     <!-- KOT -->
     <string name="table_">Table:</string>
     <string name="kot_no_">KOT No: </string>
-    <string name="order_no_">Order No:</string>
+    <string name="order_no_">Order No.:</string>
     <string name="date_">Date: </string>
     <string name="void_">*** VOID ***</string>
     <string name="kot_copy">KOT COPY</string>
     <string name="table_name">Table Name:</string>
-    
+    <string name="table_num">Table No.:</string>
+
     <!-- WIFI printer -->
     <string name="wifi_printer_connect_success">Connect the WIFI-printer successful</string>
     <string name="wifi_printer_disconnect_success">Disconnect the WIFI-printer successful</string>

@@ -141,6 +141,7 @@ public class SyncData extends BaseActivity {
 		
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
 		initTextTypeFace();
+		App.instance.showWelcomeToSecondScreen();
 	}
 
 

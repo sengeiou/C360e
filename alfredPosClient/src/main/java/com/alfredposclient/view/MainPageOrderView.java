@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SlideExpandable.AbstractSlideExpandableListAdapter;
@@ -103,6 +104,7 @@ public class MainPageOrderView extends LinearLayout {
 		inflater = LayoutInflater.from(context);
 		lv_order = (SlideExpandableListView) findViewById(R.id.lv_order);
 		orderAdapter = new OrderAdapter();
+		lv_order.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		lv_order.setAdapter(orderAdapter);
 
 		tv_table_name_ontop = (TextView) findViewById(R.id.tv_table_name_ontop);
@@ -589,7 +591,7 @@ public class MainPageOrderView extends LinearLayout {
 								}
 							}
 							Message msg = handler.obtainMessage();
-							msg.what = MainPage.VIEW_EVENT_SET_DATA;
+							msg.what = MainPage.VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER;
 							handler.sendMessage(msg);
 						}
 					});
@@ -646,7 +648,7 @@ public class MainPageOrderView extends LinearLayout {
 								@Override
 								public void run() {
 									Message msg = handler.obtainMessage();
-									msg.what = MainPage.VIEW_EVENT_SET_DATA;
+									msg.what = MainPage.VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER;
 									if (CommonUtil.isNull(discount_rate)
 											&& CommonUtil
 													.isNull(discount_price)) {
@@ -814,6 +816,7 @@ public class MainPageOrderView extends LinearLayout {
 			return arg1;
 
 		}
+
 
 		class ViewHolder {
 			public TextView name;
