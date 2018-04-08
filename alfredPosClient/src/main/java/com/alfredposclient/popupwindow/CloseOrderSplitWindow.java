@@ -454,7 +454,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_change));
 		textTypeFace.setTrajanProRegular(tv_change_num);
-		tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
+		tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
 		textTypeFace.setTrajanProRegular((TextView) view
 				.findViewById(R.id.tv_item_count));
 //		textTypeFace.setTrajanProRegular((TextView) view
@@ -653,14 +653,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					BH.getBD(sumPaidamount), true);
 			settlementNum = BH.getBD(sumPaidamount);
 		}
-		((TextView)contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + remainTotal.toString());
+		((TextView)contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
 
 //		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
 
-		tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + orderSplit.getSubTotal());
-		tv_discount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + orderSplit.getDiscountAmount());
-		tv_taxes_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + orderSplit.getTaxAmount());
-		tv_total_bill_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + orderSplit.getTotal());
+		tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderSplit.getSubTotal()).toString());
+		tv_discount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderSplit.getDiscountAmount()).toString());
+		tv_taxes_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderSplit.getTaxAmount()).toString());
+		tv_total_bill_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderSplit.getTotal()).toString());
 //		tv_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(roundAmount.getRoundBalancePrice()).toString());
 //		tv_grand_total_bill_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + orderSplit.getTotal());
 //		tv_settled_num.setText(settlementNum.toString());
@@ -1012,9 +1012,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			symbol = "-";
 		}
 		tv_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.abs(rounding, true));
-		tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotalAfterRound));
-		tv_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotalAfterRound));
-		tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
+		tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
+		tv_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
+		tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
 	}
 
 	// private void initAuthentication() {
@@ -1063,7 +1063,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			break;
 		}
 
-		tv_special_settlement_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotal));
+		tv_special_settlement_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
 		tv_special_settlement_authorize_by_name.setText(user.getFirstName() + user.getLastName());
 
 	}
@@ -1092,8 +1092,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		tv_cards_cvv_num.setText("");
 
 		tv_cards_expiration_date_num.setText("");
-		tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotal));
-		tv_cards_amount_paid_num.setText(BH.doubleFormat.format(remainTotal).toString());
+		tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+		tv_cards_amount_paid_num.setText(BH.getBD(remainTotal).toString());
 		selectView = tv_card_no_num;
 		tv_cards_amount_paid_num.setBackgroundColor(parent.getResources().getColor(
 				R.color.white));
@@ -1119,9 +1119,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		initBillSummary();
 		contentView.findViewById(R.id.ll_subtotal_layout).setVisibility(
 				View.INVISIBLE);
-		tv_nets_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotal));
+		tv_nets_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
 		tv_nets_ref_num.setText("");
-		tv_nets_amount_paid_num.setText(BH.doubleFormat.format(remainTotal).toString());
+		tv_nets_amount_paid_num.setText(BH.getBD(remainTotal).toString());
 		tv_nets_ref_num.setBackgroundColor(parent.getResources()
 				.getColor(R.color.default_line_indicator_selected_color));
 		tv_nets_amount_paid_num.setBackgroundColor(parent.getResources()
@@ -1141,9 +1141,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		} else if (payTypeId == ParamConst.SETTLEMENT_TYPE_WEIXIN){
 			tv_wechat_ali_settlement.setText(parent.getResources().getString(R.string.wechat_settlement));
 		}
-		tv_wechat_ali_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotal));
+		tv_wechat_ali_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
 		tv_wechat_ali_ref_num.setText("");
-		tv_wechat_ali_amount_paid_num.setText(BH.doubleFormat.format(remainTotal).toString());
+		tv_wechat_ali_amount_paid_num.setText(BH.getBD(remainTotal).toString());
 //		tv_wechat_ali_ref_num.setBackgroundColor(parent.getResources()
 //				.getColor(R.color.default_line_indicator_selected_color));
 		tv_wechat_ali_amount_paid_num.setBackgroundColor(parent.getResources()
@@ -1174,7 +1174,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		if (isShowing()) {
 			return;
 		}
-		tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
+		tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
 		this.order = order;
 		App.instance.setClosingOrderId(order.getId());
 		this.orderSplit = orderSplit;
@@ -2131,7 +2131,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		}
 		show.append(num * 100);
 		tv_total_amount_num
-				.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(BH.getBD(num)));
+				.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(num).toString());
 //		showCashChange();
 		BigDecimal cashNum = BH.getBD(String.valueOf(Double.parseDouble(show
 				.toString()) / 100.0));
@@ -2140,10 +2140,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		if (change > 0) {
 			BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
 			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-					+ BH.doubleFormat.format(changeNum));
+					+ BH.getBD(changeNum).toString());
 			clickEnterAction();
 		} else {
-			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
+			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
 		}
 	}
 
@@ -2155,9 +2155,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		if (change > 0) {
 			BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
 			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-					+ BH.doubleFormat.format(changeNum));
+					+ BH.getBD(changeNum).toString());
 		} else {
-			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
+			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
 		}
 	}
 
@@ -2657,7 +2657,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				isFirstClickCash = false;
 			}
 			double shownum = Double.parseDouble(show.toString()) / 100.0;
-			tv_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(shownum));
+			tv_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(shownum).toString());
 			showCashChange();
 		}
 			break;
@@ -2670,7 +2670,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			if(selectView != null && selectView == tv_cards_amount_paid_num){
 				selectView.setInputType(InputType.TYPE_CLASS_NUMBER);
 				if(TextUtils.isEmpty(show)){
-					selectView.setText("0.00");
+					selectView.setText(BH.getBD(0).toString());
 				}else{
 					if(!BH.compare(BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true), remainTotal)){
 						selectView.setText(BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true).toString());
@@ -2725,7 +2725,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			if(selectView != null && selectView == tv_nets_amount_paid_num){
 				selectView.setInputType(InputType.TYPE_CLASS_NUMBER);
 				if(TextUtils.isEmpty(show)){
-					selectView.setText("0.00");
+					selectView.setText(BH.getBD(0).toString());
 				}else{
 					if(!BH.compare(BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true), remainTotal)){
 						selectView.setText(BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true).toString());
@@ -2748,8 +2748,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		show.delete(0, show.length());
 		switch (viewTag) {
 		case ParamConst.SETTLEMENT_TYPE_CASH: {
-			tv_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
-			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00");
+			tv_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+			tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
 
 		}
 			break;
@@ -2760,7 +2760,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		case ParamConst.SETTLEMENT_TYPE_UNIPAY:
 		case ParamConst.SETTLEMENT_TYPE_VISA: {
 			if(selectView != null && selectView == tv_cards_amount_paid_num){
-				selectView.setText("0.00");
+				selectView.setText(BH.getBD(0).toString());
 			}
 			if (selectView != null && selectView == tv_card_no_num) {
 				selectView.setText("");

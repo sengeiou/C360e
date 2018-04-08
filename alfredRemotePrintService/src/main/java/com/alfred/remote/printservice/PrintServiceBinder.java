@@ -746,9 +746,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					}
 	
 		////////////// Bill Summary
-					String subTotal = BH.doubleFormat.format(BH.getBD(theOrder.getSubTotal()));
-		            String discount = BH.doubleFormat.format(BH.getBD(theOrder.getDiscountAmount()));
-		            String grandTotal = BH.doubleFormat.format(BH.getBD(theOrder.getTotal()));
+					String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
+		            String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+		            String grandTotal = BH.getBD(theOrder.getTotal()).toString();
 					
 		            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax());
 		            billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
@@ -870,9 +870,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					}
 
 		////////////// Bill Summary
-					String subTotal = BH.doubleFormat.format(BH.getBD(theOrder.getSubTotal()));
-		            String discount = BH.doubleFormat.format(BH.getBD(theOrder.getDiscountAmount()));
-		            String grandTotal = BH.doubleFormat.format(BH.getBD(theOrder.getTotal()));
+					String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
+		            String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+		            String grandTotal = BH.getBD(theOrder.getTotal()).toString();
 					
 		            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax());
 		            List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String,String>>();
@@ -1691,9 +1691,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					}
 	
 		////////////// Bill Summary
-					String subTotal = BH.doubleFormat.format(BH.getBD(theOrder.getSubTotal()));
-		            String discount = BH.doubleFormat.format(BH.getBD(theOrder.getDiscountAmount()));
-		            String grandTotal = BH.doubleFormat.format(BH.getBD(theOrder.getTotal()));
+					String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
+		            String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+		            String grandTotal = BH.getBD(theOrder.getTotal()).toString();
 					
 		            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
 		            billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
@@ -1817,9 +1817,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 //						}
 					}
 		////////////// Bill Summary
-					String subTotal = BH.doubleFormat.format(BH.getBD(theOrder.getSubTotal()));
-		            String discount = BH.doubleFormat.format(BH.getBD(theOrder.getDiscountAmount()));
-		            String grandTotal = BH.doubleFormat.format(BH.getBD(theOrder.getTotal()));
+					String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
+		            String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+		            String grandTotal = BH.getBD(theOrder.getTotal()).toString();
 					
 		            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
 		            List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String,String>>();

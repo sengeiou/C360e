@@ -13,57 +13,57 @@ public class RoundUtil {
 		}
 		if (roundType.equalsIgnoreCase(ParamConst.ROUND_10CENTS)) {
 			DecimalFormat doubleFormat = new DecimalFormat("0");
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.1"),
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.1"),
 					false);
-			return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
-					BH.getBD("0.1"), true);
+			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
+					BH.getBDNoFormat("0.1"), true);
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_1DOLLAR)) {
 			DecimalFormat doubleFormat = new DecimalFormat("0");
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("1.0"),
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("1.0"),
 					false);
-			return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
-					BH.getBD("1.0"), true);
+			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
+					BH.getBDNoFormat("1.0"), true);
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_5CENTS)) {
 			DecimalFormat doubleFormat = new DecimalFormat("0");
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.05"),
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.05"),
 					false);
-			return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
-					BH.getBD("0.05"), true);
+			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
+					BH.getBDNoFormat("0.05"), true);
 		} else if(roundType.equalsIgnoreCase(ParamConst.ROUND_10CENTS_UP)){
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.1"),
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.1"),
 					false);
-			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
-					BH.getBD("0.1"), true);
+			return BH.mul(BH.getBDNoFormat(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
+					BH.getBDNoFormat("0.1"), true);
 		} else if(roundType.equalsIgnoreCase(ParamConst.ROUND_1DOLLAR_UP)){
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("1.0"),
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("1.0"),
 					false);
-			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
-					BH.getBD("1.0"), true);
+			return BH.mul(BH.getBDNoFormat(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
+					BH.getBDNoFormat("1.0"), true);
 		} else if(roundType.equalsIgnoreCase(ParamConst.ROUND_5CENTS_UP)){
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.05"),
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.05"),
 					false);
-			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
-					BH.getBD("0.05"), true);
+			return BH.mul(BH.getBDNoFormat(bigDecimal.setScale(0, BigDecimal.ROUND_UP).toString()),
+					BH.getBDNoFormat("0.05"), true);
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_10CENTS_DOWN)) {
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.1"), 
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.1"),
 					false);
-			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_DOWN).toString()),
-					BH.getBD("0.1"), true);
+			return BH.mul(BH.getBDNoFormat(bigDecimal.setScale(0, BigDecimal.ROUND_DOWN).toString()),
+					BH.getBDNoFormat("0.1"), true);
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_5CENTS_DOWN)) {
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("0.05"), 
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.05"),
 					false);
-			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_DOWN).toString()),
-					BH.getBD("0.05"), true);
+			return BH.mul(BH.getBDNoFormat(bigDecimal.setScale(0, BigDecimal.ROUND_DOWN).toString()),
+					BH.getBDNoFormat("0.05"), true);
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_1DOLLAR_DOWN)) {
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBD("1.0"),
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("1.0"),
 					false);
-			return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_DOWN).toString()),
-					BH.getBD("1.0"), true);
+			return BH.mul(BH.getBDNoFormat(bigDecimal.setScale(0, BigDecimal.ROUND_DOWN).toString()),
+					BH.getBDNoFormat("1.0"), true);
 		} else {
 			return priceBeforeRound;
 		}

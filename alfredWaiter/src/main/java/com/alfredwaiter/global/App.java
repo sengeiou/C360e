@@ -15,6 +15,7 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.RxBus;
@@ -273,8 +274,9 @@ public class App extends BaseApplication {
 		return currencySymbol;
 	}
 
-	public void setCurrencySymbol(String currencySymbol) {
+	public void setCurrencySymbol(String currencySymbol, boolean isDouble) {
 		this.currencySymbol = currencySymbol;
+		BH.initFormart(isDouble);
 	}
 	
 }

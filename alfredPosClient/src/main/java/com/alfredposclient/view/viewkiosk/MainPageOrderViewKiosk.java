@@ -351,11 +351,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 		tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()));
 		tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()));
 		tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()));
-		if (CommonUtil.isNull(order.getTotal())) {
-			tv_grand_total.setText(parent.getResources().getString(R.string.grand_total) + ": " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-		} else {
-			tv_grand_total.setText(parent.getResources().getString(R.string.grand_total) + ": " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + order.getTotal());
-		}
+		tv_grand_total.setText(parent.getResources().getString(R.string.grand_total) + ": " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
 	}
 
 	class OrderAdapter extends AbstractSlideExpandableListAdapter {
@@ -612,13 +608,13 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()));
 
 			if(orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE){
-				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
+				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
+				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
 			}else{
 				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getDiscountPrice()).toString());
 				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
 						+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
-						BH.getBD(orderDetail.getDiscountPrice()), true));
+						BH.getBD(orderDetail.getDiscountPrice()), true).toString());
 			}
 			holder.discount.setBackgroundColor(context.getResources().getColor(
 					R.color.white));
