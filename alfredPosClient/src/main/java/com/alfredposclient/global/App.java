@@ -621,6 +621,39 @@ public class App extends BaseApplication {
             sendImageToSecondScreenByMoonearly();
         }
     }
+    public void  setWelcomeToSecondScreen(final String path){
+        if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        File file = new File(path);
+                        if (!file.exists()) {
+                            return;
+                        }
+                        sendImageToSecondScreen(path, new ISendCallback() {
+                            @Override
+                            public void onSendSuccess(long taskId) {
+                                Store.putLong(App.instance, Store.WELCOME_IMAGE_ID, taskId);
+                                showImg(taskId);
+                            }
+
+                            @Override
+                            public void onSendFail(int errorId, String errorInfo) {
+
+                            }
+
+                            @Override
+                            public void onSendProcess(long totle, long sended) {
+
+                            }
+                        });
+                    }
+                }).start();
+
+        }else{
+            sendImageToSecondScreenByMoonearly();
+        }
+    }
 
     private void sendImageToSecondScreenByMoonearly(){
         Map<String, Object> map = new HashMap<String, Object>();

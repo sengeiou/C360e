@@ -14,6 +14,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
+import com.alfredposclient.global.App;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,8 +167,9 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
                 LogUtil.d(TAG, resultList.toString());
                 if (resultList.size() > 0) {
                     String welcomeURL = resultList.get(0).getPhotoPath();
-                    Store.putString(SunmiActivity.this, Store.SUNMI_WELCOME, welcomeURL);
+//                    Store.putString(SunmiActivity.this, Store.SUNMI_WELCOME, welcomeURL);
                     Store.putInt(SunmiActivity.this, Store.SUNMI_STYLE, styleType);
+                    App.instance.setWelcomeToSecondScreen(welcomeURL);
                 }
             }
 

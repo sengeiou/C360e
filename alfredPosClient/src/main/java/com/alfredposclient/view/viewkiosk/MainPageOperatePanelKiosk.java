@@ -263,9 +263,6 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				parent.openCustomNoteView();
 				break;
 			case R.id.tv_cash_close:
-				if (!ButtonClickTimer.canClick(v)) {
-					return;
-				}
 				cashPay();
 				break;
 			default:
