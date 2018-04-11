@@ -164,7 +164,7 @@ public class SyncCentre {
 			SyncMsg syncMsg, Handler handler) {
 		//orderDataMsg
 			HttpAPI.cloudSync(context, syncMsg,
-					getAbsoluteUrl("receive/dataMsg"), bigSyncHttpClient);
+					getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
 	}
 	/*
 	 *  Sync X/Z Report Info to Cloud : for JOB
@@ -173,7 +173,7 @@ public class SyncCentre {
 			SyncMsg syncMsg, Handler handler) {
 		//reportDataMsg
 				HttpAPI.cloudSync(context, syncMsg,
-						getAbsoluteUrl("receive/dataMsg"), bigSyncHttpClient);
+						getAbsoluteUrl("receive/reportDataMsg"), bigSyncHttpClient);
 	}
 	
 	/*load day sales report from cloud */

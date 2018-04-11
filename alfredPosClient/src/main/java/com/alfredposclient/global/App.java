@@ -344,7 +344,9 @@ public class App extends BaseApplication {
         VERSION = getAppVersionName();
         UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);
-        CrashReport.initCrashReport(getApplicationContext(), "900043720", isOpenLog);
+        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
+        strategy.setAppChannel(APPPATH);
+        CrashReport.initCrashReport(getApplicationContext(), "900043720", isOpenLog,strategy);
         mDSKernel = DSKernel.newInstance();
         if(mDSKernel != null){
             mDSKernel.init(instance, new IConnectionCallback() {
