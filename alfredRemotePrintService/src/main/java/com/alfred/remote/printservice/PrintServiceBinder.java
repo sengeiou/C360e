@@ -1610,8 +1610,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					}
 
 			    	if(!TextUtils.isEmpty(orderNo))
-			    		billPrint.AddOrderNo(theOrder.getIsTakeAway(), orderNo);
-			    	billPrint.AddKioskHeader(theOrder.getTableName(), theOrder.getPersons(),
+			    		billPrint.AddOrderNo(orderNo);
+			    	billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
 			    							prtTitle.getBill_NO(), prtTitle.getPos(),
 			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), orderNo1, prtTitle.getGroupNum());
 			    	
@@ -1736,8 +1736,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 					}
 
 			    	if(!TextUtils.isEmpty(orderNo))
-			    		billPrint.AddOrderNo(theOrder.getIsTakeAway(), orderNo);
-			    	billPrint.AddKioskHeader(theOrder.getTableName(), theOrder.getPersons(),
+			    		billPrint.AddOrderNo(orderNo);
+			    	billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
 			    							prtTitle.getBill_NO(), prtTitle.getPos(),
 			    							prtTitle.getOp(), prtTitle.getDate()+" "+prtTitle.getTime(), orderNo1, prtTitle.getGroupNum());
 			    	

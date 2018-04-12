@@ -41,7 +41,7 @@ public class BaseApplication extends Application {
 
 	public static BaseApplication instance;
 	public static List<BaseActivity> activitys;
-	public static final int DATABASE_VERSION = 20;
+	public static final int DATABASE_VERSION = 21;
 	/**
 	 * 注意 
 	 * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
@@ -50,9 +50,9 @@ public class BaseApplication extends Application {
 	 */
 
 	public static boolean isDebug = false ;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = false;	//	release 时设置为false
+	public static boolean isOpenLog = true;	//	release 时设置为false
 
-	protected String APPPATH = "sunmi";// sunmi or google or alibaba;
+	protected String APPPATH = "alibaba";// sunmi or google or alibaba;
 
 	public static int UDP_INDEX_POS = 1;
 	public static int UDP_INDEX_WAITER = 2;

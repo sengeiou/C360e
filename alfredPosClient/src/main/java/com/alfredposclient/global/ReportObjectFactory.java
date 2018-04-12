@@ -562,7 +562,11 @@ public class ReportObjectFactory {
 		reportDaySales.setTakeawaySales(BH.formatDouble(takeawaySales, true).toString());
 		reportDaySales.setTakeawayTax(BH.formatDouble(takeawayTax, true).toString());
 		reportDaySales.setTakeawayQty(takeawayQty);
-		reportDaySales.setCreateTime(System.currentTimeMillis());
+		long createTime = System.currentTimeMillis();
+		if(App.instance.getSessionStatus() != null){
+			createTime = App.instance.getSessionStatus().getTime();
+		}
+		reportDaySales.setCreateTime(createTime);
 		reportDaySales.setUpdateTime(System.currentTimeMillis());
 		reportDaySales.setDeliveroo(deliveroo);
 		reportDaySales.setDeliverooQty(Integer.parseInt(deliverooQty));
@@ -572,6 +576,8 @@ public class ReportObjectFactory {
 		reportDaySales.setFoodpandaQty(Integer.parseInt(foodpandaQty));
 		reportDaySales.setVoucher(voucher);
 		reportDaySales.setVoucherQty(Integer.parseInt(voucherQty));
+		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
+		reportDaySales.setTotalHour(totalHour);
 		return reportDaySales;
 	}
 
@@ -2627,7 +2633,11 @@ public class ReportObjectFactory {
 		reportDaySales.setTakeawaySales(BH.formatDouble(takeawaySales, true).toString());
 		reportDaySales.setTakeawayTax(BH.formatDouble(takeawayTax, true).toString());
 		reportDaySales.setTakeawayQty(takeawayQty);
-		reportDaySales.setCreateTime(System.currentTimeMillis());
+		long createTime = System.currentTimeMillis();
+		if(App.instance.getSessionStatus() != null){
+			createTime = App.instance.getSessionStatus().getTime();
+		}
+		reportDaySales.setCreateTime(createTime);
 		reportDaySales.setUpdateTime(System.currentTimeMillis());
 		reportDaySales.setDeliveroo(deliveroo);
 		reportDaySales.setDeliverooQty(Integer.parseInt(deliverooQty));
@@ -2637,7 +2647,8 @@ public class ReportObjectFactory {
 		reportDaySales.setFoodpandaQty(Integer.parseInt(foodpandaQty));
 		reportDaySales.setVoucher(voucher);
 		reportDaySales.setVoucherQty(Integer.parseInt(voucherQty));
-
+		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
+		reportDaySales.setTotalHour(totalHour);
 		//-----------------------分割线----------------------------
 		reportSessionSales.setCash(reportDaySales.getTotalCash());
 		reportSessionSales.setStartDrawer(reportDaySales.getStartDrawerAmount());
@@ -2646,6 +2657,7 @@ public class ReportObjectFactory {
 		reportSessionSales.setActualAmount(reportDaySales.getWaiterAmount());
 		reportSessionSales.setDifference(reportDaySales.getDifference());
 		reportSessionSales.setBusinessDate(reportDaySales.getBusinessDate());
+
 		if(isclose)
 			ReportSessionSalesSQL.addReportSessionSales(reportSessionSales);
 		return reportDaySales;

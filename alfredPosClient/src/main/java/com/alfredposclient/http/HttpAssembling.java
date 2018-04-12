@@ -1,5 +1,7 @@
 package com.alfredposclient.http;
 
+import android.os.Build;
+
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.RevenueCenter;
@@ -29,6 +31,10 @@ public class HttpAssembling {
 											 String bizID, int machineType) throws UnsupportedEncodingException {
 		StringEntity entity = new StringEntity("{empId:" + userID
 				+ ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" +CommonUtil.getLocalMacAddress(App.instance) + "', machineType : " + machineType + "}");
+		if(App.instance.isSUNMIShow()){
+			entity = new StringEntity("{empId:" + userID
+					+ ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" +CommonUtil.getLocalMacAddress(App.instance) + "', snCode:'" + Build.SERIAL + "', machineType : " + machineType + "}");
+		}
 		return entity;
 	}
 
@@ -41,6 +47,9 @@ public class HttpAssembling {
 		map.put("restaurantKey", loginResult.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map));
 		return entity;
 	}
@@ -54,6 +63,9 @@ public class HttpAssembling {
 		map.put("restaurantKey", loginResult.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		int id = 0;
 		if(App.instance.getRevenueCenter() != null){
 			id = App.instance.getRevenueCenter().getId();
@@ -74,6 +86,9 @@ public class HttpAssembling {
 		map.put("revenueId", revenueCenter.getId());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}
@@ -86,6 +101,9 @@ public class HttpAssembling {
 				.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}
@@ -104,6 +122,9 @@ public class HttpAssembling {
 		map.put("syncMsg", syncMsg);
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}
@@ -116,6 +137,9 @@ public class HttpAssembling {
 				.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}
@@ -129,6 +153,9 @@ public class HttpAssembling {
 				.getRestaurantKey());
 		map.put("revenueId", revenueCenter.getId());
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		map.put("version", App.instance.VERSION );
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
@@ -142,6 +169,9 @@ public class HttpAssembling {
 				.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}	
@@ -154,6 +184,9 @@ public class HttpAssembling {
 				.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}	
@@ -166,6 +199,9 @@ public class HttpAssembling {
 				.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}	
@@ -178,6 +214,9 @@ public class HttpAssembling {
 				.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}	
@@ -188,6 +227,9 @@ public class HttpAssembling {
 		map.put("restaurantKey", "19yyrpy");
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}

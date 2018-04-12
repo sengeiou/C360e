@@ -145,7 +145,7 @@ public class MainPageSearchViewKiosk extends LinearLayout implements OnClickList
 		findViewById(R.id.ll_search).setOnClickListener(null);
 		iv_cancel = (ImageView) findViewById(R.id.iv_cancel);
 		iv_cancel.setOnClickListener(this);
-		itemDetailAdapter = new ItemDetailAdapter(context, itemDetails);
+		itemDetailAdapter = new ItemDetailAdapter(context, itemDetailList);
 		gv_items.setAdapter(itemDetailAdapter);
 
 		gv_items.setOnItemClickListener(new OnItemClickListener() {
@@ -252,10 +252,10 @@ public class MainPageSearchViewKiosk extends LinearLayout implements OnClickList
 		}, 100);
 //		if(handler == null || key == null)
 //			return;
-		Message msg = handler.obtainMessage();
-		msg.what = MainPageKiosk.VIEW_EVENT_SEARCH;
-		msg.obj = key;
-		handler.sendMessage(msg);
+//		Message msg = handler.obtainMessage();
+//		msg.what = MainPageKiosk.VIEW_EVENT_SEARCH;
+//		msg.obj = key;
+//		handler.sendMessage(msg);
 	}
 	
 	public void cancelSearch() {

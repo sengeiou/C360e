@@ -38,7 +38,23 @@ public class ButtonClickTimer {
 		}
 	}
 	public static long lastLinkTime;
+	private static Object lastOb;
 	public static boolean canLink() {
+		long currentTimeMillis = System.currentTimeMillis();
+		if (currentTimeMillis - lastLinkTime > 5000) {
+			lastLinkTime = currentTimeMillis;
+			return true;
+		} else {
+//			lastLinkTime = currentTimeMillis;
+			return false;
+		}
+	}
+
+	public static boolean canLink(Object ob) {
+		if(ob != lastOb){
+			lastOb = ob;
+			return true;
+		}
 		long currentTimeMillis = System.currentTimeMillis();
 		if (currentTimeMillis - lastLinkTime > 5000) {
 			lastLinkTime = currentTimeMillis;

@@ -176,6 +176,8 @@ public class ReportDaySales implements Serializable{
 
 	private Long updateTime;
 
+	private String totalHour;
+
 //	private String cashGstDiscount;
 //	private String netsGstDiscount;
 //	private String visaGstDiscount;
@@ -952,6 +954,14 @@ public class ReportDaySales implements Serializable{
 		this.voucher = voucher;
 	}
 
+	public String getTotalHour() {
+		return totalHour;
+	}
+
+	public void setTotalHour(String totalHour) {
+		this.totalHour = totalHour;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -1045,6 +1055,7 @@ public class ReportDaySales implements Serializable{
 				", takeawayQty=" + takeawayQty +
 				", createTime=" + createTime +
 				", updateTime=" + updateTime +
+				", totalHour='" + totalHour + '\'' +
 				'}';
 	}
 }

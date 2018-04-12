@@ -51,8 +51,8 @@ public class KOTPrint extends PrintJob{
 	public void AddHeader(int isTakeAway, String orderId) {
 		StringBuilder sbr = new StringBuilder();
 		if (isTakeAway==1) {
-			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
-					.append("         "+PrintService.instance.getResources().getString(R.string.order_no_))
+			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
+					.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
 					.append(orderId)
 					.append(reNext);
@@ -102,8 +102,7 @@ public class KOTPrint extends PrintJob{
 					.append(reNext);
 		}
 		if (isTakeAway==1) {
-			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print))
-					.append("  ")
+			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
 					.append(orderNo)
 					.append(reNext);
 		}else{

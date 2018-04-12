@@ -148,8 +148,6 @@ public class BillPrint extends PrintJob{
 		PrintData tabPrint = new PrintData();
 		String tabLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.table), this.FIXED_COL4_TOTAL/2);
 		String tabStr = tabLabel+":"+table;
-		if (isTakeAway==1)
-			tabStr = "("+PrintService.instance.getResources().getString(R.string.takeaway_print)+")"+tabStr;
 		tabPrint.setDataFormat(PrintData.FORMAT_TXT);
 		tabPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		tabPrint.setFontsize(2);
@@ -174,12 +172,21 @@ public class BillPrint extends PrintJob{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(isTakeAway == 1){
+			PrintData takeAwayPrint = new PrintData();
+			String str = PrintService.instance.getResources().getString(R.string.takeaway_print)+reNext;
+			takeAwayPrint.setDataFormat(PrintData.FORMAT_TXT);
+			takeAwayPrint.setTextAlign(PrintData.ALIGN_LEFT);
+			takeAwayPrint.setFontsize(2);
+			takeAwayPrint.setText(str);
+			this.data.add(takeAwayPrint);
+		}
 		//addHortionalLine();
 		addHortionaDoublelLine(this.charSize);
 	}
 	
 	/*Kiosk uses only*/
-	public void AddKioskHeader(String table, int pax, String billNo,
+	public void AddKioskHeader(int isTakeAway, String table, int pax, String billNo,
 			String posNo, String cashier, String dateTime, String orderNo, String groupNum) {
 		if(!TextUtils.isEmpty(table)) {
 			PrintData tableNamePrint = new PrintData();
@@ -205,6 +212,15 @@ public class BillPrint extends PrintJob{
 		orderNoPrint.setFontsize(2);
 		orderNoPrint.setText(padorderNo);
 		this.data.add(orderNoPrint);
+		if(isTakeAway == 1){
+			PrintData takeAwayPrint = new PrintData();
+			String str = PrintService.instance.getResources().getString(R.string.takeaway_print)+reNext;
+			takeAwayPrint.setDataFormat(PrintData.FORMAT_TXT);
+			takeAwayPrint.setTextAlign(PrintData.ALIGN_LEFT);
+			takeAwayPrint.setFontsize(2);
+			takeAwayPrint.setText(str);
+			this.data.add(takeAwayPrint);
+		}
 		//group num
 		if (!TextUtils.isEmpty(groupNum)) {
 			PrintData groupNumPrint = new PrintData();
@@ -358,24 +374,15 @@ public class BillPrint extends PrintJob{
 		return result.toString();
 	}
 	
-	public void AddOrderNo(int isTakeAway, String orderNo){
+	public void AddOrderNo(String orderNo){
 		PrintData header = new PrintData();
 		header.setDataFormat(PrintData.FORMAT_TXT);
 		header.setFontsize(2);
 		StringBuilder sbr = new StringBuilder(String.format("%1$" + this.charSize/2 + "s", ""));
-		if (isTakeAway==1) {
-			String tkw = PrintService.instance.getResources().getString(R.string.takeaway_print);
-			String ord = PrintService.instance.getResources().getString(R.string.order_no_) + orderNo;
-			sbr.replace(0, tkw.length()-1, tkw);
-			sbr.replace(this.charSize/2-ord.length()*2-1, this.charSize/2-1, ord);
-			header.setTextAlign(PrintData.ALIGN_LEFT);
-			header.setText(sbr.toString());
-		}else{
-			String ord = PrintService.instance.getResources().getString(R.string.order_no_) + orderNo;
-			sbr.replace(this.charSize/2-ord.length()*2-1, this.charSize/2-1, ord);
-			header.setTextAlign(PrintData.ALIGN_RIGHT);
-			header.setText(sbr.toString()+reNext);
-		}
+		String ord = PrintService.instance.getResources().getString(R.string.order_no_) + orderNo;
+		sbr.replace(this.charSize/2-ord.length()*2-1, this.charSize/2-1, ord);
+		header.setTextAlign(PrintData.ALIGN_RIGHT);
+		header.setText(sbr.toString()+reNext);
 		this.data.add(header);
 	}
 	

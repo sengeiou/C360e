@@ -883,12 +883,13 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					@Override
 					public void run() {
 						dismissPrinterLoadingDialog();
+						Store.remove(context, Store.SESSION_STATUS);
+						App.instance.setSessionStatus(null);
 					}
 				});
 			}
 		}).start();
-		Store.remove(context, Store.SESSION_STATUS);
-		App.instance.setSessionStatus(null);
+
 	}
 
 	private void closeAction(final View v) {
@@ -1636,24 +1637,26 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	public void httpRequestAction(int action, Object obj) {
 		if (action == ResultCode.DEVICE_NO_PERMIT) {
-			this.runOnUiThread(new Runnable() {
+			if(ButtonClickTimer.canLink(App.instance)) {
+				this.runOnUiThread(new Runnable() {
 
-				@Override
-				public void run() {
-					DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.warning),
-							ResultCode.getErrorResultStrByCode(context,
-									ResultCode.DEVICE_NO_PERMIT, null),
-							new OnClickListener() {
+					@Override
+					public void run() {
+						DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.warning),
+								ResultCode.getErrorResultStrByCode(context,
+										ResultCode.DEVICE_NO_PERMIT, null),
+								new OnClickListener() {
 
-								@Override
-								public void onClick(View arg0) {
-									Store.remove(context, Store.SYNC_DATA_TAG);
-									App.instance
-											.popAllActivityExceptOne(Welcome.class);
-								}
-							});
-				}
-			});
+									@Override
+									public void onClick(View arg0) {
+										Store.remove(context, Store.SYNC_DATA_TAG);
+										App.instance
+												.popAllActivityExceptOne(Welcome.class);
+									}
+								});
+					}
+				});
+			}
 		}
 	}
 
