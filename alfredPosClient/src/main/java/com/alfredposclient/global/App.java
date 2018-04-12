@@ -2586,16 +2586,16 @@ public class App extends BaseApplication {
                 }
             }
         }
-        boolean hasApk = copyApkFromAssets(this, "printServiceApk/Print.apk", Environment
+        boolean hasApk = copyApkFromAssets(this, "printServiceApk/print.apk", Environment
                 .getExternalStorageDirectory().getAbsolutePath()
-                + "/Print.apk");
+                + "/print.apk");
         if (printVersionCode < posVersionCode && hasApk) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setDataAndType(
                         Uri.parse("file://"
                                 + Environment.getExternalStorageDirectory()
-                                .getAbsolutePath() + "/Print.apk"),
+                                .getAbsolutePath() + "/print.apk"),
                         "application/vnd.android.package-archive");
                 intentFilter = new IntentFilter();
                 intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);

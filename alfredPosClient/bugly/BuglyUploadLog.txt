@@ -638,3 +638,7 @@ file=/Users/Alex/Work/Code/JobForAlfred/Android/AlfredPos/alfredPosClient/build/
 sha1=52f32ef136826932500bda23741c53dc55bfffeb
 appId=900043720
 
+file=/Users/Alex/Work/Code/JobForAlfred/Android/AlfredPos/alfredPosClient/build/outputs/mapping/release/mapping.txt
+sha1=52f32ef136826932500bda23741c53dc55bfffeb
+appId=900043720
+

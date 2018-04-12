@@ -28,7 +28,7 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 // 修改apk文件名
-                def fileName = "Waiter.apk"
+                def fileName = "waiter.apk"
                 output.outputFile = new File(output.outputFile.parent, fileName)
             }
         }

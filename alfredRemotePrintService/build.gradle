@@ -32,7 +32,7 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 // 修改apk文件名
-                def fileName = "Print.apk"
+                def fileName = "print.apk"
                 output.outputFile = new File(output.outputFile.parent, fileName)
             }
         }
