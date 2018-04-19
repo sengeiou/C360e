@@ -118,15 +118,14 @@ public class ReportObjectFactory {
 		Map<String, String> focBillMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT, businessDate);
-		String focBill = BH.doubleFormat.format(BH.getBD(focBillMap
-				.get("sumAmount")));
+		String focBill = BH.getBD(focBillMap.get("sumAmount")).toString();
 		String focBillQty = focBillMap.get("count");
 
 		Map<String, String> voidBillsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VOID, businessDate);
-		String billVoid = BH.doubleFormat.format(BH.getBD(voidBillsMap
-				.get("sumAmount")));
+		String billVoid = BH.getBD(voidBillsMap
+				.get("sumAmount")).toString();
 		String billVoidQty = voidBillsMap.get("count");
 
 		Map<String, String> refundBillsMap = PaymentSettlementSQL
@@ -139,141 +138,132 @@ public class ReportObjectFactory {
 		Map<String, String> cashMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_CASH, businessDate);
-		String totalCash = BH.doubleFormat.format(BH.getBD(cashMap
-				.get("sumAmount")));
+		String totalCash = BH.getBD(cashMap
+				.get("sumAmount")).toString();
 		String totalCashQty = cashMap.get("count");
 
 		Map<String, String> netsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_NETS, businessDate);
-		String nets = BH.doubleFormat
-				.format(BH.getBD(netsMap.get("sumAmount")));
+		String nets = BH.getBD(netsMap.get("sumAmount")).toString();
 		String netsQty = netsMap.get("count");
 
 		Map<String, String> alipayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_ALIPAY, businessDate);
-		String alipay = BH.doubleFormat
-				.format(BH.getBD(alipayMap.get("sumAmount")));
+		String alipay = BH.getBD(alipayMap.get("sumAmount")).toString();
 		String alipayQty = alipayMap.get("count");
 
 		Map<String, String> weixinpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate);
-		String weixinpay = BH.doubleFormat
-				.format(BH.getBD(weixinpayMap.get("sumAmount")));
+		String weixinpay = BH.getBD(weixinpayMap.get("sumAmount")).toString();
 		String weixinpayQty = weixinpayMap.get("count");
 
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_PAYPAL, businessDate);
-		String paypalpay = BH.doubleFormat
-				.format(BH.getBD(paypalpayMap.get("sumAmount")));
+		String paypalpay = BH.getBD(paypalpayMap.get("sumAmount")).toString();
 		String paypalpayQty = paypalpayMap.get("count");
 
 		Map<String, String> storedCardMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_STORED_CARD, businessDate);
-		String storedCard = BH.doubleFormat
-				.format(BH.getBD(storedCardMap.get("sumAmount")));
+		String storedCard = BH.getBD(storedCardMap.get("sumAmount")).toString();
 		String storedCardQty = storedCardMap.get("count");
 
 		Map<String, String> topUpsMap = ConsumingRecordsSQL.getSumTopUPAndRefoundByBusinessDate(businessDate);
-		String topUps = BH.doubleFormat
-				.format(BH.getBD(topUpsMap.get("sumAmount")));
+		String topUps = BH.getBD(topUpsMap.get("sumAmount")).toString();
 		String topUpsQty = topUpsMap.get("count");
 
 		Map<String, String> cashTopUpsMap = ConsumingRecordsSQL.getSumCashTopUPByBusinessDate(businessDate);
-		String cashTopUps = BH.doubleFormat
-				.format(BH.getBD(cashTopUpsMap.get("sumCashAmount")));
+		String cashTopUps = BH.getBD(cashTopUpsMap.get("sumCashAmount")).toString();
 
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VISA, businessDate);
-		String visa = BH.doubleFormat
-				.format(BH.getBD(visaMap.get("sumAmount")));
+		String visa = BH.getBD(visaMap.get("sumAmount")).toString();
 		String visaQty = visaMap.get("count");
 
 		Map<String, String> mcMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_MASTERCARD, businessDate);
-		String mc = BH.doubleFormat.format(BH.getBD(mcMap.get("sumAmount")));
+		String mc = BH.getBD(mcMap.get("sumAmount")).toString();
 		String mcQty = mcMap.get("count");
 
 		Map<String, String> amexMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_AMEX, businessDate);
-		String amex = BH.doubleFormat
-				.format(BH.getBD(amexMap.get("sumAmount")));
+		String amex = BH.getBD(amexMap.get("sumAmount")).toString();
 		String amexQty = amexMap.get("count");
 
 		Map<String, String> jblMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_JCB, businessDate);
-		String jbl = BH.doubleFormat.format(BH.getBD(jblMap.get("sumAmount")));
+		String jbl = BH.getBD(jblMap.get("sumAmount")).toString();
 		String jblQty = jblMap.get("count");
 
 		Map<String, String> unionMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_UNIPAY, businessDate);
-		String unionPay = BH.doubleFormat.format(BH.getBD(unionMap
-				.get("sumAmount")));
+		String unionPay = BH.getBD(unionMap
+				.get("sumAmount")).toString();
 		String unionPayQty = unionMap.get("count");
 
 		Map<String, String> dinerMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL,
 						businessDate);
-		String diner = BH.doubleFormat.format(BH.getBD(dinerMap
-				.get("sumAmount")));
+		String diner = BH.getBD(dinerMap
+				.get("sumAmount")).toString();
 		String dinerQty = dinerMap.get("count");
 
 		Map<String, String> holdldMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate);
-		String holdld = BH.doubleFormat.format(BH.getBD(holdldMap
-				.get("sumAmount")));
+		String holdld = BH.getBD(holdldMap
+				.get("sumAmount")).toString();
 		String holdldQty = holdldMap.get("count");
 
 		Map<String, String> totalVoidMap = OrderDetailSQL
 				.getSumOrderDetailDiscountByTimeAndVoidOrFreeType(
 						ParamConst.ORDERDETAIL_TYPE_VOID, businessDate);
-		String itemVoid = BH.doubleFormat.format(BH.getBD(totalVoidMap
-				.get("sumRealPrice")));
+		String itemVoid = BH.getBD(totalVoidMap
+				.get("sumRealPrice")).toString();
 		String itemVoidQty = totalVoidMap.get("sumItemNum");
 		Map<String, String> focItemMap = OrderDetailSQL
 				.getSumOrderDetailDiscountByTimeAndVoidOrFreeType(
 						ParamConst.ORDERDETAIL_TYPE_FREE, businessDate);
-		String focItem = BH.doubleFormat.format(BH.getBD(focItemMap
-				.get("sumRealPrice")));
+		String focItem = BH.getBD(focItemMap
+				.get("sumRealPrice")).toString();
 		String focItemQty = focItemMap.get("sumItemNum");
 
 		Map<String, String> deliverooMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_DELIVEROO, businessDate);
-		String deliveroo = BH.doubleFormat.format(BH.getBD(deliverooMap
-				.get("sumAmount")));
+		String deliveroo = BH.getBD(deliverooMap
+				.get("sumAmount")).toString();
 		String deliverooQty = deliverooMap.get("count");
 
 		Map<String, String> ubereatsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_UBEREATS, businessDate);
-		String ubereats = BH.doubleFormat.format(BH.getBD(ubereatsMap
-				.get("sumAmount")));
+		String ubereats = BH.getBD(ubereatsMap
+				.get("sumAmount")).toString();
 		String ubereatsQty = ubereatsMap.get("count");
 
 		Map<String, String> foodpandaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_FOODPANDA, businessDate);
-		String foodpanda = BH.doubleFormat.format(BH.getBD(foodpandaMap
-				.get("sumAmount")));
+		String foodpanda = BH.getBD(foodpandaMap
+				.get("sumAmount")).toString();
 		String foodpandaQty = foodpandaMap.get("count");
 
 		Map<String, String> voucherMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VOUCHER, businessDate);
-		String voucher = BH.doubleFormat.format(BH.getBD(voucherMap
-				.get("sumAmount")));
+		String voucher = BH.getBD(voucherMap
+				.get("sumAmount")).toString();
 		String voucherQty = voucherMap.get("count");
 
 		orderList = OrderSQL.getAllOrderByTime(businessDate);
@@ -559,8 +549,8 @@ public class ReportObjectFactory {
 		reportDaySales.setWaiterAmount(BH.getBD(sumActual).toString());
 		reportDaySales.setDifference(BH.getBD(sumDifference).toString());
 		reportDaySales.setCashTopUp(BH.getBD(cashTopUps).toString());
-		reportDaySales.setTakeawaySales(BH.formatDouble(takeawaySales, true).toString());
-		reportDaySales.setTakeawayTax(BH.formatDouble(takeawayTax, true).toString());
+		reportDaySales.setTakeawaySales(BH.getBD(takeawaySales).toString());
+		reportDaySales.setTakeawayTax(BH.getBD(takeawayTax).toString());
 		reportDaySales.setTakeawayQty(takeawayQty);
 		long createTime = System.currentTimeMillis();
 		if(App.instance.getSessionStatus() != null){
@@ -2164,16 +2154,16 @@ public class ReportObjectFactory {
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT, businessDate,
 						sessionStatus);
-		String focBill = BH.doubleFormat.format(BH.getBD(focBillMap
-				.get("sumAmount")));
+		String focBill = BH.getBD(focBillMap
+				.get("sumAmount")).toString();
 		String focBillQty = focBillMap.get("count");
 
 		Map<String, String> voidBillsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VOID, businessDate,
 						sessionStatus);
-		String billVoid = BH.doubleFormat.format(BH.getBD(voidBillsMap
-				.get("sumAmount")));
+		String billVoid = BH.getBD(voidBillsMap
+				.get("sumAmount")).toString();
 		String billVoidQty = voidBillsMap.get("count");
 
 		Map<String, String> refundBillsMap = PaymentSettlementSQL
@@ -2188,125 +2178,116 @@ public class ReportObjectFactory {
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_CASH, businessDate,
 						sessionStatus);
-		String totalCash = BH.doubleFormat.format(BH.getBD(cashMap
-				.get("sumAmount")));
+		String totalCash = BH.getBD(cashMap
+				.get("sumAmount")).toString();
 		String totalCashQty = cashMap.get("count");
 
 		Map<String, String> netsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_NETS, businessDate,
 						sessionStatus);
-		String nets = BH.doubleFormat
-				.format(BH.getBD(netsMap.get("sumAmount")));
+		String nets = BH.getBD(netsMap.get("sumAmount")).toString();
 		String netsQty = netsMap.get("count");
 		
 		Map<String, String> alipayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_ALIPAY, businessDate,
 						sessionStatus);
-		String alipay = BH.doubleFormat
-				.format(BH.getBD(alipayMap.get("sumAmount")));
+		String alipay = BH.getBD(alipayMap.get("sumAmount")).toString();
 		String alipayQty = alipayMap.get("count");
 		
 		Map<String, String> weixinpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate,
 						sessionStatus);
-		String weixinpay = BH.doubleFormat
-				.format(BH.getBD(weixinpayMap.get("sumAmount")));
+		String weixinpay = BH.getBD(weixinpayMap.get("sumAmount")).toString();
 		String weixinpayQty = weixinpayMap.get("count");
 
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_PAYPAL, businessDate,
 						sessionStatus);
-		String paypalpay = BH.doubleFormat
-				.format(BH.getBD(paypalpayMap.get("sumAmount")));
+		String paypalpay = BH.getBD(paypalpayMap.get("sumAmount")).toString();
 		String paypalpayQty = paypalpayMap.get("count");
 
 		Map<String, String> storedCardMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_STORED_CARD, businessDate,
 						sessionStatus);
-		String storedCard = BH.doubleFormat
-				.format(BH.getBD(storedCardMap.get("sumAmount")));
+		String storedCard = BH.getBD(storedCardMap.get("sumAmount")).toString();
 		String storedCardQty = storedCardMap.get("count");
 
 		Map<String, String> topUpsMap = ConsumingRecordsSQL.getSumTopUPAndRefoundBySession(businessDate, sessionStatus);
-		String topUps = BH.doubleFormat
-				.format(BH.getBD(topUpsMap.get("sumAmount")));
+		String topUps = BH.getBD(topUpsMap.get("sumAmount")).toString();
 		String topUpsQty = topUpsMap.get("count") == null ? "0" : topUpsMap.get("count");
 		Map<String, String> cashTopUpsMap = ConsumingRecordsSQL.getSumCashTopUPBySession(businessDate, sessionStatus);
-		String cashTopUps = BH.doubleFormat
-				.format(BH.getBD(cashTopUpsMap.get("sumCashAmount")));
+		String cashTopUps = BH.getBD(cashTopUpsMap.get("sumCashAmount")).toString();
 
 		Map<String, String> visaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VISA, businessDate,
 						sessionStatus);
-		String visa = BH.doubleFormat
-				.format(BH.getBD(visaMap.get("sumAmount")));
+		String visa = BH.getBD(visaMap.get("sumAmount")).toString();
 		String visaQty = visaMap.get("count");
 
 		Map<String, String> mcMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_MASTERCARD, businessDate,
 						sessionStatus);
-		String mc = BH.doubleFormat.format(BH.getBD(mcMap.get("sumAmount")));
+		String mc = BH.getBD(mcMap.get("sumAmount")).toString();
 		String mcQty = mcMap.get("count");
 
 		Map<String, String> amexMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_AMEX, businessDate,
 						sessionStatus);
-		String amex = BH.doubleFormat
-				.format(BH.getBD(amexMap.get("sumAmount")));
+		String amex = BH.getBD(amexMap.get("sumAmount")).toString();
 		String amexQty = amexMap.get("count");
 
 		Map<String, String> jblMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_JCB, businessDate,
 						sessionStatus);
-		String jbl = BH.doubleFormat.format(BH.getBD(jblMap.get("sumAmount")));
+		String jbl = BH.getBD(jblMap.get("sumAmount")).toString();
 		String jblQty = jblMap.get("count");
 
 		Map<String, String> unionMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_UNIPAY, businessDate,
 						sessionStatus);
-		String unionPay = BH.doubleFormat.format(BH.getBD(unionMap
-				.get("sumAmount")));
+		String unionPay = BH.getBD(unionMap
+				.get("sumAmount")).toString();
 		String unionPayQty = unionMap.get("count");
 
 		Map<String, String> dinerMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL,
 						businessDate, sessionStatus);
-		String diner = BH.doubleFormat.format(BH.getBD(dinerMap
-				.get("sumAmount")));
+		String diner = BH.getBD(dinerMap
+				.get("sumAmount")).toString();
 		String dinerQty = dinerMap.get("count");
 
 		Map<String, String> holdldMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate,
 						sessionStatus);
-		String holdld = BH.doubleFormat.format(BH.getBD(holdldMap
-				.get("sumAmount")));
+		String holdld = BH.getBD(holdldMap
+				.get("sumAmount")).toString();
 		String holdldQty = holdldMap.get("count");
 
 		Map<String, String> totalVoidMap = OrderDetailSQL
 				.getSumOrderDetailDiscountByTimeAndVoidOrFreeType(
 						ParamConst.ORDERDETAIL_TYPE_VOID, businessDate,
 						sessionStatus);
-		String itemVoid = BH.doubleFormat.format(BH.getBD(totalVoidMap
-				.get("sumRealPrice")));
+		String itemVoid = BH.getBD(totalVoidMap
+				.get("sumRealPrice")).toString();
 		String itemVoidQty = totalVoidMap.get("sumItemNum");
 		Map<String, String> focItemMap = OrderDetailSQL
 				.getSumOrderDetailDiscountByTimeAndVoidOrFreeType(
 						ParamConst.ORDERDETAIL_TYPE_FREE, businessDate,
 						sessionStatus);
-		String focItem = BH.doubleFormat.format(BH.getBD(focItemMap
-				.get("sumRealPrice")));
+		String focItem = BH.getBD(focItemMap
+				.get("sumRealPrice")).toString();
 		String focItemQty = focItemMap.get("sumItemNum");
 
 
@@ -2314,32 +2295,32 @@ public class ReportObjectFactory {
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_DELIVEROO, businessDate,
 						sessionStatus);
-		String deliveroo = BH.doubleFormat.format(BH.getBD(deliverooMap
-				.get("sumAmount")));
+		String deliveroo = BH.getBD(deliverooMap
+				.get("sumAmount")).toString();
 		String deliverooQty = deliverooMap.get("count");
 
 		Map<String, String> ubereatsMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_UBEREATS, businessDate,
 						sessionStatus);
-		String ubereats = BH.doubleFormat.format(BH.getBD(ubereatsMap
-				.get("sumAmount")));
+		String ubereats = BH.getBD(ubereatsMap
+				.get("sumAmount")).toString();
 		String ubereatsQty = ubereatsMap.get("count");
 
 		Map<String, String> foodpandaMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_FOODPANDA, businessDate,
 						sessionStatus);
-		String foodpanda = BH.doubleFormat.format(BH.getBD(foodpandaMap
-				.get("sumAmount")));
+		String foodpanda = BH.getBD(foodpandaMap
+				.get("sumAmount")).toString();
 		String foodpandaQty = foodpandaMap.get("count");
 
 		Map<String, String> voucherMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_VOUCHER, businessDate,
 						sessionStatus);
-		String voucher = BH.doubleFormat.format(BH.getBD(voucherMap
-				.get("sumAmount")));
+		String voucher = BH.getBD(voucherMap
+				.get("sumAmount")).toString();
 		String voucherQty = voucherMap.get("count");
 
 		orderList = OrderSQL.getAllOrderByTime(businessDate, sessionStatus);
@@ -2630,8 +2611,8 @@ public class ReportObjectFactory {
 		reportDaySales.setWaiterAmount(BH.getBD(actualAmount).toString());
 		reportDaySales.setDifference(difference.toString());
 		reportDaySales.setCashTopUp(BH.getBD(cashTopUps).toString());
-		reportDaySales.setTakeawaySales(BH.formatDouble(takeawaySales, true).toString());
-		reportDaySales.setTakeawayTax(BH.formatDouble(takeawayTax, true).toString());
+		reportDaySales.setTakeawaySales(BH.getBD(takeawaySales).toString());
+		reportDaySales.setTakeawayTax(BH.getBD(takeawayTax).toString());
 		reportDaySales.setTakeawayQty(takeawayQty);
 		long createTime = System.currentTimeMillis();
 		if(App.instance.getSessionStatus() != null){
@@ -3433,35 +3414,35 @@ public class ReportObjectFactory {
 				Map<String, String> focBillMap = PaymentSettlementSQL
 						.getPaymentSettlementSumPaidAndCount(
 								ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT, businessDate);
-				String focBill = BH.doubleFormat.format(BH.getBD(focBillMap
-						.get("sumAmount")));
+				String focBill = BH.getBD(focBillMap
+						.get("sumAmount")).toString();
 				String focBillQty = focBillMap.get("count");
 		
 				Map<String, String> voidBillsMap = PaymentSettlementSQL
 						.getPaymentSettlementSumPaidAndCount(
 								ParamConst.SETTLEMENT_TYPE_VOID, businessDate);
-				String billVoid = BH.doubleFormat.format(BH.getBD(voidBillsMap
-						.get("sumAmount")));
+				String billVoid = BH.getBD(voidBillsMap
+						.get("sumAmount")).toString();
 				String billVoidQty = voidBillsMap.get("count");
 		
 				Map<String, String> holdldMap = PaymentSettlementSQL
 						.getPaymentSettlementSumPaidAndCount(
 								ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD, businessDate);
-				String holdld = BH.doubleFormat.format(BH.getBD(holdldMap
-						.get("sumAmount")));
+				String holdld = BH.getBD(holdldMap
+						.get("sumAmount")).toString();
 				String holdldQty = holdldMap.get("count");
 		
 				Map<String, String> totalVoidMap = OrderDetailSQL
 						.getSumOrderDetailDiscountByTimeAndVoidOrFreeType(
 								ParamConst.ORDERDETAIL_TYPE_VOID, businessDate);
-				String itemVoid = BH.doubleFormat.format(BH.getBD(totalVoidMap
-						.get("sumRealPrice")));
+				String itemVoid = BH.getBD(totalVoidMap
+						.get("sumRealPrice")).toString();
 				String itemVoidQty = totalVoidMap.get("sumItemNum");
 				Map<String, String> focItemMap = OrderDetailSQL
 						.getSumOrderDetailDiscountByTimeAndVoidOrFreeType(
 								ParamConst.ORDERDETAIL_TYPE_FREE, businessDate);
-				String focItem = BH.doubleFormat.format(BH.getBD(focItemMap
-						.get("sumRealPrice")));
+				String focItem = BH.getBD(focItemMap
+						.get("sumRealPrice")).toString();
 				String focItemQty = focItemMap.get("sumItemNum");
 				orderList = OrderSQL.getAllOrderByTime(businessDate);
 				int orderQty = 0;

@@ -874,6 +874,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								result.put("session", sessionStatus);
 								result.put("businessDate", App.instance.getBusinessDate());	
 								result.put("currencySymbol", App.instance.getLocalRestaurantConfig().getCurrencySymbol());
+								result.put("isDouble", App.instance.getLocalRestaurantConfig().getCurrencySymbolType() >= 0);
 							} else {
 								result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
 							}

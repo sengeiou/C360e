@@ -7,6 +7,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.BH;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class LocalRestaurantConfig {
 
 	// 货币符号
 	private String currencySymbol;
+
+	private int currencySymbolType;
 
 	private IncludedTax includedTax;
 
@@ -43,6 +46,7 @@ public class LocalRestaurantConfig {
 				ParamConst.SESSION_STATUS_LUNCH,
 				ParamConst.SESSION_STATUS_DINNER });
 		this.currencySymbol = "$";
+		this.currencySymbolType = 100206;
 		this.roundType = ParamConst.ROUND_NONE;
 		this.includedTax = new IncludedTax();
 		this.sendFoodCardNumList = new ArrayList<String>();
@@ -105,6 +109,19 @@ public class LocalRestaurantConfig {
 
 	public void setCurrencySymbol(RestaurantConfig restaurantConfig) {
 		this.currencySymbol = restaurantConfig.getParaValue1();
+	}
+
+	public int getCurrencySymbolType() {
+		return currencySymbolType;
+	}
+
+	public void setCurrencySymbolType(RestaurantConfig restaurantConfig) {
+		if(restaurantConfig != null && restaurantConfig.getParaId() != null) {
+			this.currencySymbolType = restaurantConfig.getParaId();
+		}else{
+			this.currencySymbolType = 0;
+		}
+		BH.initFormart(this.currencySymbolType >= 0);
 	}
 
 	public IncludedTax getIncludedTax() {

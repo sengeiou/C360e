@@ -1,9 +1,9 @@
 package com.alfredbase.utils;
 
+import com.alfredbase.ParamConst;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-
-import com.alfredbase.ParamConst;
 
 /**
  * BigDecimal 辅助类
@@ -12,10 +12,19 @@ import com.alfredbase.ParamConst;
  * 
  */
 public class BH {
-	public static DecimalFormat doubleFormat = new DecimalFormat("0.00");
-	public static DecimalFormat threeFormat = new DecimalFormat("0.000");
-	public static DecimalFormat intFormat = new DecimalFormat("0");
-
+	private static final DecimalFormat doubleFormat = new DecimalFormat("0.00");
+	private static final DecimalFormat threeFormat = new DecimalFormat("0.000");
+	public static final DecimalFormat intFormat = new DecimalFormat("0");
+	private static DecimalFormat format = doubleFormat;
+	private static boolean isDouble = false;
+	public static void initFormart(boolean isdouble){
+		if(isdouble){
+			format = doubleFormat;
+		}else{
+			format = intFormat;
+		}
+		isDouble = isdouble;
+	}
 	/**
 	 * 加法
 	 * 
@@ -27,7 +36,7 @@ public class BH {
 	public static BigDecimal add(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
 		if (needFormat) {
-			return new BigDecimal(doubleFormat.format(value1.add(value2)));
+			return new BigDecimal(format.format(value1.add(value2)));
 		} else {
 			return value1.add(value2);
 		}
@@ -44,7 +53,7 @@ public class BH {
 	public static BigDecimal sub(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
 		if (needFormat) {
-			return new BigDecimal(doubleFormat.format(value1.subtract(value2)));
+			return new BigDecimal(format.format(value1.subtract(value2)));
 		} else {
 			return value1.subtract(value2);
 		}
@@ -61,7 +70,7 @@ public class BH {
 	public static BigDecimal mul(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
 		if (needFormat) {
-			return new BigDecimal(doubleFormat.format(value1.multiply(value2)));
+			return new BigDecimal(format.format(value1.multiply(value2)));
 		} else {
 			return value1.multiply(value2);
 		}
@@ -78,7 +87,7 @@ public class BH {
 	public static BigDecimal div(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
 		if (needFormat) {
-			return value1.divide(value2, 2, BigDecimal.ROUND_HALF_UP);
+			return new BigDecimal(format.format(value1.divide(value2)));
 		} else {
 			return value1.divide(value2, 5, BigDecimal.ROUND_HALF_UP);
 		}
@@ -102,32 +111,37 @@ public class BH {
 
 	public static BigDecimal getBD(Integer integer) {
 		if (CommonUtil.isNull(integer))
-			return new BigDecimal(ParamConst.DOUBLE_ZERO);
-		return new BigDecimal(doubleFormat.format(new BigDecimal(integer)));
+			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+		return new BigDecimal(format.format(new BigDecimal(integer)));
 	}
 
 	public static BigDecimal getBD(String string) {
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(ParamConst.DOUBLE_ZERO);
-		return new BigDecimal(doubleFormat.format(new BigDecimal(string)));
+			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+		return new BigDecimal(format.format(new BigDecimal(string)));
 	}
 	
 	public static BigDecimal getBDNoFormat(String string){
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(ParamConst.DOUBLE_ZERO);
+			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
 		return new BigDecimal(string);
 	}
 	
 	public static BigDecimal getBDThirdFormat(String string){
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(ParamConst.THREE_ZERO);
+			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
 		return new BigDecimal(threeFormat.format(new BigDecimal(string)));
 	}
 	
 	public static BigDecimal getBD(Double string) {
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(ParamConst.DOUBLE_ZERO);
-		return new BigDecimal(doubleFormat.format(new BigDecimal(string)));
+			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+		return new BigDecimal(format.format(new BigDecimal(string)));
+	}
+	public static BigDecimal getBD(BigDecimal bigDecimal) {
+		if (CommonUtil.isNull(bigDecimal))
+			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+		return new BigDecimal(format.format(bigDecimal));
 	}
 
 	/**
@@ -139,7 +153,7 @@ public class BH {
 	 */
 	public static BigDecimal abs(BigDecimal value1,boolean needFormat) {
 		if (needFormat) {
-			return new BigDecimal(doubleFormat.format(value1.abs()));
+			return new BigDecimal(format.format(value1.abs()));
 		} else {
 			return value1.abs();
 		}
@@ -159,18 +173,18 @@ public class BH {
 			return false;
 		}
 	}
-
-	/**
-	 * 保留小数点后两位
-	 * @param value1
-	 * @param needFormat
-	 * @return
-	 */
-	public static BigDecimal formatDouble(BigDecimal value1, boolean needFormat) {
-		if (needFormat) {
-			return new BigDecimal(doubleFormat.format(value1));
-		} else {
-			return value1;
-		}
-	}
+//
+//	/**
+//	 * 保留小数点后两位
+//	 * @param value1
+//	 * @param needFormat
+//	 * @return
+//	 */
+//	public static BigDecimal formatDouble(BigDecimal value1, boolean needFormat) {
+//		if (needFormat) {
+//			return new BigDecimal(format.format(value1));
+//		} else {
+//			return value1;
+//		}
+//	}
 }

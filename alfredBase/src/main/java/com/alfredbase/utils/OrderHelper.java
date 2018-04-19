@@ -286,7 +286,7 @@ public class OrderHelper {
 					}
 				}
 			}
-			order.setDiscountAmount(BH.doubleFormat.format(discount));
+			order.setDiscountAmount(BH.getBD(discount).toString());
 	}
 	// 只有修改orderDiscount的时候才能调用这个方法
 	public static void setOrderDiscountByOrder(Order order,
@@ -317,7 +317,7 @@ public class OrderHelper {
 							true);
 				}
 			}
-			order.setDiscountAmount(BH.doubleFormat.format(discount));
+			order.setDiscountAmount(BH.getBD(discount).toString());
 //			if (Double.parseDouble(order.getSubTotal()) > 0) {
 //				order.setDiscountRate(BH.div(discount,
 //						BH.getBD(order.getSubTotal()), true).toString());
@@ -335,7 +335,7 @@ public class OrderHelper {
 						BH.getBD(orderDetail.getRealPrice()), false);
 			}
 		}
-		order.setSubTotal(BH.doubleFormat.format(subTotal));
+		order.setSubTotal(BH.getBD(subTotal).toString());
 	}
 
 	public static void setOrderTax(Order order, List<OrderDetail> orderDetails) {
@@ -355,7 +355,7 @@ public class OrderHelper {
 				}
 			}
 		}
-		order.setTaxAmount(BH.doubleFormat.format(tax));
+		order.setTaxAmount(BH.getBD(tax).toString());
 	}
 
 	public static void setOrderTotal(Order order, List<OrderDetail> orderDetails) {
@@ -463,7 +463,7 @@ public class OrderHelper {
 				}
 			}
 		}
-			orderSplit.setDiscountAmount(BH.doubleFormat.format(discount).toString());
+			orderSplit.setDiscountAmount(BH.getBD(discount).toString());
 	}
 	
 	public static void setOrderSplitSubTotal(Order order, OrderSplit orderSplit,
@@ -476,7 +476,7 @@ public class OrderHelper {
 				}
 			}
 		}
-		orderSplit.setSubTotal(BH.doubleFormat.format(subTotal).toString());
+		orderSplit.setSubTotal(BH.getBD(subTotal).toString());
 	}
 	
 	public static void setOrderSplitTax(Order order, OrderSplit orderSplit, List<OrderDetail> orderDetails){
@@ -518,7 +518,7 @@ public class OrderHelper {
 				}
 			}
 		}
-		orderSplit.setTaxAmount(BH.doubleFormat.format(orderSplitTax).toString());
+		orderSplit.setTaxAmount(BH.getBD(orderSplitTax).toString());
 	}
 	
 	public static void setOrderSplitTotal(Order order, OrderSplit orderSplit, List<OrderDetail> orderDetails){
