@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.RxBus;
@@ -543,7 +544,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                     UIHelp.showShortToast(mainPage, "Stored card change succeed");
                     break;
                 case QUERYBALANCE_STOREDCARD_SUCCEED:
-                    DialogFactory.showOneButtonCompelDialog(context, "", "Balance: " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + (String) msg.obj, null);
+                    DialogFactory.showOneButtonCompelDialog(context, "", "Balance: " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD((String) msg.obj).toString(), null);
                     et_query_phone.setText("");
                     clearRegistInfo();
                     break;

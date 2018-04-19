@@ -104,6 +104,7 @@ public class HttpAnalysis {
 			JSONObject object = new JSONObject(new String(responseBody));
 			String userKey = object.optString("userKey");
 			String currencySymbol = object.optString("currencySymbol");
+			boolean isDouble = object.optBoolean("isDouble");
 			SessionStatus sessionStatus = gson.fromJson(
 					object.optString("session"), SessionStatus.class);
 			MainPosInfo mainPosInfo = gson.fromJson(object.optString("mainPosInfo"), MainPosInfo.class);
@@ -120,7 +121,7 @@ public class HttpAnalysis {
 			Store.saveObject(App.instance, Store.SESSION_STATUS, sessionStatus);
 			App.instance.setMainPosInfo(mainPosInfo);
 			App.instance.setSessionStatus(sessionStatus);
-			App.instance.setCurrencySymbol(currencySymbol);
+			App.instance.setCurrencySymbol(currencySymbol, isDouble);
 			CoreData.getInstance().setUserKey(userKey);
 			return userKey;
 		} catch (JSONException e) {

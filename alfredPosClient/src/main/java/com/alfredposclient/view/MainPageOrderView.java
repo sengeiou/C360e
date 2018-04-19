@@ -326,16 +326,11 @@ public class MainPageOrderView extends LinearLayout {
 		}
 		tv_table_name_ontop.setText(orderNoStr);
 		tv_item_count.setText("" + itemCount);
-		tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()));
-		tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()));
-		tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()));
-		if (CommonUtil.isNull(order.getTotal())) {
-			tv_grand_total.setText(context.getResources().getString(R.string.grand_total)+": " + 
-					App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-		} else {
-			tv_grand_total.setText(context.getResources().getString(R.string.grand_total)+": " + 
-					App.instance.getLocalRestaurantConfig().getCurrencySymbol() + order.getTotal());
-		}
+		tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString());
+		tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString());
+		tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString());
+		tv_grand_total.setText(context.getResources().getString(R.string.grand_total)+": " +
+				App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
 	}
 
 	class OrderAdapter extends AbstractSlideExpandableListAdapter {
@@ -603,8 +598,8 @@ public class MainPageOrderView extends LinearLayout {
 			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()));
 
 			if(orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE){
-				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
+				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
+				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
 			}else{
 				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getDiscountPrice()).toString());
 				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()

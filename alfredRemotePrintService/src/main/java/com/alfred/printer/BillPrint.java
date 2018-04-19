@@ -407,7 +407,7 @@ public class BillPrint extends PrintJob{
 	
 
 	public void addOrderModifier(String itemName, int scale, String price){
-		BigDecimal bigDecimal = BH.formatDouble(new BigDecimal(price), true);
+		BigDecimal bigDecimal = BH.getBD(price);
 		PrintData orderMod = new PrintData();
 		orderMod.setDataFormat(PrintData.FORMAT_TXT);
 		orderMod.setFontsize(scale);
@@ -452,7 +452,7 @@ public class BillPrint extends PrintJob{
 //			ArrayList<String> taxPercentages = taxes.get("taxPercentages");
 			for(Map<String, String> map : taxes){
 				PrintData taxPrint = new PrintData();
-	            String taxvalue = StringUtil.padLeft(BH.doubleFormat.format(BH.getBD(map.get("taxPriceSum"))), this.FIXED_COL4_TOTAL);
+	            String taxvalue = StringUtil.padLeft(BH.getBD(map.get("taxPriceSum")).toString(), this.FIXED_COL4_TOTAL);
 	                
 	            String padTax = map.get("taxName")
 							+ "("

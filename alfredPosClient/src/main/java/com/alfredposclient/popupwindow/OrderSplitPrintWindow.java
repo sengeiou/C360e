@@ -243,8 +243,8 @@ public class OrderSplitPrintWindow implements OnClickListener {
 			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
 
 				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
-					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
+					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
+					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
 				} else {
 					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
 							+ BH.getBD(orderDetail.getDiscountPrice()));
@@ -259,21 +259,21 @@ public class OrderSplitPrintWindow implements OnClickListener {
 						BH.getBDNoFormat(orderDetail.getDiscountRate()), true);
 
 				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
-					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
+					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
+					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
 				} else {
-					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + discount);
+					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(discount).toString());
 					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
 							+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
 									discount, true));
 				}
 			} else {
-				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
+				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
 				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + ParamConst.DOUBLE_ZERO);
+					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
 				} else {
 					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-							+ BH.getBD(orderDetail.getRealPrice()));
+							+ BH.getBD(orderDetail.getRealPrice()).toString());
 				}
 			}
 			if (orderDetail.getGroupId().intValue() > 0) {
