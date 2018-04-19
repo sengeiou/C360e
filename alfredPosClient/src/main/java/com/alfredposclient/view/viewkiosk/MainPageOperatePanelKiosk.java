@@ -104,6 +104,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 //		findViewById(R.id.tv_transfer_table).setOnClickListener(this);
 		findViewById(R.id.tv_kick_cashdrawer).setOnClickListener(this);
 		findViewById(R.id.tv_take_away).setOnClickListener(this);
+		findViewById(R.id.tv_hold_bill).setOnClickListener(this);
 		findViewById(R.id.tv_table_name).setOnClickListener(this);
 		findViewById(R.id.tv_cash_close).setOnClickListener(this);
 //		findViewById(R.id.rl_pax).setOnClickListener(this);
@@ -160,6 +161,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_open_item));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_delete_order));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_take_away));
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_hold_bill));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_table_name));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_cash_close));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_kick_cashdrawer));
@@ -256,9 +258,21 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				OrderSQL.updateOrder(order);
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
 				break;
-//			case R.id.rl_pax:
-//				handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX,(String)tv_pax.getText().toString()));
-//				break;
+			case R.id.tv_hold_bill:
+				if(order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
+					return;
+				}
+				DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning), "Hold the Order ?",
+						parent.getString(R.string.cancel), parent.getString(R.string.ok),
+						null, new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								order.setOrderStatus(ParamConst.ORDER_STATUS_HOLD);
+								OrderSQL.updateOrder(order);
+								handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+							}
+						});
+				break;
 			case R.id.tv_table_name:
 				parent.openCustomNoteView();
 				break;

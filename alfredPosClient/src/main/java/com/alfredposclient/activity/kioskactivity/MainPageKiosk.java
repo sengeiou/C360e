@@ -180,6 +180,7 @@ public class MainPageKiosk extends BaseActivity {
 	public static final int VIEW_EVENT_SET_WEIGHT = 147;
 	public static final int CHECK_TO_CLOSE_CUSTOM_NOTE_VIEW = 148;
 	public static final int CONTROL_PAGE_ORDER_VIEW_MASK = 149;
+	public static final int VIEW_EVENT_START_KIOSK_BOLD = 150;
 
 
 	public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
@@ -1436,6 +1437,9 @@ public class MainPageKiosk extends BaseActivity {
 			case CHECK_TO_CLOSE_CUSTOM_NOTE_VIEW:
 				mainPageMenuView.checkToCloseCustomNoteView();
 				break;
+			case VIEW_EVENT_START_KIOSK_BOLD:
+				UIHelp.startKioskHoldActivity(context, orderDetails != null && orderDetails.size() > 0, currentOrder);
+				break;
 			default:
 				break;
 			}
@@ -1866,7 +1870,11 @@ public class MainPageKiosk extends BaseActivity {
 				SyncCentre.getInstance().updateStoredCardValue(context, map, handler);
 				loadingDialog.show();
 			}
-		}else{
+		}else if(requestCode == KioskHoldActivity.CHECK_REQUEST_CODE && resultCode == KioskHoldActivity.CHECK_RESULT_CODE){
+			Map<String,Object> map = (Map<String, Object>) data.getExtras().get("map");
+			handler.sendMessage(handler.obtainMessage(
+					MainPage.VIEW_EVENT_CLOSE_BILL, map));
+		}else {
 			activityRequestCode = 0;
 //			mDrawerLayout.postDelayed(new Runnable() {
 //

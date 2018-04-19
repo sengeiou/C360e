@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.R;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.activity.BOHSettlementActivity;
 import com.alfredposclient.activity.CashInOutHtml;
@@ -32,6 +33,7 @@ import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.TableSummaryActivity;
 import com.alfredposclient.activity.XZReportActivity;
+import com.alfredposclient.activity.kioskactivity.KioskHoldActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 
 public class UIHelp {
@@ -217,5 +219,12 @@ public class UIHelp {
 	public static void startTableSummaryActivity(BaseActivity context) {
 		Intent intent = new Intent(context, TableSummaryActivity.class);
 		context.startActivity(intent);
+	}
+
+	public static void startKioskHoldActivity(BaseActivity context, boolean hasOrder, Order currentOrder){
+		Intent intent = new Intent(context, KioskHoldActivity.class);
+		intent.putExtra("hasOrder", hasOrder);
+		intent.putExtra("currentOrder", currentOrder);
+		context.startActivityForResult(intent, KioskHoldActivity.CHECK_REQUEST_CODE);
 	}
 }

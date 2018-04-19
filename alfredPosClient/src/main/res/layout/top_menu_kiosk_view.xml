@@ -157,12 +157,30 @@
                     android:visibility="invisible" />
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/ll_kiosk_hold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toLeftOf="@+id/ll_net_order"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="5dp" >
+                <TextView
+                    android:id="@+id/tv_kiosk_hold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/kiosk_hold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_s" />
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/ll_net_order"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@+id/left_line"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"

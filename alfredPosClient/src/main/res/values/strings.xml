@@ -80,6 +80,8 @@
     <string name="print_bill">Print</string>
     <string name="colse_bill">Close</string>
     <string name="transfer_table">Transfer\nTable</string>
+    <string name="hold_bill">Hold\nBill</string>
+    <string name="kiosk_hold">Kiosk and Hold</string>
     <string name="open_item">Open\nitem</string>
     <string name="edit_kot">Edit\nkot</string>
     <string name="take_away">Take\naway</string>

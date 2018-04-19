@@ -21,6 +21,7 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
+import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.ManagerWindow;
@@ -34,6 +35,7 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 	private LinearLayout ll_call_waiter;
 	private LinearLayout ll_get_bill;
 	private LinearLayout ll_net_order;
+	private LinearLayout ll_kiosk_hold;
 	private TextView tv_manage;
 	private RelativeLayout rl_app_num;
 	private TextView tv_app_num;
@@ -79,9 +81,11 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 		ll_call_waiter = (LinearLayout) findViewById(R.id.ll_call_waiter);
 		ll_get_bill = (LinearLayout) findViewById(R.id.ll_get_bill);
 		ll_net_order = (LinearLayout) findViewById(R.id.ll_net_order);
+		ll_kiosk_hold = (LinearLayout) findViewById(R.id.ll_kiosk_hold);
 
 		ll_get_bill.setOnClickListener(this);
 		ll_net_order.setOnClickListener(this);
+		ll_kiosk_hold.setOnClickListener(this);
 		findViewById(R.id.tv_search).setOnClickListener(this);
 		initTextTypeFace();
 		rl_app_num = (RelativeLayout) findViewById(R.id.rl_app_num);
@@ -109,6 +113,7 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_get_bill_num));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_waiter));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_net_order));
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_kiosk_hold));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_waiter_number));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_search));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_revenue_center_name));
@@ -160,6 +165,11 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 				break;
 			case R.id.ll_net_order:
 				UIHelp.startNetWorkOrderActivity(parent, NetWorkOrderActivity.CHECK_REQUEST_CODE);
+				break;
+			case R.id.ll_kiosk_hold:
+				Message msg = handler.obtainMessage();
+				msg.what = MainPageKiosk.VIEW_EVENT_START_KIOSK_BOLD;
+				handler.sendMessage(msg);
 				break;
 			default:
 				break;

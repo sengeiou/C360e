@@ -26,7 +26,7 @@ public class Order implements Serializable {
 	 */
 	private Integer persons;
 	/**
-	 * 订单状态(1打开 从订单生成到打印凭条、10waiter发送到pos机、11待支付 、12已支付、13 赊账、20拆单、21拆单结算中、30已完成)
+	 * 订单状态(1打开 从订单生成到打印凭条、10waiter发送到pos机、11待支付 、12已支付、13 挂单、20拆单、21拆单结算中、30已完成)
 	 */
 	private Integer orderStatus;
 

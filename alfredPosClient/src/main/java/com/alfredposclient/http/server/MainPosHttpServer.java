@@ -116,10 +116,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	public Response doDesktopPost(String apiName, Method mothod, Map<String, String> params, String body) {
 		LogUtil.d(TAG, "apiName : " + apiName + " body : " + body);
 		Map<String, Object> result = new HashMap<String, Object>();
-		if(App.instance.isRevenueKiosk()){
-			result.put("resultCode", ResultCode.REVENUE_IS_KIOSK);
-			return this.getJsonResponse(new Gson().toJson(result));
-		}
 		JSONObject jsonObject;
 		try {
 			jsonObject = new JSONObject(body);
@@ -174,6 +170,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					return this.getJsonResponse(new Gson().toJson(result));
 				}
 				if (apiName.equals(APIName.DESKTOP_GETTABLE)) {
+					if(App.instance.isRevenueKiosk()){
+						result.put("resultCode", ResultCode.REVENUE_IS_KIOSK);
+						return this.getJsonResponse(new Gson().toJson(result));
+					}
 					if (revenueId == App.instance.getRevenueCenter().getId().intValue()) {
 						List<PlaceInfo> placeList = PlaceInfoSQL.getAllPlaceInfo();
 						List<TableInfo> tableInfoList = TableInfoSQL.getAllTables();
@@ -185,6 +185,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					}
 					return this.getJsonResponse(new Gson().toJson(result));
 				} else if (apiName.equals(APIName.DESKTOP_SELECTTABLE)) {
+					if(App.instance.isRevenueKiosk()){
+						result.put("resultCode", ResultCode.REVENUE_IS_KIOSK);
+						return this.getJsonResponse(new Gson().toJson(result));
+					}
 					int tableId = 0;
 					int persons = 0;
 					int orderId = -1;
@@ -243,6 +247,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					List<ItemDetail> itemDetailList = ItemDetailSQL.getAllItemDetail();
 					List<ItemModifier> itemModifierList = ItemModifierSQL.getAllItemModifier();
 					List<Modifier> modifierList = ModifierSQL.getAllModifier();
+
 					result.put("resultCode", ResultCode.SUCCESS);
 					result.put("itemMainCategoryList", itemMainCategoryList);
 					result.put("itemCategoryList", itemCategoryList);
@@ -250,7 +255,66 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					result.put("itemModifierList", itemModifierList);
 					result.put("modifierList", modifierList);
 					return this.getJsonResponse(new Gson().toJson(result));
+				} else if(apiName.equals(APIName.DESKTOP_KIOSKORDER)) {
+					Response resp;
+					if (!App.instance.isRevenueKiosk()) {
+						result.put("resultCode", ResultCode.USER_NO_PERMIT);
+						return this.getJsonResponse(new Gson().toJson(result));
+					}
+					try {
+						Gson gson = new Gson();
+						Order order = ObjectFactory.getInstance().addOrderFromKioskDesktop(
+								ParamConst.ORDER_ORIGIN_TABLE,
+								TableInfoSQL.getKioskTable(),
+								App.instance.getRevenueCenter(),
+								user,
+								App.instance.getSessionStatus(),
+								App.instance.getBusinessDate(),
+								App.instance.getLocalRestaurantConfig().getIncludedTax().getTax());
+						ArrayList<OrderDetail> waiterOrderDetails = gson.fromJson(
+								jsonObject.optString("orderDetailList"),
+								new TypeToken<ArrayList<OrderDetail>>() {
+								}.getType());
+						ArrayList<OrderModifier> waiterOrderModifiers = gson.fromJson(
+								jsonObject.optString("orderModifierList"),
+								new TypeToken<ArrayList<OrderModifier>>() {
+								}.getType());
+						// waiter 过来的数据 存到 pos的DB中 不带Id存储
+						for (OrderDetail orderDetail : waiterOrderDetails) {
+							synchronized (lockObject) {
+								int oldOrderDetailId = orderDetail.getId();
+								ObjectFactory.getInstance().getOrderDetailFromKiosk(order, orderDetail);
+								OrderDetailSQL.addOrderDetailETCForWaiter(orderDetail);
+								if (waiterOrderModifiers != null
+										&& !waiterOrderModifiers.isEmpty()) {
+									for (OrderModifier orderModifier : waiterOrderModifiers) {
+										if (orderModifier.getOrderDetailId().intValue() == oldOrderDetailId) {
+											Modifier modifier = ModifierSQL.getModifierById(orderModifier.getModifierId().intValue());
+											OrderModifier localOrderModifier =
+													ObjectFactory.getInstance().getOrderModifier(order, orderDetail, modifier, 0);
+											OrderModifierSQL
+													.updateOrderModifier(localOrderModifier);
+										}
+									}
+								}
+							}
+						}
+						order = OrderSQL.getOrder(order.getId().intValue());
+						result.put("resultCode", ResultCode.SUCCESS);
+						result.put("orderNo", order.getOrderNo());
+						resp = this.getJsonResponse(new Gson().toJson(result));
+					}catch (Exception e){
+						e.printStackTrace();
+						result.clear();
+						result.put("resultCode", ResultCode.ORDER_ERROR);
+						resp = this.getJsonResponse(new Gson().toJson(result));
+					}
+					return resp;
 				} else if (apiName.equals(APIName.DESKTOP_COMMITORDER)) {
+					if(App.instance.isRevenueKiosk()){
+						result.put("resultCode", ResultCode.REVENUE_IS_KIOSK);
+						return this.getJsonResponse(new Gson().toJson(result));
+					}
 					Response resp;
 					if (App.instance.isRevenueKiosk()) {
 						result.put("resultCode", ResultCode.USER_NO_PERMIT);

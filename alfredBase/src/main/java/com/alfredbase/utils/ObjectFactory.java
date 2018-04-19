@@ -147,6 +147,42 @@ public class ObjectFactory {
 		return order;
 	}
 
+	public Order addOrderFromKioskDesktop(Integer orderOriginId, TableInfo tables,
+						  RevenueCenter revenueCenter, User user,
+						  SessionStatus sessionStatus, long businessDate, Tax inclusiveTax) {
+
+		Order order = null;
+		synchronized (lock_order) {
+			if (order == null) {
+				order = new Order();
+				order.setId(CommonSQL.getNextSeq(TableNames.Order));
+				order.setOrderOriginId(orderOriginId);
+				order.setUserId(user.getId());
+				order.setPersons(tables.getPacks());
+				order.setOrderStatus(ParamConst.ORDER_STATUS_KIOSK);
+				order.setDiscountRate(ParamConst.DOUBLE_ZERO);
+				order.setSessionStatus(sessionStatus.getSession_status());
+				order.setRestId(CoreData.getInstance().getRestaurant().getId());
+				order.setRevenueId(revenueCenter.getId());
+				order.setPlaceId(tables.getPlacesId());
+				order.setTableId(tables.getPosId());
+				long time = System.currentTimeMillis();
+				order.setCreateTime(time);
+				order.setUpdateTime(time);
+				order.setBusinessDate(businessDate);
+				order.setOrderNo(OrderHelper.calculateOrderNo(businessDate));//流水号
+				order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_NULL);
+				order.setAppOrderId(0);
+				if(inclusiveTax != null){
+					order.setInclusiveTaxName(inclusiveTax.getTaxName());
+					order.setInclusiveTaxPercentage(inclusiveTax.getTaxPercentage());
+				}
+				OrderSQL.addOrder(order);
+			}
+		}
+		return order;
+	}
+
 	public Order getOrderFromAppOrder(AppOrder appOrder, User user,
 									  SessionStatus sessionStatus, RevenueCenter revenueCenter,
 									  TableInfo tables, long businessDate, Restaurant restaurant,
@@ -234,6 +270,22 @@ public class ObjectFactory {
 			orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 			if (itemDetail.getItemType() == 3)
 				orderDetail.setIsSet(1);
+		}
+		return orderDetail;
+	}
+
+	public OrderDetail getOrderDetailFromKiosk(Order order, OrderDetail orderDetail) {
+		synchronized (lock_orderDetail) {
+			long time = System.currentTimeMillis();
+			orderDetail.setCreateTime(time);
+			orderDetail.setUpdateTime(time);
+			int orderDetailId = CommonSQL
+					.getNextSeq(TableNames.OrderDetail);
+			orderDetail
+					.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+			orderDetail.setId(orderDetailId);
+			orderDetail.setOrderId(order.getId().intValue());
+			OrderDetailSQL.updateOrderDetail(orderDetail);
 		}
 		return orderDetail;
 	}

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.javabeanforhtml.DashboardItemDetail;
 import com.alfredbase.javabean.javabeanforhtml.DashboardSales;
+import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.posonly.TableSummary;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
@@ -363,5 +364,45 @@ public class GeneralSQL {
 			e.printStackTrace();
 		}
 		return tableSummaryList;
+	}
+
+
+	public static void deleteKioskHoldOrderInfoBySession(SessionStatus sessionStatus, long businessDate) {
+		// 删除Order相关的信息
+		String deleteOrderModifier = "delete from " + TableNames.OrderModifier + " where orderId in (select id from "+ TableNames.Order + " where (orderStatus = ? or orderStatus = ?) and sessionStatus = ? and createTime > ? and businessDate = ?)";
+		String deleteOrderDetailTax = "delete from " + TableNames.OrderDetailTax + " where orderId in (select id from "+ TableNames.Order + " where (orderStatus = ? or orderStatus = ?) and sessionStatus = ? and createTime > ? and businessDate = ?)";
+		String deleteOrderDetail = "delete from " + TableNames.OrderDetail + " where orderId in (select id from "+ TableNames.Order + " where (orderStatus = ? or orderStatus = ?) and sessionStatus = ? and createTime > ? and businessDate = ?)";
+		String deleteOrderBill = "delete from " + TableNames.OrderBill + " where orderId in (select id from "+ TableNames.Order + " where (orderStatus = ? or orderStatus = ?) and sessionStatus = ? and createTime > ? and businessDate = ?)";
+		String deleteOrder = "delete from "+ TableNames.Order + " where (orderStatus = ? or orderStatus = ?) and sessionStatus = ? and createTime > ? and businessDate = ?";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+
+		try {
+			db.beginTransaction();
+			db.execSQL(deleteOrderModifier,
+					new Object[] { String.valueOf(ParamConst.ORDER_STATUS_HOLD), String.valueOf(ParamConst.ORDER_STATUS_KIOSK), String.valueOf(sessionStatus.getSession_status()),
+							String.valueOf(sessionStatus.getTime()), businessDate + "" });
+			db.execSQL(deleteOrderDetailTax,
+					new Object[] { String.valueOf(ParamConst.ORDER_STATUS_HOLD), String.valueOf(ParamConst.ORDER_STATUS_KIOSK), String.valueOf(sessionStatus.getSession_status()),
+							String.valueOf(sessionStatus.getTime()), businessDate + "" });
+			db.execSQL(deleteOrderDetail,
+					new Object[] { String.valueOf(ParamConst.ORDER_STATUS_HOLD), String.valueOf(ParamConst.ORDER_STATUS_KIOSK), String.valueOf(sessionStatus.getSession_status()),
+							String.valueOf(sessionStatus.getTime()), businessDate + "" });
+			db.execSQL(deleteOrderBill,
+					new Object[] { String.valueOf(ParamConst.ORDER_STATUS_HOLD), String.valueOf(ParamConst.ORDER_STATUS_KIOSK), String.valueOf(sessionStatus.getSession_status()),
+							String.valueOf(sessionStatus.getTime()), businessDate + "" });
+			db.execSQL(deleteOrder,
+					new Object[] { String.valueOf(ParamConst.ORDER_STATUS_HOLD), String.valueOf(ParamConst.ORDER_STATUS_KIOSK), String.valueOf(sessionStatus.getSession_status()),
+							String.valueOf(sessionStatus.getTime()), businessDate + "" });
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+			db.endTransaction();
+		}
 	}
 }

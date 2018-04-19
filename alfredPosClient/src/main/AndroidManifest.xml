@@ -205,6 +205,11 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme"/>
+        <activity
+            android:name=".activity.kioskactivity.KioskHoldActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme"/>
     </application>
 
 </manifest>

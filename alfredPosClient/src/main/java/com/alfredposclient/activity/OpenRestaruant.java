@@ -461,7 +461,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		});
 		// 系统初始化工作
 		App.instance.startHttpServer();
-		App.instance.startUDPService(App.UDP_INDEX_POS, App.instance.getRevenueCenter().getRevName(), null);
+		App.instance.startUDPService(App.UDP_INDEX_POS, App.instance.getRevenueCenter().getRevName()
+				, null);
 		observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
 		observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
 			@Override
@@ -834,6 +835,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					});
 					return;
 				}
+				GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
 				final Map<String, Object> xReportInfo
 						= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
 				//sync finished Order info in current session to cloud

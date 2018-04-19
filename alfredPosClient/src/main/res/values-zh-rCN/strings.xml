@@ -78,6 +78,8 @@
 	<string name="print_bill">打印账单</string>
 	<string name="colse_bill">结账</string>
 	<string name="transfer_table">换台</string>
+    <string name="hold_bill">挂单</string>
+    <string name="kiosk_hold">取单</string>
 	<string name="delete_order">删除</string>
 	<string name="open_item">零时菜</string>
 	<string name="edit_kot">编辑KOT</string>
