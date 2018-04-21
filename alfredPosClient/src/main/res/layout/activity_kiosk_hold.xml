@@ -54,23 +54,18 @@
                     android:id="@+id/et_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
                     android:gravity="center"
-                    android:hint="@string/search_menu"
+                    android:hint="Order Number"
                     android:minEms="10"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
+                    android:iconifiedByDefault="true"
                     android:textColorHint="#DDDDDD"
-                    android:imeOptions="actionDone"
+                    android:imeOptions="actionSearch"
+                    android:inputType="number"
                     android:textSize="@dimen/text_size_m" />
-
-                <com.alfredbase.view.DashedLine
-                    android:id="@+id/dash_line"
-                    android:layout_width="250dp"
-                    android:layout_height="8dp"
-                    android:layout_below="@id/et_search" />
             </RelativeLayout>
 
             <ImageView

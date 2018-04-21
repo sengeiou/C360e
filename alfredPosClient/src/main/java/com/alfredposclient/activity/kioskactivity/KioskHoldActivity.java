@@ -1,15 +1,18 @@
 package com.alfredposclient.activity.kioskactivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
@@ -63,6 +66,7 @@ public class KioskHoldActivity extends BaseActivity {
     private ListView lv_orderdetail_list;
     private LayoutInflater inflater;
     private List<Order> orderList = new ArrayList<>();
+    private List<Order> orderCache = new ArrayList<>();
     private List<OrderDetail> orderDetails = new ArrayList<>();
     private int selectOrderItem = 0;
     private KioskHoldOderAdapter kioskHoldOderAdapter;
@@ -78,6 +82,7 @@ public class KioskHoldActivity extends BaseActivity {
     private Button btn_refresh;
     private Order currentOrder;
     private LinearLayout ll_remarks;
+    private SearchView et_search;
     public static final int CHECK_REQUEST_CODE = 100;
     public static final int CHECK_RESULT_CODE = 100;
     @Override
@@ -106,6 +111,57 @@ public class KioskHoldActivity extends BaseActivity {
         ll_remarks = (LinearLayout) findViewById(R.id.ll_remarks);
         tv_remarks = (TextView) findViewById(R.id.tv_remarks);
         tv_eat_type = (TextView) findViewById(R.id.tv_eat_type);
+        et_search = (SearchView) findViewById(R.id.et_search);
+//        et_search.setIconifiedByDefault(true);
+        et_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // 得到输入管理对象
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    // 这将让键盘在所有的情况下都被隐藏，但是一般我们在点击搜索按钮后，输入法都会乖乖的自动隐藏的。
+                    imm.hideSoftInputFromWindow(et_search.getWindowToken(), 0); // 输入法如果是显示状态，那么就隐藏输入法                    }
+                    et_search.clearFocus();
+                }
+                if(TextUtils.isEmpty(query)){
+                    refreshDataView();
+                }else{
+                    List<Order> orders = new ArrayList<Order>();
+                    for(Order order : orderCache){
+                        if(query.equals(order.getOrderNo().intValue()+"")){
+                            orders.add(order);
+                        }
+                    }
+                    orderList = orders;
+                    kioskHoldOderAdapter.notifyDataSetChanged();
+                    kioskHoldOderDetailAdapter.notifyDataSetChanged();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(TextUtils.isEmpty(newText)){
+                    refreshDataView();
+                    return true;
+                }
+                return false;
+            }
+        });
+//        et_search.setOnCloseListener(new SearchView.OnCloseListener() {
+//            @Override
+//            public boolean onClose() {
+//                refreshDataView();
+//                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                if (imm != null) {
+//                    // 这将让键盘在所有的情况下都被隐藏，但是一般我们在点击搜索按钮后，输入法都会乖乖的自动隐藏的。
+//                    imm.hideSoftInputFromWindow(et_search.getWindowToken(), 0); // 输入法如果是显示状态，那么就隐藏输入法                    }
+//                    et_search.clearFocus();
+//                }
+//                return true;
+//            }
+//        });
+
         lv_order_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -124,6 +180,8 @@ public class KioskHoldActivity extends BaseActivity {
         tv_kiosk_order.setOnClickListener(this);
         btn_close_w_cash.setOnClickListener(this);
         btn_get_order.setOnClickListener(this);
+        btn_refresh.setOnClickListener(this);
+        findViewById(R.id.ll_search).setOnClickListener(this);
     }
 
     @Override
@@ -152,6 +210,7 @@ public class KioskHoldActivity extends BaseActivity {
                 break;
         }
         orderList = OrderSQL.getOrderByStatus(orderStatus, App.instance.getSessionStatus());
+        orderCache = orderList;
         if(orderList != null && orderList.size() > 0){
             if(selectOrderItem >= orderList.size() || selectOrderItem < 0){
                 selectOrderItem = 0;
@@ -187,6 +246,7 @@ public class KioskHoldActivity extends BaseActivity {
             case R.id.tv_hold_order:
             case R.id.tv_kiosk_order:
                 selectViewId = v.getId();
+                et_search.setQuery("", false);
                 refreshDataView();
                 break;
             case R.id.btn_close_w_cash: {
@@ -214,6 +274,10 @@ public class KioskHoldActivity extends BaseActivity {
                 break;
             case R.id.btn_refresh:
                 refreshDataView();
+                break;
+            case R.id.ll_search:
+                et_search.requestFocus();
+                et_search.onActionViewExpanded();
                 break;
         }
 
