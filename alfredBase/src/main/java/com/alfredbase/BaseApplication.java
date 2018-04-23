@@ -57,6 +57,7 @@ public class BaseApplication extends Application {
 	public static int UDP_INDEX_POS = 1;
 	public static int UDP_INDEX_WAITER = 2;
 	public static int UDP_INDEX_KDS = 3;
+	public static int UDP_INDEX_EMENU = 100;
 	private Handler reLoginHandler = new Handler();
 	public static Handler postHandler = new Handler();
 	/**

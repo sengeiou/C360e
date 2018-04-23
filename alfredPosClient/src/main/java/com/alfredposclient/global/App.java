@@ -1998,6 +1998,8 @@ public class App extends BaseApplication {
 
     public void printerDialog() {
         BaseActivity context = App.getTopActivity();
+        if(context == null)
+            return;
         DialogFactory.commonTwoBtnDialog(context, context.getResources()
                         .getString(R.string.print_down), context.getResources()
                         .getString(R.string.reconnect_print), context.getResources()

@@ -184,6 +184,83 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						result.put("resultCode", ResultCode.REVENUE_EMPLY);
 					}
 					return this.getJsonResponse(new Gson().toJson(result));
+				}else if (apiName.equals(APIName.DESKTOP_PRINTBILL)) {
+					Response resp;
+					Gson gson = new Gson();
+		/*No waiter apps in kiosk mode */
+					if (App.instance.isRevenueKiosk()) {
+						result.put("resultCode", ResultCode.USER_NO_PERMIT);
+						resp = this.getJsonResponse(new Gson().toJson(result));
+						return resp;
+					}
+					try {
+						jsonObject = new JSONObject(params);
+						int orderId = jsonObject.getInt("orderId");
+						Order loadOrder = OrderSQL.getUnfinishedOrder(orderId);
+						if (loadOrder == null) {
+							result.put("resultCode", ResultCode.ORDER_FINISHED);
+							resp = this.getJsonResponse(new Gson().toJson(result));
+							return resp;
+						}
+						String tableName = jsonObject.getString("tableName");
+						if(orderId > 0){
+							Order order = OrderSQL.getOrder(orderId);
+							if(order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
+								result.put("resultCode", ResultCode.ORDER_FINISHED);
+								resp = this.getJsonResponse(new Gson().toJson(result));
+								return resp;
+							}
+							PrinterTitle title = ObjectFactory.getInstance()
+									.getPrinterTitle(
+											App.instance.getRevenueCenter(),
+											order,
+											App.instance.getUser().getFirstName()
+													+ App.instance.getUser()
+													.getLastName(),
+											tableName, 1);
+							ArrayList<PrintOrderItem> orderItems = ObjectFactory
+									.getInstance().getItemList(
+											OrderDetailSQL.getOrderDetails(order
+													.getId()));
+							ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+									.getInstance().getItemModifierList(order, OrderDetailSQL.getOrderDetails(order
+											.getId()));
+							List<Map<String, String>> taxMap = OrderDetailTaxSQL
+									.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
+							PrinterDevice printer = App.instance.getCahierPrinter();
+							App.instance.remoteBillPrint(printer, title, order,
+									orderItems, orderModifiers, taxMap, null, null);
+							OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
+						}
+						result.put("resultCode", ResultCode.SUCCESS);
+						resp = this.getJsonResponse(new Gson().toJson(result));
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+					}
+					return resp;
+				} else if (apiName.equals(APIName.DESKTOP_GETBILL)) {
+					Response resp;
+					try {
+						if(App.instance.isRevenueKiosk()){
+							result.put("resultCode", ResultCode.REVENUE_IS_KIOSK);
+							return this.getJsonResponse(new Gson().toJson(result));
+						}
+						int tableId = jsonObject.getInt("tableId");
+						//Table status in waiter APP is not same that of table in POS
+						//need get latest status on app.
+						TableInfo tabInPOS = TableInfoSQL.getTableById(tableId);
+						App.getTopActivity().httpRequestAction(
+								MainPage.VIEW_EVNT_GET_BILL_PRINT, tabInPOS);
+
+						result.put("resultCode", ResultCode.SUCCESS);
+						resp = this.getJsonResponse(new Gson().toJson(result));
+					} catch (Exception e) {
+						e.printStackTrace();
+						resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+					}
+					return  resp;
 				} else if (apiName.equals(APIName.DESKTOP_SELECTTABLE)) {
 					if(App.instance.isRevenueKiosk()){
 						result.put("resultCode", ResultCode.REVENUE_IS_KIOSK);
@@ -235,6 +312,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						result.put("order", order);
 						result.put("orderDetailList", orderDetailListR);
 						result.put("orderModifierList", orderModifierListR);
+						try {
+							JSONObject jsonObject1 = new JSONObject();
+							jsonObject1.put("tableId", tableInfo.getPosId().intValue());
+							jsonObject1.put("status", ParamConst.TABLE_STATUS_DINING);
+							jsonObject1.put("RX", RxBus.RX_REFRESH_TABLE);
+							TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject1.toString(),null);
+							TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject1.toString(),null);
+						}catch (Exception e){
+							e.printStackTrace();
+						}
 						App.getTopActivity().httpRequestAction(
 								MainPage.REFRESH_TABLES_STATUS, tableInfo);
 					} else {
@@ -1088,10 +1175,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				resp = this.getJsonResponse(new Gson().toJson(result));
 				try {
 					JSONObject jsonObject1 = new JSONObject();
-					jsonObject.put("tableId", tables.getPosId().intValue());
-					jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
-					jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
-					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+					jsonObject1.put("tableId", tables.getPosId().intValue());
+					jsonObject1.put("status", ParamConst.TABLE_STATUS_DINING);
+					jsonObject1.put("RX", RxBus.RX_REFRESH_TABLE);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject1.toString(),null);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject1.toString(),null);
 				}catch (Exception e){
 					e.printStackTrace();
 				}

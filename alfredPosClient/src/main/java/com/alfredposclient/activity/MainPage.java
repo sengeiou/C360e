@@ -445,6 +445,7 @@ public class MainPage extends BaseActivity {
 				jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
 				jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
 				TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+				TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
 			}catch (Exception e){
 				e.printStackTrace();
 			}
@@ -671,6 +672,7 @@ public class MainPage extends BaseActivity {
 					jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
 					jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
 					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
 				}catch (Exception e){
 					e.printStackTrace();
 				}
@@ -1743,6 +1745,7 @@ public class MainPage extends BaseActivity {
 					jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
 					jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
 					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
 				}catch (Exception e){
 					e.printStackTrace();
 				}
@@ -2361,6 +2364,7 @@ public class MainPage extends BaseActivity {
 				jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
 				jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
 				TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+				TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
 			}catch (Exception e){
 				e.printStackTrace();
 			}

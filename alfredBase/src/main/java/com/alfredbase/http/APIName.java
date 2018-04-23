@@ -75,6 +75,8 @@ public class APIName {
 	public static final String DESKTOP_GETITEM= "desktop/getItem";
 	public static final String DESKTOP_COMMITORDER= "desktop/commitOrder";
 	public static final String DESKTOP_KIOSKORDER= "desktop/kioskOrder";
+	public static final String DESKTOP_GETBILL= "desktop/getBill";
+	public static final String DESKTOP_PRINTBILL= "desktop/printBill";
 
 	/**
 	 * 以kds作为服务器
