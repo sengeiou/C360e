@@ -589,6 +589,13 @@ public class ReportObjectFactory {
 						.getNextSeq(TableNames.ReportDaySales));
 				ReportDaySalesSQL.addReportDaySales(reportDaySales);
 			}
+		}else{
+			int id = reportDaySales.getId();
+			reportDaySales = loadShowReportDaySales(businessDate);
+			if(isSave && reportDaySales != null) {
+				reportDaySales.setId(id);
+				ReportDaySalesSQL.addReportDaySales(reportDaySales);
+			}
 		}
 		return reportDaySales;
 	}

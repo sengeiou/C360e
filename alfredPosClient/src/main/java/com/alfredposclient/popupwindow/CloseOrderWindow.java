@@ -1786,7 +1786,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		if ("X".equals(key)) {
 			closeMoneyKeyboard();
 		} else if ("Enter".equals(key)) {
-			clickEnterAction();
+			if(ButtonClickTimer.canClick()) {
+				clickEnterAction();
+			}
 		} else if ("C".equals(key)) {
 			clickClearAction();
 

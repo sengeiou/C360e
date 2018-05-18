@@ -74,6 +74,7 @@ import com.alfredbase.utils.RxBus;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
+import com.alfredposclient.activity.kioskactivity.KioskHoldActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
@@ -194,8 +195,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						return resp;
 					}
 					try {
-						jsonObject = new JSONObject(params);
-						int orderId = jsonObject.getInt("orderId");
+						int orderId = jsonObject.optInt("orderId");
 						Order loadOrder = OrderSQL.getUnfinishedOrder(orderId);
 						if (loadOrder == null) {
 							result.put("resultCode", ResultCode.ORDER_FINISHED);
@@ -205,11 +205,24 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						String tableName = jsonObject.getString("tableName");
 						if(orderId > 0){
 							Order order = OrderSQL.getOrder(orderId);
+							if(order == null){
+								result.put("resultCode", ResultCode.ORDER_NO_PLACE);
+								resp = this.getJsonResponse(new Gson().toJson(result));
+								return resp;
+							}
 							if(order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
 								result.put("resultCode", ResultCode.ORDER_FINISHED);
 								resp = this.getJsonResponse(new Gson().toJson(result));
 								return resp;
 							}
+							OrderBill orderBill = OrderBillSQL
+									.getOrderBillByOrder(order);
+							if(orderBill == null){
+								result.put("resultCode", ResultCode.ORDER_NO_PLACE);
+								resp = this.getJsonResponse(new Gson().toJson(result));
+								return resp;
+							}
+
 							PrinterTitle title = ObjectFactory.getInstance()
 									.getPrinterTitle(
 											App.instance.getRevenueCenter(),
@@ -247,10 +260,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							result.put("resultCode", ResultCode.REVENUE_IS_KIOSK);
 							return this.getJsonResponse(new Gson().toJson(result));
 						}
-						int tableId = jsonObject.getInt("tableId");
+						int tableId = jsonObject.optInt("tableId");
 						//Table status in waiter APP is not same that of table in POS
 						//need get latest status on app.
 						TableInfo tabInPOS = TableInfoSQL.getTableById(tableId);
+						if(tabInPOS == null){
+							result.put("resultCode", ResultCode.JSON_DATA_ERROR);
+							resp = this.getJsonResponse(new Gson().toJson(result));
+							return resp;
+						}
+
 						App.getTopActivity().httpRequestAction(
 								MainPage.VIEW_EVNT_GET_BILL_PRINT, tabInPOS);
 
@@ -395,6 +414,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						result.clear();
 						result.put("resultCode", ResultCode.ORDER_ERROR);
 						resp = this.getJsonResponse(new Gson().toJson(result));
+					}
+					int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+					App.instance.setKioskHoldNum(count);
+					if(App.getTopActivity() != null && App.getTopActivity() instanceof KioskHoldActivity){
+						App.getTopActivity().httpRequestAction(
+								MainPage.VIEW_EVENT_SET_DATA, App.getTopActivity());
 					}
 					return resp;
 				} else if (apiName.equals(APIName.DESKTOP_COMMITORDER)) {
@@ -1376,6 +1401,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForPlace(
 					TableInfoSQL.getTableById(order.getTableId()).getName(),
 					order, App.instance.getRevenueCenter(), App.instance.getBusinessDate());
+			User user = UserSQL.getUserById(order.getUserId());
+			if(user != null){
+				String empName = user.getFirstName() + user.getLastName();
+				kotSummary.setEmpName(empName);
+				KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId().intValue());
+			}
 			List<Integer> orderDetailIds = new ArrayList<Integer>();
 			ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 			ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
@@ -1975,9 +2006,22 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			}
 			if(orderId > 0){
 				Order order = OrderSQL.getOrder(orderId);
+				if(order == null){
+					result.put("resultCode", ResultCode.ORDER_NO_PLACE);
+					resp = this.getJsonResponse(new Gson().toJson(result));
+					return resp;
+				}
 				if(order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
 					result.put("resultCode", ResultCode.ORDER_FINISHED);
 					resp = this.getJsonResponse(new Gson().toJson(result));
+					return resp;
+				}
+				OrderBill orderBill = OrderBillSQL
+						.getOrderBillByOrder(order);
+				if(orderBill == null){
+					result.put("resultCode", ResultCode.ORDER_NO_PLACE);
+					resp = this.getJsonResponse(new Gson().toJson(result));
+					return resp;
 				}
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitle(

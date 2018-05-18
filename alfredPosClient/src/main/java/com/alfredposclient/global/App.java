@@ -181,6 +181,7 @@ public class App extends BaseApplication {
     private String callAppIp;
 
     private int appOrderNum;
+    private int kioskHoldNum;
     private int closingOrderId;
     /**
      * User: Current cashier logged in
@@ -2690,6 +2691,15 @@ public class App extends BaseApplication {
         RxBus.getInstance().post(RxBus.RX_MSG_1, type);
     }
 
+    public int getKioskHoldNum() {
+        return kioskHoldNum;
+    }
+
+    public void setKioskHoldNum(int kioskHoldNum) {
+        this.kioskHoldNum = kioskHoldNum;
+        RxBus.getInstance().post(RxBus.RX_MSG_1, 3);
+    }
+
     /**
      * 判断是否使用的是商米设备  商米副屏设置是否展示
      */
@@ -2698,7 +2708,7 @@ public class App extends BaseApplication {
         String model = Build.MODEL;
         String manufacturer = Build.MANUFACTURER;
         LogUtil.d(TAG, brand + "**************" + model);
-        if (brand.equals("SUNMI") && manufacturer.equals("SUNMI")){
+        if ("SUNMI".equals(brand.toUpperCase())){
             return true;
         }
         return false;

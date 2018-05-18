@@ -48,18 +48,22 @@ public class KOTPrint extends PrintJob{
 		addHortionalLine(this.charSize);
 	}
 
-	public void AddHeader(int isTakeAway, String orderId) {
+	public void AddHeader(KotSummary kotsummary) {
 		StringBuilder sbr = new StringBuilder();
-		if (isTakeAway==1) {
+		if (kotsummary.getIsTakeAway()==1) {
 			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
 					.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
-					.append(orderId)
+					.append(kotsummary.getOrderNoString())
 					.append(reNext);
 		}else{
 			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
-					.append(orderId)
+					.append(kotsummary.getOrderNoString())
+					.append(reNext);
+		}
+		if(!TextUtils.isEmpty(kotsummary.getEmpName())){
+			sbr.append("emp:"+kotsummary.getEmpName())
 					.append(reNext);
 		}
 
@@ -108,6 +112,10 @@ public class KOTPrint extends PrintJob{
 		}else{
 			sbr.append( "  ")
 					.append(orderNo)
+					.append(reNext);
+		}
+		if(!TextUtils.isEmpty(kotSummary.getEmpName())){
+			sbr.append("emp:"+kotSummary.getEmpName())
 					.append(reNext);
 		}
 		PrintData header = new PrintData();

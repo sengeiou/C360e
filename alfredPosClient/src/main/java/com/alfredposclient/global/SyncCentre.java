@@ -2,6 +2,7 @@ package com.alfredposclient.global;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -371,6 +372,9 @@ public class SyncCentre {
 		Set<Integer> key = waiterDeviceMap.keySet();
 		for (Integer index : key) {
 			WaiterDevice waiterDevice = waiterDeviceMap.get(index);
+			if(waiterDevice == null || TextUtils.isEmpty(waiterDevice.getIP())){
+				continue;
+			}
 			String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.KOT_NOTIFICATION;
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("total", KotNotificationqty);

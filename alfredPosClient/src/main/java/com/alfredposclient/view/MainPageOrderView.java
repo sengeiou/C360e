@@ -30,6 +30,7 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
@@ -154,6 +155,12 @@ public class MainPageOrderView extends LinearLayout {
 												placedOrder.getTableId()).getName(), placedOrder,
 										App.instance.getRevenueCenter(),
 										App.instance.getBusinessDate());
+						User user = App.instance.getUser();
+						if(user != null){
+							String empName = user.getFirstName() + user.getLastName();
+							kotSummary.setEmpName(empName);
+							KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId().intValue());
+						}
 						ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 						List<Integer> orderDetailIds = new ArrayList<Integer>();
 						ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();

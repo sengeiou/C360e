@@ -433,7 +433,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								 kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
 							}
 						}
-						kot.AddHeader(kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+						kot.AddHeader(kotsummary);
 						if(isFire){
 							kot.AddFire();
 						}
@@ -509,7 +509,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 									if (item.getKotStatus().intValue() == ParamConst.KOT_STATUS_VOID) {
 										 kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
 									}
-							    	kot.AddHeader(kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+							    	kot.AddHeader(kotsummary);
 									 if(isFire){
 										 kot.AddFire();
 									 }
@@ -564,7 +564,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								}
 							}
 							kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
-					    	kot.AddHeader(kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+					    	kot.AddHeader(kotsummary);
 							if(isFire){
 								kot.AddFire();
 							}
@@ -1973,7 +1973,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub{
 								 kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
 							}
 						}
-						kot.AddHeader(kotsummary.getIsTakeAway(), kotsummary.getOrderNoString());
+						kot.AddHeader(kotsummary);
 						kot.setPrinterIp(prtDevice.getIP());
 						kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
 								PrintService.instance.getResources().getString(R.string.qty));

@@ -41,7 +41,7 @@ public class BaseApplication extends Application {
 
 	public static BaseApplication instance;
 	public static List<BaseActivity> activitys;
-	public static final int DATABASE_VERSION = 21;
+	public static final int DATABASE_VERSION = 22;
 	/**
 	 * 注意 
 	 * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
@@ -49,7 +49,7 @@ public class BaseApplication extends Application {
 	 * 当 isDebug == true， isOpenLog == true 为本地的服务器
 	 */
 
-	public static boolean isDebug = false ;	//	Debug开关 release的时候设置为false
+	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
 	public static boolean isOpenLog = true;	//	release 时设置为false
 
 	protected String APPPATH = "alibaba";// sunmi or google or alibaba;
@@ -96,6 +96,8 @@ public class BaseApplication extends Application {
 	public static int IMAGE_DISK_CACHE_SIZE = 80 * 1024 * 1024;	//	总共的存储的空间
 	public static int IMAGE_ENGINE_SCALE_FOR_SDCARD = 1000; // 缓存图片的大小
 	public static int IMAGE_ENGINE_SCALE_FOR_MEMECACHE = 1000;
+
+	private int time = 5*60*1000;
 
 	@Override
 	protected void attachBaseContext(Context base) {
@@ -176,7 +178,7 @@ public class BaseApplication extends Application {
 		LogUtil.d("BaseActivity", "Remove");
 		reLoginHandler.removeCallbacks(runnable);
 		LogUtil.d("BaseActivity", "Start");
-		reLoginHandler.postDelayed(runnable, 5*60*1000);
+		reLoginHandler.postDelayed(runnable, time);
 	}
 
 	public void stopAD(){
@@ -412,5 +414,15 @@ public class BaseApplication extends Application {
 			}
 		}
 		return -1;
+	}
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		if(time >= 30*1000) {
+			this.time = time;
+		}
 	}
 }

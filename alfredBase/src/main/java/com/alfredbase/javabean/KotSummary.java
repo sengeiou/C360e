@@ -31,6 +31,8 @@ public class KotSummary implements Serializable{
 	private Integer revenueCenterIndex = 1;
 
 	private String orderRemark;// order 里面的备注
+
+	private String empName; // 提交菜品的用户名
 	
 	public Integer getId() {
 		return id;
@@ -152,6 +154,14 @@ public class KotSummary implements Serializable{
 		this.orderRemark = orderRemark;
 	}
 
+	public String getEmpName() {
+		return empName;
+	}
+
+	public void setEmpName(String empName) {
+		this.empName = empName;
+	}
+
 	@Override
 	public String toString() {
 		return "KotSummary{" +
@@ -170,6 +180,7 @@ public class KotSummary implements Serializable{
 				", description='" + description + '\'' +
 				", revenueCenterIndex=" + revenueCenterIndex +
 				", orderRemark='" + orderRemark + '\'' +
+				", empName='" + empName + '\'' +
 				'}';
 	}
 }

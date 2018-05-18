@@ -50,6 +50,7 @@ import java.util.Map;
     }
 
     protected Response getJsonResponse(String data) {
+        LogUtil.i("HttpResult", data);
         return createResponse(Response.Status.OK, NanoHTTPD.MIME_JSON,
         		data);
     }

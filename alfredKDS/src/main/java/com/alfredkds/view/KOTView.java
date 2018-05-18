@@ -229,6 +229,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemModifiers.addAll(kot.getKotItemModifiers());
 		kotId.setText(kot.getKotSummary().getId() + "");
 		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo();
+		if(!TextUtils.isEmpty(kot.getKotSummary().getEmpName())){
+			orderNoStr = orderNoStr + "(Emp:" + kot.getKotSummary().getEmpName() + ")";
+		}
 		String kioskOrderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
 		if(kot.getKotSummary() != null && kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.TAKE_AWAY){
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";

@@ -1578,20 +1578,26 @@ public class MainPage extends BaseActivity {
 				break;
 			case KOT_PRINT_NULL:
 				loadingDialog.dismiss();
-				printerLoadingDialog.dismiss();
+				if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+					printerLoadingDialog.dismiss();
+				}
 				UIHelp.showToast(context, context.getResources().getString(R.string.no_set_kds_printer));
 				break;
 			case KOT_ITEM_PRINT_NULL: {
 				String itemName = (String) msg.obj;
 				loadingDialog.dismiss();
-				printerLoadingDialog.dismiss();
+				if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+					printerLoadingDialog.dismiss();
+				}
 				UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
 			}
 				break;
 			// kot Print status
 			case KOT_PRINT_FAILED: {
 				loadingDialog.dismiss();
-				printerLoadingDialog.dismiss();
+				if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+					printerLoadingDialog.dismiss();
+				}
 				if(msg.obj instanceof String && "KDS".equals((String)msg.obj)){
 					UIHelp.showToast(context, "Please log in KDS");
 				}else {
@@ -1616,6 +1622,14 @@ public class MainPage extends BaseActivity {
 						&& ((Integer) msg.obj).intValue() == currentOrder
 								.getId().intValue()) {
 					setData();
+					if(App.instance.getSystemSettings().isAutoToTable()){
+						if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+							printerLoadingDialog.dismiss();
+						}
+						if(!isShowTables){
+							showTables();
+						}
+					}
 				}
 				break;
 			case VIEW_EVENT_SHOW_SPECIAL_INSTRACTIONS_WINDOW: {
@@ -2120,7 +2134,9 @@ public class MainPage extends BaseActivity {
 		operatePanel.setParams(this, currentOrder, orderDetails,
 				handler);
 		loadingDialog.dismiss();
-		printerLoadingDialog.dismiss();
+		if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+			printerLoadingDialog.dismiss();
+		}
 	}
 
 	private void mergerOrderSetData() {
@@ -2131,7 +2147,9 @@ public class MainPage extends BaseActivity {
 		operatePanel.setParams(this,currentOrder, orderDetails,
 				handler);
 		loadingDialog.dismiss();
-		printerLoadingDialog.dismiss();
+		if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+			printerLoadingDialog.dismiss();
+		}
 	}
 
 	private void showModifyQuantityWindow(int quantity, DismissCall dismissCall) {

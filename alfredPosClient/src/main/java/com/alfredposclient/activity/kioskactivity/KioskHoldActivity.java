@@ -100,7 +100,7 @@ public class KioskHoldActivity extends BaseActivity {
         loadingDialog.setTitle("Loading");
         inflater = LayoutInflater.from(this);
         selectOrderItem = 0;
-        selectViewId = R.id.tv_hold_order;
+        selectViewId = R.id.tv_kiosk_order;
         lv_order_list = (ListView) findViewById(R.id.lv_order_list);
         lv_orderdetail_list = (ListView) findViewById(R.id.lv_orderdetail_list);
         tv_hold_order = (TextView) findViewById(R.id.tv_hold_order);
@@ -394,6 +394,20 @@ public class KioskHoldActivity extends BaseActivity {
                 });
             }
         }).start();
+    }
+
+    @Override
+    public void httpRequestAction(int action, Object obj) {
+        if(obj == this){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(selectViewId == R.id.tv_kiosk_order){
+                        refreshDataView();
+                    }
+                }
+            });
+        }
     }
 
     class KioskHoldOderAdapter extends BaseAdapter {

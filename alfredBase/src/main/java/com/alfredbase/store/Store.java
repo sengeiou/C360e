@@ -109,6 +109,7 @@ public class Store {
 	public static final String IS_SCREDDN_LOCK = "IS_SCREDDN_LOCK";
 	public static final String REMOVE_TO_VOID = "REMOVE_TO_VOID";
 	public static final String IS_TRANSFER_PRINT = "IS_TRANSFER_PRINT";
+	public static final String IS_AUTOTO_TABLE = "IS_AUTOTO_TABLE";
 
 	public static final String LOCK_SCREEN = "LOCK_SCREEN";
 	public static final String DISCOUNT_SELECTED_ITEM = "DISCOUNT_SELECTED_ITEM";
@@ -116,6 +117,8 @@ public class Store {
 	public static final String MAX_ORDER_NO = "MAX_ORDER_NO";
 	public static final String LABEL_DEVICE = "LABEL_DEVICE";
 	public static final String WAITER_SET_LOCK = "WAITER_SET_LOCK";
+
+	public static final String RELOGIN_TIME = "RELOGIN_TIME";
 
 
 	private Store() {

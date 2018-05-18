@@ -104,7 +104,7 @@ public class KotJobManager {
 			}
 		}
 
-		if(printerGrougIds !=null && printerGrougIds.size() > 0){
+		if(printerGrougIds !=null && printerGrougIds.size() > 0 && kotSummary !=null){
 			kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
 			KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId().intValue());
 		}

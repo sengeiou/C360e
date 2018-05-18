@@ -141,6 +141,8 @@ public class Welcome extends BaseActivity {
 				context, Store.SYNC_DATA_TAG);
 		App.instance.bindSyncService();
 		App.instance.connectRemotePrintService();
+		int time = Store.getInt(App.instance, Store.RELOGIN_TIME);
+		App.instance.setTime(time);
 		if (TextUtils.isEmpty(str)) {// 认为没有同步过服务器数据
 			UIHelp.startSyncData(context);
 			this.finish();

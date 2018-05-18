@@ -513,21 +513,21 @@ public class HttpAnalysis {
 			List<ReportPluDayItem> reportPluDayItems = gson.fromJson(
 					object.getString("reportPluDayItems"),new TypeToken<ArrayList<ReportPluDayItem>>() {
 					}.getType());
-            if (reportPluDayItems!=null) {
+            if (reportPluDayItems!=null && reportPluDayItems.size() > 0) {
             	ReportPluDayItemSQL.addReportPluDayItemsFromCloud(reportPluDayItems);
             }
 			//Parse remote PLU Day combModifidier Report
 			List<ReportPluDayComboModifier> reportPluDayComboModifiers = gson.fromJson(
 					object.getString("reportPluDayComboModifiers"),new TypeToken<ArrayList<ReportPluDayComboModifier>>() {
 					}.getType());
-            if (reportPluDayComboModifiers!=null) {
+            if (reportPluDayComboModifiers!=null && reportPluDayComboModifiers.size() > 0) {
             	ReportPluDayComboModifierSQL.addReportPluDayModifierFromCloud(reportPluDayComboModifiers);
             }
             //Parse remote Day Tax report
 			List<ReportDayTax> reportDayTax = gson.fromJson(
 					object.getString("reportDayTax"),new TypeToken<ArrayList<ReportDayTax>>() {
 					}.getType());
-			if (reportDayTax!=null) {
+			if (reportDayTax!=null && reportDayTax.size() > 0) {
 				ReportDayTaxSQL.saveReportDayTaxListFromCloud(reportDayTax);
 			}
 
@@ -535,7 +535,7 @@ public class HttpAnalysis {
 			List<ReportHourly> reportHourlys = gson.fromJson(
 					object.getString("reportHourlys"),new TypeToken<ArrayList<ReportHourly>>() {
 					}.getType());
-			if (reportHourlys!=null) {
+			if (reportHourlys!=null && reportHourlys.size() > 0) {
 				ReportHourlySQL.addReportHourlyFromCloud(reportHourlys);
 			}
 		} catch (JSONException e) {

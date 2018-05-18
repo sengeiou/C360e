@@ -32,8 +32,13 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.SelectPrintWindow;
 import com.alfredposclient.popupwindow.SetPAXWindow;
 import com.alfredposclient.view.ColorPickerDialog;
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SystemSetting extends BaseActivity implements OnChangedListener,OnClickListener{
@@ -58,6 +63,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 	private SlipButton sb_top_screen_lock;
 	private SlipButton sb_cancel_order_void;
 	private SlipButton sb_transfer_print;
+	private SlipButton sb_auto_table;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -110,6 +116,7 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_top_screen_lock = (SlipButton)findViewById(R.id.sb_top_screen_lock);
 		sb_cancel_order_void = (SlipButton)findViewById(R.id.sb_cancel_order_void);
 		sb_transfer_print = (SlipButton)findViewById(R.id.sb_transfer_print);
+		sb_auto_table = (SlipButton)findViewById(R.id.sb_auto_table);
 
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -139,9 +146,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		sb_top_screen_lock.setOnChangedListener(this);
 		sb_cancel_order_void.setOnChangedListener(this);
 		sb_transfer_print.setOnChangedListener(this);
+		sb_auto_table.setOnChangedListener(this);
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
+		findViewById(R.id.ll_set_lock_time).setOnClickListener(this);
 		findViewById(R.id.ll_set_color).setOnClickListener(this);
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.rl_order_summary).setVisibility(View.GONE);
@@ -259,6 +268,11 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 		}else{
 			sb_transfer_print.setChecked(false);
 		}
+		if(settings.isAutoToTable()){
+			sb_auto_table.setChecked(true);
+		}else{
+			sb_auto_table.setChecked(false);
+		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
 		}else{
@@ -315,6 +329,73 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			break;
 		case R.id.ll_set_pwd:
 			changePasswordDialog.show();
+			break;
+		case R.id.ll_set_lock_time:
+			int time = Store.getInt(App.instance, Store.RELOGIN_TIME);
+			int hour = 0;
+			int min = 0;
+			int second = 0;
+			if(time > 0){
+				hour = time/(60*60*1000);
+				min = time/(60*1000)%60;
+				second = (time/1000)%(60*60)%60;
+			}
+			final List<Object> options1Items = new ArrayList<>();
+			for(int i = 0; i <= 12;i++){
+				if(i < 10){
+					options1Items.add("0"+i);
+				}else{
+					options1Items.add(""+i);
+				}
+			}
+			final List<Object> mins = new ArrayList<>();
+			for(int i = 0; i < 60; i++){
+				if(i < 10){
+					mins.add("0"+i);
+				}else{
+					mins.add(""+i);
+				}
+			}
+			OptionsPickerView<Object> optionsPickerBuilder = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+				@Override
+				public void onOptionsSelect(int options1, int options2, int options3, View v) {
+					String hourStr = (String) options1Items.get(options1);
+					String minStr = (String) mins.get(options2);
+					String secondStr = (String) mins.get(options3);
+					int h = Integer.parseInt(hourStr);
+					int m = Integer.parseInt(minStr);
+					int s = Integer.parseInt(secondStr);
+					if(h == 0 && m == 0 && s < 30){
+						DialogFactory.showOneButtonCompelDialog(SystemSetting.this, getResources().getString(R.string.warning), "time must >= 30 second", null);
+						return;
+					}
+					int time = s * 1000
+							+ m * 60 *1000
+							+ h * 60 * 60 * 1000;
+					Store.putInt(App.instance, Store.RELOGIN_TIME, time);
+					App.instance.setTime(time);
+				}
+			}).setTitleText("set time")
+			.setTitleSize(30)
+			.setContentTextSize(25)//设置滚轮文字大小
+			.setDividerColor(Color.BLACK)//设置分割线的颜色
+			.setBgColor(Color.WHITE)
+			.setTitleBgColor(getResources().getColor(R.color.bg_gray_line))
+			.setTitleColor(Color.BLACK)
+			.setCancelColor(Color.BLACK)
+			.setSubmitColor(Color.BLACK)
+			.setSubmitText(getResources().getString(R.string.ok))
+			.setCancelText(getResources().getString(R.string.cancel))
+			.setLineSpacingMultiplier(1.5f)
+			.setTextColorCenter(Color.TRANSPARENT)
+			.setLabels("hour", "minute", "second")
+			.isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
+			.isCenterLabel(true) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+			.setBackgroundId(getResources().getColor(R.color.white)) //设置外部遮罩颜色
+			.build();
+			optionsPickerBuilder.setNPicker(options1Items, mins, mins);
+			optionsPickerBuilder.setSelectOptions(hour,min,second);
+			optionsPickerBuilder.show();
 			break;
 		case R.id.ll_set_callnum:
 			selectPrintWindow.show("");
@@ -586,6 +667,15 @@ public class SystemSetting extends BaseActivity implements OnChangedListener,OnC
 			}else{
 				sb_transfer_print.setChecked(false);
 				settings.setTransferPrint(ParamConst.DEFAULT_FALSE);
+			}
+			break;
+		case R.id.sb_auto_table:
+			if(checkState){
+				sb_auto_table.setChecked(true);
+				settings.setAutoToTable(ParamConst.DEFAULT_TRUE);
+			}else{
+				sb_auto_table.setChecked(false);
+				settings.setAutoToTable(ParamConst.DEFAULT_FALSE);
 			}
 			break;
 		default:

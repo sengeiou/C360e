@@ -325,6 +325,8 @@ public class MainPageKiosk extends BaseActivity {
 						topMenuView.refreshUserName();
 					else if (object.intValue() == 2){
 						topMenuView.showAppOrderReciving();
+					}else if(object.intValue() == 3){
+						topMenuView.showKioskHoldNum();
 					}
 				}else {
 					UIHelp.startSoredCardActivity(context);
@@ -338,6 +340,8 @@ public class MainPageKiosk extends BaseActivity {
 			}
 		});
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
+		int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+		App.instance.setKioskHoldNum(count);
 		XMPP.getInstance().setCanCheckAppOrder(true);
 	}
 

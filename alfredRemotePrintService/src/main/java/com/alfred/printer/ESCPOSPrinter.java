@@ -244,11 +244,12 @@ public class ESCPOSPrinter {
     }
 
 	public  void kickDrawerForSunmi()  throws Exception {
-		byte[] tcmd = new byte[4];
+		byte[] tcmd = new byte[5];
 		tcmd[0] = 0x10;
 		tcmd[1] = 0x14;
 		tcmd[2] = 0x00;
 		tcmd[3] = 0x00;
+		tcmd[4] = 0x00;
 		out.write(tcmd);
 	}
 

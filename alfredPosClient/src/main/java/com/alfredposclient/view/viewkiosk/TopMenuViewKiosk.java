@@ -39,7 +39,9 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 	private TextView tv_manage;
 	private RelativeLayout rl_app_num;
 	private TextView tv_app_num;
-	
+	private RelativeLayout rl_kiosk_hold_num;
+	private TextView tv_kiosk_hold_num;
+
 	private DrawerLayout mDrawerLayout; // activity滑动布局
 	private SettingView mSettingView; // 右滑视图
 	
@@ -59,6 +61,8 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 		this.handler = handler;
 		this.mDrawerLayout = drawerLayout;
 		this.mSettingView = settingView;
+		showAppOrderReciving();
+		showKioskHoldNum();
 	}
 
 	private void init(Context context) {
@@ -90,7 +94,8 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 		initTextTypeFace();
 		rl_app_num = (RelativeLayout) findViewById(R.id.rl_app_num);
 		tv_app_num = (TextView) findViewById(R.id.tv_app_num);
-		showAppOrderReciving();
+		rl_kiosk_hold_num = (RelativeLayout) findViewById(R.id.rl_kiosk_hold_num);
+		tv_kiosk_hold_num = (TextView) findViewById(R.id.tv_kiosk_hold_num);
 	}
 
 	public void showAppOrderReciving(){
@@ -99,6 +104,15 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 			tv_app_num.setText(App.instance.getAppOrderNum() + "");
 		}else{
 			rl_app_num.setVisibility(View.INVISIBLE);
+		}
+	}
+
+	public void showKioskHoldNum(){
+		if(App.instance.getKioskHoldNum() > 0){
+			rl_kiosk_hold_num.setVisibility(View.VISIBLE);
+			tv_kiosk_hold_num.setText(App.instance.getKioskHoldNum()+"");
+		}else{
+			rl_kiosk_hold_num.setVisibility(View.INVISIBLE);
 		}
 	}
 

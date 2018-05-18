@@ -835,9 +835,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					});
 					return;
 				}
-				GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
-				final Map<String, Object> xReportInfo
-						= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
 				//sync finished Order info in current session to cloud
 				LogUtil.e("测试", "11");
 				List<Order> orders = OrderSQL.getFinishedOrdersBySession(
@@ -853,9 +850,21 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							
 						}
 					}
+				}else{
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							dismissPrinterLoadingDialog();
+							Store.remove(context, Store.SESSION_STATUS);
+							App.instance.setSessionStatus(null);
+						}
+					});
+					return;
 				}
 				LogUtil.e("测试", "33");
-				
+				GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
+				final Map<String, Object> xReportInfo
+						= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
 				//sync X-Report to cloud
 				if (cloudSync!=null) {
 					cloudSync.syncXReport(xReportInfo,

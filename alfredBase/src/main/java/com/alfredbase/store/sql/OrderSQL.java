@@ -1348,6 +1348,32 @@ public class OrderSQL {
 		return sumCount;
 	
 	}
+
+
+	public static int getKioskHoldCount(long businessDate, SessionStatus sessionStatus){
+		int sumCount = 0;
+		String sql = "select count(0) from "+ TableNames.Order + " where sessionStatus = ? and createTime > ? and businessDate = ? and (orderStatus = "
+				+ ParamConst.ORDER_STATUS_KIOSK
+				+ " or orderStatus = "
+				+ ParamConst.ORDER_STATUS_HOLD
+				+ " )";
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(businessDate)});
+			if (cursor.moveToFirst()) {
+				sumCount = cursor.getInt(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return sumCount;
+
+	}
 	
 	/*计算流水*/
 	public static int getSumCountByBizDate(long bizDate){

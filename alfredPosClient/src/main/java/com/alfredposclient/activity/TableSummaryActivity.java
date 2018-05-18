@@ -18,6 +18,7 @@ import com.alfredposclient.global.App;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alex on 2018/3/14.
@@ -26,6 +27,7 @@ import java.util.List;
 public class TableSummaryActivity extends BaseActivity {
 
     private ListView lv_table_summary;
+    private TextView tv_total_amount;
     @Override
     protected void initView() {
         super.initView();
@@ -34,10 +36,11 @@ public class TableSummaryActivity extends BaseActivity {
         loadingDialog.setTitle("Loading");
         lv_table_summary = (ListView) findViewById(R.id.lv_table_summary);
         findViewById(R.id.btn_back).setOnClickListener(this);
+        tv_total_amount = (TextView) findViewById(R.id.tv_total_amount);
         showSummary();
     }
     private void showSummary(){
-        new AsyncTask<String, String, List<TableSummary>>(){
+        new AsyncTask<String, String, Map<String, Object>>(){
 
             @Override
             protected void onPreExecute() {
@@ -45,23 +48,30 @@ public class TableSummaryActivity extends BaseActivity {
             }
 
             @Override
-            protected List<TableSummary> doInBackground(String... params) {
-                List<TableSummary> tableSummaryList = GeneralSQL.getTableSummary(App.instance.getBusinessDate());
-                return tableSummaryList;
+            protected Map<String, Object> doInBackground(String... params) {
+                Map<String, Object> map = GeneralSQL.getTableSummary(App.instance.getBusinessDate());
+                return map;
             }
 
             @Override
-            protected void onPostExecute(List<TableSummary> tableSummaries) {
+            protected void onPostExecute(Map<String, Object> map) {
                 dismissLoadingDialog();
-                initListView(tableSummaries);
+                List<TableSummary> tableSummaryList = (List<TableSummary>) map.get("tableSummaryList");
+                String total = (String) map.get("total");
+                initValue(tableSummaryList, total);
+
             }
         }.execute();
     }
 
 
-    private void initListView(List<TableSummary> tableSummaries){
+    private void initValue(List<TableSummary> tableSummaries, String total){
+        if(tableSummaries == null || tableSummaries.size() == 0){
+            return;
+        }
         TableSummaryAdapter tableSummaryAdapter = new TableSummaryAdapter(tableSummaries);
         lv_table_summary.setAdapter(tableSummaryAdapter);
+        tv_total_amount.setText("Amount("+App.instance.getLocalRestaurantConfig().getCurrencySymbol()+total+")");
     }
 
 

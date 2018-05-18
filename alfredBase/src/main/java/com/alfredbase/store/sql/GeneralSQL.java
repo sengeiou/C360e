@@ -10,9 +10,13 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.posonly.TableSummary;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 本类用于综合查询，多变查询等
@@ -326,8 +330,10 @@ public class GeneralSQL {
 		}
 	}
 
-	public static List<TableSummary> getTableSummary(long businessDate){
+	public static Map<String, Object> getTableSummary(long businessDate){
+		Map<String, Object> map = new HashMap<>();
 		List<TableSummary> tableSummaryList = new ArrayList<>();
+		BigDecimal total = BH.getBD("0");
 		String sql = "select t.posId, t.name, u.firstName, u.lastName, o.total, o.createTime, o.id from "
 				+ TableNames.Order
 				+ " o, "
@@ -345,7 +351,7 @@ public class GeneralSQL {
 			cursor = db.rawQuery(sql, new String[]{businessDate+""});
 			int count = cursor.getCount();
 			if (count < 1) {
-				return tableSummaryList;
+				return map;
 			}
 			TableSummary tableSummary = null;
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -359,11 +365,14 @@ public class GeneralSQL {
 				tableSummary.setStartTime(cursor.getLong(5));
 				tableSummary.setOrderNo(cursor.getInt(6)+"");
 				tableSummaryList.add(tableSummary);
+				total = BH.add(total, BH.getBD(tableSummary.getAmount()), true);
 			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		return tableSummaryList;
+		map.put("tableSummaryList", tableSummaryList);
+		map.put("total" , total.toString());
+		return map;
 	}
 
 

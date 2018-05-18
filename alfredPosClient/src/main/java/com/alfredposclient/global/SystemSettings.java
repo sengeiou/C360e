@@ -25,6 +25,7 @@ public class SystemSettings {
 	private boolean isScreenLock = true;
 	private boolean removeToVoid = false;
 	private boolean isTransferPrint = true;
+	private boolean isAutoToTable = false;
 
 	private int maxPrintOrderNo = 98;
     
@@ -410,6 +411,28 @@ public class SystemSettings {
 			this.isTransferPrint = true;
 		else
 			this.isTransferPrint = false;
+	}
+
+	public boolean isAutoToTable() {
+		Integer value = Store.getInt(context,
+				Store.IS_AUTOTO_TABLE);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1){
+				this.isAutoToTable = true;
+			}else{
+				this.isAutoToTable = false;
+			}
+		}
+		return isAutoToTable;
+	}
+
+	public void setAutoToTable(Integer autoToTable) {
+		Store.putInt(this.context, Store.IS_AUTOTO_TABLE,
+				autoToTable.intValue());
+		if(autoToTable.intValue() == 1)
+			this.isAutoToTable = true;
+		else
+			this.isAutoToTable = false;
 	}
 
 	public int getMaxPrintOrderNo() {

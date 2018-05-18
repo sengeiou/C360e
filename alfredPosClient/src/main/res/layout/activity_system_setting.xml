@@ -386,6 +386,40 @@
                                 android:layout_marginRight="10dp" />
                         </RelativeLayout>
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_pos_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ll_app_order"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/box_system_setting"
+                        android:orientation="vertical">
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="60dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_auto_table"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:padding="10dp"
+                                android:text="Auto go to Table"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_m" />
+
+                            <com.alfredbase.view.SlipButton
+                                android:id="@+id/sb_auto_table"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="10dp" />
+                        </RelativeLayout>
+                        </LinearLayout>
                 </RelativeLayout>
 
                 <LinearLayout
@@ -586,7 +620,28 @@
                                     android:layout_centerVertical="true"
                                     android:layout_marginRight="10dp" />
                             </RelativeLayout>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+                            <RelativeLayout
+                                android:id="@+id/ll_set_lock_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:layout_gravity="center_horizontal">
 
+                                <TextView
+                                    android:id="@+id/tv_set_lock_time"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="12dp"
+                                    android:paddingLeft="10dp"
+                                    android:text="Screen Lock Time"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                            </RelativeLayout>
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
@@ -609,7 +664,6 @@
                                     android:textSize="@dimen/text_size_m" />
 
                             </RelativeLayout>
-
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"

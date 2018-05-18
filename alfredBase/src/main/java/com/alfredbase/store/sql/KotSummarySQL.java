@@ -24,8 +24,8 @@ public class KotSummarySQL {
 			String sql = "replace into "
 					+ TableNames.KotSummary
 					+ "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
-					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[]{kotSummary.getId(),
@@ -41,7 +41,8 @@ public class KotSummarySQL {
 							kotSummary.getIsTakeAway(),
 							kotSummary.getOrderNo(),
 							kotSummary.getRevenueCenterIndex(),
-							kotSummary.getOrderRemark()
+							kotSummary.getOrderRemark(),
+							kotSummary.getEmpName()
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,6 +92,8 @@ public class KotSummarySQL {
 							kotSummary.getRevenueCenterIndex());
 					SQLiteStatementHelper.bindString(sqLiteStatement,14,
 							kotSummary.getOrderRemark());
+					SQLiteStatementHelper.bindString(sqLiteStatement,15,
+							kotSummary.getEmpName());
 					sqLiteStatement.executeInsert();
 				}
 				db.setTransactionSuccessful();
@@ -130,6 +133,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
+				kotSummary.setEmpName(cursor.getString(14));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -172,6 +176,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
+				kotSummary.setEmpName(cursor.getString(14));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -214,6 +219,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
+				kotSummary.setEmpName(cursor.getString(14));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -256,6 +262,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
+				kotSummary.setEmpName(cursor.getString(14));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -291,6 +298,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
+				kotSummary.setEmpName(cursor.getString(14));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -332,6 +340,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
+				kotSummary.setEmpName(cursor.getString(14));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -367,6 +376,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
+				kotSummary.setEmpName(cursor.getString(14));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -401,6 +411,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -446,6 +457,15 @@ public class KotSummarySQL {
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] {updateTime, kotSummayId});
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void updateKotSummaryEmpById(String empName, int id){
+		String sql = "update " + TableNames.KotSummary + " set empName = ? where id = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[]{empName, id});
+		}catch (Exception e){
 			e.printStackTrace();
 		}
 	}

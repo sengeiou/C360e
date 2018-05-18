@@ -197,6 +197,7 @@ public class ResultCode {
 
 	public static final int TABLE_EMPLY= -992;
 	public static final int ORDER_HAS_CLOSING= -991;
+	public static final int ORDER_NO_PLACE= -990;
 
 	/**
 	 * waiter提交的拆单在POS机上已经结账的返回
@@ -262,6 +263,8 @@ public class ResultCode {
 			return "The mobile phone number has been registered!";
 		case CARD_QUERY_FAIL:
 			return "There is no record";
+		case ORDER_NO_PLACE:
+			return "Cannot Print";
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);

@@ -113,18 +113,6 @@
 
 
                 <TextView
-                    android:id="@+id/tv_hold_order"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="Hold Order"
-                    android:textColor="@color/text_light_black"
-                    android:textSize="15sp" />
-
-                <TextView
                     android:id="@+id/tv_kiosk_order"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -133,6 +121,18 @@
                     android:gravity="center"
                     android:singleLine="true"
                     android:text="Kiosk Order"
+                    android:textColor="@color/text_light_black"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_hold_order"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="Hold Order"
                     android:textColor="@color/text_light_black"
                     android:textSize="15sp" />
             </LinearLayout>

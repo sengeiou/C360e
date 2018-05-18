@@ -44,7 +44,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
 //            signingConfig signingConfigs.release
         }
@@ -88,9 +88,9 @@ dependencies {
 //    compile files('libs/android-websockets.jar')
 //    compile files('libs/core-3.2.1.jar')
     compile 'com.android.support:recyclerview-v7:25.1.1'
-    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
-
+    compile 'com.contrarywind:Android-PickerView:4.1.3'
     compile(name: 'barcode_scanner_library_v2.0.8.0', ext: 'aar')
+    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
     compile 'com.tencent.bugly:crashreport:latest.release'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 //    compile 'com.rabbitmq:amqp-client:3.6.5'
