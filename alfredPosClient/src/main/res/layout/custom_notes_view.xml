@@ -32,7 +32,7 @@
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
                 android:paddingTop="10dp"
-                android:text="手动输入"
+                android:text="@string/add_table_num"
                 android:textColor="@color/title_bg"
                 android:textSize="20sp" />
 

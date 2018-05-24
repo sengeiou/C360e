@@ -2487,7 +2487,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 	
 	private void deleteVoidOrEntTax(){
 		OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrder(ParamConst.ACTIVE_DELETE, order.getId().intValue());
-		order.setTotal(BH.sub(BH.getBD(order.getTotal()), BH.getBD(order.getTaxAmount()), true).toString());
+		order.setTotal(BH.sub(BH.getBD(order.getSubTotal()),
+						BH.getBD(order.getDiscountAmount()), false).toString());
 		payment.setPaymentAmount(order.getTotal());
 		OrderSQL.update(order);
 		PaymentSQL.addPayment(payment);

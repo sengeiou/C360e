@@ -1,5 +1,9 @@
 package com.alfredbase.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,10 +14,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
-
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 public class NetUtil {
 	public static boolean isAvailable(Context context) {
@@ -102,6 +102,25 @@ public class NetUtil {
 		}
 		return sb.toString();
 
+	}
+
+	public static boolean isNetworkAvailable(Context context) {
+
+		ConnectivityManager manager = (ConnectivityManager) context
+				.getApplicationContext().getSystemService(
+						Context.CONNECTIVITY_SERVICE);
+
+		if (manager == null) {
+			return false;
+		}
+
+		NetworkInfo networkinfo = manager.getActiveNetworkInfo();
+
+		if (networkinfo == null || !networkinfo.isAvailable()) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

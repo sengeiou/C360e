@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.NetUtil;
 import com.alfredposclient.global.App;
 import com.alfredposclient.push.PushListenerClient;
 
@@ -46,6 +47,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class XMPP implements ConnectionListener, PingFailedListener{
     private String user;
@@ -63,7 +66,9 @@ public class XMPP implements ConnectionListener, PingFailedListener{
     private XMPPTCPConnection connection;
     private PingManager pingManager;
     private static String TAG = "XMPP";
-
+    private Timer timer = new Timer();
+    private int reloginTime = 10000;
+    private boolean canRunTask = true;
     private XMPPTCPConnectionConfiguration buildConfiguration() throws XmppStringprepException {
         XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
         builder.setHost(HOST);
@@ -118,8 +123,10 @@ public class XMPP implements ConnectionListener, PingFailedListener{
 
         if (connection == null) {
             this.connection = new XMPPTCPConnection(config);
+            this.connection.addConnectionListener(this);
         }
         this.connection.connect();
+
 //        Roster roster = Roster.getInstanceFor(connection);
 
 //        if (!roster.isLoaded())
@@ -167,6 +174,13 @@ public class XMPP implements ConnectionListener, PingFailedListener{
 
     public void close() {
         Log.i(TAG, "inside XMPP close method");
+        try{
+            if(timer != null){
+                timer.cancel();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         if (this.connection != null) {
             this.connection.disconnect();
         }
@@ -219,6 +233,8 @@ public class XMPP implements ConnectionListener, PingFailedListener{
         return (this.connection != null) && (this.connection.isConnected());
     }
     public void login(final String user, final String pass, final String username, final String roomName){
+
+
 //        if(App.isOpenLog){
 //            this.user = "TEST" + user;
 //            this.pass = "TEST" + pass;
@@ -345,21 +361,19 @@ public class XMPP implements ConnectionListener, PingFailedListener{
 //                    }
 //                }
             }, null);
-            connect.addConnectionListener(this);
             createMessageGroup(connection, roomName, username);
         } catch (Exception e){
             e.printStackTrace();
-            reLogin();
+            LogUtil.e(TAG, "出错重连.....");
+            if(canRunTask) {
+                timer.schedule(new MyTimertask(), reloginTime);
+                canRunTask = false;
+            }
         }
 
     }
 
     private void reLogin(){
-        try {
-            Thread.sleep(30*1000);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
         login(user, pass, username, roomName);
     }
 
@@ -432,14 +446,22 @@ public class XMPP implements ConnectionListener, PingFailedListener{
 
     @Override
     public void connectionClosed() {
-//        reLogin();
+        LogUtil.e(TAG, "connectionClosed重连.....");
+        if(canRunTask) {
+            timer.schedule(new MyTimertask(), reloginTime);
+            canRunTask = false;
+        }
         LogUtil.i(TAG, "connectionClosed");
     }
 
     @Override
     public void connectionClosedOnError(Exception e) {
         LogUtil.i(TAG, "connectionClosedOnError" + e.getMessage());
-        reLogin();
+        LogUtil.e(TAG, "connectionClosedOnError重连.....");
+        if(canRunTask) {
+            timer.schedule(new MyTimertask(), reloginTime);
+            canRunTask = false;
+        }
     }
 
     @Override
@@ -473,5 +495,26 @@ public class XMPP implements ConnectionListener, PingFailedListener{
 
     public void setCanCheckAppOrder(boolean canCheckAppOrder) {
         this.canCheckAppOrder = canCheckAppOrder;
+    }
+
+
+    class MyTimertask extends TimerTask {
+
+        @Override
+        public void run() {
+            canRunTask = true;
+            if (NetUtil.isNetworkAvailable(App.instance)) {
+                LogUtil.e(TAG, ".....正在连接中");
+                reLogin();
+            }else{
+                LogUtil.e(TAG, "xmpp  当前没有网络");
+                if(canRunTask) {
+                    timer.schedule(new MyTimertask(), reloginTime);
+                    canRunTask = false;
+                }
+            }
+
+        }
+
     }
 }

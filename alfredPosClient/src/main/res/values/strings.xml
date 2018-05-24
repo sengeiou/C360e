@@ -391,6 +391,7 @@
     <string name="index">Index</string>
     <string name="welcome">Welcome</string>
     <string name="bill_manage">Bill Manage</string>
+    <string name="add_table_num">add Table Num</string>
 
     <!--Zun-->
     <string name="device_scan_tips">Scan the QR code to get Tablets paired with the POS</string>

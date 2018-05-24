@@ -669,7 +669,7 @@ public class MainPage extends BaseActivity {
 				try {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("tableId", currentTable.getPosId().intValue());
-					jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
+					jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
 					jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
 					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
 					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
