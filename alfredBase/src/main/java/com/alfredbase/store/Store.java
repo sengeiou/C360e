@@ -119,6 +119,7 @@ public class Store {
 	public static final String WAITER_SET_LOCK = "WAITER_SET_LOCK";
 
 	public static final String RELOGIN_TIME = "RELOGIN_TIME";
+	public static final String LOAD_CASH_DEFAULT = "LOAD_CASH_DEFAULT";
 
 
 	private Store() {

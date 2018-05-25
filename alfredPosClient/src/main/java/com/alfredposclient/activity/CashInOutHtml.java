@@ -12,7 +12,10 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.store.Store;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.JSONUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.SystemUtil;
 import com.alfredposclient.R;
@@ -76,6 +79,9 @@ public class CashInOutHtml extends BaseActivity {
 					return;
 				}
 				if (!TextUtils.isEmpty(action)) {
+					if(JavaConnectJS.LOAD_CASH_DEFAULT.equals(action)){
+						mHandler.sendMessage(mHandler.obtainMessage(JavaConnectJS.ACTION_LOAD_CASH_DEFAULT, param));
+					}
 					if (JavaConnectJS.CLICK_BACK.equals(action)) {
 						mHandler.sendEmptyMessage(JavaConnectJS.ACTION_CLICK_BACK);
 					}
@@ -97,14 +103,23 @@ public class CashInOutHtml extends BaseActivity {
 	public void handlerClickEvent(View v) {
 		super.handlerClickEvent(v);
 	}
-	
+	private String getLoadCashDefault(){
+		return Store.getString(context, Store.LOAD_CASH_DEFAULT);
+	}
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
+			case JavaConnectJS.ACTION_LOAD_CASH_DEFAULT: {
+				String str = (String) msg.obj;
+				web.loadUrl("javascript:JsConnectAndroid('"
+						+ JSONUtil.getJSCallBackName(str) + "','"
+						+ BH.getBD(getLoadCashDefault()).toString() + "')");
+			}
+				break;
 			case JavaConnectJS.ACTION_CLICK_BACK:
 				CashInOutHtml.this.finish();
 				break;
-			case JavaConnectJS.ACTION_CLICK_CASH_SAVE:
+			case JavaConnectJS.ACTION_CLICK_CASH_SAVE: {
 				String str = (String) msg.obj;
 				try {
 					JSONObject jsonObject = new JSONObject(str);
@@ -112,7 +127,7 @@ public class CashInOutHtml extends BaseActivity {
 					String typeString = saveDataJsonObject.optString("type");
 					if (typeString.equals(CashIn)) {
 						type = ParamConst.CASHINOUT_TYPE_IN;
-					}else {
+					} else {
 						type = ParamConst.CASHINOUT_TYPE_OUT;
 					}
 					cash = saveDataJsonObject.optString("cash");
@@ -122,20 +137,22 @@ public class CashInOutHtml extends BaseActivity {
 				}
 				if (!TextUtils.isEmpty(cash) && !cash.equals(defaultCash)) {
 					if (App.instance.countryCode == ParamConst.CHINA) {
-						user.setUserName(user.getLastName()+user.getFirstName());
-					}else {
-						user.setUserName(user.getFirstName()+"."+user.getLastName());
+						user.setUserName(user.getLastName() + user.getFirstName());
+					} else {
+						user.setUserName(user.getFirstName() + "." + user.getLastName());
 					}
 					ObjectFactory.getInstance().getCashInOut(App.instance.getRevenueCenter(),
-							App.instance.getLastBusinessDate(),user,type,cash,comment);
+							App.instance.getLastBusinessDate(), user, type, cash, comment);
 					UIHelp.showToast(context, context.getResources().getString(R.string.save_success));
+					Store.putString(context, Store.LOAD_CASH_DEFAULT, cash);
 					mHandler.sendEmptyMessageDelayed(JavaConnectJS.ACTION_CLICK_BACK, 350);
-				}else {
+				} else {
 					UIHelp.showToast(context, context.getResources().getString(R.string.cash_not_empty));
 					return;
 				}
 				PrinterDevice printerDevice = App.instance.getCahierPrinter();
 				App.instance.kickOutCashDrawer(printerDevice);
+			}
 				break;
 			default:
 				break;

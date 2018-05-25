@@ -106,8 +106,20 @@ var app = app || {};
        }
        else if (funcname == "RefreshTableStatus") {
          _refreshTableStatus(param); 
-       }    
+       }
+       else if (funcname == "UpdateCashDefault"){
+        _refreshCash(param);
+       }
     }
+
+    function _refreshCash(param){
+        $('#cashdefault').html(param);
+    }
+
+    function _loadcashdefault() {
+            var param = {"js_callback":"UpdateCashDefault"};
+            window.JavaConnectJS.send("Loadcashdefault",JSON.stringify(param));
+        }
     
     app.cashinoutview = new app.cashInOutView();
     document.addEventListener('touchmove', function (e) {
@@ -115,5 +127,6 @@ var app = app || {};
     }, false);
     FastClick.attach(document.body);
     //expose interface to Android
-    window.JsConnectAndroid = JsConnectAndroid;      
+    window.JsConnectAndroid = JsConnectAndroid;
+     _loadcashdefault();
 })(jQuery);

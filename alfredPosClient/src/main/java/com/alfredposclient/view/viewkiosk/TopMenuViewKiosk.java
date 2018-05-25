@@ -90,7 +90,7 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 		ll_get_bill.setOnClickListener(this);
 		ll_net_order.setOnClickListener(this);
 		ll_kiosk_hold.setOnClickListener(this);
-		findViewById(R.id.tv_search).setOnClickListener(this);
+		findViewById(R.id.iv_search).setOnClickListener(this);
 		initTextTypeFace();
 		rl_app_num = (RelativeLayout) findViewById(R.id.rl_app_num);
 		tv_app_num = (TextView) findViewById(R.id.tv_app_num);
@@ -169,7 +169,7 @@ public class TopMenuViewKiosk extends LinearLayout implements OnClickListener {
 				}
 				break;
 			}
-			case R.id.tv_search: {
+			case R.id.iv_search: {
 				showSearch();
 				break;
 			}

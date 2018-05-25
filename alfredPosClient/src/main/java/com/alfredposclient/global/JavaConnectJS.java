@@ -91,8 +91,9 @@ public interface JavaConnectJS {
 	
 	public static final int ACTION_NEW_KDS_ADDED = 1041;
 	public static final int ACTION_NEW_WAITER_ADDED = 1042;
-	
 
+	public static final String LOAD_CASH_DEFAULT= "Loadcashdefault";
+	public static final int ACTION_LOAD_CASH_DEFAULT= 1043;
 	//for device setting
 	public static final String LOAD_KDS_DEVICES = "LoadKdsDevices";
 	public static final int ACTION_LOAD_KDS_DEVICES = 10050;
@@ -124,6 +125,8 @@ public interface JavaConnectJS {
 	public static final String LOAD_MONTHLY_PLU_REPORT="LoadMonthlyPLUReport";
 	public static final int ACTION_LOAD_MONTHLY_PLU_REPORT = 10059;
 	public static final int ACTION_CLICK_TABLE_ITEM = 10060;
+
+
 
 	
 	

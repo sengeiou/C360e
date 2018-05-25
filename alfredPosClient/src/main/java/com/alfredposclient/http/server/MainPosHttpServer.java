@@ -1,6 +1,9 @@
 package com.alfredposclient.http.server;
 
 import android.app.Activity;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.alfredbase.APPConfig;
@@ -409,17 +412,27 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						result.put("resultCode", ResultCode.SUCCESS);
 						result.put("orderNo", order.getOrderNo());
 						resp = this.getJsonResponse(new Gson().toJson(result));
+						int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+						App.instance.setKioskHoldNum(count);
+						if(App.getTopActivity() != null){
+							App.getTopActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+									Ringtone r = RingtoneManager.getRingtone(App.instance, notification);
+									r.play();
+								}
+							});
+							if( App.getTopActivity() instanceof KioskHoldActivity) {
+								App.getTopActivity().httpRequestAction(
+										MainPage.VIEW_EVENT_SET_DATA, App.getTopActivity());
+							}
+						}
 					}catch (Exception e){
 						e.printStackTrace();
 						result.clear();
 						result.put("resultCode", ResultCode.ORDER_ERROR);
 						resp = this.getJsonResponse(new Gson().toJson(result));
-					}
-					int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
-					App.instance.setKioskHoldNum(count);
-					if(App.getTopActivity() != null && App.getTopActivity() instanceof KioskHoldActivity){
-						App.getTopActivity().httpRequestAction(
-								MainPage.VIEW_EVENT_SET_DATA, App.getTopActivity());
 					}
 					return resp;
 				} else if (apiName.equals(APIName.DESKTOP_COMMITORDER)) {

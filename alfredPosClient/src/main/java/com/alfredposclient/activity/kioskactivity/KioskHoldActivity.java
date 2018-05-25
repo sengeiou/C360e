@@ -267,6 +267,8 @@ public class KioskHoldActivity extends BaseActivity {
                             OrderSQL.deleteOrder(currentOrder);
                         }
                         OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS, order.getId().intValue());
+                        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+                        App.instance.setKioskHoldNum(count);
                         this.finish();
                     }
                 }
@@ -389,6 +391,8 @@ public class KioskHoldActivity extends BaseActivity {
                         Intent intent = new Intent();
                         intent.putExtra("map", map);
                         setResult(CHECK_RESULT_CODE, intent);
+                        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+                        App.instance.setKioskHoldNum(count);
                         KioskHoldActivity.this.finish();
                     }
                 });
