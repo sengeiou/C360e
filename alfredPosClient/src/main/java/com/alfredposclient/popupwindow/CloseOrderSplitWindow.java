@@ -2165,6 +2165,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //		if (show.length() <= 0) {
 //			return;
 //		}
+		if(!ButtonClickTimer.canClick()){
+			return;
+		}
 		switch (viewTag) {
 		case ParamConst.SETTLEMENT_TYPE_CASH: {
 			String showStr = BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true).toString();

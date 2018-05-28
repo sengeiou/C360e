@@ -993,7 +993,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 									if (!orderDetailsUnIncludeVoid.isEmpty()){
 										canClose = false;
 									} else {
-										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
+//										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
+										OrderSQL.deleteOrder(order);
 									}
 								}
 							}
