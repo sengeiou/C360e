@@ -266,6 +266,7 @@ public class ObjectFactory {
 				orderDetail.setIsOpenItem(1);
 			}
 			orderDetail.setGroupId(groupId);
+			orderDetail.setOrderSplitId(0);
 			orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 			orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 			if (itemDetail.getItemType() == 3)
@@ -685,7 +686,7 @@ public class ObjectFactory {
 
 				orderDetail.setModifierPrice(ParamConst.DOUBLE_ZERO);
 				orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
-				orderDetail.setOrderSplitId(null);
+				orderDetail.setOrderSplitId(fromOrderDetail.getOrderSplitId());
 				orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 				orderDetail.setAppOrderDetailId(0);
 				orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
@@ -845,9 +846,12 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		synchronized(lock_get_order_bill) {
 			orderBill = OrderBillSQL.getOrderBillByOrderSplit(orderSplit);
 			if (orderBill == null) {
-				orderBill = new OrderBill();
-				orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
-				orderBill.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(revenueCenter.getId()));
+				orderBill = OrderBillSQL.getOrderBillByOnlyOrder(orderSplit.getOrderId().intValue());
+				if(orderBill == null) {
+					orderBill = new OrderBill();
+					orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
+					orderBill.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(revenueCenter.getId()));
+				}
 				orderBill.setOrderId(orderSplit.getOrderId());
 				orderBill.setOrderSplitId(orderSplit.getId());
 				orderBill.setType(ParamConst.BILL_TYPE_SPLIT);
@@ -986,9 +990,12 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 
 			long time = System.currentTimeMillis();
 			if (payment == null) {
-				payment = new Payment();
-				payment.setId(CommonSQL.getNextSeq(TableNames.Payment));
-				payment.setCreateTime(time);
+				payment = PaymentSQL.getPaymentByOrderId(orderSplit.getOrderId().intValue());
+				if(payment == null) {
+					payment = new Payment();
+					payment.setId(CommonSQL.getNextSeq(TableNames.Payment));
+					payment.setCreateTime(time);
+				}
 			}
 			payment.setBillNo(orderBill.getBillNo());
 			payment.setOrderId(orderSplit.getOrderId());

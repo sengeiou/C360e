@@ -61,6 +61,7 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -333,11 +334,35 @@ public class MainPageOrderView extends LinearLayout {
 		}
 		tv_table_name_ontop.setText(orderNoStr);
 		tv_item_count.setText("" + itemCount);
-		tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString());
-		tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString());
-		tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString());
-		tv_grand_total.setText(context.getResources().getString(R.string.grand_total)+": " +
-				App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
+		List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(order.getId().intValue());
+		if(orderSplits != null && orderSplits.size() > 0){
+			BigDecimal subtotal = BH.getBD(ParamConst.DOUBLE_ZERO);
+			BigDecimal taxAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+			BigDecimal discountAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+			BigDecimal total = BH.getBD(ParamConst.DOUBLE_ZERO);
+			for(OrderSplit orderSplit : orderSplits){
+				subtotal = BH.add(subtotal, BH.getBD(orderSplit.getSubTotal()), false);
+				taxAmount = BH.add(taxAmount, BH.getBD(orderSplit.getTaxAmount()), false);
+				discountAmount = BH.add(discountAmount, BH.getBD(orderSplit.getDiscountAmount()), false);
+				total = BH.add(total, BH.getBD(orderSplit.getTotal()), false);
+			}
+			subtotal = BH.sub(BH.getBD(order.getSubTotal()), subtotal, true);
+			taxAmount = BH.sub(BH.getBD(order.getTaxAmount()), taxAmount, true);
+			discountAmount = BH.sub(BH.getBD(order.getDiscountAmount()), discountAmount, true);
+			total = BH.sub(BH.getBD(order.getTotal()), total, true);
+			tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + subtotal.toString());
+			tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + discountAmount.toString());
+			tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + taxAmount.toString());
+			tv_grand_total.setText(context.getResources().getString(R.string.grand_total) + ": " +
+					App.instance.getLocalRestaurantConfig().getCurrencySymbol() + total.toString());
+
+		}else {
+			tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString());
+			tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString());
+			tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString());
+			tv_grand_total.setText(context.getResources().getString(R.string.grand_total) + ": " +
+					App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
+		}
 	}
 
 	class OrderAdapter extends AbstractSlideExpandableListAdapter {

@@ -1142,12 +1142,13 @@ public class OrderDetailSQL {
 	public static ArrayList<OrderDetail> getOrderDetails(int orderId) {
 		ArrayList<OrderDetail> result = new ArrayList<OrderDetail>();
 		String sql = "select * from " + TableNames.OrderDetail
-				+ " where orderId = ? and orderSplitId not in (select id from "
+				+ " where orderId = ? and orderDetailType <> " +
+				+ ParamConst.ORDERDETAIL_TYPE_VOID
+				+ " and orderSplitId not in (select id from "
 				+ TableNames.OrderSplit
 				+ " where orderId = ? and orderStatus > "
 				+ ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
-		      	+ ") and orderDetailType <> "
-				+ ParamConst.ORDERDETAIL_TYPE_VOID + " order by groupId desc";
+		      	+ ") order by groupId desc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {

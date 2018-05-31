@@ -4,6 +4,7 @@ public class EditSettlementInfo {
 
 	private int paymentId;
 	private int orderId;
+	private int orderSplitId;
 	private int billNo;
 	private String totalAmount;
 	private String placeName;
@@ -12,9 +13,11 @@ public class EditSettlementInfo {
 	private String userName;
 	private String tableName;
 	private Integer type; // 是否拆单的类型  通过此类型 判断打CloseBillWindow的类型
-	public EditSettlementInfo(int paymentId, int orderId, int billNo, String totalAmount, String placeName, String tableName, int tableId, String paymentCreateTime, String userName, Integer type) {
+	private Integer splitGroupId;
+	public EditSettlementInfo(int paymentId, int orderId, int orderSplitId, int billNo, String totalAmount, String placeName, String tableName, int tableId, String paymentCreateTime, String userName, Integer type, Integer splitGroupId) {
 		this.paymentId = paymentId;
 		this.orderId = orderId;
+		this.orderSplitId = orderSplitId;
 		this.billNo = billNo;
 		this.totalAmount = totalAmount;
 		this.placeName = placeName;
@@ -23,6 +26,7 @@ public class EditSettlementInfo {
 		this.userName = userName;
 		this.type = type;
 		this.tableName = tableName;
+		this.splitGroupId = splitGroupId;
 	}
 
 	public EditSettlementInfo() {
@@ -109,11 +113,28 @@ public class EditSettlementInfo {
 		this.tableName = tableName;
 	}
 
+	public int getOrderSplitId() {
+		return orderSplitId;
+	}
+
+	public void setOrderSplitId(int orderSplitId) {
+		this.orderSplitId = orderSplitId;
+	}
+
+	public Integer getSplitGroupId() {
+		return splitGroupId;
+	}
+
+	public void setSplitGroupId(Integer splitGroupId) {
+		this.splitGroupId = splitGroupId;
+	}
+
 	@Override
 	public String toString() {
 		return "EditSettlementInfo{" +
 				"paymentId=" + paymentId +
 				", orderId=" + orderId +
+				", orderSplitId=" + orderSplitId +
 				", billNo=" + billNo +
 				", totalAmount='" + totalAmount + '\'' +
 				", placeName='" + placeName + '\'' +
@@ -122,6 +143,7 @@ public class EditSettlementInfo {
 				", userName='" + userName + '\'' +
 				", tableName='" + tableName + '\'' +
 				", type=" + type +
+				", splitGroupId=" + splitGroupId +
 				'}';
 	}
 

@@ -99,6 +99,7 @@ public class EditSettlementPage extends BaseActivity {
         view_top_line = findViewById(R.id.view_top_line);
         editSettlementAdapter = new EditSettlementAdapter(context, getSettlementList(), verifyDialog);
         ListView lv_payment = (ListView) findViewById(R.id.lv_payment);
+        findViewById(R.id.ll_print).setVisibility(View.GONE);
         lv_payment.setAdapter(editSettlementAdapter);
         lv_payment.setOnItemClickListener(new OnItemClickListener() {
 
@@ -625,12 +626,21 @@ public class EditSettlementPage extends BaseActivity {
             PlaceInfo place = PlaceInfoSQL.getPlaceInfoById(order.getPlaceId());
             TableInfo tableInfo = TableInfoSQL.getTableById(order.getTableId());
             User user = UserSQL.getUserById(payment.getUserId());
+            int  splitId = 0;
+            int splitGroupId = 0;
+            if(payment.getType().intValue() == ParamConst.BILL_TYPE_SPLIT){
+                splitId = payment.getOrderSplitId() == null ? 0 : payment.getOrderSplitId();
+                OrderSplit orderSplitInfo = OrderSplitSQL.get(splitId);
+                if(orderSplitInfo != null){
+                    splitGroupId = orderSplitInfo.getGroupId().intValue();
+                }
+            }
             EditSettlementInfo editSettlementInfo = new EditSettlementInfo(
-                    payment.getId(), payment.getOrderId(), payment.getBillNo(),
-                    payment.getPaymentAmount(), place.getPlaceName(), tableInfo.getName(),
+                    payment.getId(), payment.getOrderId(), splitId,
+                    payment.getBillNo(), payment.getPaymentAmount(), place.getPlaceName(), tableInfo.getName(),
                     order.getTableId(), TimeUtil.getTimeFormat(payment
                     .getCreateTime()), user.getFirstName()
-                    + user.getLastName(), payment.getType());
+                    + user.getLastName(), payment.getType(), splitGroupId);
             editSettlementInfos.add(editSettlementInfo);
         }
         return editSettlementInfos;

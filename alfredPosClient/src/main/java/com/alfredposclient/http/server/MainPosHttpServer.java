@@ -2017,49 +2017,105 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			if(jsonObject.has("deviceId")) {
 				 deviceId = jsonObject.getInt("deviceId");
 			}
-			if(orderId > 0){
+			if(orderId > 0) {
 				Order order = OrderSQL.getOrder(orderId);
-				if(order == null){
+				if (order == null) {
 					result.put("resultCode", ResultCode.ORDER_NO_PLACE);
 					resp = this.getJsonResponse(new Gson().toJson(result));
 					return resp;
 				}
-				if(order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
+				if (order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
 					result.put("resultCode", ResultCode.ORDER_FINISHED);
 					resp = this.getJsonResponse(new Gson().toJson(result));
 					return resp;
 				}
-				OrderBill orderBill = OrderBillSQL
-						.getOrderBillByOrder(order);
-				if(orderBill == null){
-					result.put("resultCode", ResultCode.ORDER_NO_PLACE);
-					resp = this.getJsonResponse(new Gson().toJson(result));
-					return resp;
+				List<OrderSplit> orderSplits = OrderSplitSQL.getUnFinishedOrderSplits(order.getId().intValue());
+				if (orderSplits != null && orderSplits.size() > 0) {
+					PrinterDevice printer = App.instance.getCahierPrinter();
+					if (deviceId != 0) {
+						printer = App.instance.getPrinterDeviceById(deviceId);
+					}
+					for (OrderSplit orderSplit : orderSplits) {
+						if (orderSplit.getOrderStatus().intValue() >= ParamConst.ORDERSPLIT_ORDERSTATUS_PAYED) {
+							continue;
+						}
+						OrderBill orderBill = ObjectFactory.getInstance()
+								.getOrderBillByOrderSplit(orderSplit,
+										App.instance.getRevenueCenter());
+						if (orderBill == null) {
+							result.put("resultCode", ResultCode.ORDER_NO_PLACE);
+							resp = this.getJsonResponse(new Gson().toJson(result));
+							return resp;
+						}
+						ArrayList<OrderDetail> orderDetails = (ArrayList<OrderDetail>) OrderDetailSQL
+								.getOrderDetailsByOrderAndOrderSplit(orderSplit);
+						if (orderDetails.isEmpty()) {
+							continue;
+						}
+						List<Map<String, String>> taxMap = OrderDetailTaxSQL
+								.getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), orderSplit);
+						ArrayList<PrintOrderItem> orderItems = ObjectFactory
+								.getInstance().getItemList(orderDetails);
+
+						PrinterTitle title = ObjectFactory.getInstance()
+								.getPrinterTitleByOrderSplit(
+										App.instance.getRevenueCenter(),
+										order,
+										orderSplit,
+										App.instance.getUser().getFirstName()
+												+ App.instance.getUser()
+												.getLastName(),
+										TableInfoSQL.getTableById(
+												orderSplit.getTableId())
+												.getName(), orderBill, order.getBusinessDate().toString(), 1);
+
+						OrderSplitSQL.updateOrderSplitStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY, orderSplit.getId().intValue());
+						ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+								.getInstance().getItemModifierListByOrderDetail(
+										orderDetails);
+						Order temporaryOrder = new Order();
+						temporaryOrder.setPersons(orderSplit.getPersons());
+						temporaryOrder.setSubTotal(orderSplit.getSubTotal());
+						temporaryOrder.setDiscountAmount(orderSplit.getDiscountAmount());
+						temporaryOrder.setTotal(orderSplit.getTotal());
+						temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
+						temporaryOrder.setOrderNo(order.getOrderNo());
+						App.instance.remoteBillPrint(printer, title, temporaryOrder,
+								orderItems, orderModifiers, taxMap, null, null);
+					}
+				} else {
+					OrderBill orderBill = OrderBillSQL
+							.getOrderBillByOrder(order);
+					if (orderBill == null) {
+						result.put("resultCode", ResultCode.ORDER_NO_PLACE);
+						resp = this.getJsonResponse(new Gson().toJson(result));
+						return resp;
+					}
+					PrinterTitle title = ObjectFactory.getInstance()
+							.getPrinterTitle(
+									App.instance.getRevenueCenter(),
+									order,
+									App.instance.getUser().getFirstName()
+											+ App.instance.getUser()
+											.getLastName(),
+									tableName, 1);
+					ArrayList<PrintOrderItem> orderItems = ObjectFactory
+							.getInstance().getItemList(
+									OrderDetailSQL.getOrderDetails(order
+											.getId()));
+					ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+							.getInstance().getItemModifierList(order, OrderDetailSQL.getOrderDetails(order
+									.getId()));
+					List<Map<String, String>> taxMap = OrderDetailTaxSQL
+							.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
+					PrinterDevice printer = App.instance.getCahierPrinter();
+					if (deviceId != 0) {
+						printer = App.instance.getPrinterDeviceById(deviceId);
+					}
+					App.instance.remoteBillPrint(printer, title, order,
+							orderItems, orderModifiers, taxMap, null, null);
+					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
 				}
-				PrinterTitle title = ObjectFactory.getInstance()
-						.getPrinterTitle(
-								App.instance.getRevenueCenter(),
-								order,
-								App.instance.getUser().getFirstName()
-										+ App.instance.getUser()
-										.getLastName(),
-								tableName, 1);
-				ArrayList<PrintOrderItem> orderItems = ObjectFactory
-						.getInstance().getItemList(
-								OrderDetailSQL.getOrderDetails(order
-										.getId()));
-				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
-						.getInstance().getItemModifierList(order, OrderDetailSQL.getOrderDetails(order
-								.getId()));
-				List<Map<String, String>> taxMap = OrderDetailTaxSQL
-						.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
-				PrinterDevice printer = App.instance.getCahierPrinter();
-				if(deviceId != 0){
-					printer = App.instance.getPrinterDeviceById(deviceId);
-				}
-				App.instance.remoteBillPrint(printer, title, order,
-						orderItems, orderModifiers, taxMap, null, null);
-				OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
 			}
 			result.put("resultCode", ResultCode.SUCCESS);
 			resp = this.getJsonResponse(new Gson().toJson(result));

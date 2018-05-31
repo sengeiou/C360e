@@ -273,6 +273,113 @@ public class OrderSplitSQL {
 		}
 		return result;
 	}
+
+
+	public static List<OrderSplit> getFinishedOrderSplits(int orderId) {
+		ArrayList<OrderSplit> result = new ArrayList<OrderSplit>();
+		String sql = "select * from " + TableNames.OrderSplit
+				+ " where orderId = ? and orderStatus = " + ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED
+				+ " and groupId <> " + ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {orderId + ""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			OrderSplit orderSplit = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				orderSplit = new OrderSplit();
+				orderSplit.setId(cursor.getInt(0));
+				orderSplit.setOrderId(cursor.getInt(1));
+				orderSplit.setOrderOriginId(cursor.getInt(2));
+				orderSplit.setUserId(cursor.getInt(3));
+				orderSplit.setPersons(cursor.getInt(4));
+				orderSplit.setOrderStatus(cursor.getInt(5));
+				orderSplit.setSubTotal(cursor.getString(6));
+				orderSplit.setTaxAmount(cursor.getString(7));
+				orderSplit.setDiscountAmount(cursor.getString(8));
+				orderSplit.setTotal(cursor.getString(9));
+				orderSplit.setSessionStatus(cursor.getInt(10));
+				orderSplit.setRestId(cursor.getInt(11));
+				orderSplit.setRevenueId(cursor.getInt(12));
+				orderSplit.setTableId(cursor.getInt(13));
+				orderSplit.setCreateTime(cursor.getLong(14));
+				orderSplit.setUpdateTime(cursor.getLong(15));
+				orderSplit.setSysCreateTime(cursor.getString(16));
+				orderSplit.setSysUpdateTime(cursor.getString(17));
+				orderSplit.setGroupId(cursor.getInt(18));
+				orderSplit.setInclusiveTaxName(cursor.getString(19));
+				orderSplit.setInclusiveTaxPrice(cursor.getString(20));
+				orderSplit.setInclusiveTaxPercentage(cursor.getString(21));
+				orderSplit.setSplitByPax(cursor.getInt(22));
+				result.add(orderSplit);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
+	public static List<OrderSplit> getUnFinishedOrderSplits(int orderId) {
+		ArrayList<OrderSplit> result = new ArrayList<OrderSplit>();
+		String sql = "select * from " + TableNames.OrderSplit
+				+ " where orderId = ? and orderStatus <> " + ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED
+				+ " and groupId <> " + ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {orderId + ""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			OrderSplit orderSplit = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				orderSplit = new OrderSplit();
+				orderSplit.setId(cursor.getInt(0));
+				orderSplit.setOrderId(cursor.getInt(1));
+				orderSplit.setOrderOriginId(cursor.getInt(2));
+				orderSplit.setUserId(cursor.getInt(3));
+				orderSplit.setPersons(cursor.getInt(4));
+				orderSplit.setOrderStatus(cursor.getInt(5));
+				orderSplit.setSubTotal(cursor.getString(6));
+				orderSplit.setTaxAmount(cursor.getString(7));
+				orderSplit.setDiscountAmount(cursor.getString(8));
+				orderSplit.setTotal(cursor.getString(9));
+				orderSplit.setSessionStatus(cursor.getInt(10));
+				orderSplit.setRestId(cursor.getInt(11));
+				orderSplit.setRevenueId(cursor.getInt(12));
+				orderSplit.setTableId(cursor.getInt(13));
+				orderSplit.setCreateTime(cursor.getLong(14));
+				orderSplit.setUpdateTime(cursor.getLong(15));
+				orderSplit.setSysCreateTime(cursor.getString(16));
+				orderSplit.setSysUpdateTime(cursor.getString(17));
+				orderSplit.setGroupId(cursor.getInt(18));
+				orderSplit.setInclusiveTaxName(cursor.getString(19));
+				orderSplit.setInclusiveTaxPrice(cursor.getString(20));
+				orderSplit.setInclusiveTaxPercentage(cursor.getString(21));
+				orderSplit.setSplitByPax(cursor.getInt(22));
+				result.add(orderSplit);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
 	
 	private static void calculate(Order order, OrderSplit orderSplit) {
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
@@ -442,6 +549,18 @@ public class OrderSplitSQL {
 			}
 		}
 		return orderQty;
+	}
+
+
+	public static void updateOrderSplitStatus( int orderStatus, int id){
+
+		String sql = "update " + TableNames.OrderSplit + " set orderStatus = ? where id = ?" ;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {orderStatus, id});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	

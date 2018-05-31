@@ -7,7 +7,7 @@
 	<RelativeLayout
 		android:id="@+id/titleBar"
 		android:layout_width="match_parent"
-		android:layout_height="60dp"
+		android:layout_height="50dp"
 		android:background="@color/white" >
 
 		<LinearLayout

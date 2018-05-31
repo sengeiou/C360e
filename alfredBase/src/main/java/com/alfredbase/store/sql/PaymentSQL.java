@@ -77,7 +77,7 @@ public class PaymentSQL {
 	public static Payment getPaymentByOrderId(Integer orderId) {
 		Payment payment = null;
 		String sql = "select * from " + TableNames.Payment
-				+ " where orderId = ? and orderSplitId = 0";
+				+ " where orderId = ? and orderSplitId = " + ParamConst.BILL_TYPE_UN_SPLIT;
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB()

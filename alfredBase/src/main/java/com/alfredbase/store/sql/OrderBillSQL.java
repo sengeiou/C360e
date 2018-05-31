@@ -1,15 +1,16 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.Cursor;
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderBillSQL {
 
@@ -100,7 +101,40 @@ public class OrderBillSQL {
 		}
 		return orderBill;
 	}
-	
+
+	public static OrderBill getOrderBillByOnlyOrder(int orderId) {
+		OrderBill orderBill = null;
+		String sql = "select * from " + TableNames.OrderBill
+				+ " where orderId = ? and type = " + ParamConst.BILL_TYPE_UN_SPLIT;
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql,
+					new String[] { orderId + "" });
+			if (cursor.moveToFirst()) {
+				orderBill = new OrderBill();
+				orderBill.setId(cursor.getInt(0));
+				orderBill.setBillNo(cursor.getInt(1));
+				orderBill.setOrderId(cursor.getInt(2));
+				orderBill.setOrderSplitId(cursor.getInt(3));
+				orderBill.setType(cursor.getInt(4));
+				orderBill.setRestaurantId(cursor.getInt(5));
+				orderBill.setRevenueId(cursor.getInt(6));
+				orderBill.setUserId(cursor.getInt(7));
+				orderBill.setCreateTime(cursor.getLong(8));
+				orderBill.setUpdateTime(cursor.getLong(9));
+				return orderBill;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return orderBill;
+	}
+
 	public static List<OrderBill> getAllOrderBillByOrder(Order order) {
 		List<OrderBill> orderBills = new ArrayList<OrderBill>();
 		OrderBill orderBill = null;

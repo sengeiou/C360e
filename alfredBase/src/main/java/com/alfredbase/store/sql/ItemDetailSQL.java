@@ -414,4 +414,14 @@ public class ItemDetailSQL {
 		}
 	}
 
+	public static void updateItemNameForTest(int itemId, String itemName){
+		String sql = "update " + TableNames.ItemDetail + " set itemName = ? where id = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {itemName, itemId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
 }
