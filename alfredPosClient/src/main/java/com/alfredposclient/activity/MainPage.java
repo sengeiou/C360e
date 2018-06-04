@@ -1800,9 +1800,11 @@ public class MainPage extends BaseActivity {
 				break;
 			case ACTION_PAX_SPLIT_BY_PAX: {
 				int splitPax = Integer.parseInt(((String)msg.obj));
-				OrderSplitSQL.deleteOrderSplitByOrderId(currentOrder.getId().intValue());
-				List<OrderSplit> orderSplitList = ObjectFactory.getInstance().getOrderSplitListForPax(currentOrder, splitPax);
-				selectOrderSplitDialog.show(orderSplitList, currentOrder, true);
+				if(splitPax > 0) {
+					OrderSplitSQL.deleteOrderSplitByOrderId(currentOrder.getId().intValue());
+					List<OrderSplit> orderSplitList = ObjectFactory.getInstance().getOrderSplitListForPax(currentOrder, splitPax);
+					selectOrderSplitDialog.show(orderSplitList, currentOrder, true);
+				}
 			}
 				break;
 			case ACTION_PAX_SPLIT_BY_PAX_WINDOW:{

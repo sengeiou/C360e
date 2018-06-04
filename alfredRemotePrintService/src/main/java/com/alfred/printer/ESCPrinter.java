@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.alfred.print.jobs.WifiCommunication;
+import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.WIFIPrintCallback;
 import com.alfredbase.utils.BitmapUtil;
@@ -122,100 +123,102 @@ public class ESCPrinter implements WIFIPrintCallback{
 
 	public boolean setData(List<PrintData> data) {
 		boolean result = true;
-		boolean isKickDrawer = false;
-		try {
+		synchronized (App.instance) {
+			boolean isKickDrawer = false;
+			try {
 //			checkStatus();
-			this.printer.reset();
+				this.printer.reset();
 
-			for (int i=0; i<data.size(); i++) {
-				PrintData toPrint = data.get(i);
-				byte isUnderline = ESCPOSPrinter.UNDERLINE_NONE;
-				if (toPrint.isUnderline())
-					isUnderline = ESCPOSPrinter.UNDERLINE_SINGLE;
+				for (int i = 0; i < data.size(); i++) {
+					PrintData toPrint = data.get(i);
+					byte isUnderline = ESCPOSPrinter.UNDERLINE_NONE;
+					if (toPrint.isUnderline())
+						isUnderline = ESCPOSPrinter.UNDERLINE_SINGLE;
 
-				if (toPrint.getTextBold() != -1) {
-					this.printer.setBold((byte) 1);
-				}else {
-					this.printer.setBold((byte) 0);
-				}
-
-				if (toPrint.getFontsize() == -1)
-					this.printer.setFontSize(1);
-				else
-					this.printer.setFontSize(toPrint.getFontsize());
-
-				if (toPrint.getTextAlign() == PrintData.ALIGN_RIGHT)
-					this.printer.setJustification(ESCPOSPrinter.JUSTIFY_RIGHT);
-				else if (toPrint.getTextAlign() == PrintData.ALIGN_CENTRE)
-					this.printer.setJustification(ESCPOSPrinter.JUSTIFY_CENTER);
-				else
-					this.printer.setJustification(ESCPOSPrinter.JUSTIFY_LEFT);
-
-				if (toPrint.getDataFormat() == PrintData.FORMAT_FEED)  {
-					if(toPrint.getMarginTop() != -1)
-						this.printer.feed((byte) toPrint.getMarginTop());
-				}
-
-				if (toPrint.getDataFormat() == PrintData.FORMAT_SING) {
-					this.printer.sing();
-				}
-
-				//content
-				if (toPrint.getDataFormat() == PrintData.FORMAT_TXT) {
-					this.printer.printText(toPrint.getText());
-
-				}else if(toPrint.getDataFormat() == PrintData.FORMAT_IMG) {
-					byte bitmapBytes[] = toPrint.getImage();
-					Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-					this.printer.printBitmap(bitmap);
-				}else if (toPrint.getDataFormat() == PrintData.FORMAT_CUT) {
-					this.printer.cut();
-				}else if (toPrint.getDataFormat() == PrintData.FORMAT_QR) {
-					String qrCode = toPrint.getQrCode();
-					qrCode = URLEncoder.encode(qrCode, "UTF-8");
-					Map<EncodeHintType, ErrorCorrectionLevel> map = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
-					map.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-					QRCodeWriter writer = new QRCodeWriter();
-					BitMatrix matrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500, map);
-					Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
-					this.printer.printQRBitmap(bitmap);
-				}else if(toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {
-					if(ip.equals(WifiCommunication.localIPAddress)){
-						this.printer.kickDrawerForSunmi();
-					}else {
-						this.printer.kickDrawer();
+					if (toPrint.getTextBold() != -1) {
+						this.printer.setBold((byte) 1);
+					} else {
+						this.printer.setBold((byte) 0);
 					}
-					isKickDrawer = true;
+
+					if (toPrint.getFontsize() == -1)
+						this.printer.setFontSize(1);
+					else
+						this.printer.setFontSize(toPrint.getFontsize());
+
+					if (toPrint.getTextAlign() == PrintData.ALIGN_RIGHT)
+						this.printer.setJustification(ESCPOSPrinter.JUSTIFY_RIGHT);
+					else if (toPrint.getTextAlign() == PrintData.ALIGN_CENTRE)
+						this.printer.setJustification(ESCPOSPrinter.JUSTIFY_CENTER);
+					else
+						this.printer.setJustification(ESCPOSPrinter.JUSTIFY_LEFT);
+
+					if (toPrint.getDataFormat() == PrintData.FORMAT_FEED) {
+						if (toPrint.getMarginTop() != -1)
+							this.printer.feed((byte) toPrint.getMarginTop());
+					}
+
+					if (toPrint.getDataFormat() == PrintData.FORMAT_SING) {
+						this.printer.sing();
+					}
+
+					//content
+					if (toPrint.getDataFormat() == PrintData.FORMAT_TXT) {
+						this.printer.printText(toPrint.getText());
+
+					} else if (toPrint.getDataFormat() == PrintData.FORMAT_IMG) {
+						byte bitmapBytes[] = toPrint.getImage();
+						Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+						this.printer.printBitmap(bitmap);
+					} else if (toPrint.getDataFormat() == PrintData.FORMAT_CUT) {
+						this.printer.cut();
+					} else if (toPrint.getDataFormat() == PrintData.FORMAT_QR) {
+						String qrCode = toPrint.getQrCode();
+						qrCode = URLEncoder.encode(qrCode, "UTF-8");
+						Map<EncodeHintType, ErrorCorrectionLevel> map = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
+						map.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+						QRCodeWriter writer = new QRCodeWriter();
+						BitMatrix matrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500, map);
+						Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
+						this.printer.printQRBitmap(bitmap);
+					} else if (toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {
+						if (ip.equals(WifiCommunication.localIPAddress)) {
+							this.printer.kickDrawerForSunmi();
+						} else {
+							this.printer.kickDrawer();
+						}
+						isKickDrawer = true;
+					}
 				}
+				sendData();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				this.close();
+				result = false;
+				return result;
 			}
-			sendData();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			this.close();
-			result = false;
-			return result;
-		}
-		//printer.close();
-		try {
-			//kickdrawer no need wait for a long time
+			//printer.close();
+			try {
+				//kickdrawer no need wait for a long time
 
-			if (data.size()<2 && isKickDrawer) {
-				Thread.sleep(100);
-			}else if (data.size()<40) {
-				Thread.sleep(1000);
-			}else {
-				Thread.sleep(data.size()*40);
+				if (data.size() < 2 && isKickDrawer) {
+					Thread.sleep(100);
+				} else if (data.size() < 40) {
+					Thread.sleep(1000);
+				} else {
+					Thread.sleep(data.size() * 80);
+				}
+
+				close();
+				Thread.sleep(200);
+
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-
-			close();
-			Thread.sleep(200);
-
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return result;
 	}

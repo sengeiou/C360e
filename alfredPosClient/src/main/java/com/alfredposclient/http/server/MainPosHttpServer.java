@@ -833,7 +833,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						!App.instance.isRevenueKiosk()) {
 					final WaiterDevice waiterDevice = gson.fromJson(device,
 							WaiterDevice.class);
-					if (App.instance.isWaiterLoginAllowed(waiterDevice)) {
+//					if (App.instance.isWaiterLoginAllowed(waiterDevice)) {
 						App.instance.addWaiterDevice(waiterDevice);
 						LocalDevice localDevice = ObjectFactory
 								.getInstance()
@@ -851,11 +851,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 										waiterDevice);
 							}
 						});
-					} else {
-						result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
-						resp = this.getJsonResponse(new Gson().toJson(result));
-						return resp;
-					}
+//					} else {
+//						result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
+//						resp = this.getJsonResponse(new Gson().toJson(result));
+//						return resp;
+//					}
 				} else if (deviceType == ParamConst.DEVICE_TYPE_KDS) {
 					KDSDevice kdsDevice = new KDSDevice();
 					kdsDevice = gson.fromJson(device,
@@ -984,7 +984,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 									jsonObject.optJSONObject("device").toString(),
 									WaiterDevice.class);
 							//waiter can login one device at one time
-							if (App.instance.isWaiterLoginAllowed(dev)) {
+//							if (App.instance.isWaiterLoginAllowed(dev)) {
 								App.instance.addWaiterDevice(dev);
 								LocalDevice localDevice = ObjectFactory
 										.getInstance()
@@ -1000,9 +1000,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								result.put("businessDate", App.instance.getBusinessDate());	
 								result.put("currencySymbol", App.instance.getLocalRestaurantConfig().getCurrencySymbol());
 								result.put("isDouble", App.instance.getLocalRestaurantConfig().getCurrencySymbolType() >= 0);
-							} else {
-								result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
-							}
+//							} else {
+//								result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
+//							}
 							
 							resp = this.getJsonResponse(new Gson().toJson(result));
 					}

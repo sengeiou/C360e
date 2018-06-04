@@ -1334,6 +1334,16 @@ public class App extends BaseApplication {
     }
 
     public void addWaiterDevice(WaiterDevice waiterDevice) {
+        Iterator<Map.Entry<Integer, WaiterDevice>> entries = this.waiterDevices.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<Integer, WaiterDevice> entry = entries.next();
+            WaiterDevice waiterDevicecp = entry.getValue();
+            if(!TextUtils.isEmpty(waiterDevice.getIP())
+                    && !TextUtils.isEmpty(waiterDevicecp.getIP())
+                    && waiterDevice.getIP().equals(waiterDevicecp.getIP())){
+                this.waiterDevices.remove(entry.getKey());
+            }
+        }
         this.waiterDevices.put(waiterDevice.getWaiterId(), waiterDevice);
 
         // timesheet: Login
@@ -1794,6 +1804,7 @@ public class App extends BaseApplication {
             String tax = gson.toJson(taxData);
             String useropen = gson.toJson(reportUserOpenDrawers);
             String reportSessionSaless = gson.toJson(reportSessionSalesList);
+            LogUtil.e(TAG, "daysales ===="+reportData.toString());
             mRemoteService.printDaySalesReport(xzType, prtStr, prtTitle,
                     report, tax, useropen, reportSessionSaless);
         } catch (RemoteException e) {

@@ -1091,16 +1091,22 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
 				title, reportDaySales, reportDayTaxs, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
+//		try {
+//			Thread.sleep(5000);
+//		}catch (Exception e){
+//			e.printStackTrace();
+//		}
 		if(App.instance.getSystemSettings().isPrintPluItem())
 			// detail analysis
 			App.instance.remotePrintDetailAnalysisReport(reportType,
 					cashierPrinter, title, null, reportPluDayItems,
 					reportPluDayModifiers, null, itemMainCategorys, itemCategorys);
-
-		if(App.instance.getSystemSettings().isPrintPluModifier())
-			//modifier report
-			App.instance.remotePrintModifierDetailAnalysisReport(reportType,
-					cashierPrinter, title, reportPluDayModifiers, modifiers);
+		if(reportPluDayModifiers != null && reportPluDayModifiers.size() > 0) {
+			if (App.instance.getSystemSettings().isPrintPluModifier())
+				//modifier report
+				App.instance.remotePrintModifierDetailAnalysisReport(reportType,
+						cashierPrinter, title, reportPluDayModifiers, modifiers);
+		}
 		if(App.instance.getSystemSettings().isPrintPluCategory())
 			App.instance.remotePrintSummaryAnalysisReport(reportType,
 					cashierPrinter, title, reportPluDayItems,
@@ -1175,6 +1181,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				title, reportDaySales, reportDayTaxs,
 				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
 				reportSessionSalesList);
+//		try {
+//			Thread.sleep(2000);
+//		}catch (Exception e){
+//			e.printStackTrace();
+//		}
 		if(App.instance.getSystemSettings().isPrintPluItem())
 			// detail analysis
 			App.instance.remotePrintDetailAnalysisReport(reportType,
