@@ -1173,6 +1173,17 @@ public class MainPage extends BaseActivity {
 									}
 									KotSummary fromKotSummary = KotSummarySQL
 											.getKotSummary(oldOrder.getId());
+									if(fromKotSummary == null){
+										ObjectFactory
+												.getInstance()
+												.getKotSummary(
+														oldTable.getName(),
+														oldOrder,
+														App.instance
+																.getRevenueCenter(),
+														App.instance
+																.getBusinessDate());
+									}
 									Map<String, Object> parameters = new HashMap<String, Object>();
 									parameters.put("action",
 											ParamConst.JOB_MERGER_KOT);

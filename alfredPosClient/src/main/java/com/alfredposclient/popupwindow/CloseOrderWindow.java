@@ -839,6 +839,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				View.INVISIBLE);
 		BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
 		show.append(remainTotalAfterRound.toString().replace(".", ""));
+//		show.append(BH.intFormat.format((BH.mul(remainTotalAfterRound, BH.getBD(100),false)).toString()));
 		tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
 		BigDecimal rounding = BH.sub(remainTotalAfterRound, remainTotal, true);
 		String symbol = "";
@@ -1848,7 +1849,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 //		}
 		switch (viewTag) {
 		case ParamConst.SETTLEMENT_TYPE_CASH: {
-			String showStr = BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true).toString();
+			String showStr = BH.mul(BH.getBD(show.toString()), new BigDecimal("0.01"), true).toString();
 			BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
 			BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
 			if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {

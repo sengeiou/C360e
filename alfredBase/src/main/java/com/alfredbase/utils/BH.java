@@ -87,7 +87,7 @@ public class BH {
 	public static BigDecimal div(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
 		if (needFormat) {
-			return new BigDecimal(format.format(value1.divide(value2)));
+			return new BigDecimal(format.format(value1.divide(value2,5)));
 		} else {
 			return value1.divide(value2, 5, BigDecimal.ROUND_HALF_UP);
 		}

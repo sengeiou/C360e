@@ -57,6 +57,7 @@ public class DataHelper {
 				onUpgradeForOldVersion19(db);
 				onUpgradeForOldVersion20(db);
 				onUpgradeForOldVersion21(db);
+				onUpgradeForOldVersion22(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -92,6 +93,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 2:
 						onUpgradeForOldVersion2(db);
@@ -114,6 +116,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 3:
 						onUpgradeForOldVersion3(db);
@@ -135,6 +138,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 4:
 						onUpgradeForOldVersion4(db);
@@ -155,6 +159,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 5:
 						onUpgradeForOldVersion5(db);
@@ -174,6 +179,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 6:
 						onUpgradeForOldVersion6(db);
@@ -192,6 +198,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 7:
 						onUpgradeForOldVersion7(db);
@@ -209,6 +216,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 8:
 						onUpgradeForOldVersion8(db);
@@ -225,6 +233,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 9:
 						onUpgradeForOldVersion9(db);
@@ -240,6 +249,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 10:
 						onUpgradeForOldVersion10(db);
@@ -254,6 +264,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 11:
 						onUpgradeForOldVersion11(db);
@@ -267,6 +278,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 12:
 						onUpgradeForOldVersion12(db);
@@ -279,6 +291,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 13:
 						onUpgradeForOldVersion13(db);
@@ -290,6 +303,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 14:
 						onUpgradeForOldVersion14(db);
@@ -300,6 +314,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 15:
 						onUpgradeForOldVersion15(db);
@@ -309,6 +324,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 16:
 						onUpgradeForOldVersion16(db);
@@ -317,6 +333,7 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 17:
 						onUpgradeForOldVersion17(db);
@@ -324,24 +341,32 @@ public class DataHelper {
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 18:
 						onUpgradeForOldVersion18(db);
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 19:
 						onUpgradeForOldVersion19(db);
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 20:
 						onUpgradeForOldVersion20(db);
 						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
 						break;
 					case 21:
-
+						onUpgradeForOldVersion21(db);
+						onUpgradeForOldVersion22(db);
+						break;
+					case 22:
+						onUpgradeForOldVersion22(db);
 						break;
 				default:
 					break;
@@ -1032,6 +1057,15 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE "
 					+ TableNames.KotSummary
 					+ " ADD COLUMN empName TEXT default ''");
+		}
+		private void onUpgradeForOldVersion22(SQLiteDatabase db){
+			try {
+				db.execSQL("ALTER TABLE "
+						+ TableNames.KotSummary
+						+ " ADD COLUMN empName TEXT default ''");
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 	}
 }

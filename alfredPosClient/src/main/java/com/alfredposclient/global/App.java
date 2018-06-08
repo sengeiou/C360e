@@ -364,10 +364,10 @@ public class App extends BaseApplication {
                     hasSecondScreen = true;
                     connState = state;
                     LogUtil.d(TAG, "副屏连接成功,副屏状态:" + state);
-                    if(getTopActivity() != null) {
-                        if(isOpenLog)
-                        UIHelp.showToast(getTopActivity(), "副屏连接成功,副屏状态:" + state);
-                    }
+//                    if(getTopActivity() != null) {
+//                        if(isOpenLog)
+//                        UIHelp.showToast(getTopActivity(), "副屏连接成功,副屏状态:" + state);
+//                    }
                 }
             });
 
@@ -884,8 +884,8 @@ public class App extends BaseApplication {
         DataPacket dsPacket = UPacketFactory.buildShowText(DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
             @Override
             public void onSendSuccess(long taskId) {
-                if(isOpenLog)
-                    UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
+//                if(isOpenLog)
+//                    UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
             }
             @Override
             public void onSendFail(int errorId, String errorInfo) {

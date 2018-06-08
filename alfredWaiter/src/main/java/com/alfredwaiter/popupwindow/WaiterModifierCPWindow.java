@@ -170,6 +170,10 @@ public class WaiterModifierCPWindow {
 
         List<ItemModifier> itemModifiers = CoreData.getInstance()
                 .getItemModifiers(itemDetail);
+//        List<ItemModifier> itemModifiers = CoreData.getInstance()
+//                .getItemModifiers(
+//                        CoreData.getInstance().getItemDetailById(
+//                                itemDetail.getId()));
         if (!itemModifiers.isEmpty()) {
             for (ItemModifier itemModifier : itemModifiers) {
                 modifierTitels.add(CoreData.getInstance().getModifier(

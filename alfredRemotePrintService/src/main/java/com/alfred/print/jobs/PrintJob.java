@@ -106,8 +106,8 @@ public class PrintJob  extends Job{
         boolean isPrintLink;
         boolean printed = false;
 		boolean pingSuccess;
-        Log.d(TAG, "onRun:"+this.printerIp);
-		Log.i(TAG, "onRun:this uuid is " + this.msgUUID + ", then this object is" + this);
+        Log.e(TAG, "onRun:"+this.printerIp);
+		Log.e(TAG, "onRun:this uuid is " + this.msgUUID + ", then this object is" + this);
         Gson gson = new Gson();
         PrintQueueMsg content = PrintQueueMsgSQL.getQueuedMsgById(this.msgUUID, this.created);
         if (content == null){
@@ -178,6 +178,7 @@ public class PrintJob  extends Job{
 		if (!printed) {
 			throw new RuntimeException("Print Error");
 		}
+		Log.e(TAG, "=============finishedonRun:");
 	}
 
 	@Override

@@ -8,7 +8,7 @@ ext {
     targetSdkVersion = 20
     minSdkVersion = 14
     posMinSdkVersion = 19
-    versionCode = 32
+    versionCode = 35
     versionName = "1.0.27"
     javaVersion = JavaVersion.VERSION_1_7
 

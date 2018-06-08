@@ -41,7 +41,7 @@ public class BaseApplication extends Application {
 
 	public static BaseApplication instance;
 	public static List<BaseActivity> activitys;
-	public static final int DATABASE_VERSION = 22;
+	public static final int DATABASE_VERSION = 23;
 	/**
 	 * 注意 
 	 * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
