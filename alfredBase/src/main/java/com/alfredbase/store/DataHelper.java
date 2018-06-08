@@ -1058,6 +1058,7 @@ public class DataHelper {
 					+ TableNames.KotSummary
 					+ " ADD COLUMN empName TEXT default ''");
 		}
+		// 紧急修复
 		private void onUpgradeForOldVersion22(SQLiteDatabase db){
 			try {
 				db.execSQL("ALTER TABLE "
