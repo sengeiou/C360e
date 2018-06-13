@@ -341,9 +341,9 @@ public class HttpAnalysis {
 					new TypeToken<ArrayList<Modifier>>() {
 					}.getType());
 
-			CoreData.getInstance().setModifierList(modifierList);
 			ModifierSQL.deleteAllModifier();
 			ModifierSQL.addModifierList(modifierList);
+			CoreData.getInstance().setModifierList(ModifierSQL.getAllModifier());
 
 		} catch (JSONException e) {
 			e.printStackTrace();

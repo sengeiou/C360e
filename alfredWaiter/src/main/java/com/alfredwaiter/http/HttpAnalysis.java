@@ -313,7 +313,7 @@ public class HttpAnalysis {
 
 			ModifierSQL.deleteAllModifier();
 			ModifierSQL.addModifierList(modifierList);
-			CoreData.getInstance().setModifierList(modifierList);
+			CoreData.getInstance().setModifierList(ModifierSQL.getAllModifier());
 
 		} catch (JSONException e) {
 			e.printStackTrace();

@@ -50,7 +50,7 @@ public class BaseApplication extends Application {
 	 */
 
 	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = false;	//	release 时设置为false
+	public static boolean isOpenLog = true;	//	release 时设置为false
 
 	protected String APPPATH = "alibaba";// sunmi or google or alibaba;
 
@@ -62,9 +62,9 @@ public class BaseApplication extends Application {
 	public static Handler postHandler = new Handler();
 	/**
 	 * 国家电话代码
-	 * 用于区别不通过的代码逻辑
+	 * 用于区别不同国家的代码逻辑
 	 */
-	public static int countryCode = ParamConst.SINGAPORE ;
+	public static int countryCode = ParamConst.SINGAPORE;
 	
 	public static boolean sub_thread_running = true;
 	/**

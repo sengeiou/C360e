@@ -838,7 +838,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 		ll_subtotal_layout.setVisibility(
 				View.INVISIBLE);
 		BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
-		show.append(remainTotalAfterRound.toString().replace(".", ""));
+		show.append(BH.intFormat.format(BH.mul(remainTotalAfterRound, BH.getBD(100), true)));
 //		show.append(BH.intFormat.format((BH.mul(remainTotalAfterRound, BH.getBD(100),false)).toString()));
 		tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
 		BigDecimal rounding = BH.sub(remainTotalAfterRound, remainTotal, true);

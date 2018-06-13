@@ -382,6 +382,7 @@
     
     <string name="bill_manage">账单管理</string>
     <string name="add_table_num">手动输入</string>
+    <string name="input_table_num">请输入牌号</string>
     <!--Zun-->
     <string name="device_scan_tips">服务员和厨房设备扫描此二维码\n与收银机相连接</string>
     <string name="unassign">解除</string>

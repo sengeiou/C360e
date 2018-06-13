@@ -9,6 +9,7 @@ import com.alfredbase.store.TableNames;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ReportDaySalesSQL {
@@ -646,6 +647,127 @@ public class ReportDaySalesSQL {
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
 				reportDaySales = new ReportDaySales();
+				reportDaySales.setId(cursor.getInt(0));
+				reportDaySales.setRestaurantId(cursor.getInt(1));
+				reportDaySales.setRestaurantName(cursor.getString(2));
+				reportDaySales.setRevenueId(cursor.getInt(3));
+				reportDaySales.setRevenueName(cursor.getString(4));
+				reportDaySales.setBusinessDate(cursor.getLong(5));
+				reportDaySales.setItemSales(cursor.getString(6));
+				reportDaySales.setItemSalesQty(cursor.getInt(7));
+				reportDaySales.setDiscountPer(cursor.getString(8));
+				reportDaySales.setDiscountPerQty(cursor.getInt(9));
+				reportDaySales.setDiscount(cursor.getString(10));
+				reportDaySales.setDiscountQty(cursor.getInt(11));
+				reportDaySales.setDiscountAmt(cursor.getString(12));
+				reportDaySales.setFocItem(cursor.getString(13));
+				reportDaySales.setFocItemQty(cursor.getInt(14));
+				reportDaySales.setFocBill(cursor.getString(15));
+				reportDaySales.setFocBillQty(cursor.getInt(16));
+				reportDaySales.setTotalSales(cursor.getString(17));
+				reportDaySales.setCash(cursor.getString(18));
+				reportDaySales.setCashQty(cursor.getInt(19));
+				reportDaySales.setNets(cursor.getString(20));
+				reportDaySales.setNetsQty(cursor.getInt(21));
+				reportDaySales.setVisa(cursor.getString(22));
+				reportDaySales.setVisaQty(cursor.getInt(23));
+				reportDaySales.setMc(cursor.getString(24));
+				reportDaySales.setMcQty(cursor.getInt(25));
+				reportDaySales.setAmex(cursor.getString(26));
+				reportDaySales.setAmexQty(cursor.getInt(27));
+				reportDaySales.setJbl(cursor.getString(28));
+				reportDaySales.setJblQty(cursor.getInt(29));
+				reportDaySales.setUnionPay(cursor.getString(30));
+				reportDaySales.setUnionPayQty(cursor.getInt(31));
+				reportDaySales.setDiner(cursor.getString(32));
+				reportDaySales.setDinerQty(cursor.getInt(33));
+				reportDaySales.setHoldld(cursor.getString(34));
+				reportDaySales.setHoldldQty(cursor.getInt(35));
+				reportDaySales.setTotalCard(cursor.getString(36));
+				reportDaySales.setTotalCardQty(cursor.getInt(37));
+				reportDaySales.setTotalCash(cursor.getString(38));
+				reportDaySales.setTotalCashQty(cursor.getInt(39));
+				reportDaySales.setBillVoid(cursor.getString(40));
+				reportDaySales.setBillVoidQty(cursor.getInt(41));
+				reportDaySales.setItemVoid(cursor.getString(42));
+				reportDaySales.setItemVoidQty(cursor.getInt(43));
+				reportDaySales.setNettSales(cursor.getString(44));
+				reportDaySales.setTotalBills(cursor.getInt(45));
+				reportDaySales.setOpenCount(cursor.getInt(46));
+				reportDaySales.setFirstReceipt(cursor.getInt(47));
+				reportDaySales.setLastReceipt(cursor.getInt(48));
+				reportDaySales.setTotalTax(cursor.getString(49));
+				reportDaySales.setOrderQty(cursor.getInt(50));
+				reportDaySales.setPersonQty(cursor.getInt(51));
+				reportDaySales.setTotalBalancePrice(cursor.getString(52));
+				reportDaySales.setCashInAmt(cursor.getString(53));
+				reportDaySales.setCashOutAmt(cursor.getString(54));
+				reportDaySales.setVarianceAmt(cursor.getString(55));
+				reportDaySales.setInclusiveTaxAmt(cursor.getString(56));
+				reportDaySales.setAlipay(cursor.getString(57));
+				reportDaySales.setAlipayQty(cursor.getInt(58));
+				reportDaySales.setThirdParty(cursor.getString(59));
+				reportDaySales.setThirdPartyQty(cursor.getInt(60));
+				reportDaySales.setWeixinpay(cursor.getString(61));
+				reportDaySales.setWeixinpayQty(cursor.getInt(62));
+				reportDaySales.setPaypalpay(cursor.getString(63));
+				reportDaySales.setPaypalpayQty(cursor.getInt(64));
+				reportDaySales.setStoredCard(cursor.getString(65));
+				reportDaySales.setStoredCardQty(cursor.getInt(66));
+				reportDaySales.setTopUps(cursor.getString(67));
+				reportDaySales.setTopUpsQty(cursor.getInt(68));
+				reportDaySales.setBillRefund(cursor.getString(69));
+				reportDaySales.setBillRefundQty(cursor.getInt(70));
+				reportDaySales.setRefundTax(cursor.getString(71));
+				reportDaySales.setStartDrawerAmount(cursor.getString(72));
+				reportDaySales.setExpectedAmount(cursor.getString(73));
+				reportDaySales.setWaiterAmount(cursor.getString(74));
+				reportDaySales.setDifference(cursor.getString(75));
+				reportDaySales.setCashTopUp(cursor.getString(76));
+				reportDaySales.setTakeawaySales(cursor.getString(77));
+				reportDaySales.setTakeawayTax(cursor.getString(78));
+				reportDaySales.setTakeawayQty(cursor.getInt(79));
+				reportDaySales.setCreateTime(cursor.getLong(80));
+				reportDaySales.setUpdateTime(cursor.getLong(81));
+				reportDaySales.setDeliveroo(cursor.getString(82));
+				reportDaySales.setDeliverooQty(cursor.getInt(83));
+				reportDaySales.setUbereats(cursor.getString(84));
+				reportDaySales.setUbereatsQty(cursor.getInt(85));
+				reportDaySales.setFoodpanda(cursor.getString(86));
+				reportDaySales.setFoodpandaQty(cursor.getInt(87));
+				reportDaySales.setVoucher(cursor.getString(88));
+				reportDaySales.setVoucherQty(cursor.getInt(89));
+				reportDaySales.setTotalHour(cursor.getString(90));
+				result.add(reportDaySales);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
+
+	public static List<ReportDaySales> getReportDaySalesForZReport(long business) {
+		List<ReportDaySales> result = new ArrayList<>();
+
+		String sql = "select * from " + TableNames.ReportDaySales
+				+ " where businessDate = ? ";
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql,
+					new String[] { String.valueOf(business) });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				ReportDaySales reportDaySales = new ReportDaySales();
 				reportDaySales.setId(cursor.getInt(0));
 				reportDaySales.setRestaurantId(cursor.getInt(1));
 				reportDaySales.setRestaurantName(cursor.getString(2));

@@ -234,6 +234,49 @@ public class ReportDayTaxSQL {
 		return reportDayTaxs;
 	}
 
+
+	public static ArrayList<ReportDayTax> getReportDayTaxsForZReport(long day) {
+		ArrayList<ReportDayTax> reportDayTaxs = new ArrayList<ReportDayTax>();
+
+		String sql = "select restaurantId, restaurantName, revenueId, revenueName,"
+				+ " businessDate, taxId, taxName, taxPercentage, sum(taxQty), sum(taxAmount) from "
+				+ TableNames.ReportDayTax
+				+ " where businessDate = ? group by taxId";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			ReportDayTax reportDayTax = null;
+			cursor = db.rawQuery(sql, new String[] { String.valueOf(day) });
+			int count = cursor.getCount();
+			if(count < 1){
+				return reportDayTaxs;
+			}
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				reportDayTax = new ReportDayTax();
+				reportDayTax.setRestaurantId(cursor.getInt(0));
+				reportDayTax.setRestaurantName(cursor.getString(1));
+				reportDayTax.setRevenueId(cursor.getInt(2));
+				reportDayTax.setRevenueName(cursor.getString(3));
+				reportDayTax.setBusinessDate(cursor.getLong(4));
+				reportDayTax.setTaxId(cursor.getInt(5));
+				reportDayTax.setTaxName(cursor.getString(6));
+				reportDayTax.setTaxPercentage(cursor.getString(7));
+				reportDayTax.setTaxQty(cursor.getInt(8));
+				reportDayTax.setTaxAmount(cursor.getString(9));
+				reportDayTaxs.add(reportDayTax);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return reportDayTaxs;
+	}
+
 	public static void deleteReportDayTax(ReportDayTax reportDayTax) {
 		String sql = "delete from " + TableNames.ReportDayTax + " where id = ?";
 		try {

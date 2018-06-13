@@ -1134,20 +1134,16 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 	private void sendPrintData(long businessDate, String reportType) {
 		ReportDaySales reportDaySales = ReportObjectFactory.getInstance()
-				.loadReportDaySales(businessDate, true);
+				.loadReportDaySales(businessDate);
 		if (reportDaySales == null) {
 			handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
 			return;
 		}
 		String bizDate = TimeUtil.getPrintingDate(businessDate);		
-		ArrayList<ReportDayTax> reportDayTaxs = ReportObjectFactory
-				.getInstance().loadReportDayTax(reportDaySales, businessDate);
+		List<ReportDayTax> reportDayTaxs = ReportObjectFactory
+				.getInstance().loadReportDayTax(businessDate);
 		ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory
 				.getInstance().loadReportPluDayItem(businessDate);
-
-		//bob add to filter ENT and VOID item in PLU items
-//		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
-//				.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
 		Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(businessDate);
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
 		

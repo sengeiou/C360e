@@ -184,7 +184,7 @@ public class CustomNoteView extends LinearLayout implements OnClickListener, OnI
 		case R.id.custom_note_input_lable:
 				custom_note_discount_input_lyt.setVisibility(View.VISIBLE);
 				custom_note_person_ryt.setVisibility(View.VISIBLE);
-				custom_note_person_edt.setHint("请输入牌号");
+				custom_note_person_edt.setHint(getResources().getString(R.string.input_table_num));
 				custom_note_person_edt.setText("");
 			break;
 		default:
@@ -327,7 +327,7 @@ public class CustomNoteView extends LinearLayout implements OnClickListener, OnI
 					String table = custom_note_person_edt.getText().toString()
 							.trim();
 					if (TextUtils.isEmpty(table)) {
-						UIHelp.showShortToast(parent, "请输入牌号");
+						UIHelp.showShortToast(parent, getResources().getString(R.string.input_table_num));
 					} else {
 						List<String> stringList = Store.getObject(parent, Store.SEND_TABLE_NAME_LIST, new TypeToken<List<String>>(){}.getType());
 						if(stringList == null){
