@@ -682,9 +682,7 @@ public class MainPageKiosk extends BaseActivity {
 //					KotSummarySQL.update(kotSummary);
 //				}
 				if(isPrint) {
-					if(!TextUtils.isEmpty(changeNum)){
-					DialogFactory.changeDialogOrder(context, changeNum);
-					}
+
 					PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 							context);
 					printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
@@ -698,7 +696,11 @@ public class MainPageKiosk extends BaseActivity {
 											+ App.instance.getUser().getLastName(),
 									currentTable.getName(), 1);
 
+					if(!TextUtils.isEmpty(changeNum)){
 
+						if(!(App.instance.getLocalRestaurantConfig().getCurrencySymbol()+"0.00").equals(changeNum))
+						DialogFactory.changeDialogOrder(context, changeNum);
+					}
 
 					ArrayList<PrintOrderItem> orderItems = ObjectFactory
 							.getInstance().getItemList(

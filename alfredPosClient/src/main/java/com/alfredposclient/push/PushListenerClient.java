@@ -43,18 +43,19 @@ public class PushListenerClient implements XMPP.PushListener {
 			return;
 		if(TextUtils.isEmpty(msg.getMsg()))
 			return;
+		if(PushMessage.REAL_TIME_REPORT.equals(msg.getMsg()))
+		{
+			if(CommonUtil.isNull(msg.getRestId())){
+				return;
+			}
+			if(msg.getRestId().intValue() == App.instance.getRevenueCenter().getRestaurantId()){
+
+			}
+		}
+
 		if(PushMessage.RE_SYNC_DATA_BY_BUSINESS_DATE.equals(msg.getMsg())){
 			if(CommonUtil.isNull(msg.getRevenueId()) || TextUtils.isEmpty(msg.getBusinessStr()) || App.instance.getRevenueCenter() == null) {
 				return;
-			}else{
-				try{
-					if(msg.getRevenueId().intValue() == App.instance.getRevenueCenter().getId().intValue()) {
-						long business = TimeUtil.getPrintingLongDate(msg.getBusinessStr());
-						SyncMsgSQL.updateSyncMsgStatus(ParamConst.SYNC_MSG_UN_SEND, business);
-					}
-				}catch (Exception e){
-					e.printStackTrace();
-				}
 			}
 		}else{
 			if(msg.getRevenueId() == 0 || msg.getRevenueId() == App.instance.getRevenueCenter().getId().intValue()) {

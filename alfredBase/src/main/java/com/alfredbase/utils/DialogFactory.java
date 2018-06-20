@@ -459,8 +459,8 @@ public class DialogFactory {
 						R.layout.dialog_item_change, null);
 				Window dialogWindow = dialog.getWindow();
 				WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-				dialogWindow.setGravity(Gravity.CENTER);
-				lp.y = ScreenSizeUtil.dip2px(activity, 0); // 新位置Y坐标
+				dialogWindow.setGravity(Gravity.TOP);
+				lp.y = ScreenSizeUtil.dip2px(activity, 100); // 新位置Y坐标
 				dialogWindow.setAttributes(lp);
 				dialog.setCancelable(false);
 				dialog.setCanceledOnTouchOutside(true);
