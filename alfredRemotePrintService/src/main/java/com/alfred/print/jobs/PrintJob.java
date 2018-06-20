@@ -1,22 +1,14 @@
 package com.alfred.print.jobs;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothSocket;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 
 import com.alfred.printer.ESCPrinter;
 import com.alfred.printer.PrintData;
 import com.alfred.printer.PrintTscData;
 import com.alfred.printer.StringUtil;
-import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
-import com.alfred.remote.printservice.TSCActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PrintQueueMsg;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
@@ -29,14 +21,10 @@ import com.google.gson.reflect.TypeToken;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.gprinterio.GpCom;
-import com.gprinterio.GpDevice;
 import com.gprinterio.PrinterRecieveListener;
-import com.printer.TscCommand;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.Vector;
 
 public class PrintJob extends Job implements PrinterRecieveListener {
