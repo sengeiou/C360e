@@ -259,7 +259,7 @@ public class DevicesHtml extends BaseActivity {
 																				   		    			ParamConst.DEVICE_TYPE_PRINTER,
 																				   		    			prt.getId(), 
 																				   		    			printer.get("printerIp"),
-																				   		    			"", printerName);
+																				   		    			"", printerName,-1);
 					   		    CoreData.getInstance().addLocalDevice(localDevice);
 					   		    App.instance.loadPrinters();
 					   		    //add to printer

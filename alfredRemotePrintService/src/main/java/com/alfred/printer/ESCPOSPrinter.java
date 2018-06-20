@@ -167,8 +167,9 @@ public class ESCPOSPrinter {
         byte[] tcmd = new byte[3];
         tcmd[0] = ESCPOSPrinter.ESC;
    	    tcmd[1] = 0x45;
-   	    tcmd[2] = bold;   
+   	    tcmd[2] = bold;
    	    out.write(tcmd);
+   	    
     }
     
     //tested

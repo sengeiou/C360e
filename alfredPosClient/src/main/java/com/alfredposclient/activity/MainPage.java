@@ -769,6 +769,7 @@ public class MainPage extends BaseActivity {
 				}
 				break;
 			case VIEW_EVENT_CLOSE_BILL: {
+				String changeNum;
 				HashMap<String, String> paymentMap = (HashMap<String, String>) msg.obj;
 				final Order paidOrder = OrderSQL.getOrder(Integer.valueOf(paymentMap.get("orderId")));
 				List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
@@ -777,6 +778,10 @@ public class MainPage extends BaseActivity {
 				if(kotSummary != null){
 					kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
 					KotSummarySQL.update(kotSummary);
+				}
+				changeNum=paymentMap.get("changeNum");
+				if(!TextUtils.isEmpty(changeNum)){
+					DialogFactory.changeDialogOrder(context, changeNum);
 				}
 				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 						context);

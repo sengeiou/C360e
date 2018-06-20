@@ -57,6 +57,7 @@ public class DataHelper {
 				onUpgradeForOldVersion19(db);
 				onUpgradeForOldVersion20(db);
 				onUpgradeForOldVersion21(db);
+				onUpgradeForOldVersionfor129(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1033,5 +1034,18 @@ public class DataHelper {
 					+ TableNames.KotSummary
 					+ " ADD COLUMN empName TEXT default ''");
 		}
+
+		private void onUpgradeForOldVersionfor129(SQLiteDatabase db){
+
+			db.execSQL("ALTER TABLE "
+					+ TableNames.Printer
+					+ " ADD COLUMN isLablePrinter INTEGER default 0");
+
+			db.execSQL("ALTER TABLE "
+					+ TableNames.LocalDevice
+					+ " ADD COLUMN isLablePrinter INTEGER default 0");
+		}
+
+
 	}
 }

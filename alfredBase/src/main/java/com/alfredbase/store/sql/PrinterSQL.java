@@ -57,8 +57,8 @@ public class PrinterSQL {
 					+ " (id,printerGroupName, printerName," +
 					"printerLocation,printerType," +
 					" qPrint, isCashdrawer,companyId," +
-					"restaurantId,type,createTime,updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+					"restaurantId,type,createTime,updateTime,isLablePrinter)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Printer printer : printers) {
@@ -86,6 +86,8 @@ public class PrinterSQL {
 							printer.getCreateTime());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 12,
 							printer.getUpdateTime());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 13,
+							printer.getIsLablePrinter());
 					sqLiteStatement.executeInsert();
 				}
 			db.setTransactionSuccessful();
@@ -123,7 +125,7 @@ public class PrinterSQL {
 				printer.setType(cursor.getInt(9));
 				printer.setCreateTime(cursor.getLong(10));
 				printer.setUpdateTime(cursor.getLong(11));
-				
+				printer.setIsLablePrinter(cursor.getInt(12));
 				result.add(printer);
 			}
 		} catch (Exception e) {
@@ -164,7 +166,7 @@ public class PrinterSQL {
 				printer.setType(cursor.getInt(9));
 				printer.setCreateTime(cursor.getLong(10));
 				printer.setUpdateTime(cursor.getLong(11));
-				
+				printer.setIsLablePrinter(cursor.getInt(12));
 				result.add(printer);
 			}
 		} catch (Exception e) {

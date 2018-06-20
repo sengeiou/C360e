@@ -41,17 +41,34 @@ public class PrintManager {
     	synchronized(lock) {
 	    	jobManager = PrintManager.printJobManagers.get(ip);
 		    	if (jobManager == null) {
-			        Configuration printjobconfiguration = new Configuration.Builder(context)
-			        .customLogger(new AlfredJobLogger("PRINTER_JOBS_"+ip))
-			        .id("printer_jobs_"+ip.replace('.', '_'))
-			        .minConsumerCount(1)     //always keep at least one consumer alive
-			        .maxConsumerCount(4)     //up to 3 consumers at a time
-			        .loadFactor(3)           //3 jobs per consumer
-			        .consumerKeepAlive(120)   //wait 2 minute
-			        .build();
-			        jobManager = new JobManager(printjobconfiguration);
-			        PrintManager.printJobManagers.put(ip.trim(),jobManager);
-			        addPrinterIpsInStore(ip);
+
+					if (ip.indexOf(":") != -1) {
+
+						Configuration printjobconfiguration = new Configuration.Builder(context)
+								.customLogger(new AlfredJobLogger("PRINTER_JOBS_"+ip))
+								.id("printer_jobs_"+ip.replace(':', '_'))
+								.minConsumerCount(1)     //always keep at least one consumer alive
+								.maxConsumerCount(4)     //up to 3 consumers at a time
+								.loadFactor(3)           //3 jobs per consumer
+								.consumerKeepAlive(120)   //wait 2 minute
+								.build();
+						jobManager = new JobManager(printjobconfiguration);
+						PrintManager.printJobManagers.put(ip.trim(),jobManager);
+						addPrinterIpsInStore(ip);
+					}else {
+						Configuration printjobconfiguration = new Configuration.Builder(context)
+								.customLogger(new AlfredJobLogger("PRINTER_JOBS_"+ip))
+								.id("printer_jobs_"+ip.replace('.', '_'))
+								.minConsumerCount(1)     //always keep at least one consumer alive
+								.maxConsumerCount(1)     //up to 3 consumers at a time
+								.loadFactor(3)           //3 jobs per consumer
+								.consumerKeepAlive(10)   //wait 2 minute
+								.build();
+						jobManager = new JobManager(printjobconfiguration);
+						PrintManager.printJobManagers.put(ip.trim(),jobManager);
+						addPrinterIpsInStore(ip);
+					}
+
 		    	}
 	    }
     	return jobManager;
@@ -133,7 +150,8 @@ public class PrintManager {
 	    	JobManager jobManager =  PrintManager.printJobManagers.get(ip);
 	    	if (jobManager == null) {
 	    		jobManager = this.configureJobManager(ip);
-	    	}
+
+			}
 
 	    	//init and create network printer connection
 //			PrintService srv = ((PrintService)PrintService.instance);

@@ -13,9 +13,24 @@ public class PrinterDevice   implements Serializable{
 	String model;//printer model
 	String mac;
 	String IP;
+	String type; //1 网络  2 蓝牙
 	Integer isCahierPrinter=0;
+
+
+
+	/* 0票据 1标签*/
+	private Integer isLablePrinter;
+
 	private int groupId;
 	private String printerName;
+
+	public Integer getIsLablePrinter() {
+		return isLablePrinter;
+	}
+
+	public void setIsLablePrinter(Integer isLablePrinter) {
+		this.isLablePrinter = isLablePrinter;
+	}
 	public int getDevice_id() {
 		return device_id;
 	}
@@ -68,6 +83,13 @@ public class PrinterDevice   implements Serializable{
 
 	public void setPrinterName(String printerName) {
 		this.printerName = printerName;
+	}
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	@Override

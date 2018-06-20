@@ -27,7 +27,9 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -279,7 +281,23 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				parent.openCustomNoteView();
 				break;
 			case R.id.tv_cash_close:
-				cashPay();
+
+				Order placedOrder = OrderSQL.getOrder(order.getId());
+				List<OrderDetail> placedOrderDetails
+						= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
+				PrinterTitle title = ObjectFactory.getInstance()
+						.getPrinterTitle(
+								App.instance.getRevenueCenter(),
+								placedOrder,
+								App.instance.getUser().getFirstName()
+										+ App.instance.getUser()
+										.getLastName(),
+								"can", 1);
+			PrinterDevice printer = App.instance.getCahierPrinter();
+				App.instance.remoteTBillPrint(printer,title,placedOrder, (ArrayList<OrderDetail>) placedOrderDetails);
+
+
+//                cashPay()
 				break;
 			default:
 				break;

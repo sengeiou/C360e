@@ -66,6 +66,7 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
@@ -666,10 +667,12 @@ public class MainPageKiosk extends BaseActivity {
 				break;
 			case VIEW_EVENT_CLOSE_BILL: {
 				HashMap<String, String> paymentMap = (HashMap<String, String>) msg.obj;
+				String changeNum;
 				final Order paidOrder = OrderSQL.getOrder(Integer.valueOf(paymentMap.get("orderId")));
 				List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
 						.getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
 				boolean isPrint = true;
+				changeNum=paymentMap.get("changeNum");
 				if(paymentMap.containsKey("isPrint") && !TextUtils.isEmpty(paymentMap.get("isPrint"))){
 					isPrint = Boolean.valueOf(paymentMap.get("isPrint"));
 				}
@@ -679,6 +682,9 @@ public class MainPageKiosk extends BaseActivity {
 //					KotSummarySQL.update(kotSummary);
 //				}
 				if(isPrint) {
+					if(!TextUtils.isEmpty(changeNum)){
+					DialogFactory.changeDialogOrder(context, changeNum);
+					}
 					PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 							context);
 					printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));

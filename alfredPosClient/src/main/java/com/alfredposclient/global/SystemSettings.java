@@ -18,6 +18,8 @@ public class SystemSettings {
 	private boolean printPluItem = true; //
 	private boolean printPluModifier = true; //
 	private boolean printHourlyPayment = true; //
+	private boolean printLable = false; //
+
 	private boolean printBeforCloseBill = true; // bill close need print Bill?
 	private boolean cashClosePrint = true; // cash w close need print Bill?
 	private boolean autoRecevingOnlineOrder = false;
@@ -435,6 +437,30 @@ public class SystemSettings {
 			this.isAutoToTable = false;
 	}
 
+
+
+	public void setPrintLable(Integer printLable) {
+		Store.putInt(this.context, Store.PRINT_LABLE,
+				printLable.intValue());
+		if(printLable.intValue() == 1)
+			this.printLable = true;
+		else
+			this.printLable = false;
+	}
+
+
+	public boolean isPrintLable() {
+		Integer value = Store.getInt(context,
+				Store.PRINT_LABLE);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1){
+				this.printLable = true;
+			}else{
+				this.printLable = false;
+			}
+		}
+		return printLable;
+	}
 	public int getMaxPrintOrderNo() {
 		return maxPrintOrderNo;
 	}

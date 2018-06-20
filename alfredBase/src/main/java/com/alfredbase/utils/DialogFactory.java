@@ -445,6 +445,48 @@ public class DialogFactory {
     }
 
 
+
+
+
+	public static void changeDialogOrder(final BaseActivity activity, final String  changeNum) {
+		activity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				final Dialog dialog = new Dialog(activity, R.style.change_dialog);
+				View view = LayoutInflater.from(activity).inflate(
+						R.layout.dialog_item_change, null);
+				Window dialogWindow = dialog.getWindow();
+				WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+				dialogWindow.setGravity(Gravity.CENTER);
+				lp.y = ScreenSizeUtil.dip2px(activity, 0); // 新位置Y坐标
+				dialogWindow.setAttributes(lp);
+				dialog.setCancelable(false);
+				dialog.setCanceledOnTouchOutside(true);
+				dialog.setContentView(view);
+				dialog.setOwnerActivity(activity);
+				TextView tv_num = (TextView)view.findViewById(R.id.tv_change_num);
+				tv_num.setText(changeNum + "");
+
+
+				if (activity == null || activity.isFinishing())
+					return;
+				dialog.show();
+				BaseApplication.postHandler.postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						if(dialog != null && dialog.isShowing() && activity != null && !activity.isFinishing())
+							dialog.dismiss();
+					}
+				}, 20*1000);
+			}
+		});
+
+	}
+
+
 	public static void topDialogOrder(final BaseActivity activity, final AppOrder tempAppOrder, final OnClickListener leftListener,
 									  final OnClickListener rghtListener) {
 		activity.runOnUiThread(new Runnable() {

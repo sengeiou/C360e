@@ -23,20 +23,35 @@ android {
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
-    android.applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def outputFile = output.outputFile
-            if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                // 修改apk文件名
-                def fileName = "waiter.apk"
-                output.outputFile = new File(output.outputFile.parent, fileName)
+//    android.applicationVariants.all { variant ->
+//        variant.outputs.each { output ->
+//            def outputFile = output.outputFile
+//            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                // 修改apk文件名
+//                def fileName = "waiter.apk"
+//                output.outputFile = new File(output.outputFile.parent, fileName)
+//            }
+//        }
+//    }
+
+//    as3.0以上
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            // each 改为 all
+            def fileName = "waiter.apk"
+            def outFile = output.outputFile
+            if (outFile != null && outFile.name.endsWith('.apk')) {
+                outputFileName = fileName
+                // output.outputFile 改为 outputFileName
             }
         }
     }
+
+
 }
 
 dependencies {
-    compile project(':alfredBase')
-    compile rootProject.ext.libSupportV4
-    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
+    implementation project(':alfredBase')
+    implementation rootProject.ext.libSupportV4
+    implementation 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
 }

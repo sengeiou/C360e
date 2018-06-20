@@ -2,6 +2,7 @@ package com.alfredposclient.activity;
 
 import android.content.Intent;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -56,6 +57,7 @@ import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
@@ -173,10 +175,16 @@ public class EditSettlementPage extends BaseActivity {
 
                 case MainPage.VIEW_EVENT_CLOSE_BILL: {
 //                    Intent intentCloseBill = new Intent();
+                    String changeNum;
                     currentOrder = OrderSQL.getOrder(currentOrder.getId().intValue());
                     editSettlementAdapter.setEditSettlementInfos(getSettlementList());
                     editSettlementAdapter.notifyDataSetChanged();
                     HashMap<String, String> map = (HashMap<String, String>) msg.obj;
+
+                    changeNum=map.get("changeNum");
+                    if(!TextUtils.isEmpty(changeNum)){
+                        DialogFactory.changeDialogOrder(context, changeNum);
+                    }
                     TableInfo table = TableInfoSQL.getTableById(
                             currentOrder.getTableId());
                     PrinterTitle title = ObjectFactory.getInstance()

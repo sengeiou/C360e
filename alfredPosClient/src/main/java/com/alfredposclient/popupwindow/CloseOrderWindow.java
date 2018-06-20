@@ -1129,7 +1129,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 
 
-	private void printBill(){
+	private void printBill(final String change){
 		final int paidOrderId = order.getId();
 		final int tabelId = order.getTableId();
 		new Thread(new Runnable() {
@@ -1155,8 +1155,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				}
 				HashMap<String, String> map = new HashMap<String, String>();
 
-				map.put("orderId", String.valueOf(paidOrderId));
-				map.put("paymentId", String.valueOf(payment.getId().intValue()));
+				if(TextUtils.isEmpty(change))
+				{
+					map.put("orderId", String.valueOf(paidOrderId));
+					map.put("paymentId", String.valueOf(payment.getId().intValue()));
+					map.put("changeNum", String.valueOf(""));
+				}else {
+					map.put("orderId", String.valueOf(paidOrderId));
+					map.put("paymentId", String.valueOf(payment.getId().intValue()));
+					map.put("changeNum", String.valueOf(change));
+				}
+
 				// to print close receipt
 				handler.sendMessage(handler.obtainMessage(
 						MainPage.VIEW_EVENT_CLOSE_BILL, map));
@@ -1219,14 +1228,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
 				OrderSQL.update(order);
 				initBillSummary();
-				printBill();
+				printBill(null);
 
 			}
 				break;
 			case R.id.btn_print_receipt: {
 //				v.setVisibility(View.GONE);
 				// closeWindowAction();
-				printBill();
+				printBill(null);
 
 			}
 
@@ -1961,7 +1970,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 				@Override
 				public void run() {
 					if (isShowing())
-						printBill();
+						printBill(null);
 				}
 			}, 100);
 		}
@@ -2233,7 +2242,18 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 			closeMoneyKeyboard();
 
         if (settlementNum.compareTo(BH.getBD(order.getTotal())) == 0) {
-            printBill();
+
+        	if(viewTag==ParamConst.SETTLEMENT_TYPE_CASH)
+			{
+				if(TextUtils.isEmpty(tv_change_num.getText().toString())){
+					printBill(null);
+				}else {
+					printBill(tv_change_num.getText().toString());
+				}
+			}else {
+				printBill(null);
+			}
+
         }
 	}
 

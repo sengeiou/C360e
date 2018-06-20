@@ -68,4 +68,6 @@
     <string name="has_new_version">发现新版本</string>
     <string name="update">更新</string>
     <string name="next">下次</string>
+
+    <string name="change"> 找零:</string>
 </resources>

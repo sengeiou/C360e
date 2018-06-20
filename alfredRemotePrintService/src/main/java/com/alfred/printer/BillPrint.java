@@ -41,6 +41,8 @@ public class BillPrint extends PrintJob{
 			BillPrint.FIXED_COL4_SPACE = 1;
 		}
 	}
+
+
 	
 	public void AddRestaurantInfo(String logo, String name, String address, String customized) {
 

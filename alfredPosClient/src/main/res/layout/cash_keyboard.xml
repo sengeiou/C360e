@@ -113,7 +113,7 @@
             android:layout_weight="1"
             android:background="@drawable/box_number_selector"
             android:gravity="center"
-            android:text="@string/exact_$"
+            android:text="@string/exact"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_big" />
 

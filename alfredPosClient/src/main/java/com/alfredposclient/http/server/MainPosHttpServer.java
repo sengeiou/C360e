@@ -839,7 +839,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								.getInstance()
 								.getLocalDevice("", "waiter", ParamConst.DEVICE_TYPE_WAITER,
 										waiterDevice.getWaiterId(),
-										waiterDevice.getIP(), waiterDevice.getMac(), "");
+										waiterDevice.getIP(), waiterDevice.getMac(), "",0);
 						CoreData.getInstance().addLocalDevice(localDevice);
 						// Notify Waiter pairing complete
 						App.getTopActivity().runOnUiThread(new Runnable() {
@@ -867,7 +867,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							.getLocalDevice(kdsDevice.getName(),"kds",
 									ParamConst.DEVICE_TYPE_KDS,
 									kdsDevice.getDevice_id(),
-									kdsDevice.getIP(), kdsDevice.getMac(), "");
+									kdsDevice.getIP(), kdsDevice.getMac(), "",0);
 					CoreData.getInstance().addLocalDevice(localDevice);
 					final String kdsStr = kdsDevice == null ? "空的" : kdsDevice.toString();
 					final String localStr = localDevice == null ? "空的" : localDevice.toString();
@@ -928,7 +928,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								.getLocalDevice(dev.getName(),"kds",
 										ParamConst.DEVICE_TYPE_KDS,
 										dev.getDevice_id(),
-										dev.getIP(), dev.getMac(), "");
+										dev.getIP(), dev.getMac(), "",0);
 
 						CoreData.getInstance().addLocalDevice(localDevice);
 						App.instance.addKDSDevice(dev.getDevice_id(), dev);
@@ -990,7 +990,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 										.getInstance()
 										.getLocalDevice("", "waiter", ParamConst.DEVICE_TYPE_WAITER,
 												dev.getWaiterId(),
-												dev.getIP(), dev.getMac(), "");
+												dev.getIP(), dev.getMac(), "",0);
 								CoreData.getInstance().addLocalDevice(localDevice);
 								result.put("user", user);
 								result.put("resultCode", ResultCode.SUCCESS);
@@ -1537,7 +1537,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					.getLocalDevice(device.getName(),"kds",
 							ParamConst.DEVICE_TYPE_KDS,
 							device.getDevice_id(),
-							device.getIP(), device.getMac(), "");
+							device.getIP(), device.getMac(), "",0);
 			
 			CoreData.getInstance().addLocalDevice(localDevice);
 			

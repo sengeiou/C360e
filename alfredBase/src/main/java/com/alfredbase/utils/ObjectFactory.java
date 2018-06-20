@@ -1747,7 +1747,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 	}
 	Object lock_LocalDevice = new Object();
 	public LocalDevice getLocalDevice(String name, String model, int type, int deviceId,
-			String ip, String mac, String printerName) {
+			String ip, String mac, String printerName,int intisLablePrinter ) {
 		LocalDevice localDevice = null;
 		synchronized (lock_LocalDevice) {
 			localDevice = LocalDeviceSQL.getLocalDeviceByDeviceId(deviceId);
@@ -1763,6 +1763,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 			localDevice.setIp(ip);
 			localDevice.setMacAddress(mac);
 			localDevice.setPrinterName(printerName);
+			localDevice.setIsLablePrinter(intisLablePrinter);
 		}
 		return localDevice;
 	}

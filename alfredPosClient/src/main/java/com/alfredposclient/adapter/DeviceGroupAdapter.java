@@ -1,6 +1,7 @@
 package com.alfredposclient.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,14 +66,14 @@ public class DeviceGroupAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		Printer deptDBModel = deptDBModelList.get(position);
-
+		 Log.d("DeviceGroupAdapter", deptDBModel.getIsLablePrinter()+" ---导航栏名字---"+deptDBModel.getPrinterName());
 		if (deptDBModel.getType().intValue() == 1) {
 			holder.tv_device_group_name.setText(deptDBModel.getPrinterName());
 		}
 
 		if(selectIndex == position){
 			holder.iv_select.setVisibility(View.VISIBLE);
-			holder.tv_device_group_name.setTextColor(context.getResources().getColor(R.color.devices_red));
+			holder.tv_device_group_name.setTextColor(context.getResources().getColor(R.color.black));
 		}else{
 			holder.iv_select.setVisibility(View.INVISIBLE);
 			holder.tv_device_group_name.setTextColor(context.getResources().getColor(R.color.black));

@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -171,7 +172,7 @@ import sunmi.ds.data.DataPacket;
 //import com.alfredposclient.push.PushServer;
 
 public class App extends BaseApplication {
-    private static final  String TAG = App.class.getSimpleName();
+    private static final String TAG = App.class.getSimpleName();
     public static App instance;
     private RevenueCenter revenueCenter;
     private MainPosInfo mainPosInfo;
@@ -297,7 +298,7 @@ public class App extends BaseApplication {
 //        }
 //    };
 
-//    private PushService pushService;
+    //    private PushService pushService;
 //    private ServiceConnection pushConnection = new ServiceConnection() {
 //
 //        @Override
@@ -320,9 +321,10 @@ public class App extends BaseApplication {
     private IntentFilter intentFilter;
 
     private Observable<Object> observable;
-//    private PushServer pushServer;
+    //    private PushServer pushServer;
     private SDKHandler sdkHandler;
-    private boolean  isUsbScannerLink = false;
+    private boolean isUsbScannerLink = false;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -347,16 +349,16 @@ public class App extends BaseApplication {
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
         strategy.setAppChannel(APPPATH);
-        CrashReport.initCrashReport(getApplicationContext(), "900043720", isOpenLog,strategy);
+        CrashReport.initCrashReport(getApplicationContext(), "900043720", isOpenLog, strategy);
         mDSKernel = DSKernel.newInstance();
-        if(mDSKernel != null){
+        if (mDSKernel != null) {
             mDSKernel.init(instance, new IConnectionCallback() {
                 @Override
                 public void onDisConnect() {
                     hasSecondScreen = false;
                     LogUtil.d(TAG, "副屏连接失败");
-                    if(isOpenLog)
-                    UIHelp.showToast(getTopActivity(), "副屏连接失败");
+                    if (isOpenLog)
+                        UIHelp.showToast(getTopActivity(), "副屏连接失败");
                 }
 
                 @Override
@@ -364,25 +366,29 @@ public class App extends BaseApplication {
                     hasSecondScreen = true;
                     connState = state;
                     LogUtil.d(TAG, "副屏连接成功,副屏状态:" + state);
-                    if(getTopActivity() != null) {
-                        if(isOpenLog)
-                        UIHelp.showToast(getTopActivity(), "副屏连接成功,副屏状态:" + state);
+                    if (getTopActivity() != null) {
+                        if (isOpenLog)
+                            UIHelp.showToast(getTopActivity(), "副屏连接成功,副屏状态:" + state);
                     }
                 }
             });
 
             mDSKernel.addReceiveCallback(new IReceiveCallback() {
                 @Override
-                public void onReceiveData(DSData data) {}
+                public void onReceiveData(DSData data) {
+                }
 
                 @Override
-                public void onReceiveFile(DSFile file) {}
+                public void onReceiveFile(DSFile file) {
+                }
 
                 @Override
-                public void onReceiveFiles(DSFiles files) {}
+                public void onReceiveFiles(DSFiles files) {
+                }
 
                 @Override
-                public void onReceiveCMD(DSData cmd) {}
+                public void onReceiveCMD(DSData cmd) {
+                }
             });
         }
 
@@ -392,10 +398,10 @@ public class App extends BaseApplication {
             @Override
             public void call(Object object) {
                 boolean isScreenLock = systemSettings.isScreenLock();
-                if(isScreenLock) {
+                if (isScreenLock) {
                     BaseActivity activity = getTopActivity();
-                    if(activity != null && getIndexOfActivity(OpenRestaruant.class) != -1){
-                        if(activity instanceof ClockInOROut){
+                    if (activity != null && getIndexOfActivity(OpenRestaruant.class) != -1) {
+                        if (activity instanceof ClockInOROut) {
                             return;
                         }
                         ReloginDialog reloginDialog = new ReloginDialog(activity);
@@ -442,12 +448,12 @@ public class App extends BaseApplication {
                 .build();
         GalleryFinal.init(coreConfig);
 
-        if(isSUNMIShow()){
+        if (isSUNMIShow()) {
             try {
                 sdkHandler = new SDKHandler(this);
                 sdkHandler.dcssdkSetDelegate(iDcsSdkApiDelegate);
                 initializeDcsSdk();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -474,7 +480,7 @@ public class App extends BaseApplication {
         return isUsbScannerLink;
     }
 
-    private void initializeDcsSdk(){
+    private void initializeDcsSdk() {
         sdkHandler.dcssdkEnableAvailableScannersDetection(true);
         sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_BT_NORMAL);
         sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_SNAPI);
@@ -484,6 +490,7 @@ public class App extends BaseApplication {
         notifications_mask |= (DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_BARCODE.value);
         sdkHandler.dcssdkSubsribeForEvents(notifications_mask);
     }
+
     private DCSSDKDefs.DCSSDK_RESULT connect(int scannerId) {
         if (sdkHandler != null) {
             return sdkHandler.dcssdkEstablishCommunicationSession(scannerId);
@@ -491,18 +498,18 @@ public class App extends BaseApplication {
             return DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE;
         }
     }
+
     private IDcsSdkApiDelegate iDcsSdkApiDelegate = new IDcsSdkApiDelegate() {
         @Override
         public void dcssdkEventScannerAppeared(final DCSScannerInfo dcsScannerInfo) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    DCSSDKDefs.DCSSDK_RESULT result =connect(dcsScannerInfo.getScannerID());
-                    if(result== DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_SUCCESS){
+                    DCSSDKDefs.DCSSDK_RESULT result = connect(dcsScannerInfo.getScannerID());
+                    if (result == DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_SUCCESS) {
 //                        UIHelp.showShortToast(getTopActivity(), "Scanner linked");
                         isUsbScannerLink = true;
-                    }
-                    else if(result== DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE){
+                    } else if (result == DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE) {
 //                        Log.e(TAG, "连接失败");
                         isUsbScannerLink = false;
                     }
@@ -547,12 +554,12 @@ public class App extends BaseApplication {
         }
     };
 
-//    public PushServer getPushServer(){
+    //    public PushServer getPushServer(){
 //        return  pushServer;
 //    }
     @Override
     public void onTerminate() {
-        if(observable != null){
+        if (observable != null) {
             RxBus.getInstance().unregister("showRelogin", observable);
         }
         TcpUdpFactory.stopUdpServer();
@@ -577,12 +584,12 @@ public class App extends BaseApplication {
         return hasSecondScreen;
     }
 
-    public void  showWelcomeToSecondScreen(){
+    public void showWelcomeToSecondScreen() {
         if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
             long id = Store.getLong(App.instance, Store.WELCOME_IMAGE_ID);
-            if(id != Store.DEFAULT_LONG_TYPE){
+            if (id != Store.DEFAULT_LONG_TYPE) {
                 showImg(id);
-            }else{
+            } else {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -590,14 +597,14 @@ public class App extends BaseApplication {
                                 .getExternalStorageDirectory().getAbsolutePath() + "/welcome.png";
                         File file = new File(path);
                         if (!file.exists()) {
-    //                        UIHelp.showToast(getTopActivity(), "文件不存在");
+                            //                        UIHelp.showToast(getTopActivity(), "文件不存在");
                             boolean isOK = copyApkFromAssets(instance, "sunmiImage/welcome.png", path);
-    //                        if(!isOK){
-    //                            UIHelp.showToast(getTopActivity(), "文件拷贝失败");
-    //                            return;
-    //                        }else{
-    //                            UIHelp.showToast(getTopActivity(), "文件拷贝成功" + (new File(path)).exists());
-    //                        }
+                            //                        if(!isOK){
+                            //                            UIHelp.showToast(getTopActivity(), "文件拷贝失败");
+                            //                            return;
+                            //                        }else{
+                            //                            UIHelp.showToast(getTopActivity(), "文件拷贝成功" + (new File(path)).exists());
+                            //                        }
                         }
                         sendImageToSecondScreen(path, new ISendCallback() {
                             @Override
@@ -620,45 +627,46 @@ public class App extends BaseApplication {
                 }).start();
 
             }
-        }else{
+        } else {
             sendImageToSecondScreenByMoonearly();
         }
     }
-    public void  setWelcomeToSecondScreen(final String path){
+
+    public void setWelcomeToSecondScreen(final String path) {
         if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        File file = new File(path);
-                        if (!file.exists()) {
-                            return;
-                        }
-                        sendImageToSecondScreen(path, new ISendCallback() {
-                            @Override
-                            public void onSendSuccess(long taskId) {
-                                Store.putLong(App.instance, Store.WELCOME_IMAGE_ID, taskId);
-                                showImg(taskId);
-                            }
-
-                            @Override
-                            public void onSendFail(int errorId, String errorInfo) {
-
-                            }
-
-                            @Override
-                            public void onSendProcess(long totle, long sended) {
-
-                            }
-                        });
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    File file = new File(path);
+                    if (!file.exists()) {
+                        return;
                     }
-                }).start();
+                    sendImageToSecondScreen(path, new ISendCallback() {
+                        @Override
+                        public void onSendSuccess(long taskId) {
+                            Store.putLong(App.instance, Store.WELCOME_IMAGE_ID, taskId);
+                            showImg(taskId);
+                        }
 
-        }else{
+                        @Override
+                        public void onSendFail(int errorId, String errorInfo) {
+
+                        }
+
+                        @Override
+                        public void onSendProcess(long totle, long sended) {
+
+                        }
+                    });
+                }
+            }).start();
+
+        } else {
             sendImageToSecondScreenByMoonearly();
         }
     }
 
-    private void sendImageToSecondScreenByMoonearly(){
+    private void sendImageToSecondScreenByMoonearly() {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("type", 0);
         Gson gson = new Gson();
@@ -666,14 +674,14 @@ public class App extends BaseApplication {
         TcpUdpFactory.tcpSend(5, json, new TcpSendCallBack() {
             @Override
             public void call(boolean isSucceed) {
-                if(!isSucceed){
+                if (!isSucceed) {
                     LogUtil.d(TAG, "请确认 副屏已经连接上了");
                 }
             }
         });
     }
 
-    private  void sendImageToSecondScreen(String path, ISendCallback iSendCallback){
+    private void sendImageToSecondScreen(String path, ISendCallback iSendCallback) {
         if (App.instance.isHasSecondScreen()) {
             if (App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
                 mDSKernel.sendFile(DSKernel.getDSDPackageName(), path, iSendCallback);
@@ -681,7 +689,7 @@ public class App extends BaseApplication {
         }
     }
 
-    private void showImg(long fileId){
+    private void showImg(long fileId) {
         if (App.instance.isHasSecondScreen()) {
             if (App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
                 String json = UPacketFactory.createJson(DataModel.SHOW_IMG_WELCOME, "def");
@@ -690,15 +698,15 @@ public class App extends BaseApplication {
         }
     }
 
-    public void sendDataToSecondScreen(Order order, List<OrderDetail> orderDetails){
+    public void sendDataToSecondScreen(Order order, List<OrderDetail> orderDetails) {
 
-        if(orderDetails != null  && order != null && orderDetails.size() > 0) {
+        if (orderDetails != null && order != null && orderDetails.size() > 0) {
             if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
 
                 sendViceScreenData(order, orderDetails);
 
 
-            }else{
+            } else {
                 GoodsModel goodsModelTitle = new GoodsModel();
                 goodsModelTitle.setIndex(getResources().getString(R.string.index));
                 goodsModelTitle.setName(getResources().getString(R.string.name));
@@ -710,7 +718,7 @@ public class App extends BaseApplication {
                 for (int i = 0; i < orderDetails.size(); i++) {
                     OrderDetail orderDetail = orderDetails.get(i);
                     GoodsModel goodsModel = new GoodsModel();
-                    goodsModel.setIndex((orderDetails.size() - i)+"");
+                    goodsModel.setIndex((orderDetails.size() - i) + "");
                     goodsModel.setName(orderDetail.getItemName());
                     goodsModel.setPrice(getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString());
                     goodsModel.setQty(orderDetail.getItemNum() + "");
@@ -728,22 +736,22 @@ public class App extends BaseApplication {
                 orderModel.setGoodsModelList(goodsModels);
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("type", 1);
-                map.put("orderModel",orderModel);
+                map.put("orderModel", orderModel);
                 TcpUdpFactory.tcpSend(5, new Gson().toJson(map), new TcpSendCallBack() {
                     @Override
                     public void call(boolean isSucceed) {
-                        if(!isSucceed){
+                        if (!isSucceed) {
                             LogUtil.d(TAG, "请确认 副屏已经连接上了");
                         }
                     }
                 });
             }
-        }else{
+        } else {
             if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
-                    if (isDebug)
-                        UIHelp.showToast(App.getTopActivity(), "准备发送数据:" + App.instance.getConnState());
-                    showWelcomeToSecondScreen();
-                }else{
+                if (isDebug)
+                    UIHelp.showToast(App.getTopActivity(), "准备发送数据:" + App.instance.getConnState());
+                showWelcomeToSecondScreen();
+            } else {
                 sendImageToSecondScreenByMoonearly();
             }
         }
@@ -751,19 +759,20 @@ public class App extends BaseApplication {
 
     /**
      * 商米 副屏发送数据
+     *
      * @param order
      * @param orderDetails
      */
-    public void sendViceScreenData(Order order, List<OrderDetail> orderDetails){
+    public void sendViceScreenData(Order order, List<OrderDetail> orderDetails) {
         int styleType = Store.getInt(App.instance, Store.SUNMI_STYLE);
-        if(isOpenLog) {
+        if (isOpenLog) {
             UIHelp.showShortToast(getTopActivity(), styleType + "");
         }
-        if (styleType == Store.SUNMI_TEXT){
+        if (styleType == Store.SUNMI_TEXT) {
             showBigScreenData(order, orderDetails);
-        }else {
+        } else {
             List<String> imgPath = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
-            if(isOpenLog)
+            if (isOpenLog)
                 UIHelp.showShortToast(getTopActivity(), imgPath.toString());
             if (imgPath != null && imgPath.size() != 0) {
                 if (styleType == Store.SUNMI_IMG) {
@@ -788,22 +797,25 @@ public class App extends BaseApplication {
 //            showSunmiTextAndImg("Total Price:", order.getSubTotal(), imgPath);
 //        }
 //    }
-}
+    }
 
     /**
      * 商米 全屏显示视频(14寸屏)
+     *
      * @param path
      */
-    private void showBigScreenVideo(List<String> path){
+    private void showBigScreenVideo(List<String> path) {
         mDSKernel.sendFile(DSKernel.getDSDPackageName(), path.get(0), new ISendCallback() {
             @Override
             public void onSendSuccess(long taskId) {
                 String json = UPacketFactory.createJson(DataModel.VIDEO, "");
                 mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, taskId, null);
             }
+
             @Override
             public void onSendFail(int errorId, String errorInfo) {
             }
+
             @Override
             public void onSendProcess(long totle, long sended) {
             }
@@ -812,20 +824,23 @@ public class App extends BaseApplication {
 
     /**
      * 商米 屏幕左边显示视频，右边显示复杂的表格数据(14寸屏)
+     *
      * @param order
      * @param orderDetails
      * @param path
      */
-    private void showBigScreenVideoText(final Order order, final List<OrderDetail> orderDetails, List<String> path){
+    private void showBigScreenVideoText(final Order order, final List<OrderDetail> orderDetails, List<String> path) {
         mDSKernel.sendFile(DSKernel.getDSDPackageName(), path.get(0), new ISendCallback() {
             @Override
             public void onSendSuccess(long taskId) {
                 String jsonStr = UPacketFactory.createJson(DataModel.SHOW_VIDEO_LIST, getSendData(order, orderDetails, 0));
-                mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, taskId,null);
+                mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, taskId, null);
             }
+
             @Override
             public void onSendFail(int errorId, String errorInfo) {
             }
+
             @Override
             public void onSendProcess(long totle, long sended) {
             }
@@ -834,37 +849,46 @@ public class App extends BaseApplication {
 
     /**
      * 商米 .屏幕左边显示幻灯片或者图片，右边显示复杂的表格数据(14寸屏)
+     *
      * @param order
      * @param orderDetails
      * @param path
      */
-    private void showBigScreenImgText(final Order order, final List<OrderDetail> orderDetails, List<String> path){
-        if (path.size() == 1){
+    private void showBigScreenImgText(final Order order, final List<OrderDetail> orderDetails, List<String> path) {
+        if (path.size() == 1) {
             mDSKernel.sendFile(DSKernel.getDSDPackageName(), path.get(0), new ISendCallback() {
                 public void onSendSuccess(long fileId) {
                     String jsonStr = UPacketFactory.createJson(DataModel.SHOW_IMG_LIST, getSendData(order, orderDetails, 0));
                     //第一个参数DataModel.SHOW_IMG_LIST为显示布局模式，jsonStr为要显示的内容字符
-                    mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, fileId,null);
+                    mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, fileId, null);
                 }
-                public void onSendFail(int errorId, String errorInfo) {}
-                public void onSendProcess(long total, long sended) {}
+
+                public void onSendFail(int errorId, String errorInfo) {
+                }
+
+                public void onSendProcess(long total, long sended) {
+                }
             });
-        }else if (path.size() > 1){
+        } else if (path.size() > 1) {
             mDSKernel.sendFiles(DSKernel.getDSDPackageName(), "", path, new ISendFilesCallback() {
                 @Override
                 public void onAllSendSuccess(long fileid) {
-                    String jsonStr= UPacketFactory.createJson(DataModel.SHOW_IMGS_LIST, getSendData(order, orderDetails, 0));
-                    mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, fileid,null);
+                    String jsonStr = UPacketFactory.createJson(DataModel.SHOW_IMGS_LIST, getSendData(order, orderDetails, 0));
+                    mDSKernel.sendCMD(DSKernel.getDSDPackageName(), jsonStr, fileid, null);
                 }
+
                 @Override
                 public void onSendSuccess(String path, long taskId) {
                 }
+
                 @Override
                 public void onSendFaile(int errorId, String errorInfo) {
                 }
+
                 @Override
                 public void onSendFileFaile(String path, int errorId, String errorInfo) {
                 }
+
                 @Override
                 public void onSendProcess(String path, long totle, long sended) {
                 }
@@ -874,28 +898,31 @@ public class App extends BaseApplication {
 
     /**
      * 商米 全屏只显示复杂的表格字符数据(14寸屏)
+     *
      * @param order
      * @param orderDetails
      */
-    private void showBigScreenData(Order order, List<OrderDetail> orderDetails){
+    private void showBigScreenData(Order order, List<OrderDetail> orderDetails) {
 
         final String jsonStr = getSendData(order, orderDetails, 1);
 
         DataPacket dsPacket = UPacketFactory.buildShowText(DSKernel.getDSDPackageName(), jsonStr, new ISendCallback() {
             @Override
             public void onSendSuccess(long taskId) {
-                if(isOpenLog)
+                if (isOpenLog)
                     UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
             }
+
             @Override
             public void onSendFail(int errorId, String errorInfo) {
-                if(isOpenLog)
+                if (isOpenLog)
                     UIHelp.showToast(App.getTopActivity(), "发送数据:失败,\n失败信息" + errorInfo);
             }
+
             @Override
             public void onSendProcess(long totle, long sended) {
-                if(isOpenLog)
-                    UIHelp.showToast(App.getTopActivity(), "发送数据:中"+jsonStr);
+                if (isOpenLog)
+                    UIHelp.showToast(App.getTopActivity(), "发送数据:中" + jsonStr);
             }
         });
         App.instance.getmDSKernel().sendData(dsPacket);
@@ -903,12 +930,13 @@ public class App extends BaseApplication {
 
     /**
      * 组合要发送到商米副屏的表格数据
+     *
      * @param order
      * @param orderDetails
-     * @param type  0为正常,1为分屏 不显示第一个
+     * @param type         0为正常,1为分屏 不显示第一个
      * @return
      */
-    private String getSendData(Order order, List<OrderDetail> orderDetails, int type){
+    private String getSendData(Order order, List<OrderDetail> orderDetails, int type) {
         String title = "Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName();
         SecondScreenBean secondScreenDataHead = new SecondScreenBean();
         List<SecondScreenBean> secondScreenBeans = new ArrayList<SecondScreenBean>();
@@ -916,7 +944,7 @@ public class App extends BaseApplication {
             OrderDetail orderDetail = orderDetails.get(i);
             secondScreenBeans.add(
                     new SecondScreenBean(
-                            type == 1 ?(i+1)+"" : null,
+                            type == 1 ? (i + 1) + "" : null,
                             orderDetail.getItemName(),
                             getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString(),
                             orderDetail.getItemNum() + "",
@@ -940,30 +968,33 @@ public class App extends BaseApplication {
 
     /**
      * 商米 全屏显示幻灯片或者图片
+     *
      * @param list
      */
-    private void showSunmiImg(List<String> list){
-        if (list.size() == 1){
+    private void showSunmiImg(List<String> list) {
+        if (list.size() == 1) {
             mDSKernel.sendFile(DSKernel.getDSDPackageName(), list.get(0), new ISendCallback() {
                 @Override
                 public void onSendSuccess(long taskId) {
                     String json = UPacketFactory.createJson(DataModel.SHOW_IMG_WELCOME, "def");
                     mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, taskId, null);//该命令会让副屏显示图片
                 }
+
                 @Override
                 public void onSendFail(int errorId, String errorInfo) {
-                    if(isOpenLog) {
+                    if (isOpenLog) {
                         UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
                     }
                 }
+
                 @Override
                 public void onSendProcess(long totle, long sended) {
                 }
             });
-        }else if (list.size() > 1){
+        } else if (list.size() > 1) {
             JSONObject object = new JSONObject();
             try {
-                object.put("rotation_time",3000); //幻灯片的切换时间，用毫秒计算，如果不传默认是10000毫秒
+                object.put("rotation_time", 3000); //幻灯片的切换时间，用毫秒计算，如果不传默认是10000毫秒
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -973,21 +1004,25 @@ public class App extends BaseApplication {
                     String json = UPacketFactory.createJson(DataModel.IMAGES, "def");
                     mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, fileid, null);//该命令会让副屏显示图片
                 }
+
                 @Override
                 public void onSendSuccess(String path, long taskId) {
                 }
+
                 @Override
                 public void onSendFaile(int errorId, String errorInfo) {
-                    if(isOpenLog) {
+                    if (isOpenLog) {
                         UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
                     }
                 }
+
                 @Override
                 public void onSendFileFaile(String path, int errorId, String errorInfo) {
-                    if(isOpenLog) {
+                    if (isOpenLog) {
                         UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
                     }
                 }
+
                 @Override
                 public void onSendProcess(String path, long totle, long sended) {
                 }
@@ -997,10 +1032,11 @@ public class App extends BaseApplication {
 
     /**
      * 商米 全屏只显示简单文字(7寸屏)
+     *
      * @param title
      * @param content
      */
-    private void showSunmiText(String title, String content){
+    private void showSunmiText(String title, String content) {
         try {
             JSONObject json = new JSONObject();
             json.put("title", title);//title为上面一行的标题内容
@@ -1012,12 +1048,14 @@ public class App extends BaseApplication {
                         @Override
                         public void onSendSuccess(long taskId) {
                         }
+
                         @Override
                         public void onSendFail(int errorId, String errorInfo) {
-                            if(isOpenLog) {
+                            if (isOpenLog) {
                                 UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
                             }
                         }
+
                         @Override
                         public void onSendProcess(long totle, long sended) {
                         }
@@ -1030,55 +1068,62 @@ public class App extends BaseApplication {
 
     /**
      * 商米 在屏幕部分区域显示图片+文字(7寸屏)
+     *
      * @param title
      * @param content
      * @param list
      */
-    private void showSunmiTextAndImg(String title, String content, List<String> list){
+    private void showSunmiTextAndImg(String title, String content, List<String> list) {
         try {
             JSONObject json = new JSONObject();
             json.put("title", title);//title为上面一行的标题内容
             json.put("content", content);//content为下面一行的内容
             String jsonStr = json.toString();
-            if (list.size() == 1){
+            if (list.size() == 1) {
                 mDSKernel.sendFile(DSKernel.getDSDPackageName(), jsonStr, list.get(0), new ISendCallback() {
                     @Override
                     public void onSendSuccess(long taskId) {
                         String json = UPacketFactory.createJson(DataModel.IMAGE, "def");
                         mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, taskId, null);//该命令会让副屏显示图片
                     }
+
                     @Override
                     public void onSendFail(int errorId, String errorInfo) {
-                        if(isOpenLog) {
+                        if (isOpenLog) {
                             UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
                         }
                     }
+
                     @Override
                     public void onSendProcess(long totle, long sended) {
                     }
                 });
-            }else if (list.size() > 1){
+            } else if (list.size() > 1) {
                 mDSKernel.sendFiles(DSKernel.getDSDPackageName(), jsonStr, list, new ISendFilesCallback() {
                     @Override
                     public void onAllSendSuccess(long fileid) {
                         String json = UPacketFactory.createJson(DataModel.IMAGES, "def");
                         mDSKernel.sendCMD(DSKernel.getDSDPackageName(), json, fileid, null);//该命令会让副屏显示图片
                     }
+
                     @Override
                     public void onSendSuccess(String path, long taskId) {
                     }
+
                     @Override
                     public void onSendFaile(int errorId, String errorInfo) {
-                        if(isOpenLog) {
+                        if (isOpenLog) {
                             UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
                         }
                     }
+
                     @Override
                     public void onSendFileFaile(String path, int errorId, String errorInfo) {
-                        if(isOpenLog) {
+                        if (isOpenLog) {
                             UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
                         }
                     }
+
                     @Override
                     public void onSendProcess(String path, long totle, long sended) {
                     }
@@ -1117,6 +1162,7 @@ public class App extends BaseApplication {
             String mac = item.getMacAddress();
             String name = item.getDeviceName();
             String model = item.getDeviceMode();
+            int lable = item.getIsLablePrinter();
             String printerName = item.getPrinterName();
             int type = item.getDeviceType();
 
@@ -1129,6 +1175,8 @@ public class App extends BaseApplication {
                 pdev.setName(name);
                 pdev.setModel(model);
                 pdev.setPrinterName(printerName);
+
+                pdev.setIsLablePrinter(lable);
                 pdev.setIsCahierPrinter(CoreData.getInstance()
                         .isCashierPrinter(devid));
                 printerDevices.put(devid, pdev);
@@ -1161,6 +1209,7 @@ public class App extends BaseApplication {
                 String name = item.getDeviceName();
                 String model = item.getDeviceMode();
                 String printerName = item.getPrinterName();
+                int isLable = item.getIsLablePrinter();
                 PrinterDevice pdev = new PrinterDevice();
                 pdev.setDevice_id(devid);
                 pdev.setIP(ip);
@@ -1168,6 +1217,7 @@ public class App extends BaseApplication {
                 pdev.setName(name);
                 pdev.setModel(model);
                 pdev.setPrinterName(printerName);
+                pdev.setIsLablePrinter(isLable);
                 pdev.setIsCahierPrinter(CoreData.getInstance()
                         .isCashierPrinter(devid));
                 printerDevices.put(devid, pdev);
@@ -1209,7 +1259,7 @@ public class App extends BaseApplication {
     }
 
     public String getCallAppIp() {
-        if(callAppIp == null)
+        if (callAppIp == null)
             callAppIp = Store.getString(this, Store.CALL_APP_IP);
         return callAppIp;
     }
@@ -1580,38 +1630,67 @@ public class App extends BaseApplication {
     // mRemoteService.printBill(prtStr,prtTitle,orderStr,details,mods,
     // tax, payment, this.systemSettings.isDoubleBillPrint(),
     // this.systemSettings.isDoubleReceiptPrint());
-    // } catch (RemoteException e) {
+    // } catch (remoteexception e) {
     // e.printStackTrace();
     // }
     // }
 
-    public void remoteStoredCard(PrinterDevice printer, ConsumingRecords consumingRecords, String balance){
-        if(mRemoteService == null){
+    public void remoteStoredCard(PrinterDevice printer, ConsumingRecords consumingRecords, String balance) {
+        if (mRemoteService == null) {
             printerDialog();
             return;
         }
         String action = "Top-up";
-        if(consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_TOP_UP){
+        if (consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_TOP_UP) {
             action = "Top-up";
-        }else if(consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_PAY){
+        } else if (consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_PAY) {
             action = "Pay";
-        }else if(consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_REFUND){
+        } else if (consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_REFUND) {
             action = "Refund";
         }
         try {
             Gson gson = new Gson();
             String prtStr = gson.toJson(printer);
-            mRemoteService.printStoredCardConsume(prtStr, "StoredCard Amount", TimeUtil.getTimeFormat(consumingRecords.getConsumingTime()), consumingRecords.getCardId()+"", action, consumingRecords.getConsumingAmount(), balance);
+            mRemoteService.printStoredCardConsume(prtStr, "StoredCard Amount", TimeUtil.getTimeFormat(consumingRecords.getConsumingTime()), consumingRecords.getCardId() + "", action, consumingRecords.getConsumingAmount(), balance);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
+//    PrinterTitle title,
+//    Order order, ArrayList<PrintOrderItem> orderItems,
+    public void remoteTBillPrint(PrinterDevice printer,PrinterTitle title,
+                                 Order order, ArrayList<OrderDetail> OrderDetail
+                           ) {
+
+       // remoteTBillPrint(printer);
+
+        Gson gson = new Gson();
+        String prtStr = gson.toJson(printer);
+        String titleStr = gson.toJson(title);
+
+        String orderStr = gson.toJson(order);
+        String orderDetailStr = gson.toJson(OrderDetail);
+
+        if (mRemoteService == null) {
+            printerDialog();
+            return;
+        }
+        try {
+            mRemoteService.printTscBill(prtStr,titleStr,orderStr,orderDetailStr);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
                                 Order order, ArrayList<PrintOrderItem> orderItems,
                                 ArrayList<PrintOrderModifier> orderModifiers,
                                 List<Map<String, String>> taxes,
-                                List<PaymentSettlement> settlement, RoundAmount roundAmount){
+                                List<PaymentSettlement> settlement, RoundAmount roundAmount) {
+
         remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, true);
     }
 
@@ -1693,7 +1772,7 @@ public class App extends BaseApplication {
             String payment = gson.toJson(printReceiptInfos);
             String roundStr = gson.toJson(roundingMap);
             // gson.toJson(roundingMap);
-            if (isRevenueKiosk())
+            if (isRevenueKiosk()) {
                 if (countryCode == ParamConst.CHINA)
                     mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
@@ -1708,13 +1787,15 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             null, getLocalRestaurantConfig().getCurrencySymbol(),
                             openDrawer);
-            else
+
+            } else {
                 mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
                         mods, tax, payment,
                         this.systemSettings.isDoubleBillPrint(),
                         this.systemSettings.isDoubleReceiptPrint(), roundStr,
                         getLocalRestaurantConfig().getCurrencySymbol(),
                         openDrawer);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -1734,19 +1815,19 @@ public class App extends BaseApplication {
         }
     }
 
-    public void deleteOldPrinterMsg(long businessDate){
+    public void deleteOldPrinterMsg(long businessDate) {
 
         try {
-            mRemoteService.deleteOldPrinterMsg(businessDate+"");
+            mRemoteService.deleteOldPrinterMsg(businessDate + "");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
 
-    public void remitePrintTableQRCode(PrinterDevice printer, PrinterTitle title,String tableId, String qrCodeText){
-        if(!TextUtils.isEmpty(tableId) && IntegerUtils.isInteger(tableId)){
-            if(mRemoteService == null){
+    public void remitePrintTableQRCode(PrinterDevice printer, PrinterTitle title, String tableId, String qrCodeText) {
+        if (!TextUtils.isEmpty(tableId) && IntegerUtils.isInteger(tableId)) {
+            if (mRemoteService == null) {
                 printerDialog();
                 return;
             }
@@ -1754,7 +1835,7 @@ public class App extends BaseApplication {
             String prtStr = gson.toJson(printer);
             String prtTitle = gson.toJson(title);
             try {
-                mRemoteService.printTableQRCode(prtStr,tableId+"",prtTitle, qrCodeText);
+                mRemoteService.printTableQRCode(prtStr, tableId + "", prtTitle, qrCodeText);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -1916,8 +1997,6 @@ public class App extends BaseApplication {
     }
 
 
-
-
     public void remotePrintModifierDetailAnalysisReport(String xzType,
                                                         PrinterDevice printer, PrinterTitle title, List<ReportPluDayModifier> modifier,
                                                         List<Modifier> category) {
@@ -1999,7 +2078,7 @@ public class App extends BaseApplication {
 
     public void printerDialog() {
         BaseActivity context = App.getTopActivity();
-        if(context == null)
+        if (context == null)
             return;
         DialogFactory.commonTwoBtnDialog(context, context.getResources()
                         .getString(R.string.print_down), context.getResources()
@@ -2330,7 +2409,6 @@ public class App extends BaseApplication {
     }
 
 
-
     public void appOrderTransforOrder(final AppOrder appOrder, final List<AppOrderDetail> appOrderDetailList, final List<AppOrderModifier> appOrderModifierList, List<AppOrderDetailTax> appOrderDetailTaxList) {
         synchronized (instance) {
 //			new Thread(new Runnable() {
@@ -2354,7 +2432,7 @@ public class App extends BaseApplication {
 //                        return;
 //                    }
 //                }
-                if(tables == null){
+                if (tables == null) {
                     return;
                 }
             }
@@ -2385,16 +2463,16 @@ public class App extends BaseApplication {
                         .getOrderDetailFromTempAppOrderDetail(
                                 order, appOrderDetail);
                 OrderDetailSQL.updateOrderDetail(orderDetail);
-                for (AppOrderDetailTax appOrderDetailTax : appOrderDetailTaxList){
-                     if(appOrderDetailTax.getOrderDetailId().intValue() != appOrderDetail.getId().intValue()){
-                         continue;
-                     }
+                for (AppOrderDetailTax appOrderDetailTax : appOrderDetailTaxList) {
+                    if (appOrderDetailTax.getOrderDetailId().intValue() != appOrderDetail.getId().intValue()) {
+                        continue;
+                    }
                     Tax tax = CoreData.getInstance().getTax(appOrderDetailTax.getTaxId().intValue());
                     TaxCategory taxCategory = CoreData.getInstance().getTaxCategoryByTaxId(tax.getId().intValue());
                     OrderDetailTax orderDetailTax = ObjectFactory.getInstance().getOrderDetailTaxByOnline(order, orderDetail, appOrderDetailTax, taxCategory.getIndex());
                 }
                 for (AppOrderModifier appOrderModifier : appOrderModifierList) {
-                    if(appOrderModifier.getOrderDetailId().intValue() != appOrderDetail.getId().intValue())
+                    if (appOrderModifier.getOrderDetailId().intValue() != appOrderDetail.getId().intValue())
                         continue;
 
                     ItemDetail printItemDetail = CoreData
@@ -2412,7 +2490,7 @@ public class App extends BaseApplication {
                             printId = prints.get(0).getId().intValue();
                         }
                     }
-                   ObjectFactory
+                    ObjectFactory
                             .getInstance()
                             .getOrderModifierFromTempAppOrderModifier(
                                     order, orderDetail, printId,
@@ -2506,8 +2584,8 @@ public class App extends BaseApplication {
                         App.instance.getRevenueCenter().getId().intValue(),
                         appOrder.getId().intValue(),
                         appOrder.getOrderStatus().intValue(), "",
-                        App.instance.getBusinessDate().longValue(),appOrder.getOrderNo());
-                if(App.getTopActivity() instanceof NetWorkOrderActivity){
+                        App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+                if (App.getTopActivity() instanceof NetWorkOrderActivity) {
                     App.getTopActivity().httpRequestAction(Activity.RESULT_OK, "");
                 }
             }
@@ -2518,7 +2596,7 @@ public class App extends BaseApplication {
                 App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
             }
         }).start();
-        if(getTopActivity() instanceof MainPage){
+        if (getTopActivity() instanceof MainPage) {
             getTopActivity().httpRequestAction(MainPage.REFRESH_TABLES_STATUS, null);
         }
 //				}
@@ -2557,9 +2635,14 @@ public class App extends BaseApplication {
                                 .intValue());
                 RoundAmount roundAmount = RoundAmountSQL
                         .getRoundAmount(paidOrder);
-                App.instance.remoteBillPrint(printer, title, paidOrder,
-                        orderItems, orderModifiers, taxMap, paymentSettlements,
-                        roundAmount);
+//
+//                if(printer.getIsLablePrinter()==0) {
+                    App.instance.remoteBillPrint(printer, title, paidOrder,
+                            orderItems, orderModifiers, taxMap, paymentSettlements,
+                            roundAmount);
+//                }else {
+//                    App.instance.remoteTBillPrint(printer);
+//                }
             }
         } catch (Exception e) {
             CrashReport.postCatchedException(e);
@@ -2594,19 +2677,19 @@ public class App extends BaseApplication {
                 .getExternalStorageDirectory().getAbsolutePath()
                 + "/print.apk");
         if (printVersionCode < posVersionCode && hasApk) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setDataAndType(
-                        Uri.parse("file://"
-                                + Environment.getExternalStorageDirectory()
-                                .getAbsolutePath() + "/print.apk"),
-                        "application/vnd.android.package-archive");
-                intentFilter = new IntentFilter();
-                intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-                intentFilter.addDataScheme("package");
-                registerReceiver(receiver, intentFilter);
-                this.startActivity(intent);
-        }else{
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setDataAndType(
+                    Uri.parse("file://"
+                            + Environment.getExternalStorageDirectory()
+                            .getAbsolutePath() + "/print.apk"),
+                    "application/vnd.android.package-archive");
+            intentFilter = new IntentFilter();
+            intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+            intentFilter.addDataScheme("package");
+            registerReceiver(receiver, intentFilter);
+            this.startActivity(intent);
+        } else {
             connectRemotePrintService();
         }
 
@@ -2639,12 +2722,11 @@ public class App extends BaseApplication {
         }
         if (printVersionCode < posVersionCode) {
             printerDialog();
-        }else{
+        } else {
             connectRemotePrintService();
         }
 
     }
-
 
 
     public boolean copyApkFromAssets(Context context, String fileName, String path) {
@@ -2675,7 +2757,7 @@ public class App extends BaseApplication {
             String packName = intent.getDataString().substring(8);
             //packName为所安装的程序的包名
             String name = context.getResources().getString(R.string.printer_app_name);
-            if(packName.equals("com.alfred.remote.printservice")){
+            if (packName.equals("com.alfred.remote.printservice")) {
                 connectRemotePrintService();
                 unregisterReceiver(receiver);
             }
@@ -2703,12 +2785,12 @@ public class App extends BaseApplication {
     /**
      * 判断是否使用的是商米设备  商米副屏设置是否展示
      */
-    public boolean isSUNMIShow(){
+    public boolean isSUNMIShow() {
         String brand = Build.BRAND;
         String model = Build.MODEL;
         String manufacturer = Build.MANUFACTURER;
         LogUtil.d(TAG, brand + "**************" + model);
-        if ("SUNMI".equals(brand.toUpperCase())){
+        if ("SUNMI".equals(brand.toUpperCase())) {
             return true;
         }
         return false;
@@ -2716,17 +2798,18 @@ public class App extends BaseApplication {
 
     /**
      * 判断显示的商米富屏是大屏（14寸）还是小屏（7寸）
+     *
      * @return 返回false为小屏  反之为大屏
      */
-    public boolean isSmallOrBigScreen(){
+    public boolean isSmallOrBigScreen() {
         try {
             String sn = Build.SERIAL;
             String str = sn.substring(0, 4);
-            if (str.equals("T103") || str.equals("T104")){
+            if (str.equals("T103") || str.equals("T104")) {
                 return true;
-            }else if (str.equals("T105") || str.equals("T106")){
+            } else if (str.equals("T105") || str.equals("T106")) {
                 return false;
-            }else {
+            } else {
                 return false;
             }
         } catch (Exception e) {
