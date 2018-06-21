@@ -50,7 +50,7 @@ import com.alfredposclient.adapter.XZReportDetailAdapter;
 import com.alfredposclient.adapter.XZReportHourlyAdapter;
 import com.alfredposclient.adapter.XZReportSumaryAdapter;
 import com.alfredposclient.global.App;
-import com.alfredposclient.global.ReportObjectFactory;
+import com.alfredposclient.global.ReportObjectFactoryCP;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.ReportDetailAnalysisItem;
@@ -147,17 +147,17 @@ public class XZReportActivity extends BaseActivity {
     };
 
     private void loadNewReport(long businessDate){
-        reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(businessDate);
+        reportDaySales = ReportObjectFactoryCP.getInstance().loadShowReportDaySales(businessDate);
         if(reportDaySales != null) {
             itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
             itemMainCategorys = ItemMainCategorySQL
                     .getAllItemMainCategoryForReport();
-            reportPluDayItems = ReportObjectFactory.getInstance().loadShowReportPluDayItem(businessDate);
-            Map<String, Object> map = ReportObjectFactory.getInstance().loadShowReportPluDayModifierInfo(businessDate);
+            reportPluDayItems = ReportObjectFactoryCP.getInstance().loadShowReportPluDayItem(businessDate);
+            Map<String, Object> map = ReportObjectFactoryCP.getInstance().loadShowReportPluDayModifierInfo(businessDate);
             reportPluDayModifiers = (List<ReportPluDayModifier>) map.get("reportPluDayModifiers");
             reportPluDayComboModifiers = (List<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
-            reportHourlys = ReportObjectFactory.getInstance().loadShowReportHourlys(businessDate);
-            reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(reportDaySales,businessDate);
+            reportHourlys = ReportObjectFactoryCP.getInstance().loadShowReportHourlys(businessDate);
+            reportDayTaxs = ReportObjectFactoryCP.getInstance().loadShowReportDayTax(reportDaySales,businessDate);
             loadModel();
         }else{
             reportDayTaxs = new ArrayList<>();
@@ -277,7 +277,7 @@ public class XZReportActivity extends BaseActivity {
         curStr = yearMonthDayFormater.format(date);
 //        session = App.instance.getSessionStatus();
         revenueCenter = App.instance.getRevenueCenter();
-        reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(businessDate);
+        reportDaySales = ReportObjectFactoryCP.getInstance().loadShowReportDaySales(businessDate);
         if (reportDaySales != null) {
             String nettsSales = reportDaySales.getNettSales();
             calendarCard.setAmount(nettsSales);

@@ -876,15 +876,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							sessionStatus, CloudSyncJobManager.CLOSE_SESSION);
 					LogUtil.e("测试", "44");
 				}
-				if (sessionStatus == null) {
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							dismissPrinterLoadingDialog();
-						}
-					});
-					return;
-				}
 				if(App.instance.getSystemSettings().isPrintWhenCloseSession())
 				sendXPrintData(xReportInfo, bizDate,
 									CommonUtil.getReportType(context, sessionStatus.getSession_status()),
@@ -1151,10 +1142,14 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		
 		ArrayList<ReportHourly> reportHourlys = ReportObjectFactory
 				.getInstance().loadReportHourlys(businessDate);
-		ArrayList<ReportVoidItem> reportVoidItems = ReportObjectFactory
-				.getInstance().loadReportVoidItem(businessDate);
-		ArrayList<ReportEntItem> reportEntItems = ReportObjectFactory
-				.getInstance().loadReportEntItem(businessDate);
+
+
+//		List<ReportVoidItem> reportVoidItems = ReportObjectFactory
+//				.getInstance().loadReportVoidItem(businessDate);
+//		List<ReportEntItem> reportEntItems = ReportObjectFactory
+//				.getInstance().loadReportEntItem(businessDate);
+
+
 		ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
 				.getAllItemCategory();
 		ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
@@ -1166,7 +1161,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						"Z"
 								+ ParamHelper.getPrintOrderBillNo(
 										App.instance.getIndexOfRevenueCenter(),
-										reportDaySales.getId()),
+										0),
 						App.instance.getUser().getFirstName()
 								+ App.instance.getUser().getLastName(), null,bizDate);
 
@@ -1201,15 +1196,15 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						cashierPrinter, title, reportPluDayModifiers,
 						ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue()));
 		}
-		if (reportVoidItems != null && reportVoidItems.size() > 0)
-			// Void PLU
-			App.instance.remotePrintVoidItemReport(reportType, cashierPrinter,
-					title, reportVoidItems);
-
-		if (reportEntItems != null && reportEntItems.size() > 0)
-			// Ent PLU
-			App.instance.remotePrintEntItemReport(reportType, cashierPrinter,
-					title, reportEntItems);
+//		if (reportVoidItems != null && reportVoidItems.size() > 0)
+//			// Void PLU
+//			App.instance.remotePrintVoidItemReport(reportType, cashierPrinter,
+//					title, reportVoidItems);
+//
+//		if (reportEntItems != null && reportEntItems.size() > 0)
+//			// Ent PLU
+//			App.instance.remotePrintEntItemReport(reportType, cashierPrinter,
+//					title, reportEntItems);
 		if(App.countryCode == ParamConst.CHINA) {
 //		if(reportPluDayModifiers != null && reportPluDayModifiers.size() > 0)
 //		// modifier detail analysis

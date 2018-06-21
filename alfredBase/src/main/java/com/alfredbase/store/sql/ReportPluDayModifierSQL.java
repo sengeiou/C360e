@@ -305,6 +305,66 @@ public class ReportPluDayModifierSQL {
 		return result;
 	}
 
+	public static ArrayList<ReportPluDayModifier> getReportPluDayModifiersForZReport(long date) {
+		ArrayList<ReportPluDayModifier> result = new ArrayList<ReportPluDayModifier>();
+		String sql = "select restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, modifierCategoryName, modifierId, modifierName, "
+				+ " sum(modifierPrice), sum(modifierCount), sum(billVoidPrice), sum(billVoidCount), sum(voidModifierPrice), sum(voidModifierCount), "
+				+ " sum(bohModifierPrice), sum(bohModifierCount), sum(focModifierPrice), sum(focModifierCount),"
+				+ " sum(billFocPrice), sum(billFocCount), comboItemId, modifierItemPrice, sum(realPrice), sum(realCount) from "
+				+ TableNames.ReportPluDayModifier
+				+ " where businessDate = ? group by modifierId";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {String.valueOf(date)});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			ReportPluDayModifier reportPluDayModifier = null;
+			if (cursor.moveToFirst()) {
+				reportPluDayModifier = new ReportPluDayModifier();
+				reportPluDayModifier.setId(cursor.getInt(0));
+				reportPluDayModifier.setReportNo(cursor.getInt(1));
+				reportPluDayModifier.setRestaurantId(cursor.getInt(2));
+				reportPluDayModifier.setRestaurantName(cursor.getString(3));
+				reportPluDayModifier.setRevenueId(cursor.getInt(4));
+				reportPluDayModifier.setRevenueName(cursor.getString(5));
+				reportPluDayModifier.setBusinessDate(cursor.getLong(6));
+				reportPluDayModifier.setModifierCategoryId(cursor.getInt(7));
+				reportPluDayModifier.setModifierCategoryName(cursor
+						.getString(8));
+				reportPluDayModifier.setModifierId(cursor.getInt(9));
+				reportPluDayModifier.setModifierName(cursor.getString(10));
+				reportPluDayModifier.setModifierPrice(cursor.getString(11));
+				reportPluDayModifier.setModifierCount(cursor.getInt(12));
+				reportPluDayModifier.setBillVoidPrice(cursor.getString(13));
+				reportPluDayModifier.setBillVoidCount(cursor.getInt(14));
+				reportPluDayModifier.setVoidModifierPrice(cursor.getString(15));
+				reportPluDayModifier.setVoidModifierCount(cursor.getInt(16));
+				reportPluDayModifier.setBohModifierPrice(cursor.getString(17));
+				reportPluDayModifier.setBohModifierCount(cursor.getInt(18));
+				reportPluDayModifier.setFocModifierPrice(cursor.getString(19));
+				reportPluDayModifier.setFocModifierCount(cursor.getInt(20));
+				reportPluDayModifier.setBillFocPrice(cursor.getString(21));
+				reportPluDayModifier.setBillFocCount(cursor.getInt(22));
+				reportPluDayModifier.setComboItemId(cursor.getInt(23));
+				reportPluDayModifier.setModifierItemPrice(cursor.getString(24));
+				reportPluDayModifier.setRealPrice(cursor.getString(25));
+				reportPluDayModifier.setRealCount(cursor.getInt(26));
+				result.add(reportPluDayModifier);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static void deleteReportPluDayModifier(
 			ReportPluDayModifier reportPluDayModifier) {
 		String sql = "delete from " + TableNames.ReportPluDayModifier

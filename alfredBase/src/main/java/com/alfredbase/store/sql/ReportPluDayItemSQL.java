@@ -111,6 +111,60 @@ public class ReportPluDayItemSQL {
 			db.endTransaction();
 		}
 	}
+
+
+	public static void addReportPluDayItems(List<ReportPluDayItem> reportPluDayItems) {
+		if (reportPluDayItems == null)
+			return;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+
+			db.beginTransaction();
+			String sql = "replace into "
+					+ TableNames.ReportPluDayItem
+					+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, "
+					+ "itemMainCategoryId, itemMainCategoryName, itemCategoryId, itemCategoryName, "
+					+ "itemDetailId, itemName, itemPrice, itemCount, itemAmount, itemVoidQty, "
+					+ "itemVoidPrice, itemHoldQty, itemHoldPrice, itemFocQty, itemFocPrice,"
+					+ " billVoidQty, billVoidPrice, billFocQty, billFocPrice)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
+			for (ReportPluDayItem reportPluDayItem : reportPluDayItems) {
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportPluDayItem.getReportNo());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 2, reportPluDayItem.getRestaurantId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 3, reportPluDayItem.getRestaurantName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 4, reportPluDayItem.getRevenueId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 5, reportPluDayItem.getRevenueName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 6, reportPluDayItem.getBusinessDate());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 7, reportPluDayItem.getItemMainCategoryId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 8, reportPluDayItem.getItemMainCategoryName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 9, reportPluDayItem.getItemCategoryId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 10, reportPluDayItem.getItemCategoryName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 11, reportPluDayItem.getItemDetailId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 12, reportPluDayItem.getItemName());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 13, reportPluDayItem.getItemPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 14, reportPluDayItem.getItemCount());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 15, reportPluDayItem.getItemAmount());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 16, reportPluDayItem.getItemVoidQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 17, reportPluDayItem.getItemVoidPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 18, reportPluDayItem.getItemHoldQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 19, reportPluDayItem.getItemHoldPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 20, reportPluDayItem.getItemFocQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 21, reportPluDayItem.getItemFocPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 22, reportPluDayItem.getBillVoidQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 23, reportPluDayItem.getBillVoidPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 24, reportPluDayItem.getBillFocQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 25, reportPluDayItem.getBillFocPrice());
+				sqLiteStatement.executeInsert();
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
 	public static ReportPluDayItem getReportPluDayItem(
 			Integer reportPluDayItemID) {
 		ReportPluDayItem reportPluDayItem = null;
@@ -216,6 +270,62 @@ public class ReportPluDayItemSQL {
 		}
 		return result;
 	}
+
+//	public static List<ReportVoidItem> getReportVoidItemForZReport(long businessDate) {
+//		List<ReportVoidItem> result = new ArrayList<>();
+//		String sql = "select itemName, itemPrice, sum(itemVoidQty + billVoidQty), sum(itemVoidPrice + billVoidPrice),"
+//				+ " sum(itemHoldQty) itemHoldQty, sum(itemHoldPrice) itemHoldPrice, sum(itemFocQty) itemFocQty, sum(itemFocPrice) itemFocPrice,"
+//				+ " sum(billVoidQty) billVoidQty, sum(billVoidPrice) billVoidPrice, sum(billFocQty) billFocQty, sum(billFocPrice) billFocPrice from "
+//				+ TableNames.ReportPluDayItem
+//				+ " where businessDate = ? and (itemVoidQty > 0  or billVoidQty > 0) group by itemDetailId";
+//		Cursor cursor = null;
+//		try {
+//			cursor = SQLExe.getDB().rawQuery(sql,
+//					new String[] { businessDate + "" });
+//			int count = cursor.getCount();
+//			if (count < 1) {
+//				return result;
+//			}
+//			ReportPluDayItem reportPluDayItem = null;
+//			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+//					.moveToNext()) {
+//				reportPluDayItem = new ReportPluDayItem();
+//				reportPluDayItem.setRestaurantId(cursor.getInt(0));
+//				reportPluDayItem.setRestaurantName(cursor.getString(1));
+//				reportPluDayItem.setRevenueId(cursor.getInt(2));
+//				reportPluDayItem.setRevenueName(cursor.getString(3));
+//				reportPluDayItem.setBusinessDate(cursor.getLong(4));
+//				reportPluDayItem.setItemMainCategoryId(cursor.getInt(5));
+//				reportPluDayItem.setItemMainCategoryName(cursor.getString(6));
+//				reportPluDayItem.setItemCategoryId(cursor.getInt(7));
+//				reportPluDayItem.setItemCategoryName(cursor.getString(8));
+//				reportPluDayItem.setItemDetailId(cursor.getInt(9));
+//				reportPluDayItem.setItemName(cursor.getString(10));
+//				reportPluDayItem.setItemPrice(cursor.getString(11));
+//				reportPluDayItem.setItemCount(cursor.getInt(12));
+//				reportPluDayItem.setItemAmount(cursor.getString(13));
+//				reportPluDayItem.setItemVoidQty(cursor.getInt(14));
+//				reportPluDayItem.setItemVoidPrice(cursor.getString(15));
+//				reportPluDayItem.setItemHoldQty(cursor.getInt(16));
+//				reportPluDayItem.setItemHoldPrice(cursor.getString(17));
+//				reportPluDayItem.setItemFocQty(cursor.getInt(18));
+//				reportPluDayItem.setItemFocPrice(cursor.getString(19));
+//				reportPluDayItem.setBillVoidQty(cursor.getInt(20));
+//				reportPluDayItem.setBillVoidPrice(cursor.getString(21));
+//				reportPluDayItem.setBillFocQty(cursor.getInt(22));
+//				reportPluDayItem.setBillFocPrice(cursor.getString(23));
+//				result.add(reportPluDayItem);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//
+//		} finally {
+//			if (cursor != null && !cursor.isClosed()) {
+//				cursor.close();
+//			}
+//		}
+//		return result;
+//	}
 
 	public static ArrayList<ReportPluDayItem> getAllReportPluDayItem() {
 		ArrayList<ReportPluDayItem> result = new ArrayList<ReportPluDayItem>();

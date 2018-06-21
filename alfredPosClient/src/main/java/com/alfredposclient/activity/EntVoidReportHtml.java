@@ -28,7 +28,7 @@ import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
-import com.alfredposclient.global.ReportObjectFactory;
+import com.alfredposclient.global.ReportObjectFactoryCP;
 import com.alfredposclient.global.WebViewConfig;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.google.gson.Gson;
@@ -37,7 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,9 +197,9 @@ public class EntVoidReportHtml extends BaseActivity {
 		Gson gson = new Gson();
 
 
-		this.reportEntItems = ReportObjectFactory.getInstance().loadReportEntItem(businessDate);
-		this.reportVoidItems = ReportObjectFactory.getInstance().loadReportVoidItem(businessDate);
-		this.reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(businessDate, false);
+		this.reportEntItems = ReportObjectFactoryCP.getInstance().loadReportEntItem(businessDate);
+		this.reportVoidItems = ReportObjectFactoryCP.getInstance().loadReportVoidItem(businessDate);
+		this.reportDaySales = ReportObjectFactoryCP.getInstance().loadReportDaySales(businessDate, false);
 			
 		if (reportDaySales != null) {
 			map.put("total", String.valueOf(BH.add(BH.getBD(reportDaySales.getItemVoid()),

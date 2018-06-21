@@ -26,7 +26,7 @@ import com.alfredbase.utils.SystemUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
-import com.alfredposclient.global.ReportObjectFactory;
+import com.alfredposclient.global.ReportObjectFactoryCP;
 import com.alfredposclient.global.WebViewConfig;
 import com.google.gson.Gson;
 
@@ -122,7 +122,7 @@ public class DashboardHtml extends BaseActivity {
 		DashboardInfo dashboardInfo = new DashboardInfo();
 		try {
 			//ArrayList<DashboardTotalDetailInfo> totalDetailInfos = OrderSQL.getTotalDetaiInfosForOrder();
-			ArrayList<DashboardTotalDetailInfo> totalDetailInfos = ReportObjectFactory.getInstance()
+			ArrayList<DashboardTotalDetailInfo> totalDetailInfos = ReportObjectFactoryCP.getInstance()
 																		.loadDaySalesDashBoard(businessDate);
 
 			String cash = PaymentSettlementSQL.getSumPaidAmountByPaymentTypeId(ParamConst.SETTLEMENT_TYPE_CASH, businessDate);

@@ -76,6 +76,40 @@ public class ReportDayTaxSQL {
 			db.endTransaction();
 		}
 	}
+	public static void addReportDayTaxs(List<ReportDayTax> reportDayTaxList) {
+		if (reportDayTaxList == null)
+			return;
+
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			db.beginTransaction();
+			String sql = "replace into "
+					+ TableNames.ReportDayTax
+					+ "(daySalesId, restaurantId, restaurantName, revenueId, revenueName,"
+					+ " businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
+			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
+			for(ReportDayTax reportDayTax: reportDayTaxList) {
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportDayTax.getDaySalesId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 2, reportDayTax.getRestaurantId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 3, reportDayTax.getRestaurantName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 4, reportDayTax.getRevenueId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 5, reportDayTax.getRevenueName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 6, reportDayTax.getBusinessDate());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 7, reportDayTax.getTaxId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 8, reportDayTax.getTaxName());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 9, reportDayTax.getTaxPercentage());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 10, reportDayTax.getTaxQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 11, reportDayTax.getTaxAmount());
+				sqLiteStatement.executeInsert();
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+	}
 	public static ReportDayTax getReportDayTax(Integer reportDayTaxID) {
 		ReportDayTax reportDayTax = null;
 		String sql = "select * from " + TableNames.ReportDayTax
