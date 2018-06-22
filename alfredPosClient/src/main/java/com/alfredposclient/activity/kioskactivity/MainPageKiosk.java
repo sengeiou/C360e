@@ -699,7 +699,12 @@ public class MainPageKiosk extends BaseActivity {
 					if(!TextUtils.isEmpty(changeNum)){
 
 						if(!(App.instance.getLocalRestaurantConfig().getCurrencySymbol()+"0.00").equals(changeNum))
-						DialogFactory.changeDialogOrder(context, changeNum);
+						DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+
+							}
+						});
 					}
 
 					ArrayList<PrintOrderItem> orderItems = ObjectFactory

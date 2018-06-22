@@ -43,6 +43,16 @@ public class PushMessage {
 	private String content; // json 数据
 	private String businessStr;
 
+	public Long getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(Long sendTime) {
+		this.sendTime = sendTime;
+	}
+
+	private Long  sendTime;
+
 
 	public PushMessage() {
 	}

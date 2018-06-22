@@ -3,29 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:background="@color/transparent"
+   android:id="@+id/ll_change"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+
         android:gravity="center_horizontal"
+
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:padding="10dp"
+            android:gravity="center"
+            android:background="@drawable/change_shape"
             android:orientation="horizontal">
 
-
             <LinearLayout
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
                 android:gravity="center"
-
+   android:background="@drawable/change_dia_bg"
                 android:orientation="vertical">
 
                 <TextView
@@ -33,6 +36,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="25sp"
+                    android:layout_gravity="center"
                     android:text="@string/change" />
 
                 <TextView
@@ -41,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/black"
-
+                    android:layout_gravity="center"
                     android:textSize="25sp" />
 
             </LinearLayout>

@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,7 +52,7 @@ public class WifiCommunication {
     private boolean clientStart() {
 
         Log.d("WifiCommunication", "printer (" + ipAddress + ")");
-        if ((ipAddress.indexOf(":") != -1)) {
+        if ((ipAddress.indexOf(":") != -1)||localIPAddress.equals(ipAddress)) {
             return clientStartBluetooth(ipAddress);
         }
 
@@ -69,7 +71,11 @@ public class WifiCommunication {
     private boolean clientStartSocket() {
         boolean isStart;
         try {
-            socket = new Socket(ipAddress, port);
+
+            //SocketAddress ipe = new InetSocketAddress(ipAddress,port);
+            socket=new Socket();
+//            socket.connect(ipe);
+           socket = new Socket(ipAddress, port);
             socket.setKeepAlive(true);
             socket.setReuseAddress(true);
             socket.setTcpNoDelay(true);
@@ -89,6 +95,10 @@ public class WifiCommunication {
 
         Log.d("clientStartBluetooth", "printer (" + address + ")");
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if(localIPAddress.equals(address)){
+            address = "00:11:22:33:44:55";
+        }
         if (setConnect(mBluetoothAdapter.getRemoteDevice(address))) {
 
 
@@ -97,6 +107,8 @@ public class WifiCommunication {
 
 
                 if (mBluetoothAdapter != null) {
+
+
 //					String innerprinter_address = "00:11:22:33:44:55";
 //					BluetoothDevice innerprinter_device = null;
 //					Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
@@ -220,7 +232,7 @@ public class WifiCommunication {
 
     public boolean sndByte(byte[] data) {
 
-            if ((ipAddress.indexOf(":") != -1))
+            if ((ipAddress.indexOf(":") != -1)||localIPAddress.equals(ipAddress))
                 return sndByteBluetooth(data);
             else
                 return sndByteSocket(data);
@@ -283,11 +295,12 @@ public class WifiCommunication {
     }
 
     public boolean isConnected() {
-//        if (localIPAddress.equals(ipAddress)) {
+
+        if (ipAddress.indexOf(":") != -1) {
             return isConnectedBluetooth();
-//        } else {
-//            return isConnectedSocket();
-//        }
+        } else {
+            return isConnectedSocket();
+        }
     }
 
 }

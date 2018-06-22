@@ -586,4 +586,10 @@ public class DevicesActivity extends BaseActivity {
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        App.instance.closeDiscovery();
+        super.onDestroy();
+    }
 }

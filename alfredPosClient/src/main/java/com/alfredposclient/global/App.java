@@ -1677,6 +1677,7 @@ public class App extends BaseApplication {
             return;
         }
         try {
+          //  mRemoteService.printTscBill("","","","");
             mRemoteService.printTscBill(prtStr,titleStr,orderStr,orderDetailStr);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -1851,9 +1852,20 @@ public class App extends BaseApplication {
             printerDialog();
             return;
         }
+
+        Log.d("discoverPrinter","1856");
         try {
             mCallback.setHandler(handler);
             mRemoteService.listPrinters();
+            Log.d("discoverPrinter","1860");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeDiscovery(){
+        try {
+            mRemoteService.closeDiscovery();
         } catch (RemoteException e) {
             e.printStackTrace();
         }

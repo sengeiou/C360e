@@ -40,7 +40,7 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowAnimationStyle">@null</item>
-        <item name="android:windowBackground">@drawable/top_dialog_bg</item>
+        <item name="android:windowBackground">@color/transparent</item>
     </style>
 
     <style name="NullActivityAnimation" parent="@android:style/Animation.Activity">

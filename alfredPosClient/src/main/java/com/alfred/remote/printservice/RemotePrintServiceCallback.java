@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.os.Handler;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.LogUtil;
@@ -23,10 +24,13 @@ public class RemotePrintServiceCallback extends IAlfredRemotePrintServiceCallbac
 
        if ("PRINTS_FOUND".equals(type)) {
     	  //list all physical printers
-          Map<String, String> printers = null;    	   
+          Map<String, String> printers = null;
+
+           Log.d("PRINTS_FOUND", " ----- 29-----" +data);
     	  LogUtil.d("Prints found", data);
     	  printers =  gson.fromJson(data, new TypeToken< Map<String, String>>(){}.getType());
-    	  if (handler != null) 
+    	  if (handler != null)
+              Log.d("PRINTS_FOUND", " ----- 33-----" );
     		  handler.sendMessage(handler.obtainMessage(
     						  				RemotePrintServiceCallback.PRINTERS_DISCOVERIED,printers)
     				  					);

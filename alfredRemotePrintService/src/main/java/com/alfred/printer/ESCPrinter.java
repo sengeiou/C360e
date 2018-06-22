@@ -14,7 +14,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.printer.TscCommand;
+
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -70,11 +70,8 @@ public class ESCPrinter implements WIFIPrintCallback{
 
 		this.ip = ip;
 
-		if (labe==1) {
 			this.tprinter=new TscPOSPrinter((PrintService)context);
-		}else {
-			this.tprinter = new TscPOSPrinter((PrintService) context);
-		}
+
 
 	}
 	

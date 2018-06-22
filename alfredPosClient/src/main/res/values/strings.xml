@@ -192,7 +192,7 @@
     <string name="print_report_when_session">X Report</string>
     <string name="print_cash_close">Cash W Close Print</string>
     <string name="print_before_close_bill">Print Check</string>
-
+    <string name="print_bill_set">Print Bill</string>
     <string name="print_lable">Print Label</string>
     <string name="password_update_successfully">Password update successfully.</string>
     <string name="employee_no_exist">The employee does not exist at backoffice.</string>

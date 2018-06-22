@@ -78,7 +78,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_kot_print"
+                                android:id="@+id/mt_kot_print"
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -107,7 +107,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_kot_print_together"
+                                android:id="@+id/mt_kot_print_together"
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -136,7 +136,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_kot_double_print"
+                                android:id="@+id/mt_kot_double_print"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -163,7 +163,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_transfer_print"
+                                android:id="@+id/mt_transfer_print"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -198,7 +198,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_double_print_bill"
+                                android:id="@+id/mt_double_print_bill"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -227,7 +227,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_double_close_bill_print"
+                                android:id="@+id/mt_double_close_bill_print"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -257,7 +257,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_order_summary_print"
+                                android:id="@+id/mt_order_summary_print"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -287,13 +287,69 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_print_before_close"
+                                android:id="@+id/mt_print_before_close"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="10dp" />
                         </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ll_print_bill"
+                            android:orientation="vertical"
+                            >
+
+                            <View
+                                android:id="@+id/view_order_print_bill"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+                            <RelativeLayout
+                                android:id="@+id/rl_print_bill"
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_print_bill"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/print_bill_set"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+                                <com.alfredposclient.view.MyToggleButton
+                                    android:id="@+id/mt_print_bill"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+
+                                <!--<com.alfredposclient.view.MyToggleButton-->
+                                <!--android:id="@+id/mt_print_lable"-->
+                                <!--android:layout_width="wrap_content"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:layout_alignParentRight="true"-->
+                                <!--android:layout_centerVertical="true"-->
+                                <!--android:layout_marginRight="10dp" />-->
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/ll_print_lable"
+
+    android:orientation="vertical"
+    >
+
+
 
                         <View
                             android:id="@+id/view_order_print_lable"
@@ -316,7 +372,7 @@
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_print_lable"
+                                android:id="@+id/mt_print_lable"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
@@ -324,13 +380,15 @@
                             android:layout_marginRight="10dp" />
 
                             <!--<com.alfredposclient.view.MyToggleButton-->
-                                <!--android:id="@+id/sb_print_lable"-->
+                                <!--android:id="@+id/mt_print_lable"-->
                                 <!--android:layout_width="wrap_content"-->
                                 <!--android:layout_height="wrap_content"-->
                                 <!--android:layout_alignParentRight="true"-->
                                 <!--android:layout_centerVertical="true"-->
                                 <!--android:layout_marginRight="10dp" />-->
                         </RelativeLayout>
+
+</LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
@@ -358,7 +416,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_cash_close_print"
+                                android:id="@+id/mt_cash_close_print"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -386,7 +444,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_auto_receive_app"
+                                android:id="@+id/mt_auto_receive_app"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -415,7 +473,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_top_masking_use"
+                                android:id="@+id/mt_top_masking_use"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -449,7 +507,7 @@
                                 android:textSize="@dimen/text_size_m" />
 
                             <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/sb_auto_table"
+                                android:id="@+id/mt_auto_table"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -497,7 +555,7 @@
                                     android:textSize="@dimen/text_size_m" />
 
                                 <com.alfredposclient.view.MyToggleButton
-                                    android:id="@+id/sb_session_report_print"
+                                    android:id="@+id/mt_session_report_print"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
@@ -527,7 +585,7 @@
                                     android:textSize="@dimen/text_size_m" />
 
                                 <com.alfredposclient.view.MyToggleButton
-                                    android:id="@+id/sb_plu_category"
+                                    android:id="@+id/mt_plu_category"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
@@ -556,7 +614,7 @@
                                     android:textSize="@dimen/text_size_m" />
 
                                 <com.alfredposclient.view.MyToggleButton
-                                    android:id="@+id/sb_plu_item"
+                                    android:id="@+id/mt_plu_item"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
@@ -585,7 +643,7 @@
                                     android:textSize="@dimen/text_size_m" />
 
                                 <com.alfredposclient.view.MyToggleButton
-                                    android:id="@+id/sb_plu_modifier"
+                                    android:id="@+id/mt_plu_modifier"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
@@ -614,7 +672,7 @@
                                     android:textSize="@dimen/text_size_m" />
 
                                 <com.alfredposclient.view.MyToggleButton
-                                    android:id="@+id/sb_hourly_payment"
+                                    android:id="@+id/mt_hourly_payment"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
@@ -650,7 +708,7 @@
                                     android:textSize="@dimen/text_size_m" />
 
                                 <com.alfredposclient.view.MyToggleButton
-                                    android:id="@+id/sb_top_screen_lock"
+                                    android:id="@+id/mt_top_screen_lock"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
@@ -862,7 +920,7 @@
                                     android:textSize="@dimen/text_size_m" />
 
                                 <com.alfredposclient.view.MyToggleButton
-                                    android:id="@+id/sb_cancel_order_void"
+                                    android:id="@+id/mt_cancel_order_void"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"

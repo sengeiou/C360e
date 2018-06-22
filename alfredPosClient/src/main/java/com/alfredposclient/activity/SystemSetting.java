@@ -48,25 +48,25 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 	private ImageView iv_sync_data;
 	private TextView tv_syncdata_warn;
-	private MyToggleButton sb_kot_print;
-	private MyToggleButton sb_kot_print_together;
-	private MyToggleButton sb_kot_double_print;
-	private MyToggleButton sb_double_print_bill;
-	private MyToggleButton sb_double_close_bill_print;
-	private MyToggleButton sb_order_summary_print;
-	private MyToggleButton sb_session_report_print;
-	private MyToggleButton sb_plu_category;
-	private MyToggleButton sb_plu_item;
-	private MyToggleButton sb_plu_modifier;
-	private MyToggleButton sb_hourly_payment;
-	private MyToggleButton sb_print_before_close;
-	private MyToggleButton sb_auto_receive_app;
-	private MyToggleButton sb_cash_close_print;
-	private MyToggleButton sb_top_masking_use;
-	private MyToggleButton sb_top_screen_lock;
-	private MyToggleButton sb_cancel_order_void;
-	private MyToggleButton sb_transfer_print;
-	private MyToggleButton sb_auto_table;
+	private MyToggleButton mt_kot_print;
+	private MyToggleButton mt_kot_print_together;
+	private MyToggleButton mt_kot_double_print;
+	private MyToggleButton mt_double_print_bill;
+	private MyToggleButton mt_double_close_bill_print;
+	private MyToggleButton mt_order_summary_print;
+	private MyToggleButton mt_session_report_print;
+	private MyToggleButton mt_plu_category;
+	private MyToggleButton mt_plu_item;
+	private MyToggleButton mt_plu_modifier;
+	private MyToggleButton mt_hourly_payment;
+	private MyToggleButton mt_print_before_close;
+	private MyToggleButton mt_auto_receive_app;
+	private MyToggleButton mt_cash_close_print;
+	private MyToggleButton mt_top_masking_use;
+	private MyToggleButton mt_top_screen_lock;
+	private MyToggleButton mt_cancel_order_void;
+	private MyToggleButton mt_transfer_print;
+	private MyToggleButton mt_auto_table;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -83,27 +83,25 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private LinearLayout ll_max_order_no;
 	private TextView tv_max_order_no,tv_print_lable;
 
-	private RelativeLayout rl_print_lable;
+	private LinearLayout ll_print_lable,ll_print_bill;
 	private View v_print_lable;
 	private int maxOrderNo;
+	 MyToggleButton mt_print_lable;
 
-	 MyToggleButton sb_print_lable;
+	MyToggleButton mt_print_bill;
 
-//sb_plu_category
 	@Override
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_system_setting);
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
-
-			findViewById(R.id.rl_print_lable).setVisibility(View.VISIBLE);
-			findViewById(R.id.view_order_print_lable).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_print_lable).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_print_bill).setVisibility(View.VISIBLE);
 		}else{
-
-			findViewById(R.id.rl_print_lable).setVisibility(View.GONE);
-			findViewById(R.id.view_order_print_lable).setVisibility(View.GONE);
+			findViewById(R.id.ll_print_lable).setVisibility(View.GONE);
 			findViewById(R.id.ll_app_order).setVisibility(View.GONE);
+			findViewById(R.id.ll_print_bill).setVisibility(View.VISIBLE);
 		}
 		syncMap = App.instance.getPushMsgMap();
 		settings = new SystemSettings(context);
@@ -112,26 +110,26 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		iv_sync_data = (ImageView) findViewById(R.id.iv_sync_data);
 		selectPrintWindow = new SelectPrintWindow(context, findViewById(R.id.rl_root),handler);
 		tv_syncdata_warn = (TextView) findViewById(R.id.tv_syncdata_warn);
-		sb_kot_print = (MyToggleButton) findViewById(R.id.sb_kot_print);
-		sb_kot_print_together = (MyToggleButton) findViewById(R.id.sb_kot_print_together);
-		sb_kot_double_print = (MyToggleButton) findViewById(R.id.sb_kot_double_print);
+		mt_kot_print = (MyToggleButton) findViewById(R.id.mt_kot_print);
+		mt_kot_print_together = (MyToggleButton) findViewById(R.id.mt_kot_print_together);
+		mt_kot_double_print = (MyToggleButton) findViewById(R.id.mt_kot_double_print);
 		tv_callnum = (TextView)findViewById(R.id.tv_callnum);
-		sb_double_print_bill = (MyToggleButton) findViewById(R.id.sb_double_print_bill);
-		sb_double_close_bill_print = (MyToggleButton)findViewById(R.id.sb_double_close_bill_print);
-		sb_order_summary_print = (MyToggleButton)findViewById(R.id.sb_order_summary_print);
-		sb_session_report_print = (MyToggleButton)findViewById(R.id.sb_session_report_print);
-		sb_plu_category = (MyToggleButton)findViewById(R.id.sb_plu_category);
-		sb_plu_item = (MyToggleButton)findViewById(R.id.sb_plu_item);
-		sb_plu_modifier = (MyToggleButton)findViewById(R.id.sb_plu_modifier);
-		sb_hourly_payment = (MyToggleButton)findViewById(R.id.sb_hourly_payment);
-		sb_print_before_close = (MyToggleButton)findViewById(R.id.sb_print_before_close);
-		sb_cash_close_print = (MyToggleButton)findViewById(R.id.sb_cash_close_print);
-		sb_auto_receive_app = (MyToggleButton)findViewById(R.id.sb_auto_receive_app);
-		sb_top_masking_use = (MyToggleButton)findViewById(R.id.sb_top_masking_use);
-		sb_top_screen_lock = (MyToggleButton)findViewById(R.id.sb_top_screen_lock);
-		sb_cancel_order_void = (MyToggleButton)findViewById(R.id.sb_cancel_order_void);
-		sb_transfer_print = (MyToggleButton)findViewById(R.id.sb_transfer_print);
-		sb_auto_table = (MyToggleButton)findViewById(R.id.sb_auto_table);
+		mt_double_print_bill = (MyToggleButton) findViewById(R.id.mt_double_print_bill);
+		mt_double_close_bill_print = (MyToggleButton)findViewById(R.id.mt_double_close_bill_print);
+		mt_order_summary_print = (MyToggleButton)findViewById(R.id.mt_order_summary_print);
+		mt_session_report_print = (MyToggleButton)findViewById(R.id.mt_session_report_print);
+		mt_plu_category = (MyToggleButton)findViewById(R.id.mt_plu_category);
+		mt_plu_item = (MyToggleButton)findViewById(R.id.mt_plu_item);
+		mt_plu_modifier = (MyToggleButton)findViewById(R.id.mt_plu_modifier);
+		mt_hourly_payment = (MyToggleButton)findViewById(R.id.mt_hourly_payment);
+		mt_print_before_close = (MyToggleButton)findViewById(R.id.mt_print_before_close);
+		mt_cash_close_print = (MyToggleButton)findViewById(R.id.mt_cash_close_print);
+		mt_auto_receive_app = (MyToggleButton)findViewById(R.id.mt_auto_receive_app);
+		mt_top_masking_use = (MyToggleButton)findViewById(R.id.mt_top_masking_use);
+		mt_top_screen_lock = (MyToggleButton)findViewById(R.id.mt_top_screen_lock);
+		mt_cancel_order_void = (MyToggleButton)findViewById(R.id.mt_cancel_order_void);
+		mt_transfer_print = (MyToggleButton)findViewById(R.id.mt_transfer_print);
+		mt_auto_table = (MyToggleButton)findViewById(R.id.mt_auto_table);
 
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -143,30 +141,30 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		}
 		iv_sync_data.setOnClickListener(this);
 	//	iv_sync_data.setVisibility();
-
-		sb_print_lable =(MyToggleButton) findViewById(R.id.sb_print_lable);
-
-		sb_print_lable.setOnStateChangeListeren(this);
+		mt_print_lable =(MyToggleButton) findViewById(R.id.mt_print_lable);
+		mt_print_bill=(MyToggleButton)findViewById(R.id.mt_print_bill) ;
+		mt_print_lable.setOnStateChangeListeren(this);
 		findViewById(R.id.iv_back).setOnClickListener(this);
-		sb_kot_print.setOnStateChangeListeren(this);
-		sb_kot_print_together.setOnStateChangeListeren(this);
-		sb_kot_double_print.setOnStateChangeListeren(this);
-		sb_double_print_bill.setOnStateChangeListeren(this);
-		sb_double_close_bill_print.setOnStateChangeListeren(this);
-		sb_order_summary_print.setOnStateChangeListeren(this);
-		sb_session_report_print.setOnStateChangeListeren(this);
-		sb_plu_category.setOnStateChangeListeren(this);
-		sb_plu_item.setOnStateChangeListeren(this);
-		sb_plu_modifier.setOnStateChangeListeren(this);
-		sb_hourly_payment.setOnStateChangeListeren(this);
-		sb_print_before_close.setOnStateChangeListeren(this);
-		sb_cash_close_print.setOnStateChangeListeren(this);
-		sb_auto_receive_app.setOnStateChangeListeren(this);
-		sb_top_masking_use.setOnStateChangeListeren(this);
-		sb_top_screen_lock.setOnStateChangeListeren(this);
-		sb_cancel_order_void.setOnStateChangeListeren(this);
-		sb_transfer_print.setOnStateChangeListeren(this);
-		sb_auto_table.setOnStateChangeListeren(this);
+		mt_kot_print.setOnStateChangeListeren(this);
+		mt_kot_print_together.setOnStateChangeListeren(this);
+		mt_kot_double_print.setOnStateChangeListeren(this);
+		mt_double_print_bill.setOnStateChangeListeren(this);
+		mt_double_close_bill_print.setOnStateChangeListeren(this);
+		mt_order_summary_print.setOnStateChangeListeren(this);
+		mt_session_report_print.setOnStateChangeListeren(this);
+		mt_plu_category.setOnStateChangeListeren(this);
+		mt_plu_item.setOnStateChangeListeren(this);
+		mt_plu_modifier.setOnStateChangeListeren(this);
+		mt_hourly_payment.setOnStateChangeListeren(this);
+		mt_print_before_close.setOnStateChangeListeren(this);
+		mt_cash_close_print.setOnStateChangeListeren(this);
+		mt_auto_receive_app.setOnStateChangeListeren(this);
+		mt_top_masking_use.setOnStateChangeListeren(this);
+		mt_top_screen_lock.setOnStateChangeListeren(this);
+		mt_cancel_order_void.setOnStateChangeListeren(this);
+		mt_transfer_print.setOnStateChangeListeren(this);
+		mt_auto_table.setOnStateChangeListeren(this);
+		mt_print_bill.setOnStateChangeListeren(this);
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
@@ -202,111 +200,117 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 	private void initViewData() {
 		if (App.instance.isKotPrint()) {
-			sb_kot_print.setChecked(true);
+			mt_kot_print.setChecked(true);
 		}else {
-			sb_kot_print.setChecked(false);
+			mt_kot_print.setChecked(false);
 		}
 
 		if (settings.isKotPrintTogether()) {
-			sb_kot_print_together.setChecked(true);
+			mt_kot_print_together.setChecked(true);
 		} else {
-			sb_kot_print_together.setChecked(false);
+			mt_kot_print_together.setChecked(false);
 		}
 		if (settings.isKotPrintTogether()) {
-			sb_kot_print_together.setChecked(true);
+			mt_kot_print_together.setChecked(true);
 		} else {
-			sb_kot_print_together.setChecked(false);
+			mt_kot_print_together.setChecked(false);
 		}
 		if (settings.isKotDoublePrint()) {
-			sb_kot_double_print.setChecked(true);
+			mt_kot_double_print.setChecked(true);
 		} else {
-			sb_kot_double_print.setChecked(false);
+			mt_kot_double_print.setChecked(false);
 		}
 		if (settings.isDoubleBillPrint()) {
-			sb_double_print_bill.setChecked(true);
+			mt_double_print_bill.setChecked(true);
 		} else {
-			sb_double_print_bill.setChecked(false);
+			mt_double_print_bill.setChecked(false);
 		}
 		if (settings.isDoubleReceiptPrint()) {
-			sb_double_close_bill_print.setChecked(true);
+			mt_double_close_bill_print.setChecked(true);
 		} else {
-			sb_double_close_bill_print.setChecked(false);
+			mt_double_close_bill_print.setChecked(false);
 		}
 		if (settings.isOrderSummaryPrint()) {
-			sb_order_summary_print.setChecked(true);
+			mt_order_summary_print.setChecked(true);
 		} else {
-			sb_order_summary_print.setChecked(false);
+			mt_order_summary_print.setChecked(false);
 		}
 		if(settings.isPrintWhenCloseSession()){
-			sb_session_report_print.setChecked(true);
+			mt_session_report_print.setChecked(true);
 		}else{
-			sb_session_report_print.setChecked(false);
+			mt_session_report_print.setChecked(false);
 		}
 		if(settings.isPrintPluCategory()){
-			sb_plu_category.setChecked(true);
+			mt_plu_category.setChecked(true);
 		}else{
-			sb_plu_category.setChecked(false);
+			mt_plu_category.setChecked(false);
 		}
 		if(settings.isPrintPluItem()){
-			sb_plu_item.setChecked(true);
+			mt_plu_item.setChecked(true);
 		}else{
-			sb_plu_item.setChecked(false);
+			mt_plu_item.setChecked(false);
 		}
 		if(settings.isPrintPluModifier()){
-			sb_plu_modifier.setChecked(true);
+			mt_plu_modifier.setChecked(true);
 		}else{
-			sb_plu_modifier.setChecked(false);
+			mt_plu_modifier.setChecked(false);
 		}
 		if(settings.isPrintHourlyPayment()){
-			sb_hourly_payment.setChecked(true);
+			mt_hourly_payment.setChecked(true);
 		}else{
-			sb_hourly_payment.setChecked(false);
+			mt_hourly_payment.setChecked(false);
 		}
 		if(settings.isPrintBeforCloseBill()){
-			sb_print_before_close.setChecked(true);
+			mt_print_before_close.setChecked(true);
 		}else{
-			sb_print_before_close.setChecked(false);
+			mt_print_before_close.setChecked(false);
 		}
 		if(settings.isCashClosePrint()){
-			sb_cash_close_print.setChecked(true);
+			mt_cash_close_print.setChecked(true);
 		}else{
-			sb_cash_close_print.setChecked(false);
+			mt_cash_close_print.setChecked(false);
 		}
 		if(settings.isAutoRecevingOnlineOrder()){
-			sb_auto_receive_app.setChecked(true);
+			mt_auto_receive_app.setChecked(true);
 		}else{
-			sb_auto_receive_app.setChecked(false);
+			mt_auto_receive_app.setChecked(false);
 		}
 		if(settings.isTopMaskingIsUser()){
-			sb_top_masking_use.setChecked(true);
+			mt_top_masking_use.setChecked(true);
 		}else{
-			sb_top_masking_use.setChecked(false);
+			mt_top_masking_use.setChecked(false);
 		}
 		if(settings.isScreenLock()){
-			sb_top_screen_lock.setChecked(true);
+			mt_top_screen_lock.setChecked(true);
 		}else{
-			sb_top_screen_lock.setChecked(false);
+			mt_top_screen_lock.setChecked(false);
 		}
 		if(settings.isRemoveToVoid()){
-			sb_cancel_order_void.setChecked(true);
+			mt_cancel_order_void.setChecked(true);
 		}else{
-			sb_cancel_order_void.setChecked(false);
+			mt_cancel_order_void.setChecked(false);
 		}
 		if(settings.isTransferPrint()){
-			sb_transfer_print.setChecked(true);
+			mt_transfer_print.setChecked(true);
 		}else{
-			sb_transfer_print.setChecked(false);
+			mt_transfer_print.setChecked(false);
 		}
 		if(settings.isAutoToTable()){
-			sb_auto_table.setChecked(true);
+			mt_auto_table.setChecked(true);
 		}else{
-			sb_auto_table.setChecked(false);
+			mt_auto_table.setChecked(false);
 		}
 
 		if(settings.isPrintLable()){
-			sb_print_lable.setChecked(true);
+			mt_print_lable.setChecked(true);
 		}else{
-			sb_print_lable.setChecked(false);
+			mt_print_lable.setChecked(false);
+		}
+
+		if(settings.isPrintBill()){
+			mt_print_bill.setChecked(true);
+		}else{
+			mt_print_bill.setChecked(false);
 		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
@@ -566,6 +570,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_auto_receive_app));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_cancel_order_void));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_transfer_print));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_bill));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_lable));
 	}
 
 //	@Override
@@ -573,188 +579,196 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 
 		switch (Mybutton.getId()) {
-			case R.id.sb_kot_print:
+			case R.id.mt_kot_print:
 				if (checkState) {
-					sb_kot_print.setChecked(true);
+					mt_kot_print.setChecked(true);
 					Store.putBoolean(context, Store.KOT_PRINT, true);
 				}else {
-					sb_kot_print.setChecked(false);
+					mt_kot_print.setChecked(false);
 					Store.putBoolean(context, Store.KOT_PRINT, false);
 				}
 				break;
-			case R.id.sb_kot_print_together:
+			case R.id.mt_kot_print_together:
 				if (checkState) {
-					sb_kot_print_together.setChecked(true);
+					mt_kot_print_together.setChecked(true);
 					settings.setKotPrintTogether(ParamConst.DEFAULT_TRUE);
 				} else {
-					sb_kot_print_together.setChecked(false);
+					mt_kot_print_together.setChecked(false);
 					settings.setKotPrintTogether(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_kot_double_print:
+			case R.id.mt_kot_double_print:
 				if (checkState) {
-					sb_kot_double_print.setChecked(true);
+					mt_kot_double_print.setChecked(true);
 					settings.setKotDoublePrint(ParamConst.DEFAULT_TRUE);
 				} else {
-					sb_kot_double_print.setChecked(false);
+					mt_kot_double_print.setChecked(false);
 					settings.setKotDoublePrint(ParamConst.DEFAULT_FALSE);
 				}
 				break;
 
-			case R.id.sb_double_print_bill:
+			case R.id.mt_double_print_bill:
 				if (checkState) {
-					sb_double_print_bill.setChecked(true);
+					mt_double_print_bill.setChecked(true);
 					settings.setDoubleBillPrint(ParamConst.DEFAULT_TRUE);
 				} else {
-					sb_double_print_bill.setChecked(false);
+					mt_double_print_bill.setChecked(false);
 					settings.setDoubleBillPrint(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_double_close_bill_print:
+			case R.id.mt_double_close_bill_print:
 				if (checkState) {
-					sb_double_close_bill_print.setChecked(true);
+					mt_double_close_bill_print.setChecked(true);
 					settings.setDoubleReceiptPrint(ParamConst.DEFAULT_TRUE);
 				} else {
-					sb_double_close_bill_print.setChecked(false);
+					mt_double_close_bill_print.setChecked(false);
 					settings.setDoubleReceiptPrint(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_order_summary_print:
+			case R.id.mt_order_summary_print:
 				if (checkState) {
-					sb_order_summary_print.setChecked(true);
+					mt_order_summary_print.setChecked(true);
 					settings.setOrderSummaryPrint(ParamConst.ORDER_SUMMARY_PRINT_TRUE);
 				} else {
-					sb_order_summary_print.setChecked(false);
+					mt_order_summary_print.setChecked(false);
 					settings.setOrderSummaryPrint(ParamConst.ORDER_SUMMARY_PRINT_FALSE);
 				}
 				break;
-			case R.id.sb_session_report_print:
+			case R.id.mt_session_report_print:
 				if(checkState){
-					sb_session_report_print.setChecked(true);
+					mt_session_report_print.setChecked(true);
 					settings.setPrintWhenCloseSession(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_session_report_print.setChecked(false);
+					mt_session_report_print.setChecked(false);
 					settings.setPrintWhenCloseSession(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_plu_category:
+			case R.id.mt_plu_category:
 				if(checkState){
-					sb_plu_category.setChecked(true);
+					mt_plu_category.setChecked(true);
 					settings.setPrintPluCategory(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_plu_category.setChecked(false);
+					mt_plu_category.setChecked(false);
 					settings.setPrintPluCategory(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_plu_item:
+			case R.id.mt_plu_item:
 				if(checkState){
-					sb_plu_item.setChecked(true);
+					mt_plu_item.setChecked(true);
 					settings.setPrintPluItem(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_plu_item.setChecked(false);
+					mt_plu_item.setChecked(false);
 					settings.setPrintPluItem(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_plu_modifier:
+			case R.id.mt_plu_modifier:
 				if(checkState){
-					sb_plu_modifier.setChecked(true);
+					mt_plu_modifier.setChecked(true);
 					settings.setPrintPluModifier(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_plu_modifier.setChecked(false);
+					mt_plu_modifier.setChecked(false);
 					settings.setPrintPluModifier(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_hourly_payment:
+			case R.id.mt_hourly_payment:
 				if(checkState){
-					sb_hourly_payment.setChecked(true);
+					mt_hourly_payment.setChecked(true);
 					settings.setPrintHourlyPayment(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_hourly_payment.setChecked(false);
+					mt_hourly_payment.setChecked(false);
 					settings.setPrintHourlyPayment(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_print_before_close:
+			case R.id.mt_print_before_close:
 				if(checkState){
-					sb_print_before_close.setChecked(true);
+					mt_print_before_close.setChecked(true);
 					settings.setPrintBeforCloseBill(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_print_before_close.setChecked(false);
+					mt_print_before_close.setChecked(false);
 					settings.setPrintBeforCloseBill(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_cash_close_print:
+			case R.id.mt_cash_close_print:
 				if(checkState){
-					sb_cash_close_print.setChecked(true);
+					mt_cash_close_print.setChecked(true);
 					settings.setCashClosePrint(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_cash_close_print.setChecked(false);
+					mt_cash_close_print.setChecked(false);
 					settings.setCashClosePrint(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_auto_receive_app:
+			case R.id.mt_auto_receive_app:
 				if(checkState){
-					sb_auto_receive_app.setChecked(true);
+					mt_auto_receive_app.setChecked(true);
 					settings.setAutoRecevingOnlineOrder(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_auto_receive_app.setChecked(false);
+					mt_auto_receive_app.setChecked(false);
 					settings.setAutoRecevingOnlineOrder(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_top_masking_use:
+			case R.id.mt_top_masking_use:
 				if(checkState){
-					sb_top_masking_use.setChecked(true);
+					mt_top_masking_use.setChecked(true);
 					settings.setTopMaskingIsUser(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_top_masking_use.setChecked(false);
+					mt_top_masking_use.setChecked(false);
 					settings.setTopMaskingIsUser(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_top_screen_lock:
+			case R.id.mt_top_screen_lock:
 				if(checkState){
-					sb_top_screen_lock.setChecked(true);
+					mt_top_screen_lock.setChecked(true);
 					settings.setScreenLock(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_top_screen_lock.setChecked(false);
+					mt_top_screen_lock.setChecked(false);
 					settings.setScreenLock(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_cancel_order_void:
+			case R.id.mt_cancel_order_void:
 				if(checkState){
-					sb_cancel_order_void.setChecked(true);
+					mt_cancel_order_void.setChecked(true);
 					settings.setRemoveToVoid(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_cancel_order_void.setChecked(false);
+					mt_cancel_order_void.setChecked(false);
 					settings.setRemoveToVoid(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_transfer_print:
+			case R.id.mt_transfer_print:
 				if(checkState){
-					sb_transfer_print.setChecked(true);
+					mt_transfer_print.setChecked(true);
 					settings.setTransferPrint(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_transfer_print.setChecked(false);
+					mt_transfer_print.setChecked(false);
 					settings.setTransferPrint(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_auto_table:
+			case R.id.mt_auto_table:
 				if(checkState){
-					sb_auto_table.setChecked(true);
+					mt_auto_table.setChecked(true);
 					settings.setAutoToTable(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_auto_table.setChecked(false);
+					mt_auto_table.setChecked(false);
 					settings.setAutoToTable(ParamConst.DEFAULT_FALSE);
 				}
 				break;
-			case R.id.sb_print_lable:
+			case R.id.mt_print_lable:
 
-//				Toast.makeText(SystemSetting.this, checkState == false ? "关" : "开",
-//
-//						Toast.LENGTH_SHORT).show();
 				if(checkState){
-					sb_print_lable.setChecked(true);
+					mt_print_lable.setChecked(true);
 					settings.setPrintLable(ParamConst.DEFAULT_TRUE);
 				}else{
-					sb_print_lable.setChecked(false);
+					mt_print_lable.setChecked(false);
+					settings.setPrintLable(ParamConst.DEFAULT_FALSE);
+				}
+				break;
+
+			case R.id.mt_print_bill:
+
+				if(checkState){
+					mt_print_bill.setChecked(true);
+					settings.setPrintLable(ParamConst.DEFAULT_TRUE);
+				}else{
+					mt_print_bill.setChecked(false);
 					settings.setPrintLable(ParamConst.DEFAULT_FALSE);
 				}
 				break;

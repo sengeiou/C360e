@@ -184,7 +184,12 @@ public class EditSettlementPage extends BaseActivity {
                     changeNum=map.get("changeNum");
                     if(!TextUtils.isEmpty(changeNum)){
                         if(!(App.instance.getLocalRestaurantConfig().getCurrencySymbol()+"0.00").equals(changeNum))
-                        DialogFactory.changeDialogOrder(context, changeNum);
+                        DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
                     }
                     TableInfo table = TableInfoSQL.getTableById(
                             currentOrder.getTableId());

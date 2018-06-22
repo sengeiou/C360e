@@ -448,7 +448,7 @@ public class DialogFactory {
 
 
 
-	public static void changeDialogOrder(final BaseActivity activity, final String  changeNum) {
+	public static void changeDialogOrder(final BaseActivity activity, final String  changeNum,final OnClickListener exitListener) {
 		activity.runOnUiThread(new Runnable() {
 
 			@Override
@@ -460,7 +460,7 @@ public class DialogFactory {
 				Window dialogWindow = dialog.getWindow();
 				WindowManager.LayoutParams lp = dialogWindow.getAttributes();
 				dialogWindow.setGravity(Gravity.TOP);
-				lp.y = ScreenSizeUtil.dip2px(activity, 100); // 新位置Y坐标
+				lp.y = ScreenSizeUtil.dip2px(activity, 90); // 新位置Y坐标
 				dialogWindow.setAttributes(lp);
 				dialog.setCancelable(false);
 				dialog.setCanceledOnTouchOutside(true);
@@ -469,7 +469,16 @@ public class DialogFactory {
 				TextView tv_num = (TextView)view.findViewById(R.id.tv_change_num);
 				tv_num.setText(changeNum + "");
 
+				view.findViewById(R.id.ll_change).setOnClickListener(
+						new OnClickListener() {
 
+							@Override
+							public void onClick(View v) {
+								dialog.dismiss();
+								if (exitListener != null)
+									exitListener.onClick(v);
+							}
+						});
 				if (activity == null || activity.isFinishing())
 					return;
 				dialog.show();

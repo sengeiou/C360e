@@ -61,13 +61,12 @@ dependencies {
     implementation 'io.reactivex:rxjava:1.1.5'
     implementation project(':alfredBase')
     implementation rootProject.ext.libSupportV4
-    implementation files('libs/ePOS-Print.jar')
+//    implementation files('libs/ePOS-Print.jar')
     implementation files('libs/wfsdk.jar')
     implementation 'com.tencent.bugly:crashreport:latest.release'
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
-    implementation files('libs/bluetooth.jar')
-    implementation files('libs/ethernet.jar')
-    implementation files('libs/gprinter.jar')
+    implementation files('libs/ePOS2.jar')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 }

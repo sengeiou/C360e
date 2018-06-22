@@ -51,11 +51,7 @@ public class PrintService extends Service {
 
     final Object lock = new Object();
 
-
-    final List<IAlfredRemotePrintServiceCallback> mCallbacks = new ArrayList<IAlfredRemotePrintServiceCallback>();
-    //广播注册
-    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-
+    List<IAlfredRemotePrintServiceCallback> mCallbacks;
 
 
     private ArrayList<PrintBean> mBluetoothDevicesDatas = new ArrayList<>();
@@ -71,13 +67,14 @@ public class PrintService extends Service {
         this.printJobMgr = new PrintManager(this);
         this.pqMgr = new PrinterQueueManager(this);
         instance = this;
+        mCallbacks = new ArrayList<IAlfredRemotePrintServiceCallback>();
+        //广播注册
 
         this.printJobMgr.start();
         this.pqMgr.start();
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(mReceiver, filter);
 
-       mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+
         Log.d(TAG, "Creating Service");
     }
 
@@ -200,9 +197,19 @@ public class PrintService extends Service {
     //搜索蓝牙
     public void SearchBluetooth() {
         Log.d("SearchBluetooth", "start");
+
         mBluetoothDevicesDatas.clear();
         mBluetoothAdapter.startDiscovery();
 
+    }
+
+
+    public void registerReceiverBluetooth() {
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+
+        registerReceiver(mReceiver, filter);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     //	/**
@@ -233,10 +240,13 @@ public class PrintService extends Service {
                 Log.d("end", "   " + mBluetoothDevicesDatas.size());
 
                 for(int i=0;i<mBluetoothDevicesDatas.size();i++){
+                 callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
               //    callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
                 }
+             //   mBluetoothAdapter.cancelDiscovery();
+               unregisterReceiver(mReceiver);
 
-
+            //    abortBroadcast();
             }
         }
 
@@ -258,20 +268,20 @@ public class PrintService extends Service {
             if (device.getBondState() == BluetoothDevice.BOND_BONDED && device.getBluetoothClass().getDeviceClass() == PRINT_TYPE) {
 
 
-                mBluetoothDevicesDatas.add(0, new PrintBean(device));
+
+                    mBluetoothDevicesDatas.add(0, new PrintBean(device));
+                    Log.d("addBluetoothDevice", " -BOND_BONDED--" + mBluetoothDevicesDatas.size());
+                    for (int i = 0; i < mBluetoothDevicesDatas.size(); i++) {
 
 
-                Log.d("addBluetoothDevice", " -BOND_BONDED--" + mBluetoothDevicesDatas.size());
-                for (int i = 0; i < mBluetoothDevicesDatas.size(); i++) {
+                        if (device.getAddress().equals(mBluetoothDevicesDatas.get(i).getAddress())) {
+                            mBluetoothDevicesDatas.remove(i);
+                            Log.d("addBluetoothDevice", " ---remove");
+                        } else {
+                            callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
+                        }
+                    }
 
-
-//                    if (device.getAddress().equals(mBluetoothDevicesDatas.get(i).getAddress())) {
-//                        mBluetoothDevicesDatas.remove(i);
-//                        Log.d("addBluetoothDevice", " ---remove");
-//                    }else {
-                        callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
-               //     }
-                }
 
 
             } else {
@@ -281,22 +291,26 @@ public class PrintService extends Service {
 
               //  device.getBluetoothClass().getMajorDeviceClass()
                 if (device.getBluetoothClass().getDeviceClass() == PRINT_TYPE) {
+
+
                     mBluetoothDevicesDatas.add(new PrintBean(device));
 
                     for (int i = 0; i < mBluetoothDevicesDatas.size(); i++) {
 
+                        Log.d("addBluetoothDevice", " ==service更新==" + mBluetoothDevicesDatas.size());
 
-                        if (device.getAddress().equals(mBluetoothDevicesDatas.get(i).getAddress())) {
-                            mBluetoothDevicesDatas.remove(i);
-                            Log.d("addBluetoothDevice", " ---remove");
-                        }else {
-                            callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
-                        }
+//                        if (device.getAddress().equals(mBluetoothDevicesDatas.get(i).getAddress())) {
+//                            callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
+////                            mBluetoothDevicesDatas.remove(i);
+////                            Log.d("PRINT_TYPE", " ---mBluetoothDevicesDatas");
+//                        }else {
+//                            callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
+//                        }
                     }
 
 
                    // PrintBean pb = new PrintBean(device);
-                    Log.d("addBluetoothDevice", " ==service更新==" + mBluetoothDevicesDatas.size());
+
                    //
                 }
 

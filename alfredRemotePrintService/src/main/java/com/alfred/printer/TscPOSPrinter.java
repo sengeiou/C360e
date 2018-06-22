@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.alfred.remote.printservice.PrintService;
-import com.printer.TscCommand;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;

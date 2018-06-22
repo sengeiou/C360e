@@ -782,7 +782,12 @@ public class MainPage extends BaseActivity {
 				changeNum=paymentMap.get("changeNum");
 				if(!TextUtils.isEmpty(changeNum)){
 					if(!(App.instance.getLocalRestaurantConfig().getCurrencySymbol()+"0.00").equals(changeNum))
-					DialogFactory.changeDialogOrder(context, changeNum);
+					DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+
+						}
+					});
 				}
 				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 						context);

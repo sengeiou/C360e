@@ -55,6 +55,7 @@ import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
+import com.alfredposclient.push.SendEmailThread;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -285,6 +286,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				Order placedOrder = OrderSQL.getOrder(order.getId());
 				List<OrderDetail> placedOrderDetails
 						= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
+
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitle(
 								App.instance.getRevenueCenter(),
@@ -296,6 +298,11 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 			PrinterDevice printer = App.instance.getCahierPrinter();
 				App.instance.remoteTBillPrint(printer,title,placedOrder, (ArrayList<OrderDetail>) placedOrderDetails);
 
+			//	App.instance.remoteTBillPrint("","","", (ArrayList<OrderDetail>) placedOrderDetails);
+
+
+//				SendEmailThread thread=new SendEmailThread();
+//				thread.start();
 
 //                cashPay()
 				break;

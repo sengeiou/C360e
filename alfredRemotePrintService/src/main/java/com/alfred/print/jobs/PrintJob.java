@@ -20,14 +20,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
-import com.gprinterio.GpCom;
-import com.gprinterio.PrinterRecieveListener;
+
 
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class PrintJob extends Job implements PrinterRecieveListener {
+public class PrintJob extends Job  {
     private String printerIp;
 
 
@@ -136,15 +135,7 @@ public class PrintJob extends Job implements PrinterRecieveListener {
         return msg;
     }
 
-//    protected void addtdata( ArrayList<PrintTscData> tdata) {
-//        this.tdata=tdata;
-//        Gson gson = new Gson();
-//        String s;
-//     s=  gson.toJson(this.tdata);
-//    ESCPrinter    printer = new ESCPrinter("DC:0D:30:0D:8A:BA");
-//    printer.setTscData(this.tdata);
-//        Log.d(TAG, "addtdata:" + s);
-//    }
+
 
 
     @Override
@@ -222,7 +213,6 @@ public class PrintJob extends Job implements PrinterRecieveListener {
 
             if(getIsLablePrinter()==0) {
                 if (printer == null) {
-
                     printer = new ESCPrinter(this.printerIp);
                     isPrintLink = printer.open();
                     PrintService.instance.putEscPrinterMap(this.printerIp, printer);
@@ -234,6 +224,11 @@ public class PrintJob extends Job implements PrinterRecieveListener {
                         isPrintLink = true;
                     }
                 }
+                if (isPrintLink) {
+
+                    printed = printer.setData(this.data);
+                }
+
             }else {
                 if (printer == null) {
 
@@ -248,22 +243,24 @@ public class PrintJob extends Job implements PrinterRecieveListener {
                         isPrintLink = true;
                     }
                 }
-            }
-            if (isPrintLink) {
 
-                  printed = printer.setTscData(this.tdata);
+
+                if (isPrintLink) {
+                    printed = printer.setTscData(this.tdata);
+                }
             }
+
 
             if (printed && isPrintLink) {
                 PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_SUCCESS, this.msgUUID, this.created);
             }
         } else {
 
-            if(localIPAddress.equals(printerIp)) {
-                pingSuccess = true;
-            }else {
+          //  if(localIPAddress.equals(printerIp)) {
+              //  pingSuccess = true;
+           // }else {
                 pingSuccess = NetUtil.ping(printerIp);
-            }
+         //   }
             if (pingSuccess) {
                 if (printer == null) {
                     printer = new ESCPrinter(this.printerIp);
@@ -277,7 +274,6 @@ public class PrintJob extends Job implements PrinterRecieveListener {
                     }
                 }
                 if (isPrintLink) {
-
 
                     printed = printer.setData(this.data);
                 }
@@ -442,8 +438,5 @@ public class PrintJob extends Job implements PrinterRecieveListener {
 
 
 
-    @Override
-    public GpCom.ERROR_CODE ReceiveData(Vector<Byte> vector) {
-        return null;
-    }
+
 }

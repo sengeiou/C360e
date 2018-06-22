@@ -4,6 +4,8 @@ import android.os.Build;
 
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.LoginResult;
+import com.alfredbase.javabean.ReportDaySales;
+import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.store.sql.RevenueCenterSQL;
@@ -15,6 +17,7 @@ import org.apache.http.entity.StringEntity;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HttpAssembling {
@@ -51,6 +54,40 @@ public class HttpAssembling {
 			map.put("snCode", Build.SERIAL);
 		}
 		StringEntity entity = new StringEntity(gson.toJson(map));
+		return entity;
+	}
+
+	//  	ReportDaySales reportDaySales;
+	////	List<ReportDayTax> reportDayTaxs;
+	public static StringEntity getSendemailParam(ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs)
+			throws UnsupportedEncodingException {
+		Gson gson = new Gson();
+		LoginResult loginResult = CoreData.getInstance().getLoginResult();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userKey", loginResult.getUserKey());
+		map.put("restaurantKey", loginResult.getRestaurantKey());
+		map.put("version", App.instance.VERSION );
+		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		map.put("reportDaySales", reportDaySales);
+		map.put("reportDayTaxs", reportDayTaxs);
+		StringEntity entity = new StringEntity(gson.toJson(map));
+		return entity;
+	}
+
+	public static StringEntity getUploadOrderInfoParam(String  syncMsg,String s)
+			throws UnsupportedEncodingException {
+		Gson gson = new Gson();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+				.getRestaurantKey());
+		map.put("syncMsg", syncMsg);
+		map.put("version", App.instance.VERSION );
+		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
+		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 		return entity;
 	}
 	
