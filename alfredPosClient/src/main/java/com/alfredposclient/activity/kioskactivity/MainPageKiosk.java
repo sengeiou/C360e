@@ -82,6 +82,7 @@ import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.TablesStatusInfo;
 import com.alfredposclient.jobs.CloudSyncJobManager;
@@ -722,8 +723,18 @@ public class MainPageKiosk extends BaseActivity {
 				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
 					if (orderItems.size() > 0 && printer != null) {
 						RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
-						App.instance.remoteBillPrint(printer, title, paidOrder,
-								orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+						SystemSettings settings = new SystemSettings(context);
+						if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
+						{
+							List<OrderDetail> placedOrderDetails
+									= OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
+							App.instance.remoteTBillPrint(printer,title,paidOrder, (ArrayList<OrderDetail>) placedOrderDetails);
+						}else {
+							App.instance.remoteBillPrint(printer, title, paidOrder,
+									orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+						}
+//						App.instance.remoteBillPrint(printer, title, paidOrder,
+//								orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 					}
 				}else{
 					PrinterDevice printer = App.instance.getCahierPrinter();
@@ -804,6 +815,18 @@ public class MainPageKiosk extends BaseActivity {
 //					kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
 //					KotSummarySQL.update(kotSummary);
 //				}
+
+				String changeNum;
+				changeNum = paymentMap.get("changeNum");
+				if (!TextUtils.isEmpty(changeNum)) {
+					if (!(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00").equals(changeNum))
+						DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+
+							}
+						});
+				}
 				OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(paidOrderSplit, App.instance.getRevenueCenter());
 				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 						context);
@@ -839,8 +862,18 @@ public class MainPageKiosk extends BaseActivity {
 				temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
 				if (orderItems.size() > 0 && printer != null) {
 					RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
-					App.instance.remoteBillPrint(printer, title, temporaryOrder,
-							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+
+					SystemSettings       settings = new SystemSettings(context);
+					if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
+					{
+						List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsForPrint(paidOrderSplit.getOrderId());
+						App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails);
+					}else {
+						App.instance.remoteBillPrint(printer, title, temporaryOrder,
+								orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+					}
+//					App.instance.remoteBillPrint(printer, title, temporaryOrder,
+//							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 				}
 				//Sent to Kitchen after close bill in kiosk mode
 				String kotCommitStatus = ParamConst.JOB_NEW_KOT;

@@ -175,6 +175,8 @@ public class DevicesActivity extends BaseActivity {
 //                    break;
 
                 case ASSIGN_PRINTER_DEVICE: // 绑定打印机
+
+                    App.instance.closeDiscovery();
                     PrinterDevice printerDevice = (PrinterDevice) msg.obj;
                     Printer prt = printerDeptModelList.get(dex);
                     printerDevice.setDevice_id(prt.getId());
@@ -186,7 +188,7 @@ public class DevicesActivity extends BaseActivity {
 //                    adapter.setList(list, 1);
 //                    App.instance.setPrinterDevice(prt.getId(), printerDevice);
 
-                    Log.d("ASSIGN_PRINTER_DEVICE", " ---绑定打印机---IsLablePrinter"+printerDeptModelList.get(dex).getIsLablePrinter());
+                    Log.d("ASSIGN_PRINTER_DEVICE", " ---绑定打印机---IsLablePrinter---"+printerDeptModelList.get(dex).getIsLablePrinter());
                     LocalDevice localDevice = ObjectFactory.getInstance().getLocalDevice(printerDevice.getName(), printerDevice.getModel(),
                             ParamConst.DEVICE_TYPE_PRINTER,
                             printerDeptModelList.get(dex).getId(),
@@ -196,6 +198,7 @@ public class DevicesActivity extends BaseActivity {
                     CoreData.getInstance().addLocalDevice(localDevice);
                     App.instance.loadPrinters();
                     refreshPrinterDevices(null);
+                    map.clear();
                     App.instance.discoverPrinter(handler);
                     break;
                 default:
@@ -307,6 +310,7 @@ public class DevicesActivity extends BaseActivity {
     }
 
     private void unassignDevice(PrinterDevice device) {
+        App.instance.closeDiscovery();
         if (device == null)
             return;
         int localDevId = device.getDevice_id();

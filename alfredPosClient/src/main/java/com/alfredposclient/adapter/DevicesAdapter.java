@@ -120,9 +120,9 @@ public class DevicesAdapter extends CustomAdapter {
 
 		if(!TextUtils.isEmpty(printerDevice.getIP())) {
 			if (printerDevice.getIP().indexOf(":") != -1) {
-				holder.devices_item_type.setText("蓝牙");
+				holder.devices_item_type.setText(con.getResources().getString(R.string.devices_bluetooth));
 			} else {
-				holder.devices_item_type.setText("网络");
+				holder.devices_item_type.setText(con.getResources().getString(R.string.devices_network));
 			}
 		}
 

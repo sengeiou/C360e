@@ -67,6 +67,7 @@ import com.alfredposclient.adapter.EditSettlementAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.popupwindow.CloseOrderSplitWindow;
@@ -241,6 +242,20 @@ public class EditSettlementPage extends BaseActivity {
                             .getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
                     TableInfo table = TableInfoSQL.getTableById(
                             orderSplit.getTableId());
+
+
+                    String changeNum;
+                    changeNum = paymentMap.get("changeNum");
+                    if (!TextUtils.isEmpty(changeNum)) {
+                        if (!(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00").equals(changeNum))
+                            DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            });
+                    }
+
                     OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(orderSplit, App.instance.getRevenueCenter());
                     PrinterDevice printer = App.instance.getCahierPrinter();
                     PrinterTitle title = ObjectFactory.getInstance()
@@ -271,6 +286,7 @@ public class EditSettlementPage extends BaseActivity {
                     if (orderItems.size() > 0 && printer != null) {
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
                                 orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+
                     }
                     /**
                      * 给后台发送log 信息

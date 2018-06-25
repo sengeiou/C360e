@@ -441,7 +441,7 @@ public class SystemSettings {
 
 
 	public void setPrintLable(Integer printLable) {
-		Store.putInt(this.context, Store.PRINT_BILL,
+		Store.putInt(this.context, Store.PRINT_LABLE,
 				printLable.intValue());
 		if(printLable.intValue() == 1)
 			this.printLable = true;
@@ -472,7 +472,7 @@ public class SystemSettings {
 
 
 	public void setPrintBill(Integer printBill) {
-		Store.putInt(this.context, Store.PRINT_LABLE,
+		Store.putInt(this.context, Store.PRINT_BILL,
 				printBill.intValue());
 		if(printBill.intValue() == 1)
 			this.printBill = true;
@@ -483,7 +483,7 @@ public class SystemSettings {
 
 	public boolean isPrintBill() {
 		Integer value = Store.getInt(context,
-				Store.PRINT_LABLE);
+				Store.PRINT_BILL);
 		if(value != null && value != Store.DEFAULT_INT_TYPE){
 			if(value.intValue() == 1){
 				this.printBill = true;

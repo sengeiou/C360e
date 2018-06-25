@@ -104,7 +104,10 @@ public class PrintService extends Service {
         //close all sockets
         this.pqMgr.stop();
         closeAllSockets();
-        unregisterReceiver(mReceiver);
+   //     if(mReceiver!=null){
+            unregisterReceiver(mReceiver);
+     //   }
+
         super.onDestroy();
         //this.printJobMgr = null;
 
@@ -271,16 +274,16 @@ public class PrintService extends Service {
 
                     mBluetoothDevicesDatas.add(0, new PrintBean(device));
                     Log.d("addBluetoothDevice", " -BOND_BONDED--" + mBluetoothDevicesDatas.size());
-                    for (int i = 0; i < mBluetoothDevicesDatas.size(); i++) {
-
-
-                        if (device.getAddress().equals(mBluetoothDevicesDatas.get(i).getAddress())) {
-                            mBluetoothDevicesDatas.remove(i);
-                            Log.d("addBluetoothDevice", " ---remove");
-                        } else {
-                            callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
-                        }
-                    }
+//                    for (int i = 0; i < mBluetoothDevicesDatas.size(); i++) {
+//
+//
+//                        if (device.getAddress().equals(mBluetoothDevicesDatas.get(i).getAddress())) {
+//                            mBluetoothDevicesDatas.remove(i);
+//                            Log.d("addBluetoothDevice", " ---remove");
+//                        } else {
+//                            callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
+//                        }
+//                    }
 
 
 

@@ -394,5 +394,7 @@
     <string name="kds">厨房</string>
     <string name="waiter_">服务员</string>
     <string name="devices_">设备</string>
+    <string name="devices_network">网络</string>
+    <string name="devices_bluetooth">蓝牙</string>
     <string name="day_sales_report">日销售报表</string>
 </resources>

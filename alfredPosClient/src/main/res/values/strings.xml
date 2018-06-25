@@ -406,4 +406,9 @@
     <string name="waiter_">Waiter</string>
     <string name="devices_">Devices</string>
     <string name="day_sales_report">Day Sales Report</string>
+
+
+    <string name="devices_network">Network</string>
+
+    <string name="devices_bluetooth">Bluetooth</string>
 </resources>

@@ -283,20 +283,20 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				break;
 			case R.id.tv_cash_close:
 
-				Order placedOrder = OrderSQL.getOrder(order.getId());
-				List<OrderDetail> placedOrderDetails
-						= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
-
-				PrinterTitle title = ObjectFactory.getInstance()
-						.getPrinterTitle(
-								App.instance.getRevenueCenter(),
-								placedOrder,
-								App.instance.getUser().getFirstName()
-										+ App.instance.getUser()
-										.getLastName(),
-								"can", 1);
-			PrinterDevice printer = App.instance.getCahierPrinter();
-				App.instance.remoteTBillPrint(printer,title,placedOrder, (ArrayList<OrderDetail>) placedOrderDetails);
+//				Order placedOrder = OrderSQL.getOrder(order.getId());
+//				List<OrderDetail> placedOrderDetails
+//						= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
+//
+//				PrinterTitle title = ObjectFactory.getInstance()
+//						.getPrinterTitle(
+//								App.instance.getRevenueCenter(),
+//								placedOrder,
+//								App.instance.getUser().getFirstName()
+//										+ App.instance.getUser()
+//										.getLastName(),
+//								"can", 1);
+//			PrinterDevice printer = App.instance.getCahierPrinter();
+//				App.instance.remoteTBillPrint(printer,title,placedOrder, (ArrayList<OrderDetail>) placedOrderDetails);
 
 			//	App.instance.remoteTBillPrint("","","", (ArrayList<OrderDetail>) placedOrderDetails);
 
@@ -304,7 +304,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 //				SendEmailThread thread=new SendEmailThread();
 //				thread.start();
 
-//                cashPay()
+                cashPay();
 				break;
 			default:
 				break;

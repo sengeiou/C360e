@@ -2483,7 +2483,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     @Override
     public void printTscBill(String printer, String title, String order, String orderdetail) throws RemoteException {
         String name;
-        int orderid;
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtitle=gson.fromJson(title, PrinterTitle.class);
@@ -2499,10 +2498,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         Log.d(TAG, "setIsLablePrinter--:" + printer);
 
         name=prtitle.getRestaurantName();
-        orderid=prorder.getId();
+
         if(TextUtils.isEmpty(name))
         {
-         name="COCO"   ;
+         name=""   ;
         }
         String uuid = pqMgr.getDataUUID(prtitle.getBill_NO());
         BillTscPrint b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()));
@@ -2513,7 +2512,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             b.setIsLablePrinter(prtDevice.getIsLablePrinter());
             b.AddRestaurantInfo(null,
                     name,
-                    " No."+prorder.getId(), i,prOrderDetail.size()+"",prOrderDetail.get(i).getItemName(),"",true);
+                    " No."+prtitle.getOrderNo(), i,prOrderDetail.size()+"",prOrderDetail.get(i).getItemName(),"",true);
 
         }
         pqMgr.queuePrint(b.getJobForQueue());

@@ -101,7 +101,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		}else{
 			findViewById(R.id.ll_print_lable).setVisibility(View.GONE);
 			findViewById(R.id.ll_app_order).setVisibility(View.GONE);
-			findViewById(R.id.ll_print_bill).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
 		}
 		syncMap = App.instance.getPushMsgMap();
 		settings = new SystemSettings(context);
@@ -766,10 +766,10 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 				if(checkState){
 					mt_print_bill.setChecked(true);
-					settings.setPrintLable(ParamConst.DEFAULT_TRUE);
+					settings.setPrintBill(ParamConst.DEFAULT_TRUE);
 				}else{
 					mt_print_bill.setChecked(false);
-					settings.setPrintLable(ParamConst.DEFAULT_FALSE);
+					settings.setPrintBill(ParamConst.DEFAULT_FALSE);
 				}
 				break;
 

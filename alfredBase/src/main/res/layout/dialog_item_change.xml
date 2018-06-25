@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:gravity="center"
-            android:background="@drawable/change_shape"
+
             android:orientation="horizontal">
 
             <LinearLayout
@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
 
                 android:gravity="center"
-   android:background="@drawable/change_dia_bg"
+                android:background="@drawable/change_dia_bg"
                 android:orientation="vertical">
 
                 <TextView

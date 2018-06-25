@@ -8,6 +8,7 @@ import com.alfred.printer.ESCPrinter;
 import com.alfred.printer.PrintData;
 import com.alfred.printer.PrintTscData;
 import com.alfred.printer.StringUtil;
+import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PrintQueueMsg;
