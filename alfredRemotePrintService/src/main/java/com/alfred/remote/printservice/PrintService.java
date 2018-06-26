@@ -104,9 +104,13 @@ public class PrintService extends Service {
         //close all sockets
         this.pqMgr.stop();
         closeAllSockets();
-   //     if(mReceiver!=null){
-            unregisterReceiver(mReceiver);
-     //   }
+
+            try {
+                unregisterReceiver(mReceiver);
+            } catch (IllegalArgumentException e) {
+            }
+
+
 
         super.onDestroy();
         //this.printJobMgr = null;
@@ -207,12 +211,20 @@ public class PrintService extends Service {
     }
 
 
-    public void registerReceiverBluetooth() {
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+    public Boolean registerReceiverBluetooth() {
+        if(mReceiver != null && !mReceiver.isOrderedBroadcast()) {
 
-        registerReceiver(mReceiver, filter);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            Log.e("registerRe", " ----");
+
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+
+            registerReceiver(mReceiver, filter);
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            return true;
+        }
+        return false;
+
     }
 
     //	/**
@@ -240,7 +252,7 @@ public class PrintService extends Service {
                 //搜索完成
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 
-                Log.d("end", "   " + mBluetoothDevicesDatas.size());
+                Log.e("BluetoothAdapterend", "   " + mBluetoothDevicesDatas.size());
 
                 for(int i=0;i<mBluetoothDevicesDatas.size();i++){
                  callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));

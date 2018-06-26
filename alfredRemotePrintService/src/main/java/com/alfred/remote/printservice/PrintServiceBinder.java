@@ -1059,12 +1059,14 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void listPrinters() {
-        service.registerReceiverBluetooth();
-        final Gson gson = new Gson();
-        Log.e("PrintServiceBinder", " -----1054 listPrinters-----" );
-        if (scheduler == null) {
-            scheduler = Executors.newSingleThreadScheduledExecutor();
+        if(service.registerReceiverBluetooth()) {
+            service.SearchBluetooth();
         }
+     final Gson gson = new Gson();
+//        Log.e("PrintServiceBinder", " -----1054 listPrinters-----" );
+//        if (scheduler == null) {
+//            scheduler = Executors.newSingleThreadScheduledExecutor();
+//        }
 
         //stop old finder
 //        while (true) {
@@ -1079,17 +1081,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //        }
 
         //stop find thread
-        if (future != null) {
-            future.cancel(false);
-            while (!future.isDone()) {
-                try {
-                    Thread.sleep(500);
-                } catch (Exception e) {
-                    break;
-                }
-            }
-            future = null;
-        }
+//        if (future != null) {
+//            future.cancel(false);
+//            while (!future.isDone()) {
+//                try {
+//                    Thread.sleep(500);
+//                } catch (Exception e) {
+//                    break;
+//                }
+//            }
+//            future = null;
+//        }
 
 //        try {
 //            Finder.start(this.service.getBaseContext(), DevType.TCP, "255.255.255.255");
@@ -1113,7 +1115,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //					//
 
         Log.e("PrintServiceBinder", " -----start-----" );
-        service.SearchBluetooth();
+
         //网络打印机
         Log.e("PrintServiceBinder", " -----devices-----" );
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -1156,112 +1158,112 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 
 
-        //start thread
-        future = scheduler.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-//                List<String> deviceList = new ArrayList<String>();
-//                boolean hasLocal = false;
-
-
-
-
-//                mFilterOption = new FilterOption();
-//                mFilterOption.setDeviceType(Discovery.TYPE_PRINTER);
-//                mFilterOption.setEpsonFilter(Discovery.FILTER_NAME);
-//                try {
+//        //start thread
+//        future = scheduler.scheduleWithFixedDelay(new Runnable() {
+//            @Override
+//            public void run() {
+////                List<String> deviceList = new ArrayList<String>();
+////                boolean hasLocal = false;
 //
-//                    Discovery.start(App.instance, mFilterOption, mDiscoveryListener);
-//                }
-//                catch (Exception e) {
-//                //    ShowMsg.showException(e, "start", mContext);
-////                    e.printStackTrace();
-//                }
-////					//开始搜索蓝牙设备
-////					//
 //
-//                Log.e("PrintServiceBinder", " -----start-----" );
-//                service.SearchBluetooth();
-//                //网络打印机
-//                Log.e("PrintServiceBinder", " -----devices-----" );
-//                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//
+//
+////                mFilterOption = new FilterOption();
+////                mFilterOption.setDeviceType(Discovery.TYPE_PRINTER);
+////                mFilterOption.setEpsonFilter(Discovery.FILTER_NAME);
+////                try {
 ////
-//                ////
-//                Map<String, String> ret = new HashMap<String, String>();
-//                if (mBluetoothAdapter != null) {
-//                    String innerprinter_address = "00:11:22:33:44:55";
-//                    BluetoothDevice innerprinter_device = null;
-//                    Set<BluetoothDevice> bluetoothDevices = mBluetoothAdapter.getBondedDevices();
-//                    for (BluetoothDevice device : bluetoothDevices) {
-//
-//
-//                        if (device.getAddress().equals(innerprinter_address)) {
-//                            innerprinter_device = device;
-//
-//                        }
-//                    }
-//
-//
-//                    if (innerprinter_device != null) {
-//                        Log.d("PrintServiceBinder", " ----- deviceList.add-----" );
-//                        ret.put("127.0.0.1", "Local Print");
-//
-//                    }
-//                }
+////                    Discovery.start(App.instance, mFilterOption, mDiscoveryListener);
+////                }
+////                catch (Exception e) {
+////                //    ShowMsg.showException(e, "start", mContext);
+//////                    e.printStackTrace();
+////                }
+//////					//开始搜索蓝牙设备
+//////					//
 ////
-//                synchronized (service.mCallbacks) {
-//                    for (IAlfredRemotePrintServiceCallback listener : service.mCallbacks) {
+////                Log.e("PrintServiceBinder", " -----start-----" );
+////                service.SearchBluetooth();
+////                //网络打印机
+////                Log.e("PrintServiceBinder", " -----devices-----" );
+////                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//////
+////                ////
+////                Map<String, String> ret = new HashMap<String, String>();
+////                if (mBluetoothAdapter != null) {
+////                    String innerprinter_address = "00:11:22:33:44:55";
+////                    BluetoothDevice innerprinter_device = null;
+////                    Set<BluetoothDevice> bluetoothDevices = mBluetoothAdapter.getBondedDevices();
+////                    for (BluetoothDevice device : bluetoothDevices) {
+////
+////
+////                        if (device.getAddress().equals(innerprinter_address)) {
+////                            innerprinter_device = device;
+////
+////                        }
+////                    }
+////
+////
+////                    if (innerprinter_device != null) {
+////                        Log.d("PrintServiceBinder", " ----- deviceList.add-----" );
+////                        ret.put("127.0.0.1", "Local Print");
+////
+////                    }
+////                }
+//////
+////                synchronized (service.mCallbacks) {
+////                    for (IAlfredRemotePrintServiceCallback listener : service.mCallbacks) {
+////
+////
+////                        try {
+////                            listener.fromService("PRINTS_FOUND", gson.toJson(ret));
+////                            Log.d("PrintServiceBinder", " ----- 1153-----" + gson.toJson(ret));
+////                        } catch (RemoteException e) {
+////                            Log.w("Printer Lookup", "Failed to notify listener " + listener, e);
+////                        }
+////                    }
+////                }
+////
+//
+//                future.cancel(false);
+//                future = null;
+//                scheduler.shutdown();
+//                scheduler = null;
 //
 //
-//                        try {
-//                            listener.fromService("PRINTS_FOUND", gson.toJson(ret));
-//                            Log.d("PrintServiceBinder", " ----- 1153-----" + gson.toJson(ret));
-//                        } catch (RemoteException e) {
-//                            Log.w("Printer Lookup", "Failed to notify listener " + listener, e);
-//                        }
-//                    }
-//                }
-//
-
-                future.cancel(false);
-                future = null;
-                scheduler.shutdown();
-                scheduler = null;
-
-
-//                if (deviceList != null && deviceList.size() > 0) {
-//                    if (!hasLocal || deviceList.size() > 1) {
-//                        future.cancel(false);
-//                        future = null;
-//                        scheduler.shutdown();
-//                        scheduler = null;
-//                    }
-//                    Map<String, String> ret = new HashMap<String, String>();
-//                    Log.d("PrintServiceBinder", " ----- 1141-----" +deviceList.size());
-//
-//                    for (int i = 0; i < deviceList.size(); i++) {
-//                        ret.put(deviceList.get(i), getPrinterName(deviceList.get(i)));
-//                        Log.d("PrintServiceBinder", " ----- 1141-----" +deviceList.get(i));
-//                    }
-//
-//                    synchronized (service.mCallbacks) {
-//                        for (IAlfredRemotePrintServiceCallback listener : service.mCallbacks) {
+////                if (deviceList != null && deviceList.size() > 0) {
+////                    if (!hasLocal || deviceList.size() > 1) {
+////                        future.cancel(false);
+////                        future = null;
+////                        scheduler.shutdown();
+////                        scheduler = null;
+////                    }
+////                    Map<String, String> ret = new HashMap<String, String>();
+////                    Log.d("PrintServiceBinder", " ----- 1141-----" +deviceList.size());
+////
+////                    for (int i = 0; i < deviceList.size(); i++) {
+////                        ret.put(deviceList.get(i), getPrinterName(deviceList.get(i)));
+////                        Log.d("PrintServiceBinder", " ----- 1141-----" +deviceList.get(i));
+////                    }
+////
+////                    synchronized (service.mCallbacks) {
+////                        for (IAlfredRemotePrintServiceCallback listener : service.mCallbacks) {
+////
+////
+////                            try {
+////                                listener.fromService("PRINTS_FOUND", gson.toJson(ret));
+////                                Log.d("PrintServiceBinder", " ----- 1153-----" + gson.toJson(ret));
+////                            } catch (RemoteException e) {
+////                                Log.w("Printer Lookup", "Failed to notify listener " + listener, e);
+////                            }
+////                        }
+////                    }
+////
+////                }
+//            }
 //
 //
-//                            try {
-//                                listener.fromService("PRINTS_FOUND", gson.toJson(ret));
-//                                Log.d("PrintServiceBinder", " ----- 1153-----" + gson.toJson(ret));
-//                            } catch (RemoteException e) {
-//                                Log.w("Printer Lookup", "Failed to notify listener " + listener, e);
-//                            }
-//                        }
-//                    }
-//
-//                }
-            }
-
-
-        }, 0, 500, TimeUnit.MILLISECONDS);
+//        }, 0, 500, TimeUnit.MILLISECONDS);
     }
 
 

@@ -48,6 +48,7 @@ public class DevicesAdapter extends CustomAdapter {
 	private void setPrinterDBModelList(List<PrinterDevice> printerDBModelList){
 		this.printerDBModelList.clear();
 		if (printerDBModelList != null) {
+
 			this.printerDBModelList.addAll(printerDBModelList);
 		}
 		if(this.type == 1 &&(this.printerDBModelList.size() == 0
@@ -57,6 +58,8 @@ public class DevicesAdapter extends CustomAdapter {
 			printerDevice.setDevice_id(-100);
 			this.printerDBModelList.add(printerDevice);
 		}
+
+
 	}
 	public void setList(List<PrinterDevice> printerDBModelList, int type){
 		this.type = type;

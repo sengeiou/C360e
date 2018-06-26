@@ -79,6 +79,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.StoredCardActivity;
+import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
@@ -684,10 +685,7 @@ public class MainPageKiosk extends BaseActivity {
 //				}
 				if(isPrint) {
 
-					PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-							context);
-					printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-					printerLoadingDialog.showByTime(3000);
+
 					PrinterDevice printer = App.instance.getCahierPrinter();
 					PrinterTitle title = ObjectFactory.getInstance()
 							.getPrinterTitle(
@@ -726,12 +724,42 @@ public class MainPageKiosk extends BaseActivity {
 						SystemSettings settings = new SystemSettings(context);
 						if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
 						{
+
+
+
+							PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+									context);
+							printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+							printerLoadingDialog.showByTime(3000);
 							List<OrderDetail> placedOrderDetails
 									= OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
 							App.instance.remoteTBillPrint(printer,title,paidOrder, (ArrayList<OrderDetail>) placedOrderDetails);
 						}else {
-							App.instance.remoteBillPrint(printer, title, paidOrder,
-									orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+
+//							if(settings.isPrintBill()) {
+//
+//										   PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+//												   context);
+//										   printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+//										   printerLoadingDialog.showByTime(3000);
+//
+//							//	}
+//								App.instance.remoteBillPrint(printer, title, paidOrder,
+//										orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+//							}
+
+
+							if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
+							{
+
+							}else {
+								PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+										context);
+								printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+								printerLoadingDialog.showByTime(3000);
+								App.instance.remoteBillPrint(printer, title, paidOrder,
+										orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+							}
 						}
 //						App.instance.remoteBillPrint(printer, title, paidOrder,
 //								orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
@@ -828,10 +856,7 @@ public class MainPageKiosk extends BaseActivity {
 						});
 				}
 				OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(paidOrderSplit, App.instance.getRevenueCenter());
-				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-						context);
-				printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-				printerLoadingDialog.showByTime(3000);
+
 				PrinterDevice printer = App.instance.getCahierPrinter();
 				PrinterTitle title = ObjectFactory.getInstance()
 						.getPrinterTitleByOrderSplit(
@@ -866,11 +891,27 @@ public class MainPageKiosk extends BaseActivity {
 					SystemSettings       settings = new SystemSettings(context);
 					if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
 					{
+
+						PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+								context);
+						printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+						printerLoadingDialog.showByTime(3000);
 						List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsForPrint(paidOrderSplit.getOrderId());
 						App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails);
 					}else {
-						App.instance.remoteBillPrint(printer, title, temporaryOrder,
-								orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+
+
+						if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
+						{
+
+						}else {
+							PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+									context);
+							printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+							printerLoadingDialog.showByTime(3000);
+							App.instance.remoteBillPrint(printer, title, temporaryOrder,
+									orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+						}
 					}
 //					App.instance.remoteBillPrint(printer, title, temporaryOrder,
 //							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
@@ -1367,13 +1408,35 @@ public class MainPageKiosk extends BaseActivity {
 				String itemName = (String) msg.obj;
 				loadingDialog.dismiss();
 				printerLoadingDialog.dismiss();
-				UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+
+
+
+				if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
+				{
+						return;
+					//	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+
+				}else {
+					UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+				}
+
 			}
 			// kot Print status
 			case KOT_PRINT_FAILED:
 				loadingDialog.dismiss();
 				printerLoadingDialog.dismiss();
-				UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
+
+
+				if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
+				{
+					return;
+					//	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+
+				}else {
+					UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
+				}
+
+			//	UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
 				break;
 			case KOT_PRINT_SUCCEED:
 				// if(!orderDetails.isEmpty()){

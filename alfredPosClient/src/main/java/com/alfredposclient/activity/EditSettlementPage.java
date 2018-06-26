@@ -209,13 +209,22 @@ public class EditSettlementPage extends BaseActivity {
                     OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
                             currentOrder, App.instance.getRevenueCenter());
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
-                    App.instance.remoteBillPrint(
-                            App.instance.getCahierPrinter(),
-                            title,
-                            currentOrder,
-                            printOrderItems, orderModifiers,
-                            OrderDetailTaxSQL.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder), PaymentSettlementSQL
-                                    .getAllPaymentSettlementByPaymentId(Integer.valueOf(map.get("paymentId"))), roundAmount);
+
+
+//                   if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
+//                    {
+//
+//                    }else {
+
+                       App.instance.remoteBillPrint(
+                               App.instance.getCahierPrinter(),
+                               title,
+                               currentOrder,
+                               printOrderItems, orderModifiers,
+                               OrderDetailTaxSQL.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder), PaymentSettlementSQL
+                                       .getAllPaymentSettlementByPaymentId(Integer.valueOf(map.get("paymentId"))), roundAmount);
+                  //  }
+
                     /**
                      * 给后台发送log 信息
                      */

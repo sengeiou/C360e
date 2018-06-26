@@ -175,6 +175,8 @@ public class App extends BaseApplication {
     private static final String TAG = App.class.getSimpleName();
     public static App instance;
     private RevenueCenter revenueCenter;
+
+    private   SystemSettings  settings;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
     private static final String DATABASE_NAME = "com.alfredposclient";
@@ -2195,6 +2197,8 @@ public class App extends BaseApplication {
             return false;
         }
     }
+
+
 
     /*
      * Cloud Sync manager: Sync Sales data to cloud

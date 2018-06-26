@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 设备页
@@ -176,7 +177,7 @@ public class DevicesActivity extends BaseActivity {
 
                 case ASSIGN_PRINTER_DEVICE: // 绑定打印机
 
-                    App.instance.closeDiscovery();
+
                     PrinterDevice printerDevice = (PrinterDevice) msg.obj;
                     Printer prt = printerDeptModelList.get(dex);
                     printerDevice.setDevice_id(prt.getId());
@@ -197,8 +198,10 @@ public class DevicesActivity extends BaseActivity {
                             printerDevice.getPrinterName(), printerDeptModelList.get(dex).getIsLablePrinter());
                     CoreData.getInstance().addLocalDevice(localDevice);
                     App.instance.loadPrinters();
-                    refreshPrinterDevices(null);
                     map.clear();
+                    refreshPrinterDevices(null);
+
+                   App.instance.closeDiscovery();
                     App.instance.discoverPrinter(handler);
                     break;
                 default:
@@ -209,29 +212,29 @@ public class DevicesActivity extends BaseActivity {
 
 
     // 显示连接蓝牙的打印机
-
-    private void BluetoothPrinterDevices(List<PrinterDevice> plist) {
-//        List<PrinterDevice> devices;
-//        Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
-//        for (PrinterDevice entry : plist) {
-//            devices = new ArrayList<PrinterDevice>();
 //
-//            map.put(entry.getDevice_id(), devices);
+//    private void BluetoothPrinterDevices(List<PrinterDevice> plist) {
+////        List<PrinterDevice> devices;
+////        Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
+////        for (PrinterDevice entry : plist) {
+////            devices = new ArrayList<PrinterDevice>();
+////
+////            map.put(entry.getDevice_id(), devices);
+////        }
+//
+//        if (adapter != null) {
+//
+//            // Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size());
+//            adapter.setList(plist, 10);
+//        } else {
+//            adapter = new DevicesAdapter(this, plist, handler);
+//            // Log.d("printerDBModelList", " ---printerDBModelList2---"+printerDBModelList.size());
+//            devices_customlistview.setAdapter(adapter);
 //        }
-
-        if (adapter != null) {
-
-            // Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size());
-            adapter.setList(plist, 10);
-        } else {
-            adapter = new DevicesAdapter(this, plist, handler);
-            // Log.d("printerDBModelList", " ---printerDBModelList2---"+printerDBModelList.size());
-            devices_customlistview.setAdapter(adapter);
-        }
-
-        Log.d("refreshPrinterDevices", " ---显示蓝牙选项---" + plist.get(0).getType());
-        //  adapter.setList(printerDBModelList, 1);
-    }
+//
+//        Log.d("refreshPrinterDevices", " ---显示蓝牙选项---" + plist.get(0).getType());
+//        //  adapter.setList(printerDBModelList, 1);
+//    }
 
     // 搜索可连接的打印机
     private void refreshPrinterDevices(Map<String, String> printersDiscovered) {
@@ -271,6 +274,27 @@ public class DevicesActivity extends BaseActivity {
                 }
                 if (!map.containsKey(tmppt.getDevice_id())) {
                     List<PrinterDevice> list = new ArrayList<PrinterDevice>();
+                    // 获取所有键值对对象的集合
+
+                    // 遍历键值对对象的集合，得到每一个键值对对象
+//                    Map<Integer, List<PrinterDevice>> m = new ConcurrentHashMap<Integer, List<PrinterDevice>>();
+//                    map.putAll(map);
+////                    for (Map.Entry<String, String> entry : map.entrySet()) {
+////                        String key = entry.getKey();
+////                        map.remove(key);
+////                    }
+//                    Boolean v=false;
+//                    for ( Integer k : map.keySet()) {
+//                        // 根据键值对对象获取键和值
+//                        if(map.get(k).get(0).getIP().equals(tmppt.getIP())){
+//
+//                            System.out.println(k + "--refreshPrinterDevices-" + map.get(k));
+//                            k=t
+//                             //   map.remove(k);
+//                        }
+
+                   //     System.out.println(key + "---" + value);
+//                    }
                     list.add(tmppt);
                     map.put(tmppt.getDevice_id(), list);
                 } else {
@@ -287,19 +311,27 @@ public class DevicesActivity extends BaseActivity {
         Log.d("refreshPrinterDevices", printer1.getId() + " ---3333333---" + dex);
         if (map.containsKey(printer1.getId())) {
 
-            Log.d("refreshPrinterDevices", " ---111111111---" + dex);
+
             printerDBModelList = map.get(printer1.getId());
+
+            Log.d("refreshPrinterDevices", " ---111111111---" + printerDBModelList.size());
         } else {
 
 
             printerDBModelList = map.get(-1);
 
-            // Log.d("refreshPrinterDevices", " ---222222222---"+printerDBModelList.get(0).getIP());
+//            if(TextUtils.isEmpty(printerDBModelList.size()+"")) {
+//                Log.d("refreshPrinterDevices", " ---2222222---" + printerDBModelList.size());
+//            }
+
+
         }
         if (selectedViewId == R.id.devices_printe_lyt) {
             if (adapter != null) {
 
-                //  Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size()+"--"+printerDBModelList.get(0).getIP());
+            //     Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size()+"--"+printerDBModelList.get(0).getIP());
+
+
                 adapter.setList(printerDBModelList, 1);
             } else {
                 adapter = new DevicesAdapter(this, printerDBModelList, handler);
@@ -589,6 +621,13 @@ public class DevicesActivity extends BaseActivity {
                 handler.sendEmptyMessage(JavaConnectJS.ACTION_NEW_WAITER_ADDED);
                 break;
         }
+    }
+
+
+    @Override
+    protected void onPause() {
+        App.instance.closeDiscovery();
+        super.onPause();
     }
 
     @Override
