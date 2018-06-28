@@ -793,7 +793,7 @@ public class HttpAPI {
   //	ReportDaySales reportDaySales;
 //	List<ReportDayTax> reportDayTaxs;
     public static void sendEmailSync(Context context, final ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs,
-                                     String url, SyncHttpClient httpClient) {
+                                        String url, SyncHttpClient httpClient) {
         // try {
         StringEntity entity = null;
         try {
@@ -810,6 +810,61 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             LogUtil.d("HttpAPI--", statusCode+"");
+//                            if (resultCode == ResultCode.SUCCESS
+//                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
+//                                syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);
+//                                SyncMsgSQL.add(syncMsg);
+//                            } else {
+//                                syncMsg.setStatus(ParamConst.SYNC_MSG_MALDATA);
+//                                SyncMsgSQL.add(syncMsg);
+//                                if (resultCode == ResultCode.DEVICE_NO_PERMIT) {
+//                                    App.instance
+//                                            .getTopActivity()
+//                                            .httpRequestAction(
+//                                                    ResultCode.DEVICE_NO_PERMIT,
+//                                                    null);
+//                                }
+//                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+
+                            LogUtil.d("HttpAPI--onFailure", statusCode+"");
+                            // no need change status here. JOB will get the
+                            // exception to rerun job
+                            // syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
+                            // SyncMsgSQL.add(syncMsg);
+//                            syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
+//                            SyncMsgSQL.add(syncMsg);
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            throw new RuntimeException(error);
+                        }
+                    });
+        }
+
+    }
+
+
+    public static void mediaSync(Context context,String url, SyncHttpClient httpClient,Handler handler) {
+        // try {
+        StringEntity entity = null;
+        try {
+            entity = HttpAssembling.getMediaParam();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (entity != null) {
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            LogUtil.d("mediaSync--", statusCode+"----"+responseBody);
 //                            if (resultCode == ResultCode.SUCCESS
 //                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
 //                                syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);

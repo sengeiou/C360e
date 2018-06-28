@@ -3,10 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#cc000000">
+
     <include
+        layout="@layout/stored_card_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/stored_card_layout"
-        android:layout_centerInParent="true"
-        />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 </RelativeLayout>

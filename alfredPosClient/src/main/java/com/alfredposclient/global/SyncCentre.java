@@ -116,7 +116,6 @@ public class SyncCentre {
 
 		HttpAPI.getItemCategory(context,
 				getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
-
 		HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
 				httpClient, handler, MODE_FIRST_SYNC);
 
@@ -171,6 +170,15 @@ public class SyncCentre {
 		//orderDataMsg
 		HttpAPI.sendEmailSync(context, reportDaySales,reportDayTaxs,
 				getAbsoluteUrl(APIName.SEND_EMAIL), bigSyncHttpClient);
+	}
+
+
+
+	public void syncMedia(Context context,
+							 Handler handler) {
+		//orderDataMsg
+		HttpAPI.mediaSync(context,
+				getAbsoluteUrl(APIName.SEND_EMAIL), syncHttpClient,handler);
 	}
 	public void cloudSyncUploadOrderInfo( BaseActivity context,
 			SyncMsg syncMsg, Handler handler) {

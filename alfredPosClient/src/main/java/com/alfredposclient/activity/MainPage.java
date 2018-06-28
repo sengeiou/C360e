@@ -113,6 +113,7 @@ import com.alfredposclient.view.MainPageSearchView;
 import com.alfredposclient.view.SelectOrderSplitDialog;
 import com.alfredposclient.view.SettingView;
 import com.alfredposclient.view.TopMenuView;
+import com.alfredposclient.view.dialog.MediaDialog;
 import com.alfredposclient.xmpp.XMPP;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -258,6 +259,8 @@ public class MainPage extends BaseActivity {
     private Order oldOrder;
     private List<OrderDetail> orderDetails;
     private VerifyDialog verifyDialog;
+
+    private MediaDialog mediaDialog;
 //	public LoadingDialog loadingDialog;
 
     public PrinterLoadingDialog printerLoadingDialog;
@@ -308,6 +311,8 @@ public class MainPage extends BaseActivity {
         initDrawerLayout();
         ScreenSizeUtil.initScreenScale(context);
         verifyDialog = new VerifyDialog(context, handler);
+
+//        mediaDialog = new MediaDialog(context, handler);
         loadingDialog = new LoadingDialog(context);
         loadingDialog.setTitle(context.getResources().getString(R.string.loading));
         printerLoadingDialog = new PrinterLoadingDialog(context);

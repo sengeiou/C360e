@@ -74,6 +74,20 @@ public class HttpAssembling {
 		return entity;
 	}
 
+
+	public static StringEntity getMediaParam()
+			throws UnsupportedEncodingException {
+		Gson gson = new Gson();
+		LoginResult loginResult = CoreData.getInstance().getLoginResult();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userKey", loginResult.getUserKey());
+		map.put("restaurantKey", loginResult.getRestaurantKey());
+		map.put("version", App.instance.VERSION );
+		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+
+		StringEntity entity = new StringEntity(gson.toJson(map));
+		return entity;
+	}
 	public static StringEntity getUploadOrderInfoParam(String  syncMsg,String s)
 			throws UnsupportedEncodingException {
 		Gson gson = new Gson();

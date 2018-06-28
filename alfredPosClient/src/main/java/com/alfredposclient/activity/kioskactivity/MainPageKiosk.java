@@ -736,19 +736,6 @@ public class MainPageKiosk extends BaseActivity {
 							App.instance.remoteTBillPrint(printer,title,paidOrder, (ArrayList<OrderDetail>) placedOrderDetails);
 						}else {
 
-//							if(settings.isPrintBill()) {
-//
-//										   PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-//												   context);
-//										   printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-//										   printerLoadingDialog.showByTime(3000);
-//
-//							//	}
-//								App.instance.remoteBillPrint(printer, title, paidOrder,
-//										orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-//							}
-
-
 							if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
 							{
 
@@ -761,8 +748,7 @@ public class MainPageKiosk extends BaseActivity {
 										orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 							}
 						}
-//						App.instance.remoteBillPrint(printer, title, paidOrder,
-//								orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+//
 					}
 				}else{
 					PrinterDevice printer = App.instance.getCahierPrinter();
