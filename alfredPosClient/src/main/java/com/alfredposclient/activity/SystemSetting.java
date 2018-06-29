@@ -23,8 +23,7 @@ import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.ChangePasswordDialog;
-//import com.alfredbase.view.MyToggleButton;
-//import com.alfredbase.view.MyToggleButton.OnChangedListener;
+
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;

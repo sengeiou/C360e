@@ -94,7 +94,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener {
+public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener ,MediaDialog.OtherClickListener{
     private String TAG = CloseOrderWindow.class.getSimpleName();
     private static final int DURATION_1 = 300;
     private static final int DURATION_2 = 200;
@@ -158,7 +158,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
     private TextView tv_wechat_ali_ref_num;
     private TextView tv_wechat_ali_amount_due_num;
-    private TextView tv_wechat_ali_amount_paid_num;
+    private TextView tv_wechat_ali_amount_paid_num,tv_other_media;
 
     private boolean isMenuClose = false;
     private ImageView iv_card_img;
@@ -176,8 +176,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
     private ListView listview;
 
 
-
-    PamentMethodAdapter adapters;
 
     private boolean isFirstClickCash = false;
     List<PamentMethod> pamentMethodlist = new ArrayList<PamentMethod>();
@@ -301,7 +299,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
         contentView.findViewById(R.id.iv_AMERICAN).setOnClickListener(this);
         contentView.findViewById(R.id.iv_dinersclub).setOnClickListener(this);
 
-        contentView.findViewById(R.id.btn_media).setOnClickListener(this);
+
         contentView.findViewById(R.id.tv_BILL_on_HOLD).setOnClickListener(this);
         contentView.findViewById(R.id.tv_VOID).setOnClickListener(this);
         contentView.findViewById(R.id.tv_ENTERTAINMENT)
@@ -316,6 +314,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
         contentView.findViewById(R.id.tv_voucher_event)
                 .setOnClickListener(this);
 
+        tv_other_media=(TextView)contentView.findViewById(R.id.tv_other_media);
+
+        tv_other_media.setOnClickListener(this);
         btn_close_bill.setOnClickListener(this);
         btn_print_receipt.setOnClickListener(this);
         btn_void_all_closed.setOnClickListener(this);
@@ -478,7 +479,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                 .findViewById(R.id.tv_media));
 
         textTypeFace.setTrajanProRegular((TextView) view
-                .findViewById(R.id.btn_media));
+                .findViewById(R.id.tv_other_media));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_adjustment));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -1365,31 +1366,29 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL);
                     break;
 
-                case R.id.btn_media:
-//                    pamentMethodlist.clear();
-//                    PamentMethod p1 = new PamentMethod();
-//                    p1.setId(1);
-//                    p1.setNameCh("优惠10元");
-//                    p1.setIsMsgRequire(0);
-//                    p1.setIsverify(0);
-//                    pamentMethodlist.add(p1);
-//                    PamentMethod p2 = new PamentMethod();
-//                    p2.setId(2);
-//                    p2.setNameCh("优惠5元");
-//                    p2.setIsMsgRequire(1);
-//                    p2.setIsverify(0);
-//
-//                    pamentMethodlist.add(p2);
-//                    PamentMethod p3 = new PamentMethod();
-//                    p3.setId(3);
-//                    p3.setNameCh("优惠15元");
-//                    p3.setIsMsgRequire(0);
-//                    p3.setIsverify(1);
-//
-//                    pamentMethodlist.add(p3);
-//
-//
-//                   mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
+                case R.id.tv_other_media:
+                    pamentMethodlist.clear();
+                    PamentMethod p1 = new PamentMethod();
+                    p1.setId(1);
+                    p1.setNameCh("优惠10元");
+                    p1.setIsMsgRequire(0);
+                    p1.setIsverify(0);
+                    pamentMethodlist.add(p1);
+                    PamentMethod p2 = new PamentMethod();
+                    p2.setId(2);
+                    p2.setNameCh("优惠5元");
+                    p2.setIsMsgRequire(1);
+                    p2.setIsverify(0);
+
+                    pamentMethodlist.add(p2);
+                    PamentMethod p3 = new PamentMethod();
+                    p3.setId(3);
+                    p3.setNameCh("优惠15元");
+                    p3.setIsMsgRequire(0);
+                    p3.setIsverify(1);
+                    pamentMethodlist.add(p3);
+                   mediaDialog = new MediaDialog(parent, handler,pamentMethodlist);
+                    mediaDialog.setOtherClickListener(this);
                     break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
@@ -2571,5 +2570,41 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
         settlementNum = BH.getBD(ParamConst.DOUBLE_ZERO);
         OrderSQL.update(order);
         PaymentSQL.addPayment(payment);
+    }
+
+    @Override
+    public void onOtherClick(String key) {
+        Toast.makeText(parent,"--- "+key,Toast.LENGTH_LONG).show();
+
+//        initSpecialSettlement(user, ParamConst.SETTLEMENT_TYPE_VOID);
+      //  initBillSummary();
+        tv_special_settlement_title.setText("OTHER");
+//			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
+        rl_special_settlement_person.setVisibility(View.GONE);
+        rl_special_settlement_phone.setVisibility(View.GONE);
+        contentView.findViewById(R.id.ll_special_settlement).setVisibility(
+                View.VISIBLE);
+        show.append(0);
+
+
+        moneyKeyboard.setVisibility(View.VISIBLE);
+        moneyKeyboard.setMoneyPanel(View.GONE);
+        Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
+        iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
+                bitmap.getWidth(), bitmap.getHeight() / 2));
+        iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
+                0, bitmap.getHeight() / 2, bitmap.getWidth(),
+                bitmap.getHeight() / 2));
+        ll_pay.setVisibility(View.GONE);
+        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
+                iv_top.getY(), iv_top.getY() - iv_top.getHeight())
+                .setDuration(OPEN_DELAY);
+        ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
+                iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
+                .setDuration(OPEN_DELAY);
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.playTogether(animator1, animator2);
+        animSet.addListener(new AnimatorListenerImpl());
+        animSet.start();
     }
 }

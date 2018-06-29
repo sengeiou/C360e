@@ -1386,9 +1386,10 @@
                             android:layout_height="0dp"
                             android:layout_weight="1" />
                     </LinearLayout>
-
                     <LinearLayout
                         android:id="@+id/ll_pay"
+
+
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#FFFFFFFF"
@@ -1403,16 +1404,21 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:orientation="vertical" >
+                                android:orientation="vertical"
+
+                                >
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+
+
                                     android:orientation="vertical" >
 
                                     <RelativeLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+
                                         android:background="@drawable/box_close" >
 
                                         <!-- <ImageView -->
@@ -1448,6 +1454,7 @@
                                         android:layout_gravity="center_horizontal"
                                         android:layout_marginLeft="10dp"
                                         android:layout_marginRight="10dp"
+
                                         layout="@layout/cash_keyboard" />
                                 </LinearLayout>
 
@@ -1628,6 +1635,7 @@
                                         android:layout_gravity="center_horizontal"
                                         android:layout_marginLeft="10dp"
                                         android:layout_marginRight="10dp"
+
                                         layout="@layout/voucher_keyboard" />
                                 </LinearLayout>
                             </LinearLayout>

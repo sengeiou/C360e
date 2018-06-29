@@ -20,6 +20,7 @@ import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
+import com.alfredbase.javabean.PamentMethod;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
@@ -32,6 +33,7 @@ import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SettingData;
+import com.alfredbase.javabean.SettlementRestaurant;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
@@ -373,6 +375,33 @@ public class HttpAnalysis {
 			e.printStackTrace();
 		}
 	}
+
+	public static void getOther(int statusCode, Header[] headers,
+							  byte[] responseBody) {
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<PamentMethod> pamentMethod = gson.fromJson(
+					object.getString("pamentMethodList"),
+					new TypeToken<ArrayList<PamentMethod>>() {
+					}.getType());
+			CoreData.getInstance().setPamentMethodList(pamentMethod);
+//			TaxCategorySQL.deleteAllTaxCategory();
+//			TaxCategorySQL.addTaxCategorys(taxCategories);
+
+			List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurantList"),
+					new TypeToken<ArrayList<SettlementRestaurant>>() {
+					}.getType());
+			CoreData.getInstance().setSettlementRestaurantList(settlementRestaurant);
+
+		;
+//			TaxSQL.deleteAllTax();
+//			TaxSQL.addTaxs(taxs);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	public static void getHappyHour(int statusCode, Header[] headers,
 			byte[] responseBody) {

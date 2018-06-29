@@ -24,6 +24,7 @@ import com.alfredbase.view.NumerickeyboardOne.KeyBoardClickListener;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.adapter.PamentMethodAdapter;
+import com.alfredposclient.view.CloseMoneyKeyboard;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,8 @@ public class MediaDialog extends Dialog  {
 	List<PamentMethod> plist;
 
 	PamentMethodAdapter adapters;
+
+	private OtherClickListener otherClickListener;
 
 	public MediaDialog(Context context, Handler handler, List<PamentMethod> pamentMethodslist) {
 		super(context, com.alfredbase.R.style.Dialog_verify);
@@ -74,28 +77,29 @@ public class MediaDialog extends Dialog  {
 //						.obtainMessage(MainPage.VIEW_EVENT_SHOW_BILL_ON_HOLD));
 				PamentMethodAdapter.ViewHolder holder = (PamentMethodAdapter.ViewHolder) view.getTag();
 
-				Toast.makeText(context,"-"+plist.get(position).getNameCh(),Toast.LENGTH_LONG).show();
 
-				if(plist.get(position).getIsverify()==1)
+
+				if(plist.get(position).getIsverify()>=0)
 				{
+
+					if (otherClickListener != null)
+						otherClickListener.onOtherClick(position+"");
 					verifyDialog = new VerifyDialog(context, handler);
 					verifyDialog.show("111",null);
 				}
 				//  pays = (String) list.get(position).get("id");
 				System.out.println("======y优惠券fangs======" + position);
-
 				dlg.cancel();
-
-
-
 			}
 		});
-
-//		setCanceledOnTouchOutside(false);
 	}
 
+	public void setOtherClickListener(
+			MediaDialog.OtherClickListener otherClickListener) {
+		this.otherClickListener = otherClickListener;
+	}
 
-
-
-
+	public interface OtherClickListener {
+		void onOtherClick(String key);
+	}
 }

@@ -865,6 +865,8 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             LogUtil.d("mediaSync--", statusCode+"----"+responseBody);
+
+                            HttpAnalysis.getOther(statusCode,headers,responseBody);
 //                            if (resultCode == ResultCode.SUCCESS
 //                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
 //                                syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);

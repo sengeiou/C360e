@@ -16,12 +16,14 @@ import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.PamentMethod;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundRule;
+import com.alfredbase.javabean.SettlementRestaurant;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
@@ -88,6 +90,12 @@ public class CoreData {
 	private List<UserRestaurant> userRestaurant;
 	private List<KotNotification> kotNotifications;
 	private List<LocalDevice> localDevices;
+
+
+
+
+	private List<PamentMethod> pamentMethodList;
+	private List<SettlementRestaurant> settlementRestaurantList;
 
 	private PrinterDevice device;
 
@@ -776,6 +784,34 @@ public class CoreData {
 		this.loginResult = loginResult;
 	}
 
+
+	public List<PamentMethod> getPamentMethodList() {
+		return pamentMethodList;
+	}
+
+	public void setPamentMethodList(List<PamentMethod> pamentMethodList) {
+		this.pamentMethodList = pamentMethodList;
+	}
+
+
+
+	public PamentMethod getPamentMethod(Integer pamentMethodId) {
+		if (pamentMethodId == null)
+			return null;
+		for (PamentMethod pamentMethod : getPamentMethodList()) {
+			if (pamentMethod.getId().intValue() == pamentMethodId.intValue()) {
+				return pamentMethod;
+			}
+		}
+		return null;
+	}
+	public List<SettlementRestaurant> getSettlementRestaurantList() {
+		return settlementRestaurantList;
+	}
+
+	public void setSettlementRestaurantList(List<SettlementRestaurant> settlementRestaurantList) {
+		this.settlementRestaurantList = settlementRestaurantList;
+	}
 	public List<TaxCategory> getTaxCategories() {
 		if(taxCategories == null){
 			return new ArrayList<TaxCategory>();
