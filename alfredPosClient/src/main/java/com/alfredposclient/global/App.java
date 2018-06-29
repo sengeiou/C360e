@@ -118,6 +118,7 @@ import com.alfredposclient.jobs.KotJobManager;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
+import com.alfredposclient.xmpp.XMPP;
 import com.alfredposclient.xmpp.XmppThread;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -1097,6 +1098,7 @@ public class App extends BaseApplication {
             this.mainPosInfo.setIP(CommonUtil.getLocalIpAddress());
             this.setMainPosInfo(mainPosInfo);
             Store.saveObject(getBaseContext(), Store.MAINPOSINFO, mainPosInfo);
+            XMPP.getInstance().onNetWorkConnect();
         }
     }
 

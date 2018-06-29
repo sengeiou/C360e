@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
@@ -295,9 +296,9 @@ public class ReportDayTaxSQL {
 				reportDayTax.setBusinessDate(cursor.getLong(4));
 				reportDayTax.setTaxId(cursor.getInt(5));
 				reportDayTax.setTaxName(cursor.getString(6));
-				reportDayTax.setTaxPercentage(cursor.getString(7));
+				reportDayTax.setTaxPercentage(BH.getBD(cursor.getString(7)).toString());
 				reportDayTax.setTaxQty(cursor.getInt(8));
-				reportDayTax.setTaxAmount(cursor.getString(9));
+				reportDayTax.setTaxAmount(BH.getBD(cursor.getString(9)).toString());
 				reportDayTaxs.add(reportDayTax);
 			}
 		} catch (Exception e) {

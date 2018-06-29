@@ -575,97 +575,6 @@ public class ReportObjectFactory {
 	public ReportDaySales loadReportDaySales(long businessDate) {
 		ReportDaySales reportDaySales =  ReportDaySalesSQL
 					.getReportDaySalesForZReport(businessDate);
-//		if(reportDaySalesList != null && reportDaySalesList.size() > 0){
-//			reportDaySales = new ReportDaySales();
-//			for(ReportDaySales re : reportDaySalesList){
-//				reportDaySales.setRestaurantId(restaurant.getId());
-//				reportDaySales.setRestaurantName(restaurant.getRestaurantName());
-//				reportDaySales.setRevenueId(revenueCenter.getId());
-//				reportDaySales.setRevenueName(revenueCenter.getRevName());
-//				reportDaySales.setBusinessDate(businessDate);
-//				reportDaySales.setItemSales(BH.add(BH.getBD(reportDaySales.getItemSales()), BH.getBD(re.getItemSales()), false).toString());
-//				reportDaySales.setItemSalesQty(reportDaySales.getItemSalesQty() + re.getItemSalesQty());
-//				reportDaySales.setDiscountPer(BH.add(BH.getBD(reportDaySales.getDiscountPer()), BH.getBD(re.getDiscountPer()), false).toString());
-//				reportDaySales.setDiscountPerQty(reportDaySales.getDiscountPerQty() + re.getDiscountPerQty());
-//				reportDaySales.setDiscount(BH.add(BH.getBD(reportDaySales.getDiscount()), BH.getBD(re.getDiscount()), false).toString());
-//				reportDaySales.setDiscountQty(reportDaySales.getDiscountQty() + re.getDiscountQty());
-//				reportDaySales.setDiscountAmt(BH.add(BH.getBD(reportDaySales.getDiscountAmt()), BH.getBD(re.getDiscountAmt()), false).toString());
-//				reportDaySales.setFocItem(BH.add(BH.getBD(reportDaySales.getFocItem()), BH.getBD(re.getFocItem()), false).toString());
-//				reportDaySales.setFocItemQty(reportDaySales.getFocItemQty() + re.getFocItemQty());
-//				reportDaySales.setFocBill(BH.add(BH.getBD(reportDaySales.getFocBill()), BH.getBD(re.getFocBill()), false).toString());
-//				reportDaySales.setFocBillQty(reportDaySales.getFocBillQty() + re.getFocBillQty());
-//				reportDaySales.setBillVoid(BH.add(BH.getBD(reportDaySales.getBillVoid()), BH.getBD(re.getBillVoid()), false).toString());
-//				reportDaySales.setBillVoidQty(reportDaySales.getBillVoidQty() + re.getBillVoidQty());
-//				reportDaySales.setItemVoid(BH.add(BH.getBD(reportDaySales.getItemVoid()), BH.getBD(re.getItemVoid()), false).toString());
-//				reportDaySales.setItemVoidQty(reportDaySales.getItemVoidQty() + re.getItemVoidQty());
-//				reportDaySales.setTotalSales(BH.add(BH.getBD(reportDaySales.getTotalSales()), BH.getBD(re.getTotalSales()), false).toString());
-//				reportDaySales.setCash(BH.add(BH.getBD(reportDaySales.getCash()), BH.getBD(re.getCash()), false).toString());
-//				reportDaySales.setCashQty(reportDaySales.getCashQty()+re.getCashQty());
-//				reportDaySales.setNets(BH.add(BH.getBD(reportDaySales.getNets()), BH.getBD(re.getNets()), false).toString());
-//				reportDaySales.setNetsQty(reportDaySales.getNetsQty() + re.getNetsQty());
-//				reportDaySales.setAlipay(BH.add(BH.getBD(reportDaySales.getAlipay()), BH.getBD(re.getAlipay()), false).toString());
-//				reportDaySales.setAlipayQty(reportDaySales.getAlipayQty() + re.getAlipayQty());
-//				reportDaySales.setWeixinpay(BH.add(BH.getBD(reportDaySales.getWeixinpay()), BH.getBD(re.getWeixinpay()), false).toString());
-//				reportDaySales.setWeixinpayQty(reportDaySales.getWeixinpayQty() + re.getWeixinpayQty());
-//				reportDaySales.setPaypalpay(BH.add(BH.getBD(reportDaySales.getPaypalpay()), BH.getBD(re.getPaypalpay()), false).toString());
-//				reportDaySales.setPaypalpayQty(reportDaySales.getPaypalpayQty() + re.getPaypalpayQty());
-//				reportDaySales.setStoredCard(BH.add(BH.getBD(reportDaySales.getStoredCard()), BH.getBD(re.getStoredCard()), false).toString());
-//				reportDaySales.setStoredCardQty(reportDaySales.getStoredCardQty() + re.getStoredCardQty());
-//				reportDaySales.setTopUps(BH.add(BH.getBD(reportDaySales.getTopUps()), BH.getBD(re.getTopUps()), false).toString());
-//				reportDaySales.setTopUpsQty(reportDaySales.getTopUpsQty() + re.getTopUpsQty());
-//				reportDaySales.setVisa(BH.add(BH.getBD(reportDaySales.getVisa()), BH.getBD(re.getVisa()), false).toString());
-//				reportDaySales.setVisaQty(reportDaySales.getVisaQty() + re.getVisaQty());
-//				reportDaySales.setMc(BH.add(BH.getBD(reportDaySales.getMc()), BH.getBD(re.getMc()), false).toString());
-//				reportDaySales.setMcQty(reportDaySales.getMcQty() + re.getMcQty());
-//				reportDaySales.setAmex(BH.add(BH.getBD(reportDaySales.getAmex()), BH.getBD(re.getAmex()), false).toString());
-//				reportDaySales.setAmexQty(reportDaySales.getAmexQty() + re.getAmexQty());
-//				reportDaySales.setJbl(BH.add(BH.getBD(reportDaySales.getJbl()), BH.getBD(re.getJbl()), false).toString());
-//				reportDaySales.setJblQty(reportDaySales.getJblQty() + re.getJblQty());
-//				reportDaySales.setUnionPay(BH.add(BH.getBD(reportDaySales.getUnionPay()), BH.getBD(re.getUnionPay()), false).toString());
-//				reportDaySales.setUnionPayQty(reportDaySales.getUnionPayQty() + re.getUnionPayQty());
-//				reportDaySales.setDiner(BH.add(BH.getBD(reportDaySales.getDiner()), BH.getBD(re.getDiner()), false).toString());
-//				reportDaySales.setDinerQty(reportDaySales.getDinerQty() + re.getDinerQty());
-//				reportDaySales.setHoldld(BH.add(BH.getBD(reportDaySales.getHoldld()), BH.getBD(re.getHoldld()), false).toString());
-//				reportDaySales.setHoldldQty(reportDaySales.getHoldldQty() + re.getHoldldQty());
-//				reportDaySales.setTotalCard(BH.add(BH.getBD(reportDaySales.getTotalCard()), BH.getBD(re.getTotalCard()), false).toString());
-//				reportDaySales.setTotalCardQty(reportDaySales.getTotalCardQty() + re.getTotalCardQty());
-//				reportDaySales.setTotalCash(BH.add(BH.getBD(reportDaySales.getTotalCash()), BH.getBD(re.getTotalCash()), false).toString());
-//				reportDaySales.setTotalCashQty(reportDaySales.getTotalCashQty() + re.getTotalCashQty());
-//				reportDaySales.setNettSales(BH.add(BH.getBD(reportDaySales.getNettSales()), BH.getBD(re.getNettSales()), false).toString());
-//				reportDaySales.setTotalBills(reportDaySales.getTotalBills() + re.getTotalBills());
-//				reportDaySales.setTotalTax(BH.add(BH.getBD(reportDaySales.getTotalTax()), BH.getBD(re.getTotalTax()), false).toString());
-//				reportDaySales.setOrderQty(reportDaySales.getOrderQty() + re.getOrderQty());
-//				reportDaySales.setPersonQty(reportDaySales.getPersonQty() + re.getPersonQty());
-//				reportDaySales.setTotalBalancePrice(reportDaySales.getTotalBalancePrice() + re.getTotalBalancePrice());
-//				reportDaySales.setCashInAmt(BH.add(BH.getBD(reportDaySales.getCashInAmt()), BH.getBD(re.getCashInAmt()), false).toString());
-//				reportDaySales.setCashOutAmt(BH.add(BH.getBD(reportDaySales.getCashOutAmt()), BH.getBD(re.getCashOutAmt()), false).toString());
-//				reportDaySales.setVarianceAmt(BH.add(BH.getBD(reportDaySales.getVarianceAmt()), BH.getBD(re.getVarianceAmt()), false).toString());
-//				reportDaySales.setInclusiveTaxAmt(BH.add(BH.getBD(reportDaySales.getInclusiveTaxAmt()), BH.getBD(re.getInclusiveTaxAmt()), false).toString());
-//				reportDaySales.setBillRefund(BH.add(BH.getBD(reportDaySales.getBillRefund()), BH.getBD(re.getBillRefund()), false).toString());
-//				reportDaySales.setBillRefundQty(reportDaySales.getBillRefundQty() + re.getBillRefundQty());
-//				reportDaySales.setRefundTax(BH.add(BH.getBD(reportDaySales.getRefundTax()), BH.getBD(re.getRefundTax()), false).toString());
-//				reportDaySales.setStartDrawerAmount(BH.add(BH.getBD(reportDaySales.getStartDrawerAmount()), BH.getBD(re.getStartDrawerAmount()), false).toString());
-//				reportDaySales.setExpectedAmount(BH.add(BH.getBD(reportDaySales.getExpectedAmount()), BH.getBD(re.getExpectedAmount()), false).toString());
-//				reportDaySales.setWaiterAmount(BH.add(BH.getBD(reportDaySales.getWaiterAmount()), BH.getBD(re.getWaiterAmount()), false).toString());
-//				reportDaySales.setDifference(BH.add(BH.getBD(reportDaySales.getDifference()), BH.getBD(re.getDifference()), false).toString());
-//				reportDaySales.setCashTopUp(BH.add(BH.getBD(reportDaySales.getCashTopUp()), BH.getBD(re.getCashTopUp()), false).toString());
-//				reportDaySales.setTakeawaySales(BH.add(BH.getBD(reportDaySales.getTakeawaySales()), BH.getBD(re.getTakeawaySales()), false).toString());
-//				reportDaySales.setTakeawayTax(BH.add(BH.getBD(reportDaySales.getTakeawayTax()), BH.getBD(re.getTakeawayTax()), false).toString());
-//				reportDaySales.setTakeawayQty(reportDaySales.getTakeawayQty() + re.getTakeawayQty());
-//				long createTime = System.currentTimeMillis();
-//				reportDaySales.setCreateTime(createTime);
-//				reportDaySales.setUpdateTime(createTime);
-//				reportDaySales.setDeliveroo(BH.add(BH.getBD(reportDaySales.getDeliveroo()), BH.getBD(re.getDeliveroo()), false).toString());
-//				reportDaySales.setDeliverooQty(reportDaySales.getDeliverooQty());
-//				reportDaySales.setUbereats(BH.add(BH.getBD(reportDaySales.getUbereats()), BH.getBD(re.getUbereats()), false).toString());
-//				reportDaySales.setUbereatsQty(reportDaySales.getUbereatsQty() + re.getUbereatsQty());
-//				reportDaySales.setFoodpanda(BH.add(BH.getBD(reportDaySales.getFoodpanda()), BH.getBD(re.getFoodpanda()), false).toString());
-//				reportDaySales.setFoodpandaQty(reportDaySales.getFoodpandaQty() + re.getFoodpandaQty());
-//				reportDaySales.setVoucher(BH.add(BH.getBD(reportDaySales.getVoucher()), BH.getBD(re.getVoucher()), false).toString());
-//				reportDaySales.setVoucherQty(reportDaySales.getVoucherQty() + re.getVoucherQty());
-//				reportDaySales.setTotalHour(BH.add(BH.getBD(reportDaySales.getTotalHour()), BH.getBD(re.getTotalHour()), false).toString());
-//			}
-//		}
 		return reportDaySales;
 	}
 
@@ -1594,10 +1503,8 @@ public class ReportObjectFactory {
 		}
 		Collection<ReportPluDayModifier> valueCollectionReportPluDayModifier = reportPluDayModifierMap.values();
 		Collection<ReportPluDayComboModifier> valueCollectionReportPluDayComboModifier = reportPluDayComboModifierMap.values();
-		reportPluDayModifiers = new ArrayList<ReportPluDayModifier>(valueCollectionReportPluDayModifier);
-		reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>(valueCollectionReportPluDayComboModifier);
-//		ReportPluDayModifierSQL.addReportPluDayModifierList(reportPluDayModifiers);
-//		ReportPluDayComboModifierSQL.addReportPluDayModifierList(reportPluDayComboModifiers);
+		reportPluDayModifiers = new ArrayList<>(valueCollectionReportPluDayModifier);
+		reportPluDayComboModifiers = new ArrayList<>(valueCollectionReportPluDayComboModifier);
 		map.put("reportPluDayModifiers", reportPluDayModifiers);
 		map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
 		return map;
@@ -3021,8 +2928,8 @@ public class ReportObjectFactory {
 		}
 		Collection<ReportPluDayModifier> valueCollectionReportPluDayModifier = reportPluDayModifierMap.values();
 		Collection<ReportPluDayComboModifier> valueCollectionReportPluDayComboModifier = reportPluDayComboModifierMap.values();
-		reportPluDayModifiers = new ArrayList<ReportPluDayModifier>(valueCollectionReportPluDayModifier);
-		reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>(valueCollectionReportPluDayComboModifier);
+		reportPluDayModifiers = new ArrayList<>(valueCollectionReportPluDayModifier);
+		reportPluDayComboModifiers = new ArrayList<>(valueCollectionReportPluDayComboModifier);
 		ReportPluDayModifierSQL.addReportPluDayModifierList(reportPluDayModifiers);
 		ReportPluDayComboModifierSQL.addReportPluDayModifierList(reportPluDayComboModifiers);
 		Map<String, Object> map = new HashMap<String, Object>();

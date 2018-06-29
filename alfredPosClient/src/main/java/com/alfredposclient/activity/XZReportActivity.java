@@ -30,12 +30,6 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
-import com.alfredbase.store.sql.ReportDaySalesSQL;
-import com.alfredbase.store.sql.ReportDayTaxSQL;
-import com.alfredbase.store.sql.ReportHourlySQL;
-import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
-import com.alfredbase.store.sql.ReportPluDayItemSQL;
-import com.alfredbase.store.sql.ReportPluDayModifierSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
@@ -50,6 +44,7 @@ import com.alfredposclient.adapter.XZReportDetailAdapter;
 import com.alfredposclient.adapter.XZReportHourlyAdapter;
 import com.alfredposclient.adapter.XZReportSumaryAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.global.ReportObjectFactoryCP;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
@@ -147,13 +142,13 @@ public class XZReportActivity extends BaseActivity {
     };
 
     private void loadNewReport(long businessDate){
-        reportDaySales = ReportObjectFactoryCP.getInstance().loadShowReportDaySales(businessDate);
+        reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(businessDate);
         if(reportDaySales != null) {
             itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
             itemMainCategorys = ItemMainCategorySQL
                     .getAllItemMainCategoryForReport();
-            reportPluDayItems = ReportObjectFactoryCP.getInstance().loadShowReportPluDayItem(businessDate);
-            Map<String, Object> map = ReportObjectFactoryCP.getInstance().loadShowReportPluDayModifierInfo(businessDate);
+            reportPluDayItems = ReportObjectFactory.getInstance().loadShowReportPluDayItem(businessDate);
+            Map<String, Object> map = ReportObjectFactory.getInstance().loadShowReportPluDayModifierInfo(businessDate);
             reportPluDayModifiers = (List<ReportPluDayModifier>) map.get("reportPluDayModifiers");
             reportPluDayComboModifiers = (List<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
             reportHourlys = ReportObjectFactoryCP.getInstance().loadShowReportHourlys(businessDate);
@@ -172,17 +167,21 @@ public class XZReportActivity extends BaseActivity {
         }
 
     }
+
+
     private void loadOldReport(long businessDate){
-        reportDaySales = ReportDaySalesSQL.getReportDaySalesByTime(businessDate);
+        reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(businessDate);
         if(reportDaySales != null) {
             itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
             itemMainCategorys = ItemMainCategorySQL
                     .getAllItemMainCategoryForReport();
-            reportPluDayItems = ReportPluDayItemSQL.getReportPluDayItemsByTime(businessDate);
-            reportPluDayComboModifiers = ReportPluDayComboModifierSQL.getReportPluDayComboModifiersByTime(businessDate);
-            reportPluDayModifiers = ReportPluDayModifierSQL.getReportPluDayModifiersByTime(businessDate);
-            reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
-            reportDayTaxs = ReportDayTaxSQL.getReportDayTaxsByNowTime(businessDate);
+            reportPluDayItems = ReportObjectFactory.getInstance().loadReportPluDayItem(businessDate);
+            Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(businessDate);
+
+            reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
+            reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
+            reportHourlys =ReportObjectFactory.getInstance().loadReportHourlys(businessDate);
+            reportDayTaxs = ReportObjectFactory.getInstance().loadReportDayTax(businessDate);
             loadModel();
         }else{
             reportDayTaxs = new ArrayList<>();
@@ -532,7 +531,11 @@ public class XZReportActivity extends BaseActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        loadNewReport(showBusinessDate);
+                        if(App.instance.getSessionStatus() != null) {
+                            loadNewReport(showBusinessDate);
+                        }else{
+                            loadOldReport(showBusinessDate);
+                        }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

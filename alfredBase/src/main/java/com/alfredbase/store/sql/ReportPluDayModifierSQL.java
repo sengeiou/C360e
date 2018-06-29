@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class ReportPluDayModifierSQL {
 			SQLiteDatabase db = SQLExe.getDB();
 			try {
 				db.beginTransaction();
-				String sql = "insert into "
+				String sql = "replace into "
 						+ TableNames.ReportPluDayModifier
 						+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 						+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, "
@@ -322,36 +323,35 @@ public class ReportPluDayModifierSQL {
 				return result;
 			}
 			ReportPluDayModifier reportPluDayModifier = null;
-			if (cursor.moveToFirst()) {
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
 				reportPluDayModifier = new ReportPluDayModifier();
-				reportPluDayModifier.setId(cursor.getInt(0));
-				reportPluDayModifier.setReportNo(cursor.getInt(1));
-				reportPluDayModifier.setRestaurantId(cursor.getInt(2));
-				reportPluDayModifier.setRestaurantName(cursor.getString(3));
-				reportPluDayModifier.setRevenueId(cursor.getInt(4));
-				reportPluDayModifier.setRevenueName(cursor.getString(5));
-				reportPluDayModifier.setBusinessDate(cursor.getLong(6));
-				reportPluDayModifier.setModifierCategoryId(cursor.getInt(7));
+				reportPluDayModifier.setRestaurantId(cursor.getInt(0));
+				reportPluDayModifier.setRestaurantName(cursor.getString(1));
+				reportPluDayModifier.setRevenueId(cursor.getInt(2));
+				reportPluDayModifier.setRevenueName(cursor.getString(3));
+				reportPluDayModifier.setBusinessDate(cursor.getLong(4));
+				reportPluDayModifier.setModifierCategoryId(cursor.getInt(5));
 				reportPluDayModifier.setModifierCategoryName(cursor
-						.getString(8));
-				reportPluDayModifier.setModifierId(cursor.getInt(9));
-				reportPluDayModifier.setModifierName(cursor.getString(10));
-				reportPluDayModifier.setModifierPrice(cursor.getString(11));
-				reportPluDayModifier.setModifierCount(cursor.getInt(12));
-				reportPluDayModifier.setBillVoidPrice(cursor.getString(13));
-				reportPluDayModifier.setBillVoidCount(cursor.getInt(14));
-				reportPluDayModifier.setVoidModifierPrice(cursor.getString(15));
-				reportPluDayModifier.setVoidModifierCount(cursor.getInt(16));
-				reportPluDayModifier.setBohModifierPrice(cursor.getString(17));
-				reportPluDayModifier.setBohModifierCount(cursor.getInt(18));
-				reportPluDayModifier.setFocModifierPrice(cursor.getString(19));
-				reportPluDayModifier.setFocModifierCount(cursor.getInt(20));
-				reportPluDayModifier.setBillFocPrice(cursor.getString(21));
-				reportPluDayModifier.setBillFocCount(cursor.getInt(22));
-				reportPluDayModifier.setComboItemId(cursor.getInt(23));
-				reportPluDayModifier.setModifierItemPrice(cursor.getString(24));
-				reportPluDayModifier.setRealPrice(cursor.getString(25));
-				reportPluDayModifier.setRealCount(cursor.getInt(26));
+						.getString(6));
+				reportPluDayModifier.setModifierId(cursor.getInt(7));
+				reportPluDayModifier.setModifierName(cursor.getString(8));
+				reportPluDayModifier.setModifierPrice(BH.getBD(cursor.getString(9)).toString());
+				reportPluDayModifier.setModifierCount(cursor.getInt(10));
+				reportPluDayModifier.setBillVoidPrice(BH.getBD(cursor.getString(11)).toString());
+				reportPluDayModifier.setBillVoidCount(cursor.getInt(12));
+				reportPluDayModifier.setVoidModifierPrice(BH.getBD(cursor.getString(13)).toString());
+				reportPluDayModifier.setVoidModifierCount(cursor.getInt(14));
+				reportPluDayModifier.setBohModifierPrice(BH.getBD(cursor.getString(15)).toString());
+				reportPluDayModifier.setBohModifierCount(cursor.getInt(16));
+				reportPluDayModifier.setFocModifierPrice(BH.getBD(cursor.getString(17)).toString());
+				reportPluDayModifier.setFocModifierCount(cursor.getInt(18));
+				reportPluDayModifier.setBillFocPrice(BH.getBD(cursor.getString(19)).toString());
+				reportPluDayModifier.setBillFocCount(cursor.getInt(20));
+				reportPluDayModifier.setComboItemId(cursor.getInt(21));
+				reportPluDayModifier.setModifierItemPrice(BH.getBD(cursor.getString(22)).toString());
+				reportPluDayModifier.setRealPrice(BH.getBD(cursor.getString(23)).toString());
+				reportPluDayModifier.setRealCount(cursor.getInt(24));
 				result.add(reportPluDayModifier);
 			}
 		} catch (Exception e) {

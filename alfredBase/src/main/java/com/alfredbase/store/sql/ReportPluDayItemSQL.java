@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
@@ -245,19 +246,19 @@ public class ReportPluDayItemSQL {
 				reportPluDayItem.setItemCategoryName(cursor.getString(8));
 				reportPluDayItem.setItemDetailId(cursor.getInt(9));
 				reportPluDayItem.setItemName(cursor.getString(10));
-				reportPluDayItem.setItemPrice(cursor.getString(11));
+				reportPluDayItem.setItemPrice(BH.getBD(cursor.getString(11)).toString());
 				reportPluDayItem.setItemCount(cursor.getInt(12));
-				reportPluDayItem.setItemAmount(cursor.getString(13));
+				reportPluDayItem.setItemAmount(BH.getBD(cursor.getString(13)).toString());
 				reportPluDayItem.setItemVoidQty(cursor.getInt(14));
-				reportPluDayItem.setItemVoidPrice(cursor.getString(15));
+				reportPluDayItem.setItemVoidPrice(BH.getBD(cursor.getString(15)).toString());
 				reportPluDayItem.setItemHoldQty(cursor.getInt(16));
-				reportPluDayItem.setItemHoldPrice(cursor.getString(17));
+				reportPluDayItem.setItemHoldPrice(BH.getBD(cursor.getString(17)).toString());
 				reportPluDayItem.setItemFocQty(cursor.getInt(18));
-				reportPluDayItem.setItemFocPrice(cursor.getString(19));
+				reportPluDayItem.setItemFocPrice(BH.getBD(cursor.getString(19)).toString());
 				reportPluDayItem.setBillVoidQty(cursor.getInt(20));
-				reportPluDayItem.setBillVoidPrice(cursor.getString(21));
+				reportPluDayItem.setBillVoidPrice(BH.getBD(cursor.getString(21)).toString());
 				reportPluDayItem.setBillFocQty(cursor.getInt(22));
-				reportPluDayItem.setBillFocPrice(cursor.getString(23));
+				reportPluDayItem.setBillFocPrice(BH.getBD(cursor.getString(23)).toString());
 				result.add(reportPluDayItem);
 			}
 		} catch (Exception e) {

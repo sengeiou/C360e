@@ -2357,6 +2357,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 //		}
 //			break;
 		default:
+
+
 			break;
 		}
 	}

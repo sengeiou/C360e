@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
@@ -152,7 +153,7 @@ public class ReportHourlySQL {
 				reportHourly.setBusinessDate(cursor.getLong(4));
 				reportHourly.setHour(cursor.getInt(5));
 				reportHourly.setAmountQty(cursor.getInt(6));
-				reportHourly.setAmountPrice(cursor.getString(7));
+				reportHourly.setAmountPrice(BH.getBD(cursor.getString(7)).toString());
 				reportHourlys.add(reportHourly);
 			}
 		} catch (Exception e) {

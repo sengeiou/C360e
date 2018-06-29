@@ -327,12 +327,17 @@ public class BaseApplication extends Application {
 
 		@Override
 		 public void onReceive(Context arg0, Intent arg1) {
-		  ConnectivityManager myConnManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-	      NetworkInfo networkInfo = myConnManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);			
-		  if((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
-				  networkInfo.isConnected()){
-			  onIPChanged();
-		  }
+			ConnectivityManager cm = (ConnectivityManager) instance.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo netInfo = cm.getActiveNetworkInfo();
+			if(netInfo != null && netInfo.isConnected()){
+				onIPChanged();
+			}
+//		  ConnectivityManager myConnManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+//	      NetworkInfo networkInfo = myConnManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//		  if((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
+//				  networkInfo.isConnected()){
+//			  onIPChanged();
+//		  }
 		 }
 	};
 	
