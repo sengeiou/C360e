@@ -18,6 +18,8 @@ public class PushMessage {
 	public final static String PLACE_TABLE = "place_table";
 
 	public final static String TAX = "tax";
+
+	public final static String PAYMENT_METHOD = "payment_method";
 	
 	public final static String REST_CONFIG = "rest_config";
 	

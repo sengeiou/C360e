@@ -38,6 +38,7 @@ import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.XZReportHtml;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.popupwindow.CloseOrderWindow;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -502,6 +503,7 @@ public class HttpAPI {
                             }
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
+
                         }
                     });
         } catch (Exception e) {
@@ -848,7 +850,7 @@ public class HttpAPI {
     }
 
 
-    public static void mediaSync(Context context,String url, SyncHttpClient httpClient,Handler handler) {
+    public static void mediaSync(Context context,String url, AsyncHttpClient httpClient,Handler handler, final int mode) {
         // try {
         StringEntity entity = null;
         try {

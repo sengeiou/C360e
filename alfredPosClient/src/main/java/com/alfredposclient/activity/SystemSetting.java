@@ -351,6 +351,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 									map.put(PushMessage.USER, 1);
 //									map.put(PushMessage.PLACE_TABLE, 1);
 									map.put(PushMessage.TAX, 1);
+									map.put(PushMessage.PAYMENT_METHOD, 1);
 									syncDataAction(map);
 								}
 							});

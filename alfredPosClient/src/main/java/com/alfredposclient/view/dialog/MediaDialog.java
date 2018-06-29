@@ -83,9 +83,9 @@ public class MediaDialog extends Dialog  {
 				{
 
 					if (otherClickListener != null)
-						otherClickListener.onOtherClick(position+"");
-					verifyDialog = new VerifyDialog(context, handler);
-					verifyDialog.show("111",null);
+						otherClickListener.onOtherClick(plist.get(position));
+//					verifyDialog = new VerifyDialog(context, handler);
+//					verifyDialog.show("111",null);
 				}
 				//  pays = (String) list.get(position).get("id");
 				System.out.println("======y优惠券fangs======" + position);
@@ -100,6 +100,6 @@ public class MediaDialog extends Dialog  {
 	}
 
 	public interface OtherClickListener {
-		void onOtherClick(String key);
+		void onOtherClick(PamentMethod pa);
 	}
 }

@@ -110,10 +110,15 @@ public class SyncCentre {
 				httpClient, handler, MODE_FIRST_SYNC);
 	}
 
+	//登录后获取并同步数据
 	public void syncCommonData(Context context, Handler handler) {
 		HttpAPI.getUser(context, getAbsoluteUrl(APIName.USER_GETUSER),
 				httpClient, handler, MODE_FIRST_SYNC);
 
+		//  pamentmethod
+
+		HttpAPI.mediaSync(context,
+				getAbsoluteUrl(APIName.SEND_EMAIL),httpClient,handler,MODE_FIRST_SYNC);
 		HttpAPI.getItemCategory(context,
 				getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
 		HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
@@ -174,12 +179,12 @@ public class SyncCentre {
 
 
 
-	public void syncMedia(Context context,
-							 Handler handler) {
-		//orderDataMsg
-		HttpAPI.mediaSync(context,
-				getAbsoluteUrl(APIName.SEND_EMAIL), syncHttpClient,handler);
-	}
+//	public void syncMedia(Context context,
+//							 Handler handler) {
+//		//orderDataMsg
+//		HttpAPI.mediaSync(context,
+//				getAbsoluteUrl(APIName.SEND_EMAIL), syncHttpClient,handler);
+//	}
 	public void cloudSyncUploadOrderInfo( BaseActivity context,
 			SyncMsg syncMsg, Handler handler) {
 		//orderDataMsg
@@ -224,8 +229,14 @@ public class SyncCentre {
 						getAbsoluteUrl(APIName.POSORDER_GETORDERBYQRCODE), 
 						httpClient, parameters);
 	}
-	
+
+	//设置中同步后台数据
 	public void pushCommonData(Context context, String type, Handler handler) {
+
+		if (type.equals(PushMessage.PAYMENT_METHOD)) {
+			HttpAPI.mediaSync(context,
+					getAbsoluteUrl(APIName.SEND_EMAIL), syncHttpClient,handler,MODE_PUSH_SYNC);
+		}
 		if (type.equals(PushMessage.HAPPY_HOURS)) {
 			HttpAPI.getHappyHour(context,
 					getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_PUSH_SYNC);

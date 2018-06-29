@@ -173,8 +173,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
     private Button btn_void_all_closed;
     private String oldTotal;
 
-    private ListView listview;
-
 
 
     private boolean isFirstClickCash = false;
@@ -1372,13 +1370,20 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     p1.setId(1);
                     p1.setNameCh("优惠10元");
                     p1.setIsMsgRequire(0);
-                    p1.setIsverify(0);
+                    p1.setDescription("仅限内部人员使用");
+                    p1.setIsTax(1);
+                    p1.setIsDiscount(1);
+                    p1.setIsPart(0);
+
                     pamentMethodlist.add(p1);
                     PamentMethod p2 = new PamentMethod();
                     p2.setId(2);
                     p2.setNameCh("优惠5元");
                     p2.setIsMsgRequire(1);
                     p2.setIsverify(0);
+                    p2.setIsTax(0);
+                    p2.setIsDiscount(1);
+                    p2.setIsPart(1);
 
                     pamentMethodlist.add(p2);
                     PamentMethod p3 = new PamentMethod();
@@ -1386,6 +1391,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     p3.setNameCh("优惠15元");
                     p3.setIsMsgRequire(0);
                     p3.setIsverify(1);
+                    p3.setIsTax(1);
+                    p3.setIsDiscount(1);
+                    p3.setIsPart(0);
                     pamentMethodlist.add(p3);
                    mediaDialog = new MediaDialog(parent, handler,pamentMethodlist);
                     mediaDialog.setOtherClickListener(this);
@@ -1397,6 +1405,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     handler.sendMessage(handler
                             .obtainMessage(MainPage.VIEW_EVENT_SHOW_BILL_ON_HOLD));
                     break;
+
                 case R.id.tv_stored_card: {
 
 //				String value = ((TextView)findViewById(R.id.tv_residue_total_num)).getText().toString().substring(1);
@@ -2560,6 +2569,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
         payment.setPaymentAmount(order.getTotal());
         OrderSQL.update(order);
         PaymentSQL.addPayment(payment);
+
     }
 
     private void refundTax() {
@@ -2573,38 +2583,57 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
     }
 
     @Override
-    public void onOtherClick(String key) {
-        Toast.makeText(parent,"--- "+key,Toast.LENGTH_LONG).show();
+    public void onOtherClick(PamentMethod p) {
+        //   Toast.makeText(parent,"--- "+key,Toast.LENGTH_LONG).show();
+
+
+
+        if(p.getIsDiscount()==1){
+
+        }
+        if (p.getIsTax() == 0) {
+
+            String total=  BH.sub(BH.getBDNoFormat(order.getTotal()), BH.getBD(order.getTaxAmount()), true).toString();
+
+            Toast.makeText(parent,p.getIsTax()+"--- "+App.instance.getLocalRestaurantConfig().getCurrencySymbol() + total,Toast.LENGTH_LONG).show();
+
+            ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + total);
+        } else {
+
+            if (!TextUtils.isEmpty(p.getDescription())) {
+                et_special_settlement_remarks_text.setText(p.getDescription());
+            }
 
 //        initSpecialSettlement(user, ParamConst.SETTLEMENT_TYPE_VOID);
-      //  initBillSummary();
-        tv_special_settlement_title.setText("OTHER");
+            //  initBillSummary();
+            tv_special_settlement_title.setText("OTHER");
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
-        rl_special_settlement_person.setVisibility(View.GONE);
-        rl_special_settlement_phone.setVisibility(View.GONE);
-        contentView.findViewById(R.id.ll_special_settlement).setVisibility(
-                View.VISIBLE);
-        show.append(0);
+            rl_special_settlement_person.setVisibility(View.GONE);
+            rl_special_settlement_phone.setVisibility(View.GONE);
+            contentView.findViewById(R.id.ll_special_settlement).setVisibility(
+                    View.VISIBLE);
+            show.append(0);
 
 
-        moneyKeyboard.setVisibility(View.VISIBLE);
-        moneyKeyboard.setMoneyPanel(View.GONE);
-        Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
-        iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
-                bitmap.getWidth(), bitmap.getHeight() / 2));
-        iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
-                0, bitmap.getHeight() / 2, bitmap.getWidth(),
-                bitmap.getHeight() / 2));
-        ll_pay.setVisibility(View.GONE);
-        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
-                iv_top.getY(), iv_top.getY() - iv_top.getHeight())
-                .setDuration(OPEN_DELAY);
-        ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
-                iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
-                .setDuration(OPEN_DELAY);
-        AnimatorSet animSet = new AnimatorSet();
-        animSet.playTogether(animator1, animator2);
-        animSet.addListener(new AnimatorListenerImpl());
-        animSet.start();
+            moneyKeyboard.setVisibility(View.VISIBLE);
+            moneyKeyboard.setMoneyPanel(View.GONE);
+            Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
+            iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
+                    bitmap.getWidth(), bitmap.getHeight() / 2));
+            iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
+                    0, bitmap.getHeight() / 2, bitmap.getWidth(),
+                    bitmap.getHeight() / 2));
+            ll_pay.setVisibility(View.GONE);
+            ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
+                    iv_top.getY(), iv_top.getY() - iv_top.getHeight())
+                    .setDuration(OPEN_DELAY);
+            ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
+                    iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
+                    .setDuration(OPEN_DELAY);
+            AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(animator1, animator2);
+            animSet.addListener(new AnimatorListenerImpl());
+            animSet.start();
+        }
     }
 }

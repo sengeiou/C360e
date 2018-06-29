@@ -198,12 +198,6 @@ public class SyncData extends BaseActivity {
 						if(users.isEmpty()){
 							warn.append(context.getResources().getString(R.string.users));
 						}
-//						if(placeList.isEmpty() || tableList.isEmpty()){
-//							if(warn.length() != 0){
-//								warn.append(",");
-//							}
-//							warn.append(context.getResources().getString(R.string.tables));
-//						}
 						if(printers.isEmpty()){
 							if(warn.length() != 0){
 								warn.append(",");
@@ -288,7 +282,7 @@ public class SyncData extends BaseActivity {
 			case SYNC_DATA_TAG:
 				int type = (Integer) msg.obj;
 				if(type == SYNC_SUCCEED){
-					if(syncDataCount == 6){
+					if(syncDataCount == 7){
 						handler.sendEmptyMessage(HANDLER_GET_PLACE_INFO);
 					}else{
 						syncDataCount++;
