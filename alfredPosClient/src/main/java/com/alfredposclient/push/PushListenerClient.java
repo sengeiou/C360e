@@ -52,7 +52,7 @@ public class PushListenerClient implements XMPP.PushListener {
                 return;
             }
             if (msg.getRestId().intValue() == App.instance.getRevenueCenter().getRestaurantId()) {
-                msg.getSendTime();
+
                 long afterTime = App.instance.getBusinessDate() - 1 * 60 * 60 * 1000;
                 long frontTime = App.instance.getBusinessDate() + 1 * 60 * 60 * 1000;
 

@@ -15,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -197,6 +198,8 @@ public class MainPageKiosk extends BaseActivity {
 	private static final String HANDLER_MSG_OBJECT_TRANSFER_TABLE = "TRANSFERTABLE";
 	private static final String HANDLER_MSG_OBJECT_ITEM_QTY = "ITEM_QTY";
 	private static final String HANDLER_MSG_OBJECT_VOID_OR_FREE = "VOID_OR_FREE";
+
+	private static final String PAMENT_METHOD= "PAMENTMETHOD";
 
 	private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
 	private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
@@ -1205,6 +1208,10 @@ public class MainPageKiosk extends BaseActivity {
 			case VerifyDialog.DIALOG_RESPONSE:{
 				Map<String, Object> result = (Map<String, Object>) msg.obj;
 				User user = (User) result.get("User");
+
+
+				Toast.makeText(context,result.get("MsgObject")+"--- ",Toast.LENGTH_LONG).show();
+
 				if (result.get("MsgObject").equals(HANDLER_MSG_OBJECT_DISCOUNT)) {
 					Map<String, Object> map = (Map<String, Object>) result
 							.get("Object");
@@ -1215,7 +1222,21 @@ public class MainPageKiosk extends BaseActivity {
 					showDiscountWindow((Order) map.get("order"),
 							(OrderDetail) map.get("orderDetail"),
 							(ResultCall) map.get("resultCall"));
-				} else if (result.get("MsgObject").equals(
+				}else if(result.get("MsgObject").equals(
+						PAMENT_METHOD))
+				{
+					if(closeOrderWindow.isShowing()){
+						closeOrderWindow.setUser(user);
+						closeOrderWindow.openMoneyKeyboard(View.GONE,
+								10000);
+					} else if(closeOrderSplitWindow.isShowing()) {
+						closeOrderSplitWindow.setUser(user);
+						closeOrderSplitWindow.openMoneyKeyboard(View.GONE,
+								10000);
+					}
+				}
+
+				else if (result.get("MsgObject").equals(
 						HANDLER_MSG_OBJECT_BILL_ON_HOLD)) {
 					if (!verifyDialog.isShowing()) {
 						if(closeOrderWindow.isShowing()){

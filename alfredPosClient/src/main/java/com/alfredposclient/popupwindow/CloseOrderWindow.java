@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.VerifyDialog;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -172,7 +173,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
     //	private AlipayWebView web_alipay;
     private Button btn_void_all_closed;
     private String oldTotal;
-
+    VerifyDialog verifyDialog;
 
 
     private boolean isFirstClickCash = false;
@@ -1375,6 +1376,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     p1.setIsDiscount(1);
                     p1.setIsPart(0);
 
+                    p1.setIsAdmin(1);
+
                     pamentMethodlist.add(p1);
                     PamentMethod p2 = new PamentMethod();
                     p2.setId(2);
@@ -1384,6 +1387,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     p2.setIsTax(0);
                     p2.setIsDiscount(1);
                     p2.setIsPart(1);
+                    p2.setIsAdmin(1);
 
                     pamentMethodlist.add(p2);
                     PamentMethod p3 = new PamentMethod();
@@ -1394,7 +1398,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     p3.setIsTax(1);
                     p3.setIsDiscount(1);
                     p3.setIsPart(0);
+                    p3.setIsAdmin(1);
                     pamentMethodlist.add(p3);
+
                    mediaDialog = new MediaDialog(parent, handler,pamentMethodlist);
                     mediaDialog.setOtherClickListener(this);
                     break;
@@ -1744,6 +1750,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                 // show.append(0);
                 break;
             default:
+
+
                 break;
         }
 
@@ -2588,6 +2596,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 
 
 
+        if(p.getIsAdmin()==1)
+        {
+            verifyDialog = new VerifyDialog(parent, handler);
+					verifyDialog.show("PAMENTMETHOD",null);
+        }
+
+
         if(p.getIsDiscount()==1){
 
         }
@@ -2613,8 +2628,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
             contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                     View.VISIBLE);
             show.append(0);
-
-
             moneyKeyboard.setVisibility(View.VISIBLE);
             moneyKeyboard.setMoneyPanel(View.GONE);
             Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
@@ -2634,6 +2647,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
             animSet.playTogether(animator1, animator2);
             animSet.addListener(new AnimatorListenerImpl());
             animSet.start();
+
+
         }
     }
 }
