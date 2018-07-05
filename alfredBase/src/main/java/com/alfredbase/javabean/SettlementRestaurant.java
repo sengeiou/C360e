@@ -24,6 +24,16 @@ public class SettlementRestaurant implements Serializable {
 
     private Integer discriptionId;
 
+    private Integer otherPaymentId;
+
+    public Integer getOtherPaymentId() {
+        return otherPaymentId;
+    }
+
+    public void setOtherPaymentId(Integer otherPaymentId) {
+        this.otherPaymentId = otherPaymentId;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -86,5 +96,20 @@ public class SettlementRestaurant implements Serializable {
 
     public void setDiscriptionId(Integer discriptionId) {
         this.discriptionId = discriptionId;
+    }
+
+    @Override
+    public String toString() {
+        return "SettlementRestaurant{" +
+                "id=" + id +
+                ", restaurantId=" + restaurantId +
+                ", mediaId=" + mediaId +
+                ", adjustmentsId=" + adjustmentsId +
+                ", onlineServiceId=" + onlineServiceId +
+                ", type=" + type +
+                ", remarks='" + remarks + '\'' +
+                ", discriptionId=" + discriptionId +
+                ", otherPaymentId=" + otherPaymentId +
+                '}';
     }
 }

@@ -16,6 +16,8 @@ public class APIName {
 	public static final String LOGIN_LOGOUT = "login/logout";
 
 	public static final String SEND_EMAIL = "sendRealTimeReport/getDataSendEmail";
+
+	public static final String SETTLEMENT_GETOTHERPAYMENT = "settlement/getOtherPayment";
 	public static final String RESTAURANT_BINDDEVICEID = "restaurant/bindDeviceId";
 	public static final String RESTAURANT_DAYSALES_REPORT = "reportDaySales/getReportDaySales";
 	public static final String POSORDER_GETORDERBYQRCODE = "order/getOrderByQrcode";

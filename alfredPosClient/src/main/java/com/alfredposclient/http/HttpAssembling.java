@@ -84,7 +84,9 @@ public class HttpAssembling {
 		map.put("restaurantKey", loginResult.getRestaurantKey());
 		map.put("version", App.instance.VERSION );
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-
+		if(App.instance.isSUNMIShow()){
+			map.put("snCode", Build.SERIAL);
+		}
 		StringEntity entity = new StringEntity(gson.toJson(map));
 		return entity;
 	}

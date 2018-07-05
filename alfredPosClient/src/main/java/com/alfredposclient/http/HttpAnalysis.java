@@ -386,7 +386,8 @@ public class HttpAnalysis {
 					new TypeToken<ArrayList<PamentMethod>>() {
 					}.getType());
 			CoreData.getInstance().setPamentMethodList(pamentMethod);
-//			TaxCategorySQL.deleteAllTaxCategory();
+
+			TaxCategorySQL.deleteAllTaxCategory();
 //			TaxCategorySQL.addTaxCategorys(taxCategories);
 
 			List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurantList"),

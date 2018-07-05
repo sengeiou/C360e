@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
+import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -82,7 +83,10 @@ import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.OrderDetailAdapter;
 import com.alfredposclient.adapter.PamentMethodAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.http.HttpAPI;
+import com.alfredposclient.push.SendEmailThread;
 import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
 import com.alfredposclient.view.SettlementDetailItemView;
@@ -490,6 +494,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_stored_card));
 
+        textTypeFace.setTrajanProRegular((TextView) view
+                .findViewById(R.id.tv_other_media));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_delivery));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -1366,6 +1372,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     break;
 
                 case R.id.tv_other_media:
+
+                    SendEmailThread thread = new SendEmailThread();
+                    thread.start();
                     pamentMethodlist.clear();
                     PamentMethod p1 = new PamentMethod();
                     p1.setId(1);
@@ -1401,6 +1410,37 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     p3.setIsAdmin(1);
                     pamentMethodlist.add(p3);
 
+                    PamentMethod p4 = new PamentMethod();
+                    p4.setId(3);
+                    p4.setNameCh("优惠20元");
+                    p4.setIsMsgRequire(0);
+                    p4.setIsverify(1);
+                    p4.setIsTax(1);
+                    p4.setIsDiscount(1);
+                    p4.setIsPart(0);
+                    p4.setIsAdmin(1);
+                    pamentMethodlist.add(p4);
+                    PamentMethod p5 = new PamentMethod();
+                    p5.setId(3);
+                    p5.setNameCh("优惠20元");
+                    p5.setIsMsgRequire(0);
+                    p5.setIsverify(1);
+                    p5.setIsTax(1);
+                    p5.setIsDiscount(1);
+                    p5.setIsPart(0);
+                    p5.setIsAdmin(1);
+                    pamentMethodlist.add(p5);
+
+                    PamentMethod p6 = new PamentMethod();
+                    p6.setId(3);
+                    p6.setNameCh("优惠25元");
+                    p6.setIsMsgRequire(0);
+                    p6.setIsverify(1);
+                    p6.setIsTax(1);
+                    p6.setIsDiscount(1);
+                    p6.setIsPart(0);
+                    p6.setIsAdmin(1);
+                    pamentMethodlist.add(p6);
                    mediaDialog = new MediaDialog(parent, handler,pamentMethodlist);
                     mediaDialog.setOtherClickListener(this);
                     break;

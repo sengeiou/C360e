@@ -86,7 +86,6 @@ public class Order implements Serializable {
 	private Long updateTime;
 
 	private Long businessDate;
-
 	/**
 	 * 订单号
 	 */

@@ -58,6 +58,7 @@ public class DataHelper {
 				onUpgradeForOldVersion20(db);
 				onUpgradeForOldVersion21(db);
 				onUpgradeForOldVersionfor129(db);
+				onUpgradeFor0chen0dVersionfor(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1046,6 +1047,27 @@ public class DataHelper {
 					+ " ADD COLUMN isLablePrinter INTEGER default 0");
 		}
 
+
+		private void onUpgradeFor0chen0dVersionfor(SQLiteDatabase db){
+
+			db.execSQL("CREATE TABLE "
+					+ TableNames.PamentMethod
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, nameCh TEXT, nameEn TEXT, nameOt TEXT, logoMd TEXT, logoSm TEXT, payType INTEGER, restaurantId INTEGER, isTax INTEGER, isDiscount INTEGER, isAdmin INTEGER, isMsg INTEGER, isMsgRequire INTEGER, isPart INTEGER, partAcount DOUBLE, status INTEGER,description TEXT,updateTime LONG,updateTime LONG,updateTime LONG,paymentTypeId INTEGER)");
+
+
+			db.execSQL("CREATE TABLE "
+					+ TableNames.SettlementRestaurant
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT,  restaurantId INTEGER, mediaId INTEGER, adjustmentsId INTEGER, onlineServiceId INTEGER, type INTEGER, remarks TEXT, discriptionId INTEGER, otherPaymentId INTEGER)");
+
+
+
+			db.execSQL("CREATE TABLE "
+					+ TableNames.ReportDayPayment
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT,  daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId INTEGER, paymentName TEXT, paymentQty INTEGER, paymentAmount TEXT,createTime LONG,systemCreateTime LONG)");
+
+
+
+		}
 
 	}
 }

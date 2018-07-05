@@ -55,8 +55,8 @@ public class MediaDialog extends Dialog  {
 	private void init() {
 		final AlertDialog dlg = new AlertDialog.Builder(context).create();
 		dlg.show();
-		dlg.setCancelable(false);
-		dlg.setCanceledOnTouchOutside(true);
+		dlg.setCancelable(true);
+		dlg.setCanceledOnTouchOutside(false);
 
 		Window window = dlg.getWindow();
 		window.setContentView(R.layout.dialog_meadia_layout);

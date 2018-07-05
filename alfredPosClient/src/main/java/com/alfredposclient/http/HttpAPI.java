@@ -1936,4 +1936,7 @@ public class HttpAPI {
             }
         });
     }
+
+//    public static void mediaSync(Context context, String absoluteUrl, SyncHttpClient syncHttpClient, Handler handler) {
+//    }
 }

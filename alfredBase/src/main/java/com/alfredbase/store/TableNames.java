@@ -17,6 +17,9 @@ public class TableNames {
 //	public static final String Tables = "Tables_";
 	public static final String Tax = "Tax_";
 	public static final String TaxCategory = "TaxCategory_";
+	public static final String SettlementRestaurant = "SettlementRestaurant_";
+	public static final String ReportDayPayment = "ReportDayPayment_";
+	public static final String PamentMethod = "PamentMethod_";
 	public static final String User = "User_";
 	public static final String UserPermission = "UserPermission_";
 	public static final String UserRestaurant = "UserRestaurant_";

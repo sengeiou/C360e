@@ -117,8 +117,8 @@ public class SyncCentre {
 
 		//  pamentmethod
 
-		HttpAPI.mediaSync(context,
-				getAbsoluteUrl(APIName.SEND_EMAIL),httpClient,handler,MODE_FIRST_SYNC);
+//		HttpAPI.mediaSync(context,
+//				getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT),httpClient,handler,MODE_FIRST_SYNC);
 		HttpAPI.getItemCategory(context,
 				getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
 		HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
@@ -179,12 +179,14 @@ public class SyncCentre {
 
 
 
-//	public void syncMedia(Context context,
-//							 Handler handler) {
-//		//orderDataMsg
-//		HttpAPI.mediaSync(context,
-//				getAbsoluteUrl(APIName.SEND_EMAIL), syncHttpClient,handler);
-//	}
+	public void syncMedia(Context context,
+							 Handler handler) {
+		//orderDataMsg
+
+		HttpAPI.mediaSync(context,
+				getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT),bigSyncHttpClient,handler,MODE_FIRST_SYNC);
+
+	}
 	public void cloudSyncUploadOrderInfo( BaseActivity context,
 			SyncMsg syncMsg, Handler handler) {
 		//orderDataMsg
@@ -235,7 +237,7 @@ public class SyncCentre {
 
 		if (type.equals(PushMessage.PAYMENT_METHOD)) {
 			HttpAPI.mediaSync(context,
-					getAbsoluteUrl(APIName.SEND_EMAIL), syncHttpClient,handler,MODE_PUSH_SYNC);
+					getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), syncHttpClient,handler,MODE_PUSH_SYNC);
 		}
 		if (type.equals(PushMessage.HAPPY_HOURS)) {
 			HttpAPI.getHappyHour(context,
