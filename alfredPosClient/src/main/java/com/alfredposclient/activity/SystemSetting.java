@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -23,8 +21,6 @@ import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.ChangePasswordDialog;
-//import com.alfredbase.view.MyToggleButton;
-//import com.alfredbase.view.MyToggleButton.OnChangedListener;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
@@ -43,6 +39,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+//import com.alfredbase.view.MyToggleButton;
+//import com.alfredbase.view.MyToggleButton.OnChangedListener;
 
 public class SystemSetting extends BaseActivity implements OnClickListener,MyToggleButton.OnToggleStateChangeListeren{
 
@@ -104,7 +103,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
 		}
 		syncMap = App.instance.getPushMsgMap();
-		settings = new SystemSettings(context);
+		settings = App.instance.getSystemSettings();
 		loadingDialog = new LoadingDialog(context);
 		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
 		iv_sync_data = (ImageView) findViewById(R.id.iv_sync_data);

@@ -827,7 +827,7 @@ public class MainPage extends BaseActivity {
 
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
                     if (orderItems.size() > 0 && printer != null) {
-                        SystemSettings       settings = new SystemSettings(context);
+                        SystemSettings settings = App.instance.getSystemSettings();
                         if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
                         {
                             List<OrderDetail> placedOrderDetails
@@ -1979,7 +1979,7 @@ public class MainPage extends BaseActivity {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
 //                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
 //                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        SystemSettings       settings = new SystemSettings(context);
+                        SystemSettings settings = App.instance.getSystemSettings();
                         if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
                         {
 
