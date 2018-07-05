@@ -28,6 +28,7 @@ import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
+import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.global.ReportObjectFactoryCP;
 import com.alfredposclient.global.WebViewConfig;
 import com.alfredposclient.utils.AlertToDeviceSetting;
@@ -48,23 +49,23 @@ public class EntVoidReportHtml extends BaseActivity {
 	private ReportDaySales reportDaySales;
 	private List<ReportVoidItem> reportVoidItems;
 	private List<ReportEntItem> reportEntItems;
-	
+
 	private Map<String, Object> map = new HashMap<String, Object>();
 	private long businessDate;
     private BaseActivity context;
-    
+
     private int mode = 0; /* 0: void, 1:ent*/
 	private static final int TODAY_REPORT_CODE = 0;
 	private static final int YESTERDAY_REPORT_CODE = -1;
 	private static final int BEFORE_YESTERDAY_REPORT_CODE = -2;
 	public final static String ENT_PLU_REPORT = "ENT PLU";
 	public final static String VOID_PLU_REPORT = "VOID PLU";
-	
+
 	public final static int FROM_ENT_TAP = 10;
 	public final static int FROM_VOID_TAP = 20;
-	
+
 	private int functionMode = 10;
-	
+
 	@Override
 	protected void initView() {
 		super.initView();
@@ -92,7 +93,7 @@ public class EntVoidReportHtml extends BaseActivity {
 
 		businessDate = App.instance.getLastBusinessDate();
 		functionMode = this.getIntent().getIntExtra("from", 10);
-		
+
 		web = (WebView) findViewById(R.id.web);
 		WebViewConfig.setDefaultConfig(web);
 		javaConnectJS = new JavaConnectJS() {
@@ -139,7 +140,7 @@ public class EntVoidReportHtml extends BaseActivity {
 				   web.loadUrl(WebViewConfig.ROOT_DIRECTORY + "entVoid.html");
 				else
 				   web.loadUrl(WebViewConfig.ROOT_DIRECTORY + "voidEnt.html");
-			
+
 		}
 	}
 
@@ -175,10 +176,10 @@ public class EntVoidReportHtml extends BaseActivity {
 				EntVoidReportHtml.this.finish();
 				break;
 			case JavaConnectJS.ACTION_CLICK_PRINT:
-				if (reportDaySales != null) {	
+				if (reportDaySales != null) {
 					sendPrintData(0);
 				} else {
-					DialogFactory.alertDialog(EntVoidReportHtml.this, context.getResources().getString(R.string.warning), 
+					DialogFactory.alertDialog(EntVoidReportHtml.this, context.getResources().getString(R.string.warning),
 							context.getResources().getString(R.string.no_sales_print));
 				}
 				break;
@@ -197,10 +198,10 @@ public class EntVoidReportHtml extends BaseActivity {
 		Gson gson = new Gson();
 
 
-		this.reportEntItems = ReportObjectFactoryCP.getInstance().loadReportEntItem(businessDate);
-		this.reportVoidItems = ReportObjectFactoryCP.getInstance().loadReportVoidItem(businessDate);
-		this.reportDaySales = ReportObjectFactoryCP.getInstance().loadReportDaySales(businessDate, false);
-			
+		this.reportEntItems = ReportObjectFactory.getInstance().loadReportEntItem(businessDate);
+		this.reportVoidItems = ReportObjectFactory.getInstance().loadReportVoidItem(businessDate);
+		this.reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(businessDate);
+
 		if (reportDaySales != null) {
 			map.put("total", String.valueOf(BH.add(BH.getBD(reportDaySales.getItemVoid()),
 													BH.getBD(reportDaySales.getBillVoid()), true)));
@@ -215,12 +216,12 @@ public class EntVoidReportHtml extends BaseActivity {
 			map.put("plu", null);
 			map.put("bizDate", TimeUtil.getPrintingDate(businessDate));
 		}
-		
+
 	    String str = gson.toJson(map);
 		LogUtil.d(TAG, str);
 		return JSONUtil.getJSONFromEncode(str);
 	}
-	
+
 //	private void getDataSync() {
 //		reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(
 //				businessDate);

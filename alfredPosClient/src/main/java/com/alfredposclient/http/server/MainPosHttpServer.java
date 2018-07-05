@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.alfredbase.APPConfig;
+import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -716,6 +717,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				return handlerPrintBill(body);
 			} else if (apiName.equals(APIName.CALL_SPECIFY_THE_NUMBER)){
 				return handlerCallSpecifyNumber(body);
+			} else if (apiName.equals(APIName.UNSEAT_TABLE)){
+				return handlerWaiterUnseatTable(body);
 			} else {
 				return this.getNotFoundResponse();
 			}
@@ -2152,5 +2155,72 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 		return resp;
 	}
-	
+
+	private Response handlerWaiterVoidItem(String params){
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		Gson gson = new Gson();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
+
+
+	private Response handlerWaiterUnseatTable(String params){
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int tableId = jsonObject.getInt("tableId");
+			TableInfo tableInfo = TableInfoSQL.getTableById(tableId);
+			if(tableInfo != null && tableInfo.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE){
+				Order order = OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), App.instance.getBusinessDate());
+				int placeOrderCount = OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(order);
+				if(placeOrderCount > 0) {
+					result.put("resultCode",ResultCode.CONNOT_UNSEAT_TABLE);
+					return this.getJsonResponse(new Gson().toJson(result));
+				}else{
+					OrderDetailSQL.deleteOrderDetailByOrder(order);
+					KotSummarySQL.deleteKotSummaryByOrder(order);
+					OrderBillSQL.deleteOrderBillByOrder(order);
+					OrderSQL.deleteOrder(order);
+					tableInfo.setStatus(ParamConst.TABLE_STATUS_IDLE);
+					TableInfoSQL.updateTables(tableInfo);
+					BaseActivity activity = App.getTopActivity();
+					if(activity instanceof MainPage){
+
+					}
+					try {
+						JSONObject jsonObject1= new JSONObject();
+						jsonObject1.put("tableId", tableInfo.getPosId().intValue());
+						jsonObject1.put("status", ParamConst.TABLE_STATUS_IDLE);
+						jsonObject1.put("RX", RxBus.RX_REFRESH_TABLE);
+						TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+						TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+
+			}else{
+				result.put("resultCode",ResultCode.CONNOT_UNSEAT_TABLE);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
 }

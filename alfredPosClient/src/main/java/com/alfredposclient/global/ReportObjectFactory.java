@@ -1541,6 +1541,45 @@ public class ReportObjectFactory {
 		return  reportHourlyList;
 	}
 
+	public ArrayList<ReportDayTax> loadShowReportDayTax(long businessDate) {
+		ArrayList<ReportDayTax> reportDayTaxs = new ArrayList<ReportDayTax>();
+		ReportDayTax reportDayTax = null;
+		Map<String, Object> map = OrderDetailTaxSQL
+				.getTaxDetail(businessDate);
+		ArrayList<String> taxPriceSum = null;
+		ArrayList<String> taxNames = null;
+		ArrayList<String> taxPercentages = null;
+		ArrayList<Integer> taxIds = null;
+		ArrayList<Integer> taxCounts = null;
+		if (map != null) {
+			taxPriceSum = (ArrayList<String>) map.get("taxPriceSum");
+			taxNames = (ArrayList<String>) map.get("taxNames");
+			taxPercentages = (ArrayList<String>) map.get("taxPercentages");
+			taxIds = (ArrayList<Integer>) map.get("taxIds");
+			taxCounts = (ArrayList<Integer>) map.get("taxCounts");
+		}
+		if (taxPriceSum != null && taxNames != null
+				&& taxPercentages != null && taxIds != null
+				&& taxCounts != null) {
+			for (int i = 0; i < taxCounts.size(); i++) {
+				reportDayTax = new ReportDayTax();
+				reportDayTax.setRestaurantId(restaurant.getId());
+				reportDayTax.setRestaurantName(restaurant
+						.getRestaurantName());
+				reportDayTax.setRevenueId(revenueCenter.getId());
+				reportDayTax.setRevenueName(revenueCenter.getRevName());
+				reportDayTax.setBusinessDate(businessDate);
+				reportDayTax.setTaxId(taxIds.get(i));
+				reportDayTax.setTaxName(taxNames.get(i));
+				reportDayTax.setTaxPercentage(taxPercentages.get(i));
+				reportDayTax.setTaxQty(taxCounts.get(i));
+				reportDayTax.setTaxAmount(BH.getBD(taxPriceSum.get(i)).toString());
+				reportDayTaxs.add(reportDayTax);
+			}
+		}
+		return reportDayTaxs;
+	}
+
 
 	public ArrayList<ReportHourly> loadReportHourlys(long businessDate) {
 		ArrayList<ReportHourly> reportHourlys = new ArrayList<ReportHourly>();
@@ -3083,7 +3122,7 @@ public class ReportObjectFactory {
 			dashboard.setBusinessDateStr(businessDate);
 
 			ReportDaySales reportDaySales = ReportDaySalesSQL
-											.getReportDaySalesByTime(businessDate);
+											.getReportDaySalesForZReport(businessDate);
 			if (reportDaySales != null) {
 				dashboard.setTotalTax(reportDaySales.getTotalTax());
 				dashboard.setTotalDiscount(reportDaySales.getDiscountAmt());

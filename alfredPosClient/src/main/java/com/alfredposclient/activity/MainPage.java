@@ -139,6 +139,7 @@ public class MainPage extends BaseActivity {
 
 	public static final int CHECK_REQUEST_CODE = 98;
 	
+	public static final int REFRESH_UNSEAT_TABLE_VIEW = 97;
 	public static final int REFRESH_ORDER_STATUS = 101;
 	public static final int REFRESH_TABLES_STATUS = 102;
 	public static final int VIEW_EVENT_DISMISS_TABLES = 103;
@@ -965,6 +966,13 @@ public class MainPage extends BaseActivity {
 				if(mainPageMenuView.isModifierOpen()){
 					mainPageMenuView.closeModifiers();
 				}
+				break;
+			case REFRESH_UNSEAT_TABLE_VIEW:{
+				activityRequestCode = 0;
+				tableShowAction = SHOW_TABLES;
+				currentOrder = null;
+				showTables();
+			}
 				break;
 			case DISMISS_SOFT_INPUT:
 				dismissSoftInput();
@@ -2293,26 +2301,42 @@ public class MainPage extends BaseActivity {
 //	};
 
 	public void httpRequestAction(int action, Object obj) {
-		switch (action) {
-		case VIEW_EVENT_SET_DATA:
-			int orderId = (Integer) obj;
-			if (currentOrder != null && orderId == currentOrder.getId()) {
-				handler.sendMessage(handler.obtainMessage(action));
+		try {
+			switch (action) {
+				case VIEW_EVENT_SET_DATA: {
+					int orderId = (Integer) obj;
+					if (currentOrder != null && orderId == currentOrder.getId()) {
+						handler.sendMessage(handler.obtainMessage(action));
+					}
+				}
+					break;
+				case REFRESH_TABLES_STATUS:
+					handler.sendEmptyMessage(REFRESH_TABLES_STATUS);
+					break;
+				case VIEW_EVNT_GET_BILL_PRINT: {
+					TableInfo tables = (TableInfo) obj;
+					handler.sendMessage(handler.obtainMessage(VIEW_EVNT_GET_BILL_PRINT,
+							tables));
+				}
+				break;
+				case REFRESH_ORDER_STATUS:
+					break;
+				case REFRESH_UNSEAT_TABLE_VIEW: {
+					if(f_tables.isHidden()){
+						int orderId = (Integer) obj;
+						if (currentOrder != null && orderId == currentOrder.getId()) {
+							handler.sendEmptyMessage(REFRESH_UNSEAT_TABLE_VIEW);
+						}
+					}else{
+						handler.sendEmptyMessage(REFRESH_TABLES_STATUS);
+					}
+				}
+					break;
+				default:
+					break;
 			}
-			break;
-		case REFRESH_TABLES_STATUS:
-			handler.sendEmptyMessage(REFRESH_TABLES_STATUS);
-			break;
-		case VIEW_EVNT_GET_BILL_PRINT: {
-			TableInfo tables = (TableInfo) obj;
-			handler.sendMessage(handler.obtainMessage(VIEW_EVNT_GET_BILL_PRINT,
-					tables));
-		}
-			break;
-		case REFRESH_ORDER_STATUS:
-			break;
-		default:
-			break;
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 

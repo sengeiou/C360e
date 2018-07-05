@@ -204,6 +204,8 @@ public class ResultCode {
 	 */
 	public static final int ORDER_SPLIT_IS_SETTLED = -1998;
 
+	public static final int CONNOT_UNSEAT_TABLE = -1997;
+
 	/*
 	 * POS to KDS response Error
 	 * */

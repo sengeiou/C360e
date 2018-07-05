@@ -358,7 +358,7 @@
     <string name="order_first">Can not apply discount!</string>
     <string name="no_cashier_printer">No Cashier Printer yet</string>
     <string name="discard_current_order">Are you sure to discard current order?</string>
-    <string name="unseat_table">Are you sure to unseat this table?</string>
+    <string name="unseat_table">Are you sure to unseat table?\nVoid items will not be recorded into reports.</string>
     <string name="cannot_unseat">Cannot unseat this table. \nSome menu has been ordered.</string>
     <string name="printer_thermal_type">80mm Thermal Printer</string>
     <string name="printer_dotmatrix_type">80mm Dot Matrix Printer</string>
