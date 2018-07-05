@@ -1243,6 +1243,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		PrinterTitle printerTitle = new PrinterTitle();
 		Restaurant restaurant = RestaurantSQL.getRestaurant();
 		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
+		printerTitle.setRevName(revenue.getRevName());
 		printerTitle.setAddressDetail(restaurant.getAddressPrint());
 		printerTitle.setTel(restaurant.getTelNo());
 		printerTitle.setEmail(restaurant.getEmail());
@@ -1275,6 +1276,8 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		PrinterTitle printerTitle = new PrinterTitle();
 		Restaurant restaurant = RestaurantSQL.getRestaurant();
 		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
+
+		printerTitle.setRevName(revenue.getRevName());
 		printerTitle.setAddressDetail(restaurant.getAddressPrint());
 		printerTitle.setTel(restaurant.getTelNo());
 		printerTitle.setEmail(restaurant.getEmail());

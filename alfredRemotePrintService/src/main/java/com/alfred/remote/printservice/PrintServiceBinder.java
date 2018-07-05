@@ -48,6 +48,7 @@ import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrintReceiptInfo;
@@ -56,6 +57,7 @@ import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
@@ -75,6 +77,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1059,10 +1062,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void listPrinters() {
-        if(service.registerReceiverBluetooth()) {
+        if (service.registerReceiverBluetooth()) {
             service.SearchBluetooth();
         }
-     final Gson gson = new Gson();
+        final Gson gson = new Gson();
 //        Log.e("PrintServiceBinder", " -----1054 listPrinters-----" );
 //        if (scheduler == null) {
 //            scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -1094,7 +1097,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //        }
 
 //        try {
-//            Finder.start(this.service.getBaseContext(), DevType.TCP, "255.255.255.255");
+           // Finder.start(this.service.getBaseContext(), DevType.TCP, "255.255.255.255");
 //        } catch (EpsonIoException e1) {
 //            e1.printStackTrace();
 //        }
@@ -1106,18 +1109,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         try {
 
             Discovery.start(App.instance, mFilterOption, mDiscoveryListener);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //    ShowMsg.showException(e, "start", mContext);
 //                    e.printStackTrace();
         }
 //					//开始搜索蓝牙设备
 //					//
 
-        Log.e("PrintServiceBinder", " -----start-----" );
+        Log.e("PrintServiceBinder", " -----start-----");
 
         //网络打印机
-        Log.e("PrintServiceBinder", " -----devices-----" );
+        Log.e("PrintServiceBinder", " -----devices-----");
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 //
         ////
@@ -1137,7 +1139,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 
             if (innerprinter_device != null) {
-                Log.d("PrintServiceBinder", " ----- deviceList.add-----" );
+                Log.d("PrintServiceBinder", " ----- deviceList.add-----");
                 ret.put("127.0.0.1", "Local Print");
 
             }
@@ -1155,7 +1157,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 }
             }
         }
-
 
 
 //        //start thread
@@ -1267,7 +1268,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
 
-    public void closeDiscovery(){
+    public void closeDiscovery() {
         try {
             Discovery.stop();
         } catch (Epos2Exception e) {
@@ -1304,6 +1305,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         }
     };
+
     private String getPrinterName(String textIp) {
         if ("127.0.0.1".equals(textIp)) {
             return "Local Print";
@@ -2482,39 +2484,74 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
     }
 
-    @Override
-    public void printTscBill(String printer, String title, String order, String orderdetail) throws RemoteException {
+
+    public void printTscBill(String printer, String title, String order, String orderdetail, String modifiers,String currencySymbol) throws RemoteException {
         String name;
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
-        PrinterTitle prtitle=gson.fromJson(title, PrinterTitle.class);
-        Order prorder=gson.fromJson(order, Order.class);
+        PrinterTitle prtitle = gson.fromJson(title, PrinterTitle.class);
+        Order prorder = gson.fromJson(order, Order.class);
         ArrayList<OrderDetail> prOrderDetail = gson.fromJson(orderdetail,
                 new TypeToken<ArrayList<OrderDetail>>() {
                 }.getType());
-
+        ArrayList<PrintOrderModifier> orderModifiers = gson.fromJson(modifiers,
+                new TypeToken<ArrayList<PrintOrderModifier>>() {
+                }.getType());
 
         PrintManager printMgr = this.service.getPrintMgr();
         JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
         PrinterQueueManager pqMgr = this.service.getPqMgr();
         Log.d(TAG, "setIsLablePrinter--:" + printer);
 
-        name=prtitle.getRestaurantName();
+        name = prtitle.getRestaurantName();
 
-        if(TextUtils.isEmpty(name))
-        {
-         name=""   ;
+        if (TextUtils.isEmpty(name)) {
+            name = "AAA";
         }
         String uuid = pqMgr.getDataUUID(prtitle.getBill_NO());
         BillTscPrint b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()));
-        for(int i=0;i<prOrderDetail.size();i++)
-        {
 
+        List<OrderDetail> lableOrderDetail = new ArrayList<OrderDetail>();
+
+        for (int i = 0; i < prOrderDetail.size(); i++) {
+
+
+            if (prOrderDetail.get(i).getItemNum() > 1) {
+                String price=  BH.getBD(Double.parseDouble(prOrderDetail.get(i).getRealPrice())/prOrderDetail.get(i).getItemNum()+"").toString();
+                for (Integer j = 0; j < prOrderDetail.get(i).getItemNum(); j++) {
+                    prOrderDetail.get(i).setRealPrice(price);
+                    lableOrderDetail.add(prOrderDetail.get(i));
+                }
+            } else {
+                lableOrderDetail.add(prOrderDetail.get(i));
+            }
+        }
+        StringBuilder modbuf = new StringBuilder();
+
+
+        for (int i = 0; i < lableOrderDetail.size(); i++) {
             b.setPrinterIp(prtDevice.getIP());
             b.setIsLablePrinter(prtDevice.getIsLablePrinter());
+            modbuf.setLength(0);
+            if (orderModifiers != null) {
+                for (int m = 0; m < orderModifiers.size(); m++) {
+                    PrintOrderModifier om = orderModifiers.get(m);
+                    if (om.getOrderDetailId() == lableOrderDetail.get(i).getId()) {
+//                        if (om.getQty() > 1) {
+                           modbuf.append(om.getItemName()+""+currencySymbol+  BH.getBD(om.getPrice()).toString()+"/");
+                        //    billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+//                        } else {
+//                         //   billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+//                        }
+
+                       // App.instance.getLocalRestaurantConfig().getCurrencySymbol()
+                    }
+                }
+            }
+
             b.AddRestaurantInfo(null,
-                    name,
-                    " No."+prtitle.getOrderNo(), i,prOrderDetail.size()+"",prOrderDetail.get(i).getItemName(),"",true);
+                  prtitle.getRevName(),
+                    prtitle.getOrderNo(), i, lableOrderDetail.size() + "", lableOrderDetail.get(i).getItemName()+"", modbuf.toString(),lableOrderDetail.get(i).getRealPrice() ,true);
 
         }
         pqMgr.queuePrint(b.getJobForQueue());

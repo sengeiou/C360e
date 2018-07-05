@@ -196,6 +196,7 @@ public class App extends BaseApplication {
     private Map<Integer, WaiterDevice> waiterDevices = new ConcurrentHashMap<Integer, WaiterDevice>();
 
 
+
     // push message
     public Map<String, Integer> pushMsgMap = new HashMap<String, Integer>();
 
@@ -1459,17 +1460,40 @@ public class App extends BaseApplication {
         return this.printerDevices;
     }
 
+    public  List<PrinterDevice> getPrinterLable() {
+        // PrinterDevice dummy = new PrinterDevice();
+        // dummy.setIP("192.168.0.11");
+        // return dummy;
+        List<PrinterDevice> printlist=new ArrayList<PrinterDevice>();
+        for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
+            Integer key = dev.getKey();
+            PrinterDevice devPrinter = dev.getValue();
+            if (devPrinter.getIP().indexOf(":") != -1)
+            {
+             printlist.add(devPrinter);
+            }
+        }
+
+
+        return printlist;
+    }
+
     public PrinterDevice getCahierPrinter() {
         // PrinterDevice dummy = new PrinterDevice();
         // dummy.setIP("192.168.0.11");
         // return dummy;
-
         for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
             Integer key = dev.getKey();
             PrinterDevice devPrinter = dev.getValue();
             if (devPrinter.getIsCahierPrinter() > 0)
+
+            {
                 return devPrinter;
+            }
+
         }
+
+
         return null;
     }
 
@@ -1662,7 +1686,7 @@ public class App extends BaseApplication {
 //    PrinterTitle title,
 //    Order order, ArrayList<PrintOrderItem> orderItems,
     public void remoteTBillPrint(PrinterDevice printer,PrinterTitle title,
-                                 Order order, ArrayList<OrderDetail> OrderDetail
+                                 Order order, ArrayList<OrderDetail> OrderDetail, ArrayList<PrintOrderModifier> orderModifiers
                            ) {
 
        // remoteTBillPrint(printer);
@@ -1673,6 +1697,7 @@ public class App extends BaseApplication {
 
         String orderStr = gson.toJson(order);
         String orderDetailStr = gson.toJson(OrderDetail);
+        String orderModifiersStr = gson.toJson(orderModifiers);
 
         if (mRemoteService == null) {
             printerDialog();
@@ -1680,7 +1705,7 @@ public class App extends BaseApplication {
         }
         try {
           //  mRemoteService.printTscBill("","","","");
-            mRemoteService.printTscBill(prtStr,titleStr,orderStr,orderDetailStr);
+            mRemoteService.printTscBill(prtStr,titleStr,orderStr,orderDetailStr,orderModifiersStr, getLocalRestaurantConfig().getCurrencySymbol());
         } catch (RemoteException e) {
             e.printStackTrace();
         }

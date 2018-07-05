@@ -301,7 +301,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
         contentView.findViewById(R.id.iv_AMERICAN).setOnClickListener(this);
         contentView.findViewById(R.id.iv_dinersclub).setOnClickListener(this);
 
-        contentView.findViewById(R.id.btn_media).setOnClickListener(this);
+       // contentView.findViewById(R.id.btn_media).setOnClickListener(this);
         contentView.findViewById(R.id.tv_BILL_on_HOLD).setOnClickListener(this);
         contentView.findViewById(R.id.tv_VOID).setOnClickListener(this);
         contentView.findViewById(R.id.tv_ENTERTAINMENT)
@@ -477,8 +477,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_media));
 
-        textTypeFace.setTrajanProRegular((TextView) view
-                .findViewById(R.id.btn_media));
+//        textTypeFace.setTrajanProRegular((TextView) view
+//                .findViewById(R.id.btn_media));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_adjustment));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -1365,7 +1365,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
                     openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL);
                     break;
 
-                case R.id.btn_media:
+          //      case R.id.btn_media:
 //                    pamentMethodlist.clear();
 //                    PamentMethod p1 = new PamentMethod();
 //                    p1.setId(1);
@@ -1390,7 +1390,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener 
 //
 //
 //                   mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
-                    break;
+               //     break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
                         return;

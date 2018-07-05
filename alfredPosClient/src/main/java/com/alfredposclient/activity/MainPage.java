@@ -832,10 +832,10 @@ public class MainPage extends BaseActivity {
                         {
                             List<OrderDetail> placedOrderDetails
                                     = OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
-                            App.instance.remoteTBillPrint(printer,title,paidOrder, (ArrayList<OrderDetail>) placedOrderDetails);
+                            App.instance.remoteTBillPrint(printer,title,paidOrder, (ArrayList<OrderDetail>) placedOrderDetails,orderModifiers);
                         }else {
 
-                            if(App.instance.isRevenueKiosk()){
+                            if(!App.instance.isRevenueKiosk()){
                                 App.instance.remoteBillPrint(printer, title, paidOrder,
                                         orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
                             }else {
@@ -956,20 +956,49 @@ public class MainPage extends BaseActivity {
                     temporaryOrder.setTotal(paidOrderSplit.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+
+
+                    List<PrinterDevice> printerList=App.instance.getPrinterLable();
+                    if(printerList.size()>0){
+                        for (int i = 0; i < printerList.size(); i++) {
+                            PrinterDevice printers = printerList.get(i);
+                            if (App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isPrintLable() && printers.getIsLablePrinter() == 1 ) {
+
+
+                                App.instance.remoteTBillPrint(printers, title, temporaryOrder, (ArrayList<OrderDetail>) orderSplitDetails,orderModifiers);
+//						}
+                            }
+                        }
+                    }
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
 //                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
 //                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        SystemSettings       settings = new SystemSettings(context);
-                        if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
+
+                        if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
                         {
-                            List<OrderDetail> placedOrderDetails
-                                    = OrderDetailSQL.getOrderDetailsForPrint(temporaryOrder.getId());
-                            App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails);
+
                         }else {
-                            App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                            if(!App.instance.isRevenueKiosk()) {
+                                App.instance.remoteBillPrint(printer, title, temporaryOrder,
+                                        orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                            }else {
+                                if(printer.getIsLablePrinter()==0){
+                                    App.instance.remoteBillPrint(printer, title, temporaryOrder,
+                                            orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                }
+                            }
                         }
+
+//                        if(App.instance.isRevenueKiosk()&&App.instance.getSystemSettings().isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
+//                        {
+//                            List<OrderDetail> placedOrderDetails
+//                                    = OrderDetailSQL.getOrderDetailsForPrint(temporaryOrder.getId());
+//                            App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails,orderModifiers);
+//                        }else {
+//                            App.instance.remoteBillPrint(printer, title, temporaryOrder,
+//                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+//                        }
 
                     }
                     // remove get bill notification
@@ -1960,7 +1989,7 @@ public class MainPage extends BaseActivity {
                             printerLoadingDialog.showByTime(3000);
                             List<OrderDetail> placedOrderDetails
                                     = OrderDetailSQL.getOrderDetailsForPrint(temporaryOrder.getId());
-                            App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails);
+                            App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails,orderModifiers);
                         }else {
                             PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
                                     context);
