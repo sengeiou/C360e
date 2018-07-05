@@ -66,4 +66,6 @@
     <string name="has_new_version">Found a new version</string>
     <string name="update">Update</string>
     <string name="next">Next Time</string>
+
+    <string name="change"> Change:</string>
 </resources>

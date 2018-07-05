@@ -18,8 +18,8 @@ public class LocalDeviceSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.LocalDevice
-					+ "(id, deviceId, deviceName, userName, deviceType, ip, macAddress, connected, cashierPrinter,deviceMode, printerName)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id, deviceId, deviceName, userName, deviceType, ip, macAddress, connected, cashierPrinter,deviceMode, printerName,isLablePrinter)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] {localDevice.getId(),
@@ -31,7 +31,9 @@ public class LocalDeviceSQL {
 							localDevice.getConnected(),
 							localDevice.getCashierPrinter(),
 							localDevice.getDeviceMode(),
-							localDevice.getPrinterName()});
+							localDevice.getPrinterName(),
+							localDevice.getIsLablePrinter()
+					});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -105,6 +107,7 @@ public class LocalDeviceSQL {
 				localDevice.setCashierPrinter(cursor.getInt(8));
 				localDevice.setDeviceMode(cursor.getString(9));
 				localDevice.setPrinterName(cursor.getString(10));
+				localDevice.setIsLablePrinter(cursor.getInt(11));
 				result.add(localDevice);
 			}
 		} catch (Exception e) {
@@ -144,6 +147,7 @@ public class LocalDeviceSQL {
 				localDevice.setCashierPrinter(cursor.getInt(8));
 				localDevice.setDeviceMode(cursor.getString(9));
 				localDevice.setPrinterName(cursor.getString(10));
+				localDevice.setIsLablePrinter(cursor.getInt(11));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -86,7 +86,7 @@ public class PrinterQueueManager {
     public void stop(){
     	if (scheduler!= null) 
     		scheduler.shutdown();
-    	clearSuccessedJob();
+    	    clearSuccessedJob();
     }
     public void queuePrint(PrintQueueMsg msg) {
         if (msg != null) {

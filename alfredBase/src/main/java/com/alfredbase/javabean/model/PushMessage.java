@@ -28,6 +28,8 @@ public class PushMessage {
 	public final static String THIRDPARTYPAY_RESULT = "thirdpartyPay_result";
 
 	public final static String RE_SYNC_DATA_BY_BUSINESS_DATE = "RE_SYNC_DATA_BY_BUSINESS_DATE";
+
+	public final static String REAL_TIME_REPORT = "real_time_report";
 	
 	public final static int MESSAGE_TYPE_HEART_BEAT = -2;
 	public final static int MESSAGE_TYPE_REGISTER = 0;
@@ -40,6 +42,16 @@ public class PushMessage {
 	private Integer revenueId;
 	private String content; // json 数据
 	private String businessStr;
+
+	public Long getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(Long sendTime) {
+		this.sendTime = sendTime;
+	}
+
+	private Long  sendTime;
 
 
 	public PushMessage() {

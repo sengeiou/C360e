@@ -29,6 +29,16 @@ public class Printer implements Serializable{
     /* 0为打印机组 1为打印设备*/
     private Integer type;
 
+    public Integer getIsLablePrinter() {
+        return isLablePrinter;
+    }
+
+    public void setIsLablePrinter(Integer isLablePrinter) {
+        this.isLablePrinter = isLablePrinter;
+    }
+    /* 0票据 1标签*/
+    private Integer isLablePrinter;
+
     private Long createTime;
 
     private Long updateTime;

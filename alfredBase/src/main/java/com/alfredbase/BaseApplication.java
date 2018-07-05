@@ -1,5 +1,6 @@
 package com.alfredbase;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,8 +17,12 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
@@ -60,6 +66,10 @@ public class BaseApplication extends Application {
 	public static int UDP_INDEX_EMENU = 100;
 	private Handler reLoginHandler = new Handler();
 	public static Handler postHandler = new Handler();
+
+	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+
+	public static final int REQUEST_ENABLE_BT = 1;  //请求的code
 	/**
 	 * 国家电话代码
 	 * 用于区别不同国家的代码逻辑
@@ -139,8 +149,37 @@ public class BaseApplication extends Application {
 
 		System.out.println("fingerprint*******" + fingerprint);
 		System.out.println("serial*******" + serial);
+
+
+//		if (Build.VERSION.SDK_INT >= 23) {
+//			//校验是否已具有模糊定位权限
+//			if (ContextCompat.checkSelfPermission(BaseApplication.this,
+//					Manifest.permission.ACCESS_COARSE_LOCATION)
+//					!= PackageManager.PERMISSION_GRANTED) {
+//				ActivityCompat.requestPermissions(BaseApplication.this,
+//						new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+//						REQUEST_ENABLE_BT );
+//			}else{//权限已打开
+//				//  startScan();
+//			}
+//		}else{//小于23版本直接使用
+//			// startScan();
+//		}
 	}
 
+
+//	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//		if (requestCode == REQUEST_ENABLE_BT){
+//			if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {//蓝牙权限开启成功
+//				//startScan();
+//
+//				Toast.makeText(BaseApplication.this, "蓝牙权限已开启,请设置", Toast.LENGTH_SHORT).show();
+//			}else{
+//				Toast.makeText(BaseApplication.this, "蓝牙权限未开启,请设置", Toast.LENGTH_SHORT).show();
+//			}
+//		}
+//		instance.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//	}
 
 	public void startUDPService(int index, String serviceName , UdpServiceCallBack udpServiceCallBack){
 		TcpUdpFactory.startUdpServer(index, serviceName, udpServiceCallBack);

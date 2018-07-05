@@ -27,7 +27,9 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -53,6 +55,7 @@ import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
+import com.alfredposclient.push.SendEmailThread;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -279,7 +282,27 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				parent.openCustomNoteView();
 				break;
 			case R.id.tv_cash_close:
-				cashPay();
+
+//				Order placedOrder = OrderSQL.getOrder(order.getId());
+//				List<OrderDetail> placedOrderDetails
+//						= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
+//
+//				PrinterTitle title = ObjectFactory.getInstance()
+//						.getPrinterTitle(
+//								App.instance.getRevenueCenter(),
+//								placedOrder,
+//								App.instance.getUser().getFirstName()
+//										+ App.instance.getUser()
+//										.getLastName(),
+//								"can", 1);
+//			PrinterDevice printer = App.instance.getCahierPrinter();
+//				App.instance.remoteTBillPrint(printer,title,placedOrder, (ArrayList<OrderDetail>) placedOrderDetails);
+
+
+//				SendEmailThread thread=new SendEmailThread();
+//				thread.start();
+
+               cashPay();
 				break;
 			default:
 				break;

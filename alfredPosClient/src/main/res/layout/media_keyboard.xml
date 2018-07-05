@@ -125,17 +125,28 @@
             android:src="@drawable/diners_selector"
             />
 
-        <ImageView
+
+        <TextView
+            android:id="@+id/btn_media"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/alipay_selector" 
-            android:visibility="invisible"/>
+
+            android:background="@drawable/box_number_selector"
+            android:text="OTHER"
+            />
+
+        <!--<ImageView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:scaleType="centerInside"-->
+            <!--android:src="@drawable/alipay_selector" -->
+            <!--android:visibility="invisible"/>-->
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"

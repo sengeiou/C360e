@@ -11,12 +11,14 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -132,8 +134,42 @@ public class KotJobManager {
 				}
 				if(prntd != null){
 					prntd.setGroupId(prgid.intValue());
-					boolean printed = App.instance.remoteKotPrint(prntd,
-							kotSummary, kots.get(prgid), mods.get(prgid), false);
+
+					boolean printed = false;
+
+					if(prntd.getIP().indexOf(":") != -1){
+
+
+//					if(App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isPrintLable()&&prntd.getIsLablePrinter()==1)
+//					{
+//							PrinterTitle title = (PrinterTitle) orderMap
+//							.get("title");
+//						Order order = (Order) orderMap
+//							.get("paidOrder");
+//						ArrayList<OrderDetail> OrderDetail = (ArrayList<OrderDetail>) orderMap
+//								.get("placedOrderDetails");
+//
+//					App.instance.remoteTBillPrint(prntd,
+//								title, order, OrderDetail);
+//					printed=true;
+//					}
+					}
+					if(App.instance.isRevenueKiosk()) {
+						if (prntd.getIsLablePrinter() != 1) {
+
+
+							if ( App.instance.getSystemSettings().isPrintBill()) {
+								printed = App.instance.remoteKotPrint(prntd,
+										kotSummary, kots.get(prgid), mods.get(prgid), false);
+							}
+						}
+					}else {
+						printed = App.instance.remoteKotPrint(prntd,
+								kotSummary, kots.get(prgid), mods.get(prgid), false);
+					}
+
+
+
 					if (printed) {
 						List<Integer> orderDetailIds = (List<Integer>) orderMap
 								.get("orderDetailIds");
@@ -239,8 +275,11 @@ public class KotJobManager {
 				}
 				if(prntd != null){
 					prntd.setGroupId(prgid.intValue());
-					boolean printed = App.instance.remoteKotPrint(prntd,
-							kotSummary, kots.get(prgid), mods.get(prgid), true);
+
+
+				boolean		printed = App.instance.remoteKotPrint(prntd,
+								kotSummary, kots.get(prgid), mods.get(prgid), true);
+
 					if (printed) {
 						List<Integer> orderDetailIds = (List<Integer>) orderMap
 								.get("orderDetailIds");

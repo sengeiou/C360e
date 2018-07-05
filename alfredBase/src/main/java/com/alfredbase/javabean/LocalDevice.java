@@ -17,6 +17,17 @@ public class LocalDevice {
 	private Integer cashierPrinter;//0:false; 1 true;
 
 	private String  printerName;
+	/* 0票据 1标签*/
+	private Integer isLablePrinter;
+	public Integer getIsLablePrinter() {
+		return isLablePrinter;
+	}
+
+	public void setIsLablePrinter(Integer isLablePrinter) {
+		this.isLablePrinter = isLablePrinter;
+	}
+
+
 	
 	public LocalDevice(){
 		this.deviceMode = "";

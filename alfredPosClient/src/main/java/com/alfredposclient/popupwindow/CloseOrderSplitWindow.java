@@ -1362,7 +1362,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		set.start();
 	}
 
-	private void printBill(){
+	private void printBill(final String  change){
 		final int paidOrderId = orderSplit.getId();
 		final int tabelId = orderSplit.getTableId();
 		new Thread(new Runnable() {
@@ -1370,12 +1370,20 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			@Override
 			public void run() {
 
-
 				HashMap<String, String> map = new HashMap<String, String>();
+//				map.put("orderSplitId", String.valueOf(paidOrderId));
+//				map.put("paymentId", String.valueOf(payment.getId().intValue()));
 
-
-				map.put("orderSplitId", String.valueOf(paidOrderId));
-				map.put("paymentId", String.valueOf(payment.getId().intValue()));
+				if(TextUtils.isEmpty(change))
+				{
+					map.put("orderSplitId", String.valueOf(paidOrderId));
+					map.put("paymentId", String.valueOf(payment.getId().intValue()));
+					map.put("changeNum", String.valueOf(""));
+				}else {
+					map.put("orderSplitId", String.valueOf(paidOrderId));
+					map.put("paymentId", String.valueOf(payment.getId().intValue()));
+					map.put("changeNum", String.valueOf(change));
+				}
 				if (splitPax) {
 					handler.sendMessage(handler.obtainMessage(
 							MainPage.ACTION_PRINT_PAX_SPLIT_BY_PAX, map));
@@ -1448,13 +1456,23 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
 				}
 				initBillSummary();
-				printBill();
+				if(TextUtils.isEmpty(tv_change_num.getText().toString())){
+					printBill(null);
+				}else {
+					printBill(tv_change_num.getText().toString());
+				}
 			}
 			break;
 			case R.id.btn_print_receipt: {
 //				v.setVisibility(View.GONE);
 				// closeWindowAction();
-				printBill();
+		//		printBill();
+
+				if(TextUtils.isEmpty(tv_change_num.getText().toString())){
+					printBill(null);
+				}else {
+					printBill(tv_change_num.getText().toString());
+				}
 			}
 
 				break;
@@ -2611,7 +2629,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		initSettlementDetail();
 
 		if (settlementNum.compareTo(BH.getBD(orderSplit.getTotal())) == 0) {
-			printBill();
+
+			if(TextUtils.isEmpty(tv_change_num.getText().toString())){
+				printBill(null);
+			}else {
+				printBill(tv_change_num.getText().toString());
+			}
+			//printBill(null);
 		}
 	}
 	

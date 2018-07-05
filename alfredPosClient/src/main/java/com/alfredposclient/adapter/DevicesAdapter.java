@@ -3,6 +3,7 @@ package com.alfredposclient.adapter;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,6 +48,7 @@ public class DevicesAdapter extends CustomAdapter {
 	private void setPrinterDBModelList(List<PrinterDevice> printerDBModelList){
 		this.printerDBModelList.clear();
 		if (printerDBModelList != null) {
+
 			this.printerDBModelList.addAll(printerDBModelList);
 		}
 		if(this.type == 1 &&(this.printerDBModelList.size() == 0
@@ -56,10 +58,14 @@ public class DevicesAdapter extends CustomAdapter {
 			printerDevice.setDevice_id(-100);
 			this.printerDBModelList.add(printerDevice);
 		}
+
+
 	}
 	public void setList(List<PrinterDevice> printerDBModelList, int type){
 		this.type = type;
 		setPrinterDBModelList(printerDBModelList);
+
+
 		notifyDataSetChanged();
 	}
 	
@@ -105,13 +111,36 @@ public class DevicesAdapter extends CustomAdapter {
 			holder.devices_item_add_img = (ImageView) convertView.findViewById(R.id.devices_item_add_img);
 			holder.ll_auto_add = (LinearLayout) convertView.findViewById(R.id.ll_auto_add);
 			holder.ll_manually_add = (LinearLayout) convertView.findViewById(R.id.ll_manually_add);
+			holder.devices_item_type=(TextView) convertView.findViewById(R.id.devices_item_type);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
 		PrinterDevice printerDevice = printerDBModelList.get(position);
+		Log.d("Adapter", " ---显示---"+printerDevice.getIP()+"---"+ printerDevice.getType()+""+TextUtils.isEmpty(printerDevice.getType()));
 		holder.devices_unbund_tv.setTag(printerDevice);
+
+		if(!TextUtils.isEmpty(printerDevice.getIP())) {
+			if (printerDevice.getIP().indexOf(":") != -1) {
+				holder.devices_item_type.setText(con.getResources().getString(R.string.devices_bluetooth));
+			} else {
+				holder.devices_item_type.setText(con.getResources().getString(R.string.devices_network));
+			}
+		}
+
+//		if(!TextUtils.isEmpty(printerDevice.getType()))
+//		{
+//			if(printerDevice.getType().equals("1"))
+//			{
+//				holder.devices_item_type.setText("网络");
+//			}else {
+//				holder.devices_item_type.setText("蓝牙");
+//			}
+//
+//		}else {
+//			holder.devices_item_type.setText("网络");
+//		}
 		if(printerDevice.getDevice_id() == -100){
 			holder.ll_auto_add.setVisibility(View.GONE);
 			holder.ll_manually_add.setVisibility(View.VISIBLE);
@@ -181,6 +210,8 @@ public class DevicesAdapter extends CustomAdapter {
 		public TextView devices_ip_tv;
 		public TextView devices_unbund_tv;
 		public TextView tv_device_ip;
+
+		public TextView devices_item_type;
 		TextView devices_item_add_tv;
 		ImageView devices_item_add_img;
 		LinearLayout ll_auto_add;

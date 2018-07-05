@@ -2,6 +2,7 @@ package com.alfredposclient.activity;
 
 import android.content.Intent;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -56,6 +57,7 @@ import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
@@ -65,6 +67,7 @@ import com.alfredposclient.adapter.EditSettlementAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.popupwindow.CloseOrderSplitWindow;
@@ -173,10 +176,22 @@ public class EditSettlementPage extends BaseActivity {
 
                 case MainPage.VIEW_EVENT_CLOSE_BILL: {
 //                    Intent intentCloseBill = new Intent();
+                    String changeNum;
                     currentOrder = OrderSQL.getOrder(currentOrder.getId().intValue());
                     editSettlementAdapter.setEditSettlementInfos(getSettlementList());
                     editSettlementAdapter.notifyDataSetChanged();
                     HashMap<String, String> map = (HashMap<String, String>) msg.obj;
+
+                    changeNum=map.get("changeNum");
+                    if(!TextUtils.isEmpty(changeNum)){
+                        if(!(App.instance.getLocalRestaurantConfig().getCurrencySymbol()+"0.00").equals(changeNum))
+                        DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
+                    }
                     TableInfo table = TableInfoSQL.getTableById(
                             currentOrder.getTableId());
                     PrinterTitle title = ObjectFactory.getInstance()
@@ -194,13 +209,22 @@ public class EditSettlementPage extends BaseActivity {
                     OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
                             currentOrder, App.instance.getRevenueCenter());
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
-                    App.instance.remoteBillPrint(
-                            App.instance.getCahierPrinter(),
-                            title,
-                            currentOrder,
-                            printOrderItems, orderModifiers,
-                            OrderDetailTaxSQL.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder), PaymentSettlementSQL
-                                    .getAllPaymentSettlementByPaymentId(Integer.valueOf(map.get("paymentId"))), roundAmount);
+
+
+//                   if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
+//                    {
+//
+//                    }else {
+
+                       App.instance.remoteBillPrint(
+                               App.instance.getCahierPrinter(),
+                               title,
+                               currentOrder,
+                               printOrderItems, orderModifiers,
+                               OrderDetailTaxSQL.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder), PaymentSettlementSQL
+                                       .getAllPaymentSettlementByPaymentId(Integer.valueOf(map.get("paymentId"))), roundAmount);
+                  //  }
+
                     /**
                      * 给后台发送log 信息
                      */
@@ -227,6 +251,20 @@ public class EditSettlementPage extends BaseActivity {
                             .getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
                     TableInfo table = TableInfoSQL.getTableById(
                             orderSplit.getTableId());
+
+
+                    String changeNum;
+                    changeNum = paymentMap.get("changeNum");
+                    if (!TextUtils.isEmpty(changeNum)) {
+                        if (!(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00").equals(changeNum))
+                            DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            });
+                    }
+
                     OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(orderSplit, App.instance.getRevenueCenter());
                     PrinterDevice printer = App.instance.getCahierPrinter();
                     PrinterTitle title = ObjectFactory.getInstance()
@@ -257,6 +295,7 @@ public class EditSettlementPage extends BaseActivity {
                     if (orderItems.size() > 0 && printer != null) {
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
                                 orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+
                     }
                     /**
                      * 给后台发送log 信息

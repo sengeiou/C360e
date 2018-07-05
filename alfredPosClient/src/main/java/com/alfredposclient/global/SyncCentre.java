@@ -9,6 +9,8 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
+import com.alfredbase.javabean.ReportDaySales;
+import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
@@ -22,6 +24,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -113,7 +116,6 @@ public class SyncCentre {
 
 		HttpAPI.getItemCategory(context,
 				getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
-
 		HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
 				httpClient, handler, MODE_FIRST_SYNC);
 
@@ -161,6 +163,23 @@ public class SyncCentre {
 	/*
 	 *  Sync Order Info to Cloud : for JOB
 	 * */
+//	ReportDaySales reportDaySales;
+//	List<ReportDayTax> reportDayTaxs;
+	public void syncSendEmail(Context context,
+							  ReportDaySales reportDaySales,List<ReportDayTax> reportDayTaxs, Handler handler) {
+		//orderDataMsg
+		HttpAPI.sendEmailSync(context, reportDaySales,reportDayTaxs,
+				getAbsoluteUrl(APIName.SEND_EMAIL), bigSyncHttpClient);
+	}
+
+
+
+	public void syncMedia(Context context,
+							 Handler handler) {
+		//orderDataMsg
+		HttpAPI.mediaSync(context,
+				getAbsoluteUrl(APIName.SEND_EMAIL), syncHttpClient,handler);
+	}
 	public void cloudSyncUploadOrderInfo( BaseActivity context,
 			SyncMsg syncMsg, Handler handler) {
 		//orderDataMsg

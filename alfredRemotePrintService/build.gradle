@@ -21,33 +21,52 @@ android {
         targetCompatibility javaVersion
     }
 
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-    android.applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def outputFile = output.outputFile
-            if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                // 修改apk文件名
-                def fileName = "print.apk"
-                output.outputFile = new File(output.outputFile.parent, fileName)
+//    android.applicationVariants.all { variant ->
+//        variant.outputs.each { output ->
+//            def outputFile = output.outputFile
+//            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                // 修改apk文件名
+//                def fileName = "print.apk"
+//                output.outputFile = new File(output.outputFile.parent, fileName)
+//            }
+//        }
+//    }
+
+
+    // as3.0以上
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            // each 改为 all
+            def fileName = "print.apk"
+            def outFile = output.outputFile
+            if (outFile != null && outFile.name.endsWith('.apk')) {
+                outputFileName = fileName
+                // output.outputFile 改为 outputFileName
             }
         }
     }
-}
 
+}
 dependencies {
-//    compile project(':alfredTaskQueue')
-    compile 'com.birbit:android-priority-jobqueue:2.0.0'
-//    compile 'com.path:android-priority-jobqueue:1.1.2'
-    compile 'io.reactivex:rxjava:1.1.5'
-    compile project(':alfredBase')
-    compile rootProject.ext.libSupportV4
-    compile files('libs/ePOS-Print.jar')
-    compile files('libs/wfsdk.jar')
-    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
-    compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
+    //    compile project(':alfredTaskQueue')
+    implementation 'com.birbit:android-priority-jobqueue:2.0.0'
+    //    compile 'com.path:android-priority-jobqueue:1.1.2'
+    implementation 'io.reactivex:rxjava:1.1.5'
+    implementation project(':alfredBase')
+    implementation rootProject.ext.libSupportV4
+//    implementation files('libs/ePOS-Print.jar')
+    implementation files('libs/wfsdk.jar')
+    implementation 'com.tencent.bugly:crashreport:latest.release'
+    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
+    implementation files('libs/ePOS2.jar')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 }

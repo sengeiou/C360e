@@ -32,7 +32,9 @@ public class XmppThread extends Thread {
 
     @Override
     public void destroy() {
+
         XMPP.getInstance().close();
         super.destroy();
     }
+
 }

@@ -15,11 +15,13 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import static android.content.ContentValues.TAG;
 
@@ -41,6 +43,8 @@ public class ESCPrinter implements WIFIPrintCallback{
 	private String ip;
 	ESCPOSPrinter printer;
 
+	TscPOSPrinter tprinter;
+
 	//data
 //	private ArrayList<PrintData> data;
 
@@ -51,11 +55,24 @@ public class ESCPrinter implements WIFIPrintCallback{
 	public static final int DEFAULT_PORT = 9100;
 
 
-	public ESCPrinter(String ip) {
+	public ESCPrinter(String ip ) {
 		
 //		hdl.setPrinterCbk(this);
+
+
 		this.ip = ip;
-		this.printer = new ESCPOSPrinter((PrintService) context);
+
+
+			this.printer = new ESCPOSPrinter((PrintService) context);
+	}
+
+	public ESCPrinter(String ip,int labe) {
+
+		this.ip = ip;
+
+			this.tprinter=new TscPOSPrinter((PrintService)context);
+
+
 	}
 	
 	public ArrayList<String> discovery() {
@@ -119,6 +136,93 @@ public class ESCPrinter implements WIFIPrintCallback{
 //			throw new RuntimeException("Print action Failed");
 //		}
 //	}
+
+
+	public boolean setTscData(List<PrintTscData> data)
+	{
+		boolean result = true;
+		try {
+
+			this.tprinter.addHome();
+		//	this.tprinter.resetPrinter();
+			this.tprinter.addTsize(30, 30, 1);//设置打印区域大小
+
+			this.tprinter.addReference(0, 0); // 设置原点坐标
+			this.tprinter.addSpeed();// 设置打印速度
+			this.tprinter.addDensity();// 设置打印浓度
+			this.tprinter.addDirection();// 设置打印方向
+			this.tprinter.addCls();// 清除打印缓冲区
+			for(int i=0;i<data.size();i++)
+			{
+				PrintTscData toPrint = data.get(i);
+
+				if(toPrint.getDataFormat()==PrintTscData.FORMAT_RESET){
+					this.tprinter.addPrint();
+
+					if (i<data.size()-1) {
+						sendTData();
+
+						this.tprinter.addHome();
+						this.tprinter.addTsize(30, 30, 1);//设置打印区域大小
+
+						this.tprinter.addReference(0, 0); // 设置原点坐标
+						this.tprinter.addSpeed();// 设置打印速度
+						this.tprinter.addDensity();// 设置打印浓度
+						this.tprinter.addDirection();// 设置打印方向
+						this.tprinter.addCls();// 清除打印缓冲区
+
+					}else {
+						sendTData();
+					}
+
+				}else {
+
+					if(toPrint.getDataFormat()==PrintTscData.FORMAT_BAR){
+
+						this.tprinter.addBar(toPrint.getX(),toPrint.getY(),500,5);
+
+					}else if(toPrint.getDataFormat()==PrintTscData.FORMAT_TXT){
+						this.tprinter.addText(toPrint.getX(), toPrint.getY(), toPrint.getFontsizeX(), toPrint.getFontsizeY(), toPrint.getText());
+					}
+				}
+			}
+
+
+		//	this.tprinter.resetPrinter();
+//
+
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			this.close();
+			result = false;
+			return result;
+		}
+
+
+		try {
+			//kickdrawer no need wait for a long time
+
+			if (data.size()<2 ) {
+				Thread.sleep(100);
+			}else if (data.size()<40) {
+				Thread.sleep(1000);
+			}else {
+				Thread.sleep(data.size()*40);
+			}
+
+			close();
+			Thread.sleep(200);
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return  result;
+	}
 
 	public boolean setData(List<PrintData> data) {
 		boolean result = true;
@@ -220,8 +324,32 @@ public class ESCPrinter implements WIFIPrintCallback{
 		return result;
 	}
 
+
+	public void sendTData() {
+
+		this.tprinter.resetPrinter();
+		byte[] b=ByteTo_byte(this.tprinter.getCommand());
+		boolean result = wfComm.sndByte(b);
+		this.tprinter.clrCommand();
+		//this.close();
+		if (!result) {
+			throw new RuntimeException("Print action Failed");
+		}
+	}
+
+	public static byte[] ByteTo_byte(Vector<Byte> vector) {
+		int len = vector.size();
+		byte[] data = new byte[len];
+
+		for (int i = 0; i < len; ++i) {
+			data[i] = ((Byte) vector.get(i)).byteValue();
+		}
+
+		return data;
+	}
 	public void sendData() {
 		boolean result = wfComm.sndByte(this.printer.getOut().toByteArray());
+	//boolean	result=true;
 		this.printer.getOut().reset();
 //		wfComm.close();
 		if (!result) {

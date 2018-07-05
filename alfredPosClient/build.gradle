@@ -9,7 +9,6 @@ bugly {
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-
     defaultConfig {
         applicationId "com.alfredposclient"
         minSdkVersion rootProject.ext.posMinSdkVersion
@@ -53,20 +52,36 @@ android {
 //        }
     }
 
-    android.applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def outputFile = output.outputFile
-            if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                // 修改apk文件名
-                def fileName = "pos.apk"
-                output.outputFile = new File(output.outputFile.parent, fileName)
+//    android.applicationVariants.all { variant ->
+//        variant.outputs.each { output ->
+//            def outputFile = output.outputFile
+//            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                // 修改apk文件名
+//                def fileName = "pos.apk"
+//                output.outputFile = new File(output.outputFile.parent, fileName)
+//            }
+//        }
+//    }
+// as3.0以上
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            // each 改为 all
+            def fileName = "pos.apk"
+            def outFile = output.outputFile
+            if (outFile != null && outFile.name.endsWith('.apk')) {
+                outputFileName = fileName
+                // output.outputFile 改为 outputFileName
             }
         }
     }
 
+
+
+
 //    packagingOptions {
 //        exclude 'LICENSE.txt'
 //    }
+    buildToolsVersion '27.0.3'
 }
 repositories {
 
@@ -79,23 +94,23 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile project(':alfredBase')
-    compile project(':alfredTaskQueue')
-    compile project(':galleryfinal')
+   implementation project(':alfredBase')
+   implementation project(':alfredTaskQueue')
+   implementation project(':galleryfinal')
 //    compile rootProject.ext.libSupportV4
 //    compile 'com.path:android-priority-jobqueue:1.1.2'
 //    compile 'com.birbit:android-priority-jobqueue:2.0.0'
 //    compile files('libs/android-websockets.jar')
 //    compile files('libs/core-3.2.1.jar')
-    compile 'com.contrarywind:Android-PickerView:4.1.3'
-    compile(name: 'barcode_scanner_library_v2.0.8.0', ext: 'aar')
+    implementation 'com.contrarywind:Android-PickerView:4.1.3'
+    implementation(name: 'barcode_scanner_library_v2.0.8.0', ext: 'aar')
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
-    compile 'com.tencent.bugly:crashreport:latest.release'
-    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+   implementation 'com.tencent.bugly:crashreport:latest.release'
+   implementation 'com.google.android.gms:play-services-appindexing:8.4.0'
 //    compile 'com.rabbitmq:amqp-client:3.6.5'
-    compile 'com.sunmi:DS_Lib:1.0.3'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile(name:'barcode_scanner_library_v2.0.8.0', ext:'aar')
-    compile "org.igniterealtime.smack:smack-android-extensions:4.2.0-alpha3"
-    compile "org.igniterealtime.smack:smack-tcp:4.2.0-alpha3"
+    implementation 'com.sunmi:DS_Lib:1.0.3'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation(name:'barcode_scanner_library_v2.0.8.0', ext:'aar')
+    implementation "org.igniterealtime.smack:smack-android-extensions:4.2.0-alpha3"
+    implementation "org.igniterealtime.smack:smack-tcp:4.2.0-alpha3"
 }

@@ -9,6 +9,8 @@
     <color name="deep_gray">#ADADAD</color>
     <color name="toast_bg">#f9bf35</color>
     <color name="whitesmoke">#F5F5F5</color>
+
+    <color name="transparent">#00ffffff</color>
 	
     <color name="bg_tabpageindi">#f5f5f5</color>
     <color name="bg_press_tabpageindi">#987e54</color>

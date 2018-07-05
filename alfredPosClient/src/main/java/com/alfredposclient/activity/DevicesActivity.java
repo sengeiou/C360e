@@ -1,10 +1,14 @@
 package com.alfredposclient.activity;
 
 import android.animation.ObjectAnimator;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -40,8 +44,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 设备页
@@ -56,14 +62,11 @@ public class DevicesActivity extends BaseActivity {
     private ImageButton btn_back;
     private TextView tv_title_name;
     private LinearLayout ll_print;
-
     private ImageView device_code_img;
     private TextView devices_ip_tv;
     private TextView devices_revenueCenter_tv;
-
     //打印机
     private LinearLayout devices_printe_lyt;
-
     //KDS
     private LinearLayout devices_transfer_lyt;
 
@@ -84,10 +87,14 @@ public class DevicesActivity extends BaseActivity {
     private SelectPrintWindow selectPrintWindow;
     private int dex = 0;
 
+
+    Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
+
     @Override
     protected void initView() {
         super.initView();
         setContentView(R.layout.devices_layout);
+        map.clear();
         initUI();
         initData();
     }
@@ -110,39 +117,40 @@ public class DevicesActivity extends BaseActivity {
                             .fromJson((String) msg.obj,
                                     new TypeToken<Map<String, String>>() {
                                     }.getType());
-                            if (printer != null) {
-                                String assignToName = printer.get("assignTo");
-                                if (assignToName != null && assignToName.length()>0) {
-                                        String printerModel = printer.get("deviceName");
-                                        String printerName = printer.get("printerName");
-                                        LocalDevice localDevice = ObjectFactory
-                                                .getInstance().getLocalDevice(assignToName,
-                                                        printerModel,
-                                                        ParamConst.DEVICE_TYPE_PRINTER,
-                                                        printerDeptModelList.get(dex).getId(),
-                                                        printer.get("printerIp"), "",printerName);
-                                        CoreData.getInstance().addLocalDevice(localDevice);
+                    if (printer != null) {
+                        String assignToName = printer.get("assignTo");
+                        if (assignToName != null && assignToName.length() > 0) {
+                            String printerModel = printer.get("deviceName");
+                            String printerName = printer.get("printerName");
+                            LocalDevice localDevice = ObjectFactory
+                                    .getInstance().getLocalDevice(assignToName,
+                                            printerModel,
+                                            ParamConst.DEVICE_TYPE_PRINTER,
+                                            printerDeptModelList.get(dex).getId(),
+                                            printer.get("printerIp"), "", printerName,printerDeptModelList.get(dex).getIsLablePrinter());
+                            CoreData.getInstance().addLocalDevice(localDevice);
 
-                                        PrinterDevice prtDev = new PrinterDevice();
-                                        prtDev.setDevice_id(printerDeptModelList.get(dex).getId());
-                                        prtDev.setIP(printer.get("printerIp"));
-                                        prtDev.setIsCahierPrinter(printerDeptModelList.get(dex).getIsCashdrawer());
-                                        prtDev.setMac(localDevice.getMacAddress());
-                                        prtDev.setModel(printerModel);
-                                        prtDev.setName(assignToName);
-                                        prtDev.setPrinterName(printerName);
-                                        App.instance.setPrinterDevice(printerDeptModelList.get(dex).getId(), prtDev);
-                                        refreshPrinterDevices(null);
-                                        App.instance.discoverPrinter(handler);
-                                }
-                            }
+                            PrinterDevice prtDev = new PrinterDevice();
+                            prtDev.setDevice_id(printerDeptModelList.get(dex).getId());
+                            prtDev.setIP(printer.get("printerIp"));
+                            prtDev.setIsCahierPrinter(printerDeptModelList.get(dex).getIsCashdrawer());
+                            prtDev.setMac(localDevice.getMacAddress());
+                            prtDev.setModel(printerModel);
+                            prtDev.setName(assignToName);
+                            prtDev.setPrinterName(printerName);
+                            prtDev.setIsLablePrinter(printerDeptModelList.get(dex).getIsLablePrinter());
+                            App.instance.setPrinterDevice(printerDeptModelList.get(dex).getId(), prtDev);
+                            refreshPrinterDevices(null);
+                            App.instance.discoverPrinter(handler);
+                        }
+                    }
                     break;
                 case JavaConnectJS.ACTION_NEW_KDS_ADDED: // 连接KDS设备
 //                    KDSDevice kds = (KDSDevice)msg.obj;
 //                    Map<Integer, KDSDevice> map1 = new HashMap<Integer, KDSDevice>();
 //                    map1.put(kds.getDevice_id(), kds);
 //                    App.instance.addKDSDevice(kds.getDevice_id(), kds);
-                    if(selectedViewId == R.id.devices_transfer_lyt){
+                    if (selectedViewId == R.id.devices_transfer_lyt) {
                         MViews(selectedViewId);
                     }
                     break;
@@ -151,32 +159,50 @@ public class DevicesActivity extends BaseActivity {
 //                    Map<Integer, WaiterDevice> map2 = new HashMap<Integer, WaiterDevice>();
 //                    map2.put(waiter.getWaiterId(), waiter);
 //                    App.instance.setWaiterDevices(map2);
-                    if(selectedViewId == R.id.devices_waiter_lyt){
+                    if (selectedViewId == R.id.devices_waiter_lyt) {
                         MViews(selectedViewId);
                     }
                     break;
                 case RemotePrintServiceCallback.PRINTERS_DISCOVERIED: // 同一局域网内搜索可绑定的打印机
+                    Log.d("refreshPrinterDevices", " ---同一局域网内搜索可绑定的打印机---");
                     refreshPrinterDevices((Map<String, String>) msg.obj);
+
+
                     break;
+
+//                case RemotePrintServiceCallback.B_RINTERS_DISCOVERIED: // 搜索到的蓝牙打印机
+//                    Log.d("refreshPrinterDevices", " ---搜索到的蓝牙打印机---");
+//                    BluetoothPrinterDevices((List<PrinterDevice>) msg.obj);
+//                    //refreshPrinterDevices((Map<String, String>) msg.obj);
+//                    break;
+
                 case ASSIGN_PRINTER_DEVICE: // 绑定打印机
+
+
                     PrinterDevice printerDevice = (PrinterDevice) msg.obj;
                     Printer prt = printerDeptModelList.get(dex);
                     printerDevice.setDevice_id(prt.getId());
                     printerDevice.setIsCahierPrinter(prt.getIsCashdrawer());
                     printerDevice.setPrinterName(prt.getPrinterName());
+                    printerDevice.setIsLablePrinter(prt.getIsLablePrinter());
 //                    List<PrinterDevice> list = new ArrayList<PrinterDevice>();
 //                    list.add(printerDevice);
 //                    adapter.setList(list, 1);
 //                    App.instance.setPrinterDevice(prt.getId(), printerDevice);
+
+                    Log.d("ASSIGN_PRINTER_DEVICE", " ---绑定打印机---IsLablePrinter---"+printerDeptModelList.get(dex).getIsLablePrinter());
                     LocalDevice localDevice = ObjectFactory.getInstance().getLocalDevice(printerDevice.getName(), printerDevice.getModel(),
                             ParamConst.DEVICE_TYPE_PRINTER,
                             printerDeptModelList.get(dex).getId(),
                             printerDevice.getIP(),
                             printerDevice.getMac(),
-                            printerDevice.getPrinterName());
+                            printerDevice.getPrinterName(), printerDeptModelList.get(dex).getIsLablePrinter());
                     CoreData.getInstance().addLocalDevice(localDevice);
                     App.instance.loadPrinters();
+                    map.clear();
                     refreshPrinterDevices(null);
+
+                   App.instance.closeDiscovery();
                     App.instance.discoverPrinter(handler);
                     break;
                 default:
@@ -185,52 +211,165 @@ public class DevicesActivity extends BaseActivity {
         }
     };
 
+
+    // 显示连接蓝牙的打印机
+//
+//    private void BluetoothPrinterDevices(List<PrinterDevice> plist) {
+////        List<PrinterDevice> devices;
+////        Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
+////        for (PrinterDevice entry : plist) {
+////            devices = new ArrayList<PrinterDevice>();
+////
+////            map.put(entry.getDevice_id(), devices);
+////        }
+//
+//        if (adapter != null) {
+//
+//            // Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size());
+//            adapter.setList(plist, 10);
+//        } else {
+//            adapter = new DevicesAdapter(this, plist, handler);
+//            // Log.d("printerDBModelList", " ---printerDBModelList2---"+printerDBModelList.size());
+//            devices_customlistview.setAdapter(adapter);
+//        }
+//
+//        Log.d("refreshPrinterDevices", " ---显示蓝牙选项---" + plist.get(0).getType());
+//        //  adapter.setList(printerDBModelList, 1);
+//    }
+
     // 搜索可连接的打印机
-    private void refreshPrinterDevices(Map<String, String> printersDiscovered){
+    private void refreshPrinterDevices(Map<String, String> printersDiscovered) {
         Map<Integer, PrinterDevice> data = App.instance.getPrinterDevices();
-        Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
+
+
+        //     Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
         for (Map.Entry<Integer, PrinterDevice> entry : data.entrySet()) {
             List<PrinterDevice> devices = new ArrayList<PrinterDevice>();
             devices.add(entry.getValue());
             map.put(entry.getKey(), devices);
         }
 
+
         if (printersDiscovered != null) {
+
+
             for (Map.Entry<String, String> entry : printersDiscovered.entrySet()) {
+
+
                 PrinterDevice tmppt = new PrinterDevice();
-                tmppt.setIP(entry.getKey());
-                tmppt.setName(entry.getValue());
-                tmppt.setDevice_id(-1);
+
+
+                if (entry.getKey().indexOf(":") != -1) {
+                    tmppt.setIP(entry.getKey());
+                    tmppt.setName(entry.getValue());
+                    tmppt.setDevice_id(-1);
+                    tmppt.setType("2");
+
+                    Log.d("refreshPrinterDevices", " ---包含该字符串---" + entry.getKey());
+                    System.out.println("包含该字符串");
+                } else {
+                    tmppt.setIP(entry.getKey());
+                    tmppt.setName(entry.getValue());
+                    tmppt.setDevice_id(-1);
+                    Log.d("refreshPrinterDevices", " ---不包含该字符串---" + entry.getKey());
+                }
                 if (!map.containsKey(tmppt.getDevice_id())) {
                     List<PrinterDevice> list = new ArrayList<PrinterDevice>();
+                    // 获取所有键值对对象的集合
+                    Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合---" + entry.getKey());
+                    // 遍历键值对对象的集合，得到每一个键值对对象
+//                    Map<Integer, List<PrinterDevice>> m = new ConcurrentHashMap<Integer, List<PrinterDevice>>();
+//                    m.putAll(map);
+
+
+
+
+//                    for ( Integer k : map.keySet()) {
+//                        // 根据键值对对象获取键和值
+//                        if(map.get(k).get(0).getIP().equals(tmppt.getIP())){
+//
+//                            System.out.println(k + "--refreshPrinterDevices-" + map.get(k));
+//                            // k=t
+//                            map.remove();
+//                            map.r
+//                        }
+//
+//                        System.out.println(key + "---" + value);
+//                    }
                     list.add(tmppt);
                     map.put(tmppt.getDevice_id(), list);
                 } else {
+
                     List<PrinterDevice> printerDevices = map.get(tmppt.getDevice_id());
-                    printerDevices.add(tmppt);
+                    Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合111---" );
+
+
+//                    Iterator iterator = map.keySet().iterator();
+//                    while (iterator.hasNext()) {
+//                        int key = (Integer) iterator.next();
+//                        if(map.get(key).get(0).getIP().equals(tmppt.getIP())){
+//                            Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---" );
+//                            iterator.remove();        //添加该行代码
+//                            map.remove(key);
+//                        }
+//                    }
+//
+                       boolean is=true;
+                    for (int i = 0; i < printerDevices.size(); i++) {
+
+                        if(printerDevices.get(i).getIP().equals(tmppt.getIP())){
+                            Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---" );
+                          is=false;
+                        }
+
+                    }
+
+                    if(is) {
+                        printerDevices.add(tmppt);
+                    }
+
                 }
             }
         }
 
         App.instance.setMap(map);
 
+
         Printer printer1 = printerDeptModelList.get(dex);
-        if(map.containsKey(printer1.getId())) {
+
+        if (map.containsKey(printer1.getId())) {
+
+
             printerDBModelList = map.get(printer1.getId());
-        }else{
+
+        } else {
+
+
             printerDBModelList = map.get(-1);
+
+//            if(TextUtils.isEmpty(printerDBModelList.size()+"")) {
+//                Log.d("refreshPrinterDevices", " ---2222222---" + printerDBModelList.size());
+//            }
+
+
         }
-        if(selectedViewId == R.id.devices_printe_lyt) {
+        if (selectedViewId == R.id.devices_printe_lyt) {
             if (adapter != null) {
+
+            //     Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size()+"--"+printerDBModelList.get(0).getIP());
+
+
                 adapter.setList(printerDBModelList, 1);
-            }else {
+            } else {
                 adapter = new DevicesAdapter(this, printerDBModelList, handler);
+                // Log.d("printerDBModelList", " ---printerDBModelList2---"+printerDBModelList.size());
                 devices_customlistview.setAdapter(adapter);
             }
         }
     }
 
     private void unassignDevice(PrinterDevice device) {
+        App.instance.closeDiscovery();
         if (device == null)
             return;
         int localDevId = device.getDevice_id();
@@ -242,6 +381,7 @@ public class DevicesActivity extends BaseActivity {
                 CoreData.getInstance().removeLocalDeviceByDeviceIdAndIP(
                         localDevId, device.getIP());
             }
+            map.clear();
             refreshPrinterDevices(null);
             App.instance.discoverPrinter(handler);
         }
@@ -277,17 +417,17 @@ public class DevicesActivity extends BaseActivity {
         }
     }
 
-    private void MViews(int id){
-        switch (id){
+    private void MViews(int id) {
+        switch (id) {
             case R.id.devices_printe_lyt:
                 hv_printer_group.setVisibility(View.VISIBLE);
                 List<PrinterDevice> devices = new ArrayList<PrinterDevice>();
                 Map<Integer, List<PrinterDevice>> hash = App.instance.getMap();
                 if (hash.containsKey(printerDeptModelList.get(dex).getId())) {
                     devices = hash.get(printerDeptModelList.get(dex).getId());
-                }else {
+                } else {
                     List<PrinterDevice> list = hash.get(-1);
-                    if(list != null) {
+                    if (list != null) {
                         for (PrinterDevice device : list) {
                             PrinterDevice printerDevice = new PrinterDevice();
                             printerDevice.setDevice_id(-1);
@@ -300,32 +440,38 @@ public class DevicesActivity extends BaseActivity {
                         }
                     }
                 }
-                    if (adapter != null) {
-                        adapter.setList(devices, 1);
-                    }else {
-                        adapter = new DevicesAdapter(DevicesActivity.this, devices, handler);
-                        devices_customlistview.setAdapter(adapter);
-                    }
+                if (adapter != null) {
+                    adapter.setList(devices, 1);
+                } else {
+                    adapter = new DevicesAdapter(DevicesActivity.this, devices, handler);
+                    devices_customlistview.setAdapter(adapter);
+                }
                 break;
             case R.id.devices_transfer_lyt:
                 hv_printer_group.setVisibility(View.GONE);
                 Map<Integer, KDSDevice> map = App.instance.getKDSDevices();
                 List<PrinterDevice> KDSDevices = new ArrayList<PrinterDevice>();
-                if (map.size() > 0){
+                if (map.size() > 0) {
                     List<KDSDevice> kdsDevices = new ArrayList<KDSDevice>(map.values());
-                    for (KDSDevice device : kdsDevices){
+                    for (KDSDevice device : kdsDevices) {
                         PrinterDevice printerDevice = new PrinterDevice();
                         printerDevice.setDevice_id(device.getDevice_id());
                         printerDevice.setModel(device.getName());
                         printerDevice.setName(device.getName());
                         printerDevice.setIP(device.getIP());
                         printerDevice.setMac(device.getMac());
+
+                        if (device.getIP().indexOf(":") != -1) {
+                            printerDevice.setType("2");
+                        } else {
+                            printerDevice.setType("1");
+                        }
                         KDSDevices.add(printerDevice);
                     }
                 }
-                if (adapter != null){
+                if (adapter != null) {
                     adapter.setList(KDSDevices, 2);
-                }else {
+                } else {
                     adapter = new DevicesAdapter(DevicesActivity.this, KDSDevices, handler);
                     devices_customlistview.setAdapter(adapter);
                 }
@@ -341,17 +487,23 @@ public class DevicesActivity extends BaseActivity {
                         printerDevice.setDevice_id(device.getWaiterId());
                         printerDevice.setIP(device.getIP());
                         printerDevice.setMac(device.getMac());
+
+                        if (device.getIP().indexOf(":") != -1) {
+                            printerDevice.setType("2");
+                        } else {
+                            printerDevice.setType("1");
+                        }
                         WaiterDevices.add(printerDevice);
                     }
                 }
-                if (adapter != null){
+                if (adapter != null) {
                     adapter.setList(WaiterDevices, 2);
-                }else {
+                } else {
                     adapter = new DevicesAdapter(DevicesActivity.this, WaiterDevices, handler);
                     devices_customlistview.setAdapter(adapter);
                 }
                 break;
-            }
+        }
     }
 
     private void initData() {
@@ -442,6 +594,12 @@ public class DevicesActivity extends BaseActivity {
                                 printerDevice.setIP(device.getIP());
                                 printerDevice.setMac(device.getMac());
                                 printerDevice.setModel(device.getModel());
+
+                                if (device.getIP().indexOf(":") != -1) {
+                                    printerDevice.setType("2");
+                                } else {
+                                    printerDevice.setType("1");
+                                }
                                 devices.add(printerDevice);
                             }
                         }
@@ -454,6 +612,7 @@ public class DevicesActivity extends BaseActivity {
                     devices_customlistview.setAdapter(adapter);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -489,5 +648,18 @@ public class DevicesActivity extends BaseActivity {
                 handler.sendEmptyMessage(JavaConnectJS.ACTION_NEW_WAITER_ADDED);
                 break;
         }
+    }
+
+
+    @Override
+    protected void onPause() {
+        App.instance.closeDiscovery();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        App.instance.closeDiscovery();
+        super.onDestroy();
     }
 }
