@@ -40,10 +40,11 @@ import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.javabean.ItemCategoryAndDetails;
+import com.alfredwaiter.javabean.ModifierCPVariance;
 import com.alfredwaiter.javabean.ModifierVariance;
 import com.alfredwaiter.popupwindow.SearchMenuItemWindow;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
-import com.alfredwaiter.popupwindow.WaiterModifierWindow;
+import com.alfredwaiter.popupwindow.WaiterModifierCPWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.CountView;
 import com.alfredwaiter.view.SelectPersonDialog;
@@ -103,7 +104,8 @@ public class MainPage extends BaseActivity {
 	
 	private Button btn_slide;
 //	private ModifierWindow modifierWindow;
-	private WaiterModifierWindow modifierWindow;
+//	private WaiterModifierWindow modifierWindow;
+	private WaiterModifierCPWindow modifierWindow;
 
 	@Override
 	protected void initView() {
@@ -113,7 +115,8 @@ public class MainPage extends BaseActivity {
 		initTitle();
 		searchPopUp = new SearchMenuItemWindow(context,handler,findViewById(R.id.rl_root));
 //		modifierWindow = new ModifierWindow(context, handler, findViewById(R.id.rl_root));
-		modifierWindow = new WaiterModifierWindow(context, handler, findViewById(R.id.rl_root));
+//		modifierWindow = new WaiterModifierWindow(context, handler, findViewById(R.id.rl_root));
+		modifierWindow = new WaiterModifierCPWindow(context, handler, findViewById(R.id.rl_root));
 //		searchPopUp.setParams(this, handler, findViewById(R.id.rl_root));
 //		searchPopUp.setParams(currentOrder,CoreData.getInstance().getItemDetails());
 		setItemCountWindow = new SetItemCountWindow(this, findViewById(R.id.rl_root),
@@ -271,7 +274,7 @@ public class MainPage extends BaseActivity {
 				int count = (Integer)map.get("count");
 				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
 				ModifierVariance modifierVariance = (ModifierVariance) map.get("modifierVariance");
-				modifierWindow.setList(modifierVariance);
+//				modifierWindow.setList(modifierVariance);
 
 				break;
 			}
@@ -359,7 +362,7 @@ public class MainPage extends BaseActivity {
 			case VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER:
 				Map<String, Object> map = (Map<String, Object>) msg.obj;
 //				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
-				List<ModifierVariance> variances = (List<ModifierVariance>) map.get("variances");
+				List<ModifierCPVariance> variances = (List<ModifierCPVariance>) map.get("variances");
 				String description = (String) map.get("description");
 				OrderDetail orderDetail = (OrderDetail) tv_more_detail.getTag();
 				addOrderDetailAndOrderModifier(orderDetail, orderDetail.getItemNum(), variances, description);
@@ -420,7 +423,7 @@ public class MainPage extends BaseActivity {
 		}
 	}
 
-	private void addOrderDetailAndOrderModifier(OrderDetail orderDetail,int count, List<ModifierVariance> modifierIds, String description){
+	private void addOrderDetailAndOrderModifier(OrderDetail orderDetail,int count, List<ModifierCPVariance> modifierIds, String description){
         currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
 		orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
 //		OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getItemId().intValue());
@@ -431,8 +434,8 @@ public class MainPage extends BaseActivity {
 		orderDetail.setItemNum(count);
 		orderDetail.setSpecialInstractions(description);
 		OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
-		for(ModifierVariance modifierVariance : modifierIds){
-			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId1());
+		for(ModifierCPVariance modifierVariance : modifierIds){
+			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId());
 			OrderModifier orderModifier = new OrderModifier();
 			orderModifier.setId(CommonSQL
 					.getNextSeq(TableNames.OrderModifier));
@@ -443,7 +446,7 @@ public class MainPage extends BaseActivity {
 			orderModifier.setUserId(currentOrder.getUserId());
 			orderModifier.setItemId(orderDetail.getItemId());
 			orderModifier.setModifierId(modifier.getId());
-			orderModifier.setModifierNum(modifierVariance.getModQty());
+			orderModifier.setModifierNum(1);
 			orderModifier
 					.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
 			orderModifier.setModifierPrice(BH.mul(BH.getBD(modifier.getPrice()), BH.getBD(orderDetail.getItemNum()), false).toString());

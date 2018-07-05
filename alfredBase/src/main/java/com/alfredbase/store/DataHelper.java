@@ -57,6 +57,7 @@ public class DataHelper {
 				onUpgradeForOldVersion19(db);
 				onUpgradeForOldVersion20(db);
 				onUpgradeForOldVersion21(db);
+				onUpgradeForOldVersion22(db);
 				onUpgradeForOldVersionfor129(db);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
@@ -1033,6 +1034,16 @@ public class DataHelper {
 			db.execSQL("ALTER TABLE "
 					+ TableNames.KotSummary
 					+ " ADD COLUMN empName TEXT default ''");
+		}
+		// 紧急修复
+		private void onUpgradeForOldVersion22(SQLiteDatabase db){
+			try {
+				db.execSQL("ALTER TABLE "
+						+ TableNames.KotSummary
+						+ " ADD COLUMN empName TEXT default ''");
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 
 		private void onUpgradeForOldVersionfor129(SQLiteDatabase db){
