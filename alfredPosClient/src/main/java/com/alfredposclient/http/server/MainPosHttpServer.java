@@ -2159,10 +2159,94 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	private Response handlerWaiterVoidItem(String params){
 		Map<String, Object> result = new HashMap<String, Object>();
 		Response resp;
-		Gson gson = new Gson();
 		try {
 			JSONObject jsonObject = new JSONObject(params);
+			int orderDetailId = jsonObject.getInt("orderDetailId");
+			OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(orderDetailId);
+			if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
+				result.put("resultCode", ResultCode.VOID_ITEM_FAIL);
+				return this.getJsonResponse(new Gson().toJson(result));
+			} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+				result.put("resultCode", ResultCode.VOID_ITEM_FAIL);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}else if(orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0){
+				OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
+				if(orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+					result.put("resultCode", ResultCode.SPLIT_ORDER_FINISHED);
+					return this.getJsonResponse(new Gson().toJson(result));
+				}
+			}
+			if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+				OrderDetailSQL.setOrderDetailToVoidOrFree(
+						orderDetail,
+						ParamConst.ORDERDETAIL_TYPE_VOID);
+				String kotCommitStatus = ParamConst.JOB_VOID_KOT;
+				KotItemDetail kotItemDetail = KotItemDetailSQL
+						.getMainKotItemDetailByOrderDetailId(orderDetail
+								.getId());
+				kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
+				KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
+						.getOrderId());
+				KotItemDetailSQL.update(kotItemDetail);
+				ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+				kotItemDetails.add(kotItemDetail);
+				OrderDetail freeOrderDetail = OrderDetailSQL
+						.getOrderDetail(
+								orderDetail.getOrderId(),
+								orderDetail);
+				if (freeOrderDetail != null) {
+					KotItemDetail freeKotItemDetail = KotItemDetailSQL
+							.getMainKotItemDetailByOrderDetailId(freeOrderDetail
+									.getId());
+					freeKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
+					KotItemDetailSQL.update(freeKotItemDetail);
+					kotItemDetails.add(freeKotItemDetail);
+				}
 
+				//Bob: fix issue: kot print no modifier showup
+				// look for kot modifiers
+				Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
+				ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+				ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+						.getOrderModifiers(placedOrder, orderDetail);
+				for (OrderModifier orderModifier : orderModifiers) {
+					if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
+						Modifier mod = CoreData.getInstance().getModifier(orderModifier.getModifierId());
+						if (mod != null) {
+							KotItemModifier kotItemModifier = KotItemModifierSQL
+									.getKotItemModifier(kotItemDetail.getId(), mod.getId());
+							if (kotItemModifier != null)
+								kotItemModifiers.add(kotItemModifier);
+						}
+					}
+				}
+				//end fix
+
+				Map<String, Object> orderMap = new HashMap<String, Object>();
+				ArrayList<Integer> orderDetailIds = new ArrayList<Integer>();
+				orderDetailIds.add(orderDetail.getId());
+				orderMap.put("orderId", orderDetail.getOrderId());
+				orderMap.put("orderDetailIds", orderDetailIds);
+				App.instance.getKdsJobManager().tearDownKot(
+						kotSummary, kotItemDetails,
+						kotItemModifiers,
+						kotCommitStatus, orderMap);
+				try {
+					JSONObject jsonObjectMsg = new JSONObject();
+					jsonObjectMsg.put("orderId", orderDetail.getOrderId().intValue());
+					jsonObjectMsg.put("RX", RxBus.RX_REFRESH_ORDER);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObjectMsg.toString(), null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				BaseActivity activity = App.getTopActivity();
+				if(activity instanceof MainPage){
+					activity.httpRequestAction(MainPage.VIEW_EVENT_SET_DATA, orderDetail.getOrderId().intValue());
+				}
+			}else{
+				result.put("resultCode", ResultCode.VOID_ITEM_FAIL);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}
 			result.put("resultCode", ResultCode.SUCCESS);
 			resp = this.getJsonResponse(new Gson().toJson(result));
 		} catch (Exception e) {
@@ -2196,15 +2280,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					TableInfoSQL.updateTables(tableInfo);
 					BaseActivity activity = App.getTopActivity();
 					if(activity instanceof MainPage){
-
+						activity.httpRequestAction(MainPage.REFRESH_UNSEAT_TABLE_VIEW, order.getId().intValue());
 					}
 					try {
-						JSONObject jsonObject1= new JSONObject();
-						jsonObject1.put("tableId", tableInfo.getPosId().intValue());
-						jsonObject1.put("status", ParamConst.TABLE_STATUS_IDLE);
-						jsonObject1.put("RX", RxBus.RX_REFRESH_TABLE);
-						TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
-						TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObject.toString(),null);
+						JSONObject jsonObjectMsg= new JSONObject();
+						jsonObjectMsg.put("tableId", tableInfo.getPosId().intValue());
+						jsonObjectMsg.put("status", ParamConst.TABLE_STATUS_IDLE);
+						jsonObjectMsg.put("RX", RxBus.RX_REFRESH_TABLE);
+						TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObjectMsg.toString(),null);
+						TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObjectMsg.toString(),null);
 					}catch (Exception e){
 						e.printStackTrace();
 					}

@@ -1118,6 +1118,10 @@ public class DataHelper {
                 db.execSQL("DROP INDEX IF EXISTS daySalesReport_idx1");
                 db.execSQL("DROP INDEX IF EXISTS dayPluReport_idx1");
                 db.execSQL("DROP INDEX IF EXISTS datTaxReport_idx1");
+                db.execSQL("ALTER TABLE "
+                        + TableNames.SyncMsg
+                        + " ADD COLUMN billNo INTEGER default 0");
+                onUpgradeForOldVersionfor129(db);
             } catch (Exception e) {
                 e.printStackTrace();
             }

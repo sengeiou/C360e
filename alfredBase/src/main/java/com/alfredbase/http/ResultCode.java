@@ -206,6 +206,9 @@ public class ResultCode {
 
 	public static final int CONNOT_UNSEAT_TABLE = -1997;
 
+	public static final int VOID_ITEM_FAIL= -1996;
+	public static final int SPLIT_ORDER_FINISHED = -1995;
+
 	/*
 	 * POS to KDS response Error
 	 * */

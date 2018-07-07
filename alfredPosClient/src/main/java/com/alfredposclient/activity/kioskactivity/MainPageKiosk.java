@@ -66,7 +66,6 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
-import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
@@ -79,11 +78,9 @@ import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.StoredCardActivity;
-import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
-import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.TablesStatusInfo;
 import com.alfredposclient.jobs.CloudSyncJobManager;
@@ -907,12 +904,8 @@ public class MainPageKiosk extends BaseActivity {
 				if(printerList.size()>0){
 					for (int i = 0; i < printerList.size(); i++) {
 						PrinterDevice printers = printerList.get(i);
-						if (App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isPrintLable() && printers.getIsLablePrinter() == 1 ) {
-
-//
-//							App.instance.remoteTBillPrint(printers, title, temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails,orderModifiers);
-
-							App.instance.remoteTBillPrint(printers,title,temporaryOrder, (ArrayList<OrderDetail>) orderSplitDetails,orderModifiers);
+						if (App.instance.getSystemSettings().isPrintLable() && printers.getIsLablePrinter() == 1 ) {
+							App.instance.remoteTBillPrint(printers,title,temporaryOrder, orderSplitDetails,orderModifiers);
 //						}
 						}
 					}
@@ -920,22 +913,9 @@ public class MainPageKiosk extends BaseActivity {
 
 				if (orderItems.size() > 0 && printer != null) {
 					RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
-//
-
-					if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
-					{
-
-					}else {
-						if(!App.instance.isRevenueKiosk()) {
-							App.instance.remoteBillPrint(printer, title, temporaryOrder,
-//
-									orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-						}else {
-							if(printer.getIsLablePrinter()==0){
-								App.instance.remoteBillPrint(printer, title, temporaryOrder,
-								orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-							}
-						}
+					if(App.instance.getSystemSettings().isPrintBill()){
+						App.instance.remoteBillPrint(printer, title, temporaryOrder,
+							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 					}
 				}
 //
@@ -994,7 +974,6 @@ public class MainPageKiosk extends BaseActivity {
 						if (kotItemModifierObj != null)
 							kotItemModifiers.addAll(kotItemModifierObj);
 					}
-
 					Map<String, Object> orderMap = new HashMap<String, Object>();
 					orderMap.put("orderId", paidOrderSplit.getOrderId());
 					orderMap.put("orderDetailIds", orderDetailIds);

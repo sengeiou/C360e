@@ -27,11 +27,11 @@ android {
 //greendao {
 //    schemaVersion 1
 //}
-repositories {
-    maven {
-        url 'https://maven.google.com'
-    }
-}
+//repositories {
+//    maven {
+//        url 'https://maven.google.com'
+//    }
+//}
 
 dependencies {
     api  rootProject.ext.libSupportV4
@@ -43,6 +43,8 @@ dependencies {
     api files('libs/slf4j-simple-1.7.6.jar')
     api files('libs/umeng-analytics-v5.4.2.jar')
     api files('libs/universal-image-loader-1.9.2.jar')
+    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
+    api 'com.tencent.bugly:crashreport:latest.release'
 //    compile files('libs/zxing.jar')
     api files('libs/core-3.2.1.jar')
     api 'io.reactivex:rxjava:1.1.5'

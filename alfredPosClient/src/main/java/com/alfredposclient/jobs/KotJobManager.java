@@ -11,14 +11,12 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Printer;
-import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -137,62 +135,34 @@ public class KotJobManager {
 
 					boolean printed = false;
 
-					if(prntd.getIP().indexOf(":") != -1){
-
-
-//					if(App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isPrintLable()&&prntd.getIsLablePrinter()==1)
-//					{
-//							PrinterTitle title = (PrinterTitle) orderMap
-//							.get("title");
-//						Order order = (Order) orderMap
-//							.get("paidOrder");
-//						ArrayList<OrderDetail> OrderDetail = (ArrayList<OrderDetail>) orderMap
-//								.get("placedOrderDetails");
-//
-//					App.instance.remoteTBillPrint(prntd,
-//								title, order, OrderDetail);
-//					printed=true;
-//					}
-					}
-					if(App.instance.isRevenueKiosk()) {
-						if (prntd.getIsLablePrinter() != 1) {
-
-
-							if ( App.instance.getSystemSettings().isPrintBill()) {
-								printed = App.instance.remoteKotPrint(prntd,
-										kotSummary, kots.get(prgid), mods.get(prgid), false);
-							}
-						}
-					}else {
+					if(prntd.getIP().indexOf(":") == -1 || prntd.getIsLablePrinter() != 1){
 						printed = App.instance.remoteKotPrint(prntd,
 								kotSummary, kots.get(prgid), mods.get(prgid), false);
-					}
 
-
-
-					if (printed) {
-						List<Integer> orderDetailIds = (List<Integer>) orderMap
-								.get("orderDetailIds");
-						if (orderDetailIds != null && orderDetailIds.size() != 0) {
-							ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
-							synchronized (orderDetails) {
-								for (int i = 0; i < orderDetailIds.size(); i++) {
-									OrderDetail orderDetail = OrderDetailSQL
-											.getOrderDetail(orderDetailIds
-													.get(i));
-									orderDetail
-											.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
-									orderDetails.add(orderDetail);
+						if (printed) {
+							List<Integer> orderDetailIds = (List<Integer>) orderMap
+									.get("orderDetailIds");
+							if (orderDetailIds != null && orderDetailIds.size() != 0) {
+								ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+								synchronized (orderDetails) {
+									for (int i = 0; i < orderDetailIds.size(); i++) {
+										OrderDetail orderDetail = OrderDetailSQL
+												.getOrderDetail(orderDetailIds
+														.get(i));
+										orderDetail
+												.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
+										orderDetails.add(orderDetail);
+									}
 								}
+								OrderDetailSQL.addOrderDetailList(orderDetails);
+								LogUtil.e("成功时间", "时间");
+								context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED,
+										orderMap.get("orderId"));
 							}
-							OrderDetailSQL.addOrderDetailList(orderDetails);
-							LogUtil.e("成功时间","时间");
-							context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED,
+						} else {
+							context.kotPrintStatus(MainPage.KOT_PRINT_FAILED,
 									orderMap.get("orderId"));
 						}
-					} else {
-						context.kotPrintStatus(MainPage.KOT_PRINT_FAILED,
-								orderMap.get("orderId"));
 					}
 				}
 			}
