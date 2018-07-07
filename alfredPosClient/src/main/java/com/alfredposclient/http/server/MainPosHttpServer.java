@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.alfredbase.APPConfig;
+import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -716,6 +717,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				return handlerPrintBill(body);
 			} else if (apiName.equals(APIName.CALL_SPECIFY_THE_NUMBER)){
 				return handlerCallSpecifyNumber(body);
+			} else if (apiName.equals(APIName.UNSEAT_TABLE)){
+				return handlerWaiterUnseatTable(body);
 			} else {
 				return this.getNotFoundResponse();
 			}
@@ -833,7 +836,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						!App.instance.isRevenueKiosk()) {
 					final WaiterDevice waiterDevice = gson.fromJson(device,
 							WaiterDevice.class);
-					if (App.instance.isWaiterLoginAllowed(waiterDevice)) {
+//					if (App.instance.isWaiterLoginAllowed(waiterDevice)) {
 						App.instance.addWaiterDevice(waiterDevice);
 						LocalDevice localDevice = ObjectFactory
 								.getInstance()
@@ -851,11 +854,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 										waiterDevice);
 							}
 						});
-					} else {
-						result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
-						resp = this.getJsonResponse(new Gson().toJson(result));
-						return resp;
-					}
+//					} else {
+//						result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
+//						resp = this.getJsonResponse(new Gson().toJson(result));
+//						return resp;
+//					}
 				} else if (deviceType == ParamConst.DEVICE_TYPE_KDS) {
 					KDSDevice kdsDevice = new KDSDevice();
 					kdsDevice = gson.fromJson(device,
@@ -984,7 +987,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 									jsonObject.optJSONObject("device").toString(),
 									WaiterDevice.class);
 							//waiter can login one device at one time
-							if (App.instance.isWaiterLoginAllowed(dev)) {
+//							if (App.instance.isWaiterLoginAllowed(dev)) {
 								App.instance.addWaiterDevice(dev);
 								LocalDevice localDevice = ObjectFactory
 										.getInstance()
@@ -1000,9 +1003,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								result.put("businessDate", App.instance.getBusinessDate());	
 								result.put("currencySymbol", App.instance.getLocalRestaurantConfig().getCurrencySymbol());
 								result.put("isDouble", App.instance.getLocalRestaurantConfig().getCurrencySymbolType() >= 0);
-							} else {
-								result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
-							}
+//							} else {
+//								result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
+//							}
 							
 							resp = this.getJsonResponse(new Gson().toJson(result));
 					}
@@ -2152,5 +2155,156 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 		return resp;
 	}
-	
+
+	private Response handlerWaiterVoidItem(String params){
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int orderDetailId = jsonObject.getInt("orderDetailId");
+			OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(orderDetailId);
+			if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
+				result.put("resultCode", ResultCode.VOID_ITEM_FAIL);
+				return this.getJsonResponse(new Gson().toJson(result));
+			} else if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
+				result.put("resultCode", ResultCode.VOID_ITEM_FAIL);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}else if(orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0){
+				OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
+				if(orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+					result.put("resultCode", ResultCode.SPLIT_ORDER_FINISHED);
+					return this.getJsonResponse(new Gson().toJson(result));
+				}
+			}
+			if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+				OrderDetailSQL.setOrderDetailToVoidOrFree(
+						orderDetail,
+						ParamConst.ORDERDETAIL_TYPE_VOID);
+				String kotCommitStatus = ParamConst.JOB_VOID_KOT;
+				KotItemDetail kotItemDetail = KotItemDetailSQL
+						.getMainKotItemDetailByOrderDetailId(orderDetail
+								.getId());
+				kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
+				KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
+						.getOrderId());
+				KotItemDetailSQL.update(kotItemDetail);
+				ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+				kotItemDetails.add(kotItemDetail);
+				OrderDetail freeOrderDetail = OrderDetailSQL
+						.getOrderDetail(
+								orderDetail.getOrderId(),
+								orderDetail);
+				if (freeOrderDetail != null) {
+					KotItemDetail freeKotItemDetail = KotItemDetailSQL
+							.getMainKotItemDetailByOrderDetailId(freeOrderDetail
+									.getId());
+					freeKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
+					KotItemDetailSQL.update(freeKotItemDetail);
+					kotItemDetails.add(freeKotItemDetail);
+				}
+
+				//Bob: fix issue: kot print no modifier showup
+				// look for kot modifiers
+				Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
+				ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+				ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+						.getOrderModifiers(placedOrder, orderDetail);
+				for (OrderModifier orderModifier : orderModifiers) {
+					if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
+						Modifier mod = CoreData.getInstance().getModifier(orderModifier.getModifierId());
+						if (mod != null) {
+							KotItemModifier kotItemModifier = KotItemModifierSQL
+									.getKotItemModifier(kotItemDetail.getId(), mod.getId());
+							if (kotItemModifier != null)
+								kotItemModifiers.add(kotItemModifier);
+						}
+					}
+				}
+				//end fix
+
+				Map<String, Object> orderMap = new HashMap<String, Object>();
+				ArrayList<Integer> orderDetailIds = new ArrayList<Integer>();
+				orderDetailIds.add(orderDetail.getId());
+				orderMap.put("orderId", orderDetail.getOrderId());
+				orderMap.put("orderDetailIds", orderDetailIds);
+				App.instance.getKdsJobManager().tearDownKot(
+						kotSummary, kotItemDetails,
+						kotItemModifiers,
+						kotCommitStatus, orderMap);
+				try {
+					JSONObject jsonObjectMsg = new JSONObject();
+					jsonObjectMsg.put("orderId", orderDetail.getOrderId().intValue());
+					jsonObjectMsg.put("RX", RxBus.RX_REFRESH_ORDER);
+					TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObjectMsg.toString(), null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				BaseActivity activity = App.getTopActivity();
+				if(activity instanceof MainPage){
+					activity.httpRequestAction(MainPage.VIEW_EVENT_SET_DATA, orderDetail.getOrderId().intValue());
+				}
+			}else{
+				result.put("resultCode", ResultCode.VOID_ITEM_FAIL);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
+
+
+	private Response handlerWaiterUnseatTable(String params){
+		Map<String, Object> result = new HashMap<String, Object>();
+		Response resp;
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int tableId = jsonObject.getInt("tableId");
+			TableInfo tableInfo = TableInfoSQL.getTableById(tableId);
+			if(tableInfo != null && tableInfo.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE){
+				Order order = OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), App.instance.getBusinessDate());
+				int placeOrderCount = OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(order);
+				if(placeOrderCount > 0) {
+					result.put("resultCode",ResultCode.CONNOT_UNSEAT_TABLE);
+					return this.getJsonResponse(new Gson().toJson(result));
+				}else{
+					OrderDetailSQL.deleteOrderDetailByOrder(order);
+					KotSummarySQL.deleteKotSummaryByOrder(order);
+					OrderBillSQL.deleteOrderBillByOrder(order);
+					OrderSQL.deleteOrder(order);
+					tableInfo.setStatus(ParamConst.TABLE_STATUS_IDLE);
+					TableInfoSQL.updateTables(tableInfo);
+					BaseActivity activity = App.getTopActivity();
+					if(activity instanceof MainPage){
+						activity.httpRequestAction(MainPage.REFRESH_UNSEAT_TABLE_VIEW, order.getId().intValue());
+					}
+					try {
+						JSONObject jsonObjectMsg= new JSONObject();
+						jsonObjectMsg.put("tableId", tableInfo.getPosId().intValue());
+						jsonObjectMsg.put("status", ParamConst.TABLE_STATUS_IDLE);
+						jsonObjectMsg.put("RX", RxBus.RX_REFRESH_TABLE);
+						TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObjectMsg.toString(),null);
+						TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU,TcpUdpFactory.UDP_REQUEST_MSG+ jsonObjectMsg.toString(),null);
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+
+			}else{
+				result.put("resultCode",ResultCode.CONNOT_UNSEAT_TABLE);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}
+			result.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(new Gson().toJson(result));
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+
+		return resp;
+	}
 }

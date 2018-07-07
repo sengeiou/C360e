@@ -68,6 +68,7 @@ public class XMPP implements ConnectionListener, PingFailedListener{
     private static String TAG = "XMPP";
     private Timer timer = new Timer();
     private int reloginTime = 10000;
+    private int noNetWorkTime = 30000;
     private boolean canRunTask = true;
     private XMPPTCPConnectionConfiguration buildConfiguration() throws XmppStringprepException {
         XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
@@ -314,7 +315,9 @@ public class XMPP implements ConnectionListener, PingFailedListener{
                                     }
                                 } catch (Exception e) {
                                     LogUtil.d(TAG, "设置监听出错");
-                                    e.printStackTrace();
+                                    if (App.isOpenLog) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }
@@ -497,19 +500,43 @@ public class XMPP implements ConnectionListener, PingFailedListener{
         this.canCheckAppOrder = canCheckAppOrder;
     }
 
+    public void onNetWorkConnect(){
+        try{
+            if(timer != null){
+                timer.cancel();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if (this.connection != null) {
+            this.connection.disconnect();
+        }
+        timer = new Timer();
+        timer.schedule(new MyTimertask(),1000);
+    }
+
 
     class MyTimertask extends TimerTask {
 
         @Override
         public void run() {
             canRunTask = true;
+            LogUtil.e(TAG, ".....正在尝试连接");
             if (NetUtil.isNetworkAvailable(App.instance)) {
                 LogUtil.e(TAG, ".....正在连接中");
+                noNetWorkTime = 30*1000;
                 reLogin();
             }else{
-                LogUtil.e(TAG, "xmpp  当前没有网络");
+                LogUtil.e(TAG, "xmpp  当前没有网络,等待30s,1m,2m,3m,4m,5m,10m.最少10分钟一次,减少次数");
                 if(canRunTask) {
-                    timer.schedule(new MyTimertask(), reloginTime);
+                    timer.schedule(new MyTimertask(), noNetWorkTime);
+                    if(noNetWorkTime == 30*1000){
+                        noNetWorkTime += noNetWorkTime;
+                    }else if(noNetWorkTime < 5*60*1000){
+                        noNetWorkTime += 60*1000;
+                    }else{
+                        noNetWorkTime = 10*60*1000;
+                    }
                     canRunTask = false;
                 }
             }

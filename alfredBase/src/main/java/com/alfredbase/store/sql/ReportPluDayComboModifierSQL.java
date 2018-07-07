@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
@@ -331,6 +332,67 @@ public class ReportPluDayComboModifierSQL {
 				reportPluDayComboModifier.setModifierItemPrice(cursor.getString(26));
 				reportPluDayComboModifier.setRealPrice(cursor.getString(27));
 				reportPluDayComboModifier.setRealCount(cursor.getInt(28));
+				result.add(reportPluDayComboModifier);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
+	public static ArrayList<ReportPluDayComboModifier> getReportPluDayComboModifiersForZReport(long date) {
+		ArrayList<ReportPluDayComboModifier> result = new ArrayList<ReportPluDayComboModifier>();
+		String sql = "select restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId,"
+				+ " modifierCategoryName, modifierId, modifierName, modifierPrice, sum(modifierCount), sum(billVoidPrice), sum(billVoidCount),"
+				+ " sum(voidModifierPrice), sum(voidModifierCount), sum(bohModifierPrice), sum(bohModifierCount), sum(focModifierPrice), sum(focModifierCount), "
+				+ " sum(billFocPrice), sum(billFocCount), comboItemId, itemId, itemName, modifierItemPrice, sum(realPrice), sum(realCount) from "
+				+ TableNames.ReportPluDayComboModifier
+				+ " where businessDate = ? group by modifierId";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {String.valueOf(date)});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			ReportPluDayComboModifier reportPluDayComboModifier = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				reportPluDayComboModifier = new ReportPluDayComboModifier();
+				reportPluDayComboModifier.setRestaurantId(cursor.getInt(0));
+				reportPluDayComboModifier.setRestaurantName(cursor.getString(1));
+				reportPluDayComboModifier.setRevenueId(cursor.getInt(2));
+				reportPluDayComboModifier.setRevenueName(cursor.getString(3));
+				reportPluDayComboModifier.setBusinessDate(cursor.getLong(4));
+				reportPluDayComboModifier.setModifierCategoryId(cursor.getInt(5));
+				reportPluDayComboModifier.setModifierCategoryName(cursor
+						.getString(6));
+				reportPluDayComboModifier.setModifierId(cursor.getInt(7));
+				reportPluDayComboModifier.setModifierName(cursor.getString(8));
+				reportPluDayComboModifier.setModifierPrice(BH.getBD(cursor.getString(9)).toString());
+				reportPluDayComboModifier.setModifierCount(cursor.getInt(10));
+				reportPluDayComboModifier.setBillVoidPrice(BH.getBD(cursor.getString(11)).toString());
+				reportPluDayComboModifier.setBillVoidCount(cursor.getInt(12));
+				reportPluDayComboModifier.setVoidModifierPrice(BH.getBD(cursor.getString(13)).toString());
+				reportPluDayComboModifier.setVoidModifierCount(cursor.getInt(14));
+				reportPluDayComboModifier.setBohModifierPrice(BH.getBD(cursor.getString(15)).toString());
+				reportPluDayComboModifier.setBohModifierCount(cursor.getInt(16));
+				reportPluDayComboModifier.setFocModifierPrice(BH.getBD(cursor.getString(17)).toString());
+				reportPluDayComboModifier.setFocModifierCount(cursor.getInt(18));
+				reportPluDayComboModifier.setBillFocPrice(BH.getBD(cursor.getString(19)).toString());
+				reportPluDayComboModifier.setBillFocCount(cursor.getInt(20));
+				reportPluDayComboModifier.setComboItemId(cursor.getInt(21));
+				reportPluDayComboModifier.setItemId(cursor.getInt(22));
+				reportPluDayComboModifier.setItemName(cursor.getString(23));
+				reportPluDayComboModifier.setModifierItemPrice(BH.getBD(cursor.getString(24)).toString());
+				reportPluDayComboModifier.setRealPrice(BH.getBD(cursor.getString(25)).toString());
+				reportPluDayComboModifier.setRealCount(cursor.getInt(26));
 				result.add(reportPluDayComboModifier);
 			}
 		} catch (Exception e) {

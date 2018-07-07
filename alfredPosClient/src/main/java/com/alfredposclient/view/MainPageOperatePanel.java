@@ -15,6 +15,7 @@ import com.alfredbase.ParamHelper;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -160,7 +161,9 @@ public class MainPageOperatePanel extends LinearLayout implements
 //				if (paymentSettlement != null) {
 //					return;
 //				}
-				if(orderDetails != null && orderDetails.size() > 0) {
+
+				int placeOrderCount = OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(order);
+				if(placeOrderCount > 0) {
 					DialogFactory.showOneButtonCompelDialog(parent,"", parent.getResources().getString(R.string.cannot_unseat), null);
 				}else{
 					DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),

@@ -1243,6 +1243,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		PrinterTitle printerTitle = new PrinterTitle();
 		Restaurant restaurant = RestaurantSQL.getRestaurant();
 		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
+		printerTitle.setRevName(revenue.getRevName());
 		printerTitle.setAddressDetail(restaurant.getAddressPrint());
 		printerTitle.setTel(restaurant.getTelNo());
 		printerTitle.setEmail(restaurant.getEmail());
@@ -1275,6 +1276,8 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		PrinterTitle printerTitle = new PrinterTitle();
 		Restaurant restaurant = RestaurantSQL.getRestaurant();
 		printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
+
+		printerTitle.setRevName(revenue.getRevName());
 		printerTitle.setAddressDetail(restaurant.getAddressPrint());
 		printerTitle.setTel(restaurant.getTelNo());
 		printerTitle.setEmail(restaurant.getEmail());
@@ -1460,19 +1463,19 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotSummary.setOrderNo(order.getOrderNo());//流水号
 				kotSummary.setRevenueCenterId(revenueCenter.getId());
 				kotSummary.setRevenueCenterName(revenueCenter.getRevName());
-				if(revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
-					kotSummary.setTableName(order.getTableName());
-				}else{
-					kotSummary.setTableName(tableName);
-				}
 				kotSummary.setCreateTime(time);
 				kotSummary.setUpdateTime(time);
 				kotSummary.setBusinessDate(businessDate);
-				kotSummary.setIsTakeAway(order.getIsTakeAway());
 				kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
 				kotSummary.setOrderRemark(order.getOrderRemark());
-				KotSummarySQL.update(kotSummary);
 			}
+			if(revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
+				kotSummary.setTableName(order.getTableName());
+			}else{
+				kotSummary.setTableName(tableName);
+			}
+			kotSummary.setIsTakeAway(order.getIsTakeAway());
+			KotSummarySQL.update(kotSummary);
 		}
 		return kotSummary;
 	}

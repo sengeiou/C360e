@@ -40,6 +40,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.ReportObjectFactory;
+import com.alfredposclient.global.ReportObjectFactoryCP;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.WebViewConfig;
 import com.alfredposclient.utils.AlertToDeviceSetting;
@@ -338,20 +339,20 @@ public class XZReportHtml extends BaseActivity {
 
 	private String getXReportData(Long bizDate, SessionStatus sessionStatus) {
 
-		reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(
+		reportDaySales = ReportObjectFactoryCP.getInstance().loadXReportDaySales(
 				bizDate, sessionStatus, "0.00", false);
 		if (reportDaySales != null) {
-			reportDayTaxs = ReportObjectFactory.getInstance()
+			reportDayTaxs = ReportObjectFactoryCP.getInstance()
 					.loadXReportDayTax(reportDaySales, bizDate, sessionStatus);
-			reportPluDayItems = ReportObjectFactory.getInstance()
+			reportPluDayItems = ReportObjectFactoryCP.getInstance()
 					.loadXReportPluDayItem(bizDate, sessionStatus);
 
-			filteredPluDayItems = ReportObjectFactory.getInstance()
+			filteredPluDayItems = ReportObjectFactoryCP.getInstance()
 					.getPLUItemWithoutVoidEnt(reportPluDayItems);
 
-			reportPluDayModifiers = ReportObjectFactory.getInstance()
+			reportPluDayModifiers = ReportObjectFactoryCP.getInstance()
 					.loadReportPluDayModifier(bizDate);
-			reportHourlys = ReportObjectFactory.getInstance()
+			reportHourlys = ReportObjectFactoryCP.getInstance()
 					.loadXReportHourlys(bizDate, sessionStatus);
 
 			itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
@@ -395,19 +396,19 @@ public class XZReportHtml extends BaseActivity {
 		// List<ItemCategory> itemCategorys;
 		// List<ItemMainCategory> itemMainCategorys;
 
-		reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(
+		reportDaySales = ReportObjectFactoryCP.getInstance().loadReportDaySales(
 				bizDate, false);
 		if (reportDaySales != null) {
-			reportDayTaxs = ReportObjectFactory.getInstance().loadReportDayTax(
+			reportDayTaxs = ReportObjectFactoryCP.getInstance().loadReportDayTax(
 					reportDaySales, bizDate);
-			reportPluDayItems = ReportObjectFactory.getInstance()
+			reportPluDayItems = ReportObjectFactoryCP.getInstance()
 					.loadReportPluDayItem(bizDate);
 
-			filteredPluDayItems = ReportObjectFactory.getInstance()
+			filteredPluDayItems = ReportObjectFactoryCP.getInstance()
 					.getPLUItemWithoutVoidEnt(reportPluDayItems);
-			Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(bizDate);
+			Map<String, Object> map = ReportObjectFactoryCP.getInstance().loadReportPluDayModifierInfo(bizDate);
 			reportPluDayModifiers = (List<ReportPluDayModifier>) map.get("reportPluDayModifiers");
-			reportHourlys = ReportObjectFactory.getInstance()
+			reportHourlys = ReportObjectFactoryCP.getInstance()
 					.loadReportHourlys(bizDate);
 			itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
 			itemMainCategorys = ItemMainCategorySQL

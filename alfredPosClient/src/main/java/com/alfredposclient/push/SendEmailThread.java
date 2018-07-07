@@ -1,18 +1,13 @@
 package com.alfredposclient.push;
 
-import android.app.Application;
 import android.content.Context;
 
-import com.alfredbase.BaseActivity;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
-import com.alfredbase.javabean.RevenueCenter;
 import com.alfredposclient.activity.OpenRestaruant;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.ReportObjectFactory;
 import com.alfredposclient.global.SyncCentre;
-import com.alfredposclient.xmpp.XMPP;
-import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -41,11 +36,9 @@ public class SendEmailThread extends Thread {
         ReportDaySales reportDaySales;
         List<ReportDayTax> reportDayTaxs;
             reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(App.instance.getBusinessDate());
-            reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(reportDaySales,App.instance.getBusinessDate());
+            reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(App.instance.getBusinessDate());
 
             if(reportDayTaxs != null && reportDayTaxs.size() > 0) {
-
-
                 SyncCentre.getInstance().syncSendEmail(App.instance, reportDaySales, reportDayTaxs, null);
             }
            // SyncCentre.getInstance().syncMedia(App.instance,  null);

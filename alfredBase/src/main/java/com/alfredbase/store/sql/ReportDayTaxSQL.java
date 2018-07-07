@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
@@ -52,6 +53,40 @@ public class ReportDayTaxSQL {
 			String sql = "replace into "
 					+ TableNames.ReportDayTax
 					+ "(daySalesId, restaurantId, restaurantName, revenueId, revenueName," 
+					+ " businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
+			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
+			for(ReportDayTax reportDayTax: reportDayTaxList) {
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportDayTax.getDaySalesId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 2, reportDayTax.getRestaurantId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 3, reportDayTax.getRestaurantName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 4, reportDayTax.getRevenueId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 5, reportDayTax.getRevenueName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 6, reportDayTax.getBusinessDate());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 7, reportDayTax.getTaxId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 8, reportDayTax.getTaxName());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 9, reportDayTax.getTaxPercentage());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 10, reportDayTax.getTaxQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 11, reportDayTax.getTaxAmount());
+				sqLiteStatement.executeInsert();
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+	}
+	public static void addReportDayTaxs(List<ReportDayTax> reportDayTaxList) {
+		if (reportDayTaxList == null)
+			return;
+
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			db.beginTransaction();
+			String sql = "replace into "
+					+ TableNames.ReportDayTax
+					+ "(daySalesId, restaurantId, restaurantName, revenueId, revenueName,"
 					+ " businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
@@ -221,6 +256,49 @@ public class ReportDayTaxSQL {
 				reportDayTax.setTaxPercentage(cursor.getString(9));
 				reportDayTax.setTaxQty(cursor.getInt(10));
 				reportDayTax.setTaxAmount(cursor.getString(11));
+				reportDayTaxs.add(reportDayTax);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return reportDayTaxs;
+	}
+
+
+	public static ArrayList<ReportDayTax> getReportDayTaxsForZReport(long day) {
+		ArrayList<ReportDayTax> reportDayTaxs = new ArrayList<ReportDayTax>();
+
+		String sql = "select restaurantId, restaurantName, revenueId, revenueName,"
+				+ " businessDate, taxId, taxName, taxPercentage, sum(taxQty), sum(taxAmount) from "
+				+ TableNames.ReportDayTax
+				+ " where businessDate = ? group by taxId";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			ReportDayTax reportDayTax = null;
+			cursor = db.rawQuery(sql, new String[] { String.valueOf(day) });
+			int count = cursor.getCount();
+			if(count < 1){
+				return reportDayTaxs;
+			}
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				reportDayTax = new ReportDayTax();
+				reportDayTax.setRestaurantId(cursor.getInt(0));
+				reportDayTax.setRestaurantName(cursor.getString(1));
+				reportDayTax.setRevenueId(cursor.getInt(2));
+				reportDayTax.setRevenueName(cursor.getString(3));
+				reportDayTax.setBusinessDate(cursor.getLong(4));
+				reportDayTax.setTaxId(cursor.getInt(5));
+				reportDayTax.setTaxName(cursor.getString(6));
+				reportDayTax.setTaxPercentage(BH.getBD(cursor.getString(7)).toString());
+				reportDayTax.setTaxQty(cursor.getInt(8));
+				reportDayTax.setTaxAmount(BH.getBD(cursor.getString(9)).toString());
 				reportDayTaxs.add(reportDayTax);
 			}
 		} catch (Exception e) {

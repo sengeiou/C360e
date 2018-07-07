@@ -132,31 +132,37 @@ public class KotJobManager {
 				}
 				if(prntd != null){
 					prntd.setGroupId(prgid.intValue());
-					boolean printed = App.instance.remoteKotPrint(prntd,
-							kotSummary, kots.get(prgid), mods.get(prgid), false);
-					if (printed) {
-						List<Integer> orderDetailIds = (List<Integer>) orderMap
-								.get("orderDetailIds");
-						if (orderDetailIds != null && orderDetailIds.size() != 0) {
-							ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
-							synchronized (orderDetails) {
-								for (int i = 0; i < orderDetailIds.size(); i++) {
-									OrderDetail orderDetail = OrderDetailSQL
-											.getOrderDetail(orderDetailIds
-													.get(i));
-									orderDetail
-											.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
-									orderDetails.add(orderDetail);
+
+					boolean printed = false;
+
+					if(prntd.getIP().indexOf(":") == -1 || prntd.getIsLablePrinter() != 1){
+						printed = App.instance.remoteKotPrint(prntd,
+								kotSummary, kots.get(prgid), mods.get(prgid), false);
+
+						if (printed) {
+							List<Integer> orderDetailIds = (List<Integer>) orderMap
+									.get("orderDetailIds");
+							if (orderDetailIds != null && orderDetailIds.size() != 0) {
+								ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+								synchronized (orderDetails) {
+									for (int i = 0; i < orderDetailIds.size(); i++) {
+										OrderDetail orderDetail = OrderDetailSQL
+												.getOrderDetail(orderDetailIds
+														.get(i));
+										orderDetail
+												.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
+										orderDetails.add(orderDetail);
+									}
 								}
+								OrderDetailSQL.addOrderDetailList(orderDetails);
+								LogUtil.e("成功时间", "时间");
+								context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED,
+										orderMap.get("orderId"));
 							}
-							OrderDetailSQL.addOrderDetailList(orderDetails);
-							LogUtil.e("成功时间","时间");
-							context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED,
+						} else {
+							context.kotPrintStatus(MainPage.KOT_PRINT_FAILED,
 									orderMap.get("orderId"));
 						}
-					} else {
-						context.kotPrintStatus(MainPage.KOT_PRINT_FAILED,
-								orderMap.get("orderId"));
 					}
 				}
 			}
@@ -239,8 +245,11 @@ public class KotJobManager {
 				}
 				if(prntd != null){
 					prntd.setGroupId(prgid.intValue());
-					boolean printed = App.instance.remoteKotPrint(prntd,
-							kotSummary, kots.get(prgid), mods.get(prgid), true);
+
+
+				boolean		printed = App.instance.remoteKotPrint(prntd,
+								kotSummary, kots.get(prgid), mods.get(prgid), true);
+
 					if (printed) {
 						List<Integer> orderDetailIds = (List<Integer>) orderMap
 								.get("orderDetailIds");

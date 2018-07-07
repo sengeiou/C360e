@@ -1,10 +1,12 @@
-package com.customRecycler;
+package com.alfredwaiter.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.alfredwaiter.listener.RvItemClickListener;
 
 import java.util.List;
 
@@ -13,17 +15,17 @@ import java.util.List;
  * 当item有不同的布局时，抽象出来的类
  */
 
-public abstract class RecyclerViewMenuAdapter<T> extends RecyclerView.Adapter<RecyclerViewMenuAdapter.RvHolder> {
+public abstract class RvAdapter<T> extends RecyclerView.Adapter<RvAdapter.RvHolder> {
     private Context context;
     protected List<T> list;
-    protected ItemClickListener listener;
-    public RecyclerViewMenuAdapter(Context context, List<T> list, ItemClickListener listener)
+    protected RvItemClickListener listener;
+    public RvAdapter(Context context, List<T> list, RvItemClickListener listener)
     {
         this.context=context;
         this.list=list;
         this.listener=listener;
     }
-    public RecyclerViewMenuAdapter()
+    public RvAdapter()
     {
 
     }
@@ -60,16 +62,14 @@ public abstract class RecyclerViewMenuAdapter<T> extends RecyclerView.Adapter<Re
     }
     public  abstract class RvHolder <T> extends RecyclerView.ViewHolder
     {
-        protected ItemClickListener clickListener;
-        public RvHolder(View itemView ,int type,ItemClickListener listener) {
+        protected RvItemClickListener clickListener;
+        public RvHolder(View itemView , int type, RvItemClickListener listener) {
             super(itemView);
             clickListener=listener;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(clickListener != null) {
-                        clickListener.onItemClick(v, (int) v.getTag());
-                    }
+                    clickListener.onItemClick(v, (int) v.getTag());
                 }
             });
         }

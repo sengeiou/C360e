@@ -330,7 +330,7 @@
     <string name="main_category">Main Category</string>
     <string name="tax_group">Tax Group</string>
     <string name="allow_takeaways">Allow Takeaways?</string>
-    <string name="discoutable">Discoutable?</string>
+    <string name="discoutable">Discountable?</string>
     <string name="sub_category">Sub Category</string>
     <string name="kitchen">Kitchen</string>
     <string name="allow_delivery">Allow Delivery?</string>
@@ -362,7 +362,7 @@
     <string name="order_first">Can not apply discount!</string>
     <string name="no_cashier_printer">No Cashier Printer yet</string>
     <string name="discard_current_order">Are you sure to discard current order?</string>
-    <string name="unseat_table">Are you sure to unseat this table?</string>
+    <string name="unseat_table">Are you sure to unseat table?\nVoid items will not be recorded into reports.</string>
     <string name="cannot_unseat">Cannot unseat this table. \nSome menu has been ordered.</string>
     <string name="printer_thermal_type">80mm Thermal Printer</string>
     <string name="printer_dotmatrix_type">80mm Dot Matrix Printer</string>
@@ -395,7 +395,8 @@
     <string name="index">Index</string>
     <string name="welcome">Welcome</string>
     <string name="bill_manage">Bill Manage</string>
-    <string name="add_table_num">add Table Num</string>
+    <string name="add_table_num">Add Table Number</string>
+    <string name="input_table_num">Please Input Table Number</string>
 
     <!--Zun-->
     <string name="device_scan_tips">Scan the QR code to get Tablets paired with the POS</string>

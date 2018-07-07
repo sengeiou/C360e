@@ -164,7 +164,7 @@ public class TscPOSPrinter {
 	// 设置打印浓度
 	public void addDensity() {
 		new String();
-		String str = "DENSITY " + 7 + "\r\n";
+		String str = "DENSITY " + 15 + "\r\n";
 		this.addStrToCommand(str);
 	}
 	// 设置打印方向

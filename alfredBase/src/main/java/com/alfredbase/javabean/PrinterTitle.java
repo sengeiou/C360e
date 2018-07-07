@@ -38,6 +38,16 @@ public class PrinterTitle implements Serializable{
 	private Integer copy;
 	private int spliteByPax = 0;
 
+	private String revName;
+
+	public String getRevName() {
+		return revName;
+	}
+
+	public void setRevName(String revName) {
+		this.revName = revName;
+	}
+
 	public Integer getIsKiosk() {
 		return isKiosk;
 	}
@@ -223,7 +233,10 @@ public class PrinterTitle implements Serializable{
 				", isTakeAway=" + isTakeAway +
 				", orderNo='" + orderNo + '\'' +
 				", groupNum='" + groupNum + '\'' +
+				", isKiosk=" + isKiosk +
+				", copy=" + copy +
+				", spliteByPax=" + spliteByPax +
+				", revName='" + revName + '\'' +
 				'}';
 	}
-
 }

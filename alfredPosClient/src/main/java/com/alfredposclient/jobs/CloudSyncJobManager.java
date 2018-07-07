@@ -3,6 +3,7 @@ package com.alfredposclient.jobs;
 import android.content.Context;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.model.SessionStatus;
@@ -19,6 +20,7 @@ import com.path.android.jobqueue.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -117,6 +119,15 @@ public class CloudSyncJobManager {
 		
     	if (SyncMsgSQL.getSyncMsgByOrderIdBizDate(orderId, bizDate) == null)  {
 			Map<String, Object> orderInfo = UploadSQL.getOrderInfo(orderId);
+			List<OrderBill> orderBills = (List<OrderBill>) orderInfo.get("orderBills");
+			int billNo =0;
+			if(orderBills != null && orderBills.size() > 0){
+				for(OrderBill orderBill : orderBills){
+					if(orderBill.getBillNo() != null && orderBill.getBillNo().intValue() > billNo){
+						billNo = orderBill.getBillNo().intValue();
+					}
+				}
+			}
 	    	if (orderInfo != null) {
 	    		Gson gson = new Gson();
 	    		SyncMsg syncMsg = new SyncMsg();
@@ -129,6 +140,7 @@ public class CloudSyncJobManager {
 	    		syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
 	    		syncMsg.setRevenueId(revenueCenterId);
 	    		syncMsg.setBusinessDate(bizDate);
+	    		syncMsg.setBillNo(billNo);
 	    		SyncMsgSQL.add(syncMsg);
 	    		syncOrderJob = new SyncMsgJob(revenueCenterId, HttpAPI.ORDER_DATA, uuid,
 	    				orderId, bizDate, syncMsg.getCreateTime());
@@ -143,6 +155,15 @@ public class CloudSyncJobManager {
 		
     	if (SyncMsgSQL.getSyncMsgByOrderIdBizDateCurrCount(orderId, bizDate, currCount) == null)  {
 			Map<String, Object> orderInfo = UploadSQL.getOrderInfo(orderId);
+			List<OrderBill> orderBills = (List<OrderBill>) orderInfo.get("orderBills");
+			int billNo =0;
+			if(orderBills != null && orderBills.size() > 0){
+				for(OrderBill orderBill : orderBills){
+					if(orderBill.getBillNo() != null && orderBill.getBillNo().intValue() > billNo){
+						billNo = orderBill.getBillNo().intValue();
+					}
+				}
+			}
 	    	if (orderInfo != null) {
 	    		Gson gson = new Gson();
 	    		SyncMsg syncMsg = new SyncMsg();
@@ -156,6 +177,7 @@ public class CloudSyncJobManager {
 	    		syncMsg.setRevenueId(revenueCenterId);
 	    		syncMsg.setBusinessDate(bizDate);
 	    		syncMsg.setCurrCount(currCount);
+	    		syncMsg.setBillNo(billNo);
 	    		SyncMsgSQL.add(syncMsg);
 	    		syncOrderJob = new SyncMsgJob(revenueCenterId, HttpAPI.ORDER_DATA, uuid,
 	    				orderId, bizDate, syncMsg.getCreateTime());

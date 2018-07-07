@@ -47,7 +47,7 @@ public class BaseApplication extends Application {
 
 	public static BaseApplication instance;
 	public static List<BaseActivity> activitys;
-	public static final int DATABASE_VERSION = 22;
+	public static final int DATABASE_VERSION = 24;
 	/**
 	 * 注意 
 	 * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
@@ -72,9 +72,9 @@ public class BaseApplication extends Application {
 	public static final int REQUEST_ENABLE_BT = 1;  //请求的code
 	/**
 	 * 国家电话代码
-	 * 用于区别不通过的代码逻辑
+	 * 用于区别不同国家的代码逻辑
 	 */
-	public static int countryCode = ParamConst.SINGAPORE ;
+	public static int countryCode = ParamConst.SINGAPORE;
 	
 	public static boolean sub_thread_running = true;
 	/**
@@ -366,12 +366,17 @@ public class BaseApplication extends Application {
 
 		@Override
 		 public void onReceive(Context arg0, Intent arg1) {
-		  ConnectivityManager myConnManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-	      NetworkInfo networkInfo = myConnManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);			
-		  if((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
-				  networkInfo.isConnected()){
-			  onIPChanged();
-		  }
+			ConnectivityManager cm = (ConnectivityManager) instance.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo netInfo = cm.getActiveNetworkInfo();
+			if(netInfo != null && netInfo.isConnected()){
+				onIPChanged();
+			}
+//		  ConnectivityManager myConnManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+//	      NetworkInfo networkInfo = myConnManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//		  if((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
+//				  networkInfo.isConnected()){
+//			  onIPChanged();
+//		  }
 		 }
 	};
 	

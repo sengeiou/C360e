@@ -302,18 +302,18 @@ public class HttpAnalysis {
 					new TypeToken<ArrayList<ItemModifier>>() {
 					}.getType());
 
-			CoreData.getInstance().setItemModifiers(itemModifierlList);
 			ItemModifierSQL.deleteAllItemModifier();
 			ItemModifierSQL.addItemModifierList(itemModifierlList);
+			CoreData.getInstance().setItemModifiers(itemModifierlList);
 
 			List<Modifier> modifierList = gson.fromJson(
 					object.getString("modifierList"),
 					new TypeToken<ArrayList<Modifier>>() {
 					}.getType());
 
-			CoreData.getInstance().setModifierList(modifierList);
 			ModifierSQL.deleteAllModifier();
 			ModifierSQL.addModifierList(modifierList);
+			CoreData.getInstance().setModifierList(ModifierSQL.getAllModifier());
 
 		} catch (JSONException e) {
 			e.printStackTrace();
