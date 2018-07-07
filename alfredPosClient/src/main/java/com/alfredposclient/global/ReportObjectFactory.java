@@ -2409,6 +2409,8 @@ public class ReportObjectFactory {
 		return reportDaySales;
 	}
 
+	// TODO loadXReportDayPayment()
+
 	public ArrayList<ReportDayTax> loadXReportDayTax(
 			ReportDaySales reportDaySales, long businessDate,
 			SessionStatus sessionStatus) {
