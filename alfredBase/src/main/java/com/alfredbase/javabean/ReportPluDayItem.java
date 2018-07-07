@@ -60,7 +60,8 @@ public class ReportPluDayItem implements Serializable, Comparable<ReportPluDayIt
     private Integer billFocQty;
     
     private String billFocPrice;
-    
+
+	private Integer isOpenItem;
 	public Integer getId() {
 		return id;
 	}

@@ -298,13 +298,11 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 //			PrinterDevice printer = App.instance.getCahierPrinter();
 //				App.instance.remoteTBillPrint(printer,title,placedOrder, (ArrayList<OrderDetail>) placedOrderDetails);
 
-			//	App.instance.remoteTBillPrint("","","", (ArrayList<OrderDetail>) placedOrderDetails);
-
 
 //				SendEmailThread thread=new SendEmailThread();
 //				thread.start();
 
-                cashPay();
+               cashPay();
 				break;
 			default:
 				break;

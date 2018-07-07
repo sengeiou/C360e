@@ -1,6 +1,9 @@
 package com.alfredwaiter.activity;
 
+import android.content.Intent;
 import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
@@ -57,6 +60,19 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		oldUser = Store.getObject(context, Store.WAITER_USER, User.class);
 		tv_login_tips.setText(oldUser.getFirstName()+"."+oldUser.getLastName()+getString(R.string.waiter_login_tips2));
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
+		Button btn_re_connect = (Button) findViewById(R.id.btn_re_connect);
+		btn_re_connect.setVisibility(View.VISIBLE);
+		btn_re_connect.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SyncCentre.getInstance().cancelAllRequests();
+				Store.remove(Login.this,  Store.WAITER_USER);
+				Store.remove(Login.this,  Store.MAINPOSINFO);
+				App.instance.setMainPosInfo(null);
+				Login.this.startActivity(new Intent(Login.this,Welcome.class));
+				Login.this.finish();
+			}
+		});
 		initTextTypeFace();
 	}
 

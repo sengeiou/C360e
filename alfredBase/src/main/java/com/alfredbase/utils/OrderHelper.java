@@ -50,6 +50,9 @@ public class OrderHelper {
 		if (taxCategories.size() > 0) {
 			for (TaxCategory taxCategory : taxCategories) {
 				Tax tax = CoreData.getInstance().getTax(taxCategory.getTaxId());
+				if(tax == null){
+					continue;
+				}
 				OrderDetailTax orderDetailTax = ObjectFactory.getInstance()
 						.getOrderDetailTax(order, orderDetail, tax, taxCategory.getIndex().intValue());
 				if (taxCategory.getTaxOn().intValue() == ParamConst.TAX_ON_TAX_1

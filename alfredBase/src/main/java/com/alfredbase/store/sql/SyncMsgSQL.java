@@ -20,8 +20,8 @@ public class SyncMsgSQL {
 			String sql = "replace into "
 					+ TableNames.SyncMsg
 					+ "(id, orderId, msg_type, data, status, createTime, revenueId, businessDate, currCount, appOrderId, orderStatus,"
-					+ "orderNum)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "orderNum, billNo)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { syncMsg.getId(), syncMsg.getOrderId(),
@@ -29,7 +29,8 @@ public class SyncMsgSQL {
 							syncMsg.getStatus(), syncMsg.getCreateTime(),
 							syncMsg.getRevenueId(), syncMsg.getBusinessDate(),
 							syncMsg.getCurrCount(), syncMsg.getAppOrderId(),
-							syncMsg.getOrderStatus(), syncMsg.getOrderNum()});
+							syncMsg.getOrderStatus(), syncMsg.getOrderNum(),
+							syncMsg.getBillNo()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -62,6 +63,7 @@ public class SyncMsgSQL {
 				syncMsg.setAppOrderId(cursor.getInt(9));
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
+				syncMsg.setBillNo(cursor.getInt(12));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -106,6 +108,7 @@ public class SyncMsgSQL {
 				syncMsg.setAppOrderId(cursor.getInt(9));
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
+				syncMsg.setBillNo(cursor.getInt(12));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -153,6 +156,7 @@ public class SyncMsgSQL {
 				syncMsg.setAppOrderId(cursor.getInt(9));
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
+				syncMsg.setBillNo(cursor.getInt(12));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -193,6 +197,7 @@ public class SyncMsgSQL {
 				syncMsg.setAppOrderId(cursor.getInt(9));
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
+				syncMsg.setBillNo(cursor.getInt(12));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -232,6 +237,7 @@ public class SyncMsgSQL {
 				syncMsg.setAppOrderId(cursor.getInt(9));
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
+				syncMsg.setBillNo(cursor.getInt(12));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -272,6 +278,7 @@ public class SyncMsgSQL {
 				syncMsg.setAppOrderId(cursor.getInt(9));
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
+				syncMsg.setBillNo(cursor.getInt(12));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -312,6 +319,7 @@ public class SyncMsgSQL {
 				syncMsg.setAppOrderId(cursor.getInt(9));
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
+				syncMsg.setBillNo(cursor.getInt(12));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

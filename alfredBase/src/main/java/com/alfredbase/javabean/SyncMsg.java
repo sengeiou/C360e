@@ -22,6 +22,7 @@ public class SyncMsg {
 	private Integer appOrderId;
 	private Integer orderStatus;
 	private Integer orderNum;
+	private Integer billNo;
 	public SyncMsg() {
 	}
 
@@ -137,6 +138,14 @@ public class SyncMsg {
 		this.orderNum = orderNum;
 	}
 
+	public Integer getBillNo() {
+		return billNo;
+	}
+
+	public void setBillNo(Integer billNo) {
+		this.billNo = billNo;
+	}
+
 	@Override
 	public String toString() {
 		return "SyncMsg{" +
@@ -152,6 +161,7 @@ public class SyncMsg {
 				", appOrderId=" + appOrderId +
 				", orderStatus=" + orderStatus +
 				", orderNum=" + orderNum +
+				", billNo=" + billNo +
 				'}';
 	}
 

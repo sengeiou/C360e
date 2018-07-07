@@ -58,5 +58,5 @@ interface IAlfredRemotePrintService {
 	void printMonthlyPLUReport(String printer, String title,  int year, int month, String plu);
 	void printStoredCardConsume(String printer, String title, String date, String cardNo, String action, String actionAmount, String balance);
     void printTableQRCode(String printer, String tableId, String title, String qrCodeText);
-    void printTscBill(String printer,String title,String order,String orderdetail);
+    void printTscBill(String printer,String title,String order,String orderdetail,String modifiers,String currencySymbol);
 }

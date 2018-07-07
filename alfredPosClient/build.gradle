@@ -88,9 +88,9 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-    maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots'
-    }
+//    maven {
+//        url 'https://oss.sonatype.org/content/repositories/snapshots'
+//    }
     mavenCentral()
 }
 dependencies {
@@ -104,8 +104,6 @@ dependencies {
 //    compile files('libs/core-3.2.1.jar')
     implementation 'com.contrarywind:Android-PickerView:4.1.3'
     implementation(name: 'barcode_scanner_library_v2.0.8.0', ext: 'aar')
-    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
-   implementation 'com.tencent.bugly:crashreport:latest.release'
    implementation 'com.google.android.gms:play-services-appindexing:8.4.0'
 //    compile 'com.rabbitmq:amqp-client:3.6.5'
     implementation 'com.sunmi:DS_Lib:1.0.3'

@@ -57,6 +57,7 @@ public class APIName {
 	public static final String GET_ORDERDETAILS = "get_orderDetails";
 	public static final String GET_BILL = "get_bill";
 	public static final String PRINT_BILL = "print_bill";
+	public static final String UNSEAT_TABLE = "unseat_table";
 
 	// 以下是KDS专用
 	public static final String GET_PRINTERS= "get_printers";

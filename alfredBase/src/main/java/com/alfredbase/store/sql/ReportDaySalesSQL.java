@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.BH;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -748,6 +749,134 @@ public class ReportDaySalesSQL {
 			}
 		}
 		return result;
+	}
+
+
+	public static ReportDaySales getReportDaySalesForZReport(long business) {
+		ReportDaySales reportDaySales = null;
+
+		String sql = "select restaurantId, restaurantName, revenueId, revenueName, businessDate, sum(itemSales), sum(itemSalesQty), sum(discountPer), sum(discountPerQty), "
+				+ " sum(discount), sum(discountQty), sum(discountAmt), sum(focItem), sum(focItemQty), sum(focBill), sum(focBillQty), sum(totalSales), sum(cash), sum(cashQty),"
+				+ " sum(nets), sum(netsQty), sum(visa),  sum(visaQty), sum(mc), sum(mcQty), sum(amex), sum(amexQty), sum(jbl), sum(jblQty), sum(unionPay), sum(unionPayQty), "
+				+ " sum(diner), sum(dinerQty), sum(holdld), sum(holdldQty), sum(totalCard), sum(totalCardQty), sum(totalCash), sum(totalCashQty), sum(billVoid), sum(billVoidQty),"
+				+ " sum(itemVoid), sum(itemVoidQty), sum(nettSales), sum(totalBills), sum(openCount), sum(firstReceipt), sum(lastReceipt), sum(totalTax), sum(orderQty),"
+				+ " sum(personQty), sum(totalBalancePrice), sum(cashInAmt), sum(cashOutAmt), sum(varianceAmt), sum(inclusiveTaxAmt), sum(alipay), sum(alipayQty), sum(thirdParty), "
+				+ " sum(thirdPartyQty), sum(weixinpay), sum(weixinpayQty), sum(paypalpay), sum(paypalpayQty), sum(storedCard), sum(storedCardQty), sum(topUps), sum(topUpsQty),"
+				+ " sum(billRefund), sum(billRefundQty), sum(refundTax), sum(startDrawerAmount), sum(expectedAmount), sum(waiterAmount), sum(difference), sum(cashTopUp), "
+				+ " sum(takeawaySales), sum(takeawayTax), sum(takeawayQty), createTime, updateTime, sum(deliveroo), sum(deliverooQty), sum(ubereats), sum(ubereatsQty), "
+				+ " sum(foodpanda), sum(foodpandaQty), sum(voucher), sum(voucherQty), sum(totalHour) from "
+				+ TableNames.ReportDaySales
+				+ " where businessDate = ? ";
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql,
+					new String[] { String.valueOf(business) });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return reportDaySales;
+			}
+			if (cursor.moveToFirst()) {
+				reportDaySales = new ReportDaySales();
+				reportDaySales.setRestaurantId(cursor.getInt(0));
+				reportDaySales.setRestaurantName(cursor.getString(1));
+				reportDaySales.setRevenueId(cursor.getInt(2));
+				reportDaySales.setRevenueName(cursor.getString(3));
+				reportDaySales.setBusinessDate(cursor.getLong(4));
+				reportDaySales.setItemSales(BH.getBD(cursor.getString(5)).toString());
+				reportDaySales.setItemSalesQty(cursor.getInt(6));
+				reportDaySales.setDiscountPer(BH.getBD(cursor.getString(7)).toString());
+				reportDaySales.setDiscountPerQty(cursor.getInt(8));
+				reportDaySales.setDiscount(BH.getBD(cursor.getString(9)).toString());
+				reportDaySales.setDiscountQty(cursor.getInt(10));
+				reportDaySales.setDiscountAmt(BH.getBD(cursor.getString(11)).toString());
+				reportDaySales.setFocItem(BH.getBD(cursor.getString(12)).toString());
+				reportDaySales.setFocItemQty(cursor.getInt(13));
+				reportDaySales.setFocBill(BH.getBD(cursor.getString(14)).toString());
+				reportDaySales.setFocBillQty(cursor.getInt(15));
+				reportDaySales.setTotalSales(BH.getBD(cursor.getString(16)).toString());
+				reportDaySales.setCash(BH.getBD(cursor.getString(17)).toString());
+				reportDaySales.setCashQty(cursor.getInt(18));
+				reportDaySales.setNets(BH.getBD(cursor.getString(19)).toString());
+				reportDaySales.setNetsQty(cursor.getInt(20));
+				reportDaySales.setVisa(BH.getBD(cursor.getString(21)).toString());
+				reportDaySales.setVisaQty(cursor.getInt(22));
+				reportDaySales.setMc(BH.getBD(cursor.getString(23)).toString());
+				reportDaySales.setMcQty(cursor.getInt(24));
+				reportDaySales.setAmex(BH.getBD(cursor.getString(25)).toString());
+				reportDaySales.setAmexQty(cursor.getInt(26));
+				reportDaySales.setJbl(BH.getBD(cursor.getString(27)).toString());
+				reportDaySales.setJblQty(cursor.getInt(28));
+				reportDaySales.setUnionPay(BH.getBD(cursor.getString(29)).toString());
+				reportDaySales.setUnionPayQty(cursor.getInt(30));
+				reportDaySales.setDiner(BH.getBD(cursor.getString(31)).toString());
+				reportDaySales.setDinerQty(cursor.getInt(32));
+				reportDaySales.setHoldld(BH.getBD(cursor.getString(33)).toString());
+				reportDaySales.setHoldldQty(cursor.getInt(34));
+				reportDaySales.setTotalCard(BH.getBD(cursor.getString(35)).toString());
+				reportDaySales.setTotalCardQty(cursor.getInt(36));
+				reportDaySales.setTotalCash(BH.getBD(cursor.getString(37)).toString());
+				reportDaySales.setTotalCashQty(cursor.getInt(38));
+				reportDaySales.setBillVoid(BH.getBD(cursor.getString(39)).toString());
+				reportDaySales.setBillVoidQty(cursor.getInt(40));
+				reportDaySales.setItemVoid(BH.getBD(cursor.getString(41)).toString());
+				reportDaySales.setItemVoidQty(cursor.getInt(42));
+				reportDaySales.setNettSales(BH.getBD(cursor.getString(43)).toString());
+				reportDaySales.setTotalBills(cursor.getInt(44));
+				reportDaySales.setOpenCount(cursor.getInt(45));
+				reportDaySales.setFirstReceipt(cursor.getInt(46));
+				reportDaySales.setLastReceipt(cursor.getInt(47));
+				reportDaySales.setTotalTax(BH.getBD(cursor.getString(48)).toString());
+				reportDaySales.setOrderQty(cursor.getInt(49));
+				reportDaySales.setPersonQty(cursor.getInt(50));
+				reportDaySales.setTotalBalancePrice(BH.getBD(cursor.getString(51)).toString());
+				reportDaySales.setCashInAmt(BH.getBD(cursor.getString(52)).toString());
+				reportDaySales.setCashOutAmt(BH.getBD(cursor.getString(53)).toString());
+				reportDaySales.setVarianceAmt(BH.getBD(cursor.getString(54)).toString());
+				reportDaySales.setInclusiveTaxAmt(BH.getBD(cursor.getString(55)).toString());
+				reportDaySales.setAlipay(BH.getBD(cursor.getString(56)).toString());
+				reportDaySales.setAlipayQty(cursor.getInt(57));
+				reportDaySales.setThirdParty(BH.getBD(cursor.getString(58)).toString());
+				reportDaySales.setThirdPartyQty(cursor.getInt(59));
+				reportDaySales.setWeixinpay(BH.getBD(cursor.getString(60)).toString());
+				reportDaySales.setWeixinpayQty(cursor.getInt(61));
+				reportDaySales.setPaypalpay(BH.getBD(cursor.getString(62)).toString());
+				reportDaySales.setPaypalpayQty(cursor.getInt(63));
+				reportDaySales.setStoredCard(BH.getBD(cursor.getString(64)).toString());
+				reportDaySales.setStoredCardQty(cursor.getInt(65));
+				reportDaySales.setTopUps(BH.getBD(cursor.getString(66)).toString());
+				reportDaySales.setTopUpsQty(cursor.getInt(67));
+				reportDaySales.setBillRefund(BH.getBD(cursor.getString(68)).toString());
+				reportDaySales.setBillRefundQty(cursor.getInt(69));
+				reportDaySales.setRefundTax(BH.getBD(cursor.getString(70)).toString());
+				reportDaySales.setStartDrawerAmount(BH.getBD(cursor.getString(71)).toString());
+				reportDaySales.setExpectedAmount(BH.getBD(cursor.getString(72)).toString());
+				reportDaySales.setWaiterAmount(BH.getBD(cursor.getString(73)).toString());
+				reportDaySales.setDifference(BH.getBD(cursor.getString(74)).toString());
+				reportDaySales.setCashTopUp(BH.getBD(cursor.getString(75)).toString());
+				reportDaySales.setTakeawaySales(BH.getBD(cursor.getString(76)).toString());
+				reportDaySales.setTakeawayTax(BH.getBD(cursor.getString(77)).toString());
+				reportDaySales.setTakeawayQty(cursor.getInt(78));
+				reportDaySales.setCreateTime(cursor.getLong(79));
+				reportDaySales.setUpdateTime(cursor.getLong(80));
+				reportDaySales.setDeliveroo(BH.getBD(cursor.getString(81)).toString());
+				reportDaySales.setDeliverooQty(cursor.getInt(82));
+				reportDaySales.setUbereats(BH.getBD(cursor.getString(83)).toString());
+				reportDaySales.setUbereatsQty(cursor.getInt(84));
+				reportDaySales.setFoodpanda(BH.getBD(cursor.getString(85)).toString());
+				reportDaySales.setFoodpandaQty(cursor.getInt(86));
+				reportDaySales.setVoucher(BH.getBD(cursor.getString(87)).toString());
+				reportDaySales.setVoucherQty(cursor.getInt(88));
+				reportDaySales.setTotalHour(BH.getBDThirdFormat(cursor.getString(89)).toString());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return reportDaySales;
 	}
 
 	public static void deleteReportDaySales(ReportDaySales reportDaySales) {

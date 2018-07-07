@@ -67,7 +67,6 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
-import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
@@ -80,11 +79,9 @@ import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.StoredCardActivity;
-import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
-import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.TablesStatusInfo;
 import com.alfredposclient.jobs.CloudSyncJobManager;
@@ -686,7 +683,14 @@ public class MainPageKiosk extends BaseActivity {
 //					kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
 //					KotSummarySQL.update(kotSummary);
 //				}
+
+				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+						context);
+				printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+				printerLoadingDialog.showByTime(3000);
 				if(isPrint) {
+
+
 
 
 					PrinterDevice printer = App.instance.getCahierPrinter();
@@ -697,6 +701,8 @@ public class MainPageKiosk extends BaseActivity {
 									App.instance.getUser().getFirstName()
 											+ App.instance.getUser().getLastName(),
 									currentTable.getName(), 1);
+
+
 
 					if(!TextUtils.isEmpty(changeNum)){
 
@@ -719,40 +725,42 @@ public class MainPageKiosk extends BaseActivity {
 					ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 							.getInstance().getItemModifierList(paidOrder, OrderDetailSQL.getOrderDetails(paidOrder
 									.getId()));
+					List<PrinterDevice> printerList=App.instance.getPrinterLable();
+					if(printerList.size()>0){
+						for (int i = 0; i < printerList.size(); i++) {
+							PrinterDevice printers = printerList.get(i);
+							if (App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isPrintLable() && printers.getIsLablePrinter() == 1 ) {
 
-				// ArrayList<OrderModifier> orderModifiers =
-				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
+//
+								List<OrderDetail> placedOrderDetails
+										= OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
+								App.instance.remoteTBillPrint(printers, title, paidOrder, (ArrayList<OrderDetail>) placedOrderDetails,orderModifiers);
+//						}
+							}
+						}
+					}
+
 					if (orderItems.size() > 0 && printer != null) {
 						RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
-						SystemSettings settings = new SystemSettings(context);
-						if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
-						{
-
-
-
-							PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-									context);
-							printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-							printerLoadingDialog.showByTime(3000);
-							List<OrderDetail> placedOrderDetails
-									= OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
-							App.instance.remoteTBillPrint(printer,title,paidOrder, (ArrayList<OrderDetail>) placedOrderDetails);
-						}else {
+//
 
 							if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
 							{
 
 							}else {
-								PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-										context);
-								printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-								printerLoadingDialog.showByTime(3000);
-								App.instance.remoteBillPrint(printer, title, paidOrder,
-										orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                   if(!App.instance.isRevenueKiosk()) {
+									   App.instance.remoteBillPrint(printer, title, paidOrder,
+											   orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+								   }else {
+                                   	if(printer.getIsLablePrinter()==0){
+										App.instance.remoteBillPrint(printer, title, paidOrder,
+												orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+									}
+								   }
 							}
 						}
 //
-					}
+
 				}else{
 					PrinterDevice printer = App.instance.getCahierPrinter();
 					if (printer == null) {
@@ -786,9 +794,25 @@ public class MainPageKiosk extends BaseActivity {
 							kotItemModifiers.addAll(kotItemModifierObj);
 					}
 
+
+//					List<OrderDetail> placedOrderDetails
+//							= OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
+
+					PrinterTitle title = ObjectFactory.getInstance()
+							.getPrinterTitle(
+									App.instance.getRevenueCenter(),
+									paidOrder,
+									App.instance.getUser().getFirstName()
+											+ App.instance.getUser().getLastName(),
+									currentTable.getName(), 1);
+
 					Map<String, Object> orderMap = new HashMap<String, Object>();
+
 					orderMap.put("orderId", paidOrder.getId());
 					orderMap.put("orderDetailIds", orderDetailIds);
+					orderMap.put("paidOrder", paidOrder);
+					orderMap.put("title", title);
+					orderMap.put("placedOrderDetails", placedOrderDetails);
 					App.instance.getKdsJobManager().tearDownKot(
 							kotSummary, kotItemDetails,
 							kotItemModifiers, kotCommitStatus,
@@ -865,7 +889,10 @@ public class MainPageKiosk extends BaseActivity {
 
 				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 						.getInstance().getItemModifierList(currentOrder, orderSplitDetails);
-
+				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+								context);
+				printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+				printerLoadingDialog.showByTime(3000);
 				// ArrayList<OrderModifier> orderModifiers =
 				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
 				Order temporaryOrder = new Order();
@@ -874,37 +901,57 @@ public class MainPageKiosk extends BaseActivity {
 				temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
 				temporaryOrder.setTotal(paidOrderSplit.getTotal());
 				temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
-				if (orderItems.size() > 0 && printer != null) {
-					RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
-
-					SystemSettings       settings = new SystemSettings(context);
-					if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
-					{
-
-						PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-								context);
-						printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-						printerLoadingDialog.showByTime(3000);
-						List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsForPrint(paidOrderSplit.getOrderId());
-						App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails);
-					}else {
 
 
-						if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
-						{
-
-						}else {
-							PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-									context);
-							printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-							printerLoadingDialog.showByTime(3000);
-							App.instance.remoteBillPrint(printer, title, temporaryOrder,
-									orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+				List<PrinterDevice> printerList=App.instance.getPrinterLable();
+				if(printerList.size()>0){
+					for (int i = 0; i < printerList.size(); i++) {
+						PrinterDevice printers = printerList.get(i);
+						if (App.instance.getSystemSettings().isPrintLable() && printers.getIsLablePrinter() == 1 ) {
+							App.instance.remoteTBillPrint(printers,title,temporaryOrder, orderSplitDetails,orderModifiers);
+//						}
 						}
 					}
-//					App.instance.remoteBillPrint(printer, title, temporaryOrder,
-//							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 				}
+
+				if (orderItems.size() > 0 && printer != null) {
+					RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
+					if(App.instance.getSystemSettings().isPrintBill()){
+						App.instance.remoteBillPrint(printer, title, temporaryOrder,
+							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+					}
+				}
+//
+//				if (orderItems.size() > 0 && printer != null) {
+//					RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
+//
+//					SystemSettings       settings = new SystemSettings(context);
+//					if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
+//					{
+//
+//						PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+//								context);
+//						printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+//						printerLoadingDialog.showByTime(3000);
+//						List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsForPrint(paidOrderSplit.getOrderId());
+//						App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails,orderModifiers);
+//					}else {
+//
+//
+//						if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
+//						{
+//
+//						}else {
+//							PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+//									context);
+//
+//							App.instance.remoteBillPrint(printer, title, temporaryOrder,
+//									orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+//						}
+//					}
+////					App.instance.remoteBillPrint(printer, title, temporaryOrder,
+////							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+//				}
 				//Sent to Kitchen after close bill in kiosk mode
 				String kotCommitStatus = ParamConst.JOB_NEW_KOT;
 				List<OrderDetail> placedOrderDetails  = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(paidOrderSplit);
@@ -930,7 +977,6 @@ public class MainPageKiosk extends BaseActivity {
 						if (kotItemModifierObj != null)
 							kotItemModifiers.addAll(kotItemModifierObj);
 					}
-
 					Map<String, Object> orderMap = new HashMap<String, Object>();
 					orderMap.put("orderId", paidOrderSplit.getOrderId());
 					orderMap.put("orderDetailIds", orderDetailIds);

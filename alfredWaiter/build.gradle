@@ -52,6 +52,6 @@ android {
 
 dependencies {
     implementation project(':alfredBase')
-    implementation rootProject.ext.libSupportV4
-    implementation 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
+//    implementation rootProject.ext.libSupportV4
+//    implementation 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
 }

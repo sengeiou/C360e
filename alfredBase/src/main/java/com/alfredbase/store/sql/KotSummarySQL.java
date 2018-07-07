@@ -59,8 +59,8 @@ public class KotSummarySQL {
 			String sql = "replace into "
 					+ TableNames.KotSummary
 					+ "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
-					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (KotSummary kotSummary : kotSummarys) {
@@ -411,7 +411,7 @@ public class KotSummarySQL {
 				kotSummary.setOrderNo(cursor.getInt(11));
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
-
+				kotSummary.setEmpName(cursor.getString(14));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

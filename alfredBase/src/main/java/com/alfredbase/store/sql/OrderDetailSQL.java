@@ -727,7 +727,35 @@ public class OrderDetailSQL {
 		}
 		return result;
 	}
-	
+
+
+	public static int getOrderDetailPlaceOrderCountByOrder(Order order) {
+		String sql = "select count(*) from " + TableNames.OrderDetail + " where orderId = ? and orderDetailType <> "
+				+ ParamConst.ORDERDETAIL_TYPE_VOID
+				+ " and orderDetailStatus > "
+				+ ParamConst.ORDERDETAIL_STATUS_ADDED;
+		int result = 0;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {order.getId() + ""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			if(cursor.moveToFirst()){
+				result = cursor.getInt(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
 
 	public static ArrayList<OrderDetail> getAllOrderDetailByTime(
 			long businessDate) {

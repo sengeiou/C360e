@@ -44,6 +44,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -275,31 +276,58 @@ public class DevicesActivity extends BaseActivity {
                 if (!map.containsKey(tmppt.getDevice_id())) {
                     List<PrinterDevice> list = new ArrayList<PrinterDevice>();
                     // 获取所有键值对对象的集合
-
+                    Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合---" + entry.getKey());
                     // 遍历键值对对象的集合，得到每一个键值对对象
 //                    Map<Integer, List<PrinterDevice>> m = new ConcurrentHashMap<Integer, List<PrinterDevice>>();
-//                    map.putAll(map);
-////                    for (Map.Entry<String, String> entry : map.entrySet()) {
-////                        String key = entry.getKey();
-////                        map.remove(key);
-////                    }
-//                    Boolean v=false;
+//                    m.putAll(map);
+
+
+
+
 //                    for ( Integer k : map.keySet()) {
 //                        // 根据键值对对象获取键和值
 //                        if(map.get(k).get(0).getIP().equals(tmppt.getIP())){
 //
 //                            System.out.println(k + "--refreshPrinterDevices-" + map.get(k));
-//                            k=t
-//                             //   map.remove(k);
+//                            // k=t
+//                            map.remove();
+//                            map.r
 //                        }
-
-                   //     System.out.println(key + "---" + value);
+//
+//                        System.out.println(key + "---" + value);
 //                    }
                     list.add(tmppt);
                     map.put(tmppt.getDevice_id(), list);
                 } else {
+
                     List<PrinterDevice> printerDevices = map.get(tmppt.getDevice_id());
-                    printerDevices.add(tmppt);
+                    Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合111---" );
+
+
+//                    Iterator iterator = map.keySet().iterator();
+//                    while (iterator.hasNext()) {
+//                        int key = (Integer) iterator.next();
+//                        if(map.get(key).get(0).getIP().equals(tmppt.getIP())){
+//                            Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---" );
+//                            iterator.remove();        //添加该行代码
+//                            map.remove(key);
+//                        }
+//                    }
+//
+                       boolean is=true;
+                    for (int i = 0; i < printerDevices.size(); i++) {
+
+                        if(printerDevices.get(i).getIP().equals(tmppt.getIP())){
+                            Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---" );
+                          is=false;
+                        }
+
+                    }
+
+                    if(is) {
+                        printerDevices.add(tmppt);
+                    }
+
                 }
             }
         }
@@ -308,13 +336,12 @@ public class DevicesActivity extends BaseActivity {
 
 
         Printer printer1 = printerDeptModelList.get(dex);
-        Log.d("refreshPrinterDevices", printer1.getId() + " ---3333333---" + dex);
+
         if (map.containsKey(printer1.getId())) {
 
 
             printerDBModelList = map.get(printer1.getId());
 
-            Log.d("refreshPrinterDevices", " ---111111111---" + printerDBModelList.size());
         } else {
 
 

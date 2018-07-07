@@ -121,6 +121,7 @@ import com.alfredposclient.jobs.KotJobManager;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
+import com.alfredposclient.xmpp.XMPP;
 import com.alfredposclient.xmpp.XmppThread;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -196,6 +197,7 @@ public class App extends BaseApplication {
     private Map<Integer, KDSDevice> kdsDevices = new ConcurrentHashMap<Integer, KDSDevice>();
     private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<Integer, PrinterDevice>();
     private Map<Integer, WaiterDevice> waiterDevices = new ConcurrentHashMap<Integer, WaiterDevice>();
+
 
 
     // push message
@@ -1146,6 +1148,7 @@ public class App extends BaseApplication {
             this.mainPosInfo.setIP(CommonUtil.getLocalIpAddress());
             this.setMainPosInfo(mainPosInfo);
             Store.saveObject(getBaseContext(), Store.MAINPOSINFO, mainPosInfo);
+            XMPP.getInstance().onNetWorkConnect();
         }
     }
 
@@ -1461,17 +1464,40 @@ public class App extends BaseApplication {
         return this.printerDevices;
     }
 
+    public  List<PrinterDevice> getPrinterLable() {
+        // PrinterDevice dummy = new PrinterDevice();
+        // dummy.setIP("192.168.0.11");
+        // return dummy;
+        List<PrinterDevice> printlist=new ArrayList<PrinterDevice>();
+        for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
+            Integer key = dev.getKey();
+            PrinterDevice devPrinter = dev.getValue();
+            if (devPrinter.getIP().indexOf(":") != -1)
+            {
+             printlist.add(devPrinter);
+            }
+        }
+
+
+        return printlist;
+    }
+
     public PrinterDevice getCahierPrinter() {
         // PrinterDevice dummy = new PrinterDevice();
         // dummy.setIP("192.168.0.11");
         // return dummy;
-
         for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
             Integer key = dev.getKey();
             PrinterDevice devPrinter = dev.getValue();
             if (devPrinter.getIsCahierPrinter() > 0)
+
+            {
                 return devPrinter;
+            }
+
         }
+
+
         return null;
     }
 
@@ -1664,7 +1690,7 @@ public class App extends BaseApplication {
 //    PrinterTitle title,
 //    Order order, ArrayList<PrintOrderItem> orderItems,
     public void remoteTBillPrint(PrinterDevice printer,PrinterTitle title,
-                                 Order order, ArrayList<OrderDetail> OrderDetail
+                                 Order order, ArrayList<OrderDetail> OrderDetail, ArrayList<PrintOrderModifier> orderModifiers
                            ) {
 
        // remoteTBillPrint(printer);
@@ -1675,6 +1701,7 @@ public class App extends BaseApplication {
 
         String orderStr = gson.toJson(order);
         String orderDetailStr = gson.toJson(OrderDetail);
+        String orderModifiersStr = gson.toJson(orderModifiers);
 
         if (mRemoteService == null) {
             printerDialog();
@@ -1682,7 +1709,7 @@ public class App extends BaseApplication {
         }
         try {
           //  mRemoteService.printTscBill("","","","");
-            mRemoteService.printTscBill(prtStr,titleStr,orderStr,orderDetailStr);
+            mRemoteService.printTscBill(prtStr,titleStr,orderStr,orderDetailStr,orderModifiersStr, getLocalRestaurantConfig().getCurrencySymbol());
         } catch (RemoteException e) {
             e.printStackTrace();
         }

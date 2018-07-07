@@ -48,9 +48,9 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
-import com.alfredwaiter.javabean.ModifierVariance;
+import com.alfredwaiter.javabean.ModifierCPVariance;
 import com.alfredwaiter.popupwindow.SelectGroupWindow;
-import com.alfredwaiter.popupwindow.WaiterModifierWindow;
+import com.alfredwaiter.popupwindow.WaiterModifierCPWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.MoneyKeyboard;
 import com.alfredwaiter.view.MoneyKeyboard.KeyBoardClickListener;
@@ -99,7 +99,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 	private StringBuffer buffer = new StringBuffer();
 	private DismissCall dismissCall;
 	private LinearLayout ll_bill_action;
-	private WaiterModifierWindow modifierWindow;
+	private WaiterModifierCPWindow modifierWindow;
 	private Observable<String> observable;
 	private OrderDetail selectedOrderDetail;
 	@Override
@@ -108,7 +108,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		setContentView(R.layout.activity_order_detail_total);
 		getIntentData();
 		lv_dishes = (ListView) findViewById(R.id.lv_dishes);
-		modifierWindow = new WaiterModifierWindow(context, handler, findViewById(R.id.rl_root));
+		modifierWindow = new WaiterModifierCPWindow(context, handler, findViewById(R.id.rl_root));
 		tv_place_order = (TextView) findViewById(R.id.tv_place_order);
 		btn_get_bill = (Button) findViewById(R.id.btn_get_bill);
 		btn_print_bill = (Button) findViewById(R.id.btn_print_bill);
@@ -265,7 +265,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 					return;
 				Map<String, Object> map = (Map<String, Object>) msg.obj;
 //				ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
-				List<ModifierVariance> variances = (List<ModifierVariance>) map.get("variances");
+				List<ModifierCPVariance> variances = (List<ModifierCPVariance>) map.get("variances");
 				String description = (String) map.get("description");
 				OrderDetail orderDetail = selectedOrderDetail;
 				addOrderDetailAndOrderModifier(orderDetail, orderDetail.getItemNum(), variances, description);
@@ -287,7 +287,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				handler);
 	}
 
-	private void addOrderDetailAndOrderModifier(OrderDetail orderDetail,int count, List<ModifierVariance> modifierIds, String description){
+	private void addOrderDetailAndOrderModifier(OrderDetail orderDetail,int count, List<ModifierCPVariance> modifierIds, String description){
 		currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
 		orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
 //		OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getItemId().intValue());
@@ -298,8 +298,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		orderDetail.setItemNum(count);
 		orderDetail.setSpecialInstractions(description);
 		OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
-		for(ModifierVariance modifierVariance : modifierIds){
-			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId1());
+		for(ModifierCPVariance modifierVariance : modifierIds){
+			Modifier modifier = CoreData.getInstance().getModifier(modifierVariance.getModifierId());
 			OrderModifier orderModifier = new OrderModifier();
 			orderModifier.setId(CommonSQL
 					.getNextSeq(TableNames.OrderModifier));
@@ -310,7 +310,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 			orderModifier.setUserId(currentOrder.getUserId());
 			orderModifier.setItemId(orderDetail.getItemId());
 			orderModifier.setModifierId(modifier.getId());
-			orderModifier.setModifierNum(modifierVariance.getModQty());
+			orderModifier.setModifierNum(1);
 			orderModifier
 					.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
 			orderModifier.setModifierPrice(modifier.getPrice());

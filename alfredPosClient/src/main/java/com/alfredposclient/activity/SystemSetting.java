@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -103,7 +101,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
 		}
 		syncMap = App.instance.getPushMsgMap();
-		settings = new SystemSettings(context);
+		settings = App.instance.getSystemSettings();
 		loadingDialog = new LoadingDialog(context);
 		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
 		iv_sync_data = (ImageView) findViewById(R.id.iv_sync_data);
@@ -351,7 +349,6 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 									map.put(PushMessage.USER, 1);
 //									map.put(PushMessage.PLACE_TABLE, 1);
 									map.put(PushMessage.TAX, 1);
-									map.put(PushMessage.PAYMENT_METHOD, 1);
 									syncDataAction(map);
 								}
 							});
