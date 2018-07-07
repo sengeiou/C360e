@@ -1467,23 +1467,22 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //                    p6.setIsAdmin(1);
 //                    pamentMethodlist.add(p6);
 
-                    SettlementRestaurant s = new SettlementRestaurant();
                     settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
-                    PamentMethod pam = new PamentMethod();
-                    pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
-                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
-                    pamentMethodlist.add(pam);
-//                   if(!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString()))
-//                   {
-//
-//                       String[] strarray=settle.get(0).getOtherPaymentId().toString().split("[|]");
-//                       for (int i = 0; i < strarray.length; i++) {
-//                           // System.out.println(strarray);
-//                           PamentMethod pa = new PamentMethod();
-//                           PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[0]).intValue());
-//                           pamentMethodlist.add(pa);
-//                       }
-//                   }
+                 //   PamentMethod pam = new PamentMethod();
+//                    pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
+//                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
+//                    pamentMethodlist.add(pam);
+                   if(!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString()))
+                   {
+
+                       String[] strarray=settle.get(0).getOtherPaymentId().toString().split("[|]");
+                       for (int i = 0; i < strarray.length; i++) {
+
+                           PamentMethod pa = new PamentMethod();
+                           PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[0]).intValue());
+                           pamentMethodlist.add(pa);
+                       }
+                   }
 
                     mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
                     mediaDialog.setPaymentClickListener(this);
