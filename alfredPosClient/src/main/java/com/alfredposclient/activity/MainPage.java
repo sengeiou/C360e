@@ -89,7 +89,6 @@ import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
-import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.TablesStatusInfo;
 import com.alfredposclient.jobs.CloudSyncJobManager;
@@ -230,23 +229,23 @@ public class MainPage extends BaseActivity {
     public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
     public static final String HANDLER_MSG_OBJECT_CANCEL_ITEM = "CANCEL_ITEM";
 
-	private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
-	private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
-	private static final String HANDLER_MSG_OBJECT_STORED_CARD_REPLACEMENT = "STORED_CARD_REPLACEMENT";
-	private TopMenuView topMenuView;
-	private MainPageSearchView mainPageSearchView;
-	public MainPageOrderView orderView;
-	private MainPageOperatePanel operatePanel;
-	private MainPageMenuView mainPageMenuView;
-	private CloseOrderWindow closeOrderWindow; // settlement window
-	private CloseOrderSplitWindow closeOrderSplitWindow;
-	private SetPAXWindow setPAXWindow;
-	private DiscountWindow discountWindow;
-	private ModifyQuantityWindow modifyQuantityWindow;
-	private OpenItemWindow openItemWindow;
-	private SpecialInstractionsWindow specialInstractionsWindow;
-	private SetWeightWindow setWeightWindow;
-//	private WebView web_tables;
+    private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
+    private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
+    private static final String HANDLER_MSG_OBJECT_STORED_CARD_REPLACEMENT = "STORED_CARD_REPLACEMENT";
+    private TopMenuView topMenuView;
+    private MainPageSearchView mainPageSearchView;
+    public MainPageOrderView orderView;
+    private MainPageOperatePanel operatePanel;
+    private MainPageMenuView mainPageMenuView;
+    private CloseOrderWindow closeOrderWindow; // settlement window
+    private CloseOrderSplitWindow closeOrderSplitWindow;
+    private SetPAXWindow setPAXWindow;
+    private DiscountWindow discountWindow;
+    private ModifyQuantityWindow modifyQuantityWindow;
+    private OpenItemWindow openItemWindow;
+    private SpecialInstractionsWindow specialInstractionsWindow;
+    private SetWeightWindow setWeightWindow;
+    //	private WebView web_tables;
 //    private StoredCardActivity f_stored_card;
     private JavaConnectJS javaConnectJS;
     private Gson gson = new Gson();
@@ -822,38 +821,19 @@ public class MainPage extends BaseActivity {
                             .getInstance().getItemModifierList(paidOrder, OrderDetailSQL.getOrderDetails(paidOrder
                                     .getId()));
 
-                    // ArrayList<OrderModifier> orderModifiers =
-                    // OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
-                    OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
-                            paidOrder, App.instance.getRevenueCenter());
-
-
-                    RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
-                    if (orderItems.size() > 0 && printer != null) {
-                        SystemSettings       settings = new SystemSettings(context);
-                        if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
-                        {
-                            List<OrderDetail> placedOrderDetails
-                                    = OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
-                            App.instance.remoteTBillPrint(printer,title,paidOrder, (ArrayList<OrderDetail>) placedOrderDetails);
-                        }else {
-
-                            if(App.instance.isRevenueKiosk()){
-                                App.instance.remoteBillPrint(printer, title, paidOrder,
-                                        orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                            }else {
-                                if(settings.isPrintBill()) {
-                                    App.instance.remoteBillPrint(printer, title, paidOrder,
-                                            orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                                }
-                            }
-
-                        }
-                    }
-                    // remove get bill notification
-                    removeNotificationTables();
-                    topMenuView.setGetBillNum(App.instance
-                            .getGetTingBillNotifications().size());
+				// ArrayList<OrderModifier> orderModifiers =
+				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
+				OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+						paidOrder, App.instance.getRevenueCenter());
+				RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
+				if (orderItems.size() > 0 && printer != null) {
+					App.instance.remoteBillPrint(printer, title, paidOrder,
+							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+				}
+				// remove get bill notification
+				removeNotificationTables();
+				topMenuView.setGetBillNum(App.instance
+						.getGetTingBillNotifications().size());
 //				final Order sendOrder = currentOrder;
                     /**
                      通知桌面系统 菜已经做完
@@ -950,91 +930,80 @@ public class MainPage extends BaseActivity {
                     ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                             .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
 
-                    // ArrayList<OrderModifier> orderModifiers =
-                    // OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
-                    Order temporaryOrder = new Order();
-                    temporaryOrder.setPersons(paidOrderSplit.getPersons());
-                    temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
-                    temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
-                    temporaryOrder.setOrderNo(currentOrder.getOrderNo());
-                    if (orderItems.size() > 0 && printer != null) {
-                        RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
-//                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
-//                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        SystemSettings       settings = new SystemSettings(context);
-                        if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
-                        {
-                            List<OrderDetail> placedOrderDetails
-                                    = OrderDetailSQL.getOrderDetailsForPrint(temporaryOrder.getId());
-                            App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails);
-                        }else {
-                            App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        }
+				// ArrayList<OrderModifier> orderModifiers =
+				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
+				Order temporaryOrder = new Order();
+				temporaryOrder.setPersons(paidOrderSplit.getPersons());
+				temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
+				temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
+				temporaryOrder.setTotal(paidOrderSplit.getTotal());
+				temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+				temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+				if (orderItems.size() > 0 && printer != null) {
+					RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+					App.instance.remoteBillPrint(printer, title, temporaryOrder,
+							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+				}
+				// remove get bill notification
+				removeNotificationTables();
+				topMenuView.setGetBillNum(App.instance
+						.getGetTingBillNotifications().size());
+				setData();
+				/**
+				 * 给后台发送log 信息
+				 */
+				if(OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED){
+					new Thread(new Runnable() {
 
-                    }
-                    // remove get bill notification
-                    removeNotificationTables();
-                    topMenuView.setGetBillNum(App.instance
-                            .getGetTingBillNotifications().size());
-                    setData();
-                    /**
-                     * 给后台发送log 信息
-                     */
-                    if (OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
-                        new Thread(new Runnable() {
+						@Override
+						public void run() {
+							CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+							if (cloudSync!=null) {
+								int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(currentOrder.getId());
+								cloudSync.syncOrderInfoForLog(currentOrder.getId(),
+											App.instance.getRevenueCenter().getId(),
+											App.instance.getBusinessDate(), currCount + 1);
 
-                            @Override
-                            public void run() {
-                                CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-                                if (cloudSync != null) {
-                                    int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(currentOrder.getId());
-                                    cloudSync.syncOrderInfoForLog(currentOrder.getId(),
-                                            App.instance.getRevenueCenter().getId(),
-                                            App.instance.getBusinessDate(), currCount + 1);
+							}
+						}
+					}).start();
+				}
 
-                                }
-                            }
-                        }).start();
-                    }
-
-                }
-                break;
-                case VIEW_EVENT_SHOW_DISCOUNT_WINDOW: {
-                    verifyDialog.show(HANDLER_MSG_OBJECT_DISCOUNT,
-                            (Map<String, Object>) msg.obj);
-                    break;
-                }
-                case VIEW_EVENT_SHOW_MODIFY_QUANTITY_WINDOW: {
-                    Map<String, Object> qtyMap = (Map<String, Object>) msg.obj;
-                    showModifyQuantityWindow(
-                            Integer.parseInt(qtyMap.get("quantity").toString()),
-                            (DismissCall) qtyMap.get("dismissCall"));
-                    break;
-                }
-                case VIEW_EVENT_ADD_ORDER_DETAIL:
-                    addOrderDetail((OrderDetail) msg.obj);
-                    break;
-                case VIEW_EVENT_SET_DATA:
-                    setData();
-                    break;
-                case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
-                    setData();
-                    if (mainPageMenuView.isModifierOpen()) {
-                        mainPageMenuView.closeModifiers();
-                    }
-                    break;
-                case DISMISS_SOFT_INPUT:
-                    dismissSoftInput();
-                    break;
-                case VIEW_EVENT_OPEN_MODIFIERS: {
-                    Map<String, Object> map = (Map<String, Object>) msg.obj;
-                    openModifiers((OrderDetail) map.get("orderDetail"),
-                            (List<ItemModifier>) map.get("itemModifiers"), (View) map.get("view"));
-                    break;
-                }
+			}
+				break;
+			case VIEW_EVENT_SHOW_DISCOUNT_WINDOW: {
+				verifyDialog.show(HANDLER_MSG_OBJECT_DISCOUNT,
+						(Map<String, Object>) msg.obj);
+				break;
+			}
+			case VIEW_EVENT_SHOW_MODIFY_QUANTITY_WINDOW: {
+				Map<String, Object> qtyMap = (Map<String, Object>) msg.obj;
+				showModifyQuantityWindow(
+						Integer.parseInt(qtyMap.get("quantity").toString()),
+						(DismissCall) qtyMap.get("dismissCall"));
+				break;
+			}
+			case VIEW_EVENT_ADD_ORDER_DETAIL:
+				addOrderDetail((OrderDetail) msg.obj);
+				break;
+			case VIEW_EVENT_SET_DATA:
+				setData();
+				break;
+			case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
+				setData();
+				if(mainPageMenuView.isModifierOpen()){
+					mainPageMenuView.closeModifiers();
+				}
+				break;
+			case DISMISS_SOFT_INPUT:
+				dismissSoftInput();
+				break;
+			case VIEW_EVENT_OPEN_MODIFIERS: {
+				Map<String, Object> map = (Map<String, Object>) msg.obj;
+				openModifiers((OrderDetail) map.get("orderDetail"),
+						(List<ItemModifier>) map.get("itemModifiers"), (View)map.get("view"));
+				break;
+			}
 
                 case JavaConnectJS.ACTION_CLICK_TABLE: {
                     currentTable = (TableInfo) msg.obj;
@@ -1940,49 +1909,30 @@ public class MainPage extends BaseActivity {
                     List<Map<String, String>> taxMap = OrderDetailTaxSQL
                             .getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
 
-                    ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
-                            .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
-                    Order temporaryOrder = new Order();
-                    temporaryOrder.setPersons(paidOrderSplit.getPersons());
-                    temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
-                    temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
-                    temporaryOrder.setOrderNo(currentOrder.getOrderNo());
-                    if (orderItems.size() > 0 && printer != null) {
-                        RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
-//                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
-//                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        SystemSettings       settings = new SystemSettings(context);
-                        if(App.instance.isRevenueKiosk()&&settings.isPrintLable()&&printer.getIsLablePrinter()==1&&printer.getIP().indexOf(":") != -1 )
-                        {
-
-                            PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                                    context);
-                            printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-                            printerLoadingDialog.showByTime(3000);
-                            List<OrderDetail> placedOrderDetails
-                                    = OrderDetailSQL.getOrderDetailsForPrint(temporaryOrder.getId());
-                            App.instance.remoteTBillPrint(printer,title,temporaryOrder, (ArrayList<OrderDetail>) placedOrderDetails);
-                        }else {
-                            PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                                    context);
-                            printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-                            printerLoadingDialog.showByTime(3000);
-                            App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        }
-                    }
-                    // remove get bill notification
-                    removeNotificationTables();
-                    topMenuView.setGetBillNum(App.instance
-                            .getGetTingBillNotifications().size());
-                    setData();
-                    /**
-                     * 给后台发送log 信息
-                     */
-                    if (OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
-                        new Thread(new Runnable() {
+				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+						.getInstance().getItemModifierList(currentOrder, orderSplitDetails);
+				Order temporaryOrder = new Order();
+				temporaryOrder.setPersons(paidOrderSplit.getPersons());
+				temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
+				temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
+				temporaryOrder.setTotal(paidOrderSplit.getTotal());
+				temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+				temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+				if (orderItems.size() > 0 && printer != null) {
+					RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+					App.instance.remoteBillPrint(printer, title, temporaryOrder,
+							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+				}
+				// remove get bill notification
+				removeNotificationTables();
+				topMenuView.setGetBillNum(App.instance
+						.getGetTingBillNotifications().size());
+				setData();
+				/**
+				 * 给后台发送log 信息
+				 */
+				if (OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
+					new Thread(new Runnable() {
 
                             @Override
                             public void run() {
