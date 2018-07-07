@@ -21,8 +21,6 @@ public class PamentMethodSQL {
         if (pamentMethods == null) {
             return;
         }
-
-
         SQLiteDatabase db = SQLExe.getDB();
         try {
             db.beginTransaction();
@@ -32,8 +30,6 @@ public class PamentMethodSQL {
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
-
-
             for (PamentMethod pamentMethod : pamentMethods) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
                         pamentMethod.getId());
@@ -89,6 +85,7 @@ public class PamentMethodSQL {
             e.printStackTrace();
         } finally {
             db.endTransaction();
+
         }
     }
     public static ArrayList<PamentMethod> getAllPamentMethod() {
@@ -106,7 +103,6 @@ public class PamentMethodSQL {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
                 pamentMethod = new PamentMethod();
-
                 pamentMethod.setId(cursor.getInt(0));
                 pamentMethod.setNameCh(cursor.getString(1));
                 pamentMethod.setNameEn(cursor.getString(2));
@@ -127,7 +123,6 @@ public class PamentMethodSQL {
                 pamentMethod.setCreateTime(cursor.getLong(17));
                 pamentMethod.setUpdateTime(cursor.getLong(18));
                 pamentMethod.setPaymentTypeId(cursor.getLong(19));
-
                 result.add(pamentMethod);
             }
         } catch (Exception e) {
@@ -142,45 +137,41 @@ public class PamentMethodSQL {
     }
 
 
-    public static ArrayList<PamentMethod> getPamentMethod(int paid) {
-        ArrayList<PamentMethod> result = new ArrayList<PamentMethod>();
+    public static PamentMethod getPamentMethod(int paid) {
+        PamentMethod result = null;
         String sql = "select * from " + TableNames.PamentMethod+ " where id = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,new String[] {paid+""});
-            int count = cursor.getCount();
-            if (count < 1) {
-                return result;
+//            int count = cursor.getCount();
+//            if (count < 1) {
+//                return result;
+//            }
+            if (cursor.moveToFirst()) {
+                result = new PamentMethod();
+                result.setId(cursor.getInt(0));
+                result.setNameCh(cursor.getString(1));
+                result.setNameEn(cursor.getString(2));
+                result.setNameOt(cursor.getString(3));
+                result.setLogoMd(cursor.getString(4));
+                result.setLogoSm(cursor.getString(5));
+                result.setPayType(cursor.getInt(6));
+                result.setRestaurantId(cursor.getInt(7));
+                result.setIsTax(cursor.getInt(8));
+                result.setIsDiscount(cursor.getInt(9));
+                result.setIsAdmin(cursor.getInt(10));
+                result.setIsMsgRequire(cursor.getInt(11));
+                result.setIsMsgRequire(cursor.getInt(12));
+                result.setIsPart(cursor.getInt(13));
+                result.setPartAcount(cursor.getDouble(14));
+                result.setStatus(cursor.getInt(15));
+                result.setDescription(cursor.getString(16));
+                result.setCreateTime(cursor.getLong(17));
+                result.setUpdateTime(cursor.getLong(18));
+                result.setPaymentTypeId(cursor.getLong(19));
             }
-            PamentMethod pamentMethod = null;
-            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
-                    .moveToNext()) {
-                pamentMethod = new PamentMethod();
 
-                pamentMethod.setId(cursor.getInt(0));
-                pamentMethod.setNameCh(cursor.getString(1));
-                pamentMethod.setNameEn(cursor.getString(2));
-                pamentMethod.setNameOt(cursor.getString(3));
-                pamentMethod.setLogoMd(cursor.getString(4));
-                pamentMethod.setLogoSm(cursor.getString(5));
-                pamentMethod.setPayType(cursor.getInt(6));
-                pamentMethod.setRestaurantId(cursor.getInt(7));
-                pamentMethod.setIsTax(cursor.getInt(8));
-                pamentMethod.setIsDiscount(cursor.getInt(9));
-                pamentMethod.setIsAdmin(cursor.getInt(10));
-                pamentMethod.setIsMsgRequire(cursor.getInt(11));
-                pamentMethod.setIsMsgRequire(cursor.getInt(12));
-                pamentMethod.setIsPart(cursor.getInt(13));
-                pamentMethod.setPartAcount(cursor.getDouble(14));
-                pamentMethod.setStatus(cursor.getInt(15));
-                pamentMethod.setDescription(cursor.getString(16));
-                pamentMethod.setCreateTime(cursor.getLong(17));
-                pamentMethod.setUpdateTime(cursor.getLong(18));
-                pamentMethod.setPaymentTypeId(cursor.getLong(19));
-
-                result.add(pamentMethod);
-            }
         } catch (Exception e) {
             e.printStackTrace();
 

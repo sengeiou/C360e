@@ -15,7 +15,7 @@ public class SettlementRestaurant implements Serializable {
     private Integer mediaId;
 
     private Integer adjustmentsId;
-    
+
     private Integer onlineServiceId;
 
     private Integer type;
@@ -24,13 +24,13 @@ public class SettlementRestaurant implements Serializable {
 
     private Integer discriptionId;
 
-    private Integer otherPaymentId;
+    private String  otherPaymentId;
 
-    public Integer getOtherPaymentId() {
+    public String getOtherPaymentId() {
         return otherPaymentId;
     }
 
-    public void setOtherPaymentId(Integer otherPaymentId) {
+    public void setOtherPaymentId(String otherPaymentId) {
         this.otherPaymentId = otherPaymentId;
     }
 

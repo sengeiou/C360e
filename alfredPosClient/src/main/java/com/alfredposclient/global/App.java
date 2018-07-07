@@ -45,6 +45,7 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.PamentMethod;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Printer;
@@ -91,6 +92,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.PamentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
@@ -1746,7 +1748,11 @@ public class App extends BaseApplication {
                                         .getReferenceNo()
                                         + "");
                         break;
-                    default:
+                    default: {
+                        PamentMethod pamentMethod = PamentMethodSQL.getPamentMethod(paymentSettlement.getPaymentTypeId()-10000);
+                               //CoreData.getInstance().getPamentMethod(paymentSettlement.getPaymentTypeId());
+                        printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
+                    }
                         break;
                 }
                 printReceiptInfos.add(printReceiptInfo);

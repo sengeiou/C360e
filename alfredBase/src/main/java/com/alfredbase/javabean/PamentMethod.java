@@ -48,6 +48,7 @@ public class PamentMethod implements Serializable {
     private Long updateTime;
 
     private  Long paymentTypeId;
+
     public Long getCreateTime() {
         return createTime;
     }

@@ -42,11 +42,13 @@ import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.ModifierSQL;
+import com.alfredbase.store.sql.PamentMethodSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
+import com.alfredbase.store.sql.SettlementRestaurantSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
@@ -95,7 +97,7 @@ public class CoreData {
 
 
 	private List<PamentMethod> pamentMethodList;
-	private List<SettlementRestaurant> settlementRestaurantList;
+	private List<SettlementRestaurant> settlementRestaurant;
 
 	private PrinterDevice device;
 
@@ -142,6 +144,9 @@ public class CoreData {
 		kotNotifications = KotNotificationSQL.getAllKotNotification();
 		localDevices = LocalDeviceSQL.getAllLocalDevice();
 		restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
+		settlementRestaurant= SettlementRestaurantSQL.getAllSettlementRestaurant();
+
+		pamentMethodList= PamentMethodSQL.getAllPamentMethod();
 	}
 
 	public PrinterDevice getDevice() {
@@ -805,13 +810,15 @@ public class CoreData {
 		}
 		return null;
 	}
-	public List<SettlementRestaurant> getSettlementRestaurantList() {
-		return settlementRestaurantList;
+
+	public List<SettlementRestaurant> getSettlementRestaurant() {
+		return settlementRestaurant;
 	}
 
-	public void setSettlementRestaurantList(List<SettlementRestaurant> settlementRestaurantList) {
-		this.settlementRestaurantList = settlementRestaurantList;
+	public void setSettlementRestaurant(List<SettlementRestaurant> settlementRestaurant) {
+		this.settlementRestaurant = settlementRestaurant;
 	}
+
 	public List<TaxCategory> getTaxCategories() {
 		if(taxCategories == null){
 			return new ArrayList<TaxCategory>();

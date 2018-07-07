@@ -42,7 +42,7 @@ public class MediaDialog extends Dialog  {
 
 	PamentMethodAdapter adapters;
 
-	private OtherClickListener otherClickListener;
+	private PaymentClickListener paymentClickListener;
 
 	public MediaDialog(Context context, Handler handler, List<PamentMethod> pamentMethodslist) {
 		super(context, com.alfredbase.R.style.Dialog_verify);
@@ -82,10 +82,12 @@ public class MediaDialog extends Dialog  {
 				if(plist.get(position).getIsverify()>=0)
 				{
 
-					if (otherClickListener != null)
-						otherClickListener.onOtherClick(plist.get(position));
+					if (paymentClickListener != null)
+						paymentClickListener.onPaymentClick(plist.get(position));
 //					verifyDialog = new VerifyDialog(context, handler);
 ////					verifyDialog.show("111",null);
+
+				//	Toast.makeText()
 				}
 				//  pays = (String) list.get(position).get("id");
 				System.out.println("======y优惠券fangs======" + position);
@@ -94,12 +96,12 @@ public class MediaDialog extends Dialog  {
 		});
 	}
 
-	public void setOtherClickListener(
-			MediaDialog.OtherClickListener otherClickListener) {
-		this.otherClickListener = otherClickListener;
+	public void setPaymentClickListener(
+			MediaDialog.PaymentClickListener otherClickListener) {
+		this.paymentClickListener = otherClickListener;
 	}
 
-	public interface OtherClickListener {
-		void onOtherClick(PamentMethod pa);
+	public interface PaymentClickListener {
+		void onPaymentClick(PamentMethod pa);
 	}
 }

@@ -61,6 +61,7 @@ import com.alfredbase.store.sql.ItemHappyHourSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.ModifierSQL;
+import com.alfredbase.store.sql.PamentMethodSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
@@ -73,6 +74,7 @@ import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
+import com.alfredbase.store.sql.SettlementRestaurantSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
@@ -381,23 +383,22 @@ public class HttpAnalysis {
 		try {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
-			List<PamentMethod> pamentMethod = gson.fromJson(
+			List<PamentMethod> pamentMethodList = gson.fromJson(
 					object.getString("pamentMethodList"),
 					new TypeToken<ArrayList<PamentMethod>>() {
 					}.getType());
-			CoreData.getInstance().setPamentMethodList(pamentMethod);
+			CoreData.getInstance().setPamentMethodList(pamentMethodList);
+			PamentMethodSQL.deleteAllPamentMethod();
+			PamentMethodSQL.addPamentMethod(pamentMethodList);
 
-			TaxCategorySQL.deleteAllTaxCategory();
-//			TaxCategorySQL.addTaxCategorys(taxCategories);
 
-			List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurantList"),
+			List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurants"),
 					new TypeToken<ArrayList<SettlementRestaurant>>() {
 					}.getType());
-			CoreData.getInstance().setSettlementRestaurantList(settlementRestaurant);
+			CoreData.getInstance().setSettlementRestaurant(settlementRestaurant);
+      SettlementRestaurantSQL.deleteAllSettlementRestaurant();
+      SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurant);
 
-		;
-//			TaxSQL.deleteAllTax();
-//			TaxSQL.addTaxs(taxs);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

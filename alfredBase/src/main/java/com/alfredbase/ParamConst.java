@@ -196,6 +196,12 @@ public class ParamConst {
 	public static final int SETTLEMENT_TYPE_FOODPANDA = 3003;
 	public static final int SETTLEMENT_TYPE_VOUCHER = 4001;
 
+	public static final int SETTLEMENT_TYPE_PART = 5001;
+	public static final int SETTLEMENT_TYPE_NOT_PART = 5002;
+	public static final int SETTLEMENT_TYPE_NOT_PART_NUM = 5003;
+
+	public static final int SETTLEMENT_TYPE_PART_PAYMENT = 5000;
+
 	
 
 	// BOH PaymentType

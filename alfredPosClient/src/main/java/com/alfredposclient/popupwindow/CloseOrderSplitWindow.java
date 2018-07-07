@@ -2016,6 +2016,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					View.VISIBLE);
 			// show.append(0);
 			break;
+
+			case ParamConst.SETTLEMENT_TYPE_PART_PAYMENT:
+
+				break;
 		default:
 			break;
 		}

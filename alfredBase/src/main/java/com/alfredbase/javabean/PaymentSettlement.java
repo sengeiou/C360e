@@ -26,10 +26,21 @@ public class PaymentSettlement {
 	 * 注意这个字段只是前段用的，暂存信息找零信息跟后台没有关系
 	 */
 	private String cashChange;
+
+
+	private String partChange;
 	/**
 	 * 是否可用(-1删除，0正常) 用于本地
 	 */
 	private int isActive;
+
+	public String getPartChange() {
+		return partChange;
+	}
+
+	public void setPartChange(String partChange) {
+		this.partChange = partChange;
+	}
 
 	public Integer getId() {
 		return id;

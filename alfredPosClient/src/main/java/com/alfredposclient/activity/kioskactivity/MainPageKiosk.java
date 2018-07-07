@@ -1210,7 +1210,7 @@ public class MainPageKiosk extends BaseActivity {
 				User user = (User) result.get("User");
 
 
-				Toast.makeText(context,result.get("MsgObject")+"--- ",Toast.LENGTH_LONG).show();
+				Toast.makeText(context,result.get("MsgObject")+"--111111- ",Toast.LENGTH_LONG).show();
 
 				if (result.get("MsgObject").equals(HANDLER_MSG_OBJECT_DISCOUNT)) {
 					Map<String, Object> map = (Map<String, Object>) result
@@ -1228,11 +1228,11 @@ public class MainPageKiosk extends BaseActivity {
 					if(closeOrderWindow.isShowing()){
 						closeOrderWindow.setUser(user);
 						closeOrderWindow.openMoneyKeyboard(View.GONE,
-								10000);
+								ParamConst.SETTLEMENT_TYPE_PART_PAYMENT);
 					} else if(closeOrderSplitWindow.isShowing()) {
 						closeOrderSplitWindow.setUser(user);
 						closeOrderSplitWindow.openMoneyKeyboard(View.GONE,
-								10000);
+								ParamConst.SETTLEMENT_TYPE_PART_PAYMENT);
 					}
 				}
 

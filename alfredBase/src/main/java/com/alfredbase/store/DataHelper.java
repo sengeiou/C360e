@@ -914,8 +914,11 @@ public class DataHelper {
 		private void onUpgradeForOldVersion10(SQLiteDatabase db){
 			db.execSQL("update " + TableNames.SyncMsg + " set status = " + ParamConst.SYNC_MSG_UN_SEND + " where status = " + ParamConst.SYNC_MSG_MALDATA + " and msg_type <> 1001");
 		}
-
 		private void onUpgradeForOldVersion11(SQLiteDatabase db){
+			onUpgradeForOldVersion11(db,false);
+		}
+
+		private void onUpgradeForOldVersion11(SQLiteDatabase db,Boolean remove){
 			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
 					+ " ADD COLUMN startDrawerAmount TEXT default '0.00'");
 			db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
@@ -936,7 +939,13 @@ public class DataHelper {
 					+ " ADD COLUMN mainCategoryId INTEGER default 0");
 			db.execSQL("update " + TableNames.SyncMsg + " set status = " + ParamConst.SYNC_MSG_UN_SEND + " where (status = " + ParamConst.SYNC_MSG_QUEUED + " or status = " + ParamConst.SYNC_MSG_MALDATA + ") and msg_type <> 1001");
 			try {
-				Store.remove(BaseApplication.instance, Store.PUSH_MESSAGE);
+if(remove){
+
+
+	  Store.remove(BaseApplication.instance, Store.PUSH_MESSAGE);
+}
+
+
 			}catch (Exception e){
 				e.printStackTrace();
 			}
@@ -1052,18 +1061,15 @@ public class DataHelper {
 
 			db.execSQL("CREATE TABLE "
 					+ TableNames.PamentMethod
-					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, nameCh TEXT, nameEn TEXT, nameOt TEXT, logoMd TEXT, logoSm TEXT, payType INTEGER, restaurantId INTEGER, isTax INTEGER, isDiscount INTEGER, isAdmin INTEGER, isMsg INTEGER, isMsgRequire INTEGER, isPart INTEGER, partAcount DOUBLE, status INTEGER,description TEXT,updateTime LONG,updateTime LONG,updateTime LONG,paymentTypeId INTEGER)");
-
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, nameCh TEXT, nameEn TEXT, nameOt TEXT, logoMd TEXT, logoSm TEXT, payType INTEGER, restaurantId INTEGER, isTax INTEGER, isDiscount INTEGER, isAdmin INTEGER, isMsg INTEGER, isMsgRequire INTEGER, isPart INTEGER, partAcount DOUBLE, status INTEGER,description TEXT,createTime LONG,updateTime LONG,paymentTypeId INTEGER)");
 
 			db.execSQL("CREATE TABLE "
 					+ TableNames.SettlementRestaurant
-					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT,  restaurantId INTEGER, mediaId INTEGER, adjustmentsId INTEGER, onlineServiceId INTEGER, type INTEGER, remarks TEXT, discriptionId INTEGER, otherPaymentId INTEGER)");
-
-
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, mediaId INTEGER, adjustmentsId INTEGER, onlineServiceId INTEGER, type INTEGER, remarks TEXT, discriptionId INTEGER, otherPaymentId TEXT)");
 
 			db.execSQL("CREATE TABLE "
 					+ TableNames.ReportDayPayment
-					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT,  daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId INTEGER, paymentName TEXT, paymentQty INTEGER, paymentAmount TEXT,createTime LONG,systemCreateTime LONG)");
+					+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId INTEGER, paymentName TEXT, paymentQty INTEGER, paymentAmount TEXT,createTime LONG,systemCreateTime LONG)");
 
 
 

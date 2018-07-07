@@ -2,6 +2,7 @@ package com.alfredposclient.http;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -332,6 +333,7 @@ public class HttpAPI {
 
     public static void getItemCategory(Context context, String url,
                                        AsyncHttpClient httpClient, final Handler handler, final int mode) {
+        Log.e("getItemCategory", "-----------start--------progress");
         try {
             httpClient.post(context, url, HttpAssembling.getTokenParam(),
                     HttpAssembling.CONTENT_TYPE,
@@ -344,6 +346,7 @@ public class HttpAPI {
                             if (resultCode == ResultCode.SUCCESS) {
                                 new Thread(new Runnable() {
                                     public void run() {
+                                        Log.e("getItemCategory", "------------------progress");
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
@@ -360,6 +363,7 @@ public class HttpAPI {
                                                     .obtainMessage(
                                                             SyncData.SYNC_DATA_TAG,
                                                             SyncData.SYNC_SUCCEED));
+                                            Log.e("getItemCategory", "-----------end--------progress");
                                         }
                                     }
                                 }).start();
@@ -850,8 +854,9 @@ public class HttpAPI {
     }
 
 
-    public static void mediaSync(Context context,String url, AsyncHttpClient httpClient,Handler handler, final int mode) {
+    public static void mediaSync(Context context, String url, AsyncHttpClient httpClient, final Handler handler, final int mode) {
         // try {
+        Log.e("TAG", "-------------------strat");
         StringEntity entity = null;
         try {
             entity = HttpAssembling.getMediaParam();
@@ -863,27 +868,49 @@ public class HttpAPI {
             httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
-                        public void onSuccess(int statusCode, Header[] headers,
-                                              byte[] responseBody) {
+                        public void onSuccess(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            LogUtil.d("mediaSync--", statusCode+"----"+responseBody);
+                            LogUtil.d("mediaSync--", statusCode+"----"+resultCode);
 
-                            HttpAnalysis.getOther(statusCode,headers,responseBody);
-//                            if (resultCode == ResultCode.SUCCESS
-//                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
-//                                syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);
-//                                SyncMsgSQL.add(syncMsg);
-//                            } else {
-//                                syncMsg.setStatus(ParamConst.SYNC_MSG_MALDATA);
-//                                SyncMsgSQL.add(syncMsg);
-//                                if (resultCode == ResultCode.DEVICE_NO_PERMIT) {
-//                                    App.instance
-//                                            .getTopActivity()
-//                                            .httpRequestAction(
-//                                                    ResultCode.DEVICE_NO_PERMIT,
-//                                                    null);
-//                                }
-//                            }
+
+                            if (resultCode == 1) {
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        Map<String, Integer> map = App.instance
+                                                .getPushMsgMap();
+                                        if (!map.isEmpty()) {
+                                            map.remove(PushMessage.PAYMENT_METHOD);
+                                            Store.saveObject(App.instance,
+                                                    Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
+                                        }
+                                        Log.e("TAG", "-------------------progress");
+                                        HttpAnalysis.getOther(statusCode,headers,responseBody);
+                                        if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(
+                                                            SyncData.SYNC_DATA_TAG,
+                                                            SyncData.SYNC_SUCCEED));
+
+                                            Log.e("TAG", "-------------------end");
+                                        } else {
+                                            handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                        }
+
+                                    }
+                                }).start();
+                            } else {
+                                if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                            }
+
+
+
+
                         }
 
                         @Override
@@ -891,12 +918,14 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
 
                             LogUtil.d("HttpAPI--onFailure", statusCode+"");
-                            // no need change status here. JOB will get the
-                            // exception to rerun job
-                            // syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
-                            // SyncMsgSQL.add(syncMsg);
-//                            syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
-//                            SyncMsgSQL.add(syncMsg);
+                            if (mode == SyncCentre.MODE_PUSH_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        SyncData.SYNC_DATA_TAG,
+                                        SyncData.SYNC_FAILURE));
+                            }
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
                             throw new RuntimeException(error);

@@ -3,5 +3,4 @@
     
     <item android:state_pressed="true" android:drawable="@drawable/diners_clicked" />
     <item android:drawable="@drawable/diners" />
-
 </selector>

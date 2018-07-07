@@ -114,11 +114,9 @@ public class SyncCentre {
 	public void syncCommonData(Context context, Handler handler) {
 		HttpAPI.getUser(context, getAbsoluteUrl(APIName.USER_GETUSER),
 				httpClient, handler, MODE_FIRST_SYNC);
-
-		//  pamentmethod
-
-//		HttpAPI.mediaSync(context,
-//				getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT),httpClient,handler,MODE_FIRST_SYNC);
+//
+		HttpAPI.mediaSync(context,
+				getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT),httpClient,handler,MODE_FIRST_SYNC);
 		HttpAPI.getItemCategory(context,
 				getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
 		HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),

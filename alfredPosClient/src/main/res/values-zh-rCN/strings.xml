@@ -280,6 +280,7 @@
     <string name="exp_not_empty">有效期不能为空</string>
     <string name="exp_format">有效期的格式为"00/00"</string>
     <string name="cash_settlement">现金结算</string>
+    <string name="part_settlement">部分支付</string>
 	<string name="totle_paid">总计支付</string>
 	<string name="visa_settlement">Visa结算</string>
 	<string name="amount_due">应付</string>

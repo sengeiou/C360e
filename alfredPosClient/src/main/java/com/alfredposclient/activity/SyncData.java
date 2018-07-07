@@ -29,6 +29,7 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.adapter.RevenueCentreListAdapter;
@@ -282,10 +283,12 @@ public class SyncData extends BaseActivity {
 			case SYNC_DATA_TAG:
 				int type = (Integer) msg.obj;
 				if(type == SYNC_SUCCEED){
-					if(syncDataCount == 6){
+					if(syncDataCount == 7){
 						handler.sendEmptyMessage(HANDLER_GET_PLACE_INFO);
 					}else{
+
 						syncDataCount++;
+						LogUtil.d("syncDataCount--", syncDataCount+"----");
 					}
 				}else{
 					handler.sendEmptyMessage(HANDLER_GET_PLACE_INFO);

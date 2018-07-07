@@ -287,6 +287,8 @@
     <string name="exp_not_empty">Expiration Date cannot be empty</string>
     <string name="exp_format">Expiration Date Format for 00/00</string>
     <string name="cash_settlement">Cash Settlement</string>
+
+    <string name="part_settlement">Part Settlement</string>
     <string name="totle_paid">Total Paid</string>
     <!--<string name="change">Change</string>-->
     <string name="visa_settlement">Visa Settlement</string>

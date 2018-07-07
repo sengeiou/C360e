@@ -126,14 +126,15 @@
             />
 
 
-        <TextView
+        <Button
             android:id="@+id/tv_other_media"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/text_color_selector"
-            android:background="@drawable/other_pament_btn"
+
+            android:background="@drawable/box_key_number_selector"
             android:text="Custom"
+            android:textColor="@color/black"
             android:textSize="15sp"
             android:gravity="center"
 

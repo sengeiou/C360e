@@ -38,17 +38,17 @@ public class SendEmailThread extends Thread {
         }
         try{
 //
-//        ReportDaySales reportDaySales;
-//        List<ReportDayTax> reportDayTaxs;
-//            reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(App.instance.getBusinessDate());
-//            reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(reportDaySales,App.instance.getBusinessDate());
-//
-//            if(reportDayTaxs != null && reportDayTaxs.size() > 0) {
-//
-//
-//                SyncCentre.getInstance().syncSendEmail(App.instance, reportDaySales, reportDayTaxs, null);
-//            }
-            SyncCentre.getInstance().syncMedia(App.instance,  null);
+        ReportDaySales reportDaySales;
+        List<ReportDayTax> reportDayTaxs;
+            reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(App.instance.getBusinessDate());
+            reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(reportDaySales,App.instance.getBusinessDate());
+
+            if(reportDayTaxs != null && reportDayTaxs.size() > 0) {
+
+
+                SyncCentre.getInstance().syncSendEmail(App.instance, reportDaySales, reportDayTaxs, null);
+            }
+           // SyncCentre.getInstance().syncMedia(App.instance,  null);
 
 //            RevenueCenter revenueCenter = App.instance.getRevenueCenter();
 //            String name = "alfred_" + revenueCenter.getId().intValue() + "_b";

@@ -78,10 +78,41 @@ public class PamentMethodAdapter extends BaseAdapter{
 
             PamentMethod   p = list.get(position);
 
-      //  ImageLoader.getInstance().displayImage(url, imageViewHolder.item_name_img, options);
-            holder.tv.setText(p.getNameCh().toString());
+            ImageLoader.getInstance().displayImage(p.getLogoSm(), holder.img, options);
+            holder.tv.setText(p.getNameOt().toString());
+        if(p.getIsTax()==0)
+        {
+            holder.tax.setText("No Tax,");
+        }else
+            {
+                holder.tax.setText("Tax,");
+        }
 
-           return view;
+        if ( p.getIsAdmin()==0) {
+            holder.admin.setText("Cashier,");
+        } else {
+            holder.admin.setText("Manager,");
+        }
+
+        if ( p.getIsPart()==0) {
+            holder.pay.setText("Part-pay");
+            holder.symbol.setVisibility(View.GONE);
+            holder.money.setVisibility(View.GONE);
+        } else {
+            holder.pay.setText("All-pay");
+            holder.symbol.setVisibility(View.VISIBLE);
+            holder.money.setVisibility(View.VISIBLE);
+
+            if(p.getPartAcount()>0) {
+                holder.money.setText(p.getPartAcount() + "");
+            }else {
+                holder.symbol.setVisibility(View.GONE);
+                holder.money.setVisibility(View.GONE);
+            }
+
+
+        }
+        return view;
     }
 
     public class ViewHolder {
