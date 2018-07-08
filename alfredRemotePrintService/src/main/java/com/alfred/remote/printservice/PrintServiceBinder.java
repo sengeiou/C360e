@@ -1022,6 +1022,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 case ParamConst.SETTLEMENT_TYPE_VOUCHER:
                                     paymentType = PrintService.instance.getResources().getString(R.string.voucher);
                                     break;
+                                default:
+                                    paymentType = printReceiptInfo.getPaymentTypeName();
+                                    break;
                             }
                             if (!TextUtils.isEmpty(paymentType)) {
                                 stmt.put(paymentType,
