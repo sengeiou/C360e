@@ -1,6 +1,7 @@
 package com.alfredposclient.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -9,10 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class SettlementDetailItemView extends LinearLayout implements OnClickListener {
 //	private static final int ROW_COUNT = 4;
@@ -22,6 +26,7 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 	public TextView tv_settlement_num;
 	public TextView tv_settlement_delicon;
 	private TextTypeFace textTypeFace;
+	private DisplayImageOptions options;
 
 	public SettlementDetailItemView(Context context) {
 		super(context);
@@ -44,11 +49,18 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 	
 	public void setParams(final PaymentSettlement paymentSettlement, final ViewResultCall viewResultCall) {
 		tv_settlement_num.setText(BH.getBD(paymentSettlement.getPaidAmount()).toString());
-		iv_settlement_icon
-				.setImageResource(getImageResourceBySettlementType(paymentSettlement
-						.getPaymentTypeId().intValue()));
 		int paymentTypeId = paymentSettlement.getPaymentTypeId()
 				.intValue();
+
+		if (paymentTypeId > 10000) {
+                   getImage(paymentTypeId);
+		} else
+		{
+			iv_settlement_icon
+					.setImageResource(getImageResourceBySettlementType(paymentSettlement
+							.getPaymentTypeId().intValue()));
+	       }
+
 		if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL){
 			tv_settlement_delicon.setVisibility(View.INVISIBLE);
 			tv_settlement_delicon.setOnClickListener(null);
@@ -115,7 +127,21 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 		textTypeFace = TextTypeFace.getInstance();
 		textTypeFace.setTrajanProBlod(tv_settlement_num);
 	}
-	
+
+	public void getImage(int typeid) {
+int id;
+		options = new DisplayImageOptions.Builder()
+				.showImageOnFail(R.drawable.icon_settle_cash)
+				.showImageForEmptyUri(R.drawable.icon_settle_cash)
+				.cacheInMemory(true)
+				.cacheOnDisk(true)
+				.bitmapConfig(Bitmap.Config.RGB_565)
+				.build();
+                id=typeid-10000;
+
+		ImageLoader.getInstance().displayImage(	CoreData.getInstance().getPamentMethod(id).getLogoSm(), iv_settlement_icon, options);
+	}
+
 	public interface ViewResultCall {
 		public void call(PaymentSettlement paymentSettlement);
 	}

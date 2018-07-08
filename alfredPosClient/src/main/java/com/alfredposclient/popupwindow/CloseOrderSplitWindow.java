@@ -2399,7 +2399,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				PaymentSQL.addPayment(payment);
 				PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
 						.getPaymentSettlement(payment, paymentTypeId, showStr);
-
+            paymentSettlement.setPartImg(p.getLogoSm());
 				if (showStrBigDecimal.compareTo(remainTotalAfterRound) > -1) {
 					RoundAmount roundAmount = ObjectFactory.getInstance()
 							.getRoundAmountByOrderSplit(
