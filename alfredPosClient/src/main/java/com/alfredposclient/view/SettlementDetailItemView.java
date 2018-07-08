@@ -138,7 +138,6 @@ int id;
 				.bitmapConfig(Bitmap.Config.RGB_565)
 				.build();
                 id=typeid-10000;
-
 		ImageLoader.getInstance().displayImage(	CoreData.getInstance().getPamentMethod(id).getLogoSm(), iv_settlement_icon, options);
 	}
 
