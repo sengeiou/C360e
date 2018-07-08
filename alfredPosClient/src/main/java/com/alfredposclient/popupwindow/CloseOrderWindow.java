@@ -3,8 +3,6 @@ package com.alfredposclient.popupwindow;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.InputType;
@@ -13,26 +11,20 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
-import com.alfredbase.global.CoreData;
-import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -43,7 +35,7 @@ import com.alfredbase.javabean.NonChargableSettlement;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.PamentMethod;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
@@ -86,12 +78,8 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.OrderDetailAdapter;
-import com.alfredposclient.adapter.PamentMethodAdapter;
 import com.alfredposclient.global.App;
-import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
-import com.alfredposclient.http.HttpAPI;
-import com.alfredposclient.push.SendEmailThread;
 import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
 import com.alfredposclient.view.SettlementDetailItemView;
@@ -194,11 +182,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
     int ispart;
 
-    PamentMethod p = new PamentMethod();
+    PaymentMethod p = new PaymentMethod();
 
 
     private boolean isFirstClickCash = false;
-    List<PamentMethod> pamentMethodlist = new ArrayList<PamentMethod>();
+    List<PaymentMethod> pamentMethodlist = new ArrayList<PaymentMethod>();
 
     MediaDialog mediaDialog;
     private List<PaymentSettlement> paymentSettlements = new ArrayList<>();
@@ -1414,7 +1402,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
                     SettlementRestaurant se=new SettlementRestaurant();
                     se=SettlementRestaurantSQL.getSettlementRestaurant(3109);
-                   PamentMethod pam = new PamentMethod();
+                   PaymentMethod pam = new PaymentMethod();
                     pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
 //                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
 //                    pamentMethodlist.add(pam);
@@ -1422,7 +1410,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                         String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
                         for (int i = 0; i < strarray.length; i++) {
-                            PamentMethod pa = new PamentMethod();
+                            PaymentMethod pa = new PaymentMethod();
                             pa = PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[i]).intValue());
                             pamentMethodlist.add(pa);
                         }
@@ -2766,7 +2754,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
 
-    public void onPaymentClick(PamentMethod paym) {
+    public void onPaymentClick(PaymentMethod paym) {
         //   Toast.makeText(parent,"--- "+key,Toast.LENGTH_LONG).show();
           p=paym;
         if (p.getIsAdmin() == 1) {

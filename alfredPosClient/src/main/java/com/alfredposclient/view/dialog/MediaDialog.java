@@ -8,28 +8,13 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alfredbase.BaseActivity;
-import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
-import com.alfredbase.global.CoreData;
-import com.alfredbase.javabean.PamentMethod;
-import com.alfredbase.javabean.User;
-import com.alfredbase.utils.TextTypeFace;
-import com.alfredbase.utils.ToastUtils;
-import com.alfredbase.view.NumerickeyboardOne;
-import com.alfredbase.view.NumerickeyboardOne.KeyBoardClickListener;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredposclient.R;
-import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.adapter.PamentMethodAdapter;
-import com.alfredposclient.view.CloseMoneyKeyboard;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MediaDialog extends Dialog  {
 
@@ -38,13 +23,13 @@ public class MediaDialog extends Dialog  {
 	private ListView listView;
 	private ListView listview;
 	VerifyDialog	verifyDialog;
-	List<PamentMethod> plist;
+	List<PaymentMethod> plist;
 
 	PamentMethodAdapter adapters;
 
 	private PaymentClickListener paymentClickListener;
 
-	public MediaDialog(Context context, Handler handler, List<PamentMethod> pamentMethodslist) {
+	public MediaDialog(Context context, Handler handler, List<PaymentMethod> pamentMethodslist) {
 		super(context, com.alfredbase.R.style.Dialog_verify);
 		this.handler = handler;
 		this.context = context;
@@ -102,6 +87,6 @@ public class MediaDialog extends Dialog  {
 	}
 
 	public interface PaymentClickListener {
-		void onPaymentClick(PamentMethod pa);
+		void onPaymentClick(PaymentMethod pa);
 	}
 }

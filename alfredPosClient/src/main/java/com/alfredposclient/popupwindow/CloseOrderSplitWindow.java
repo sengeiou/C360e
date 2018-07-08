@@ -34,7 +34,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
-import com.alfredbase.javabean.PamentMethod;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
@@ -192,11 +192,11 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 	double partAcount;
 
 	int ispart;
-	PamentMethod p = new PamentMethod();
+	PaymentMethod p = new PaymentMethod();
 
 	Button tv_other_media;
 
-	List<PamentMethod> pamentMethodlist = new ArrayList<PamentMethod>();
+	List<PaymentMethod> pamentMethodlist = new ArrayList<PaymentMethod>();
 
 	MediaDialog mediaDialog;
 
@@ -1670,7 +1670,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 					settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
 					SettlementRestaurant se=new SettlementRestaurant();
 					se=SettlementRestaurantSQL.getSettlementRestaurant(3109);
-					PamentMethod pam = new PamentMethod();
+					PaymentMethod pam = new PaymentMethod();
 					pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
 //                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
 //                    pamentMethodlist.add(pam);
@@ -1678,7 +1678,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
 						String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
 						for (int i = 0; i < strarray.length; i++) {
-							PamentMethod pa = new PamentMethod();
+							PaymentMethod pa = new PaymentMethod();
 							pa = PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[i]).intValue());
 							pamentMethodlist.add(pa);
 						}
@@ -3151,7 +3151,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 	}
 
 	@Override
-	public void onPaymentClick(PamentMethod pa) {
+	public void onPaymentClick(PaymentMethod pa) {
 		    p=pa;
 		if (p.getIsAdmin() == 1) {
 			verifyDialog = new VerifyDialog(parent, handler);

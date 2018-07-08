@@ -1153,9 +1153,11 @@ public class DataHelper {
 
             db.execSQL("CREATE TABLE "
                     + TableNames.ReportDayPayment
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId INTEGER, paymentName TEXT, paymentQty INTEGER, paymentAmount TEXT,createTime LONG,systemCreateTime LONG)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId LONG, paymentName TEXT, paymentQty INTEGER, paymentAmount TEXT,overPaymentAmount TEXT,createTime LONG)");
 
-
+            db.execSQL("ALTER TABLE "
+                    + TableNames.PaymentSettlement
+                    + " ADD COLUMN partChange TEXT default '0.00'");
 
         }
     }

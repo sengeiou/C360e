@@ -1,8 +1,6 @@
 package com.alfredbase.javabean;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Created by Eric on 2018/7/4.
@@ -16,12 +14,12 @@ public class ReportDayPayment implements Serializable{
     private Integer revenueId;
     private String revenueName;
     private Long businessDate;
-    private Integer paymentTypeId;
+    private Long paymentTypeId;
     private String paymentName;
     private Integer paymentQty;
     private String paymentAmount;
+    private String overPaymentAmount;
     private Long createTime;
-    private Long systemCreateTime;
 
 
 
@@ -33,13 +31,6 @@ public class ReportDayPayment implements Serializable{
         this.createTime = createTime;
     }
 
-    public Long getSystemCreateTime() {
-        return systemCreateTime;
-    }
-
-    public void setSystemCreateTime(Long systemCreateTime) {
-        this.systemCreateTime = systemCreateTime;
-    }
 
     public Integer getId() {
         return id;
@@ -97,11 +88,11 @@ public class ReportDayPayment implements Serializable{
         this.businessDate = businessDate;
     }
 
-    public Integer getPaymentTypeId() {
+    public Long getPaymentTypeId() {
         return paymentTypeId;
     }
 
-    public void setPaymentTypeId(Integer paymentTypeId) {
+    public void setPaymentTypeId(Long paymentTypeId) {
         this.paymentTypeId = paymentTypeId;
     }
 
@@ -121,6 +112,14 @@ public class ReportDayPayment implements Serializable{
         this.paymentQty = paymentQty;
     }
 
+    public String getOverPaymentAmount() {
+        return overPaymentAmount;
+    }
+
+    public void setOverPaymentAmount(String overPaymentAmount) {
+        this.overPaymentAmount = overPaymentAmount;
+    }
+
     public String getPaymentAmount() {
         return paymentAmount;
     }
@@ -129,6 +128,7 @@ public class ReportDayPayment implements Serializable{
         this.paymentAmount = paymentAmount;
     }
 
+    @Override
     public String toString() {
         return "ReportDayPayment{" +
                 "id=" + id +
@@ -141,9 +141,9 @@ public class ReportDayPayment implements Serializable{
                 ", paymentTypeId=" + paymentTypeId +
                 ", paymentName='" + paymentName + '\'' +
                 ", paymentQty=" + paymentQty +
-                ", paymentAmount=" + paymentAmount +
+                ", paymentAmount='" + paymentAmount + '\'' +
+                ", overPaymentAmount='" + overPaymentAmount + '\'' +
                 ", createTime=" + createTime +
-                ", systemCreateTime=" + systemCreateTime +
                 '}';
     }
 }

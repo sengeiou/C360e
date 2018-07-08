@@ -20,7 +20,7 @@ import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
-import com.alfredbase.javabean.PamentMethod;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
@@ -383,9 +383,9 @@ public class HttpAnalysis {
 		try {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
-			List<PamentMethod> pamentMethodList = gson.fromJson(
+			List<PaymentMethod> pamentMethodList = gson.fromJson(
 					object.getString("pamentMethodList"),
-					new TypeToken<ArrayList<PamentMethod>>() {
+					new TypeToken<ArrayList<PaymentMethod>>() {
 					}.getType());
 			CoreData.getInstance().setPamentMethodList(pamentMethodList);
 			PamentMethodSQL.deleteAllPamentMethod();

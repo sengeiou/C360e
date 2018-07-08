@@ -45,7 +45,7 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.PamentMethod;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Printer;
@@ -1776,7 +1776,7 @@ public class App extends BaseApplication {
                                         + "");
                         break;
                     default: {
-                        PamentMethod pamentMethod = PamentMethodSQL.getPamentMethod(paymentSettlement.getPaymentTypeId()-10000);
+                        PaymentMethod pamentMethod = PamentMethodSQL.getPamentMethod(paymentSettlement.getPaymentTypeId()-10000);
                                //CoreData.getInstance().getPamentMethod(paymentSettlement.getPaymentTypeId());
                         printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
                     }
