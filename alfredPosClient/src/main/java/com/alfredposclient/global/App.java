@@ -50,6 +50,7 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
@@ -1908,7 +1909,7 @@ public class App extends BaseApplication {
 
     public void remotePrintDaySalesReport(String xzType, PrinterDevice printer,
                                           PrinterTitle title, ReportDaySales reportData,
-                                          List<ReportDayTax> taxData, List<ReportUserOpenDrawer> reportUserOpenDrawers,
+                                          List<ReportDayTax> taxData, List<ReportDayPayment> reportDayPayments, List<ReportUserOpenDrawer> reportUserOpenDrawers,
                                           List<ReportSessionSales> reportSessionSalesList) {
         if (mRemoteService == null) {
             printerDialog();
@@ -1920,10 +1921,11 @@ public class App extends BaseApplication {
             String prtTitle = gson.toJson(title);
             String report = gson.toJson(reportData);
             String tax = gson.toJson(taxData);
+            String customPayment = gson.toJson(reportDayPayments);
             String useropen = gson.toJson(reportUserOpenDrawers);
             String reportSessionSaless = gson.toJson(reportSessionSalesList);
             mRemoteService.printDaySalesReport(xzType, prtStr, prtTitle,
-                    report, tax, useropen, reportSessionSaless);
+                    report, tax, customPayment, useropen, reportSessionSaless);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
