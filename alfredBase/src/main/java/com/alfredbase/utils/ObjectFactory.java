@@ -1050,6 +1050,22 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 					paymentSettlement.setPaidAmount(paidAmount);
 				}
 			}
+			if(paymentTypeId>10000){
+
+
+				paymentSettlement.setId(CommonSQL
+						.getNextSeq(TableNames.PaymentSettlement));
+				paymentSettlement.setBillNo(payment.getBillNo());
+				paymentSettlement.setPaymentId(payment.getId());
+				paymentSettlement.setPaymentTypeId(paymentTypeId);
+				paymentSettlement.setPaidAmount(paidAmount);
+				paymentSettlement.setTotalAmount(payment.getPaymentAmount());
+				paymentSettlement.setRestaurantId(payment.getRestaurantId());
+				paymentSettlement.setRevenueId(payment.getRevenueId());
+				paymentSettlement.setUserId(payment.getUserId());
+				paymentSettlement.setCreateTime(time);
+				paymentSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
+			}
 			paymentSettlement.setUpdateTime(time);
 			PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 		}

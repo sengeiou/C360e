@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.VerifyDialog;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -33,9 +34,11 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.PamentMethod;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.javabean.SettlementRestaurant;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.VoidSettlement;
@@ -49,9 +52,11 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.PamentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
+import com.alfredbase.store.sql.SettlementRestaurantSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
@@ -77,6 +82,7 @@ import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
 import com.alfredposclient.view.SettlementDetailItemView;
 import com.alfredposclient.view.SettlementDetailItemView.ViewResultCall;
+import com.alfredposclient.view.dialog.MediaDialog;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -84,7 +90,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickListener {
+public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickListener ,MediaDialog.PaymentClickListener{
 	private String TAG = CloseOrderWindow.class.getSimpleName();
 	private static final int DURATION_1 = 300;
 	private static final int DURATION_2 = 200;
@@ -175,6 +181,26 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 	private List<PaymentSettlement> paymentSettlements = new ArrayList<>();
 	private String oldTotal;
 	private boolean splitPax = false;
+
+	private TextView tv_part_amount_due_num;
+	private TextView tv_part_total_amount_num;
+
+	VerifyDialog verifyDialog;
+
+	boolean isFirstClickPart;
+
+	double partAcount;
+
+	int ispart;
+	PamentMethod p = new PamentMethod();
+
+	Button tv_other_media;
+
+	List<PamentMethod> pamentMethodlist = new ArrayList<PamentMethod>();
+
+	MediaDialog mediaDialog;
+
+
 	public CloseOrderSplitWindow(BaseActivity parent, View parentView,
 			Handler handler) {
 		this.parent = parent;
@@ -198,6 +224,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //				.findViewById(R.id.rl_pay_panel);
 
 //		web_alipay = (WebView) contentView.findViewById(R.id.web_alipay);
+		tv_part_amount_due_num=(TextView) contentView.findViewById(R.id.tv_part_amount_due_num) ;
+		tv_part_total_amount_num=(TextView) contentView.findViewById(R.id.tv_part_total_amount_num);
+
 		tv_change_num = (TextView) contentView
 				.findViewById(R.id.tv_change_num);
 		rl_menu = (RelativeLayout) contentView.findViewById(R.id.rl_menu);
@@ -283,6 +312,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //		swipe = contentView.findViewById(R.id.swipe);
 //		swipe.setOnClickListener(this);
 
+		tv_other_media = (Button) contentView.findViewById(R.id.tv_other_media);
+
+		tv_other_media.setOnClickListener(this);
 		contentView.findViewById(R.id.tv_Others).setOnClickListener(this);
 		contentView.findViewById(R.id.tv_exact).setOnClickListener(this);
 		contentView.findViewById(R.id.iv_VISA).setOnClickListener(this);
@@ -412,6 +444,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
 	private void initTextTypeFace(View view) {
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
+		textTypeFace.setTrajanProRegular((Button) view
+				.findViewById(R.id.tv_other_media));
 		textTypeFace.setTrajanProBlod((TextView) view
 				.findViewById(R.id.tv_bill_summary));
 		textTypeFace.setTrajanProRegular((TextView) view
@@ -1219,6 +1253,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		ll_pay.setVisibility(View.VISIBLE);
 		contentView.findViewById(R.id.ll_subtotal_layout).setVisibility(
 				View.VISIBLE);
+
+		contentView.findViewById(R.id.ll_part_settlement).setVisibility(
+				View.INVISIBLE);
 		contentView.findViewById(R.id.ll_cash_settlement).setVisibility(
 				View.INVISIBLE);
 		contentView.findViewById(R.id.ll_cards_settlement).setVisibility(
@@ -1625,6 +1662,31 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			}
 			// 支付方式的点击事件
 			switch (v.getId()) {
+
+
+				case R.id.tv_other_media:
+					List<SettlementRestaurant> settle;
+					pamentMethodlist.clear();
+					settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
+					SettlementRestaurant se=new SettlementRestaurant();
+					se=SettlementRestaurantSQL.getSettlementRestaurant(3109);
+					PamentMethod pam = new PamentMethod();
+					pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
+//                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
+//                    pamentMethodlist.add(pam);
+					if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {
+
+						String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
+						for (int i = 0; i < strarray.length; i++) {
+							PamentMethod pa = new PamentMethod();
+							pa = PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[i]).intValue());
+							pamentMethodlist.add(pa);
+						}
+					}
+
+					mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
+					mediaDialog.setPaymentClickListener(this);
+					break;
 			case R.id.tv_Others: {
 				openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
 				isFirstClickCash = true;
@@ -2017,8 +2079,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			// show.append(0);
 			break;
 
-			case ParamConst.SETTLEMENT_TYPE_PART_PAYMENT:
 
+			case ParamConst.SETTLEMENT_TYPE_PART_PAYMENT:
+				initPayment();
 				break;
 		default:
 			break;
@@ -2156,6 +2219,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		show.append(num * 100);
 		tv_total_amount_num
 				.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(num).toString());
+		tv_part_total_amount_num
+				.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(num).toString());
 //		showCashChange();
 		BigDecimal cashNum = BH.getBD(String.valueOf(Double.parseDouble(show
 				.toString()) / 100.0));
@@ -2251,6 +2316,167 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			}
 		}
 			break;
+
+			// 部分支付（未固定金额）
+			case ParamConst.SETTLEMENT_TYPE_NOT_PART: {
+
+				String showStr = BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true).toString();
+				BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
+				BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+				if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
+					showStr = remainTotalAfterRound.toString();
+				}else{
+					showStr = showStrBigDecimal.toString();
+				}
+				PaymentSQL.addPayment(payment);
+				PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+						.getPaymentSettlement(payment, paymentTypeId, showStr);
+
+				if (showStrBigDecimal.compareTo(remainTotalAfterRound) > -1) {
+					RoundAmount roundAmount = ObjectFactory.getInstance()
+							.getRoundAmountByOrderSplit(
+									orderSplit,
+									orderBill,
+									remainTotal,
+									App.instance.getLocalRestaurantConfig()
+											.getRoundType(),
+									App.instance.getBusinessDate());
+					orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+					OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
+					OrderSplitSQL.update(orderSplit);
+					PaymentSQL.updateSplitOrderPaymentAmount(orderSplit.getTotal(), orderSplit.getId().intValue());
+					int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
+					if(upDoneOrderSplitCount == 0){
+						double roundBalancePrice = RoundAmountSQL.getSumRoundWhenSplitByOrder(order);
+						BigDecimal roundAlfterPrice = BH.sub(BH.getBD(order.getTotal()), BH.getBD(roundBalancePrice), true);
+						RoundAmount orderRoundAmount = ObjectFactory.getInstance()
+								.getRoundAmount(
+										order,
+										orderBill,
+										BH.getBD(order.getTotal()),
+										App.instance.getLocalRestaurantConfig()
+												.getCurrencySymbol());
+						orderRoundAmount.setRoundAlfterPrice(roundAlfterPrice.toString());
+						orderRoundAmount.setRoundBalancePrice(roundBalancePrice);
+						RoundAmountSQL.update(orderRoundAmount);
+//					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
+						order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+						OrderHelper.setOrderTotalAlfterRound(order, orderRoundAmount);
+						OrderSQL.update(order);
+					}
+					paymentSettlement.setCashChange(BH.sub(showStrBigDecimal,
+							remainTotalAfterRound, true).toString());
+				} else {
+					settlementNum = BH.getBD(PaymentSettlementSQL
+							.getPaymentSettlementsSumBypaymentId(payment.getId()));
+					remainTotal = BH.sub(remainTotalAfterRound, settlementNum, false);
+				}
+				PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+				if (newPaymentMapList != null) {
+					Map<String, Object> paymentMap = new HashMap<String, Object>();
+					paymentMap.put("newPaymentSettlement", paymentSettlement);
+					newPaymentMapList.add(paymentMap);
+				}
+			}
+			contentView.findViewById(R.id.ll_part_settlement).setVisibility(
+					View.INVISIBLE);
+
+
+			break;
+
+			//固定金额
+			case ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM: {
+
+				String showStr = BH.getBD(partAcount).toString();
+
+				BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
+				BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+				if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
+					showStr = remainTotalAfterRound.toString();
+				}else{
+					showStr = showStrBigDecimal.toString();
+				}
+				PaymentSQL.addPayment(payment);
+				PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+						.getPaymentSettlement(payment, paymentTypeId, showStr);
+
+				if (showStrBigDecimal.compareTo(remainTotalAfterRound) > -1) {
+					RoundAmount roundAmount = ObjectFactory.getInstance()
+							.getRoundAmountByOrderSplit(
+									orderSplit,
+									orderBill,
+									remainTotal,
+									App.instance.getLocalRestaurantConfig()
+											.getRoundType(),
+									App.instance.getBusinessDate());
+					orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+					OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
+					OrderSplitSQL.update(orderSplit);
+					PaymentSQL.updateSplitOrderPaymentAmount(orderSplit.getTotal(), orderSplit.getId().intValue());
+					int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
+					if(upDoneOrderSplitCount == 0){
+						double roundBalancePrice = RoundAmountSQL.getSumRoundWhenSplitByOrder(order);
+						BigDecimal roundAlfterPrice = BH.sub(BH.getBD(order.getTotal()), BH.getBD(roundBalancePrice), true);
+						RoundAmount orderRoundAmount = ObjectFactory.getInstance()
+								.getRoundAmount(
+										order,
+										orderBill,
+										BH.getBD(order.getTotal()),
+										App.instance.getLocalRestaurantConfig()
+												.getCurrencySymbol());
+						orderRoundAmount.setRoundAlfterPrice(roundAlfterPrice.toString());
+						orderRoundAmount.setRoundBalancePrice(roundBalancePrice);
+						RoundAmountSQL.update(orderRoundAmount);
+//					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
+						order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+						OrderHelper.setOrderTotalAlfterRound(order, orderRoundAmount);
+						OrderSQL.update(order);
+					}
+					paymentSettlement.setCashChange(BH.sub(showStrBigDecimal,
+							remainTotalAfterRound, true).toString());
+				} else {
+					settlementNum = BH.getBD(PaymentSettlementSQL
+							.getPaymentSettlementsSumBypaymentId(payment.getId()));
+					remainTotal = BH.sub(remainTotalAfterRound, settlementNum, false);
+				}
+				PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+				if (newPaymentMapList != null) {
+					Map<String, Object> paymentMap = new HashMap<String, Object>();
+					paymentMap.put("newPaymentSettlement", paymentSettlement);
+					newPaymentMapList.add(paymentMap);
+				}
+			}
+			contentView.findViewById(R.id.ll_part_settlement).setVisibility(
+					View.INVISIBLE);
+
+
+			break;
+
+			case ParamConst.SETTLEMENT_TYPE_PART: {
+				if (ispart == 0) {
+					//不计税
+					deleteVoidOrEntTax();
+				}
+
+
+				PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+						.getPaymentSettlement(payment, paymentTypeId,
+								orderSplit.getTotal());
+				PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+
+				orderSplit.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+				OrderSplitSQL.update(orderSplit);
+				if (newPaymentMapList != null) {
+					Map<String, Object> paymentMap = new HashMap<String, Object>();
+					paymentMap.put("newPaymentSettlement", paymentSettlement);
+
+					newPaymentMapList.add(paymentMap);
+				}
+				contentView.findViewById(R.id.ll_subtotal_layout).setVisibility(
+						View.VISIBLE);
+
+			}
+		break;
 		case ParamConst.SETTLEMENT_TYPE_AMEX:
 		case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
 		case ParamConst.SETTLEMENT_TYPE_JCB:
@@ -2767,6 +2993,21 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 			}
 		}
 			break;
+
+			case ParamConst.SETTLEMENT_TYPE_NOT_PART:
+
+				if (isFirstClickPart) {
+					if (show.length() > 0)
+						show.delete(0, show.length());
+					show.append(key);
+					isFirstClickPart = false;
+				}
+
+				double shownum = Double.parseDouble(show.toString()) / 100.0;
+				tv_part_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(shownum).toString());
+
+
+				break;
 		default:
 			break;
 		}
@@ -2908,4 +3149,148 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 		OrderSplitSQL.update(orderSplit);
 		PaymentSQL.addPayment(payment);
 	}
+
+	@Override
+	public void onPaymentClick(PamentMethod pa) {
+		    p=pa;
+		if (p.getIsAdmin() == 1) {
+			verifyDialog = new VerifyDialog(parent, handler);
+			verifyDialog.show("PAMENTMETHOD", null);
+		} else {
+			initPayment();
+		}
+	}
+
+
+	private void initPayment() {
+		paymentTypeId = new Long(p.getPaymentTypeId()).intValue();
+		if (p.getIsPart() == 1) {
+			viewTag = ParamConst.SETTLEMENT_TYPE_NOT_PART;
+			//  paymentTypeId = ParamConst.SETTLEMENT_TYPE_NOT_PART;
+
+			if (p.getPartAcount() == 0.0) {
+				initPartSettlement(order);
+				contentView.findViewById(R.id.ll_part_settlement).setVisibility(
+						View.VISIBLE);
+				//                moneyKeyboard.setVisibility(View.VISIBLE);
+				contentView.findViewById(R.id.ll_subtotal_layout).setVisibility(
+						View.INVISIBLE);
+				isFirstClickPart = true;
+//                    tv_special_settlement_title.setText("OTHER");
+////			     remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
+//                rl_special_settlement_person.setVisibility(View.GONE);
+//                rl_special_settlement_phone.setVisibility(View.GONE);
+//                contentView.findViewById(R.id.ll_special_settlement).setVisibility(
+//                        View.VISIBLE);
+//                show.append(0);
+				moneyKeyboard.setVisibility(View.VISIBLE);
+
+				//   moneyKeyboard.setMoneyPanel(View.GONE);
+				Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
+				iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
+						bitmap.getWidth(), bitmap.getHeight() / 2));
+				iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
+						0, bitmap.getHeight() / 2, bitmap.getWidth(),
+						bitmap.getHeight() / 2));
+				ll_pay.setVisibility(View.GONE);
+				ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
+						iv_top.getY(), iv_top.getY() - iv_top.getHeight())
+						.setDuration(OPEN_DELAY);
+				ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
+						iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
+						.setDuration(OPEN_DELAY);
+				AnimatorSet animSet = new AnimatorSet();
+				animSet.playTogether(animator1, animator2);
+				animSet.addListener(new AnimatorListenerImpl());
+				animSet.start();
+
+			} else {
+				viewTag = ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM;
+				partAcount = p.getPartAcount();
+				//备注
+				if (p.getIsMsg() == 1) {
+					tv_special_settlement_title.setText("CUSTOM");
+					rl_special_settlement_person.setVisibility(View.GONE);
+					rl_special_settlement_phone.setVisibility(View.GONE);
+					contentView.findViewById(R.id.ll_special_settlement).setVisibility(
+							View.VISIBLE);
+					show.append(0);
+					moneyKeyboard.setVisibility(View.VISIBLE);
+					moneyKeyboard.setMoneyPanel(View.GONE);
+					Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
+					iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
+							bitmap.getWidth(), bitmap.getHeight() / 2));
+					iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
+							0, bitmap.getHeight() / 2, bitmap.getWidth(),
+							bitmap.getHeight() / 2));
+					ll_pay.setVisibility(View.GONE);
+					ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
+							iv_top.getY(), iv_top.getY() - iv_top.getHeight())
+							.setDuration(OPEN_DELAY);
+					ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
+							iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
+							.setDuration(OPEN_DELAY);
+					AnimatorSet animSet = new AnimatorSet();
+					animSet.playTogether(animator1, animator2);
+					animSet.addListener(new AnimatorListenerImpl());
+					animSet.start();
+
+				} else {
+					clickEnterAction();
+				}
+			}
+
+		} else {
+			viewTag = ParamConst.SETTLEMENT_TYPE_PART;
+			ispart = p.getIsPart();
+			if (p.getIsMsg() == 1) {
+				tv_special_settlement_title.setText("CUSTOM");
+				rl_special_settlement_person.setVisibility(View.GONE);
+				rl_special_settlement_phone.setVisibility(View.GONE);
+				contentView.findViewById(R.id.ll_special_settlement).setVisibility(
+						View.VISIBLE);
+				show.append(0);
+				moneyKeyboard.setVisibility(View.VISIBLE);
+				moneyKeyboard.setMoneyPanel(View.GONE);
+				Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
+				iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
+						bitmap.getWidth(), bitmap.getHeight() / 2));
+				iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
+						0, bitmap.getHeight() / 2, bitmap.getWidth(),
+						bitmap.getHeight() / 2));
+				ll_pay.setVisibility(View.GONE);
+				ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
+						iv_top.getY(), iv_top.getY() - iv_top.getHeight())
+						.setDuration(OPEN_DELAY);
+				ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
+						iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
+						.setDuration(OPEN_DELAY);
+				AnimatorSet animSet = new AnimatorSet();
+				animSet.playTogether(animator1, animator2);
+				animSet.addListener(new AnimatorListenerImpl());
+				animSet.start();
+				//是否退税
+
+			} else {
+				clickEnterAction();
+
+			}
+
+
+		}
+	}
+
+	private void initPartSettlement(Order order) {
+
+		contentView.findViewById(R.id.ll_subtotal_layout).setVisibility(
+				View.INVISIBLE);
+		//  BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+		//  show.append(remainTotalAfterRound.toString().replace(".", ""));
+		tv_part_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()));
+
+		//  tv_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.abs(rounding, true).toString());
+		tv_part_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()));
+		//   tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+	}
+
 }

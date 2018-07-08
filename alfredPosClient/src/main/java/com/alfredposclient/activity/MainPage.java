@@ -228,6 +228,7 @@ public class MainPage extends BaseActivity {
     private static final String HANDLER_MSG_OBJECT_VOID_OR_FREE = "VOID_OR_FREE";
     public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
     public static final String HANDLER_MSG_OBJECT_CANCEL_ITEM = "CANCEL_ITEM";
+    private static final String PAMENT_METHOD= "PAMENTMETHOD";
 
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
@@ -1365,7 +1366,22 @@ public class MainPage extends BaseActivity {
                         showDiscountWindow((Order) map.get("order"),
                                 (OrderDetail) map.get("orderDetail"),
                                 (ResultCall) map.get("resultCall"));
-                    } else if (result.get("MsgObject").equals(
+                    }
+                    else if(result.get("MsgObject").equals(
+                            PAMENT_METHOD))
+                    {
+                        if(closeOrderWindow.isShowing()){
+                            closeOrderWindow.setUser(user);
+                            closeOrderWindow.openMoneyKeyboard(View.GONE,
+                                    ParamConst.SETTLEMENT_TYPE_PART_PAYMENT);
+                        } else if(closeOrderSplitWindow.isShowing()) {
+                            closeOrderSplitWindow.setUser(user);
+                            closeOrderSplitWindow.openMoneyKeyboard(View.GONE,
+                                    ParamConst.SETTLEMENT_TYPE_PART_PAYMENT);
+                        }
+                    }
+
+                    else if (result.get("MsgObject").equals(
                             HANDLER_MSG_OBJECT_BILL_ON_HOLD)) {
                         if (!verifyDialog.isShowing()) {
                             if (closeOrderWindow.isShowing()) {

@@ -104,7 +104,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener {
+public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener  {
     private String TAG = CloseOrderWindow.class.getSimpleName();
     private static final int DURATION_1 = 300;
     private static final int DURATION_2 = 200;
@@ -193,6 +193,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     double partAcount;
 
     int ispart;
+
+    PamentMethod p = new PamentMethod();
 
 
     private boolean isFirstClickCash = false;
@@ -538,9 +540,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_amount_due_num));
         textTypeFace.setTrajanProRegular((TextView) view
+                .findViewById(R.id.tv_part_amount_due_num));
+        textTypeFace.setTrajanProRegular((TextView) view
+                .findViewById(R.id.tv_part_amount_due));
+        textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_total_amount));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_total_amount_num));
+        textTypeFace.setTrajanProRegular((TextView) view
+                .findViewById(R.id.tv_part_total_amount_num));
+        textTypeFace.setTrajanProRegular((TextView) view
+                .findViewById(R.id.tv_part_total_amount));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_change_action));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -1396,93 +1406,27 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                 case R.id.tv_other_media:
 
-//                    SendEmailThread thread = new SendEmailThread();
-//                    thread.start();
 
                     List<SettlementRestaurant> settle;
                     pamentMethodlist.clear();
-//                    PamentMethod p1 = new PamentMethod();
-//                    p1.setId(1);
-//                    p1.setNameCh("优惠10元");
-//                    p1.setIsMsgRequire(0);
-//                    p1.setDescription("仅限内部人员使用");
-//                    p1.setIsTax(1);
-//                    p1.setIsDiscount(1);
-//                    p1.setIsPart(0);
 //
-//                    p1.setIsAdmin(1);
-//
-//                    pamentMethodlist.add(p1);
-//                    PamentMethod p2 = new PamentMethod();
-//                    p2.setId(2);
-//                    p2.setNameCh("优惠5元");
-//                    p2.setIsMsgRequire(1);
-//                    p2.setIsverify(0);
-//                    p2.setIsTax(0);
-//                    p2.setIsDiscount(1);
-//                    p2.setIsPart(1);
-//                    p2.setIsAdmin(1);
-//
-//                    pamentMethodlist.add(p2);
-//                    PamentMethod p3 = new PamentMethod();
-//                    p3.setId(3);
-//                    p3.setNameCh("优惠15元");
-//                    p3.setIsMsgRequire(0);
-//                    p3.setIsverify(1);
-//                    p3.setIsTax(1);
-//                    p3.setIsDiscount(1);
-//                    p3.setIsPart(0);
-//                    p3.setIsAdmin(1);
-//                    pamentMethodlist.add(p3);
-//
-//                    PamentMethod p4 = new PamentMethod();
-//                    p4.setId(3);
-//                    p4.setNameCh("优惠20元");
-//                    p4.setIsMsgRequire(0);
-//                    p4.setIsverify(1);
-//                    p4.setIsTax(1);
-//                    p4.setIsDiscount(1);
-//                    p4.setIsPart(0);
-//                    p4.setIsAdmin(1);
-//                    pamentMethodlist.add(p4);
-//                    PamentMethod p5 = new PamentMethod();
-//                    p5.setId(3);
-//                    p5.setNameCh("优惠20元");
-//                    p5.setIsMsgRequire(0);
-//                    p5.setIsverify(1);
-//                    p5.setIsTax(1);
-//                    p5.setIsDiscount(1);
-//                    p5.setIsPart(0);
-//                    p5.setIsAdmin(1);
-//                    pamentMethodlist.add(p5);
-//
-//                    PamentMethod p6 = new PamentMethod();
-//                    p6.setId(3);
-//                    p6.setNameCh("优惠25元");
-//                    p6.setIsMsgRequire(0);
-//                    p6.setIsverify(1);
-//                    p6.setIsTax(1);
-//                    p6.setIsDiscount(1);
-//                    p6.setIsPart(0);
-//                    p6.setIsAdmin(1);
-//                    pamentMethodlist.add(p6);
 
                     settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
-                 //   PamentMethod pam = new PamentMethod();
-//                    pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
+                    SettlementRestaurant se=new SettlementRestaurant();
+                    se=SettlementRestaurantSQL.getSettlementRestaurant(3109);
+                   PamentMethod pam = new PamentMethod();
+                    pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
 //                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
 //                    pamentMethodlist.add(pam);
-                   if(!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString()))
-                   {
+                    if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {
 
-                       String[] strarray=settle.get(0).getOtherPaymentId().toString().split("[|]");
-                       for (int i = 0; i < strarray.length; i++) {
-
-                           PamentMethod pa = new PamentMethod();
-                           PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[0]).intValue());
-                           pamentMethodlist.add(pa);
-                       }
-                   }
+                        String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
+                        for (int i = 0; i < strarray.length; i++) {
+                            PamentMethod pa = new PamentMethod();
+                            pa = PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[i]).intValue());
+                            pamentMethodlist.add(pa);
+                        }
+                    }
 
                     mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
                     mediaDialog.setPaymentClickListener(this);
@@ -1832,6 +1776,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         View.VISIBLE);
                 // show.append(0);
                 break;
+            case ParamConst.SETTLEMENT_TYPE_PART_PAYMENT:
+              initPayment();
+                break;
+
             default:
 
 
@@ -1910,9 +1858,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
                         View.INVISIBLE);
                 break;
-            case ParamConst.SETTLEMENT_TYPE_PART_PAYMENT:
-
+            case ParamConst.SETTLEMENT_TYPE_NOT_PART:
+                contentView.findViewById(R.id.ll_part_settlement).setVisibility(
+                        View.INVISIBLE);
                 break;
+
 
             default:
                 break;
@@ -2098,7 +2048,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
             break;
 
-
+         //固定金额
             case ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM: {
 
                 String showStr = BH.getBD(partAcount).toString();
@@ -2141,11 +2091,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             break;
 
             case ParamConst.SETTLEMENT_TYPE_PART: {
-                if(ispart==0)
-                {
+                if (ispart == 0) {
                     //不计税
                     deleteVoidOrEntTax();
-
                 }
 
 
@@ -2162,6 +2110,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                     newPaymentMapList.add(paymentMap);
                 }
+                ll_subtotal_layout.setVisibility(View.VISIBLE);
+
             }
             break;
             case ParamConst.SETTLEMENT_TYPE_AMEX:
@@ -2815,27 +2765,31 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
 
-    public void onPaymentClick(PamentMethod p) {
+    public void onPaymentClick(PamentMethod paym) {
         //   Toast.makeText(parent,"--- "+key,Toast.LENGTH_LONG).show();
-
-        paymentTypeId = new Long(p.getPaymentTypeId()).intValue();
-
+          p=paym;
         if (p.getIsAdmin() == 1) {
-//            verifyDialog = new VerifyDialog(parent, handler);
-//					verifyDialog.show("PAMENTMETHOD",null);
+            verifyDialog = new VerifyDialog(parent, handler);
+            verifyDialog.show("PAMENTMETHOD", null);
         } else {
-            if (p.getIsPart() == 1) {
-                viewTag = ParamConst.SETTLEMENT_TYPE_NOT_PART;
-                //  paymentTypeId = ParamConst.SETTLEMENT_TYPE_NOT_PART;
+            initPayment();
+        }
+    }
 
-                if (p.getPartAcount() == 0.0) {
-                    initPartSettlement(order);
-                    contentView.findViewById(R.id.ll_part_settlement).setVisibility(
-                            View.VISIBLE);
-                    //                moneyKeyboard.setVisibility(View.VISIBLE);
-                    ll_subtotal_layout.setVisibility(
-                            View.INVISIBLE);
-                    isFirstClickPart = true;
+    private void initPayment() {
+        paymentTypeId = new Long(p.getPaymentTypeId()).intValue();
+        if (p.getIsPart() == 1) {
+            viewTag = ParamConst.SETTLEMENT_TYPE_NOT_PART;
+            //  paymentTypeId = ParamConst.SETTLEMENT_TYPE_NOT_PART;
+
+            if (p.getPartAcount() == 0.0) {
+                initPartSettlement(order);
+                contentView.findViewById(R.id.ll_part_settlement).setVisibility(
+                        View.VISIBLE);
+                //                moneyKeyboard.setVisibility(View.VISIBLE);
+                ll_subtotal_layout.setVisibility(
+                        View.INVISIBLE);
+                isFirstClickPart = true;
 //                    tv_special_settlement_title.setText("OTHER");
 ////			     remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
 //                rl_special_settlement_person.setVisibility(View.GONE);
@@ -2843,66 +2797,31 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //                contentView.findViewById(R.id.ll_special_settlement).setVisibility(
 //                        View.VISIBLE);
 //                show.append(0);
-                    moneyKeyboard.setVisibility(View.VISIBLE);
+                moneyKeyboard.setVisibility(View.VISIBLE);
 
-                    //  moneyKeyboard.setMoneyPanel(View.GONE);
-                    Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
-                    iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
-                            bitmap.getWidth(), bitmap.getHeight() / 2));
-                    iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
-                            0, bitmap.getHeight() / 2, bitmap.getWidth(),
-                            bitmap.getHeight() / 2));
-                    ll_pay.setVisibility(View.GONE);
-                    ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
-                            iv_top.getY(), iv_top.getY() - iv_top.getHeight())
-                            .setDuration(OPEN_DELAY);
-                    ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
-                            iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
-                            .setDuration(OPEN_DELAY);
-                    AnimatorSet animSet = new AnimatorSet();
-                    animSet.playTogether(animator1, animator2);
-                    animSet.addListener(new AnimatorListenerImpl());
-                    animSet.start();
-
-                } else {
-                    viewTag = ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM;
-                    partAcount = p.getPartAcount();
-                    //备注
-                    if (p.getIsMsg() == 1) {
-                        tv_special_settlement_title.setText("CUSTOM");
-                        rl_special_settlement_person.setVisibility(View.GONE);
-                        rl_special_settlement_phone.setVisibility(View.GONE);
-                        contentView.findViewById(R.id.ll_special_settlement).setVisibility(
-                                View.VISIBLE);
-                        show.append(0);
-                        moneyKeyboard.setVisibility(View.VISIBLE);
-                        moneyKeyboard.setMoneyPanel(View.GONE);
-                        Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
-                        iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
-                                bitmap.getWidth(), bitmap.getHeight() / 2));
-                        iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
-                                0, bitmap.getHeight() / 2, bitmap.getWidth(),
-                                bitmap.getHeight() / 2));
-                        ll_pay.setVisibility(View.GONE);
-                        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
-                                iv_top.getY(), iv_top.getY() - iv_top.getHeight())
-                                .setDuration(OPEN_DELAY);
-                        ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
-                                iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
-                                .setDuration(OPEN_DELAY);
-                        AnimatorSet animSet = new AnimatorSet();
-                        animSet.playTogether(animator1, animator2);
-                        animSet.addListener(new AnimatorListenerImpl());
-                        animSet.start();
-
-                    } else {
-                        clickEnterAction();
-                    }
-                }
+              //   moneyKeyboard.setMoneyPanel(View.GONE);
+                Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
+                iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
+                        bitmap.getWidth(), bitmap.getHeight() / 2));
+                iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
+                        0, bitmap.getHeight() / 2, bitmap.getWidth(),
+                        bitmap.getHeight() / 2));
+                ll_pay.setVisibility(View.GONE);
+                ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
+                        iv_top.getY(), iv_top.getY() - iv_top.getHeight())
+                        .setDuration(OPEN_DELAY);
+                ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
+                        iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
+                        .setDuration(OPEN_DELAY);
+                AnimatorSet animSet = new AnimatorSet();
+                animSet.playTogether(animator1, animator2);
+                animSet.addListener(new AnimatorListenerImpl());
+                animSet.start();
 
             } else {
-                viewTag = ParamConst.SETTLEMENT_TYPE_PART;
-                ispart = p.getIsPart();
+                viewTag = ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM;
+                partAcount = p.getPartAcount();
+                //备注
                 if (p.getIsMsg() == 1) {
                     tv_special_settlement_title.setText("CUSTOM");
                     rl_special_settlement_person.setVisibility(View.GONE);
@@ -2929,20 +2848,50 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     animSet.playTogether(animator1, animator2);
                     animSet.addListener(new AnimatorListenerImpl());
                     animSet.start();
-                    //是否退税
 
                 } else {
                     clickEnterAction();
-
                 }
+            }
 
+        } else {
+            viewTag = ParamConst.SETTLEMENT_TYPE_PART;
+            ispart = p.getIsPart();
+            if (p.getIsMsg() == 1) {
+                tv_special_settlement_title.setText("CUSTOM");
+                rl_special_settlement_person.setVisibility(View.GONE);
+                rl_special_settlement_phone.setVisibility(View.GONE);
+                contentView.findViewById(R.id.ll_special_settlement).setVisibility(
+                        View.VISIBLE);
+                show.append(0);
+                moneyKeyboard.setVisibility(View.VISIBLE);
+                moneyKeyboard.setMoneyPanel(View.GONE);
+                Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
+                iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
+                        bitmap.getWidth(), bitmap.getHeight() / 2));
+                iv_bottom.setImageBitmap(Bitmap.createBitmap(bitmap,
+                        0, bitmap.getHeight() / 2, bitmap.getWidth(),
+                        bitmap.getHeight() / 2));
+                ll_pay.setVisibility(View.GONE);
+                ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_top, "y",
+                        iv_top.getY(), iv_top.getY() - iv_top.getHeight())
+                        .setDuration(OPEN_DELAY);
+                ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_bottom, "y",
+                        iv_bottom.getY(), iv_bottom.getY() + iv_bottom.getHeight())
+                        .setDuration(OPEN_DELAY);
+                AnimatorSet animSet = new AnimatorSet();
+                animSet.playTogether(animator1, animator2);
+                animSet.addListener(new AnimatorListenerImpl());
+                animSet.start();
+                //是否退税
+
+            } else {
+                clickEnterAction();
 
             }
+
+
         }
-
-//
-
-
     }
 
     private void initPartSettlement(Order order) {
@@ -2958,27 +2907,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         //   tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
     }
 
-//    private void selectPartNumberAction(int num) {
-//        if (show.length() > 0) {
-//            show.delete(0, show.length());
-//        }
-//        show.append(num * 100);
-//        BigDecimal partNum = BH.getBD(String.valueOf(Double.parseDouble(show
-//                .toString()) / 100.0));
-//        tv_part_total_amount_num
-//                .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(partNum).toString());
-////        BigDecimal cashNum = BH.getBD(String.valueOf(Double.parseDouble(show
-////                .toString()) / 100.0));
-////        BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
-////        int change = cashNum.compareTo(remainTotalAfterRound);
-////        if (change >= 0) {
-////            BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
-////            tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-////                    + BH.getBD(changeNum).toString());
-////            clickEnterAction();
-////        } else {
-////            tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
-////        }
-//    }
+
 
 }

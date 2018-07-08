@@ -1256,7 +1256,7 @@ public class MainPageKiosk extends BaseActivity {
 				User user = (User) result.get("User");
 
 
-				Toast.makeText(context,result.get("MsgObject")+"--111111- ",Toast.LENGTH_LONG).show();
+		//		Toast.makeText(context,result.get("MsgObject")+"--111111- ",Toast.LENGTH_LONG).show();
 
 				if (result.get("MsgObject").equals(HANDLER_MSG_OBJECT_DISCOUNT)) {
 					Map<String, Object> map = (Map<String, Object>) result

@@ -35,8 +35,8 @@ public class PamentMethodAdapter extends BaseAdapter{
         this.inflater = LayoutInflater.from(context);
 
         options = new DisplayImageOptions.Builder()
-                .showImageOnFail(R.drawable.default_itemmenu)
-                .showImageForEmptyUri(R.drawable.default_itemmenu)
+                .showImageOnFail(R.drawable.icon_settle_cash)
+                .showImageForEmptyUri(R.drawable.icon_settle_cash)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
@@ -85,30 +85,32 @@ public class PamentMethodAdapter extends BaseAdapter{
             holder.tax.setText("No Tax,");
         }else
             {
-                holder.tax.setText("Tax,");
+                holder.tax.setText("Tax, ");
         }
 
         if ( p.getIsAdmin()==0) {
-            holder.admin.setText("Cashier,");
+            holder.admin.setText("Cashier, ");
         } else {
-            holder.admin.setText("Manager,");
+            holder.admin.setText("Manager, ");
         }
 
-        if ( p.getIsPart()==0) {
+        if ( p.getIsPart()==1) {
             holder.pay.setText("Part-pay");
-            holder.symbol.setVisibility(View.GONE);
-            holder.money.setVisibility(View.GONE);
-        } else {
-            holder.pay.setText("All-pay");
-            holder.symbol.setVisibility(View.VISIBLE);
-            holder.money.setVisibility(View.VISIBLE);
+
 
             if(p.getPartAcount()>0) {
+                holder.symbol.setVisibility(View.VISIBLE);
+                holder.money.setVisibility(View.VISIBLE);
                 holder.money.setText(p.getPartAcount() + "");
             }else {
                 holder.symbol.setVisibility(View.GONE);
                 holder.money.setVisibility(View.GONE);
             }
+        } else {
+            holder.pay.setText("All-pay");
+            holder.symbol.setVisibility(View.GONE);
+            holder.money.setVisibility(View.GONE);
+
 
 
         }
