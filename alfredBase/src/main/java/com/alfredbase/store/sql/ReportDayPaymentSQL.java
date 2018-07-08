@@ -9,16 +9,14 @@ import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ReportDayPaymentSQL {
 
 
 
-    public static void addReportDayPayment(List<ReportDayPayment> reportDayPayments) {
+    public static void addReportDayPaymentList(List<ReportDayPayment> reportDayPayments) {
         if (reportDayPayments == null) {
             return;
         }
@@ -30,42 +28,36 @@ public class ReportDayPaymentSQL {
 
             String sql = "replace into "
                     + TableNames.ReportDayPayment
-                    + "(id,daySalesId,restaurantId,restaurantName,revenueId,revenueName,businessDate,paymentTypeId,paymentName,paymentQty,paymentAmount,createTime,systemCreateTime)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "(daySalesId,restaurantId,restaurantName,revenueId,revenueName,businessDate,paymentTypeId,paymentName,paymentQty,paymentAmount, overPaymentAmount, createTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (ReportDayPayment reportDayPayment : reportDayPayments) {
 
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
-                        reportDayPayment.getId());
-                SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
                         reportDayPayment.getDaySalesId());
-                SQLiteStatementHelper.bindLong(sqLiteStatement, 3,
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
                         reportDayPayment.getRestaurantId());
-                SQLiteStatementHelper.bindString(sqLiteStatement, 4,
+                SQLiteStatementHelper.bindString(sqLiteStatement, 3,
                         reportDayPayment.getRestaurantName());
-                SQLiteStatementHelper.bindLong(sqLiteStatement, 5,
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
                         reportDayPayment.getRevenueId());
-                SQLiteStatementHelper.bindString(sqLiteStatement, 6,
+                SQLiteStatementHelper.bindString(sqLiteStatement, 5,
                         reportDayPayment.getRevenueName());
-                SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 6,
                         reportDayPayment.getBusinessDate());
-                SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
                         reportDayPayment.getPaymentTypeId());
-                SQLiteStatementHelper.bindString(sqLiteStatement, 9,
+                SQLiteStatementHelper.bindString(sqLiteStatement, 8,
                         reportDayPayment.getPaymentName());
-                SQLiteStatementHelper.bindLong(sqLiteStatement, 10,
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
                         reportDayPayment.getPaymentQty());
-                SQLiteStatementHelper.bindString(sqLiteStatement, 11,
+                SQLiteStatementHelper.bindString(sqLiteStatement, 10,
                         reportDayPayment.getPaymentAmount());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 11,
+                        reportDayPayment.getOverPaymentAmount());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 12,
                         reportDayPayment.getCreateTime());
-
-                SQLiteStatementHelper.bindLong(sqLiteStatement, 13,
-                        reportDayPayment.getSystemCreateTime());
-
-
-
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -73,6 +65,38 @@ public class ReportDayPaymentSQL {
             e.printStackTrace();
         } finally {
             db.endTransaction();
+        }
+    }
+
+
+    public static void addReportDayPayment(ReportDayPayment reportDayPayment) {
+        if (reportDayPayment == null) {
+            return;
+        }
+        try {
+
+            String sql = "replace into "
+                    + TableNames.ReportDayPayment
+                    + "(id,daySalesId,restaurantId,restaurantName,revenueId,revenueName,businessDate,paymentTypeId,paymentName,paymentQty,paymentAmount, overPaymentAmount, createTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            SQLExe.getDB().execSQL(
+                    sql,new Object[]{
+                            reportDayPayment.getId(),
+                            reportDayPayment.getDaySalesId(),
+                            reportDayPayment.getRestaurantId(),
+                            reportDayPayment.getRestaurantName(),
+                            reportDayPayment.getRevenueId(),
+                            reportDayPayment.getRevenueName(),
+                            reportDayPayment.getBusinessDate(),
+                            reportDayPayment.getPaymentTypeId(),
+                            reportDayPayment.getPaymentName(),
+                            reportDayPayment.getPaymentQty(),
+                            reportDayPayment.getPaymentAmount(),
+                            reportDayPayment.getOverPaymentAmount(),
+                            reportDayPayment.getCreateTime()
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     public static ArrayList<ReportDayPayment> getAllReportDayPayment() {
@@ -99,12 +123,12 @@ public class ReportDayPaymentSQL {
                 reportDayPayment.setRevenueName(cursor.getString(5));
 
                 reportDayPayment.setBusinessDate(cursor.getLong(6));
-                reportDayPayment.setPaymentTypeId(cursor.getInt(7));
+                reportDayPayment.setPaymentTypeId(cursor.getLong(7));
                 reportDayPayment.setPaymentName(cursor.getString(8));
                 reportDayPayment.setPaymentQty(cursor.getInt(9));
                 reportDayPayment.setPaymentAmount(cursor.getString(10));
-                reportDayPayment.setCreateTime(cursor.getLong(11));
-                reportDayPayment.setSystemCreateTime(cursor.getLong(12));
+                reportDayPayment.setOverPaymentAmount(cursor.getString(11));
+                reportDayPayment.setCreateTime(cursor.getLong(13));
                 result.add(reportDayPayment);
             }
         } catch (Exception e) {

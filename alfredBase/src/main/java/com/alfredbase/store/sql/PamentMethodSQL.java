@@ -4,8 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-import com.alfredbase.javabean.PamentMethod;
-import com.alfredbase.javabean.TaxCategory;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
@@ -17,7 +16,7 @@ public class PamentMethodSQL {
 
 
 
-    public static void addPamentMethod(List<PamentMethod> pamentMethods) {
+    public static void addPamentMethod(List<PaymentMethod> pamentMethods) {
         if (pamentMethods == null) {
             return;
         }
@@ -30,7 +29,7 @@ public class PamentMethodSQL {
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
-            for (PamentMethod pamentMethod : pamentMethods) {
+            for (PaymentMethod pamentMethod : pamentMethods) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
                         pamentMethod.getId());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 2,
@@ -88,8 +87,8 @@ public class PamentMethodSQL {
 
         }
     }
-    public static ArrayList<PamentMethod> getAllPamentMethod() {
-        ArrayList<PamentMethod> result = new ArrayList<PamentMethod>();
+    public static ArrayList<PaymentMethod> getAllPamentMethod() {
+        ArrayList<PaymentMethod> result = new ArrayList<PaymentMethod>();
         String sql = "select * from " + TableNames.PamentMethod;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
@@ -99,10 +98,10 @@ public class PamentMethodSQL {
             if (count < 1) {
                 return result;
             }
-            PamentMethod pamentMethod = null;
+            PaymentMethod pamentMethod = null;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
-                pamentMethod = new PamentMethod();
+                pamentMethod = new PaymentMethod();
                 pamentMethod.setId(cursor.getInt(0));
                 pamentMethod.setNameCh(cursor.getString(1));
                 pamentMethod.setNameEn(cursor.getString(2));
@@ -137,8 +136,8 @@ public class PamentMethodSQL {
     }
 
 
-    public static PamentMethod getPamentMethod(int paid) {
-        PamentMethod result = null;
+    public static PaymentMethod getPamentMethod(int paid) {
+        PaymentMethod result = null;
         String sql = "select * from " + TableNames.PamentMethod+ " where id = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
@@ -149,7 +148,7 @@ public class PamentMethodSQL {
 //                return result;
 //            }
             if (cursor.moveToFirst()) {
-                result = new PamentMethod();
+                result = new PaymentMethod();
                 result.setId(cursor.getInt(0));
                 result.setNameCh(cursor.getString(1));
                 result.setNameEn(cursor.getString(2));
@@ -184,7 +183,7 @@ public class PamentMethodSQL {
     }
 
 
-    public static void deletePamentMethod(PamentMethod pamentMethod) {
+    public static void deletePamentMethod(PaymentMethod pamentMethod) {
         String sql = "delete from " + TableNames.PamentMethod + " where id = ?";
         try {
             SQLExe.getDB().execSQL(sql, new Object[] { pamentMethod.getId() });

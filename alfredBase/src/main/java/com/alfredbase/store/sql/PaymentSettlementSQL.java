@@ -21,8 +21,8 @@ public class PaymentSettlementSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.PaymentSettlement
-					+ "(id, billNo, paymentId, paymentTypeId, paidAmount, totalAmount, restaurantId, revenueId, userId, createTime, updateTime, cashChange, isActive)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id, billNo, paymentId, paymentTypeId, paidAmount, totalAmount, restaurantId, revenueId, userId, createTime, updateTime, cashChange, isActive, partChange)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { paymentSettlement.getId(),
@@ -37,7 +37,8 @@ public class PaymentSettlementSQL {
 							paymentSettlement.getCreateTime(),
 							paymentSettlement.getUpdateTime(),
 							paymentSettlement.getCashChange(),
-							paymentSettlement.getIsActive()});
+							paymentSettlement.getIsActive(),
+							paymentSettlement.getPartChange()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,6 +68,7 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setUpdateTime(cursor.getLong(10));
 				paymentSettlement.setCashChange(cursor.getString(11));
 				paymentSettlement.setIsActive(cursor.getInt(12));
+				paymentSettlement.setPartChange(cursor.getString(13));
 				return paymentSettlement;
 			}
 		} catch (Exception e) {
@@ -111,6 +113,7 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setUpdateTime(cursor.getLong(10));
 				paymentSettlement.setCashChange(cursor.getString(11));
 				paymentSettlement.setIsActive(cursor.getInt(12));
+				paymentSettlement.setPartChange(cursor.getString(13));
 				paymentSettlements.add(paymentSettlement);
 			}
 		} catch (Exception e) {
@@ -160,6 +163,7 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setUpdateTime(cursor.getLong(10));
 				paymentSettlement.setCashChange(cursor.getString(11));
 				paymentSettlement.setIsActive(cursor.getInt(12));
+				paymentSettlement.setPartChange(cursor.getString(13));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -221,6 +225,7 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setUpdateTime(cursor.getLong(10));
 				paymentSettlement.setCashChange(cursor.getString(11));
 				paymentSettlement.setIsActive(cursor.getInt(12));
+				paymentSettlement.setPartChange(cursor.getString(13));
 				return paymentSettlement;
 			}
 		} catch (Exception e) {
@@ -262,6 +267,7 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setUpdateTime(cursor.getLong(10));
 				paymentSettlement.setCashChange(cursor.getString(11));
 				paymentSettlement.setIsActive(cursor.getInt(12));
+				paymentSettlement.setPartChange(cursor.getString(13));
 				result.add(paymentSettlement);
 			}
 		} catch (Exception e) {
@@ -310,6 +316,7 @@ public class PaymentSettlementSQL {
 				paymentSettlement.setUpdateTime(cursor.getLong(10));
 				paymentSettlement.setCashChange(cursor.getString(11));
 				paymentSettlement.setIsActive(cursor.getInt(12));
+				paymentSettlement.setPartChange(cursor.getString(13));
 				result.add(paymentSettlement);
 			}
 		} catch (Exception e) {
@@ -386,6 +393,58 @@ public class PaymentSettlementSQL {
 					.moveToNext()) {
 				map.put("sumAmount", cursor.getString(0));
 				map.put("count", String.valueOf(cursor.getInt(1)));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		if (map.get("sumAmount") == null || map.get("sumAmount").equals("0")) {
+			map.put("sumAmount", "0.00");
+		}
+		if (map.get("count") == null) {
+			map.put("count", "0");
+		}
+		return map;
+	}
+
+
+	public static Map<String, String> getCustomPaymentSettlementSumPaidAndCount(
+			int paymentTypeId, long businessDate, SessionStatus sessionStatus) {
+		Map<String, String> map = new HashMap<String, String>();
+		String sql = "select SUM(paidAmount), COUNT (*), SUM(partChange) from "
+				+ TableNames.PaymentSettlement
+				+ " where paymentTypeId = ? and isActive = "
+				+ ParamConst.PAYMENT_SETT_IS_ACTIVE
+				+ " and paymentId  in ( select id from "
+				+ TableNames.Payment
+				+ " where orderId in ( select id from "
+				+ TableNames.Order
+				+ " where businessDate = ? and sessionStatus = ? and createTime > ?) )";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(
+					sql,
+					new String[] { String.valueOf(paymentTypeId),
+							String.valueOf(businessDate),
+							String.valueOf(sessionStatus.getSession_status()),
+							String.valueOf(sessionStatus.getTime()) });
+			if(cursor.getCount() < 1){
+				return  map;
+			}
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				int count = cursor.getInt(1);
+				if(count < 1){
+					continue;
+				}
+				map.put("sumAmount", cursor.getString(0));
+				map.put("count", String.valueOf(cursor.getInt(1)));
+				map.put("partChange", cursor.getString(2));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

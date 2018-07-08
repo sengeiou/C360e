@@ -16,7 +16,7 @@ import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.PamentMethod;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.Restaurant;
@@ -96,7 +96,7 @@ public class CoreData {
 
 
 
-	private List<PamentMethod> pamentMethodList;
+	private List<PaymentMethod> pamentMethodList;
 	private List<SettlementRestaurant> settlementRestaurant;
 
 	private PrinterDevice device;
@@ -790,20 +790,20 @@ public class CoreData {
 	}
 
 
-	public List<PamentMethod> getPamentMethodList() {
+	public List<PaymentMethod> getPamentMethodList() {
 		return pamentMethodList;
 	}
 
-	public void setPamentMethodList(List<PamentMethod> pamentMethodList) {
+	public void setPamentMethodList(List<PaymentMethod> pamentMethodList) {
 		this.pamentMethodList = pamentMethodList;
 	}
 
 
 
-	public PamentMethod getPamentMethod(Integer pamentMethodId) {
+	public PaymentMethod getPamentMethod(Integer pamentMethodId) {
 		if (pamentMethodId == null)
 			return null;
-		for (PamentMethod pamentMethod : getPamentMethodList()) {
+		for (PaymentMethod pamentMethod : getPamentMethodList()) {
 			if (pamentMethod.getId().intValue() == pamentMethodId.intValue()) {
 				return pamentMethod;
 			}

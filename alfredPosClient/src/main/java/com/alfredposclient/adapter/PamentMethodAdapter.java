@@ -9,14 +9,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alfredbase.BaseApplication;
-import com.alfredbase.javabean.PamentMethod;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredposclient.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
-import java.util.Map;
 
 public class PamentMethodAdapter extends BaseAdapter{
 
@@ -26,9 +24,9 @@ public class PamentMethodAdapter extends BaseAdapter{
     private String t;
     private String pay;
 
-    List<PamentMethod> list;
+    List<PaymentMethod> list;
     private DisplayImageOptions options;
-    public PamentMethodAdapter(Context context, List<PamentMethod> list) {
+    public PamentMethodAdapter(Context context, List<PaymentMethod> list) {
 
         this.context = context;
         this.list = list;
@@ -76,7 +74,7 @@ public class PamentMethodAdapter extends BaseAdapter{
             holder = (PamentMethodAdapter.ViewHolder)view.getTag();
         }
 
-            PamentMethod   p = list.get(position);
+            PaymentMethod p = list.get(position);
 
             ImageLoader.getInstance().displayImage(p.getLogoSm(), holder.img, options);
             holder.tv.setText(p.getNameOt().toString());

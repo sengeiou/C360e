@@ -9,7 +9,9 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
@@ -41,6 +43,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.ReportDayPaymentSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportDayTaxSQL;
 import com.alfredbase.store.sql.ReportHourlySQL;
@@ -2410,6 +2413,42 @@ public class ReportObjectFactory {
 	}
 
 	// TODO loadXReportDayPayment()
+
+	public List<ReportDayPayment> loadXReportDayPayment(
+			ReportDaySales reportDaySales, long businessDate,
+			SessionStatus sessionStatus){
+		List<ReportDayPayment> reportDayPayments = new ArrayList<>();
+		ReportDayPayment reportDayPayment = null;
+		List<PaymentMethod> paymentMethods = CoreData.getInstance().getPamentMethodList();
+		for(PaymentMethod paymentMethod : paymentMethods){
+            Map<String, String> paymentMap = PaymentSettlementSQL
+                    .getPaymentSettlementSumPaidAndCount(
+                            paymentMethod.getPaymentTypeId().intValue(), businessDate,
+                            sessionStatus);
+            if(paymentMap != null && paymentMap.size() > 0) {
+                String amount = BH.getBD(paymentMap.get("sumAmount")).toString();
+                String qty = paymentMap.get("count");
+                String overPaymentAmount = paymentMap.get("partChange");
+                reportDayPayment  = new ReportDayPayment();
+                reportDayPayment.setId(CommonSQL.getNextSeq(TableNames.ReportDayPayment));
+                reportDayPayment.setBusinessDate(businessDate);
+                reportDayPayment.setCreateTime(System.currentTimeMillis());
+                reportDayPayment.setDaySalesId(reportDaySales.getId());
+                reportDayPayment.setPaymentName(paymentMethod.getNameOt());
+                reportDayPayment.setPaymentTypeId(paymentMethod.getPaymentTypeId());
+                reportDayPayment.setOverPaymentAmount(overPaymentAmount);
+                reportDayPayment.setPaymentAmount(amount);
+                reportDayPayment.setPaymentQty(Integer.parseInt(qty));
+                reportDayPayment.setRestaurantId(restaurant.getId());
+                reportDayPayment.setRestaurantName(restaurant.getRestaurantName());
+                reportDayPayment.setRevenueId(revenueCenter.getId());
+                reportDayPayment.setRevenueName(revenueCenter.getRevName());
+                ReportDayPaymentSQL.addReportDayPayment(reportDayPayment);
+                reportDayPayments.add(reportDayPayment);
+            }
+        }
+        return  reportDayPayments;
+	}
 
 	public ArrayList<ReportDayTax> loadXReportDayTax(
 			ReportDaySales reportDaySales, long businessDate,
