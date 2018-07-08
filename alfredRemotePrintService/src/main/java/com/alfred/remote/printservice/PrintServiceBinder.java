@@ -1,18 +1,11 @@
 package com.alfred.remote.printservice;
 
-import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.PrintManager;
 import com.alfred.printer.BillPrint;
 import com.alfred.printer.BillTscPrint;
@@ -42,13 +35,13 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PrintBean;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
-import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrintReceiptInfo;
@@ -57,7 +50,6 @@ import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
-import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
@@ -71,13 +63,11 @@ import com.epson.epos2.discovery.FilterOption;
 import com.epson.epsonio.DevType;
 import com.epson.epsonio.EpsonIo;
 import com.epson.epsonio.EpsonIoException;
-import com.epson.epsonio.Finder;
 import com.epson.epsonio.IoStatus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -85,10 +75,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 
 public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
@@ -202,7 +190,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
     @Override
-    public void printDaySalesReport(String xzType, String printer, String title, String report, String tax, String useropen, String sessionSales)
+    public void printDaySalesReport(String xzType, String printer, String title, String report, String tax, String customPayment, String useropen, String sessionSales)
             throws RemoteException {
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
@@ -210,6 +198,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         ReportDaySales reportData = gson.fromJson(report, ReportDaySales.class);
         ArrayList<ReportDayTax> taxData = gson.fromJson(tax, new TypeToken<ArrayList<ReportDayTax>>() {
         }.getType());
+        List<ReportDayPayment> reportDayPayments = gson.fromJson(customPayment, new TypeToken<List<ReportDayPayment>>(){}.getType());
         List<ReportUserOpenDrawer> reportUserOpenDrawers = gson.fromJson(useropen, new TypeToken<List<ReportUserOpenDrawer>>() {
         }.getType());
         List<ReportSessionSales> reportSessionSales = null;
@@ -242,7 +231,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     PrintService.instance.getResources().getString(R.string.qty_),
                     PrintService.instance.getResources().getString(R.string.amount));
             salesPrint.setPrinterIp(prtDevice.getIP());
-            salesPrint.print(reportData, taxData, reportUserOpenDrawers, reportSessionSales);
+            salesPrint.print(reportData, taxData, reportDayPayments, reportUserOpenDrawers, reportSessionSales);
             salesPrint.AddFooter(prtTitle.getDate() + " " + prtTitle.getTime());
 
             pqMgr.queuePrint(salesPrint.getJobForQueue());

@@ -481,8 +481,8 @@ public class XZReportHtml extends BaseActivity {
 			if (type == XZReportHtml.REPORT_PRINT_ALL) {
 
 				// sales report
-				App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
+//				App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
+//						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
 				// detail analysis
 				App.instance.remotePrintDetailAnalysisReport(rptType,
 						cashierPrinter, title, reportDaySales,
@@ -501,8 +501,8 @@ public class XZReportHtml extends BaseActivity {
 			}
 			if (type == XZReportHtml.REPORT_PRINT_SALES) {
 				// sales report
-				App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
+//				App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
+//						title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
 			}
 			if (type == XZReportHtml.REPORT_PRINT_DETAILS) {
 				if (zPrint)

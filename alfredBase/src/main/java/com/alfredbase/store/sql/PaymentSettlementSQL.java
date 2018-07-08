@@ -454,11 +454,47 @@ public class PaymentSettlementSQL {
 				cursor.close();
 			}
 		}
-		if (map.get("sumAmount") == null || map.get("sumAmount").equals("0")) {
-			map.put("sumAmount", "0.00");
-		}
-		if (map.get("count") == null) {
-			map.put("count", "0");
+		return map;
+	}
+	public static Map<String, String> getCustomPaymentSettlementSumPaidAndCount(
+			int paymentTypeId, long businessDate) {
+		Map<String, String> map = new HashMap<>();
+		String sql = "select SUM(paidAmount), COUNT (*), SUM(partChange) from "
+				+ TableNames.PaymentSettlement
+				+ " where paymentTypeId = ? and isActive = "
+				+ ParamConst.PAYMENT_SETT_IS_ACTIVE
+				+ " and paymentId  in ( select id from "
+				+ TableNames.Payment
+				+ " where orderId in ( select id from "
+				+ TableNames.Order
+				+ " where businessDate = ?) )";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(
+					sql,
+					new String[] { String.valueOf(paymentTypeId),
+							String.valueOf(businessDate)});
+			if(cursor.getCount() < 1){
+				return  map;
+			}
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				int count = cursor.getInt(1);
+				if(count < 1){
+					continue;
+				}
+				map.put("sumAmount", cursor.getString(0));
+				map.put("count", String.valueOf(cursor.getInt(1)));
+				map.put("partChange", cursor.getString(2));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
 		}
 		return map;
 	}
@@ -1027,7 +1063,7 @@ public class PaymentSettlementSQL {
 	public static Map<Integer, Map<String, String>> getModifiersInVoidSplitBillByBusinessDateAndSession(
 			long businessDate, SessionStatus sessionStatus) {
 		Map<Integer, Map<String, String>> result = new HashMap<Integer, Map<String, String>>();
-		String sql = "SELECT om.modifierId, sum(om.modifierNum), sum(om.modifierPrice) FROM"
+		String sql = "SELECT om.modifierId, sum(om.modifierNum), sum(om.modifierPrice) FROM "
 				+ TableNames.Payment
 				+ " p, "
 				+ TableNames.PaymentSettlement

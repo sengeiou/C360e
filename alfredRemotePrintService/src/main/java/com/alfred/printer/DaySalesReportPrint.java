@@ -4,6 +4,7 @@ import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
 import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.model.ReportSessionSales;
@@ -26,6 +27,7 @@ public class DaySalesReportPrint extends ReportBasePrint{
 
 	private ReportDaySales reportDaySales;
 	private ArrayList<ReportDayTax> reportDayTaxs;
+	private List<ReportDayPayment> reportDayPayments;
 	private List<ReportUserOpenDrawer> reportUserOpenDrawerList;
 	private List<ReportSessionSales> reportSessionSalesList;
 	
@@ -41,9 +43,11 @@ public class DaySalesReportPrint extends ReportBasePrint{
 		return data;
 	}
 	
-	public void print(ReportDaySales reportData, ArrayList<ReportDayTax> taxData, List<ReportUserOpenDrawer> reportUserOpenDrawers, List<ReportSessionSales> reportSessionSalesList) {
+	public void print(ReportDaySales reportData, ArrayList<ReportDayTax> taxData, List<ReportDayPayment> reportDayPayments,
+					  List<ReportUserOpenDrawer> reportUserOpenDrawers, List<ReportSessionSales> reportSessionSalesList) {
 		this.reportDaySales = reportData;
 		this.reportDayTaxs = taxData;
+		this.reportDayPayments = reportDayPayments;
 		this.reportUserOpenDrawerList = reportUserOpenDrawers;
 		this.reportSessionSalesList = reportSessionSalesList;
 		GetReportDaySalesText();
@@ -262,6 +266,15 @@ public class DaySalesReportPrint extends ReportBasePrint{
 			this.addItem(PrintService.instance.getResources().getString(R.string.total_tax), " ", BH.getBD(reportDaySales.getTotalTax()).toString(), 1);
 			this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), " ", BH.getBD(reportDaySales.getInclusiveTaxAmt()).toString(), 1);
 		}
+		if(reportDayPayments != null && reportDayPayments.size() >0){
+			BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+			for(ReportDayPayment reportDayPayment : reportDayPayments){
+				BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
+			}
+			if(overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0){
+				this.addItem("Custom Payment Change", " ", overPaymentAmount.toString(), 1);
+			}
+		}
 		this.addItem(PrintService.instance.getResources().getString(R.string.rounding), " ", reportDaySales.getTotalBalancePrice(), 1);
 		this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", reportDaySales.getTotalSales(), 1);
 		
@@ -334,6 +347,14 @@ public class DaySalesReportPrint extends ReportBasePrint{
 			this.addItem(PrintService.instance.getResources().getString(R.string.voucher), reportDaySales.getVoucherQty().toString(),
 					BH.getBD(reportDaySales.getVoucher()).toString(), 1);
 		}
+
+		if(reportDayPayments != null && reportDayPayments.size() > 0){
+			for(ReportDayPayment reportDayPayment : reportDayPayments){
+				this.addItem(reportDayPayment.getPaymentName(), reportDayPayment.getPaymentQty().toString(),
+						BH.getBD(reportDayPayment.getPaymentAmount()).toString(), 1);
+			}
+		}
+
 		if(totalDelivery.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
 			this.addItem("TOTAL DELIVERY", totalDeliveryQty+"",
 					totalDelivery.toString(), 1);

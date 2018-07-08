@@ -1586,6 +1586,37 @@ public class ReportObjectFactory {
 		}
 		return reportDayTaxs;
 	}
+	public List<ReportDayPayment> loadShowReportDayPayment(long businessDate) {
+		List<ReportDayPayment> reportDayPayments = new ArrayList<>();
+		ReportDayPayment reportDayPayment = null;
+		List<PaymentMethod> paymentMethods = CoreData.getInstance().getPamentMethodList();
+		for (PaymentMethod paymentMethod : paymentMethods) {
+			Map<String, String> paymentMap = PaymentSettlementSQL
+					.getCustomPaymentSettlementSumPaidAndCount(
+							paymentMethod.getPaymentTypeId().intValue(), businessDate);
+			if (paymentMap != null && paymentMap.size() > 0) {
+				String amount = BH.getBD(paymentMap.get("sumAmount")).toString();
+				String qty = paymentMap.get("count");
+				String overPaymentAmount = paymentMap.get("partChange");
+				reportDayPayment = new ReportDayPayment();
+				reportDayPayment.setId(CommonSQL.getNextSeq(TableNames.ReportDayPayment));
+				reportDayPayment.setBusinessDate(businessDate);
+				reportDayPayment.setCreateTime(System.currentTimeMillis());
+				reportDayPayment.setPaymentName(paymentMethod.getNameOt());
+				reportDayPayment.setPaymentTypeId(paymentMethod.getPaymentTypeId());
+				reportDayPayment.setOverPaymentAmount(overPaymentAmount);
+				reportDayPayment.setPaymentAmount(amount);
+				reportDayPayment.setPaymentQty(Integer.parseInt(qty));
+				reportDayPayment.setRestaurantId(restaurant.getId());
+				reportDayPayment.setRestaurantName(restaurant.getRestaurantName());
+				reportDayPayment.setRevenueId(revenueCenter.getId());
+				reportDayPayment.setRevenueName(revenueCenter.getRevName());
+				ReportDayPaymentSQL.addReportDayPayment(reportDayPayment);
+				reportDayPayments.add(reportDayPayment);
+			}
+		}
+		return reportDayPayments;
+	}
 
 
 	public ArrayList<ReportHourly> loadReportHourlys(long businessDate) {
@@ -2426,7 +2457,7 @@ public class ReportObjectFactory {
 		List<PaymentMethod> paymentMethods = CoreData.getInstance().getPamentMethodList();
 		for(PaymentMethod paymentMethod : paymentMethods){
             Map<String, String> paymentMap = PaymentSettlementSQL
-                    .getPaymentSettlementSumPaidAndCount(
+                    .getCustomPaymentSettlementSumPaidAndCount(
                             paymentMethod.getPaymentTypeId().intValue(), businessDate,
                             sessionStatus);
             if(paymentMap != null && paymentMap.size() > 0) {

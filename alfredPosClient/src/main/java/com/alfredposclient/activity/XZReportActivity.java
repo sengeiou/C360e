@@ -18,6 +18,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
@@ -80,6 +81,7 @@ public class XZReportActivity extends BaseActivity {
     private long date;
     private ReportDaySales reportDaySales;
     private List<ReportDayTax> reportDayTaxs;
+    private List<ReportDayPayment> reportDayPayments;
     private List<ReportPluDayItem> reportPluDayItems;
     private List<ReportDetailAnalysisItem> reportDetailAnalysisItems;
     private List<ReportDetailAnalysisItem> reportDetailAnalysisItemList;
@@ -152,10 +154,12 @@ public class XZReportActivity extends BaseActivity {
             reportPluDayComboModifiers = (List<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
             reportHourlys = ReportObjectFactory.getInstance().loadShowReportHourlys(businessDate);
             reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(businessDate);
+            reportDayPayments = ReportObjectFactory.getInstance().loadShowReportDayPayment(businessDate);
             loadModel();
         }else{
             reportDayTaxs = new ArrayList<>();
-            reportPluDayItems = new ArrayList<ReportPluDayItem>();
+            reportDayPayments = new ArrayList<>();
+            reportPluDayItems = new ArrayList<>();
             reportPluDayModifiers = new ArrayList<>();
             reportHourlys = new ArrayList<>();
             itemCategorys = new ArrayList<>();
@@ -181,9 +185,11 @@ public class XZReportActivity extends BaseActivity {
             reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
             reportHourlys =ReportObjectFactory.getInstance().loadReportHourlys(businessDate);
             reportDayTaxs = ReportObjectFactory.getInstance().loadReportDayTax(businessDate);
+            reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
             loadModel();
         }else{
             reportDayTaxs = new ArrayList<>();
+            reportDayPayments = new ArrayList<>();
             reportPluDayItems = new ArrayList<ReportPluDayItem>();
             reportPluDayModifiers = new ArrayList<>();
             reportHourlys = new ArrayList<>();
@@ -657,7 +663,7 @@ public class XZReportActivity extends BaseActivity {
 
                 // sales report
                 App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-                        title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
+                        title, reportDaySales, reportDayTaxs, reportDayPayments, reportUserOpenDrawers, null);
                 // detail analysis
                 App.instance.remotePrintDetailAnalysisReport(rptType,
                         cashierPrinter, title, reportDaySales,
@@ -677,7 +683,7 @@ public class XZReportActivity extends BaseActivity {
             if (type == XZReportHtml.REPORT_PRINT_SALES) {
                 // sales report
                 App.instance.remotePrintDaySalesReport(rptType, cashierPrinter,
-                        title, reportDaySales, reportDayTaxs, reportUserOpenDrawers, null);
+                        title, reportDaySales, reportDayTaxs, reportDayPayments, reportUserOpenDrawers, null);
             }
             if (type == XZReportHtml.REPORT_PRINT_DETAILS) {
                 if (zPrint)
