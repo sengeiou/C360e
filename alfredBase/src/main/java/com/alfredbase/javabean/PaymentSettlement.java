@@ -32,6 +32,10 @@ public class PaymentSettlement {
 	/**
 	 * 是否可用(-1删除，0正常) 用于本地
 	 */
+	/**
+	 * partImg注意这个字段只是前端用的
+	 */
+	private String partImg;
 	private int isActive;
 
 	public String getPartChange() {
@@ -40,6 +44,14 @@ public class PaymentSettlement {
 
 	public void setPartChange(String partChange) {
 		this.partChange = partChange;
+	}
+
+	public String getPartImg() {
+		return partImg;
+	}
+
+	public void setPartImg(String partImg) {
+		this.partImg = partImg;
 	}
 
 	public Integer getId() {

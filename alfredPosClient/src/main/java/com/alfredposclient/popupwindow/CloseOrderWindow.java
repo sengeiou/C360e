@@ -2008,6 +2008,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 PaymentSQL.addPayment(payment);
                 PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
                         .getPaymentSettlement(payment, paymentTypeId, showStr);
+                paymentSettlement.setPartImg(p.getLogoSm());
 //                ((TextView) contentView.findViewById(R.id.tv_change_num))
 //                        .setText(tv_change_action_num.getText());
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > -1) {
