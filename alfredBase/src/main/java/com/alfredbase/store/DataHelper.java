@@ -1153,7 +1153,7 @@ public class DataHelper {
 
             db.execSQL("CREATE TABLE "
                     + TableNames.ReportDayPayment
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId LONG, paymentName TEXT, paymentQty INTEGER, paymentAmount TEXT,overPaymentAmount TEXT,createTime LONG)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId LONG, paymentName TEXT, paymentQty INTEGER default 0, paymentAmount TEXT default '0.00',overPaymentAmount TEXT default '0.00',createTime LONG)");
 
             db.execSQL("ALTER TABLE "
                     + TableNames.PaymentSettlement

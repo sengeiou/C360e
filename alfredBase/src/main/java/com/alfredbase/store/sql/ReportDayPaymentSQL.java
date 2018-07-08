@@ -143,6 +143,46 @@ public class ReportDayPaymentSQL {
     }
 
 
+    public static List<ReportDayPayment> getReportDayPaymentsForZReport(long businessDate){
+        List<ReportDayPayment> result = new ArrayList<>();
+        String sql = "select restaurantId,restaurantName,revenueId,revenueName,businessDate,"
+                + " paymentTypeId,paymentName,sum(paymentQty),sum(paymentAmount), sum(overPaymentAmount) from "
+                + TableNames.ReportDayPayment
+                + " where businessDate = ? group by paymentTypeId";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate) });
+            int count = cursor.getCount();
+            if(count < 1){
+                return result;
+            }
+            ReportDayPayment reportDayPayment = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                reportDayPayment = new ReportDayPayment();
+                reportDayPayment.setRestaurantId(cursor.getInt(0));
+                reportDayPayment.setRestaurantName(cursor.getString(1));
+                reportDayPayment.setRevenueId(cursor.getInt(2));
+                reportDayPayment.setRevenueName(cursor.getString(3));
+                reportDayPayment.setBusinessDate(cursor.getLong(4));
+                reportDayPayment.setPaymentTypeId(cursor.getLong(5));
+                reportDayPayment.setPaymentName(cursor.getString(6));
+                reportDayPayment.setPaymentQty(cursor.getInt(7));
+                reportDayPayment.setPaymentAmount(cursor.getString(8));
+                reportDayPayment.setOverPaymentAmount(cursor.getString(9));
+                result.add(reportDayPayment);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
 
 
     public static void deleteReportDayPayment(ReportDayPayment reportDayPayment) {

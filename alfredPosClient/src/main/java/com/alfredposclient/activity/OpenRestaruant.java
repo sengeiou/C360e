@@ -42,6 +42,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
@@ -50,11 +51,8 @@ import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
-import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportSessionSales;
-import com.alfredbase.javabean.model.ReportVoidItem;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
@@ -71,7 +69,6 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.ReportSessionSalesSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
-import com.alfredbase.store.sql.UserTimeSheetSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BH;
@@ -1050,6 +1047,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		}
 		String bizDate = TimeUtil.getPrintingDate(businessDate);
 		ArrayList<ReportDayTax> reportDayTaxs = (ArrayList<ReportDayTax>) xReport.get("reportDayTaxs");
+		List<ReportDayPayment> reportDayPayments = (List<ReportDayPayment>) xReport.get("reportDayPayments");
 		ArrayList<ReportPluDayItem> reportPluDayItems = (ArrayList<ReportPluDayItem>) xReport.get("reportPluDayItems");
 		//bob add to filter ENT and VOID item in PLU items
 //		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
@@ -1080,7 +1078,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 		// sales report
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-				title, reportDaySales, reportDayTaxs, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
+				title, reportDaySales, reportDayTaxs,reportDayPayments,  ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
 //		try {
 //			Thread.sleep(5000);
@@ -1133,6 +1131,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		String bizDate = TimeUtil.getPrintingDate(businessDate);		
 		List<ReportDayTax> reportDayTaxs = ReportObjectFactory
 				.getInstance().loadReportDayTax(businessDate);
+		List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
 		ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory
 				.getInstance().loadReportPluDayItem(businessDate);
 		Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(businessDate);
@@ -1169,7 +1168,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 		// sales report
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-				title, reportDaySales, reportDayTaxs,
+				title, reportDaySales, reportDayTaxs, reportDayPayments,
 				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
 				reportSessionSalesList);
 //		try {

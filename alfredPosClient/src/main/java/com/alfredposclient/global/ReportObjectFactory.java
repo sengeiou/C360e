@@ -585,6 +585,10 @@ public class ReportObjectFactory {
 		List<ReportDayTax> reportDayTaxList = ReportDayTaxSQL.getReportDayTaxsForZReport(businessDate);
 		return reportDayTaxList;
 	}
+	public List<ReportDayPayment> loadReportDayPayment(long businessDate){
+		List<ReportDayPayment> ReportDayPaymentList = ReportDayPaymentSQL.getReportDayPaymentsForZReport(businessDate);
+		return ReportDayPaymentList;
+	}
 
 	/*
 	 * Z Report : Wrong algo. not used
@@ -3077,6 +3081,7 @@ public class ReportObjectFactory {
 		// tax report
 		ArrayList<ReportDayTax> reportDayTaxs = loadXReportDayTax(reportDaySales, businessDate,
 				sessionStatus);
+		List<ReportDayPayment> reportDayPayments = loadXReportDayPayment(reportDaySales,businessDate,sessionStatus);
 		// plu item reprot
 		ArrayList<ReportPluDayItem> reportPluDayItems = loadXReportPluDayItem(businessDate, sessionStatus);
 
@@ -3089,6 +3094,7 @@ public class ReportObjectFactory {
 		ArrayList<ReportHourly> reportHourlys = loadXReportHourlys(businessDate, sessionStatus);
 		map.put("reportDaySales", reportDaySales);
 		map.put("reportDayTaxs", reportDayTaxs);
+		map.put("reportDayPayments", reportDayPayments);
 		map.put("reportPluDayItems", reportPluDayItems);
 		map.put("reportPluDayModifiers", reportPluDayModifiers);
 		map.put("reportHourlys", reportHourlys);
