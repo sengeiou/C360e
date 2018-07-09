@@ -20,22 +20,25 @@
         android:textSize="36sp"
         android:visibility="visible" />
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_gravity="center"
-    android:layout_marginTop="10dp"
-    android:layout_marginLeft="25dp"
-    android:layout_marginRight="25dp"
-    android:layout_marginBottom="10dp"
-    android:layout_height="wrap_content">
-    <ListView
-        android:layout_marginTop="10dp"
-        android:id="@+id/lv_media"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:divider="@null"></ListView>
-</LinearLayout>
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="10dp">
+
+        <ListView
+            android:id="@+id/lv_media"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:divider="@null"
+            android:fadeScrollbars="false"
+            android:scrollbars="none"></ListView>
+    </LinearLayout>
 
 
 </LinearLayout>

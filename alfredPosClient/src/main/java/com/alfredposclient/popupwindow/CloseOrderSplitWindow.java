@@ -444,6 +444,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
     private void initTextTypeFace(View view) {
         TextTypeFace textTypeFace = TextTypeFace.getInstance();
+
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_part_settlement));
         textTypeFace.setTrajanProRegular((Button) view
                 .findViewById(R.id.tv_other_media));
         textTypeFace.setTrajanProBlod((TextView) view

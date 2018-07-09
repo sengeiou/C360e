@@ -401,6 +401,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
     private void initTextTypeFace(View view) {
         TextTypeFace textTypeFace = TextTypeFace.getInstance();
+
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_part_settlement));
         textTypeFace.setTrajanProBlod((TextView) view
                 .findViewById(R.id.tv_bill_summary));
         textTypeFace.setTrajanProBlod((TextView) view
