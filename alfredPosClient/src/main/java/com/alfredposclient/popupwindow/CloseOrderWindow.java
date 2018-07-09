@@ -1405,19 +1405,24 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     pamentMethodlist.clear();
 
                     settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
-                    SettlementRestaurant se = new SettlementRestaurant();
-                    se = SettlementRestaurantSQL.getSettlementRestaurant(3109);
-                    PaymentMethod pam = new PaymentMethod();
-                    pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
-//                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
-//                    pamentMethodlist.add(pam);
-                    if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {
 
-                        String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
-                        for (int i = 0; i < strarray.length; i++) {
-                            PaymentMethod pa = new PaymentMethod();
-                            pa = PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[i]).intValue());
-                            pamentMethodlist.add(pa);
+
+                    if (settle != null && !settle.isEmpty()) {
+
+                        if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {
+
+                            String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
+                            for (int i = 0; i < strarray.length; i++) {
+                                PaymentMethod pa = new PaymentMethod();
+                                pa = PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[i]).intValue());
+
+                                if (pa == null) {
+                                    return;
+                                } else {
+                                    pamentMethodlist.add(pa);
+                                }
+
+                            }
                         }
                     }
 
@@ -2101,7 +2106,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 }
                 paymentSettlement = ObjectFactory.getInstance()
                         .getPaymentSettlement(payment, paymentTypeId,
-                               order.getTotal());
+                                order.getTotal());
                 PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 
                 order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
@@ -2785,7 +2790,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         //   Toast.makeText(parent,"--- "+key,Toast.LENGTH_LONG).show();
         p = paym;
         if (p.getIsAdmin() == 1) {
-            if(p.getIsPart() == 0){
+            if (p.getIsPart() == 0) {
                 if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
                     return;
                 }
