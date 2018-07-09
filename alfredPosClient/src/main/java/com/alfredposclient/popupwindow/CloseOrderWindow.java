@@ -628,9 +628,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 sumPaidamount = PaymentSettlementSQL
                         .getPaymentSettlementsSumBypaymentId(payment.getId());
             }
-            remainTotal = BH.sub(BH.getBD(order.getTotal()),
-                    BH.getBD(sumPaidamount), true);
+
             settlementNum = BH.getBD(sumPaidamount);
+            if(settlementNum.compareTo(BH.getBD(order.getTotal())) > -1){
+                remainTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
+            }else {
+                remainTotal = BH.sub(BH.getBD(order.getTotal()),
+                        BH.getBD(sumPaidamount), true);
+            }
         }
         ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
 
@@ -1393,11 +1398,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
 
                 case R.id.tv_other_media:
-
-
                     List<SettlementRestaurant> settle;
                     pamentMethodlist.clear();
-//
 
                     settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
                     SettlementRestaurant se=new SettlementRestaurant();
@@ -2001,7 +2003,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
                 BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
-                    showStr = remainTotalAfterRound.toString();
+                   // showStr = remainTotalAfterRound.toString();
+
+                    showStr = showStrBigDecimal.toString();
                 } else {
                     showStr = showStrBigDecimal.toString();
                 }
@@ -2044,7 +2048,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
                 BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
-                    showStr = remainTotalAfterRound.toString();
+                    showStr =showStrBigDecimal.toString();
                 } else {
                     showStr = showStrBigDecimal.toString();
                 }
@@ -2788,7 +2792,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //                show.append(0);
                 moneyKeyboard.setVisibility(View.VISIBLE);
 
-              //   moneyKeyboard.setMoneyPanel(View.GONE);
+                moneyKeyboard.setMoneyPanel(View.VISIBLE);
                 Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
                 iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
                         bitmap.getWidth(), bitmap.getHeight() / 2));

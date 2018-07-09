@@ -683,9 +683,18 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				sumPaidamount = PaymentSettlementSQL
 						.getPaymentSettlementsSumBypaymentId(payment.getId());
 			}
-			remainTotal = BH.sub(BH.getBD(orderSplit.getTotal()),
-					BH.getBD(sumPaidamount), true);
+//			remainTotal = BH.sub(BH.getBD(orderSplit.getTotal()),
+//					BH.getBD(sumPaidamount), true);
+//			settlementNum = BH.getBD(sumPaidamount);
+
 			settlementNum = BH.getBD(sumPaidamount);
+			if(settlementNum.compareTo(BH.getBD(orderSplit.getTotal())) > -1){
+				remainTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
+			}else {
+				remainTotal = BH.sub(BH.getBD(orderSplit.getTotal()),
+						BH.getBD(sumPaidamount), true);
+			}
+
 		}
 		((TextView)contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
 
@@ -2324,7 +2333,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
 				BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
 				if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
-					showStr = remainTotalAfterRound.toString();
+					showStr = showStrBigDecimal.toString();
 				}else{
 					showStr = showStrBigDecimal.toString();
 				}
@@ -2392,7 +2401,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 				BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
 				BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
 				if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
-					showStr = remainTotalAfterRound.toString();
+					showStr = showStrBigDecimal.toString();
 				}else{
 					showStr = showStrBigDecimal.toString();
 				}
@@ -3185,7 +3194,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //                show.append(0);
 				moneyKeyboard.setVisibility(View.VISIBLE);
 
-				//   moneyKeyboard.setMoneyPanel(View.GONE);
+				  moneyKeyboard.setMoneyPanel(View.VISIBLE);
 				Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
 				iv_top.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
 						bitmap.getWidth(), bitmap.getHeight() / 2));

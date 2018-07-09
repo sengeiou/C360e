@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredposclient.R;
+import com.alfredposclient.global.App;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -78,6 +79,7 @@ public class PamentMethodAdapter extends BaseAdapter{
 
             ImageLoader.getInstance().displayImage(p.getLogoSm(), holder.img, options);
             holder.tv.setText(p.getNameOt().toString());
+        holder.symbol.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol());
         if(p.getIsTax()==0)
         {
             holder.tax.setText("No Tax,");

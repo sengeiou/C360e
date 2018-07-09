@@ -24,7 +24,7 @@ public class APIName {
 	public static final String POSORDER_GETPAIEDAPPORDERBYID= "order/getPaiedAppOrderById";
 	public static final String POSORDER_GETALLPAIEDAPPORDER= "order/getAllPaiedAppOrder";
 	public static final String POSORDER_UPDATEAPPORDERSTATUS= "order/updateAppOrderStatus";
-	public static final String UPDATE_MANUALAPPORDERSTATUS= "order/updateManualAppOrderStatus";
+	public static final String UPDATE_MANUALAPPORDERSTATUS= "order/updateManualAppOrderStatus";  
 	public static final String APP_ORDER_REFUND= "order/appOrderRefund";
 	public static final String RESTAURANT_MONTHLY_SALE_REPORT = "reportDaySales/getMonthReportDaySales";
 	public static final String RESTAURANT_MONTHLY_PLU_REPORT = "reportPlu/getMonthReport";

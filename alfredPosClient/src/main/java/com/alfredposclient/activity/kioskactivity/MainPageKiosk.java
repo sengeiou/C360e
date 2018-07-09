@@ -690,9 +690,6 @@ public class MainPageKiosk extends BaseActivity {
 				printerLoadingDialog.showByTime(3000);
 				if(isPrint) {
 
-
-
-
 					PrinterDevice printer = App.instance.getCahierPrinter();
 					PrinterTitle title = ObjectFactory.getInstance()
 							.getPrinterTitle(
@@ -730,8 +727,6 @@ public class MainPageKiosk extends BaseActivity {
 						for (int i = 0; i < printerList.size(); i++) {
 							PrinterDevice printers = printerList.get(i);
 							if (App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isPrintLable() && printers.getIsLablePrinter() == 1 ) {
-
-//
 								List<OrderDetail> placedOrderDetails
 										= OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
 								App.instance.remoteTBillPrint(printers, title, paidOrder, (ArrayList<OrderDetail>) placedOrderDetails,orderModifiers);
@@ -857,17 +852,7 @@ public class MainPageKiosk extends BaseActivity {
 //					KotSummarySQL.update(kotSummary);
 //				}
 
-				String changeNum;
-				changeNum = paymentMap.get("changeNum");
-				if (!TextUtils.isEmpty(changeNum)) {
-					if (!(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00").equals(changeNum))
-						DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
-							@Override
-							public void onClick(View v) {
 
-							}
-						});
-				}
 				OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(paidOrderSplit, App.instance.getRevenueCenter());
 
 				PrinterDevice printer = App.instance.getCahierPrinter();
@@ -893,6 +878,17 @@ public class MainPageKiosk extends BaseActivity {
 								context);
 				printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
 				printerLoadingDialog.showByTime(3000);
+				String changeNum;
+				changeNum = paymentMap.get("changeNum");
+				if (!TextUtils.isEmpty(changeNum)) {
+					if (!(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00").equals(changeNum))
+						DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+
+							}
+						});
+				}
 				// ArrayList<OrderModifier> orderModifiers =
 				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
 				Order temporaryOrder = new Order();
