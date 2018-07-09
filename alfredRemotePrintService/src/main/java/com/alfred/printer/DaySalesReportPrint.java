@@ -266,8 +266,8 @@ public class DaySalesReportPrint extends ReportBasePrint{
 			this.addItem(PrintService.instance.getResources().getString(R.string.total_tax), " ", BH.getBD(reportDaySales.getTotalTax()).toString(), 1);
 			this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), " ", BH.getBD(reportDaySales.getInclusiveTaxAmt()).toString(), 1);
 		}
+		BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if(reportDayPayments != null && reportDayPayments.size() >0){
-			BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
 			for(ReportDayPayment reportDayPayment : reportDayPayments){
 				BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
 			}
@@ -276,8 +276,7 @@ public class DaySalesReportPrint extends ReportBasePrint{
 			}
 		}
 		this.addItem(PrintService.instance.getResources().getString(R.string.rounding), " ", reportDaySales.getTotalBalancePrice(), 1);
-		this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", reportDaySales.getTotalSales(), 1);
-		
+		this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true).toString(), 1);
 		this.addSectionHeader(PrintService.instance.getResources().getString(R.string.media));
 		if(BH.getBD(reportDaySales.getCash()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
 			this.addItem(PrintService.instance.getResources().getString(R.string.cash), reportDaySales.getCashQty().toString(),
@@ -348,11 +347,17 @@ public class DaySalesReportPrint extends ReportBasePrint{
 					BH.getBD(reportDaySales.getVoucher()).toString(), 1);
 		}
 
+		BigDecimal totalCustomPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+		int totalCustomPaymentQty = 0;
 		if(reportDayPayments != null && reportDayPayments.size() > 0){
 			for(ReportDayPayment reportDayPayment : reportDayPayments){
+                totalCustomPaymentAmount = BH.add(totalCustomPaymentAmount,BH.getBD(reportDayPayment.getPaymentAmount()),true);
+                totalCustomPaymentQty += reportDayPayment.getPaymentQty();
 				this.addItem(reportDayPayment.getPaymentName(), reportDayPayment.getPaymentQty().toString(),
 						BH.getBD(reportDayPayment.getPaymentAmount()).toString(), 1);
 			}
+            this.addItem("TOTAL Custom Payment", totalCustomPaymentQty+"",
+                    totalCustomPaymentAmount.toString(), 1);
 		}
 
 		if(totalDelivery.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){

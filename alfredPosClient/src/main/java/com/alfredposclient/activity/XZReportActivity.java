@@ -51,6 +51,7 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.ReportDetailAnalysisItem;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.DialogSelectReportPrint;
+import com.alfredposclient.view.ReportDaySalesItem;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -67,6 +68,7 @@ public class XZReportActivity extends BaseActivity {
     private CalendarCard calendarCard;
     private TextView tv_title_name;
     private LinearLayout ll_print;
+    private LinearLayout ll_sales_total;
     private ImageButton btn_back;
     private LinearLayout ll_xz_analsis;
     private long businessDate;
@@ -298,179 +300,321 @@ public class XZReportActivity extends BaseActivity {
             calendarCard.setVisibility(View.GONE);
             ll_xz_analsis.setVisibility(View.VISIBLE);
             ll_print.setVisibility(View.VISIBLE);
+            ll_sales_total = (LinearLayout) findViewById(R.id.ll_sales_total);
             // Item Sales
-            ((TextView) findViewById(R.id.tv_sales_total_num)).setText(reportDaySales.getItemSalesQty() + "");
-            ((TextView) findViewById(R.id.tv_sales_total)).setText("$" + reportDaySales.getItemSales());
+            ReportDaySalesItem salesTotal = new ReportDaySalesItem(context);
+            salesTotal.setData("Item Sales", reportDaySales.getItemSalesQty() + "", App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getItemSales(), true);
+            ll_sales_total.addView(salesTotal);
             // Stored-Card Sales
-            ((TextView) findViewById(R.id.tv_free_menu_num)).setText(reportDaySales.getTopUpsQty() + "");
-            ((TextView) findViewById(R.id.tv_free_menu)).setText("$" + reportDaySales.getTopUps());
+            ReportDaySalesItem storedCardSales = new ReportDaySalesItem(context);
+            storedCardSales.setData("Stored-Card Sales", reportDaySales.getTopUpsQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTopUps(), true);
+            ll_sales_total.addView(storedCardSales);
             // ENT Items
-            ((TextView) findViewById(R.id.tv_free_item_num)).setText(reportDaySales.getFocItemQty() + "");
-            ((TextView) findViewById(R.id.tv_free_item)).setText("$" + reportDaySales.getFocItem());
+            ReportDaySalesItem entItems = new ReportDaySalesItem(context);
+            entItems.setData("ENT items", reportDaySales.getFocItemQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getFocItem(), true);
+            ll_sales_total.addView(entItems);
             // ENT Bills
-            ((TextView) findViewById(R.id.tv_ent_bills_item_num)).setText(reportDaySales.getFocBillQty() + "");
-            ((TextView) findViewById(R.id.tv_ent_bills_item)).setText("$" + reportDaySales.getFocBill());
+            ReportDaySalesItem entBills = new ReportDaySalesItem(context);
+            entBills.setData("ENT Bills/$", reportDaySales.getFocBillQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getFocBill(), true);
+            ll_sales_total.addView(entBills);
             // VOID/Items
-            ((TextView) findViewById(R.id.tv_void_item_num)).setText(reportDaySales.getItemVoidQty() + "");
-            ((TextView) findViewById(R.id.tv_void_item)).setText("$" + reportDaySales.getItemVoid());
+            ReportDaySalesItem voidItem = new ReportDaySalesItem(context);
+            voidItem.setData("VOID items", reportDaySales.getItemVoidQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getItemVoid(), true);
+            ll_sales_total.addView(voidItem);
             // VOID Bills
-            ((TextView) findViewById(R.id.tv_void_bills_num)).setText(reportDaySales.getBillVoidQty() + "");
-            ((TextView) findViewById(R.id.tv_void_bills_item)).setText("$" + reportDaySales.getBillVoid());
+            ReportDaySalesItem voidBill = new ReportDaySalesItem(context);
+            voidBill.setData("VOID Bills", reportDaySales.getBillVoidQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getBillVoid(), true);
+            ll_sales_total.addView(voidBill);
             // REFUND Bills
-            ((TextView) findViewById(R.id.tv_refund_bills_item_num)).setText(reportDaySales.getBillRefundQty() + "");
-            ((TextView) findViewById(R.id.tv_refund_bills_item)).setText("$" + reportDaySales.getBillRefund());
+            ReportDaySalesItem refundBill = new ReportDaySalesItem(context);
+            refundBill.setData("REFUND Bills", reportDaySales.getBillRefundQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getBillRefund(), true);
+            ll_sales_total.addView(refundBill);
             // REFUND Taxes
-            ((TextView) findViewById(R.id.tv_refund_taxes_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_refund_taxes_item)).setText("$" + reportDaySales.getRefundTax());
+            ReportDaySalesItem refundTax = new ReportDaySalesItem(context);
+            refundTax.setData("REFUND Taxes", "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getRefundTax(), true);
+            ll_sales_total.addView(refundTax);
             // Discount on%
-            ((TextView) findViewById(R.id.tv_discount_on_item_num)).setText(reportDaySales.getDiscountPerQty() + "");
-            ((TextView) findViewById(R.id.tv_discount_on_item)).setText("$" + reportDaySales.getDiscountPer());
+            ReportDaySalesItem discountA = new ReportDaySalesItem(context);
+            discountA.setData("Discount on %", reportDaySales.getDiscountPerQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscountPer(), true);
+            ll_sales_total.addView(discountA);
             // Discount on$
-            ((TextView) findViewById(R.id.tv_discount_item_num)).setText(reportDaySales.getDiscountQty() + "");
-            ((TextView) findViewById(R.id.tv_discount_item)).setText("$" + reportDaySales.getDiscount());
+            ReportDaySalesItem discountB = new ReportDaySalesItem(context);
+            discountB.setData("Discount on $", reportDaySales.getDiscountQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscount(), true);
+            ll_sales_total.addView(discountB);
             // Exlusive Tax
-            ((TextView) findViewById(R.id.tv_exlusive_tax_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_exlusive_tax_item)).setText("$" + reportDaySales.getTotalTax());
+            ReportDaySalesItem exclusiveTax = new ReportDaySalesItem(context);
+            exclusiveTax.setData("Exclusive Tax", "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTotalTax(), true);
+            ll_sales_total.addView(exclusiveTax);
             // Inclusive Tax
-            ((TextView) findViewById(R.id.tv_inclusive_tax_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_inclusive_tax_item)).setText("$" + reportDaySales.getInclusiveTaxAmt());
+            ReportDaySalesItem inclusiveTax = new ReportDaySalesItem(context);
+            inclusiveTax.setData("Exclusive Tax", "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getInclusiveTaxAmt(), true);
+            ll_sales_total.addView(inclusiveTax);
+            if(reportDayPayments != null && reportDayPayments.size() >0){
+                BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
+                for(ReportDayPayment reportDayPayment : reportDayPayments){
+                    BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
+                }
+                if(overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0){
+                    ReportDaySalesItem other = new ReportDaySalesItem(context);
+                    other.setData("Custom Change", "",
+                            App.instance.getLocalRestaurantConfig().getCurrencySymbol() + overPaymentAmount, true);
+                    ll_sales_total.addView(other);
+                }
+            }
+
             // Total/sales
-            ((TextView) findViewById(R.id.tv_total_sales_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_total_sales_item)).setText("$" + reportDaySales.getTotalSales());
+            ReportDaySalesItem totalSales = new ReportDaySalesItem(context);
+            totalSales.setData("Total Sales", "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTotalSales(), true);
+            ll_sales_total.addView(totalSales);
             // CASH
-            ((TextView) findViewById(R.id.tv_cash_item_num)).setText(reportDaySales.getCashQty() + "");
-            ((TextView) findViewById(R.id.tv_cash_item)).setText("$" + reportDaySales.getCash());
+            ReportDaySalesItem cashView = new ReportDaySalesItem(context);
+            cashView.setTitle("-----MEDIA-----");
+            cashView.setData("CASH", reportDaySales.getCashQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getCash(), true);
+            ll_sales_total.addView(cashView);
             // Diner App
-            ((TextView) findViewById(R.id.tv_diner_app_item_num)).setText(reportDaySales.getPaypalpayQty() + "");
-            ((TextView) findViewById(R.id.tv_diner_app_item)).setText("$" + reportDaySales.getPaypalpay());
+            ReportDaySalesItem dinerApp = new ReportDaySalesItem(context);
+            dinerApp.setData("Diner App", reportDaySales.getPaypalpayQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getPaypalpay(), true);
+            ll_sales_total.addView(dinerApp);
             // Stored-Card Use
-            ((TextView) findViewById(R.id.tv_storedcard_use_item_num)).setText(reportDaySales.getStoredCardQty() + "");
-            ((TextView) findViewById(R.id.tv_storedcard_use_item)).setText("$" + reportDaySales.getStoredCard());
+            ReportDaySalesItem storedCardUse = new ReportDaySalesItem(context);
+            storedCardUse.setData("Stored_Card Use", reportDaySales.getStoredCardQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getStoredCard(), true);
+            ll_sales_total.addView(storedCardUse);
             // Stored-Card Charge
-            ((TextView) findViewById(R.id.tv_storedcard_charge_item_num)).setText(reportDaySales.getTopUpsQty() + "");
-            ((TextView) findViewById(R.id.tv_storedcard_charge_item)).setText("$" + reportDaySales.getTopUps());
+            ReportDaySalesItem storedCardCharge = new ReportDaySalesItem(context);
+            storedCardCharge.setData("Store_Card Charge", reportDaySales.getTopUpsQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTopUps(), true);
+            ll_sales_total.addView(storedCardCharge);
             // NETS
-            ((TextView) findViewById(R.id.tv_nets_item_num)).setText(reportDaySales.getNetsQty() + "");
-            ((TextView) findViewById(R.id.tv_nets_item)).setText("$" + reportDaySales.getNets());
+            ReportDaySalesItem nets = new ReportDaySalesItem(context);
+            nets.setData("NETS", reportDaySales.getNetsQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getNets(), true);
+            ll_sales_total.addView(nets);
             // VISA
-            ((TextView) findViewById(R.id.tv_visa_item_num)).setText(reportDaySales.getVisaQty() + "");
-            ((TextView) findViewById(R.id.tv_visa_item)).setText("$" + reportDaySales.getVisa());
+            ReportDaySalesItem visa = new ReportDaySalesItem(context);
+            visa.setData("VISA", reportDaySales.getVisaQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getVisa(), true);
+            ll_sales_total.addView(visa);
             // MC
-            ((TextView) findViewById(R.id.tv_mc_item_num)).setText(reportDaySales.getMcQty() + "");
-            ((TextView) findViewById(R.id.tv_mc_item)).setText("$" + reportDaySales.getMc());
+            ReportDaySalesItem mc = new ReportDaySalesItem(context);
+            mc.setData("MC", reportDaySales.getMcQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getMc(), true);
+            ll_sales_total.addView(mc);
             // AMEX
-            ((TextView) findViewById(R.id.tv_amex_item_num)).setText(reportDaySales.getAmexQty() + "");
-            ((TextView) findViewById(R.id.tv_amex_item)).setText("$" + reportDaySales.getAmex());
+            ReportDaySalesItem amex = new ReportDaySalesItem(context);
+            amex.setData("AMEX", reportDaySales.getAmexQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getAmex(), true);
+            ll_sales_total.addView(amex);
             // JBL
-            ((TextView) findViewById(R.id.tv_jbl_item_num)).setText(reportDaySales.getJblQty() + "");
-            ((TextView) findViewById(R.id.tv_jbl_item)).setText("$" + reportDaySales.getJbl());
+            ReportDaySalesItem jbl = new ReportDaySalesItem(context);
+            jbl.setData("JBL", reportDaySales.getJblQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getJbl(), true);
+            ll_sales_total.addView(jbl);
             // unionPAYPayQty
-            ((TextView) findViewById(R.id.tv_unionpayqty_item_num)).setText(reportDaySales.getUnionPayQty() + "");
-            ((TextView) findViewById(R.id.tv_unionpayqty_item)).setText("$" + reportDaySales.getUnionPay());
+            ReportDaySalesItem unionPay = new ReportDaySalesItem(context);
+            unionPay.setData("union Pay", reportDaySales.getUnionPayQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getUnionPay(), true);
+            ll_sales_total.addView(unionPay);
             // Diner
-            ((TextView) findViewById(R.id.tv_diner_item_num)).setText(reportDaySales.getDinerQty() + "");
-            ((TextView) findViewById(R.id.tv_diner_item)).setText("$" + reportDaySales.getDiner());
+            ReportDaySalesItem diner = new ReportDaySalesItem(context);
+            diner.setData("Diner", reportDaySales.getDinerQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiner(), true);
+            ll_sales_total.addView(diner);
             // BOH
-            ((TextView) findViewById(R.id.tv_boh_item_num)).setText(reportDaySales.getHoldldQty() + "");
-            ((TextView) findViewById(R.id.tv_boh_item)).setText("$" + reportDaySales.getHoldld());
+            ReportDaySalesItem boh = new ReportDaySalesItem(context);
+            boh.setData("BOH", reportDaySales.getHoldldQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getHoldld(), true);
+            ll_sales_total.addView(boh);
             // DELIVEROO
-            ((TextView) findViewById(R.id.tv_deliveoo_item_num)).setText(reportDaySales.getDeliverooQty() + "");
-            ((TextView) findViewById(R.id.tv_deliveoo_item)).setText("$" + reportDaySales.getDeliveroo());
-            // UBEREATS
-            ((TextView) findViewById(R.id.tv_ubereats_item_num)).setText(reportDaySales.getUbereatsQty() + "");
-            ((TextView) findViewById(R.id.tv_ubereats_item)).setText("$" + reportDaySales.getUbereats());
+            ReportDaySalesItem deliveroo = new ReportDaySalesItem(context);
+            deliveroo.setData("DELIVEROO", reportDaySales.getDeliverooQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDeliveroo(), true);
+            ll_sales_total.addView(deliveroo);
+//            // UBEREATS
+//            ((TextView) findViewById(R.id.tv_ubereats_item_num)).setText(reportDaySales.getUbereatsQty() + "");
+//            ((TextView) findViewById(R.id.tv_ubereats_item)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getUbereats());
             // FOODPANDA
-            ((TextView) findViewById(R.id.tv_foodpanda_item_num)).setText(reportDaySales.getFoodpandaQty() + "");
-            ((TextView) findViewById(R.id.tv_foodpanda_item)).setText("$" + reportDaySales.getFoodpanda());
-            // VOUCHER
-            ((TextView) findViewById(R.id.tv_voucher_item_num)).setText(reportDaySales.getVoucherQty() + "");
-            ((TextView) findViewById(R.id.tv_voucher_item)).setText("$" + reportDaySales.getVoucher());
+            ReportDaySalesItem foodpanda = new ReportDaySalesItem(context);
+            foodpanda.setData("FOODPANDA", reportDaySales.getFoodpandaQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getFoodpanda(), true);
+            ll_sales_total.addView(foodpanda);
+
+            if(reportDayPayments != null && reportDayPayments.size() >0){
+                int totalCustomPaymentQty = 0;
+                BigDecimal totalCustomPayment = BH.getBD(ParamConst.DOUBLE_ZERO);
+                for(ReportDayPayment reportDayPayment : reportDayPayments){
+                    totalCustomPaymentQty += reportDayPayment.getPaymentQty();
+                    totalCustomPayment = BH.add(totalCustomPayment, BH.getBD(reportDayPayment.getPaymentAmount()),false);
+                    ReportDaySalesItem other = new ReportDaySalesItem(context);
+                    other.setData(reportDayPayment.getPaymentName(), reportDayPayment.getPaymentQty() + "",
+                            App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDayPayment.getPaymentAmount(), true);
+                    ll_sales_total.addView(other);
+                }
+                ReportDaySalesItem totalOther = new ReportDaySalesItem(context);
+                totalOther.setData("total Custom", totalCustomPaymentQty + "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + totalCustomPayment, true);
+                ll_sales_total.addView(totalOther);
+            }
+//            // VOUCHER
+//            ((TextView) findViewById(R.id.tv_voucher_item_num)).setText(reportDaySales.getVoucherQty() + "");
+//            ((TextView) findViewById(R.id.tv_voucher_item)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getVoucher());
             // TOTAL DELIVERY
-            ((TextView) findViewById(R.id.tv_total_delivery_item_num)).setText(reportDaySales.getDeliverooQty().intValue() + reportDaySales.getUbereatsQty().intValue() + reportDaySales.getFoodpandaQty().intValue() + "");
             float f = Float.parseFloat(reportDaySales.getDeliveroo()) + Float.parseFloat(reportDaySales.getUbereats()) + Float.parseFloat(reportDaySales.getFoodpanda());
-            ((TextView) findViewById(R.id.tv_total_delivery_item)).setText("$" + f + "");
+            ReportDaySalesItem totalDelivery = new ReportDaySalesItem(context);
+            totalDelivery.setData("TOTAL DELIVERY", reportDaySales.getDeliverooQty().intValue() + reportDaySales.getUbereatsQty().intValue() + reportDaySales.getFoodpandaQty().intValue() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f, true);
+            ll_sales_total.addView(totalDelivery);
             // TOTAL/CARD
-            ((TextView) findViewById(R.id.tv_total_card_item_num)).setText(reportDaySales.getTotalCardQty() + "");
-            ((TextView) findViewById(R.id.tv_total_card_item)).setText("$" + reportDaySales.getTotalCard());
+            ReportDaySalesItem totalCard = new ReportDaySalesItem(context);
+            totalCard.setData("TOTAL CARD", reportDaySales.getTotalCardQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTotalCard(), true);
+            ll_sales_total.addView(totalCard);
             // TOTAL/NETS
-            ((TextView) findViewById(R.id.tv_total_nets_item_num)).setText(reportDaySales.getNetsQty() + "");
-            ((TextView) findViewById(R.id.tv_total_nets_item)).setText("$" + reportDaySales.getNets());
+            ReportDaySalesItem totalNets = new ReportDaySalesItem(context);
+            totalNets.setData("TOTAL NETS", reportDaySales.getNetsQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getNets(), true);
+            ll_sales_total.addView(totalNets);
             // TOTAL/CASH
-            ((TextView) findViewById(R.id.tv_total_cash_item_num)).setText(reportDaySales.getTotalCashQty() + "");
-            ((TextView) findViewById(R.id.tv_total_cash_item)).setText("$" + reportDaySales.getTotalCash());
+            ReportDaySalesItem totalCash = new ReportDaySalesItem(context);
+            totalCash.setData("TOTAL CASH", reportDaySales.getTotalCashQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTotalCash(), true);
+            ll_sales_total.addView(totalCash);
             // TOTAL/BOH
-            ((TextView) findViewById(R.id.tv_total_boh_item_num)).setText(reportDaySales.getHoldldQty() + "");
-            ((TextView) findViewById(R.id.tv_total_boh_item)).setText("$" + reportDaySales.getHoldld());
+            ReportDaySalesItem totalBoh = new ReportDaySalesItem(context);
+            totalBoh.setData("TOTAL BOH", reportDaySales.getHoldldQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getHoldld(), true);
+            ll_sales_total.addView(totalBoh);
             // Netts/Sales
-            ((TextView) findViewById(R.id.tv_nett_sales_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_nett_sales_item)).setText("$" + reportDaySales.getNettSales());
+            ReportDaySalesItem nettSales = new ReportDaySalesItem(context);
+            nettSales.setData("Nett Sales",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getNettSales(), true);
+            ll_sales_total.addView(nettSales);
             // VOID/Items
-            ((TextView) findViewById(R.id.tv_summary_voiditems_item_num)).setText(reportDaySales.getItemVoidQty() + "");
-            ((TextView) findViewById(R.id.tv_summary_voiditems_item)).setText("$" + reportDaySales.getItemVoid());
+            ReportDaySalesItem voidItemView = new ReportDaySalesItem(context);
+            voidItemView.setTitle("-----VOID/REFUND/SUMMARY-----");
+            voidItemView.setData("VOID Items",  reportDaySales.getItemVoidQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getItemVoid(), true);
+            ll_sales_total.addView(voidItemView);
             // VOID Bills
-            ((TextView) findViewById(R.id.tv_summary_voidbills_item_num)).setText(reportDaySales.getBillVoidQty() + "");
-            ((TextView) findViewById(R.id.tv_summary_voidbills_item)).setText("$" + reportDaySales.getBillVoid());
+            ReportDaySalesItem voidBillView = new ReportDaySalesItem(context);
+            voidBillView.setData("VOID Bills",  reportDaySales.getBillVoidQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getBillVoid(), true);
+            ll_sales_total.addView(voidBillView);
             // TOTAL VOID
-            ((TextView) findViewById(R.id.tv_summary_totalvoids_item_num)).setText("");
             float f1 = Float.parseFloat(reportDaySales.getItemVoid()) + Float.parseFloat(reportDaySales.getBillVoid());
-            ((TextView) findViewById(R.id.tv_summary_totalvoids_item)).setText("$" + f1 + "");
+            ReportDaySalesItem totalVoid = new ReportDaySalesItem(context);
+            totalVoid.setData("TOTAL VOID",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f1, true);
+            ll_sales_total.addView(totalVoid);
             // REFUND Bills
-            ((TextView) findViewById(R.id.tv_summary_refundbills_num)).setText(reportDaySales.getBillRefundQty() + "");
-            ((TextView) findViewById(R.id.tv_summary_refundbills_item)).setText("$" + reportDaySales.getBillRefund());
+            ReportDaySalesItem refundBillView = new ReportDaySalesItem(context);
+            refundBillView.setData("REFUND Bills",  reportDaySales.getBillRefundQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getBillRefund(), true);
+            ll_sales_total.addView(refundBillView);
             // REFUND Taxes
-            ((TextView) findViewById(R.id.tv_summary_refundtaxes_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_summary_refundtaxes_item)).setText("$" + reportDaySales.getRefundTax());
+            ReportDaySalesItem refundTaxView = new ReportDaySalesItem(context);
+            refundTaxView.setData("REFUND Taxes",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getRefundTax(), true);
+            ll_sales_total.addView(refundTaxView);
             // TOTAL REFUND
-            ((TextView) findViewById(R.id.tv_summary_totalrefund_item_num)).setText("");
+
             float f2 = Float.parseFloat(reportDaySales.getBillRefund()) + Float.parseFloat(reportDaySales.getRefundTax());
-            ((TextView) findViewById(R.id.tv_summary_totalrefund_item)).setText("$" + f2 + "");
+            ReportDaySalesItem totalRefundView = new ReportDaySalesItem(context);
+            totalRefundView.setData("TOTAL REFUND",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f2, true);
+            ll_sales_total.addView(totalRefundView);
             // Discount on%
-            ((TextView) findViewById(R.id.tv_discounts_discounton_item_num)).setText(reportDaySales.getDiscountPerQty() + "");
-            ((TextView) findViewById(R.id.tv_discounts_discounton_item)).setText("$" + reportDaySales.getDiscountPer());
+
+            ReportDaySalesItem disncountViewA = new ReportDaySalesItem(context);
+            disncountViewA.setTitle("-----DISCOUNTS-----");
+            disncountViewA.setData("Discount on %",  reportDaySales.getDiscountPerQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscountPer(), true);
+            ll_sales_total.addView(disncountViewA);
             // Discount on$
-            ((TextView) findViewById(R.id.tv_discounts_discount_item_num)).setText(reportDaySales.getDiscountQty() + "");
-            ((TextView) findViewById(R.id.tv_discounts_discount_item)).setText("$" + reportDaySales.getDiscount());
+
+            ReportDaySalesItem disncountViewB = new ReportDaySalesItem(context);
+            disncountViewB.setData("Discount on $",  reportDaySales.getDiscountQty() + "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscount(), true);
+            ll_sales_total.addView(disncountViewB);
             // Total Discount
-            ((TextView) findViewById(R.id.tv_discounts_totaldiscount_item_num)).setText("");
             float f3 = Float.parseFloat(reportDaySales.getDiscountPer()) + Float.parseFloat(reportDaySales.getDiscount());
-            ((TextView) findViewById(R.id.tv_discounts_totaldiscount_item)).setText("$" + f3 + "");
+            ReportDaySalesItem totalDiscount = new ReportDaySalesItem(context);
+            totalDiscount.setData("Discount on $",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f3, true);
+            ll_sales_total.addView(totalDiscount);
             // Svc Charge
 //        ((TextView)findViewById(R.id.tv_svc_charge_item_num)).setText(reportDaySales.getDiscountPerQty() + "");
-//        ((TextView)findViewById(R.id.tv_svc_charge_item)).setText("$" + reportDaySales.getDiscountPer());
+//        ((TextView)findViewById(R.id.tv_svc_charge_item)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscountPer());
             // GST
 //        ((TextView)findViewById(R.id.tv_gst_item_num)).setText(reportDaySales.getDiscountPerQty() + "");
-//        ((TextView)findViewById(R.id.tv_gst_item)).setText("$" + reportDaySales.getDiscountPer());
+//        ((TextView)findViewById(R.id.tv_gst_item)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscountPer());
             // Inclusive Tax
-            ((TextView) findViewById(R.id.tv_tax_inclusivetax_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_tax_inclusivetax_item)).setText("$" + reportDaySales.getInclusiveTaxAmt());
+            ReportDaySalesItem inclusiveTaxView = new ReportDaySalesItem(context);
+            inclusiveTaxView.setTitle("-----TAX-----");
+            inclusiveTaxView.setData("Discount on $",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getInclusiveTaxAmt(), true);
+            ll_sales_total.addView(inclusiveTaxView);
             // Total Tax
-            ((TextView) findViewById(R.id.tv_tax_totaltax_item_num)).setText("");
             float f4 = Float.parseFloat(reportDaySales.getTotalTax()) + Float.parseFloat(reportDaySales.getInclusiveTaxAmt());
-            ((TextView) findViewById(R.id.tv_tax_totaltax_item)).setText("$" + f4 + "");
+            ReportDaySalesItem totalTaxView = new ReportDaySalesItem(context);
+            totalTaxView.setData("Discount on $",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f4, true);
+            ll_sales_total.addView(totalTaxView);
             // Start Drawer
-            ((TextView) findViewById(R.id.tv_start_drawer_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_start_drawer_item)).setText("$" + reportDaySales.getStartDrawerAmount());
+            ReportDaySalesItem startDrawer = new ReportDaySalesItem(context);
+            startDrawer.setTitle("-----DRAWER-----");
+            startDrawer.setData("Discount on $",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getStartDrawerAmount(), true);
+            ll_sales_total.addView(startDrawer);
             // TOTAL CASH
-            ((TextView) findViewById(R.id.tv_drawer_totalcash_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_drawer_totalcash_item)).setText("$" + reportDaySales.getTotalCash());
+            ReportDaySalesItem totalCASHView = new ReportDaySalesItem(context);
+            totalCASHView.setData("Total Cash",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTotalCash(), true);
+            ll_sales_total.addView(totalCASHView);
             // Stored-card Cash Charge
-            ((TextView) findViewById(R.id.tv_drawer_storedcharge_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_drawer_storedcharge_item)).setText("$" + reportDaySales.getCashTopUp());
+            ReportDaySalesItem storedCardCashCharge = new ReportDaySalesItem(context);
+            storedCardCashCharge.setData("Stored-Card Cash Charge",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getCashTopUp(), true);
+            ll_sales_total.addView(storedCardCashCharge);
             // Cash In
-            ((TextView) findViewById(R.id.tv_cashIn_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_cashIn_item)).setText("$" + reportDaySales.getCashInAmt());
+            ReportDaySalesItem cashIN = new ReportDaySalesItem(context);
+            cashIN.setData("Cash In",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getCashInAmt(), true);
+            ll_sales_total.addView(cashIN);
             // Cash Out
-            ((TextView) findViewById(R.id.tv_cashout_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_cashout_item)).setText("$" + reportDaySales.getCashOutAmt());
+            ReportDaySalesItem cashOUT = new ReportDaySalesItem(context);
+            cashOUT.setData("Cash Out",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getCashOutAmt(), true);
+            ll_sales_total.addView(cashOUT);
             // Expected In Drawer
-            ((TextView) findViewById(R.id.tv_expectedindrawer_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_expectedindrawer_item)).setText("$" + reportDaySales.getExpectedAmount());
+            ReportDaySalesItem expected = new ReportDaySalesItem(context);
+            expected.setData("Expected in Drawer",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getExpectedAmount(), true);
+            ll_sales_total.addView(expected);
             // Actual In Drawer
-            ((TextView) findViewById(R.id.tv_actualindrawer_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_actualindrawer_item)).setText("$" + reportDaySales.getWaiterAmount());
+            ReportDaySalesItem actual = new ReportDaySalesItem(context);
+            actual.setData("Actual in Drawer",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getWaiterAmount(), true);
+            ll_sales_total.addView(actual);
             // Difference
-            ((TextView) findViewById(R.id.tv_difference_item_num)).setText("");
-            ((TextView) findViewById(R.id.tv_difference_item)).setText("$" + reportDaySales.getDifference());
+            ReportDaySalesItem difference = new ReportDaySalesItem(context);
+            difference.setData("Difference",  "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDifference(), true);
+            ll_sales_total.addView(difference);
 
             ((TextView) findViewById(R.id.tv_total_bill)).setText(reportDaySales.getTotalBills().toString());
             ((TextView) findViewById(R.id.tv_total_temp_menu)).setText(reportDaySales.getOpenCount().toString());

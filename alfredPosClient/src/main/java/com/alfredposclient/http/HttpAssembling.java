@@ -4,6 +4,7 @@ import android.os.Build;
 
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.LoginResult;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.RevenueCenter;
@@ -59,7 +60,7 @@ public class HttpAssembling {
 
 	//  	ReportDaySales reportDaySales;
 	////	List<ReportDayTax> reportDayTaxs;
-	public static StringEntity getSendemailParam(ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs)
+	public static StringEntity getSendemailParam(ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs, List<ReportDayPayment> reportDayPayments)
 			throws UnsupportedEncodingException {
 		Gson gson = new Gson();
 		LoginResult loginResult = CoreData.getInstance().getLoginResult();
@@ -70,6 +71,7 @@ public class HttpAssembling {
 		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
 		map.put("reportDaySales", reportDaySales);
 		map.put("reportDayTaxs", reportDayTaxs);
+		map.put("reportDayPayments", reportDayPayments);
 		StringEntity entity = new StringEntity(gson.toJson(map));
 		return entity;
 	}

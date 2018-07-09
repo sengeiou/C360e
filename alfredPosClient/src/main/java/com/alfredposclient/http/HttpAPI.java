@@ -10,6 +10,7 @@ import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.RevenueCenter;
@@ -39,7 +40,6 @@ import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.XZReportHtml;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
-import com.alfredposclient.popupwindow.CloseOrderWindow;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -798,12 +798,12 @@ public class HttpAPI {
   //  reportDaySales,reportDayTaxs,
   //	ReportDaySales reportDaySales;
 //	List<ReportDayTax> reportDayTaxs;
-    public static void sendEmailSync(Context context, final ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs,
+    public static void sendEmailSync(Context context, final ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs, List<ReportDayPayment> reportDayPayments,
                                         String url, SyncHttpClient httpClient) {
         // try {
         StringEntity entity = null;
         try {
-            entity = HttpAssembling.getSendemailParam(reportDaySales,reportDayTaxs);
+            entity = HttpAssembling.getSendemailParam(reportDaySales,reportDayTaxs, reportDayPayments);
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
