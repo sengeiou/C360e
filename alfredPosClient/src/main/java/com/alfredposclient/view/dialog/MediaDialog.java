@@ -56,11 +56,11 @@ public class MediaDialog extends Dialog  {
 		listview = (ListView) window.findViewById(R.id.
 				lv_media);
 
-		title=(TextView) window.findViewById(R.id.lv_media);
+		title=(TextView) window.findViewById(R.id.tv_pay_title);
 
 
 		textTypeFace.setTrajanProBlod((TextView) window
-				.findViewById(R.id.lv_media));
+				.findViewById(R.id.tv_pay_title));
 		adapters = new PamentMethodAdapter(context, plist);
 
 		listview.setAdapter(adapters);

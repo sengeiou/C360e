@@ -79,6 +79,8 @@ public class PamentMethodAdapter extends BaseAdapter{
 //            textTypeFace.setTrajanProBlod((TextView) window
 //                    .findViewById(R.id.lv_media));
 
+
+            initTextTypeFace(view);
             view.setTag(holder);
         } else {
             holder = (PamentMethodAdapter.ViewHolder)view.getTag();
@@ -132,10 +134,21 @@ public class PamentMethodAdapter extends BaseAdapter{
 
     }
 
-//    private void initTextTypeFace(View view) {
-//        TextTypeFace textTypeFace = TextTypeFace.getInstance();
-//        textTypeFace.setTrajanProBlod((TextView) view
-//                .findViewById(R.id.tv_bill_summary));
-//
-//    }
+    private void initTextTypeFace(View view) {
+        TextTypeFace textTypeFace = TextTypeFace.getInstance();
+
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_payment_meth));
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_payment_tax));
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_payment_admin));
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_payment_pay));
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_payment_symbol));
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_payment_money));
+
+    }
 }
