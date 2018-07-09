@@ -360,8 +360,8 @@ public class XZReportActivity extends BaseActivity {
             inclusiveTax.setData("Exclusive Tax", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getInclusiveTaxAmt(), true);
             ll_sales_total.addView(inclusiveTax);
+            BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
             if(reportDayPayments != null && reportDayPayments.size() >0){
-                BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
                 for(ReportDayPayment reportDayPayment : reportDayPayments){
                     BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
                 }
@@ -376,7 +376,7 @@ public class XZReportActivity extends BaseActivity {
             // Total/sales
             ReportDaySalesItem totalSales = new ReportDaySalesItem(context);
             totalSales.setData("Total Sales", "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTotalSales(), true);
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true), true);
             ll_sales_total.addView(totalSales);
             // CASH
             ReportDaySalesItem cashView = new ReportDaySalesItem(context);
