@@ -97,10 +97,11 @@ public class BillPrint extends PrintJob{
 		
 		addHortionalLine(this.charSize);
 	}
-	
+
+
 	public void AddHeader(int isTakeAway, String table, int pax, String billNo,
 					String posNo, String cashier, String dateTime, String orderNo) {
-		
+
 		//流水号 NO
 		PrintData orderNoPrint = new PrintData();
 		String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL-1);
@@ -120,7 +121,7 @@ public class BillPrint extends PrintJob{
 //		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
 //		cashierPrint.setText(cashierStr);
 //		this.data.add(cashierPrint);
-		
+
 		//POS
 		PrintData posPrint = new PrintData();
 		String posLabel = StringUtil.padLeft(PrintService.instance.getResources().getString(R.string.pos), this.FIXED_COL4_TOTAL-1);
@@ -134,7 +135,7 @@ public class BillPrint extends PrintJob{
 		PrintData datePrint = new PrintData();
 		String dateLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.date), this.FIXED_COL4_TOTAL-1);
 		String dateStr = dateLabel+":"+dateTime+" ";
-		
+
 		//Bill NO
 		PrintData billNoPrint = new PrintData();
 		String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.bill_no_), this.FIXED_COL4_TOTAL-1);
@@ -144,9 +145,9 @@ public class BillPrint extends PrintJob{
 		billNoPrint.setText(dateStr+padBillNo);
 		this.data.add(billNoPrint);
 
-		
+
 		//Table & PAX
-		
+
 		PrintData tabPrint = new PrintData();
 		String tabLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.table), this.FIXED_COL4_TOTAL/2);
 		String tabStr = tabLabel+":"+table;
@@ -155,9 +156,9 @@ public class BillPrint extends PrintJob{
 		tabPrint.setFontsize(2);
 		tabPrint.setText(tabStr);
 		this.data.add(tabPrint);
-		
+
 		PrintData paxPrint = new PrintData();
-		
+
 		try {
 			int padlen = this.charSize - tabStr.getBytes("GBK").length * 2;
 			String paxLabel = StringUtil.padRight(PrintService.instance
@@ -186,7 +187,33 @@ public class BillPrint extends PrintJob{
 		//addHortionalLine();
 		addHortionaDoublelLine(this.charSize);
 	}
-	
+
+
+	public void AddHeaderCash(int isTakeAway, String table, int pax, String billNo,
+						  String posNo, String cashier, String dateTime, String orderNo) {
+
+		//日期
+		PrintData datePrint = new PrintData();
+		String dateLabel = StringUtil.padRight
+				(PrintService.instance.getResources().getString(R.string.date), this.FIXED_COL4_TOTAL-1);
+		String dateStr = dateLabel+":"+dateTime+" ";
+
+		//Bill NO
+		PrintData billEmpPrint = new PrintData();
+		String empLabel = StringUtil.padRight(PrintService.instance.getResources
+				().getString(R.string.cashier), this.FIXED_COL4_TOTAL-1);
+		String padBillNo =empLabel+":"+cashier+reNext;
+		billEmpPrint.setDataFormat(PrintData.FORMAT_TXT);
+		billEmpPrint.setTextAlign(PrintData.ALIGN_LEFT);
+		billEmpPrint.setText(dateStr+padBillNo);
+		this.data.add(billEmpPrint);
+		addHortionaDoublelLine(this.charSize);
+
+	}
+
+
+
+
 	/*Kiosk uses only*/
 	public void AddKioskHeader(int isTakeAway, String table, int pax, String billNo,
 			String posNo, String cashier, String dateTime, String orderNo, String groupNum) {

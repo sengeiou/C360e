@@ -92,7 +92,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener  {
+public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener {
     private String TAG = CloseOrderWindow.class.getSimpleName();
     private static final int DURATION_1 = 300;
     private static final int DURATION_2 = 200;
@@ -630,9 +630,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
 
             settlementNum = BH.getBD(sumPaidamount);
-            if(settlementNum.compareTo(BH.getBD(order.getTotal())) > -1){
+            if (settlementNum.compareTo(BH.getBD(order.getTotal())) > -1) {
                 remainTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
-            }else {
+            } else {
                 remainTotal = BH.sub(BH.getBD(order.getTotal()),
                         BH.getBD(sumPaidamount), true);
             }
@@ -1402,9 +1402,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     pamentMethodlist.clear();
 
                     settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
-                    SettlementRestaurant se=new SettlementRestaurant();
-                    se=SettlementRestaurantSQL.getSettlementRestaurant(3109);
-                   PaymentMethod pam = new PaymentMethod();
+                    SettlementRestaurant se = new SettlementRestaurant();
+                    se = SettlementRestaurantSQL.getSettlementRestaurant(3109);
+                    PaymentMethod pam = new PaymentMethod();
                     pam = PamentMethodSQL.getPamentMethod(Integer.valueOf("31").intValue());
 //                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
 //                    pamentMethodlist.add(pam);
@@ -1767,7 +1767,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 // show.append(0);
                 break;
             case ParamConst.SETTLEMENT_TYPE_PART_PAYMENT:
-              initPayment();
+
+
+                initPayment();
                 break;
 
             default:
@@ -1998,12 +2000,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             break;
             // 部分支付（未固定金额）
             case ParamConst.SETTLEMENT_TYPE_NOT_PART: {
+                String showStr;
+                if (show.toString().equals("0")) {
+                    showStr = BH.mul(BH.getBD(remainTotal), BH.getBD("1.00"), true).toString();
+                } else {
+                    showStr = BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true).toString();
+                }
 
-                String showStr = BH.mul(BH.getBD(show.toString()), BH.getBD("0.01"), true).toString();
                 BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
                 BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
-                   // showStr = remainTotalAfterRound.toString();
+                    // showStr = remainTotalAfterRound.toString();
 
                     showStr = showStrBigDecimal.toString();
                 } else {
@@ -2041,14 +2048,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
             break;
 
-         //固定金额
+            //固定金额
             case ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM: {
 
                 String showStr = BH.getBD(partAcount).toString();
                 BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
                 BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
-                    showStr =showStrBigDecimal.toString();
+                    showStr = showStrBigDecimal.toString();
                 } else {
                     showStr = showStrBigDecimal.toString();
                 }
@@ -2084,15 +2091,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             break;
 
             case ParamConst.SETTLEMENT_TYPE_PART: {
+                PaymentSettlement paymentSettlement = null;
                 if (ispart == 0) {
                     //不计税
                     deleteVoidOrEntTax();
                 }
-
-
-                PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+                paymentSettlement = ObjectFactory.getInstance()
                         .getPaymentSettlement(payment, paymentTypeId,
-                                order.getTotal());
+                               order.getTotal());
                 PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 
                 order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
@@ -2455,9 +2461,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
         initBillSummary();
         if (viewTag != ParamConst.SETTLEMENT_TYPE_STORED_CARD)
+
             closeMoneyKeyboard();
 
-        if (settlementNum.compareTo(BH.getBD(order.getTotal())) == 0) {
+        if (settlementNum.compareTo(BH.getBD(order.getTotal())) == 0)
+
+        {
 
             if (viewTag == ParamConst.SETTLEMENT_TYPE_CASH) {
                 if (TextUtils.isEmpty(tv_change_num.getText().toString())) {
@@ -2470,6 +2479,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
 
         }
+
     }
 
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {
@@ -2747,6 +2757,16 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
     }
 
+    private void deleteVoidOrEntTaxAllPart() {
+        OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrder(ParamConst.ACTIVE_DELETE, order.getId().intValue());
+        order.setTotal(BH.sub(BH.getBD(remainTotal),
+                BH.getBD(order.getTaxAmount()), false).toString());
+        payment.setPaymentAmount(order.getTotal());
+        OrderSQL.update(order);
+        PaymentSQL.addPayment(payment);
+
+    }
+
     private void refundTax() {
         OrderDetailTaxSQL.updateOrderDetailTaxActiveByOrder(ParamConst.ACTIVE_REFUND, order.getId().intValue());
 //		order.setTotal(BH.sub(BH.getBDNoFormat(order.getTotal()), BH.getBD(order.getTaxAmount()), true).toString());
@@ -2760,11 +2780,19 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
     public void onPaymentClick(PaymentMethod paym) {
         //   Toast.makeText(parent,"--- "+key,Toast.LENGTH_LONG).show();
-          p=paym;
+        p = paym;
         if (p.getIsAdmin() == 1) {
+            if(p.getIsPart() == 0){
+                if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                    return;
+                }
+            }
             verifyDialog = new VerifyDialog(parent, handler);
             verifyDialog.show("PAMENTMETHOD", null);
+
         } else {
+
+
             initPayment();
         }
     }
@@ -2848,6 +2876,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
 
         } else {
+
+            if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                return;
+            }
             viewTag = ParamConst.SETTLEMENT_TYPE_PART;
             ispart = p.getIsPart();
             if (p.getIsMsg() == 1) {
@@ -2893,13 +2925,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 View.INVISIBLE);
         //  BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
         //  show.append(remainTotalAfterRound.toString().replace(".", ""));
-        tv_part_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()));
+        tv_part_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal));
 
         //  tv_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.abs(rounding, true).toString());
-        tv_part_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()));
+        tv_part_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal));
+        show.append(0);
         //   tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
     }
-
 
 
 }

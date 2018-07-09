@@ -6,10 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.PaymentMethod;
+import com.alfredbase.utils.BH;
+import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -27,6 +31,8 @@ public class PamentMethodAdapter extends BaseAdapter{
 
     List<PaymentMethod> list;
     private DisplayImageOptions options;
+
+    TextTypeFace textTypeFace = TextTypeFace.getInstance();
     public PamentMethodAdapter(Context context, List<PaymentMethod> list) {
 
         this.context = context;
@@ -69,6 +75,9 @@ public class PamentMethodAdapter extends BaseAdapter{
             holder.symbol = (TextView)view.findViewById(R.id.tv_payment_symbol);
             holder.money = (TextView)view.findViewById(R.id.tv_payment_money);
             holder.img=(ImageView)view.findViewById(R.id.img_payment_left);
+
+//            textTypeFace.setTrajanProBlod((TextView) window
+//                    .findViewById(R.id.lv_media));
 
             view.setTag(holder);
         } else {
@@ -122,4 +131,11 @@ public class PamentMethodAdapter extends BaseAdapter{
         public TextView tv ,tax,pay,admin,symbol,money;
 
     }
+
+//    private void initTextTypeFace(View view) {
+//        TextTypeFace textTypeFace = TextTypeFace.getInstance();
+//        textTypeFace.setTrajanProBlod((TextView) view
+//                .findViewById(R.id.tv_bill_summary));
+//
+//    }
 }
