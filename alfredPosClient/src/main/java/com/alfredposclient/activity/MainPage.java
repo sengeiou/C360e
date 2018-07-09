@@ -787,6 +787,12 @@ public class MainPage extends BaseActivity {
                         kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
                         KotSummarySQL.update(kotSummary);
                     }
+
+                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                            context);
+                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+                    printerLoadingDialog.showByTime(3000);
+
                     changeNum = paymentMap.get("changeNum");
                     if (!TextUtils.isEmpty(changeNum)) {
                         if (!(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00").equals(changeNum))
@@ -797,10 +803,6 @@ public class MainPage extends BaseActivity {
                                 }
                             });
                     }
-                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                            context);
-                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-                    printerLoadingDialog.showByTime(3000);
                     PrinterDevice printer = App.instance.getCahierPrinter();
                     PrinterTitle title = ObjectFactory.getInstance()
                             .getPrinterTitle(
@@ -898,6 +900,12 @@ public class MainPage extends BaseActivity {
                     OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(paidOrderSplit, App.instance.getRevenueCenter());
                     String changeNum;
                     changeNum = paymentMap.get("changeNum");
+
+                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                            context);
+                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+                    printerLoadingDialog.showByTime(3000);
+
                     if (!TextUtils.isEmpty(changeNum)) {
                         if (!(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00").equals(changeNum))
                             DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
@@ -907,10 +915,6 @@ public class MainPage extends BaseActivity {
                                 }
                             });
                     }
-                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                            context);
-                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-                    printerLoadingDialog.showByTime(3000);
                     PrinterDevice printer = App.instance.getCahierPrinter();
                     PrinterTitle title = ObjectFactory.getInstance()
                             .getPrinterTitleByOrderSplit(

@@ -180,7 +180,7 @@ public class App extends BaseApplication {
     public static App instance;
     private RevenueCenter revenueCenter;
 
-    private   SystemSettings  settings;
+    private SystemSettings settings;
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
     private static final String DATABASE_NAME = "com.alfredposclient";
@@ -198,7 +198,6 @@ public class App extends BaseApplication {
     private Map<Integer, KDSDevice> kdsDevices = new ConcurrentHashMap<Integer, KDSDevice>();
     private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<Integer, PrinterDevice>();
     private Map<Integer, WaiterDevice> waiterDevices = new ConcurrentHashMap<Integer, WaiterDevice>();
-
 
 
     // push message
@@ -1465,17 +1464,16 @@ public class App extends BaseApplication {
         return this.printerDevices;
     }
 
-    public  List<PrinterDevice> getPrinterLable() {
+    public List<PrinterDevice> getPrinterLable() {
         // PrinterDevice dummy = new PrinterDevice();
         // dummy.setIP("192.168.0.11");
         // return dummy;
-        List<PrinterDevice> printlist=new ArrayList<PrinterDevice>();
+        List<PrinterDevice> printlist = new ArrayList<PrinterDevice>();
         for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
             Integer key = dev.getKey();
             PrinterDevice devPrinter = dev.getValue();
-            if (devPrinter.getIP().indexOf(":") != -1)
-            {
-             printlist.add(devPrinter);
+            if (devPrinter.getIP().indexOf(":") != -1) {
+                printlist.add(devPrinter);
             }
         }
 
@@ -1688,13 +1686,13 @@ public class App extends BaseApplication {
         }
     }
 
-//    PrinterTitle title,
+    //    PrinterTitle title,
 //    Order order, ArrayList<PrintOrderItem> orderItems,
-    public void remoteTBillPrint(PrinterDevice printer,PrinterTitle title,
+    public void remoteTBillPrint(PrinterDevice printer, PrinterTitle title,
                                  Order order, ArrayList<OrderDetail> OrderDetail, ArrayList<PrintOrderModifier> orderModifiers
-                           ) {
+    ) {
 
-       // remoteTBillPrint(printer);
+        // remoteTBillPrint(printer);
 
         Gson gson = new Gson();
         String prtStr = gson.toJson(printer);
@@ -1709,8 +1707,8 @@ public class App extends BaseApplication {
             return;
         }
         try {
-          //  mRemoteService.printTscBill("","","","");
-            mRemoteService.printTscBill(prtStr,titleStr,orderStr,orderDetailStr,orderModifiersStr, getLocalRestaurantConfig().getCurrencySymbol());
+            //  mRemoteService.printTscBill("","","","");
+            mRemoteService.printTscBill(prtStr, titleStr, orderStr, orderDetailStr, orderModifiersStr, getLocalRestaurantConfig().getCurrencySymbol());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -1776,10 +1774,14 @@ public class App extends BaseApplication {
                                         .getReferenceNo()
                                         + "");
                         break;
-                    default: {
-                        PaymentMethod pamentMethod = PamentMethodSQL.getPamentMethod(paymentSettlement.getPaymentTypeId()-10000);
-                               //CoreData.getInstance().getPamentMethod(paymentSettlement.getPaymentTypeId());
-                        printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
+
+                    default:
+                        {
+
+                            if(paymentSettlement.getPaymentTypeId().intValue()>10000) {
+                                PaymentMethod pamentMethod = PamentMethodSQL.getPamentMethod(paymentSettlement.getPaymentTypeId() - 10000);
+                                    printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
+                            }
                     }
                         break;
                 }
@@ -1889,17 +1891,17 @@ public class App extends BaseApplication {
             return;
         }
 
-        Log.d("discoverPrinter","1856");
+        Log.d("discoverPrinter", "1856");
         try {
             mCallback.setHandler(handler);
             mRemoteService.listPrinters();
-            Log.d("discoverPrinter","1860");
+            Log.d("discoverPrinter", "1860");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
-    public void closeDiscovery(){
+    public void closeDiscovery() {
         try {
             mRemoteService.closeDiscovery();
         } catch (RemoteException e) {
@@ -2232,7 +2234,6 @@ public class App extends BaseApplication {
             return false;
         }
     }
-
 
 
     /*
@@ -2688,9 +2689,9 @@ public class App extends BaseApplication {
                         .getRoundAmount(paidOrder);
 //
 //                if(printer.getIsLablePrinter()==0) {
-                    App.instance.remoteBillPrint(printer, title, paidOrder,
-                            orderItems, orderModifiers, taxMap, paymentSettlements,
-                            roundAmount);
+                App.instance.remoteBillPrint(printer, title, paidOrder,
+                        orderItems, orderModifiers, taxMap, paymentSettlements,
+                        roundAmount);
 //                }else {
 //                    App.instance.remoteTBillPrint(printer);
 //                }

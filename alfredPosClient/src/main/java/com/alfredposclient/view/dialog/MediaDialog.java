@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.javabean.PaymentMethod;
+import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.adapter.PamentMethodAdapter;
 
@@ -27,8 +29,12 @@ public class MediaDialog extends Dialog  {
 
 	PamentMethodAdapter adapters;
 
+	private TextView  title;
+
 	private PaymentClickListener paymentClickListener;
 
+
+	TextTypeFace textTypeFace = TextTypeFace.getInstance();
 	public MediaDialog(Context context, Handler handler, List<PaymentMethod> pamentMethodslist) {
 		super(context, com.alfredbase.R.style.Dialog_verify);
 		this.handler = handler;
@@ -50,6 +56,11 @@ public class MediaDialog extends Dialog  {
 		listview = (ListView) window.findViewById(R.id.
 				lv_media);
 
+		title=(TextView) window.findViewById(R.id.lv_media);
+
+
+		textTypeFace.setTrajanProBlod((TextView) window
+				.findViewById(R.id.lv_media));
 		adapters = new PamentMethodAdapter(context, plist);
 
 		listview.setAdapter(adapters);
