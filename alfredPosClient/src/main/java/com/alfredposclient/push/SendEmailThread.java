@@ -2,8 +2,11 @@ package com.alfredposclient.push;
 
 import android.content.Context;
 
+import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
+import com.alfredbase.utils.BH;
 import com.alfredposclient.activity.OpenRestaruant;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.ReportObjectFactory;
@@ -37,9 +40,9 @@ public class SendEmailThread extends Thread {
         List<ReportDayTax> reportDayTaxs;
             reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(App.instance.getBusinessDate());
             reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(App.instance.getBusinessDate());
-
-            if(reportDayTaxs != null && reportDayTaxs.size() > 0) {
-                SyncCentre.getInstance().syncSendEmail(App.instance, reportDaySales, reportDayTaxs, null);
+            List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadShowReportDayPayment(App.instance.getBusinessDate());
+            if(reportDayTaxs != null && BH.getBD(reportDaySales.getTotalSales()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) == 1) {
+                SyncCentre.getInstance().syncSendEmail(App.instance, reportDaySales, reportDayTaxs, reportDayPayments,null);
             }
            // SyncCentre.getInstance().syncMedia(App.instance,  null);
 

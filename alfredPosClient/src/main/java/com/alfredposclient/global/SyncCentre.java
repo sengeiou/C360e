@@ -9,6 +9,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
+import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.SyncMsg;
@@ -169,9 +170,9 @@ public class SyncCentre {
 //	ReportDaySales reportDaySales;
 //	List<ReportDayTax> reportDayTaxs;
 	public void syncSendEmail(Context context,
-							  ReportDaySales reportDaySales,List<ReportDayTax> reportDayTaxs, Handler handler) {
+							  ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs, List<ReportDayPayment> reportDayPayments, Handler handler) {
 		//orderDataMsg
-		HttpAPI.sendEmailSync(context, reportDaySales,reportDayTaxs,
+		HttpAPI.sendEmailSync(context, reportDaySales,reportDayTaxs,reportDayPayments,
 				getAbsoluteUrl(APIName.SEND_EMAIL), bigSyncHttpClient);
 	}
 
