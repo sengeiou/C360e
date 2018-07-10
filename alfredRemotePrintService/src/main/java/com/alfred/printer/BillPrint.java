@@ -201,7 +201,7 @@ public class BillPrint extends PrintJob{
 		//Bill NO
 		PrintData billEmpPrint = new PrintData();
 		String empLabel = StringUtil.padRight(PrintService.instance.getResources
-				().getString(R.string.cashier), this.FIXED_COL4_TOTAL-1);
+				().getString(R.string.emp), this.FIXED_COL4_TOTAL-1);
 		String padBillNo =empLabel+":"+cashier+reNext;
 		billEmpPrint.setDataFormat(PrintData.FORMAT_TXT);
 		billEmpPrint.setTextAlign(PrintData.ALIGN_LEFT);

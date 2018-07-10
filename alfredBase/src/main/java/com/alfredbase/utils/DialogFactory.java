@@ -469,6 +469,11 @@ public class DialogFactory {
 				TextView tv_num = (TextView)view.findViewById(R.id.tv_change_num);
 				tv_num.setText(changeNum + "");
 
+
+				TextTypeFace textTypeFace = TextTypeFace.getInstance();
+
+				textTypeFace.setTrajanProBlod((TextView) view
+						.findViewById(R.id.tv_dia_change));
 				view.findViewById(R.id.ll_change).setOnClickListener(
 						new OnClickListener() {
 

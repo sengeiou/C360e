@@ -3270,7 +3270,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     rl_special_settlement_phone.setVisibility(View.GONE);
                     contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                             View.VISIBLE);
-                    show.append(0);
+                  //  show.append(0);
                     moneyKeyboard.setVisibility(View.VISIBLE);
                     moneyKeyboard.setMoneyPanel(View.GONE);
                     Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
@@ -3309,7 +3309,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                         View.VISIBLE);
-                show.append(0);
+           //     show.append(0);
                 moneyKeyboard.setVisibility(View.VISIBLE);
                 moneyKeyboard.setMoneyPanel(View.GONE);
                 Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
