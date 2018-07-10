@@ -93,7 +93,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.PamentMethodSQL;
+import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
@@ -1779,7 +1779,7 @@ public class App extends BaseApplication {
                         {
 
                             if(paymentSettlement.getPaymentTypeId().intValue()>10000) {
-                                PaymentMethod pamentMethod = PamentMethodSQL.getPamentMethod(paymentSettlement.getPaymentTypeId() - 10000);
+                                PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethod(paymentSettlement.getPaymentTypeId() - 10000);
                                     printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
                             }
                     }

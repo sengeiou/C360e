@@ -12,24 +12,24 @@ import com.alfredbase.utils.SQLiteStatementHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PamentMethodSQL {
+public class PaymentMethodSQL {
 
 
 
-    public static void addPamentMethod(List<PaymentMethod> pamentMethods) {
-        if (pamentMethods == null) {
+    public static void addPaymentMethod(List<PaymentMethod> paymentMethods) {
+        if (paymentMethods == null) {
             return;
         }
         SQLiteDatabase db = SQLExe.getDB();
         try {
             db.beginTransaction();
             String sql = "replace into "
-                    + TableNames.PamentMethod
+                    + TableNames.PaymentMethod
                     + "(id,nameCh,nameEn,nameOt,logoMd,logoSm,payType,restaurantId,isTax,isDiscount,isAdmin,isMsg,isMsgRequire,isPart,partAcount,status,description,createTime,updateTime,paymentTypeId)"
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
-            for (PaymentMethod pamentMethod : pamentMethods) {
+            for (PaymentMethod pamentMethod : paymentMethods) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
                         pamentMethod.getId());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 2,
@@ -87,9 +87,9 @@ public class PamentMethodSQL {
 
         }
     }
-    public static ArrayList<PaymentMethod> getAllPamentMethod() {
+    public static ArrayList<PaymentMethod> getAllPaymentMethod() {
         ArrayList<PaymentMethod> result = new ArrayList<PaymentMethod>();
-        String sql = "select * from " + TableNames.PamentMethod;
+        String sql = "select * from " + TableNames.PaymentMethod;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
@@ -136,9 +136,9 @@ public class PamentMethodSQL {
     }
 
 
-    public static PaymentMethod getPamentMethod(int paid) {
+    public static PaymentMethod getPaymentMethod(int paid) {
         PaymentMethod result = null;
-        String sql = "select * from " + TableNames.PamentMethod+ " where id = ?";
+        String sql = "select * from " + TableNames.PaymentMethod+ " where id = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
@@ -183,8 +183,8 @@ public class PamentMethodSQL {
     }
 
 
-    public static void deletePamentMethod(PaymentMethod pamentMethod) {
-        String sql = "delete from " + TableNames.PamentMethod + " where id = ?";
+    public static void deletePaymentMethod(PaymentMethod pamentMethod) {
+        String sql = "delete from " + TableNames.PaymentMethod + " where id = ?";
         try {
             SQLExe.getDB().execSQL(sql, new Object[] { pamentMethod.getId() });
         } catch (Exception e) {
@@ -192,8 +192,8 @@ public class PamentMethodSQL {
         }
     }
 
-    public static void deleteAllPamentMethod() {
-        String sql = "delete from " + TableNames.PamentMethod;
+    public static void deleteAllPaymentMethod() {
+        String sql = "delete from " + TableNames.PaymentMethod;
         try {
             SQLExe.getDB().execSQL(sql, new Object[] {});
         } catch (Exception e) {

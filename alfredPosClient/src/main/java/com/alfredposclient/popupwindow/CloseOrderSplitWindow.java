@@ -52,7 +52,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
-import com.alfredbase.store.sql.PamentMethodSQL;
+import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
@@ -1690,7 +1690,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                             String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
                             for (int i = 0; i < strarray.length; i++) {
                                 PaymentMethod pa = new PaymentMethod();
-                                pa = PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[i]).intValue());
+                                pa = PaymentMethodSQL.getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
 
                                 if (pa == null) {
                                     return;
@@ -1701,14 +1701,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                             }
                         }
                     }
-//                    //  pamentMethodlist=PamentMethodSQL.getAllPamentMethod();
+//                    //  pamentMethodlist=PamentMethodSQL.getAllPaymentMethod();
 //                    pamentMethodlist.add(pam);
 //                    if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {
 //
 //                        String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
 //                        for (int i = 0; i < strarray.length; i++) {
 //                            PaymentMethod pa = new PaymentMethod();
-//                            pa = PamentMethodSQL.getPamentMethod(Integer.valueOf(strarray[i]).intValue());
+//                            pa = PamentMethodSQL.getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
 //                            pamentMethodlist.add(pa);
 //                        }
 //                    }
