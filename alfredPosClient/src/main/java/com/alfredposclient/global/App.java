@@ -29,6 +29,7 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.CashInOut;
 import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
@@ -57,6 +58,7 @@ import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
+import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
@@ -1854,6 +1856,24 @@ public class App extends BaseApplication {
         }
     }
 
+
+
+    public void printOutCashDrawer(PrinterDevice printer,CashInOut c,Restaurant title) {
+        Gson gson = new Gson();
+        String prtStr = gson.toJson(printer);
+
+        String cashStr = gson.toJson(c);
+        String titleStr = gson.toJson(title);
+        if (mRemoteService == null) {
+            printerDialog();
+            return;
+        }
+        try {
+            mRemoteService.printCashInOut(prtStr,cashStr,titleStr);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
     public void deleteOldPrinterMsg(long businessDate) {
 
         try {

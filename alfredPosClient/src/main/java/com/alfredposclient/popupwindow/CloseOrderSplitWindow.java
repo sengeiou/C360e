@@ -3271,6 +3271,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                             View.VISIBLE);
                   //  show.append(0);
+                    EditText et_special_settlement_person_name = (EditText) contentView
+                            .findViewById(R.id.et_special_settlement_person_name);
+                    if(TextUtils.isEmpty(p.getDescription()))
+                    {
+                        et_special_settlement_person_name.setText("");
+                    }else {
+                        et_special_settlement_person_name.setText(p.getDescription().toString());
+                    }
                     moneyKeyboard.setVisibility(View.VISIBLE);
                     moneyKeyboard.setMoneyPanel(View.GONE);
                     Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
@@ -3310,6 +3318,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                         View.VISIBLE);
            //     show.append(0);
+                EditText et_special_settlement_person_name = (EditText) contentView
+                        .findViewById(R.id.et_special_settlement_person_name);
+                if(TextUtils.isEmpty(p.getDescription()))
+                {
+                    et_special_settlement_person_name.setText("");
+                }else {
+                    et_special_settlement_person_name.setText(p.getDescription().toString());
+                }
                 moneyKeyboard.setVisibility(View.VISIBLE);
                 moneyKeyboard.setMoneyPanel(View.GONE);
                 Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);

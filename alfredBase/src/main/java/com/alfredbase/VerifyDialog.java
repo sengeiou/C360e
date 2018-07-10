@@ -146,6 +146,7 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 						employee_ID = null;
 						password = null;
 						resultObject.put("User", user);
+
 						handler.sendMessage(handler.obtainMessage(DIALOG_RESPONSE, resultObject));
 						this.dismiss();
 					}

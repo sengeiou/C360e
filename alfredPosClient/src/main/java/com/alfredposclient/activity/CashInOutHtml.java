@@ -10,9 +10,16 @@ import android.webkit.WebView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
+import com.alfredbase.javabean.CashInOut;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.Restaurant;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.RestaurantSQL;
+import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.JSONUtil;
@@ -41,6 +48,8 @@ public class CashInOutHtml extends BaseActivity {
 	private String comment;
 	private User user;
 
+	private int id;
+
 	@Override
 	protected void initView() {
 		super.initView();
@@ -59,6 +68,7 @@ public class CashInOutHtml extends BaseActivity {
 				case VerifyDialog.DIALOG_RESPONSE:
 					Map<String, Object> map = (Map<String, Object>) msg.obj;
 					user = (User) map.get("User");
+				//	id = (int) map.get("Id");
 					init();
 					break;
 				case VerifyDialog.DIALOG_DISMISS:
@@ -121,6 +131,7 @@ public class CashInOutHtml extends BaseActivity {
 				break;
 			case JavaConnectJS.ACTION_CLICK_CASH_SAVE: {
 				String str = (String) msg.obj;
+                CashInOut cashInOut=new CashInOut();
 				try {
 					JSONObject jsonObject = new JSONObject(str);
 					JSONObject saveDataJsonObject = jsonObject.getJSONObject("saveData");
@@ -141,7 +152,7 @@ public class CashInOutHtml extends BaseActivity {
 					} else {
 						user.setUserName(user.getFirstName() + "." + user.getLastName());
 					}
-					ObjectFactory.getInstance().getCashInOut(App.instance.getRevenueCenter(),
+                     cashInOut= ObjectFactory.getInstance().getCashInOut(App.instance.getRevenueCenter(),
 							App.instance.getLastBusinessDate(), user, type, cash, comment);
 					UIHelp.showToast(context, context.getResources().getString(R.string.save_success));
 					Store.putString(context, Store.LOAD_CASH_DEFAULT, cash);
@@ -150,8 +161,25 @@ public class CashInOutHtml extends BaseActivity {
 					UIHelp.showToast(context, context.getResources().getString(R.string.cash_not_empty));
 					return;
 				}
+
+
+				Restaurant restaurant = RestaurantSQL.getRestaurant();
+
+			String logo=	SettingDataSQL.getSettingDataByUrl(restaurant.getLogoUrl()).getLogoString();
+			restaurant.setLogoUrl(logo);
+//				RevenueCenter title= App.instance.getRevenueCenter();
+			//	PrinterTitle title	App.instance.getRevenueCenter(),
+//                PrinterTitle title = ObjectFactory.getInstance()
+//                        .getPrinterTitle(
+//                                App.instance.getRevenueCenter(),
+//                                order,
+//                                App.instance.getUser().getFirstName()
+//                                        + App.instance.getUser().getLastName(),
+//                               "", 1);
+//
 				PrinterDevice printerDevice = App.instance.getCahierPrinter();
 				App.instance.kickOutCashDrawer(printerDevice);
+				App.instance.printOutCashDrawer(printerDevice,cashInOut,restaurant);
 			}
 				break;
 			default:
