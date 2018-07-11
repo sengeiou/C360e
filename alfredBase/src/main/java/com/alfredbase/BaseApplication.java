@@ -1,6 +1,5 @@
 package com.alfredbase;
 
-import android.Manifest;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,12 +15,8 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
@@ -56,7 +50,7 @@ public class BaseApplication extends Application {
 	 */
 
 	public static boolean isDebug = false;	//	Debug开关 release的时候设置为false
-	public static boolean isOpenLog = true;	//	release 时设置为false
+	public static boolean isOpenLog = false;	//	release 时设置为false
 
 	protected String APPPATH = "alibaba";// sunmi or google or alibaba;
 

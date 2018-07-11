@@ -61,7 +61,7 @@ import com.alfredbase.store.sql.ItemHappyHourSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.ModifierSQL;
-import com.alfredbase.store.sql.PamentMethodSQL;
+import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
@@ -388,8 +388,8 @@ public class HttpAnalysis {
 					new TypeToken<ArrayList<PaymentMethod>>() {
 					}.getType());
 			CoreData.getInstance().setPamentMethodList(pamentMethodList);
-			PamentMethodSQL.deleteAllPamentMethod();
-			PamentMethodSQL.addPamentMethod(pamentMethodList);
+			PaymentMethodSQL.deleteAllPaymentMethod();
+			PaymentMethodSQL.addPaymentMethod(pamentMethodList);
 
 
 			List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurants"),

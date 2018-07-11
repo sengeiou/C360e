@@ -1144,7 +1144,7 @@ public class DataHelper {
         private void onUpgradeFor0chen0dVersionfor(SQLiteDatabase db){
 
             db.execSQL("CREATE TABLE "
-                    + TableNames.PamentMethod
+                    + TableNames.PaymentMethod
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, nameCh TEXT, nameEn TEXT, nameOt TEXT, logoMd TEXT, logoSm TEXT, payType INTEGER, restaurantId INTEGER, isTax INTEGER, isDiscount INTEGER, isAdmin INTEGER, isMsg INTEGER, isMsgRequire INTEGER, isPart INTEGER, partAcount DOUBLE, status INTEGER,description TEXT,createTime LONG,updateTime LONG,paymentTypeId INTEGER)");
 
             db.execSQL("CREATE TABLE "
@@ -1153,7 +1153,7 @@ public class DataHelper {
 
             db.execSQL("CREATE TABLE "
                     + TableNames.ReportDayPayment
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId LONG, paymentName TEXT, paymentQty INTEGER default 0, paymentAmount TEXT default '0.00',overPaymentAmount TEXT default '0.00',createTime LONG)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId LONG, paymentName TEXT, paymentQty INTEGER default '0, paymentAmount TEXT default '0.00',overPaymentAmount TEXT default '0.00',createTime LONG)");
 
             db.execSQL("ALTER TABLE "
                     + TableNames.PaymentSettlement

@@ -42,7 +42,7 @@ import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.ModifierSQL;
-import com.alfredbase.store.sql.PamentMethodSQL;
+import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
@@ -146,7 +146,7 @@ public class CoreData {
 		restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
 		settlementRestaurant= SettlementRestaurantSQL.getAllSettlementRestaurant();
 
-		pamentMethodList= PamentMethodSQL.getAllPamentMethod();
+		pamentMethodList= PaymentMethodSQL.getAllPaymentMethod();
 	}
 
 	public PrinterDevice getDevice() {
