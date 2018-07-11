@@ -123,6 +123,8 @@ public class Store {
 	public static final String PRINT_LABLE = "PRINT_LABLE";
 	public static final String PRINT_BILL = "PRINT_BILL";
 
+	public static final String OPEN_BALANCE = "OPEN_BALANCE";
+
 
 	private Store() {
 	};

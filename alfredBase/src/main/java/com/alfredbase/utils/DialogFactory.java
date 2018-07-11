@@ -28,6 +28,7 @@ import com.alfredbase.R;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
+import com.alfredbase.store.Store;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -218,10 +219,10 @@ public class DialogFactory {
 	 * @param leftListener
      * @param rghtListener
      */
-	public static void commonTwoBtnInputDialog(final BaseActivity activity,
-										  final String title, final String content, final String leftText, final String rightText,
-										  final OnClickListener leftListener,
-										  final OnClickListener rghtListener) {
+	public static void commonTwoBtnInputDialog(final BaseActivity activity, final Boolean balance,
+											   final String title, final String content, final String leftText, final String rightText,
+											   final OnClickListener leftListener,
+											   final OnClickListener rghtListener) {
 		activity.runOnUiThread(new Runnable() {
 
 			@Override
@@ -234,6 +235,13 @@ public class DialogFactory {
 				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
 				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
 				final EditText editText = (EditText) view.findViewById(R.id.et_input);
+             String  inputNum=	Store.getString(activity, Store.OPEN_BALANCE);
+
+             if(!TextUtils.isEmpty(inputNum)&&BH.getBD(inputNum).compareTo(BH.getBD(100000)) <0&&balance)
+			 {
+			 	editText.setText(inputNum);
+			 }
+
 				dialog.setCancelable(false);
 				dialog.setCanceledOnTouchOutside(false);
 				dialog.setContentView(view);
@@ -260,9 +268,19 @@ public class DialogFactory {
 							public void onClick(View v) {
 
 								String num = editText.getText().toString();
+
+								if(balance) {
+									if(TextUtils.isEmpty(num)) {
+										Store.remove(activity, Store.OPEN_BALANCE);
+									}else {
+										Store.putString(activity, Store.OPEN_BALANCE, num);
+									}
+								}
 								try{
 									if(BH.getBD(num).compareTo(BH.getBD(100000)) > 0){
 										((EditText) view.findViewById(R.id.et_input)).setText("");
+										Store.remove(activity,Store.OPEN_BALANCE);
+
 										return;
 									}
 								}catch (Exception e){
