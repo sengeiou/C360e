@@ -1,9 +1,6 @@
 package com.alfredposclient.activity;
 
 import android.animation.ObjectAnimator;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -44,10 +41,8 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 设备页
@@ -316,8 +311,8 @@ public class DevicesActivity extends BaseActivity {
 //
                        boolean is=true;
                     for (int i = 0; i < printerDevices.size(); i++) {
-
-                        if(printerDevices.get(i).getIP().equals(tmppt.getIP())){
+                        PrinterDevice printerDevice = printerDevices.get(i);
+                        if(printerDevice != null && printerDevice.getIP().equals(tmppt.getIP())){
                             Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---" );
                           is=false;
                         }

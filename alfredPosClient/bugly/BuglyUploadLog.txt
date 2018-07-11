@@ -730,3 +730,27 @@ file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosCli
 sha1=8f6a023f03f360e396c95182fba834c3e65c08e8
 appId=900043720
 
+file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosClient/build/outputs/mapping/release/mapping.txt
+sha1=8a7cf3845737a4f723ed06c898bd89531ba540e4
+appId=900043720
+
+file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosClient/build/outputs/mapping/release/mapping.txt
+sha1=5bb0b6c0552db80631c2195337f42833b2075457
+appId=900043720
+
+file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosClient/build/outputs/mapping/release/mapping.txt
+sha1=52322e17e246544d5d1bbd5c8e386f4ff3681799
+appId=900043720
+
+file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosClient/build/outputs/mapping/release/mapping.txt
+sha1=52322e17e246544d5d1bbd5c8e386f4ff3681799
+appId=900043720
+
+file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosClient/build/outputs/mapping/release/mapping.txt
+sha1=52322e17e246544d5d1bbd5c8e386f4ff3681799
+appId=900043720
+
+file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosClient/build/outputs/mapping/release/mapping.txt
+sha1=52322e17e246544d5d1bbd5c8e386f4ff3681799
+appId=900043720
+
