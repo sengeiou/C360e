@@ -1754,7 +1754,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		cashInOut.setRestaurantId(CoreData.getInstance().getRestaurant().getId());
 		cashInOut.setRevenueId(revenueCenter.getId());
 		cashInOut.setUserId(user.getId());
-		cashInOut.setEmpId(user.getId());
+		cashInOut.setEmpId(user.getEmpId());
 		cashInOut.setEmpName(user.getUserName());
 		cashInOut.setBusinessDate(businessDate);
 		cashInOut.setType(type);

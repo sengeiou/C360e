@@ -15,8 +15,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,7 +53,7 @@ public class BillPrint extends PrintJob{
 			logoimg.setDataFormat(PrintData.FORMAT_IMG);
 			logoimg.addImage(Base64.decode(logo,  Base64.DEFAULT));
 			logoimg.setTextAlign(PrintData.ALIGN_CENTRE);
-			this.data.add(logoimg);		
+			this.data.add(logoimg);
 		}
 		
 		StringBuilder rname = new StringBuilder();
@@ -189,24 +191,57 @@ public class BillPrint extends PrintJob{
 	}
 
 
-	public void AddHeaderCash(int isTakeAway, String table, int pax, String billNo,
-						  String posNo, String cashier, String dateTime, String orderNo) {
+	public void AddHeaderCash(int id, String time) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");// HH:mm:ss
 
-		//日期
-		PrintData datePrint = new PrintData();
+        Date date = new Date(System.currentTimeMillis());
+        String dates = simpleDateFormat.format(date).toString().trim();
 		String dateLabel = StringUtil.padRight
 				(PrintService.instance.getResources().getString(R.string.date), this.FIXED_COL4_TOTAL-1);
-		String dateStr = dateLabel+":"+dateTime+" ";
-
+		String dateStr = dateLabel+":"+dates+" ";
 		//Bill NO
 		PrintData billEmpPrint = new PrintData();
-		String empLabel = StringUtil.padRight(PrintService.instance.getResources
-				().getString(R.string.cashier), this.FIXED_COL4_TOTAL-1);
-		String padBillNo =empLabel+":"+cashier+reNext;
+		String emp = StringUtil.padRight(PrintService.instance.getResources
+				().getString(R.string.emp), this.FIXED_COL4_TOTAL-1);
+		String padBillNo =" "+emp+":"+id+reNext;
 		billEmpPrint.setDataFormat(PrintData.FORMAT_TXT);
 		billEmpPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		billEmpPrint.setText(dateStr+padBillNo);
 		this.data.add(billEmpPrint);
+		addHortionaDoublelLine(this.charSize);
+
+	}
+
+	public void AddCashIn( String cash,String com,int type) {
+
+
+
+		PrintData cashPrint = new PrintData();
+		String cashType;
+		if(type==0)
+        {
+            cashType="Cash In :";
+        }else {
+            cashType="Cash Out :";
+        }
+	//	String orderNoStr = StringUtil.padRight("Cash In :", this.FIXED_COL4_TOTAL-1);
+		String padorderNo = cashType + cash+reNext;
+        cashPrint.setDataFormat(PrintData.FORMAT_TXT);
+        cashPrint.setTextAlign(PrintData.ALIGN_CENTRE);
+        cashPrint.setFontsize(2);
+        cashPrint.setText(padorderNo);
+		this.data.add(cashPrint);
+
+		if(!TextUtils.isEmpty(com)) {
+            PrintData cashComPrint = new PrintData();
+
+            String comment = "" + com + reNext;
+            cashComPrint.setDataFormat(PrintData.FORMAT_TXT);
+            cashComPrint.setTextAlign(PrintData.ALIGN_CENTRE);
+            cashComPrint.setFontsize(2);
+            cashComPrint.setText(comment);
+            this.data.add(cashComPrint);
+        }
 		addHortionaDoublelLine(this.charSize);
 
 	}
@@ -659,5 +694,6 @@ public class BillPrint extends PrintJob{
 	
 	public void setData(ArrayList<PrintData> data) {
 		this.data = data;
+
 	}
 }

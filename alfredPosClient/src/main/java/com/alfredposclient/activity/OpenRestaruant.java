@@ -1581,7 +1581,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			if (x_ > 0 && x_ < rl_slideUnlockView.getWidth() && y_ > 0
 					&& y_ < rl_slideUnlockView.getHeight()) {
 				if (open(v)) {
-					DialogFactory.commonTwoBtnInputDialog(context, "Start Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+					DialogFactory.commonTwoBtnInputDialog(context, true,"Start Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
 							new OnClickListener() {
 								@Override
 								public void onClick(View v) {
@@ -1678,7 +1678,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			switch (msg.what) {
 			case CAN_CLOSE: {
 				final View msgView = (View)msg.obj;
-				DialogFactory.commonTwoBtnInputDialog(context, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+				DialogFactory.commonTwoBtnInputDialog(context,false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
 						new OnClickListener() {
 							@Override
 							public void onClick(View view) {
