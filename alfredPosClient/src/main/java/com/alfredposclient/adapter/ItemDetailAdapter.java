@@ -1,13 +1,16 @@
 package com.alfredposclient.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
@@ -15,8 +18,10 @@ import com.alfredbase.store.Store;
 import com.alfredbase.utils.ColorSelectedUtils;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
+import com.alfredposclient.global.App;
 import com.alfredposclient.view.MyGridView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -103,9 +108,28 @@ public class ItemDetailAdapter extends BaseAdapter {
 
 			if (arg1 == null) {
 				arg1 = inflater.inflate(R.layout.item_name_layout, null);
+//				re = (TextView) itemView
+//						.findViewById(R.id.tv_main_category);
+
+				if( Store.getInt(App.instance, Store.TEXT_SIZE, 0)==0)
+				{
+//					layoutParams = new AbsListView.LayoutParams(ScreenSizeUtil.dip2px((Activity) context, 100), ScreenSizeUtil.dip2px((Activity) context, 100));
+//					//		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+////					layoutParams.setMargins(0,10,0,3);
+				}else {
+					AbsListView.LayoutParams layoutParams;
+					layoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenSizeUtil.dip2px((Activity) context, 60));
+					//		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+					arg1.setLayoutParams(layoutParams);
+//					layoutParams.setMargins(0, 10, 0, 3);
+				}
+
 				holder = new ViewHolder();
+
 				holder.tv_text = (TextView) arg1.findViewById(R.id.tv_item_name);
-				textTypeFace.setTrajanProBlod(holder.tv_text);
+				if( Store.getInt(App.instance, Store.TEXT_SIZE, 0)==0) {
+					textTypeFace.setTrajanProBlod(holder.tv_text);
+				}
 				arg1.setTag(holder);
 			} else {
 				holder = (ViewHolder) arg1.getTag();
@@ -114,11 +138,11 @@ public class ItemDetailAdapter extends BaseAdapter {
 				//如果是onMeasure调用的就立即返回
 				return arg1;
 			}
-			int color = Store.getInt(context, Store.COLOR_PICKER, 0);
+			int color = Store.getInt(context, Store.COLOR_PICKER,0);
 
 			if (IntegerUtils.isEmptyOrZero(color)) {
 				holder.tv_text.setTextColor(context.getResources().getColorStateList(R.color.text_color_selector));
-				holder.tv_text.setBackgroundResource(R.drawable.box_menu_selector);
+			//	holder.tv_text.setBackgroundResource(R.drawable.box_menu_selector);
 			} else {
 				int[] rgb = CommonUtil.getRgb(color);
 				int color1 = Color.rgb(Math.abs(rgb[0] - 255), Math.abs(rgb[1] - 255), Math.abs(rgb[2] - 255));
@@ -149,6 +173,8 @@ public class ItemDetailAdapter extends BaseAdapter {
 	int i = 0;
 	class ViewHolder {
 		public TextView tv_text;
+
+		public RelativeLayout re;
 	}
 
 	class ImageViewHolder {

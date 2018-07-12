@@ -1424,7 +1424,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //				map.put("orderSplitId", String.valueOf(paidOrderId));
 //				map.put("paymentId", String.valueOf(payment.getId().intValue()));
 
-                if (TextUtils.isEmpty(change)) {
+                if (TextUtils.isEmpty(change)&&change.equals("0.00")) {
                     map.put("orderSplitId", String.valueOf(paidOrderId));
                     map.put("paymentId", String.valueOf(payment.getId().intValue()));
                     map.put("changeNum", String.valueOf(""));

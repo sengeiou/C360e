@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,6 +37,7 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.store.Store;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -45,6 +48,7 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.adapter.ItemDetailAdapter;
+import com.alfredposclient.global.App;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,9 +85,12 @@ public class MainPageMenuView extends LinearLayout {
 	private PagerSnapHelper pagerSnapHelper;
 	private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
 			.getItemMainCategories();
+	int size,tsize,color,textcolor;
+	Context context;
 
 	public MainPageMenuView(Context context) {
 		super(context);
+		this.context=context;
 		init(context);
 		initTextTypeFace();
 		isFirst = true;
@@ -91,6 +98,7 @@ public class MainPageMenuView extends LinearLayout {
 
 	public MainPageMenuView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		this.context=context;
 		init(context);
 		initTextTypeFace();
 		isFirst = true;
@@ -103,6 +111,20 @@ public class MainPageMenuView extends LinearLayout {
 	public void setParam(Order order, Handler handler) {
 		this.handler = handler;
 		this.order = order;
+
+		size= Store.getInt(App.instance, Store.TEXT_SIZE, 0);
+		tsize=Store.getInt(App.instance, Store.T_TEXT_SIZE, 0);
+
+		color= Store.getInt(App.instance, Store.COLOR_PICKER, Color.WHITE);
+		textcolor=Store.getInt(App.instance, Store.T_COLOR_PICKER, Color.WHITE);
+
+		if(size!=tsize||color!=textcolor){
+			isFirst=true;
+
+			current_index=0;
+			Store.putInt(App.instance,Store.T_TEXT_SIZE,size);
+			Store.putInt(App.instance,Store.T_COLOR_PICKER,color);
+		}
 		if(isFirst){
 			oneLevelMenu.setAdapter(new OneLevelMenuAdapter());
 			twoLevelMenu.setAdapter(new TwoLevelMenuAdapter());
@@ -300,6 +322,16 @@ public class MainPageMenuView extends LinearLayout {
 				super(itemView);
 				gv_menu_detail = (MyGridView) itemView
 						.findViewById(R.id.gv_menu_detail);
+
+				if( Store.getInt(App.instance, Store.TEXT_SIZE, 0)==0)
+				{
+//					gv_menu_detail.setVerticalSpacing(ScreenSizeUtil.dip2px((Activity) context, 15));
+//
+//					gv_menu_detail.setHorizontalSpacing(ScreenSizeUtil.dip2px((Activity) context, 10));
+				}else {
+					gv_menu_detail.setVerticalSpacing(ScreenSizeUtil.dip2px((Activity) context, 5));
+					gv_menu_detail.setHorizontalSpacing(ScreenSizeUtil.dip2px((Activity) context, 5));
+				}
 				gv_menu_detail.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 
 					@SuppressLint("NewApi")

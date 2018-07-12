@@ -1216,7 +1216,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 }
                 HashMap<String, String> map = new HashMap<String, String>();
 
-                if (TextUtils.isEmpty(change)) {
+                if (TextUtils.isEmpty(change)&&change.equals("0.00")) {
                     map.put("orderId", String.valueOf(paidOrderId));
                     map.put("paymentId", String.valueOf(payment.getId().intValue()));
                     map.put("changeNum", String.valueOf(""));
@@ -1774,8 +1774,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 // show.append(0);
                 break;
             case ParamConst.SETTLEMENT_TYPE_PART_PAYMENT:
-
-
                 initPayment();
                 break;
 
