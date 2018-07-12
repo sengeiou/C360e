@@ -236,7 +236,7 @@ public class SyncCentre {
 
 		if (type.equals(PushMessage.PAYMENT_METHOD)) {
 			HttpAPI.mediaSync(context,
-					getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), syncHttpClient,handler,MODE_PUSH_SYNC);
+					getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), httpClient,handler,MODE_PUSH_SYNC);
 		}
 		if (type.equals(PushMessage.HAPPY_HOURS)) {
 			HttpAPI.getHappyHour(context,

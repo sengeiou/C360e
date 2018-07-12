@@ -71,6 +71,8 @@
 -dontwarn com.moonearly.**
 -dontwarn com.sunmi.**
 -dontwarn org.jivesoftware.**
+-dontwarn org.jxmpp.**
+-dontwarn org.xmlpull.**
 
 #-dontwarn com.hp.hpl.sparta.**
 #-dontwarn demo.**
@@ -109,6 +111,8 @@
 -keep class com.sunmi.**{*;}
 -keep class com.umeng.** {*;}
 -keep class org.jivesoftware.** { *;}
+-keep class org.jxmpp.** { *;}
+-keep class org.xmlpull.** { *;}
 -keepclassmembers class com.alfredbase.javabean.**{*;}
 -keepclassmembers class com.alfredposclient.javabean.**{*;}
 -keepclassmembers class * implements android.os.Parcelable {

@@ -76,7 +76,7 @@ public class ModifierWindow {
         btn_description.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFactory.commonTwoBtnInputDialog(context, "Description", "Please input description", "cancel", "Save", null, new View.OnClickListener() {
+                DialogFactory.commonTwoBtnInputDialog(context,false, "Description", "Please input description", "cancel", "Save", null, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         EditText editText = (EditText) v;

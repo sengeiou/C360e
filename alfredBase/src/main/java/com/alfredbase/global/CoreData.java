@@ -145,7 +145,6 @@ public class CoreData {
 		localDevices = LocalDeviceSQL.getAllLocalDevice();
 		restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
 		settlementRestaurant= SettlementRestaurantSQL.getAllSettlementRestaurant();
-
 		pamentMethodList= PaymentMethodSQL.getAllPaymentMethod();
 	}
 
@@ -798,6 +797,16 @@ public class CoreData {
 		this.pamentMethodList = pamentMethodList;
 	}
 
+	public PaymentMethod getPaymentMethod(int id){
+		if(pamentMethodList != null){
+			for(PaymentMethod paymentMethod : pamentMethodList){
+				if(paymentMethod.getId().intValue() == id){
+					return paymentMethod;
+				}
+			}
+		}
+		return  null;
+	}
 
 
 	public PaymentMethod getPamentMethod(Integer pamentMethodId) {

@@ -237,8 +237,7 @@ public class DialogFactory {
 				final EditText editText = (EditText) view.findViewById(R.id.et_input);
              String  inputNum=	Store.getString(activity, Store.OPEN_BALANCE);
 
-             if(!TextUtils.isEmpty(inputNum)&&BH.getBD(inputNum).compareTo(BH.getBD(100000)) <0&&balance)
-			 {
+             if(!TextUtils.isEmpty(inputNum)&&BH.getBD(inputNum).compareTo(BH.getBD(100000)) <0&&balance){
 			 	editText.setText(inputNum);
 			 }
 

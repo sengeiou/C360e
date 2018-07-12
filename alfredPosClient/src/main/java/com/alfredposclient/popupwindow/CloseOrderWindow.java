@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -35,8 +36,8 @@ import com.alfredbase.javabean.NonChargableSettlement;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.Payment;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.SettlementRestaurant;
@@ -54,11 +55,9 @@ import com.alfredbase.store.sql.NonChargableSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
-import com.alfredbase.store.sql.SettlementRestaurantSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
@@ -1404,7 +1403,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     List<SettlementRestaurant> settle;
                     pamentMethodlist.clear();
 
-                    settle = SettlementRestaurantSQL.getAllSettlementRestaurant();
+                    settle = CoreData.getInstance().getSettlementRestaurant();
 
 
                     if (settle != null && !settle.isEmpty()) {
@@ -1414,7 +1413,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                             String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
                             for (int i = 0; i < strarray.length; i++) {
                                 PaymentMethod pa = new PaymentMethod();
-                                pa = PaymentMethodSQL.getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
+                                pa = CoreData.getInstance().getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
 
                                 if (pa == null) {
                                     return;

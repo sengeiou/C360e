@@ -719,6 +719,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				return handlerCallSpecifyNumber(body);
 			} else if (apiName.equals(APIName.UNSEAT_TABLE)){
 				return handlerWaiterUnseatTable(body);
+			} else if (apiName.equals(APIName.VOID_ITEM)){
+				return handlerWaiterVoidItem(body);
 			} else {
 				return this.getNotFoundResponse();
 			}

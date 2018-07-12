@@ -1103,13 +1103,13 @@ public class DataHelper {
 
         // 紧急修复
         private void onUpgradeForOldVersion22(SQLiteDatabase db) {
-            try {
-                db.execSQL("ALTER TABLE "
-                        + TableNames.KotSummary
-                        + " ADD COLUMN empName TEXT default ''");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try {
+//                db.execSQL("ALTER TABLE "
+//                        + TableNames.KotSummary
+//                        + " ADD COLUMN empName TEXT default ''");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
 
         private void onUpgradeForOldVersion23(SQLiteDatabase db) {
@@ -1153,7 +1153,7 @@ public class DataHelper {
 
             db.execSQL("CREATE TABLE "
                     + TableNames.ReportDayPayment
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId LONG, paymentName TEXT, paymentQty INTEGER default '0, paymentAmount TEXT default '0.00',overPaymentAmount TEXT default '0.00',createTime LONG)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, daySalesId INTEGER, restaurantId INTEGER, restaurantName TEXT, revenueId INTEGER, revenueName TEXT, businessDate LONG, paymentTypeId LONG, paymentName TEXT, paymentQty INTEGER default 0, paymentAmount TEXT default '0.00',overPaymentAmount TEXT default '0.00',createTime LONG)");
 
             db.execSQL("ALTER TABLE "
                     + TableNames.PaymentSettlement
