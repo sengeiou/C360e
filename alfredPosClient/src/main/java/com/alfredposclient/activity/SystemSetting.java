@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -83,9 +84,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private LinearLayout ll_print_lable,ll_print_bill;
 	private View v_print_lable;
 	private int maxOrderNo;
-	 MyToggleButton mt_print_lable;
-
+	MyToggleButton mt_print_lable;
 	MyToggleButton mt_print_bill;
+	private int textsize,textcolor;
 
 	@Override
 	protected void initView() {
@@ -182,8 +183,10 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		refreshMaxOrderNo();
 		ll_max_order_no = (LinearLayout) findViewById(R.id.ll_max_order_no);
 		ll_max_order_no.setOnClickListener(this);
-
-
+        textsize= Store.getInt(SystemSetting.this, Store.TEXT_SIZE, 0);
+		Store.putInt(SystemSetting.this, Store.T_TEXT_SIZE, textsize);
+		textcolor= Store.getInt(SystemSetting.this, Store.COLOR_PICKER, Color.WHITE);
+		Store.putInt(SystemSetting.this, Store.T_COLOR_PICKER, textsize);
 
 	}
 
@@ -362,6 +365,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			setResult(RESULT_OK, intent);
 			break;
 		case R.id.iv_back:
+
 			this.finish();
 			break;
 		case R.id.ll_set_pwd:

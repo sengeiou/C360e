@@ -102,7 +102,10 @@ public class Store {
 	public static final String SUNMI_DATA = "SUNMI_DATA";
 	public static final String SUNMI_WELCOME = "SUNMI_WELCOME";
 
+	public static final String TEXT_SIZE= "TEXT_SIZE";
+	public static final String T_TEXT_SIZE= "T_TEXT_SIZE";
 	public static final String COLOR_PICKER= "COLOR_PICKER";
+	public static final String T_COLOR_PICKER= "T_COLOR_PICKER";
 	public static final String SET_BACKGROUND = "SET_BACKGROUND";
 
 	public static final String TOP_MASKING_IS_USER = "TOP_MASKING_IS_USER";

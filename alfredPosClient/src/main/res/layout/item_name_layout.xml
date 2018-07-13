@@ -18,8 +18,8 @@
         android:id="@+id/rl_item_name"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
         android:padding="1dp"
         android:background="@drawable/box_menu"
         android:layout_centerInParent="true">
@@ -32,6 +32,7 @@
         android:textSize="@dimen/text_size_s"/>
 
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/rl_item_num"
         android:layout_width="30dp"
@@ -54,5 +55,8 @@
             android:text="999"
             android:textColor="@color/white"
             android:textSize="12sp" />
+
+
     </RelativeLayout>
+
 </RelativeLayout>

@@ -1809,6 +1809,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 break;
                 case R.id.tv_deliveroo:
                     if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     viewTag = ParamConst.SETTLEMENT_TYPE_DELIVEROO;
@@ -1817,6 +1818,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     break;
                 case R.id.tv_ubereats:
                     if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     viewTag = ParamConst.SETTLEMENT_TYPE_UBEREATS;
@@ -1825,6 +1827,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     break;
                 case R.id.tv_foodpanda:
                     if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     viewTag = ParamConst.SETTLEMENT_TYPE_FOODPANDA;
@@ -1837,6 +1840,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     handler.sendMessage(handler
@@ -1846,6 +1850,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     break;
                 case R.id.tv_VOID:
                     if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     handler.sendMessage(handler
@@ -1854,6 +1859,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     break;
                 case R.id.tv_ENTERTAINMENT:
                     if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     handler.sendMessage(handler
@@ -3307,4 +3313,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         //   tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
     }
 
+    private void showPaymentReminder() {
+        UIHelp.showToast(parent,parent.getResources().getString(R.string.close_payment_reminder));
+
+    }
 }

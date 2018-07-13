@@ -375,7 +375,7 @@ public class XZReportActivity extends BaseActivity {
 
             // Total/sales
             ReportDaySalesItem totalSales = new ReportDaySalesItem(context);
-            totalSales.setData("Total Sales", "",
+            totalSales.setData("Gross Total Sales", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true), true);
             ll_sales_total.addView(totalSales);
             // CASH

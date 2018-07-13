@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -248,6 +249,8 @@ public class MainPageKiosk extends BaseActivity {
 //	private StoredCardActivity f_stored_card;
 	private Observable<Integer> observable;
 	private Observable<Object> observable1;
+
+
 	private void initDrawerLayout() {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setScrimColor(Color.TRANSPARENT);//关闭阴影
@@ -346,6 +349,8 @@ public class MainPageKiosk extends BaseActivity {
 		int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
 		App.instance.setKioskHoldNum(count);
 		XMPP.getInstance().setCanCheckAppOrder(true);
+
+
 	}
 
 //	private void showStoredCard(){
@@ -2036,8 +2041,19 @@ public class MainPageKiosk extends BaseActivity {
 			Map<String,Object> map = (Map<String, Object>) data.getExtras().get("map");
 			handler.sendMessage(handler.obtainMessage(
 					MainPage.VIEW_EVENT_CLOSE_BILL, map));
-		}else {
+		}else if(requestCode==0)
+		{
+			if(resultCode==10000)
+			{
+				Log.v(TAG, "system返回:------- ");
+			}
+		}
+		else {
 			activityRequestCode = 0;
+
+
+
+
 //			mDrawerLayout.postDelayed(new Runnable() {
 //
 //				@Override
