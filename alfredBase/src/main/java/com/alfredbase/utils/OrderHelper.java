@@ -71,37 +71,37 @@ public class OrderHelper {
 							orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
 						}else if(taxOn.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE){
 							taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice,
-									BH.getBD(tax.getTaxPercentage()), false), false);
+									BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
 							orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-									BH.getBD(tax.getTaxPercentage()), false).toString());
+									BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
 						} else if (tax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE){
 							taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice,
-									BH.getBD(taxOn.getTaxPercentage()), false), false);
+									BH.getBDNoFormat(taxOn.getTaxPercentage()), false), false);
 							orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-									BH.getBD(taxOn.getTaxPercentage()), false).toString());
+									BH.getBDNoFormat(taxOn.getTaxPercentage()), false).toString());
 						}else {
 							BigDecimal priceOntax = BH.add(
 									preTaxPrice,
 									BH.mul(preTaxPrice,
-											BH.getBD(taxOn.getTaxPercentage()), false),
+											BH.getBDNoFormat(taxOn.getTaxPercentage()), false),
 									false);
 							
 							taxTotal = BH.add(taxTotal, BH.mul(priceOntax,
-									BH.getBD(tax.getTaxPercentage()), false), false);
+									BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
 							orderDetailTax.setTaxPrice(BH.mul(priceOntax,
-									BH.getBD(tax.getTaxPercentage()), false).toString());
+									BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
 						}
 					}else{
 						BigDecimal priceOntax = BH.add(
 								preTaxPrice,
 								BH.mul(preTaxPrice,
-										BH.getBD(taxOn.getTaxPercentage()), false),
+										BH.getBDNoFormat(taxOn.getTaxPercentage()), false),
 								false);
 						
 						taxTotal = BH.add(taxTotal, BH.mul(priceOntax,
-								BH.getBD(tax.getTaxPercentage()), false), false);
+								BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
 						orderDetailTax.setTaxPrice(BH.mul(priceOntax,
-								BH.getBD(tax.getTaxPercentage()), false).toString());
+								BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
 					}
 					
 				} else {
@@ -113,19 +113,19 @@ public class OrderHelper {
 							taxTotal = BH.add(
 									taxTotal,
 									BH.mul(preTaxPrice,
-											BH.getBD(tax.getTaxPercentage()), false),
+											BH.getBDNoFormat(tax.getTaxPercentage()), false),
 											false);
 							orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-									BH.getBD(tax.getTaxPercentage()), false).toString());
+									BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
 						}
 					}else{
 						taxTotal = BH.add(
 								taxTotal,
 								BH.mul(preTaxPrice,
-										BH.getBD(tax.getTaxPercentage()), false),
+										BH.getBDNoFormat(tax.getTaxPercentage()), false),
 								false);
 						orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-								BH.getBD(tax.getTaxPercentage()), false).toString());
+								BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
 					}
 					
 				}
@@ -149,7 +149,7 @@ public class OrderHelper {
 		if (itemHappyHour != null) {
 			if (Double.parseDouble(itemHappyHour.getDiscountPrice()) > 0) {
 				price = BH.sub(BH.getBD(orderDetail.getItemPrice()),
-						BH.getBD(itemHappyHour.getDiscountPrice()), false);
+						BH.getBDNoFormat(itemHappyHour.getDiscountPrice()), false);
 			} else if (Double.parseDouble(itemHappyHour.getDiscountRate()) > 0) {
 				orderDetail.setDiscountRate(itemHappyHour.getDiscountRate());
 				price = BH.sub(BH.getBD(orderDetail.getItemPrice()), BH

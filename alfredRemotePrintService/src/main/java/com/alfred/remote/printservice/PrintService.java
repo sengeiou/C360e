@@ -8,10 +8,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.alfred.print.jobs.PrintManager;
@@ -19,6 +17,7 @@ import com.alfred.printer.ESCPrinter;
 import com.alfredbase.PrinterDeviceConfig;
 import com.alfredbase.javabean.PrintBean;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.BH;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.security.auth.callback.Callback;
 
 import static com.alfredbase.javabean.PrintBean.PRINT_TYPE;
 
@@ -89,7 +86,11 @@ public class PrintService extends Service {
                     ("fxxxkprinting").equals((String) extras.get("PRINTERKEY"))) {
 //				if (this.printJobMgr!=null)
 //					this.printJobMgr.addPingJob();
-
+                boolean isDouble = true;
+                if(extras.containsKey("isDouble")){
+                    isDouble = extras.getBoolean("isDouble");
+                }
+                BH.initFormart(isDouble);
                 return new PrintServiceBinder(this);
             }
         }

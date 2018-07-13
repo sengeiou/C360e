@@ -552,7 +552,7 @@ public class BillPrint extends PrintJob{
 				new TypeToken<Map<String, String>>() {
 				}.getType());
 		PrintData totalPrint = new PrintData();
-		String totalStr = StringUtil.padLeft(roundMap.get("Total"),
+		String totalStr = StringUtil.padLeft(BH.getBD(roundMap.get("Total")).toString(),
 				this.FIXED_COL4_TOTAL);
 		String totaling = PrintService.instance.getResources().getString(R.string.total_) + currencySymbol  + totalStr + reNext;
 		totalPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -562,7 +562,7 @@ public class BillPrint extends PrintJob{
 		this.data.add(totalPrint);
 		// rounding
 		PrintData roundingPrint = new PrintData();
-		String roundingStr = StringUtil.padLeft(roundMap.get("Rounding"),
+		String roundingStr = StringUtil.padLeft(BH.getBD(roundMap.get("Rounding")).toString(),
 				this.FIXED_COL4_TOTAL);
 		String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + currencySymbol  + roundingStr + reNext;
 		roundingPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -596,7 +596,7 @@ public class BillPrint extends PrintJob{
 			//subtotal
 			for (Map.Entry<String, String> entry : settlement.entrySet()) {
 				PrintData toPrint = new PrintData();
-				String lable = StringUtil.padLeft(entry.getValue(), this.FIXED_COL4_TOTAL);
+				String lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
 				String toPrintStr = entry.getKey()+" : "  + currencySymbol + lable+reNext;
 				toPrint.setDataFormat(PrintData.FORMAT_TXT);
 				toPrint.setTextAlign(PrintData.ALIGN_RIGHT);

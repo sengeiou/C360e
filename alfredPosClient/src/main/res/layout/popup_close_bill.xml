@@ -439,7 +439,17 @@
                                         android:text="@string/totle_paid"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m_smail" />
-
+                                    <TextView
+                                        android:id="@+id/tv_total_cur"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_toLeftOf="@+id/tv_total_amount_num"
+                                        android:layout_centerVertical="true"
+                                        android:background="@color/white"
+                                        android:singleLine="true"
+                                        android:text="$0.00"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/text_size_m_smail" />
                                     <TextView
                                         android:id="@+id/tv_total_amount_num"
                                         android:layout_width="wrap_content"
@@ -556,7 +566,16 @@
                                         android:text="@string/totle_paid"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m_smail" />
-
+                                    <TextView
+                                        android:id="@+id/tv_part_cur"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_toLeftOf="@+id/tv_part_total_amount_num"
+                                        android:background="@color/white"
+                                        android:singleLine="true"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/text_size_m_smail" />
                                     <TextView
                                         android:id="@+id/tv_part_total_amount_num"
                                         android:layout_width="wrap_content"
@@ -565,7 +584,6 @@
                                         android:layout_centerVertical="true"
                                         android:background="@color/white"
                                         android:singleLine="true"
-                                        android:text="$0.00"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m_smail" />
                                 </RelativeLayout>

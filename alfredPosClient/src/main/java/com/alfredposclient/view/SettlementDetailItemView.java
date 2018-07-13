@@ -2,6 +2,7 @@ package com.alfredposclient.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TextTypeFace;
@@ -51,11 +53,10 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 		tv_settlement_num.setText(BH.getBD(paymentSettlement.getPaidAmount()).toString());
 		int paymentTypeId = paymentSettlement.getPaymentTypeId()
 				.intValue();
-
-		if (paymentTypeId > 10000) {
-                   getImage(paymentTypeId);
-		} else
-		{
+		PaymentMethod paymentMethod = CoreData.getInstance().getPamentMethodByPaymentTypeId(paymentSettlement.getId().intValue());
+		if(paymentMethod != null && !TextUtils.isEmpty(paymentMethod.getLogoSm())){
+			showImage(paymentMethod.getLogoSm());
+		} else {
 			iv_settlement_icon
 					.setImageResource(getImageResourceBySettlementType(paymentSettlement
 							.getPaymentTypeId().intValue()));
@@ -128,8 +129,7 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 		textTypeFace.setTrajanProBlod(tv_settlement_num);
 	}
 
-	public void getImage(int typeid) {
-int id;
+	public void showImage(String url) {
 		options = new DisplayImageOptions.Builder()
 				.showImageOnFail(R.drawable.icon_settle_cash)
 				.showImageForEmptyUri(R.drawable.icon_settle_cash)
@@ -137,8 +137,7 @@ int id;
 				.cacheOnDisk(true)
 				.bitmapConfig(Bitmap.Config.RGB_565)
 				.build();
-                id=typeid-10000;
-		ImageLoader.getInstance().displayImage(	CoreData.getInstance().getPamentMethod(id).getLogoSm(), iv_settlement_icon, options);
+		ImageLoader.getInstance().displayImage(url	, iv_settlement_icon, options);
 	}
 
 	public interface ViewResultCall {

@@ -1519,6 +1519,7 @@ public class App extends BaseApplication {
             Intent bindIntent = new Intent(
                     "alfred.intent.action.bindPrintService");
             bindIntent.putExtra("PRINTERKEY", "fxxxkprinting");
+            bindIntent.putExtra("isDouble", BH.IsDouble());
             bindIntent.setClassName("com.alfred.remote.printservice",
                     "com.alfred.remote.printservice.PrintService");
 
@@ -1529,6 +1530,7 @@ public class App extends BaseApplication {
     public void reconnectRemotePrintService() {
         Intent bindIntent = new Intent("alfred.intent.action.bindPrintService");
         bindIntent.putExtra("PRINTERKEY", "fxxxkprinting");
+        bindIntent.putExtra("isDouble", BH.IsDouble());
         bindIntent.setClassName("com.alfred.remote.printservice",
                 "com.alfred.remote.printservice.PrintService");
 
@@ -1777,13 +1779,11 @@ public class App extends BaseApplication {
                                         + "");
                         break;
 
-                    default:
-                        {
-
-                            if(paymentSettlement.getPaymentTypeId().intValue()>10000) {
-                                PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethod(paymentSettlement.getPaymentTypeId() - 10000);
-                                    printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
-                            }
+                    default: {
+                        PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethodByPaymentTypeId(paymentSettlement.getPaymentTypeId().intValue());
+                        if(pamentMethod != null && !TextUtils.isEmpty(pamentMethod.getNameOt())) {
+                            printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
+                        }
                     }
                         break;
                 }

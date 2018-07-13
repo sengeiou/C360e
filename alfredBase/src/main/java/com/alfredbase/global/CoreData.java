@@ -820,6 +820,17 @@ public class CoreData {
 		return null;
 	}
 
+	public PaymentMethod getPamentMethodByPaymentTypeId(Integer paymentTypeId) {
+		if (paymentTypeId == null)
+			return null;
+		for (PaymentMethod pamentMethod : getPamentMethodList()) {
+			if (pamentMethod.getPaymentTypeId().intValue() == paymentTypeId.intValue()) {
+				return pamentMethod;
+			}
+		}
+		return null;
+	}
+
 	public List<SettlementRestaurant> getSettlementRestaurant() {
 		return settlementRestaurant;
 	}

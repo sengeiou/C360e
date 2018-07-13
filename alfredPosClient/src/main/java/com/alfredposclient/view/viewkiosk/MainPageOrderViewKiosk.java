@@ -661,7 +661,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 										if (BH.compare(BH.getBD(discount_rate), BH.getBD(ParamConst.DOUBLE_ZERO))) {
 											tag.setDiscountRate(discount_rate);
 											tag.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE);
-											tag.setDiscountPrice(BH.mul(BH.getBD(tag.getRealPrice()), BH.getBD(discount_rate), true).toString());
+											tag.setDiscountPrice(BH.mul(BH.getBD(tag.getRealPrice()), BH.getBDNoFormat(discount_rate), true).toString());
 										} else {
 											tag.setDiscountPrice(ParamConst.INT_ZERO);
 											tag.setDiscountRate(ParamConst.INT_ZERO);

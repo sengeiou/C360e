@@ -9,7 +9,7 @@ import java.text.DecimalFormat;
  * BigDecimal 辅助类
  * 
  * @author 冯小卫 2014-5-26
- * 
+ *
  */
 public class BH {
 	private static final DecimalFormat doubleFormat = new DecimalFormat("0.00");
@@ -172,6 +172,10 @@ public class BH {
 		} else {
 			return false;
 		}
+	}
+
+	public static boolean IsDouble(){
+		return isDouble;
 	}
 //
 //	/**
