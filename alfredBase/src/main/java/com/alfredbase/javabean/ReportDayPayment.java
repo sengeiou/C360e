@@ -18,7 +18,7 @@ public class ReportDayPayment implements Serializable{
     private String paymentName;
     private Integer paymentQty;
     private String paymentAmount;
-    private String overPaymentAmount;
+    private String overPaymentAmount = "0.00";
     private Long createTime;
 
 

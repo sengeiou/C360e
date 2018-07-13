@@ -336,10 +336,12 @@ public class HttpAnalysis {
 					new TypeToken<ArrayList<ItemModifier>>() {
 					}.getType());
 
-			CoreData.getInstance().setItemModifiers(itemModifierlList);
+
 			ItemModifierSQL.deleteAllItemModifier();
 			ItemModifierSQL.addItemModifierList(itemModifierlList);
+			List<ItemModifier> itemModifiers =  ItemModifierSQL.getAllItemModifier();
 
+			CoreData.getInstance().setItemModifiers(ItemModifierSQL.getAllItemModifier());
 			List<Modifier> modifierList = gson.fromJson(
 					object.getString("modifierList"),
 					new TypeToken<ArrayList<Modifier>>() {

@@ -121,7 +121,7 @@ public class PushMessage {
 				", revenueId=" + revenueId +
 				", content='" + content + '\'' +
 				", businessStr='" + businessStr + '\'' +
+				", sendTime=" + sendTime +
 				'}';
 	}
-
 }

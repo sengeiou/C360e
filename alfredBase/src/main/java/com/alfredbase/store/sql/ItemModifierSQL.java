@@ -21,8 +21,8 @@ public class ItemModifierSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.ItemModifier
-					+ "(id, restaurantId, itemId, modifierId, modifierCategoryId, itemCategoryId, type)"
-					+ " values (?,?,?,?,?,?,?)";
+					+ "(id, restaurantId, itemId, modifierId, modifierCategoryId, itemCategoryId, type,indexNo)"
+					+ " values (?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { itemModifier.getId(),
@@ -31,7 +31,8 @@ public class ItemModifierSQL {
 							itemModifier.getModifierId(),
 							itemModifier.getModifierCategoryId(),
 							itemModifier.getItemCategoryId(),
-							itemModifier.getType()
+							itemModifier.getType(),
+							itemModifier.getIndexNo()
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -47,8 +48,8 @@ public class ItemModifierSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.ItemModifier
-					+ "(id, restaurantId, itemId, modifierId, modifierCategoryId, itemCategoryId, type)"
-					+ " values (?,?,?,?,?,?,?)";
+					+ "(id, restaurantId, itemId, modifierId, modifierCategoryId, itemCategoryId, type,indexNo)"
+					+ " values (?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (ItemModifier itemModifier : itemModifierList) {
@@ -66,6 +67,8 @@ public class ItemModifierSQL {
 							itemModifier.getItemCategoryId());
 					SQLiteStatementHelper.bindLong(sqLiteStatement,7,
 							itemModifier.getType());
+					SQLiteStatementHelper.bindLong(sqLiteStatement,8,
+							itemModifier.getIndexNo());
 					sqLiteStatement.executeInsert();
 				}
 				db.setTransactionSuccessful();
@@ -78,7 +81,8 @@ public class ItemModifierSQL {
 
 	public static ArrayList<ItemModifier> getAllItemModifier() {
 		ArrayList<ItemModifier> result = new ArrayList<ItemModifier>();
-		String sql = "select * from " + TableNames.ItemModifier;
+	//	+" order by indexNo asc"
+		String sql = "select * from " + TableNames.ItemModifier+" order by indexNo asc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -98,6 +102,7 @@ public class ItemModifierSQL {
 				itemModifier.setModifierCategoryId(cursor.getInt(4));
 				itemModifier.setItemCategoryId(cursor.getInt(5));
 				itemModifier.setType(cursor.getInt(6));
+				itemModifier.setIndexNo(cursor.getInt(7));
 				result.add(itemModifier);
 			}
 		} catch (Exception e) {

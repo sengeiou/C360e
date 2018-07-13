@@ -1159,6 +1159,10 @@ public class DataHelper {
                     + TableNames.PaymentSettlement
                     + " ADD COLUMN partChange TEXT default '0.00'");
 
+
+            db.execSQL("ALTER TABLE "
+                    + TableNames.ItemModifier
+                    + " ADD COLUMN indexNo INTEGER default 0");
         }
     }
 }

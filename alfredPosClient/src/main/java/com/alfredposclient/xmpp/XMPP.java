@@ -301,12 +301,16 @@ public class XMPP implements ConnectionListener, PingFailedListener{
                                     if(jsonObject.has("restId")){
                                         pushMessage.setRestId(jsonObject.getInt("restId"));
                                     }
+                                    if(jsonObject.has("sendTime")){
+                                        pushMessage.setSendTime(jsonObject.getLong("sendTime"));
+                                    }
                                     if(jsonObject.has("revenueId")){
                                         pushMessage.setRevenueId(jsonObject.getInt("revenueId"));
                                     }
                                     if(jsonObject.has("businessStr")){
                                         pushMessage.setBusinessStr(jsonObject.getString("businessStr"));
                                     }
+
                                     if(!TextUtils.isEmpty(pushMessage.getMsg())){
                                         if (pushListener != null)
                                             pushListener.onPushMessageReceived(pushMessage, canCheckAppOrder);

@@ -45,7 +45,6 @@ public class SendEmailThread extends Thread {
                 SyncCentre.getInstance().syncSendEmail(App.instance, reportDaySales, reportDayTaxs, reportDayPayments,null);
             }
            // SyncCentre.getInstance().syncMedia(App.instance,  null);
-
 //            RevenueCenter revenueCenter = App.instance.getRevenueCenter();
 //            String name = "alfred_" + revenueCenter.getId().intValue() + "_b";
 //            String roomName = "alfred" + revenueCenter.getRestaurantId().intValue() + "g";

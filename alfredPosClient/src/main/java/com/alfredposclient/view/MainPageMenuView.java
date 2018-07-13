@@ -404,7 +404,6 @@ public class MainPageMenuView extends LinearLayout {
 						int index = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
 						moveToPosition(twoLevelMenu, index);
 						current_index = index;
-
 					}
 				}
 			}

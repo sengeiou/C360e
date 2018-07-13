@@ -17,7 +17,21 @@ public class ItemModifier {
 	private Integer itemCategoryId;
 
 	private Integer type;
-	
+
+	private Integer indexNo;
+
+	public Integer getIndexNo() {
+		return indexNo;
+	}
+
+	public void setIndexNo(Integer indexNo) {
+		this.indexNo = indexNo;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
 	public Integer getId() {
 		if (CommonUtil.isNull(id))
 			return 0;
@@ -94,6 +108,7 @@ public class ItemModifier {
 				", modifierCategoryId=" + modifierCategoryId +
 				", itemCategoryId=" + itemCategoryId +
 				", type=" + type +
+				", indexNo=" + indexNo +
 				'}';
 	}
 

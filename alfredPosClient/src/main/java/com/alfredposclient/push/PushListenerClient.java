@@ -53,12 +53,14 @@ public class PushListenerClient implements XMPP.PushListener {
             }
             if (msg.getRestId().intValue() == App.instance.getRevenueCenter().getRestaurantId()) {
 
-                long afterTime = App.instance.getBusinessDate() - 1 * 60 * 60 * 1000;
-                long frontTime = App.instance.getBusinessDate() + 1 * 60 * 60 * 1000;
-
-                if (msg.getSendTime() <= frontTime && msg.getSendTime() >= afterTime) {
-                    SendEmailThread thread = new SendEmailThread();
-                    thread.start();
+                long timeStamp = System.currentTimeMillis();
+                long afterTime = timeStamp - 1 * 60 * 60 * 1000;
+                long frontTime = timeStamp + 1 * 60 * 60 * 1000;
+                if(!TextUtils.isEmpty(msg.getSendTime().toString())) {
+                    if (msg.getSendTime() <= frontTime && msg.getSendTime() >= afterTime) {
+                        SendEmailThread thread = new SendEmailThread();
+                        thread.start();
+                    }
                 }
             }
         }
