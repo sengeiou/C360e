@@ -575,16 +575,11 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 				gv_menu_detail = (MyGridView) itemView
 						.findViewById(R.id.gv_menu_detail);
 
-				if( Store.getInt(App.instance, Store.TEXT_SIZE, 0)==0)
+				if( Store.getInt(App.instance, Store.TEXT_SIZE, 0)==1)
 				{
-//					gv_menu_detail.setVerticalSpacing(ScreenSizeUtil.dip2px((Activity) context, 15));
-//
-//					gv_menu_detail.setHorizontalSpacing(ScreenSizeUtil.dip2px((Activity) context, 10));
-				}else {
 					gv_menu_detail.setVerticalSpacing(ScreenSizeUtil.dip2px((Activity) context, 5));
 					gv_menu_detail.setHorizontalSpacing(ScreenSizeUtil.dip2px((Activity) context, 5));
 				}
-
 				gv_menu_detail.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 
 					@SuppressLint("NewApi")

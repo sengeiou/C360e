@@ -1216,7 +1216,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 }
                 HashMap<String, String> map = new HashMap<String, String>();
 
-                if (TextUtils.isEmpty(change)&&change.equals("0.00")) {
+                if (TextUtils.isEmpty(change)||change.equals("0.00")) {
                     map.put("orderId", String.valueOf(paidOrderId));
                     map.put("paymentId", String.valueOf(payment.getId().intValue()));
                     map.put("changeNum", String.valueOf(""));
@@ -1430,6 +1430,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     handler.sendMessage(handler
@@ -1449,6 +1450,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 break;
                 case R.id.tv_deliveroo:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     viewTag = ParamConst.SETTLEMENT_TYPE_DELIVEROO;
@@ -1457,6 +1459,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
                 case R.id.tv_ubereats:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     viewTag = ParamConst.SETTLEMENT_TYPE_UBEREATS;
@@ -1465,6 +1468,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
                 case R.id.tv_foodpanda:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     viewTag = ParamConst.SETTLEMENT_TYPE_FOODPANDA;
@@ -1492,6 +1496,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
                 case R.id.tv_VOID:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                         showPaymentReminder();
                         return;
                     }
                     handler.sendMessage(handler
@@ -1499,6 +1504,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
                 case R.id.tv_ENTERTAINMENT:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                        showPaymentReminder();
                         return;
                     }
                     handler.sendMessage(handler
@@ -1580,6 +1586,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         }
 
     }
+
 
 //	public void alipayAction(int payTypeId){
 //		viewTag = payTypeId;
@@ -2952,6 +2959,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         tv_part_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal));
         show.append(0);
         //   tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+    }
+
+
+    private void showPaymentReminder() {
+        UIHelp.showToast(parent,parent.getResources().getString(R.string.close_payment_reminder));
+
     }
 
 

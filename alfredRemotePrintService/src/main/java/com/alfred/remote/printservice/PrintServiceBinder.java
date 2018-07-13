@@ -1018,7 +1018,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     paymentType = PrintService.instance.getResources().getString(R.string.deliveroo);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_UBEREATS:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
+                                   paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
                                     paymentType = PrintService.instance.getResources().getString(R.string.foodpanda);
@@ -2137,7 +2137,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     paymentType = PrintService.instance.getResources().getString(R.string.deliveroo);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_UBEREATS:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
+                                   paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
                                     paymentType = PrintService.instance.getResources().getString(R.string.foodpanda);

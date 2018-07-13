@@ -279,6 +279,8 @@
 
     <!-- CloseOrderWindow -->
     <string name="ref_id_not_empty">Ref id not empty</string>
+
+    <string name="close_payment_reminder">Chosen payment mode cannot be used with other payment mode</string>
     <string name="card_no_not_empty">Card No cannot be empty</string>
     <string name="card_no_for_four">Card No for four</string>
     <string name="card_no_not_correct">Card No is not correct</string>
