@@ -143,10 +143,12 @@
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="10dp" />
                         </RelativeLayout>
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/black" />
+
                         <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="60dp"
@@ -296,17 +298,17 @@
                         </RelativeLayout>
 
                         <LinearLayout
+                            android:id="@+id/ll_print_bill"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/ll_print_bill"
-                            android:orientation="vertical"
-                            >
+                            android:orientation="vertical">
 
                             <View
                                 android:id="@+id/view_order_print_bill"
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/black" />
+
                             <RelativeLayout
                                 android:id="@+id/rl_print_bill"
                                 android:layout_width="wrap_content"
@@ -322,6 +324,7 @@
                                     android:text="@string/print_bill_set"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
+
                                 <com.alfredposclient.view.MyToggleButton
                                     android:id="@+id/mt_print_bill"
                                     android:layout_width="wrap_content"
@@ -341,54 +344,54 @@
 
                         </LinearLayout>
 
-                    <LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/ll_print_lable"
-
-    android:orientation="vertical"
-    >
-
-
-
-                        <View
-                            android:id="@+id/view_order_print_lable"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/black" />
-                        <RelativeLayout
-                            android:id="@+id/rl_print_lable"
+                        <LinearLayout
+                            android:id="@+id/ll_print_lable"
                             android:layout_width="wrap_content"
-                            android:layout_height="60dp"
-                            android:orientation="horizontal">
+                            android:layout_height="wrap_content"
 
-                            <TextView
-                                android:id="@+id/tv_print_lable"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:padding="10dp"
-                                android:text="@string/print_lable"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/text_size_m" />
-                            <com.alfredposclient.view.MyToggleButton
-                                android:id="@+id/mt_print_lable"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="10dp" />
+                            android:orientation="vertical">
 
-                            <!--<com.alfredposclient.view.MyToggleButton-->
+
+                            <View
+                                android:id="@+id/view_order_print_lable"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
+                                android:id="@+id/rl_print_lable"
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_print_lable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/print_lable"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredposclient.view.MyToggleButton
+                                    android:id="@+id/mt_print_lable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+
+                                <!--<com.alfredposclient.view.MyToggleButton-->
                                 <!--android:id="@+id/mt_print_lable"-->
                                 <!--android:layout_width="wrap_content"-->
                                 <!--android:layout_height="wrap_content"-->
                                 <!--android:layout_alignParentRight="true"-->
                                 <!--android:layout_centerVertical="true"-->
                                 <!--android:layout_marginRight="10dp" />-->
-                        </RelativeLayout>
+                            </RelativeLayout>
 
-</LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
@@ -400,6 +403,7 @@
                         android:layout_marginTop="30dp"
                         android:background="@drawable/box_system_setting"
                         android:orientation="vertical">
+
                         <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="60dp"
@@ -428,6 +432,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/black" />
+
                         <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="60dp"
@@ -491,6 +496,7 @@
                         android:layout_marginTop="30dp"
                         android:background="@drawable/box_system_setting"
                         android:orientation="vertical">
+
                         <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="60dp"
@@ -514,7 +520,7 @@
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="10dp" />
                         </RelativeLayout>
-                        </LinearLayout>
+                    </LinearLayout>
                 </RelativeLayout>
 
                 <LinearLayout
@@ -715,10 +721,49 @@
                                     android:layout_centerVertical="true"
                                     android:layout_marginRight="10dp" />
                             </RelativeLayout>
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/black" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/ll_of_pax"
+                                android:orientation="vertical"
+                                >
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="60dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tv_of_pax"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:padding="10dp"
+                                        android:text="@string/of_pax"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/text_size_m" />
+
+                                    <com.alfredposclient.view.MyToggleButton
+                                        android:id="@+id/mt_of_pax"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginRight="10dp" />
+                                </RelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="@color/black" />
+                            </LinearLayout>
+
                             <RelativeLayout
                                 android:id="@+id/ll_set_lock_time"
                                 android:layout_width="match_parent"
@@ -737,10 +782,12 @@
                                     android:textSize="@dimen/text_size_m" />
 
                             </RelativeLayout>
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/black" />
+
                             <RelativeLayout
                                 android:id="@+id/ll_set_pwd"
                                 android:layout_width="match_parent"
@@ -759,6 +806,7 @@
                                     android:textSize="@dimen/text_size_m" />
 
                             </RelativeLayout>
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
@@ -900,10 +948,12 @@
                                     android:textSize="@dimen/text_size_m" />
 
                             </LinearLayout>
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/black" />
+
                             <RelativeLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="60dp"

@@ -263,7 +263,7 @@ public class MainPage extends BaseActivity {
     private List<OrderDetail> orderDetails;
     private VerifyDialog verifyDialog;
 
-    private MediaDialog mediaDialog;
+
 //	public LoadingDialog loadingDialog;
 
     public PrinterLoadingDialog printerLoadingDialog;
@@ -1030,7 +1030,15 @@ public class MainPage extends BaseActivity {
                                     }
                                 }
                             }).start();
-                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                            if(App.instance.getSystemSettings().isOfPax()) {
+                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                            } else {
+                                setTablePacks("4");
+                                if (loadingDialog != null && loadingDialog.isShowing())
+                                    loadingDialog.dismiss();
+                                closeTables();
+                                setData();
+                            }
                         } else {
                             handler.sendMessage(handler
                                     .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));

@@ -20,7 +20,7 @@ public class SystemSettings {
 	private boolean printHourlyPayment = true; //
 	private boolean printLable = false; //
 	private boolean printBill = true; // 打印账单
-
+	private boolean isOfPax = true;//开桌人数
 	private boolean printBeforCloseBill = true; // bill close need print Bill?
 	private boolean cashClosePrint = true; // cash w close need print Bill?
 	private boolean autoRecevingOnlineOrder = false;
@@ -51,6 +51,8 @@ public class SystemSettings {
 		return kotPrintTogether;
 	}
 
+
+
 	public void setKotPrintTogether(Integer kotPrintTogether) {
 		Store.putInt(this.context, Store.PRINT_SETTING_KOT_MODE_TOGETHER,
 				kotPrintTogether);
@@ -59,7 +61,9 @@ public class SystemSettings {
 		else
 			this.kotPrintTogether = false;
 	}
-	
+
+
+
 	public boolean isKotDoublePrint() {
 		Integer value = Store.getInt(context,
 				Store.PRINT_SETTING_KOT_MODE_DOUBLE);
@@ -493,4 +497,25 @@ public class SystemSettings {
 		}
 		return printBill;
     }
+
+	public boolean isOfPax() {
+		Integer value = Store.getInt(context,
+				Store.OF_PAX);
+		if (value != null && value != Store.DEFAULT_INT_TYPE) {
+			if (value.intValue() == 1)
+				this.isOfPax = true;
+			else
+				this.isOfPax = false;
+
+		}
+		return isOfPax;
+	}
+	public void setOfPax(Integer ofPax) {
+		Store.putInt(this.context, Store.OF_PAX,
+				ofPax.intValue());
+		if(ofPax.intValue() == 1)
+			this.isOfPax = true;
+		else
+			this.isOfPax = false;
+	}
 }

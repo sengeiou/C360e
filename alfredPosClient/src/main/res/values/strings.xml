@@ -176,6 +176,8 @@
 
     <!-- setting -->
     <string name="kot_print">KOT Print</string>
+
+    <string name="of_pax">No. of Pax</string>
     <string name="kot_print_together">KOT Print Together</string>
     <string name="double_kot_print">Double KOT Print</string>
     <string name="double_bill_prints">Double Bill Prints</string>
