@@ -16,7 +16,7 @@ public class BH {
 	private static final DecimalFormat threeFormat = new DecimalFormat("0.000");
 	public static final DecimalFormat intFormat = new DecimalFormat("0");
 	private static DecimalFormat format = doubleFormat;
-	private static boolean isDouble = false;
+	private static boolean isDouble = true;
 	public static void initFormart(boolean isdouble){
 		if(isdouble){
 			format = doubleFormat;

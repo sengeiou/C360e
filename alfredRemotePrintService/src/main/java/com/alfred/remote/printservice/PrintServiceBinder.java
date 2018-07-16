@@ -672,8 +672,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                           String modifiers, String tax,
                           String payment, boolean doubleprint,
                           boolean doubleReceipts, String rounding,
-                          String currencySymbol, boolean openDrawer) throws RemoteException {
-
+                          String currencySymbol, boolean openDrawer, boolean isDouble) throws RemoteException {
+        BH.initFormart(isDouble);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 
@@ -1778,8 +1778,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     public void printKioskBill(String printer, String title, String order,
                                String orderDetail, String modifiers, String tax, String payment,
                                boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,
-                               String currencySymbol, boolean openDrawer) throws RemoteException {
-
+                               String currencySymbol, boolean openDrawer, boolean isDouble) throws RemoteException {
+        BH.initFormart(isDouble);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 

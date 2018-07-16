@@ -1222,7 +1222,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
     }
 
 
-    public void show(View view, Order order, OrderSplit orderSplit) {
+    public void show(View view, final Order order, OrderSplit orderSplit) {
         if (isShowing()) {
             return;
         }
@@ -1321,6 +1321,15 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //						ll_order_list.setVisibility(View.VISIBLE);
 //						ll_order_list1.setVisibility(View.VISIBLE);
 
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        if (BH.getBD(0).compareTo(BH.getBD(order.getTotal())) == 0
+                                && !(parent instanceof EditSettlementPage)){
+                            clickEnterAction();
+                        }
                     }
                 });
                 set.start();

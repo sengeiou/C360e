@@ -1050,7 +1050,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         return itemCount;
     }
 
-    public void show(View view, Order order, float startX, OrderBill orderBill, List<OrderDetail> orderDetailList) {
+    public void show(View view, final Order order, float startX, OrderBill orderBill, List<OrderDetail> orderDetailList) {
         if (isShowing()) {
             return;
         }
@@ -1127,12 +1127,22 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         super.onAnimationStart(animation);
 
                     }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        if (BH.getBD(0).compareTo(BH.getBD(order.getTotal())) == 0
+                                && !(parent instanceof EditSettlementPage)){
+                            clickEnterAction();
+                        }
+                    }
                 });
                 set.start();
             }
         }), 300);
         App.instance.orderInPayment = order;
         isMenuClose = false;
+
     }
 
     public void dismiss() {

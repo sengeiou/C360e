@@ -105,6 +105,7 @@
 	<string name="misc">其他</string>
 	
 	<!-- Close Bill -->
+    <string name="close_payment_reminder">Chosen payment mode cannot be used with other payment mode</string>
 	<string name="bill_summary">账单总结</string>
 	<string name="print_receipt">打印凭条</string>
 	<string name="total_bill"> 账单总额:</string>

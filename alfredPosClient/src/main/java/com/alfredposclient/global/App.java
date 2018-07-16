@@ -1820,14 +1820,14 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-                            true);
+                            true, BH.IsDouble());
                 else
                     mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             null, getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer);
+                            openDrawer, BH.IsDouble());
 
             } else {
                 mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
@@ -1835,7 +1835,7 @@ public class App extends BaseApplication {
                         this.systemSettings.isDoubleBillPrint(),
                         this.systemSettings.isDoubleReceiptPrint(), roundStr,
                         getLocalRestaurantConfig().getCurrencySymbol(),
-                        openDrawer);
+                        openDrawer, BH.IsDouble());
             }
         } catch (RemoteException e) {
             e.printStackTrace();
