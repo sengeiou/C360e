@@ -596,10 +596,14 @@ public class BillPrint extends PrintJob{
 			//subtotal
 			for (Map.Entry<String, String> entry : settlement.entrySet()) {
 				PrintData toPrint = new PrintData();
-				String lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
-				String toPrintStr = entry.getKey()+" : "  + currencySymbol + lable+reNext;
-				if(entry.getKey().equals(PrintService.instance.getResources().getString(R.string.card_no))){
+				String lable;
+				String toPrintStr;
+				if(PrintService.instance.getResources().getString(R.string.card_no).equals(entry.getKey())){
+					lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
 					toPrintStr = entry.getKey()+" : "  + lable+reNext;
+				}else {
+					lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
+					toPrintStr = entry.getKey()+" : "  + currencySymbol + lable+reNext;
 				}
 				toPrint.setDataFormat(PrintData.FORMAT_TXT);
 				toPrint.setTextAlign(PrintData.ALIGN_RIGHT);
