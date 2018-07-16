@@ -598,6 +598,9 @@ public class BillPrint extends PrintJob{
 				PrintData toPrint = new PrintData();
 				String lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
 				String toPrintStr = entry.getKey()+" : "  + currencySymbol + lable+reNext;
+				if(entry.getKey().equals(PrintService.instance.getResources().getString(R.string.card_no))){
+					toPrintStr = entry.getKey()+" : "  + lable+reNext;
+				}
 				toPrint.setDataFormat(PrintData.FORMAT_TXT);
 				toPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 				toPrint.setFontsize(2);
