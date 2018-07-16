@@ -1422,10 +1422,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 case R.id.tv_other_media:
                     List<SettlementRestaurant> settle;
                     pamentMethodlist.clear();
-
                     settle = CoreData.getInstance().getSettlementRestaurant();
-
-
                     if (settle != null && !settle.isEmpty()) {
 
                         if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {

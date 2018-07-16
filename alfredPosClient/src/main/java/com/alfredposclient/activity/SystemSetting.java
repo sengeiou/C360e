@@ -64,7 +64,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private MyToggleButton mt_top_screen_lock;
 	private MyToggleButton mt_cancel_order_void;
 	private MyToggleButton mt_transfer_print;
-	private MyToggleButton mt_auto_table;
+	private MyToggleButton mt_auto_table,mt_of_pax;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -96,10 +96,12 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_print_lable).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_print_bill).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_of_pax).setVisibility(View.GONE);
 		}else{
 			findViewById(R.id.ll_print_lable).setVisibility(View.GONE);
 			findViewById(R.id.ll_app_order).setVisibility(View.GONE);
 			findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
+			findViewById(R.id.ll_of_pax).setVisibility(View.VISIBLE);
 		}
 		syncMap = App.instance.getPushMsgMap();
 		settings = App.instance.getSystemSettings();
@@ -128,6 +130,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_cancel_order_void = (MyToggleButton)findViewById(R.id.mt_cancel_order_void);
 		mt_transfer_print = (MyToggleButton)findViewById(R.id.mt_transfer_print);
 		mt_auto_table = (MyToggleButton)findViewById(R.id.mt_auto_table);
+		mt_of_pax=(MyToggleButton)findViewById(R.id.mt_of_pax);
+
 
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -163,6 +167,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_transfer_print.setOnStateChangeListeren(this);
 		mt_auto_table.setOnStateChangeListeren(this);
 		mt_print_bill.setOnStateChangeListeren(this);
+		mt_of_pax.setOnStateChangeListeren(this);
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
@@ -311,6 +316,12 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			mt_print_bill.setChecked(true);
 		}else{
 			mt_print_bill.setChecked(false);
+		}
+
+		if(settings.isOfPax()){
+			mt_of_pax.setChecked(true);
+		}else{
+			mt_of_pax.setChecked(false);
 		}
 		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 			tv_callnum.setText(null);
@@ -574,6 +585,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_transfer_print));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_bill));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_lable));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_of_pax));
 	}
 
 //	@Override
@@ -775,6 +787,17 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 				}
 				break;
 
+
+			case R.id.mt_of_pax:
+
+				if(checkState){
+					mt_of_pax.setChecked(true);
+					settings.setOfPax(ParamConst.DEFAULT_TRUE);
+				}else{
+					mt_of_pax.setChecked(false);
+					settings.setOfPax(ParamConst.DEFAULT_FALSE);
+				}
+				break;
 			default:
 				break;
 		}

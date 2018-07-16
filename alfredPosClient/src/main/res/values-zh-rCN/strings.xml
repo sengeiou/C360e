@@ -171,6 +171,7 @@
     
     <!-- setting -->
     <string name="kot_print">厨房联打印</string>
+    <string name="of_pax">开桌选人数</string>
     <string name="kot_print_together">合并厨房联打印</string>
     <string name="double_kot_print">双厨房联打印</string>
     <string name="double_bill_prints">双小票打印</string>
