@@ -1038,6 +1038,7 @@ public class MainPage extends BaseActivity {
                                     loadingDialog.dismiss();
                                 closeTables();
                                 setData();
+
                             }
                         } else {
                             handler.sendMessage(handler
