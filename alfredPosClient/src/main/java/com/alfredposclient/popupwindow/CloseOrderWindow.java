@@ -1133,7 +1133,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         super.onAnimationEnd(animation);
                         if (BH.getBD(0).compareTo(BH.getBD(order.getTotal())) == 0
                                 && !(parent instanceof EditSettlementPage)){
-                            clickEnterAction();
+                            printBill(null);
                         }
                     }
                 });
