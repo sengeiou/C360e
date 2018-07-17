@@ -193,23 +193,33 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 								}
 							}
 
-							int max=modifier.getMaxNumber();
-							if(modifier.getMaxNumber()>0&&num<=max-1) {
+							int max=modifier_type.getMaxNumber();
+							if(max>0&&num<=max-1) {
 
 								orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
 								OrderModifierSQL.addOrderModifier(orderModifier);
 								num++;
-							}else if(modifier.getMaxNumber()==0){
+							}else if(max==0){
 								orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
 								OrderModifierSQL.addOrderModifier(orderModifier);
 								num++;
 
 							}else {
-								UIHelp.showShortToast(parent, "数量不能超过3");
+								UIHelp.showShortToast(parent, "数量不能超过"+max+"份");
 							}
+
 
 						}
 
+//						int min=modifier_type.getMinNumber();
+//						if(num>=min){
+//							orderDetail.setIsMin(1);
+//							OrderDetailSQL.updateOrderDetail(orderDetail);
+//						}else {
+//
+//							orderDetail.setIsMin(0);
+//							OrderDetailSQL.updateOrderDetail(orderDetail);
+//						}
 						LogUtil.e("ModifierView", "==å®½===" +num);
 						setParams(order, orderDetail, itemModifier, mHandler,height);// 回调，刷新数据
 //						refreshView((TextView)v, orderModifier);

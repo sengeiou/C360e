@@ -602,7 +602,7 @@ public class OrderModifierSQL {
 		ArrayList<OrderModifier> result = new ArrayList<OrderModifier>();
 		String sql = "select * from "
 		+ TableNames.OrderModifier
-				+ "o,"
+				+ " o,"
 				+ TableNames.Modifier
 				+ " m"
 				+ " where o.orderId = ? and o.orderDetailId = ? and o.modifierId = m.id and m.type = 1 order by m.categoryId";

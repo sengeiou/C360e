@@ -1180,6 +1180,13 @@ public class DataHelper {
             db.execSQL("ALTER TABLE "
                     + TableNames.Modifier
                     + " ADD COLUMN  maxNumber INTEGER default 0");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.ModifierCheck
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderDetailId INTEGER, orderId INTEGER, modifierCategoryId INTEGER, itemName TEXT,  modifierCategoryName TEXT, num INTEGER)");
+
+
+
         }
     }
 }

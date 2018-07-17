@@ -39,8 +39,11 @@ import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
+import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
@@ -801,6 +804,9 @@ public class MainPageMenuViewKiosk extends LinearLayout {
     private void initMenuDetail(Order order, OrderDetail orderDetail,
                                 List<ItemModifier> itemModifiers) {
         ll_item_detail.removeAllViews();
+
+
+
         for (ItemModifier itemModifier : itemModifiers) {
             ModifierView modifierView = new ModifierView(parent);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -809,6 +815,15 @@ public class MainPageMenuViewKiosk extends LinearLayout {
             modifierView.setLayoutParams(params);
             if (itemModifiers.indexOf(itemModifier) % 2 == 1) {//判断为奇数时，背景色改变
                 modifierView.setBackgroundResource(R.color.modifier_odd);
+            }
+           // add ModifierCheck
+
+
+            final Modifier modifier_type = CoreData.getInstance().getModifier(
+                    itemModifier);
+            if(modifier_type.getMinNumber()>0){
+                ModifierCheck modifierCheck=null;
+                modifierCheck =ObjectFactory.getInstance().getModifierCheck(order, orderDetail, modifier_type,itemModifier);
             }
             modifierView.setParams(order, orderDetail, itemModifier, handler, height);
             ll_item_detail.addView(modifierView);

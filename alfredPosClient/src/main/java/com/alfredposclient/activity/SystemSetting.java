@@ -588,6 +588,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_of_pax));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_auto_table));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_set_lock_time));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
+
 	}
 
 //	@Override

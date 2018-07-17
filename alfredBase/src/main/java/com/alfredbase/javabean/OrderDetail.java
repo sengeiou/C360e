@@ -112,9 +112,10 @@ public class OrderDetail implements Serializable {
 	private int isSet = 0;
 
 	/**
-	 * 只用于前端
+	 * 只用于前端,判断是否满足minNumber
+	 * 0 否  1 是
 	 */
-	private Boolean isMin ;
+	private int isMin ;
 	/**
 	 * 不存数据库 临时缓存用
 	 */
@@ -123,6 +124,14 @@ public class OrderDetail implements Serializable {
 	public OrderDetail() {
 		// set openItem False
 		this.isOpenItem = 0;
+	}
+
+	public int getIsMin() {
+		return isMin;
+	}
+
+	public void setIsMin(int isMin) {
+		this.isMin = isMin;
 	}
 
 	public Integer getId() {
@@ -448,5 +457,6 @@ public class OrderDetail implements Serializable {
 	public void setTransferFromDetailNum(int transferFromDetailNum) {
 		this.transferFromDetailNum = transferFromDetailNum;
 	}
+
 
 }

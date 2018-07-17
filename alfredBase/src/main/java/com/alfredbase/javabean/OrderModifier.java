@@ -34,15 +34,28 @@ public class OrderModifier {
 	private Integer printerId;//Printer Group
 	
 	private String modifierItemPrice;
+	/**
+	 * 只用于前端,判断是否满足minNumber
+	 * 0 否  1 是
+	 */
+	private int isMin ;
 
 
 	public OrderModifier() {
 	}
 
+	public int getIsMin() {
+		return isMin;
+	}
+
+	public void setIsMin(int isMin) {
+		this.isMin = isMin;
+	}
+
 	public OrderModifier(Integer id, Integer orderId, Integer orderDetailId,
-			Integer orderOriginId, Integer userId, Integer itemId,
-			Integer modifierId, Integer modifierNum, Integer status,
-			String modifierPrice, Long createTime, Long updateTime, String modifierItemPrice) {
+						 Integer orderOriginId, Integer userId, Integer itemId,
+						 Integer modifierId, Integer modifierNum, Integer status,
+						 String modifierPrice, Long createTime, Long updateTime, String modifierItemPrice) {
 		super();
 		this.id = id;
 		this.orderId = orderId;

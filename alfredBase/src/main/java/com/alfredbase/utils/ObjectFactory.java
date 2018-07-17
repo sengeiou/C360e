@@ -11,11 +11,13 @@ import com.alfredbase.javabean.CardsSettlement;
 import com.alfredbase.javabean.CashInOut;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
+import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.NetsSettlement;
 import com.alfredbase.javabean.NonChargableSettlement;
 import com.alfredbase.javabean.Order;
@@ -756,6 +758,28 @@ public class ObjectFactory {
 		return orderDetail;
 	}
 
+
+
+	Object lock_order_modifier_check = new Object();
+	//bob: only call from main POS. not need threadsafe
+	public ModifierCheck getModifierCheck(Order order, OrderDetail orderDetail,
+										  Modifier modifier,ItemModifier itemModifier) {
+		ModifierCheck modifierCheck = new ModifierCheck();
+		synchronized (lock_order_modifier_check) {
+
+			modifierCheck.setId(CommonSQL.getNextSeq(TableNames.ModifierCheck));
+			modifierCheck.setOrderDetailId(orderDetail.getId());
+			modifierCheck.setOrderId(order.getId());
+			modifierCheck.setModifierCategoryId(itemModifier.getModifierCategoryId());
+			modifierCheck.setItemName(orderDetail.getItemName());
+			modifierCheck.setModifierCategoryName(modifier.getCategoryName());
+			modifierCheck.setNum(modifier.getMinNumber());
+
+		}
+		return modifierCheck;
+	}
+
+
 	Object lock_order_modifier = new Object();
 	//bob: only call from main POS. not need threadsafe
 	public OrderModifier getOrderModifier(Order order, OrderDetail orderDetail,
@@ -780,6 +804,8 @@ public class ObjectFactory {
 		}
 		return orderModifier;
 	}
+
+
 
 
 	public OrderModifier getOrderModifierFromTempAppOrderModifier(Order order,
