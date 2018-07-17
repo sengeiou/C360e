@@ -600,9 +600,9 @@ public class OrderModifierSQL {
 	public static ArrayList<OrderModifier> getOrderModifiers(Order order,
 			OrderDetail orderDetail) {
 		ArrayList<OrderModifier> result = new ArrayList<OrderModifier>();
-		String sql = "select * from " 
-				+ TableNames.OrderModifier
-				+ " o,"
+		String sql = "select * from "
+		+ TableNames.OrderModifier
+				+ "o,"
 				+ TableNames.Modifier
 				+ " m"
 				+ " where o.orderId = ? and o.orderDetailId = ? and o.modifierId = m.id and m.type = 1 order by m.categoryId";

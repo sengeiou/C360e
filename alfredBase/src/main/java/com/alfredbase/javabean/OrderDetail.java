@@ -110,6 +110,11 @@ public class OrderDetail implements Serializable {
 	 * 只用于本地计算，方便计算
 	 */
 	private int isSet = 0;
+
+	/**
+	 * 只用于前端
+	 */
+	private Boolean isMin ;
 	/**
 	 * 不存数据库 临时缓存用
 	 */

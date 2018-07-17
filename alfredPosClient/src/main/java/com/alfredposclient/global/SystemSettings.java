@@ -506,7 +506,6 @@ public class SystemSettings {
 				this.isOfPax = true;
 			else
 				this.isOfPax = false;
-
 		}
 		return isOfPax;
 	}

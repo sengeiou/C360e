@@ -2231,7 +2231,6 @@ public class MainPage extends BaseActivity {
         //update tabels orders
         currentTable.setOrders(orderDetails.size());
         TableInfoSQL.updateTables(currentTable);
-
         mainPageMenuView.setParam(currentOrder, handler);
         orderView.setParam(this, currentOrder, orderDetails, handler);
         operatePanel.setParams(this, currentOrder, orderDetails,

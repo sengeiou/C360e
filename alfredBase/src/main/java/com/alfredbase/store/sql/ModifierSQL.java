@@ -21,8 +21,8 @@ public class ModifierSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.Modifier
-					+ "(id, restaurantId, type, categoryId, categoryName, price, modifierName, isActive, isDefault, itemId, isSet, qty, mustDefault, optionQty)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id, restaurantId, type, categoryId, categoryName, price, modifierName, isActive, isDefault, itemId, isSet, qty, mustDefault, optionQty,minNumber,maxNumber)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { 
@@ -39,7 +39,7 @@ public class ModifierSQL {
 							modifier.getIsSet(),
 							modifier.getQty(),
 							modifier.getMustDefault(),
-							modifier.getOptionQty()});
+							modifier.getOptionQty(),modifier.getMinNumber(),modifier.getMaxNumber()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,8 +54,8 @@ public class ModifierSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.Modifier
-					+ "(id, restaurantId, type, categoryId, categoryName, price, modifierName, isActive, isDefault, itemId, isSet, qty, mustDefault, optionQty)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id, restaurantId, type, categoryId, categoryName, price, modifierName, isActive, isDefault, itemId, isSet, qty, mustDefault,optionQty,minNumber,maxNumber)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Modifier modifier : modifierList) {
@@ -87,6 +87,10 @@ public class ModifierSQL {
 							modifier.getMustDefault());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 14,
 							modifier.getOptionQty());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 15,
+							modifier.getMinNumber());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 16,
+							modifier.getMaxNumber());
 
 					sqLiteStatement.executeInsert();
 				}
@@ -127,6 +131,8 @@ public class ModifierSQL {
 				modifier.setQty(cursor.getInt(11));
 				modifier.setMustDefault(cursor.getInt(12));
 				modifier.setOptionQty(cursor.getInt(13));
+				modifier.setMinNumber(cursor.getInt(14));
+				modifier.setMaxNumber(cursor.getInt(15));
 				result.add(modifier);
 			}
 		} catch (Exception e) {
@@ -169,6 +175,8 @@ public class ModifierSQL {
 				modifier.setQty(cursor.getInt(11));
 				modifier.setMustDefault(cursor.getInt(12));
 				modifier.setOptionQty(cursor.getInt(13));
+				modifier.setMinNumber(cursor.getInt(14));
+				modifier.setMaxNumber(cursor.getInt(15));
 				result.add(modifier);
 			}
 		} catch (Exception e) {
@@ -205,6 +213,8 @@ public class ModifierSQL {
 				modifier.setQty(cursor.getInt(11));
 				modifier.setMustDefault(cursor.getInt(12));
 				modifier.setOptionQty(cursor.getInt(13));
+				modifier.setMinNumber(cursor.getInt(14));
+				modifier.setMaxNumber(cursor.getInt(15));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -245,6 +255,8 @@ public class ModifierSQL {
 				modifier.setQty(cursor.getInt(11));
 				modifier.setMustDefault(cursor.getInt(12));
 				modifier.setOptionQty(cursor.getInt(13));
+				modifier.setMinNumber(cursor.getInt(14));
+				modifier.setMaxNumber(cursor.getInt(15));
 				result.add(modifier);
 			}
 		} catch (Exception e) {

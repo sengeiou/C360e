@@ -26,6 +26,7 @@ public class Modifier implements Serializable{
 	private String price;
 
 	private String modifierName;
+
 	
 
 	/**
@@ -61,7 +62,25 @@ public class Modifier implements Serializable{
 	 * 注意：这个字段是ModifierGroup使用的
 	 */
 	private int  optionQty;
-	
+	private int  minNumber;
+
+	private int  maxNumber;
+
+	public int getMinNumber() {
+		return minNumber;
+	}
+
+	public void setMinNumber(int minNumber) {
+		this.minNumber = minNumber;
+	}
+
+	public int getMaxNumber() {
+		return maxNumber;
+	}
+
+	public void setMaxNumber(int maxNumber) {
+		this.maxNumber = maxNumber;
+	}
 
 	public Integer getId() {
 		if (CommonUtil.isNull(id))
@@ -195,13 +214,24 @@ public class Modifier implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Modifier [id=" + id + ", restaurantId=" + restaurantId
-				+ ", type=" + type + ", categoryId=" + categoryId
-				+ ", categoryName=" + categoryName + ", price=" + price
-				+ ", modifierName=" + modifierName + ", isActive=" + isActive
-				+ ", isDefault=" + isDefault + ", itemId=" + itemId
-				+ ", isSet=" + isSet + ", qty=" + qty + ", mustDefault="
-				+ mustDefault + ", optionQty=" + optionQty + "]";
+		return "Modifier{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", type=" + type +
+				", categoryId=" + categoryId +
+				", categoryName='" + categoryName + '\'' +
+				", price='" + price + '\'' +
+				", modifierName='" + modifierName + '\'' +
+				", isActive=" + isActive +
+				", isDefault=" + isDefault +
+				", itemId=" + itemId +
+				", isSet=" + isSet +
+				", qty=" + qty +
+				", mustDefault=" + mustDefault +
+				", optionQty=" + optionQty +
+				", minNumber=" + minNumber +
+				", maxNumber=" + maxNumber +
+				'}';
 	}
-	
+
 }

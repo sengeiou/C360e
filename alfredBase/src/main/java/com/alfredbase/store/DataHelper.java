@@ -61,6 +61,7 @@ public class DataHelper {
                 onUpgradeForOldVersion22(db);
                 //1.0.28
                 onUpgradeForOldVersion23(db);
+                onUpgradeForOldVersion24(db);
                 db.setTransactionSuccessful();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -396,6 +397,11 @@ public class DataHelper {
                     //1.0.28
                     case 23:
                         onUpgradeForOldVersion23(db);
+
+                        break;
+                    case 24:
+                        onUpgradeForOldVersion24(db);
+
                         break;
                     default:
                         break;
@@ -1163,6 +1169,17 @@ public class DataHelper {
             db.execSQL("ALTER TABLE "
                     + TableNames.ItemModifier
                     + " ADD COLUMN indexNo INTEGER default 0");
+        }
+
+        private void onUpgradeForOldVersion24(SQLiteDatabase db) {
+
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Modifier
+                    + " ADD COLUMN  minNumber INTEGER default 0");
+
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Modifier
+                    + " ADD COLUMN  maxNumber INTEGER default 0");
         }
     }
 }

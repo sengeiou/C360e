@@ -27,6 +27,7 @@ import com.alfredbase.javabean.Printer;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
@@ -117,7 +118,8 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 					textView.setBackgroundResource(R.drawable.box_modifier);
 					textView.setTextColor(Color.BLACK);
 				}
-				
+
+//				LogUtil.e("ModifierView", "==å®½===" +modifier_type.getCategoryName() + "é«====" + childCount+"=="+modifier.getModifierName());
 				textView.setText(modifier.getModifierName());
 				textTypeFace.setTrajanProRegular(textView);
 				textView.setTag(modifier);
@@ -189,12 +191,26 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 								}else{
 									printId = prints.get(0).getId().intValue();
 								}
-							
 							}
-							orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
-							OrderModifierSQL.addOrderModifier(orderModifier);
-							num++;
+
+							int max=modifier.getMaxNumber();
+							if(modifier.getMaxNumber()>0&&num<=max-1) {
+
+								orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
+								OrderModifierSQL.addOrderModifier(orderModifier);
+								num++;
+							}else if(modifier.getMaxNumber()==0){
+								orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
+								OrderModifierSQL.addOrderModifier(orderModifier);
+								num++;
+
+							}else {
+								UIHelp.showShortToast(parent, "数量不能超过3");
+							}
+
 						}
+
+						LogUtil.e("ModifierView", "==å®½===" +num);
 						setParams(order, orderDetail, itemModifier, mHandler,height);// 回调，刷新数据
 //						refreshView((TextView)v, orderModifier);
 //						orderModifiers= OrderModifierSQL
@@ -203,6 +219,8 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 						msg.what = MainPage.VIEW_EVENT_SET_DATA;
 						handler.sendMessage(msg);
 					}
+
+
 				});
 				layout.addView(textView);
 				addCount++;
