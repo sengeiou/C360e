@@ -774,6 +774,7 @@ public class ObjectFactory {
 			modifierCheck.setItemName(orderDetail.getItemName());
 			modifierCheck.setModifierCategoryName(modifier.getCategoryName());
 			modifierCheck.setNum(modifier.getMinNumber());
+			modifierCheck.setMinNum(modifier.getMinNumber());
 
 		}
 		return modifierCheck;

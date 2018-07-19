@@ -45,6 +45,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -819,12 +820,13 @@ public class MainPageMenuViewKiosk extends LinearLayout {
            // add ModifierCheck
 
 
-            final Modifier modifier_type = CoreData.getInstance().getModifier(
-                    itemModifier);
-            if(modifier_type.getMinNumber()>0){
-                ModifierCheck modifierCheck=null;
-                modifierCheck =ObjectFactory.getInstance().getModifierCheck(order, orderDetail, modifier_type,itemModifier);
-            }
+//            final Modifier modifier_type = CoreData.getInstance().getModifier(
+//                    itemModifier);
+//            if(modifier_type.getMinNumber()>0){
+//                ModifierCheck modifierCheck=null;
+//                modifierCheck =ObjectFactory.getInstance().getModifierCheck(order, orderDetail, modifier_type,itemModifier);
+//                ModifierCheckSql.addModifierCheck(modifierCheck);
+          //  }
             modifierView.setParams(order, orderDetail, itemModifier, handler, height);
             ll_item_detail.addView(modifierView);
         }
@@ -875,7 +877,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
     }
 
     public void openModifiers(Order order, OrderDetail orderDetail,
-                              List<ItemModifier> itemModifiers) {
+                              List<ItemModifier> itemModifiers ) {
         initMenuDetail(order, orderDetail, itemModifiers);
         if (AnimatorListenerImpl.isRunning) {
             return;

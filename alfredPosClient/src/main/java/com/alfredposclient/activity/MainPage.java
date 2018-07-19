@@ -35,6 +35,7 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
@@ -71,6 +72,7 @@ import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
+import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
@@ -123,6 +125,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -660,6 +663,7 @@ public class MainPage extends BaseActivity {
                             showCloseBillWindow();
                         }
                     }
+
                     break;
                 case VIEW_EVENT_SHOW_TABLES: {
                     activityRequestCode = 0;
@@ -2266,6 +2270,18 @@ public class MainPage extends BaseActivity {
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         setData();
         if (itemModifiers.size() > 0) {
+
+
+                for (ItemModifier itemModifier : itemModifiers) {
+
+                    final Modifier modifier_type = CoreData.getInstance().getModifier(
+                            itemModifier);
+                    if (modifier_type.getMinNumber() > 0) {
+                        ModifierCheck modifierCheck = null;
+                        modifierCheck = ObjectFactory.getInstance().getModifierCheck(currentOrder, orderDetail, modifier_type, itemModifier);
+                        ModifierCheckSql.addModifierCheck(modifierCheck);
+                    }
+                }
             mainPageMenuView.openModifiers(currentOrder, orderDetail,
                     itemModifiers);
         }
@@ -2417,6 +2433,7 @@ public class MainPage extends BaseActivity {
                         public void onClick(View arg0) {
                             OrderDetailSQL.deleteOrderDetail(tag);
                             OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
+                            ModifierCheckSql.deleteModifierCheck(tag.getId());
                             try {
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("orderId", tag.getOrderId().intValue());

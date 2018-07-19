@@ -111,11 +111,7 @@ public class OrderDetail implements Serializable {
 	 */
 	private int isSet = 0;
 
-	/**
-	 * 只用于前端,判断是否满足minNumber
-	 * 0 否  1 是
-	 */
-	private int isMin ;
+
 	/**
 	 * 不存数据库 临时缓存用
 	 */
@@ -125,15 +121,6 @@ public class OrderDetail implements Serializable {
 		// set openItem False
 		this.isOpenItem = 0;
 	}
-
-	public int getIsMin() {
-		return isMin;
-	}
-
-	public void setIsMin(int isMin) {
-		this.isMin = isMin;
-	}
-
 	public Integer getId() {
 		return id;
 	}

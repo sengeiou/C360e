@@ -11,6 +11,15 @@ public class ModifierCheck implements Serializable{
     private String itemName;
     private String  modifierCategoryName;
     private int num;
+    private int minNum;
+
+    public int getMinNum() {
+        return minNum;
+    }
+
+    public void setMinNum(int minNum) {
+        this.minNum = minNum;
+    }
 
     public int getId() {
         return id;
@@ -75,9 +84,10 @@ public class ModifierCheck implements Serializable{
                 ", orderDetailId=" + orderDetailId +
                 ", orderId=" + orderId +
                 ", modifierCategoryId=" + modifierCategoryId +
-                ", itemName=" + itemName +
-                ", modifierCategoryName=" + modifierCategoryName +
+                ", itemName='" + itemName + '\'' +
+                ", modifierCategoryName='" + modifierCategoryName + '\'' +
                 ", num=" + num +
+                ", minNum=" + minNum +
                 '}';
     }
 }
