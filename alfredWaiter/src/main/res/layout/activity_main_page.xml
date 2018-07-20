@@ -162,8 +162,29 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
-		    
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+            <FrameLayout
+
+                android:layout_marginLeft="10dp"
+                android:id="@+id/lin_fragment_mod"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4">
+            </FrameLayout>
+                <android.support.v7.widget.RecyclerView
+
+                    android:id="@+id/recyc_itemCate"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+            </LinearLayout>
             <ExpandableListView
+                android:visibility="gone"
                 android:id="@+id/expandedListViewEx"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -218,4 +239,6 @@
 			android:layout_weight="1"
 			android:layout_margin="10dp"/>
 	</LinearLayout>
+
+
 </RelativeLayout>

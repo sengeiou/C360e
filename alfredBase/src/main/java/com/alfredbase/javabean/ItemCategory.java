@@ -158,16 +158,33 @@ public class ItemCategory implements Serializable{
 		this.updateTime = updateTime;
 	}
 
+//	@Override
+//	public String toString() {
+//		return "ItemCategory [id=" + id + ", itemCategoryName="
+//				+ itemCategoryName + ", superCategoryId=" + superCategoryId
+//				+ ", color=" + color + ", itemMainCategoryId="
+//				+ itemMainCategoryId + ", restaurantId=" + restaurantId
+//				+ ", isActive=" + isActive + ", indexId=" + indexId
+//				+ ", printerGroupId=" + printerGroupId + ", userId=" + userId
+//				+ ", createTime=" + createTime + ", updateTime=" + updateTime
+//				+ "]";
+//	}
+
 	@Override
 	public String toString() {
-		return "ItemCategory [id=" + id + ", itemCategoryName="
-				+ itemCategoryName + ", superCategoryId=" + superCategoryId
-				+ ", color=" + color + ", itemMainCategoryId="
-				+ itemMainCategoryId + ", restaurantId=" + restaurantId
-				+ ", isActive=" + isActive + ", indexId=" + indexId
-				+ ", printerGroupId=" + printerGroupId + ", userId=" + userId
-				+ ", createTime=" + createTime + ", updateTime=" + updateTime
-				+ "]";
+		return "ItemCategory{" +
+				"id=" + id +
+				", itemCategoryName='" + itemCategoryName + '\'' +
+				", superCategoryId=" + superCategoryId +
+				", color='" + color + '\'' +
+				", itemMainCategoryId=" + itemMainCategoryId +
+				", restaurantId=" + restaurantId +
+				", isActive=" + isActive +
+				", indexId=" + indexId +
+				", printerGroupId=" + printerGroupId +
+				", userId=" + userId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				'}';
 	}
-
 }

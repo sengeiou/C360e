@@ -2,6 +2,9 @@ package com.alfredwaiter.activity;
 
 import android.content.Intent;
 import android.os.Handler;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -10,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -35,13 +39,16 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
+import com.alfredwaiter.adapter.ItemCategoryAdapter;
 import com.alfredwaiter.adapter.OrderAdapter;
+import com.alfredwaiter.adapter.RvListener;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.javabean.ItemCategoryAndDetails;
 import com.alfredwaiter.javabean.ModifierCPVariance;
 import com.alfredwaiter.javabean.ModifierVariance;
+import com.alfredwaiter.listener.RvItemClickListener;
 import com.alfredwaiter.popupwindow.SearchMenuItemWindow;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.popupwindow.WaiterModifierCPWindow;
@@ -106,6 +113,10 @@ public class MainPage extends BaseActivity {
 //	private ModifierWindow modifierWindow;
 //	private WaiterModifierWindow modifierWindow;
 	private WaiterModifierCPWindow modifierWindow;
+	List<ItemCategory>  itemCategorys=new ArrayList<ItemCategory>();
+    private RecyclerView reItemCate;
+    ItemCategoryAdapter itemCateAdapter;
+	private LinearLayoutManager mLinearLayoutManager;
 
 	@Override
 	protected void initView() {
@@ -123,9 +134,48 @@ public class MainPage extends BaseActivity {
 				handler);
 		dialog = new SelectPersonDialog(context, handler);
 		getIntentData();
+
+        itemCategorys.addAll(getItemCategory(null));
+
 		expandableListView = (ExpandableListView) findViewById(R.id.expandedListViewEx);
 		expandableListView.setDividerHeight(0);
 		itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
+
+       reItemCate=(RecyclerView)findViewById(R.id.recyc_itemCate) ;
+		mLinearLayoutManager = new LinearLayoutManager(context);
+		reItemCate.setLayoutManager(mLinearLayoutManager);
+		DividerItemDecoration decoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+		reItemCate.addItemDecoration(decoration);
+
+//		for (int i = 0; i < categoryOneArray.size(); i++) {
+//			list.add(categoryOneArray.get(i).getName());
+//		}
+//		mSortAdapter = new SortAdapter(mContext, list, new RvListener() {
+//			@Override
+//			public void onItemClick(int id, int position) {
+//				if (mSortDetailFragment != null) {
+//					isMoved = true;
+//					targetPosition = position;
+//					setChecked(position, true);
+//				}
+//			}
+//		});
+        itemCateAdapter=new ItemCategoryAdapter(context, itemCategorys, new RvItemClickListener() {
+
+            public void onItemClick(View v, int position) {
+            	itemCateAdapter.setCheckedPosition(position);
+//				targetPosition = position;
+//				setChecked(position, true);
+//				Toast.makeText(context,""+position,Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
+     reItemCate.setAdapter(itemCateAdapter);
+
+
+
 		adapter = new OrderAdapter(context, itemCategoryAndDetailsList, handler,setItemCountWindow,new CountView.OnCountChange() {
 			@Override
 			public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
@@ -487,35 +537,50 @@ public class MainPage extends BaseActivity {
 		searchPopUp.setAdapterData(currentOrder,itemDetailList,currentGroupId);
 	}
 	
-	private List<ItemCategoryAndDetails> getItemCategoryAndDetails(
+	private List<ItemCategory> getItemCategory(
 			ItemMainCategory itemMainCategory) {
-		List<ItemCategoryAndDetails> result = new ArrayList<ItemCategoryAndDetails>();
-		ItemCategoryAndDetails itemCategoryAndDetails = null;
+        List<ItemCategory>  ItemCategory= new ArrayList<ItemCategory>();
 		if (itemMainCategory == null) {
-//			for(ItemMainCategory mItemMainCategory:CoreData.getInstance()
-//					.getItemMainCategories()){
-				for (ItemCategory itemCategory : CoreData.getInstance()
-						.getItemCategories()) {
-					itemCategoryAndDetails = new ItemCategoryAndDetails();
-					itemCategoryAndDetails.setItemCategory(itemCategory);
-					itemCategoryAndDetails.setItemDetails(CoreData.getInstance()
-							.getItemDetails(itemCategory));
-					result.add(itemCategoryAndDetails);
-				}
-//			}
+
+            ItemCategory= CoreData.getInstance()
+                    .getItemCategories();
 		} else {
-			for (ItemCategory itemCategory : CoreData.getInstance()
-					.getItemCategories(itemMainCategory)) {
-				itemCategoryAndDetails = new ItemCategoryAndDetails();
-				itemCategoryAndDetails.setItemCategory(itemCategory);
-				itemCategoryAndDetails.setItemDetails(CoreData.getInstance()
-						.getItemDetails(itemCategory));
-				result.add(itemCategoryAndDetails);
-			}
+		    ItemCategory=CoreData.getInstance()
+                    .getItemCategories(itemMainCategory);
 		}
-		return result;
+		return ItemCategory;
 	}
 
+
+
+    private List<ItemCategoryAndDetails> getItemCategoryAndDetails(
+            ItemMainCategory itemMainCategory) {
+        List<ItemCategoryAndDetails> result = new ArrayList<ItemCategoryAndDetails>();
+        ItemCategoryAndDetails itemCategoryAndDetails = null;
+        if (itemMainCategory == null) {
+//			for(ItemMainCategory mItemMainCategory:CoreData.getInstance()
+//					.getItemMainCategories()){
+            for (ItemCategory itemCategory : CoreData.getInstance()
+                    .getItemCategories()) {
+                itemCategoryAndDetails = new ItemCategoryAndDetails();
+                itemCategoryAndDetails.setItemCategory(itemCategory);
+                itemCategoryAndDetails.setItemDetails(CoreData.getInstance()
+                        .getItemDetails(itemCategory));
+                result.add(itemCategoryAndDetails);
+            }
+//			}
+        } else {
+            for (ItemCategory itemCategory : CoreData.getInstance()
+                    .getItemCategories(itemMainCategory)) {
+                itemCategoryAndDetails = new ItemCategoryAndDetails();
+                itemCategoryAndDetails.setItemCategory(itemCategory);
+                itemCategoryAndDetails.setItemDetails(CoreData.getInstance()
+                        .getItemDetails(itemCategory));
+                result.add(itemCategoryAndDetails);
+            }
+        }
+        return result;
+    }
 	@Override
 	public void handlerClickEvent(View v) {
 		super.handlerClickEvent(v);
