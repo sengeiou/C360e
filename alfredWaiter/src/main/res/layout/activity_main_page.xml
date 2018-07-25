@@ -166,8 +166,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:weightSum="5">
+                android:weightSum="4">
 
+				<android.support.v7.widget.RecyclerView
+					android:id="@+id/rv_item_detail"
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_weight="4"
+                    android:visibility="gone"
+					android:background="@android:color/white">
+				</android.support.v7.widget.RecyclerView>
             <FrameLayout
 
                 android:layout_marginLeft="10dp"
@@ -177,11 +185,12 @@
                 android:layout_weight="4">
             </FrameLayout>
                 <android.support.v7.widget.RecyclerView
-
                     android:id="@+id/recyc_itemCate"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+					 android:visibility="gone"
+					/>
             </LinearLayout>
             <ExpandableListView
                 android:visibility="gone"
@@ -198,12 +207,13 @@
                 android:src="@drawable/shadow"
                 android:layout_alignParentTop="true"
                 android:scaleType="fitXY"/>
-            <Button
-                android:id="@+id/btn_slide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_slide"
-                android:layout_centerVertical="true"/>
+
+			<Button
+				android:id="@+id/btn_slide"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:background="@drawable/btn_slide" />
         </RelativeLayout>
     </LinearLayout>
 	<LinearLayout

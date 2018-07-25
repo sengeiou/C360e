@@ -765,6 +765,30 @@ public class CoreData {
 		return itemCategories;
 	}
 
+
+	public List<ItemCategory> getItemCategoriesorDetail() {
+		if (itemCategories == null) {
+			return Collections.emptyList();
+		}
+		List<ItemCategory> mItemCategory = new ArrayList<ItemCategory>();
+		List<ItemDetail> itemDetailandCate =new ArrayList<ItemDetail>();
+		for (ItemCategory itemCategory :itemCategories) {
+			itemDetailandCate.clear();
+			for (ItemDetail itemDetail : CoreData.getInstance().getItemDetails()) {
+				if (itemDetail.getItemCategoryId().intValue() == itemCategory
+						.getId().intValue()) {
+					itemDetailandCate.add(itemDetail);
+				}
+			}
+
+			if(itemDetailandCate.size()>0){
+				mItemCategory.add(itemCategory);
+			}
+
+		}
+		return mItemCategory;
+	}
+
 	public void setItemCategories(List<ItemCategory> itemCategories) {
 		this.itemCategories = itemCategories;
 	}

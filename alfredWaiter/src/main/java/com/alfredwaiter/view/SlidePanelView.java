@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,10 +20,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.ItemCategory;
+import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
+import com.alfredwaiter.activity.CallBackMove;
+import com.alfredwaiter.activity.CheckListener;
+import com.alfredwaiter.activity.ItemDetailFragment;
 import com.alfredwaiter.activity.MainPage;
+import com.alfredwaiter.adapter.ItemHeaderDecoration;
+import com.alfredwaiter.adapter.ItemHeaderDetailDecoration;
 
 /**
  * 参考http://blog.csdn.net/hellogv/article/details/6828584
@@ -31,7 +39,13 @@ import com.alfredwaiter.activity.MainPage;
  * 
  */
 public class SlidePanelView extends LinearLayout implements
-		GestureDetector.OnGestureListener {
+		GestureDetector.OnGestureListener ,CheckListener {
+
+	private Boolean isMoved;
+	public void check(int position, boolean isScroll) {
+		setChecked(position,isScroll);
+		Log.d("滑动事件--->", position + "---" + isScroll);
+	}
 
 	public interface PanelClosedEvent {
 		void onPanelClosed(View panel);
@@ -62,6 +76,7 @@ public class SlidePanelView extends LinearLayout implements
 
 	private boolean isPressed = true;
 	private int selectItem = 0;
+	private static CallBackMove callBackMove;
 
 	public SlidePanelView(Context context, View otherView, int width,
 			int height,  final Handler handler) {
@@ -102,11 +117,16 @@ public class SlidePanelView extends LinearLayout implements
 
 		lv_main_category.setAdapter(mAdapter);
 
+	//	setChecked(0,true);
+		ItemDetailFragment.setListener(this);
 		lv_main_category.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				Log.d("onItemClick-------->", String.valueOf(arg2));
+				isMoved=true;
+					setChecked(arg2,true);
 				if (selectItem == arg2){
 					isPressed = true;
 				}else {
@@ -295,7 +315,9 @@ public class SlidePanelView extends LinearLayout implements
 	@Override
 	public void onShowPress(MotionEvent e) {
 	}
-
+	public static void setCallBackMove( CallBackMove callBack) {
+		callBackMove = callBack;
+	}
 	class MainCategoryAdapter extends BaseAdapter {
 		private List<ItemMainCategory> mItemMainCategories = new ArrayList<ItemMainCategory>();
 		private int selectItem = 0;
@@ -309,7 +331,7 @@ public class SlidePanelView extends LinearLayout implements
 				return;
 			}else {
 				this.mItemMainCategories.clear();
-				this.mItemMainCategories.add(null);
+				//this.mItemMainCategories.add(null);
 				this.mItemMainCategories.addAll(mItemMainCategories);
 			}
 		}
@@ -351,11 +373,11 @@ public class SlidePanelView extends LinearLayout implements
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-			if (position == 0) {
-				holder.tv_text.setText(mContext.getResources().getString(R.string.all));
-			}else {
+//			if (position == 0) {
+//				holder.tv_text.setText(mContext.getResources().getString(R.string.all));
+//			}else {
 				holder.tv_text.setText(mItemMainCategories.get(position).getMainCategoryName());
-			}
+		//	}
 			textTypeFace.setTrajanProBlod(holder.tv_text);
 			if (position == selectItem) {
 				convertView.setBackgroundResource(R.color.bg_item_category);
@@ -373,5 +395,56 @@ public class SlidePanelView extends LinearLayout implements
 
 	private void initTextTypeFace() {
 		textTypeFace = TextTypeFace.getInstance();
+	}
+
+	private void setChecked(int position, boolean isLeft) {
+		Log.d("setChecked-------->", String.valueOf(position));
+		if (isLeft) {
+			((MainCategoryAdapter) lv_main_category.getAdapter()).setSelectItem(position);
+			((MainCategoryAdapter) lv_main_category.getAdapter()).refresh();
+			//mSortAdapter.setCheckedPosition(position);
+			//此处的位置需要根据每个分类的集合来进行计算
+			List<ItemCategory>	itemCategorylist=  CoreData.getInstance().getItemCategoriesorDetail();
+			List<ItemDetail> itemDetaillist =new ArrayList<ItemDetail>();
+			int count = 0;
+			for (int i = 0; i < position; i++) {
+
+				for (int j = 0; j < itemCategorylist.size(); j++) {
+
+					int itemMainid=itemMainCategories.get(i).getId();
+					int categoryId=itemCategorylist.get(j).getItemMainCategoryId();
+				if(itemMainid==categoryId){
+					count++;
+					itemDetaillist.clear();
+					itemDetaillist= CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
+					for(int d=0;d<itemDetaillist.size();d++){
+					count++;
+
+					}
+				}
+
+				}
+
+			}
+			count += position;
+//			ItemDetailFragment fragment=new ItemDetailFragment();
+			Log.d("count-------->", String.valueOf(count));
+//			fragment.setData(count);
+			callBackMove.move(count);
+			ItemHeaderDetailDecoration.setCurrentTag(String.valueOf(position));//凡是点击左边，将左边点击的位置作为当前的tag
+		} else {
+
+
+			if (isMoved) {
+				isMoved = false;
+			} else {
+				((MainCategoryAdapter) lv_main_category.getAdapter()).setSelectItem(position);
+				((MainCategoryAdapter) lv_main_category.getAdapter()).refresh();
+			}
+			ItemHeaderDecoration.setCurrentTag(String.valueOf(position));//如果是滑动右边联动左边，则按照右边传过来的位置作为tag
+
+		}
+	//	moveToCenter(position);
+
 	}
 }

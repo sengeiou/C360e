@@ -1,10 +1,15 @@
 package com.alfredwaiter.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -40,6 +45,8 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
 import com.alfredwaiter.adapter.ItemCategoryAdapter;
+import com.alfredwaiter.adapter.ItemDetailAdapter;
+import com.alfredwaiter.adapter.ItemHeaderDetailDecoration;
 import com.alfredwaiter.adapter.OrderAdapter;
 import com.alfredwaiter.adapter.RvListener;
 import com.alfredwaiter.global.App;
@@ -62,7 +69,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainPage extends BaseActivity {
+public class MainPage extends BaseActivity implements CheckListener{
 	public static final int VIEW_EVENT_CLICK_MAIN_CATEGORY = 0;
 	public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
 	public static final int VIEW_EVENT_SET_PERSON_INDEX = 2;
@@ -115,9 +122,13 @@ public class MainPage extends BaseActivity {
 	private WaiterModifierCPWindow modifierWindow;
 	List<ItemCategory>  itemCategorys=new ArrayList<ItemCategory>();
     private RecyclerView reItemCate;
+	private RecyclerView reItemdetail;
     ItemCategoryAdapter itemCateAdapter;
 	private LinearLayoutManager mLinearLayoutManager;
+	List<ItemDetail> itemDetails=new ArrayList<ItemDetail>();
 
+	ItemDetailFragment itemDetailFragment;
+	private ItemDetailAdapter  detailAdapter;
 	@Override
 	protected void initView() {
 		super.initView();
@@ -135,47 +146,49 @@ public class MainPage extends BaseActivity {
 		dialog = new SelectPersonDialog(context, handler);
 		getIntentData();
 
-        itemCategorys.addAll(getItemCategory(null));
-
+       itemCategorys.addAll(getItemCategory(null));
+        itemDetails.clear();
+       itemDetails.addAll(getItemDetail());
 		expandableListView = (ExpandableListView) findViewById(R.id.expandedListViewEx);
 		expandableListView.setDividerHeight(0);
 		itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
-
-       reItemCate=(RecyclerView)findViewById(R.id.recyc_itemCate) ;
+          //右侧子分类列表recyclerView
+        reItemCate=(RecyclerView)findViewById(R.id.recyc_itemCate) ;
 		mLinearLayoutManager = new LinearLayoutManager(context);
 		reItemCate.setLayoutManager(mLinearLayoutManager);
 		DividerItemDecoration decoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
 		reItemCate.addItemDecoration(decoration);
+        itemCateAdapter=new ItemCategoryAdapter(context, itemCategorys, new RvItemClickListener() {
 
-//		for (int i = 0; i < categoryOneArray.size(); i++) {
-//			list.add(categoryOneArray.get(i).getName());
-//		}
-//		mSortAdapter = new SortAdapter(mContext, list, new RvListener() {
-//			@Override
-//			public void onItemClick(int id, int position) {
-//				if (mSortDetailFragment != null) {
+            public void onItemClick(View v, int position) {
+            //	itemCateAdapter.setCheckedPosition(position);
+//				if (itemDetailFragment != null) {
 //					isMoved = true;
 //					targetPosition = position;
 //					setChecked(position, true);
 //				}
-//			}
-//		});
-        itemCateAdapter=new ItemCategoryAdapter(context, itemCategorys, new RvItemClickListener() {
 
-            public void onItemClick(View v, int position) {
-            	itemCateAdapter.setCheckedPosition(position);
-//				targetPosition = position;
-//				setChecked(position, true);
-//				Toast.makeText(context,""+position,Toast.LENGTH_SHORT).show();
 
             }
         });
-
-
      reItemCate.setAdapter(itemCateAdapter);
 
+     //菜单列表
+     reItemdetail=(RecyclerView)findViewById(R.id.rv_item_detail);
 
+		mLinearLayoutManager = new LinearLayoutManager(context);
+		reItemdetail.setLayoutManager(mLinearLayoutManager);
+		DividerItemDecoration itemdecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+		reItemdetail.addItemDecoration(itemdecoration);
+		detailAdapter=new ItemDetailAdapter(context, itemDetails, new RvItemClickListener() {
+			@Override
+			public void onItemClick(View view, int position) {
 
+			}
+		});
+reItemdetail.setAdapter(detailAdapter);
+
+		createFragment();
 		adapter = new OrderAdapter(context, itemCategoryAndDetailsList, handler,setItemCountWindow,new CountView.OnCountChange() {
 			@Override
 			public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
@@ -271,6 +284,19 @@ public class MainPage extends BaseActivity {
 				handler);
 
 	}
+
+
+	public void createFragment() {
+		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+		itemDetailFragment = new ItemDetailFragment();
+		Bundle bundle = new Bundle();
+		bundle.putParcelableArrayList("left", (ArrayList<? extends Parcelable>) itemDetails);
+		itemDetailFragment.setArguments(bundle);
+		//itemDetailFragment.(this);
+		fragmentTransaction.add(R.id.lin_fragment_mod, itemDetailFragment);
+		fragmentTransaction.commit();
+	}
+
 
 	private void getIntentData() {
 		Intent intent = getIntent();
@@ -552,6 +578,98 @@ public class MainPage extends BaseActivity {
 	}
 
 
+//	private List<ItemDetail> getItemDetail(
+//			) {
+//		List<ItemDetail> itemDetaillist =new ArrayList<ItemDetail>();
+//		List<ItemDetail> itemDetailandCate =new ArrayList<ItemDetail>();
+//		itemDetaillist=CoreData.getInstance().getItemDetails();
+//		List<ItemCategory> list=new ArrayList<ItemCategory>();
+//
+//		 for(int i=0; i< CoreData.getInstance().getItemMainCategories().size();i++) {
+//			 list=CoreData.getInstance()
+//					 .getItemCategoriesorDetail(CoreData.getInstance().getItemMainCategories().get(i));
+//			 for (int j = 0; j < list.size(); i++) {
+//				 ItemDetail detail = new ItemDetail();
+//				 detail.setItemCategoryName(list.get(j).getItemCategoryName());
+//				 detail.setId(list.get(j).getId());
+//				 detail.setTag(String.valueOf(i));
+//				 itemDetailandCate.add(detail);
+//
+//				 for (ItemDetail itemDetail : itemDetaillist) {
+//					 if (itemDetail.getItemCategoryId().intValue() == list.get(j)
+//							 .getId().intValue()) {
+//						 itemDetail.setItemCategoryName(list.get(j).getItemCategoryName());
+//						 itemDetail.setTag(String.valueOf(i));
+//						 itemDetailandCate.add(itemDetail);
+//					 }
+//				 }
+//			 }
+//		 }
+//
+//
+////		else {
+////			ItemCategory=CoreData.getInstance()
+////					.getItemCategories(itemMainCategory);
+////		}
+//		return itemDetailandCate;
+//	}
+	private List<ItemDetail> getItemDetail(
+	) {
+	List<ItemDetail> itemDetaillist =new ArrayList<ItemDetail>();
+		//itemDetaillist=CoreData.getInstance().getItemDetails();
+		List<ItemDetail> itemDetailandCate =new ArrayList<ItemDetail>();
+//		itemDetaillist=CoreData.getInstance().getItemDetails();
+//		List<ItemCategory> list=new ArrayList<ItemCategory>();
+	List<ItemCategory>	itemCategorylist=  CoreData.getInstance().getItemCategoriesorDetail();
+	List<ItemMainCategory>	itemMainCategorielist=CoreData.getInstance().getItemMainCategories();
+
+		for(int i=0; i<itemMainCategorielist.size() ;i++) {
+
+			ItemDetail detail = new ItemDetail();
+				 detail.setItemCategoryName(itemMainCategorielist.get(i).getMainCategoryName());
+				// detail.setId(list.get(j).getId());
+				 detail.setTag(String.valueOf(i));
+				 detail.setViewType(1);
+				 itemDetailandCate.add(detail);
+			for (int j = 0; j < itemCategorylist.size(); j++) {
+               int  id ,cid;
+
+			id=	itemMainCategorielist.get(i).getId();
+				cid=itemCategorylist.get(j).getItemMainCategoryId();
+				if(id==cid){
+
+					ItemDetail itemCateDetail = new ItemDetail();
+					itemCateDetail.setItemCategoryName(itemMainCategorielist.get(i).getMainCategoryName());
+					// detail.setId(list.get(j).getId());
+					itemCateDetail.setItemName(itemCategorylist.get(j).getItemCategoryName());
+					itemCateDetail.setTag(String.valueOf(i));
+					itemCateDetail.setViewType(2);
+					itemDetailandCate.add(itemCateDetail);
+					itemDetaillist.clear();
+					itemDetaillist= CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
+					for(int d=0;d<itemDetaillist.size();d++){
+						itemDetaillist.get(d).setItemCategoryName(itemMainCategorielist.get(i).getMainCategoryName());
+						itemDetaillist.get(d).setTag(String.valueOf(i));
+						itemDetaillist.get(d).setViewType(3);
+						itemDetailandCate.add(itemDetaillist.get(d));
+
+					}
+
+
+				}
+
+			}
+
+		}
+
+
+//		else {
+//			ItemCategory=CoreData.getInstance()
+//					.getItemCategories(itemMainCategory);
+//		}
+		return itemDetailandCate;
+	}
+
 
     private List<ItemCategoryAndDetails> getItemCategoryAndDetails(
             ItemMainCategory itemMainCategory) {
@@ -659,5 +777,45 @@ public class MainPage extends BaseActivity {
 		textTypeFace.setTrajanProBlod((TextView)findViewById(R.id.tv_notification_qty));
 		textTypeFace.setTrajanProBlod((TextView)findViewById(R.id.tv_person_index));
 		textTypeFace.setTrajanProBlod((TextView)findViewById(R.id.tv_table_name));
+	}
+
+
+//	private void setChecked(int position, boolean isLeft) {
+//		Log.d("p-------->", String.valueOf(position));
+//		if (isLeft) {
+//			itemCateAdapter.setCheckedPosition(position);
+//			//此处的位置需要根据每个分类的集合来进行计算
+//			int count = 0;
+//			for (int i = 0; i < position; i++) {
+//				count += mSortBean.getCategoryOneArray().get(i).getCategoryTwoArray().size();
+//			}
+//			count += position;
+//			itemDetailFragment.setData(count);
+//			ItemHeaderDetailDecoration.setCurrentTag(String.valueOf(targetPosition));//凡是点击左边，将左边点击的位置作为当前的tag
+//		} else {
+//			if (isMoved) {
+//				isMoved = false;
+//			} else
+//				mSortAdapter.setCheckedPosition(position);
+//			ItemHeaderDecoration.setCurrentTag(String.valueOf(position));//如果是滑动右边联动左边，则按照右边传过来的位置作为tag
+//
+//		}
+//		moveToCenter(position);
+//
+//	}
+//
+//	//将当前选中的item居中
+//	private void moveToCenter(int position) {
+//		//将点击的position转换为当前屏幕上可见的item的位置以便于计算距离顶部的高度，从而进行移动居中
+//		View childAt = rvSort.getChildAt(position - mLinearLayoutManager.findFirstVisibleItemPosition());
+//		if (childAt != null) {
+//			int y = (childAt.getTop() - rvSort.getHeight() / 2);
+//			rvSort.smoothScrollBy(0, y);
+//		}
+//
+//	}
+	@Override
+	public void check(int position, boolean isScroll) {
+
 	}
 }
