@@ -2,6 +2,7 @@ package com.alfredwaiter.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -85,6 +86,7 @@ public class CountView extends LinearLayout implements OnClickListener {
 		}
 		case R.id.ll_add: {
 			int count = 0;
+			Log.d("111111111--->", "111111111");
 			try {
 				count = Integer.parseInt(tv_count.getText().toString());
 				count++;
@@ -95,7 +97,8 @@ public class CountView extends LinearLayout implements OnClickListener {
 				count = 1;
 			tv_count.setText(count + "");
 			if (onCountChange != null) {
-				onCountChange.onChange(itemDetail, count, true);
+				//onCountChange.onChange(itemDetail, count, true);
+				Log.d("2222222222--->", "22222222222");
 			}
 			break;
 		}

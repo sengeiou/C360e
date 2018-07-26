@@ -1,8 +1,10 @@
 package com.alfredwaiter.activity;
 
+import android.app.Application;
 import android.app.Fragment;
 import android.graphics.Color;
 
+import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,16 +13,28 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alfredbase.global.CoreData;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.ItemMainCategory;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredwaiter.R;
 import com.alfredwaiter.adapter.ItemDetailAdapter;
 import com.alfredwaiter.adapter.ItemHeaderDecoration;
 import com.alfredwaiter.adapter.ItemHeaderDetailDecoration;
+import com.alfredwaiter.global.App;
+import com.alfredwaiter.global.UIHelp;
+import com.alfredwaiter.javabean.ModifierCPVariance;
+import com.alfredwaiter.javabean.ModifierVariance;
 import com.alfredwaiter.listener.RvItemClickListener;
+import com.alfredwaiter.popupwindow.SetItemCountWindow;
+import com.alfredwaiter.utils.WaiterUtils;
+import com.alfredwaiter.view.CountView;
 import com.alfredwaiter.view.SlidePanelView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ItemDetailFragment extends BaseFragment<ItemDetailPresenter, String> implements CheckListener,CallBackMove {
     private static CheckListener checkListener;
@@ -29,6 +43,7 @@ public class ItemDetailFragment extends BaseFragment<ItemDetailPresenter, String
     private GridLayoutManager mManager;
 
     private ItemHeaderDetailDecoration mDecoration;
+    private SetItemCountWindow setItemCountWindow;
     ItemDetailAdapter mAdapter;
     private boolean move = false;
     private int mIndex = 0;
@@ -90,6 +105,7 @@ public class ItemDetailFragment extends BaseFragment<ItemDetailPresenter, String
 
     private void initData() {
 
+
         ArrayList<ItemDetail> leftList =  getArguments().getParcelableArrayList("left");
           mDatas=leftList;
 //        mLinearLayoutManager = new LinearLayoutManager(mContext);
@@ -104,20 +120,16 @@ public class ItemDetailFragment extends BaseFragment<ItemDetailPresenter, String
             }
         });
         mRv.setLayoutManager(mManager);
-        mAdapter = new ItemDetailAdapter(mContext, mDatas, new RvItemClickListener() {
-
+        mAdapter = new ItemDetailAdapter(mContext, mDatas,setItemCountWindow, new RvItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-            }
 
-//                Snackbar snackbar = Snackbar.make(mRv, "当前点击的是" + content + ":" + mDatas.get(position).getName(), Snackbar.LENGTH_SHORT);
-//                View mView = snackbar.getView();
-//                mView.setBackgroundColor(Color.BLUE);
-//                TextView text = (TextView) mView.findViewById(android.support.design.R.id.snackbar_text);
-//                text.setTextColor(Color.WHITE);
-//                text.setTextSize(25);
-//                snackbar.show();
-//            }
+            }
+        }, new CountView.OnCountChange() {
+            @Override
+            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
+
+            }
         });
 
         mRv.setAdapter(mAdapter);
@@ -156,14 +168,16 @@ public class ItemDetailFragment extends BaseFragment<ItemDetailPresenter, String
         Log.d("first--->", String.valueOf(firstItem));
         Log.d("last--->", String.valueOf(lastItem));
         if (n <= firstItem) {
-            mRv.scrollToPosition(n);
+            mRv.smoothScrollToPosition(n);
+           // ((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
         } else if (n <= lastItem) {
             Log.d("pos---->", String.valueOf(n) + "VS" + firstItem);
             int top = mRv.getChildAt(n - firstItem).getTop();
             Log.d("top---->", String.valueOf(top));
             mRv.scrollBy(0, top);
         } else {
-            mRv.scrollToPosition(n);
+            //((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
+            mRv.smoothScrollToPosition(n);
             move = true;
         }
     }
@@ -193,6 +207,17 @@ public class ItemDetailFragment extends BaseFragment<ItemDetailPresenter, String
 //    }
 
 
+    private Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+
+                default:
+                    break;
+            }
+        };
+    };
+
+
     private class RecyclerViewListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -212,14 +237,14 @@ public class ItemDetailFragment extends BaseFragment<ItemDetailPresenter, String
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (move) {
-                move = false;
-                int n = mIndex - mManager.findFirstVisibleItemPosition();
-                if (0 <= n && n < mRv.getChildCount()) {
-                    int top = mRv.getChildAt(n).getTop();
-                    mRv.scrollBy(0, top);
-                }
-            }
+//            if (move) {
+//                move = false;
+//                int n = mIndex - mManager.findFirstVisibleItemPosition();
+//                if (0 <= n && n < mRv.getChildCount()) {
+//                    int top = mRv.getChildAt(n).getTop();
+//                    mRv.scrollBy(0, top);
+//                }
+//            }
         }
     }
 

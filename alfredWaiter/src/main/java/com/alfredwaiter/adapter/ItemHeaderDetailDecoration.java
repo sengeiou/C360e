@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.CheckListener;
 import com.alfredwaiter.javabean.ModifierCPVariance;
@@ -27,6 +28,7 @@ public class ItemHeaderDetailDecoration extends RecyclerView.ItemDecoration {
     private int mTitleHeight;
     private List<ItemDetail> mDatas;
     private LayoutInflater mInflater;
+    private TextTypeFace textTypeFace = TextTypeFace.getInstance();
   //  private CheckListener mCheckListener;
     public static String currentTag = "0";//标记当前左侧选中的position，因为有可能选中的item，右侧不能置顶，所以强制替换掉当前的tag
 
@@ -105,6 +107,7 @@ public class ItemHeaderDetailDecoration extends RecyclerView.ItemDecoration {
         View topTitleView = mInflater.inflate(R.layout.kot_mian_item_listview, parent, false);
         TextView tvTitle = (TextView) topTitleView.findViewById(R.id.tv_main_title);
         tvTitle.setText(mDatas.get(pos).getItemCategoryName());
+        textTypeFace.setTrajanProRegular(tvTitle);
         //绘制title开始
         int toDrawWidthSpec;//用于测量的widthMeasureSpec
         int toDrawHeightSpec;//用于测量的heightMeasureSpec

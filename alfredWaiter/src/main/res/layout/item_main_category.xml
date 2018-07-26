@@ -12,5 +12,10 @@
         android:paddingTop="15dp"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_m" />
-    
+    <View
+        android:layout_below="@id/tv_text"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_line"
+        ></View>
 </RelativeLayout>
