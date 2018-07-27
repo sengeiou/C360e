@@ -2486,7 +2486,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
 
-    public void printTscBill(String printer, String title, String order, String orderdetail, String modifiers, String currencySymbol) throws RemoteException {
+    public void printTscBill(String printer, String title, String order, String orderdetail, String modifiers, String currencySymbol,String  direction) throws RemoteException {
         String name;
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
@@ -2510,7 +2510,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             name = "AAA";
         }
         String uuid = pqMgr.getDataUUID(prtitle.getBill_NO());
-        BillTscPrint b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()));
+        BillTscPrint b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()),0);
 
         List<OrderDetail> lableOrderDetail = new ArrayList<OrderDetail>();
 
@@ -2520,7 +2520,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             if (prOrderDetail.get(i).getItemNum() > 1) {
                 String price = BH.getBD(Double.parseDouble(prOrderDetail.get(i).getRealPrice()) / prOrderDetail.get(i).getItemNum() + "").toString();
                 for (Integer j = 0; j < prOrderDetail.get(i).getItemNum(); j++) {
-                    if(price.equals("0.00")) {
+                    if(price.equals("0.00")||price.equals("0")) {
                         prOrderDetail.get(i).setRealPrice("");
                     }else{
                         prOrderDetail.get(i).setRealPrice(price);
@@ -2536,7 +2536,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         for (int i = 0; i < lableOrderDetail.size(); i++) {
             b.setPrinterIp(prtDevice.getIP());
-            b.setIsLablePrinter(prtDevice.getIsLablePrinter());
+            b.setIsLablePrinter(prtDevice.getIsLablePrinter(),Integer.valueOf(direction).intValue());
             modbuf.setLength(0);
             if (orderModifiers != null) {
                 for (int m = 0; m < orderModifiers.size(); m++) {

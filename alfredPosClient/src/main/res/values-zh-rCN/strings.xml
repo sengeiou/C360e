@@ -190,6 +190,7 @@
     <string name="print_before_close_bill">预结单打印</string>
     <string name="print_bill_set">打印账单</string>
     <string name="print_lable">标签打印</string>
+    <string name="print_direction">标签打印方向</string>
     <string name="password_update_successfully">密码修改成功</string>
     <string name="employee_no_exist">当前员工不存在，请联系餐厅管理员</string>
     <string name="table_dining">当前桌子已经被占用</string>

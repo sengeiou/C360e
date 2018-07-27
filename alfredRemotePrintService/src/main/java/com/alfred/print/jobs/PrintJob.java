@@ -32,6 +32,7 @@ public class PrintJob extends Job  {
 
 
     private int isLablePrinter;
+    private int direction;
     private long localId;
     static final String TAG = "PrintJob";
     public static String reNext = "\n";
@@ -104,9 +105,9 @@ public class PrintJob extends Job  {
         return isLablePrinter;
     }
 
-    public void setIsLablePrinter(int isLablePrinter) {
+    public void setIsLablePrinter(int isLablePrinter, int direction) {
         this.isLablePrinter = isLablePrinter;
-
+   this.direction=direction;
         Log.d(TAG, "setIsLablePrinter:" + this.isLablePrinter);
     }
 
@@ -247,7 +248,7 @@ public class PrintJob extends Job  {
 
 
                 if (isPrintLink) {
-                    printed = printer.setTscData(this.tdata);
+                    printed = printer.setTscData(this.tdata,this.direction);
                 }
             }
 

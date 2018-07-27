@@ -196,6 +196,8 @@
     <string name="print_before_close_bill">Print Check</string>
     <string name="print_bill_set">Print Bill</string>
     <string name="print_lable">Print Label</string>
+
+    <string name="print_direction">Print Label Direction</string>
     <string name="password_update_successfully">Password update successfully.</string>
     <string name="employee_no_exist">The employee does not exist at backoffice.</string>
     <string name="color_picker_tip">Tip: Touch the color ring or color bar to select a color value</string>

@@ -352,7 +352,56 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/ll_print_lable"
+                        android:id="@+id/ll_print_lable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:orientation="vertical">
+
+
+                        <View
+                            android:id="@+id/view_order_print_lable"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/black" />
+
+                        <RelativeLayout
+                            android:id="@+id/rl_print_lable"
+                            android:layout_width="wrap_content"
+                            android:layout_height="60dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_print_lable"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:padding="10dp"
+                                android:text="@string/print_lable"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_m" />
+
+                            <com.alfredposclient.view.MyToggleButton
+                                android:id="@+id/mt_print_lable"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="10dp" />
+
+                            <!--<com.alfredposclient.view.MyToggleButton-->
+                            <!--android:id="@+id/mt_print_lable"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_alignParentRight="true"-->
+                            <!--android:layout_centerVertical="true"-->
+                            <!--android:layout_marginRight="10dp" />-->
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_print_lable_direction"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
 
@@ -360,29 +409,29 @@
 
 
                             <View
-                                android:id="@+id/view_order_print_lable"
+                                android:id="@+id/view_order_print_lable_direction"
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/black" />
 
                             <RelativeLayout
-                                android:id="@+id/rl_print_lable"
+                                android:id="@+id/rl_print_lable_direction"
                                 android:layout_width="wrap_content"
                                 android:layout_height="60dp"
                                 android:orientation="horizontal">
 
                                 <TextView
-                                    android:id="@+id/tv_print_lable"
+                                    android:id="@+id/tv_print_lable_direction"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="@string/print_lable"
+                                    android:text="@string/print_direction"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
                                 <com.alfredposclient.view.MyToggleButton
-                                    android:id="@+id/mt_print_lable"
+                                    android:id="@+id/mt_print_lable_direction"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"

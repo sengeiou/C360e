@@ -32,12 +32,14 @@ public class BillTscPrint extends PrintJob {
     public static int FIXED_COL4_TOTAL = 12; //in case of 48 dots width, QTY col = 10dots
 
     public int nameSize = 17;
-
+    public  int modSize=19;
+    public  int lableSize;
     public static int COL4_ITEMNAME; // Width = CharSize/scale - FIXED_COL2_QTY/scale -
     // FIXED_COL2_PRICE/scale- FIXED_COL2_TOTAL/scale- FIXED_COL2_SPACE *3
 
-    public BillTscPrint(String uuid, Long bizDate) {
+    public BillTscPrint(String uuid, Long bizDate, int size) {
         super(new Params(Priority.HIGH).requireNetwork().persist().groupBy("lable"), "lable", uuid, bizDate);
+        this.lableSize=size;
 //		if (this.charSize == 33) {
 //			BillTscPrint.FIXED_COL4_TOTAL = 8;
 //			BillTscPrint.FIXED_COL4_PRICE = 7;
@@ -56,11 +58,7 @@ public class BillTscPrint extends PrintJob {
 //			logoimg.setTextAlign(PrintTscData.ALIGN_CENTRE);
             this.tdata.add(logoimg);
         }
-
-
         //address
-
-
         String strno;
         StringBuilder addbuf = new StringBuilder();
 
@@ -114,8 +112,8 @@ public class BillTscPrint extends PrintJob {
 
 
         StringBuilder totalbuf = new StringBuilder();
-
-        totalbuf.append(price);
+         String   strPrice = StringUtil.padLeft(price + "", size / 2 -7);
+        totalbuf.append(strPrice);
 
         PrintTscData total = new PrintTscData();
         total.setDataFormat(PrintTscData.FORMAT_TXT);
@@ -128,7 +126,7 @@ public class BillTscPrint extends PrintJob {
         toMultiLine(itemName, nameSize, 80);
         if (!TextUtils.isEmpty(modifier)) {
             String newmod = modifier.substring(0, modifier.length() - 1);
-            modMultiLine(itemName, 19, 175, newmod);
+            modMultiLine(itemName, modSize, 175, newmod);
         }
 //        ++num;
 //        String strnum;
