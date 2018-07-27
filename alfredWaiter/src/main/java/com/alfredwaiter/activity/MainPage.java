@@ -179,11 +179,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 
         //菜单列表
         reItemdetail = (RecyclerView) findViewById(R.id.rv_item_detail);
-       // reItemdetail.addOnScrollListener(new RecyclerViewListener());
+       reItemdetail.addOnScrollListener(new RecyclerViewListener());
         SlidePanelView.setCallBackMove(this);
-
-//		mLinearLayoutManager = new LinearLayoutManager(context);
-//		reItemdetail.setLayoutManager(mLinearLayoutManager);
         mManager = new GridLayoutManager(context, 1);
         //通过isTitle的标志来判断是否是title
         mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -219,8 +216,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             }
         });
         reItemdetail.setAdapter(detailAdapter);
-//        mDecoration = new ItemHeaderDetailDecoration(context, itemDetails);
-//        reItemdetail.addItemDecoration(mDecoration);
+        mDecoration = new ItemHeaderDetailDecoration(context, itemDetails);
+        reItemdetail.addItemDecoration(mDecoration);
 
 
         //	createFragment();
