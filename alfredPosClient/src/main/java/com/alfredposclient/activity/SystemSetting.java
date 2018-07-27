@@ -98,7 +98,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			findViewById(R.id.ll_print_bill).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_of_pax).setVisibility(View.GONE);
 			findViewById(R.id.ll_pos_setting).setVisibility(View.GONE);
-			findViewById(R.id.ll_transfer_print).setVisibility(View.GONE);
+			//findViewById(R.id.ll_transfer_print).setVisibility(View.GONE);
 
 		}else{
 			findViewById(R.id.ll_print_lable).setVisibility(View.GONE);
@@ -106,7 +106,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
 			findViewById(R.id.ll_of_pax).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_pos_setting).setVisibility(View.VISIBLE);
-			findViewById(R.id.ll_transfer_print).setVisibility(View.VISIBLE);
+		//	findViewById(R.id.ll_transfer_print).setVisibility(View.VISIBLE);
 		}
 		syncMap = App.instance.getPushMsgMap();
 		settings = App.instance.getSystemSettings();

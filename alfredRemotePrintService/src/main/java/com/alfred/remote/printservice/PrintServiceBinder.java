@@ -2520,7 +2520,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             if (prOrderDetail.get(i).getItemNum() > 1) {
                 String price = BH.getBD(Double.parseDouble(prOrderDetail.get(i).getRealPrice()) / prOrderDetail.get(i).getItemNum() + "").toString();
                 for (Integer j = 0; j < prOrderDetail.get(i).getItemNum(); j++) {
-                    prOrderDetail.get(i).setRealPrice(price);
+                    if(price.equals("0.00")) {
+                        prOrderDetail.get(i).setRealPrice("");
+                    }else{
+                        prOrderDetail.get(i).setRealPrice(price);
+                    }
                     lableOrderDetail.add(prOrderDetail.get(i));
                 }
             } else {
@@ -2539,7 +2543,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     PrintOrderModifier om = orderModifiers.get(m);
                     if (om.getOrderDetailId() == lableOrderDetail.get(i).getId()) {
 //                        if (om.getQty() > 1) {
-                        modbuf.append(om.getItemName() + "" + currencySymbol + BH.getBD(om.getPrice()).toString() + "/");
+                        if(om.getPrice().toString().equals("0")){
+                            modbuf.append(om.getItemName() + "" + "/");
+                        }else {
+                            modbuf.append(om.getItemName() + "" + currencySymbol + BH.getBD(om.getPrice()).toString() + "/");
+                        }
                         //    billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
 //                        } else {
 //                         //   billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
@@ -2552,7 +2560,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
             b.AddRestaurantInfo(null,
                     prtitle.getRevName(),
-                    prtitle.getOrderNo(), i, lableOrderDetail.size() + "", lableOrderDetail.get(i).getItemName() + "", modbuf.toString(), lableOrderDetail.get(i).getRealPrice(), true);
+                    prtitle.getOrderNo(), i, lableOrderDetail.size() + "", lableOrderDetail.get(i).getItemName() + "", modbuf.toString(), currencySymbol+lableOrderDetail.get(i).getRealPrice(), true);
 
         }
         pqMgr.queuePrint(b.getJobForQueue());
