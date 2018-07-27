@@ -87,6 +87,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	MyToggleButton mt_print_lable;
 	MyToggleButton mt_print_bill;
 	private int textsize,textcolor;
+	private TextView tv_lable_upOrdown;
 
 	@Override
 	protected void initView() {
@@ -138,6 +139,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_transfer_print = (MyToggleButton)findViewById(R.id.mt_transfer_print);
 		mt_auto_table = (MyToggleButton)findViewById(R.id.mt_auto_table);
 		mt_of_pax=(MyToggleButton)findViewById(R.id.mt_of_pax);
+		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
 
 
 		if (syncMap.isEmpty()) {
@@ -321,8 +323,10 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			mt_print_lable.setChecked(false);
 		}
 		if(settings.isPrintLableD()){
+			tv_lable_upOrdown.setText("Down");
 			mt_print_lable_direction.setChecked(true);
 		}else{
+			tv_lable_upOrdown.setText("Up");
 			mt_print_lable_direction.setChecked(false);
 		}
 
@@ -603,6 +607,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_of_pax));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_auto_table));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_set_lock_time));
+		textTypeFace.setTrajanProRegular(tv_lable_upOrdown);
 	}
 
 //	@Override
@@ -794,9 +799,11 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			case R.id.mt_print_lable_direction:
 
 				if(checkState){
+					tv_lable_upOrdown.setText("Down");
 					mt_print_lable_direction.setChecked(true);
 					settings.setPrintLableD(ParamConst.DEFAULT_TRUE);
 				}else{
+					tv_lable_upOrdown.setText("Up");
 					mt_print_lable_direction.setChecked(false);
 					settings.setPrintLableD(ParamConst.DEFAULT_FALSE);
 				}

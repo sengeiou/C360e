@@ -2510,7 +2510,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             name = "AAA";
         }
         String uuid = pqMgr.getDataUUID(prtitle.getBill_NO());
-        BillTscPrint b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()),0);
+        BillTscPrint b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()),26);
 
         List<OrderDetail> lableOrderDetail = new ArrayList<OrderDetail>();
 

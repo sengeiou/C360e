@@ -438,6 +438,21 @@
                                     android:layout_centerVertical="true"
                                     android:layout_marginRight="10dp" />
 
+                                <TextView
+                                    android:id="@+id/tv_lable_upOrdown"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_toLeftOf="@id/mt_print_lable_direction"
+                                    android:layout_marginRight="10dp"
+                                    android:padding="10dp"
+                                    android:text=""
+                                    android:textColor="@color/black"
+
+                                    android:textSize="@dimen/text_size_m"
+
+                                    />
+
                                 <!--<com.alfredposclient.view.MyToggleButton-->
                                 <!--android:id="@+id/mt_print_lable"-->
                                 <!--android:layout_width="wrap_content"-->
