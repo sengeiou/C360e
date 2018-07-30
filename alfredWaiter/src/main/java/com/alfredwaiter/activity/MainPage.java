@@ -47,6 +47,7 @@ import com.alfredwaiter.adapter.MainCategoryAdapter;
 import com.alfredwaiter.adapter.ItemDetailAdapter;
 import com.alfredwaiter.adapter.ItemHeaderDetailDecoration;
 import com.alfredwaiter.adapter.OrderAdapter;
+import com.alfredwaiter.adapter.RvListener;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
@@ -137,7 +138,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     protected void initView() {
         super.initView();
         setContentView(R.layout.activity_main_page);
-        initTextTypeFace();
+     initTextTypeFace();
         initTitle();
         searchPopUp = new SearchMenuItemWindow(context, handler, findViewById(R.id.rl_root));
 //		modifierWindow = new ModifierWindow(context, handler, findViewById(R.id.rl_root));
@@ -149,10 +150,10 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 handler);
         dialog = new SelectPersonDialog(context, handler);
         getIntentData();
-
-        //itemCategorys.addAll(getItemCategory(null));
-        itemDetails.clear();
+        Log.d("111111111111--->", "1111111111");
+     //   itemDetails.clear();
         itemDetails.addAll(getItemDetail());
+
 //        expandableListView = (ExpandableListView) findViewById(R.id.expandedListViewEx);
 //        expandableListView.setDividerHeight(0);
       //  itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
@@ -179,46 +180,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 
         //菜单列表
         reItemdetail = (RecyclerView) findViewById(R.id.rv_item_detail);
-       reItemdetail.addOnScrollListener(new RecyclerViewListener());
-        SlidePanelView.setCallBackMove(this);
-        mManager = new GridLayoutManager(context, 1);
-        //通过isTitle的标志来判断是否是title
-        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return 1;
-            }
-        });
-        reItemdetail.setLayoutManager(mManager);
-        DividerItemDecoration itemdecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-        reItemdetail.addItemDecoration(itemdecoration);
-        detailAdapter = new ItemDetailAdapter(context, itemDetails, setItemCountWindow, new RvItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
 
-            }
-        }, new CountView.OnCountChange() {
-            @Override
-            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("itemDetail", selectedItemDetail);
-                map.put("count", count);
-                map.put("isAdd", isAdd);
-                Log.d("333333333--->", "3333333333");
-              //  ll_last_detail.setVisibility(View.VISIBLE);
-                updateOrderDetail(selectedItemDetail,
-                       count);
-                Log.d("44444--->", "444444444");
-                refreshTotal();
-             //   refreshList();
-//                handler.sendMessage(handler.obtainMessage(
-//                        MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, map));
-            }
-        });
-        reItemdetail.setAdapter(detailAdapter);
-        mDecoration = new ItemHeaderDetailDecoration(context, itemDetails);
-        reItemdetail.addItemDecoration(mDecoration);
-
+        Log.d("33333333--->", "3333333333333333");
 
         //	createFragment();
 //        adapter = new OrderAdapter(context, itemCategoryAndDetailsList, handler, setItemCountWindow, new CountView.OnCountChange() {
@@ -307,7 +270,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 //				.getInstance().getTables(currentOrder.getTableId())
 //				.getTableName());
         tv_person_index = (TextView) findViewById(R.id.tv_person_index);
-
+//
         loadingDialog = new LoadingDialog(context);
         loadingDialog.setTitle(context.getResources().getString(R.string.loading));
         loadingDialog.show();
@@ -316,23 +279,74 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         SyncCentre.getInstance().handlerGetOrderDetails(context, parameters,
                 handler);
 
+//        new Handler().postDelayed(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                //do something
+
+           createAdapter();
+//            }
+//        }, 100);
+//
     }
-
-
     public static void setListener(CheckListener listener) {
+
+
         checkListener = listener;
         mDecoration.setCheckListener(checkListener);
     }
 
-    public void createFragment() {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        itemDetailFragment = new ItemDetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("left", (ArrayList<? extends Parcelable>) itemDetails);
-        itemDetailFragment.setArguments(bundle);
-        //itemDetailFragment.(this);
-        fragmentTransaction.add(R.id.lin_fragment_mod, itemDetailFragment);
-        fragmentTransaction.commit();
+    public void createAdapter() {
+
+
+      //  reItemdetail.addOnScrollListener(new RecyclerViewListener());
+      //  SlidePanelView.setCallBackMove(this);
+        mManager = new GridLayoutManager(context, 1);
+        //通过isTitle的标志来判断是否是title
+        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return 1;
+            }
+        });
+        //mManager.setRecycleChildrenOnDetach(true);
+        reItemdetail.setLayoutManager(mManager);
+
+
+        DividerItemDecoration itemdecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        reItemdetail.addItemDecoration(itemdecoration);
+        Log.d("2222222222--->", "2222222222222");
+        detailAdapter = new ItemDetailAdapter(context, itemDetails, setItemCountWindow, new RvListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+        }, new CountView.OnCountChange() {
+            @Override
+            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("itemDetail", selectedItemDetail);
+                map.put("count", count);
+                map.put("isAdd", isAdd);
+                Log.d("333333333--->", "3333333333");
+                //  ll_last_detail.setVisibility(View.VISIBLE);
+
+                Log.d("44444--->", "444444444");
+
+                handler.sendMessage(handler.obtainMessage(
+                        MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, map));
+            }
+        });
+        reItemdetail.setAdapter(detailAdapter);
+        mDecoration = new ItemHeaderDetailDecoration(context, itemDetails);
+        reItemdetail.addItemDecoration(mDecoration);
+//
+//        mDecoration = new ItemHeaderDetailDecoration(context, itemDetails);
+//        reItemdetail.addItemDecoration(mDecoration);
+//        refreshTotal();
+//        refreshList();
+
     }
 
 

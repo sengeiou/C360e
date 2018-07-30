@@ -120,22 +120,22 @@ public class ItemDetailFragment extends BaseFragment<ItemDetailPresenter, String
             }
         });
         mRv.setLayoutManager(mManager);
-        mAdapter = new ItemDetailAdapter(mContext, mDatas,setItemCountWindow, new RvItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
+//        mAdapter = new ItemDetailAdapter(mContext, mDatas,setItemCountWindow, new RvItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//
+//            }
+//        }, new CountView.OnCountChange() {
+//            @Override
+//            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
+//
+//            }
+//        });
 
-            }
-        }, new CountView.OnCountChange() {
-            @Override
-            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
-
-            }
-        });
-
-        mRv.setAdapter(mAdapter);
-         mDecoration = new ItemHeaderDetailDecoration(mContext, mDatas);
-          mRv.addItemDecoration(mDecoration);
-           mDecoration.setCheckListener(checkListener);
+//        mRv.setAdapter(mAdapter);
+//         mDecoration = new ItemHeaderDetailDecoration(mContext, mDatas);
+//          mRv.addItemDecoration(mDecoration);
+//           mDecoration.setCheckListener(checkListener);
     //    initData();
 //        ArrayList<ItemDetail> leftList =  getArguments().getParcelableArrayList("left");
 //          mDatas=leftList;
