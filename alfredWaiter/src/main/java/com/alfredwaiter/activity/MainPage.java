@@ -181,78 +181,10 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         //菜单列表
         reItemdetail = (RecyclerView) findViewById(R.id.rv_item_detail);
 
-        Log.d("33333333--->", "3333333333333333");
 
-        //	createFragment();
-//        adapter = new OrderAdapter(context, itemCategoryAndDetailsList, handler, setItemCountWindow, new CountView.OnCountChange() {
-//            @Override
-//            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
-//                Map<String, Object> map = new HashMap<String, Object>();
-////				if(CoreData.getInstance()
-////						.getItemModifiers(selectedItemDetail).size() > 0){
-////					if(isAdd){
-////						modifierWindow.show(selectedItemDetail);
-////					}else{
-////                        refreshList();
-////					}
-////				}else{
-//                map.put("itemDetail", selectedItemDetail);
-//                map.put("count", count);
-//                map.put("isAdd", isAdd);
-//
-//                handler.sendMessage(handler.obtainMessage(
-//                        MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, map));
-////				}
-//            }
-//        });
-//        expandableListView.setGroupIndicator(null);
-//        expandableListView.setAdapter(adapter);
-//        for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
-//            expandableListView.expandGroup(i);
-//        }
         tv_title_name = (TextView) findViewById(R.id.tv_title_name);
         tv_detail_qty = (TextView) findViewById(R.id.tv_detail_qty);
-//        //get table name
-//        TableInfo currentTable = TableInfoSQL.getTableById(currentOrder.getTableId());
-//        if (currentTable != null)
-//            tv_title_name.setText(currentTable.getName());
 //
-//        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-//            @Override
-//            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-//                ItemCategoryAndDetails itemCategoryAndDetails = itemCategoryAndDetailsList.get(groupPosition);
-//                itemCategoryAndDetailsList.remove(itemCategoryAndDetails);
-//                itemCategoryAndDetailsList.add(0, itemCategoryAndDetails);
-//                refreshTotal();
-//                refreshList();
-//                for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
-//                    if (i == 0) {
-//                        expandableListView.expandGroup(0);
-//                    } else {
-//                        expandableListView.collapseGroup(i);
-//                    }
-//                }
-//                return true;
-//            }
-//        });
-
-//		expandableListView.setOnChildClickListener(new OnChildClickListener() {
-//
-//			@Override
-//			public boolean onChildClick(ExpandableListView parent, View v,
-//					int groupPosition, int childPosition, long id) {
-//				ItemDetail itemDetail = (ItemDetail) adapter.getChild(
-//						groupPosition, childPosition);
-//				OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
-//						currentOrder, itemDetail, currentGroupId,
-//						ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE);
-//				UIHelp.startOrderDetail(context, currentOrder, itemDetail,
-//						orderDetail, currentGroupId);
-//				return false;
-//			}
-//		});
-        // refreshList();
-//		findViewById(R.id.iv_kot_notification).setOnClickListener(this);
         findViewById(R.id.ll_dish_total).setOnClickListener(this);
         findViewById(R.id.iv_person_index).setOnClickListener(this);
         ll_last_detail = (LinearLayout) findViewById(R.id.ll_last_detail);
@@ -278,21 +210,10 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         parameters.put("order", currentOrder);
         SyncCentre.getInstance().handlerGetOrderDetails(context, parameters,
                 handler);
-
-//        new Handler().postDelayed(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                //do something
-
            createAdapter();
-//            }
-//        }, 100);
-//
+
     }
     public static void setListener(CheckListener listener) {
-
-
         checkListener = listener;
         mDecoration.setCheckListener(checkListener);
     }
@@ -300,8 +221,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     public void createAdapter() {
 
 
-      //  reItemdetail.addOnScrollListener(new RecyclerViewListener());
-      //  SlidePanelView.setCallBackMove(this);
+        reItemdetail.addOnScrollListener(new RecyclerViewListener());
+        SlidePanelView.setCallBackMove(this);
         mManager = new GridLayoutManager(context, 1);
         //通过isTitle的标志来判断是否是title
         mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -312,11 +233,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         });
         //mManager.setRecycleChildrenOnDetach(true);
         reItemdetail.setLayoutManager(mManager);
-
-
         DividerItemDecoration itemdecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         reItemdetail.addItemDecoration(itemdecoration);
-        Log.d("2222222222--->", "2222222222222");
         detailAdapter = new ItemDetailAdapter(context, itemDetails, setItemCountWindow, new RvListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -329,11 +247,6 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 map.put("itemDetail", selectedItemDetail);
                 map.put("count", count);
                 map.put("isAdd", isAdd);
-                Log.d("333333333--->", "3333333333");
-                //  ll_last_detail.setVisibility(View.VISIBLE);
-
-                Log.d("44444--->", "444444444");
-
                 handler.sendMessage(handler.obtainMessage(
                         MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, map));
             }
@@ -342,14 +255,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         mDecoration = new ItemHeaderDetailDecoration(context, itemDetails);
         reItemdetail.addItemDecoration(mDecoration);
 //
-//        mDecoration = new ItemHeaderDetailDecoration(context, itemDetails);
-//        reItemdetail.addItemDecoration(mDecoration);
-//        refreshTotal();
-//        refreshList();
-
     }
-
-
     private void getIntentData() {
         Intent intent = getIntent();
         currentOrder = (Order) intent.getExtras().get("order");
