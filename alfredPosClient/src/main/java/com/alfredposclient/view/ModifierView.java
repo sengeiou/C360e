@@ -205,13 +205,14 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                             }
 
                             int max = modifier_type.getMaxNumber();
+                            orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
                             if (max > 0 && num <= max - 1) {
 
-                                orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
+
                                 OrderModifierSQL.addOrderModifier(orderModifier);
                                 num++;
                             } else if (max == 0) {
-                                orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
+
                                 OrderModifierSQL.addOrderModifier(orderModifier);
                                 num++;
 
