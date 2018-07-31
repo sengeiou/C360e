@@ -162,8 +162,18 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
-		    
+
+
+				<android.support.v7.widget.RecyclerView
+					android:id="@+id/rv_item_detail"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+                    android:visibility="visible"
+					android:background="@android:color/white">
+				</android.support.v7.widget.RecyclerView>
+
             <ExpandableListView
+                android:visibility="gone"
                 android:id="@+id/expandedListViewEx"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -177,12 +187,13 @@
                 android:src="@drawable/shadow"
                 android:layout_alignParentTop="true"
                 android:scaleType="fitXY"/>
-            <Button
-                android:id="@+id/btn_slide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_slide"
-                android:layout_centerVertical="true"/>
+
+			<Button
+				android:id="@+id/btn_slide"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:background="@drawable/btn_slide" />
         </RelativeLayout>
     </LinearLayout>
 	<LinearLayout
@@ -218,4 +229,6 @@
 			android:layout_weight="1"
 			android:layout_margin="10dp"/>
 	</LinearLayout>
+
+
 </RelativeLayout>

@@ -25,6 +25,7 @@
             android:layout_height="1dp"
             android:background="@color/gray_line"/>
 
+
         <ListView
             android:id="@+id/lv_main_category"
             android:layout_width="match_parent"
@@ -34,8 +35,16 @@
             android:divider="@color/gray_line"
             android:listSelector="@android:color/transparent"
             android:overScrollMode="never"
+            android:visibility="gone"
             android:scrollbars="none" >
         </ListView>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/re_main_category"
+            android:divider="@color/gray_line"
+            ></android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
 </LinearLayout>

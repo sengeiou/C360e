@@ -208,7 +208,6 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                             orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
                             if (max > 0 && num <= max - 1) {
 
-
                                 OrderModifierSQL.addOrderModifier(orderModifier);
                                 num++;
                             } else if (max == 0) {
@@ -217,6 +216,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                                 num++;
 
                             } else {
+
                                 UIHelp.showShortToast(parent, "数量不能超过" + max + "份");
                             }
 

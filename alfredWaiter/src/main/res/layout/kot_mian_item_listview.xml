@@ -3,16 +3,16 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
-    android:background="@color/ex_list_bg" >
+    android:background="@drawable/bg_slide" >
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/tv_main_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:paddingLeft="5dip"
-        android:textColor="@color/black"
+        android:textColor="#FFFFFF"
         android:textSize="@dimen/text_size_b" >
     </TextView>
     

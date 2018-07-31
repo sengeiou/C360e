@@ -1,5 +1,8 @@
 package com.alfredbase.javabean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +11,7 @@ import java.io.Serializable;
  * @author Alex
  * 
  */
-public class ItemDetail implements Serializable {
+public class ItemDetail implements Serializable ,Parcelable{
 
 	/**
 	 * 
@@ -81,6 +84,9 @@ public class ItemDetail implements Serializable {
 
 	private String barcode;
 
+	private String itemCategoryName;
+	private String tag;
+	private int viewType;
 	public ItemDetail() {
 	}
 
@@ -90,7 +96,7 @@ public class ItemDetail implements Serializable {
 			Integer printerId, Integer isModifier, Integer itemMainCategoryId,
 			Integer itemCategoryId, Integer isActive, Integer taxCategoryId,
 			Integer isPack, Integer isTakeout, Integer happyHoursId,
-			Integer userId, Long createTime, Long updateTime,Integer indexId, int isDiscount) {
+			Integer userId, Long createTime, Long updateTime,Integer indexId, int isDiscount,String itemCategoryName,String tag,int viewType) {
 		super();
 		this.id = id;
 		this.restaurantId = restaurantId;
@@ -116,6 +122,130 @@ public class ItemDetail implements Serializable {
 		this.updateTime = updateTime;
 		this.indexId = indexId;
 		this.isDiscount = isDiscount;
+		this.itemCategoryName=itemCategoryName;
+		this.tag=tag;
+		this.viewType=viewType;
+	}
+
+	protected ItemDetail(Parcel in) {
+		if (in.readByte() == 0) {
+			id = null;
+		} else {
+			id = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			restaurantId = null;
+		} else {
+			restaurantId = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			itemTemplateId = null;
+		} else {
+			itemTemplateId = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			revenueId = null;
+		} else {
+			revenueId = in.readInt();
+		}
+		itemName = in.readString();
+		itemDesc = in.readString();
+		itemCode = in.readString();
+		imgUrl = in.readString();
+		price = in.readString();
+		if (in.readByte() == 0) {
+			itemType = null;
+		} else {
+			itemType = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			printerId = null;
+		} else {
+			printerId = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			isModifier = null;
+		} else {
+			isModifier = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			itemMainCategoryId = null;
+		} else {
+			itemMainCategoryId = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			itemCategoryId = null;
+		} else {
+			itemCategoryId = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			isActive = null;
+		} else {
+			isActive = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			taxCategoryId = null;
+		} else {
+			taxCategoryId = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			isPack = null;
+		} else {
+			isPack = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			isTakeout = null;
+		} else {
+			isTakeout = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			happyHoursId = null;
+		} else {
+			happyHoursId = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			userId = null;
+		} else {
+			userId = in.readInt();
+		}
+		if (in.readByte() == 0) {
+			createTime = null;
+		} else {
+			createTime = in.readLong();
+		}
+		if (in.readByte() == 0) {
+			updateTime = null;
+		} else {
+			updateTime = in.readLong();
+		}
+		if (in.readByte() == 0) {
+			indexId = null;
+		} else {
+			indexId = in.readInt();
+		}
+		isDiscount = in.readInt();
+		barcode = in.readString();
+		itemCategoryName = in.readString();
+	}
+
+	public static final Creator<ItemDetail> CREATOR = new Creator<ItemDetail>() {
+		@Override
+		public ItemDetail createFromParcel(Parcel in) {
+			return new ItemDetail(in);
+		}
+
+		@Override
+		public ItemDetail[] newArray(int size) {
+			return new ItemDetail[size];
+		}
+	};
+
+	public String getItemCategoryName() {
+		return itemCategoryName;
+	}
+
+	public void setItemCategoryName(String itemCategoryName) {
+		this.itemCategoryName = itemCategoryName;
 	}
 
 	public Integer getId() {
@@ -318,6 +448,22 @@ public class ItemDetail implements Serializable {
 		this.barcode = barcode;
 	}
 
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public int getViewType() {
+		return viewType;
+	}
+
+	public void setViewType(int viewType) {
+		this.viewType = viewType;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemDetail{" +
@@ -346,6 +492,134 @@ public class ItemDetail implements Serializable {
 				", indexId=" + indexId +
 				", isDiscount=" + isDiscount +
 				", barcode='" + barcode + '\'' +
+				", itemCategoryName='" + itemCategoryName + '\'' +
+				", tag='" + tag + '\'' +
+				", viewType=" + viewType +
 				'}';
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		if (id == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(id);
+		}
+		if (restaurantId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(restaurantId);
+		}
+		if (itemTemplateId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(itemTemplateId);
+		}
+		if (revenueId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(revenueId);
+		}
+		dest.writeString(itemName);
+		dest.writeString(itemDesc);
+		dest.writeString(itemCode);
+		dest.writeString(imgUrl);
+		dest.writeString(price);
+		if (itemType == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(itemType);
+		}
+		if (printerId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(printerId);
+		}
+		if (isModifier == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(isModifier);
+		}
+		if (itemMainCategoryId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(itemMainCategoryId);
+		}
+		if (itemCategoryId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(itemCategoryId);
+		}
+		if (isActive == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(isActive);
+		}
+		if (taxCategoryId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(taxCategoryId);
+		}
+		if (isPack == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(isPack);
+		}
+		if (isTakeout == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(isTakeout);
+		}
+		if (happyHoursId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(happyHoursId);
+		}
+		if (userId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(userId);
+		}
+		if (createTime == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeLong(createTime);
+		}
+		if (updateTime == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeLong(updateTime);
+		}
+		if (indexId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(indexId);
+		}
+		dest.writeInt(isDiscount);
+		dest.writeString(barcode);
+		dest.writeString(itemCategoryName);
 	}
 }

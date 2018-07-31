@@ -63,6 +63,7 @@ public class App extends BaseApplication {
 	private Observable<String> observable1;
 
 	private String currencySymbol = "$";
+	public static boolean isleftMoved;
 	@Override
 	public void onCreate() {
 		super.onCreate();
