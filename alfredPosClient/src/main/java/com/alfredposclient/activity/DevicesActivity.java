@@ -277,28 +277,12 @@ public class DevicesActivity extends BaseActivity {
 //                    m.putAll(map);
 
 
-
-
-//                    for ( Integer k : map.keySet()) {
-//                        // 根据键值对对象获取键和值
-//                        if(map.get(k).get(0).getIP().equals(tmppt.getIP())){
-//
-//                            System.out.println(k + "--refreshPrinterDevices-" + map.get(k));
-//                            // k=t
-//                            map.remove();
-//                            map.r
-//                        }
-//
-//                        System.out.println(key + "---" + value);
-//                    }
                     list.add(tmppt);
                     map.put(tmppt.getDevice_id(), list);
                 } else {
 
                     List<PrinterDevice> printerDevices = map.get(tmppt.getDevice_id());
                     Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合111---" );
-
-
 //                    Iterator iterator = map.keySet().iterator();
 //                    while (iterator.hasNext()) {
 //                        int key = (Integer) iterator.next();
@@ -316,9 +300,7 @@ public class DevicesActivity extends BaseActivity {
                             Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---" );
                           is=false;
                         }
-
                     }
-
                     if(is) {
                         printerDevices.add(tmppt);
                     }
