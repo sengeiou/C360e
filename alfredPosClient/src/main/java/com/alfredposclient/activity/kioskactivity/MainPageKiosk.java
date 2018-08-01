@@ -17,7 +17,6 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -101,7 +100,6 @@ import com.alfredposclient.popupwindow.SetPAXWindow;
 import com.alfredposclient.popupwindow.SetWeightWindow;
 import com.alfredposclient.popupwindow.SpecialInstractionsWindow;
 import com.alfredposclient.utils.AlertToDeviceSetting;
-import com.alfredposclient.view.ModifierView;
 import com.alfredposclient.view.SelectOrderSplitDialog;
 import com.alfredposclient.view.SettingView;
 import com.alfredposclient.view.viewkiosk.MainPageMenuViewKiosk;
@@ -2126,4 +2124,63 @@ public class MainPageKiosk extends BaseActivity {
 //			}, 500);
         }
     }
+
+
+    /**
+     * 到新加坡做测试
+
+     private StringBuffer inPutBarCode = new StringBuffer("");
+
+     @Override
+     public boolean dispatchKeyEvent(KeyEvent event) {
+     boolean hasInputDevice = false;
+     int[] devicesIds = InputDevice.getDeviceIds();
+     if(devicesIds != null && devicesIds.length > 0){
+     for(int id : devicesIds){
+     String name = InputDevice.getDevice(id).getName().trim();
+     if(name.toUpperCase().contains("BARCODE")){
+     hasInputDevice = true;
+     break;
+     }
+     }
+     }
+     if(hasInputDevice) {
+     int keyCode = event.getKeyCode();
+     if (KeyEvent.KEYCODE_ENTER == keyCode && event.getAction() == KeyEvent.ACTION_DOWN) {
+     String barCode = inPutBarCode.toString();
+     if (TextUtils.isEmpty(barCode)) {
+     UIHelp.showToast(this, "Barcode cannot be empty");
+     return false;
+     }
+     inPutBarCode = new StringBuffer("");
+     ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(barCode);
+     OrderDetail orderDetail = null;
+     SureDialog sureDialog = new SureDialog(this);
+     if (itemDetail != null) {
+     orderDetail = ObjectFactory.getInstance()
+     .getOrderDetail(currentOrder, itemDetail, 0);
+     }
+     if (orderDetail == null) {
+     sureDialog.show(false);
+     return false;
+     }
+     Message msg = handler.obtainMessage();
+     msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+     msg.obj = orderDetail;
+     handler.sendMessage(msg);
+     sureDialog.show(true);
+     return true;
+     }else{
+     if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
+     inPutBarCode.append(event.getKeyCode() - KeyEvent.KEYCODE_0);
+     return true;
+     }
+     return false;
+     }
+     }else{
+     return super.dispatchKeyEvent(event);
+     }
+
+     }
+     */
 }
