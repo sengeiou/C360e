@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.SlideExpandable.AbstractSlideExpandableListAdapter;
 import com.SlideExpandable.SlideExpandableListView;
+import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemModifier;
@@ -25,6 +26,7 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
@@ -32,6 +34,7 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -44,6 +47,8 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
+import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ColorUtils;
@@ -65,6 +70,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -132,10 +138,58 @@ public class MainPageOrderView extends LinearLayout {
 					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
 					return;
 				}
-				
+			//	ModifierCheckSql.deleteAllModifierCheck();
+				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck();
+
+				Map<Integer,String> categorMap=new HashMap<Integer,String>();
+				Map<String, Map<Integer,String>> checkMap = new HashMap<String, Map<Integer,String>>();
+				for (int i = 0; i < allModifierCheck.size(); i++) {
+					ModifierCheck modifierCheck;
+					modifierCheck=allModifierCheck.get(i);
+					if(modifierCheck.getNum()>0) {
+						//  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
+						if(checkMap.containsKey(modifierCheck.getItemName())){
+//                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
+//                                 {
+//                                    categorMap=checkMap.get(modifierCheck.getItemName());
+//                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
+//                                     checkMap.put(modifierCheck.getItemName(),categorMap);
+							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
+							checkMap.put(modifierCheck.getItemName(),categorMap);
+
+						}else {
+							categorMap=new HashMap<Integer,String>();
+							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
+							checkMap.put(modifierCheck.getItemName(),categorMap);
+						}
+					}
+				}
+
+
+			if(checkMap.size()>0){
+					StringBuffer checkbuf=new StringBuffer();
+					Iterator iter = checkMap.entrySet().iterator();
+					while (iter.hasNext()) {
+						Map.Entry entry = (Map.Entry) iter.next();
+						String key = (String) entry.getKey();
+						checkbuf.append(" "+key+":");
+						Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
+						Iterator iter2 = val.entrySet().iterator();
+						while (iter2.hasNext()) {
+							Map.Entry entry2 = (Map.Entry) iter2.next();
+							String val2 = (String) entry2.getValue();
+							checkbuf.append(val2+" ");
+//                      String val = (String) entry.getValue();
+//                      checkbuf.append("不能少于"+val+"种 .");
+						}
+					}
+
+					UIHelp.showToast((BaseActivity) context,checkbuf.toString());
+				}else {
+
 				//DON'T use reference 
 				Order placedOrder = OrderSQL.getOrder(order.getId());
-				if(placedOrder.getOrderNo().intValue() == 0){
+				if (placedOrder.getOrderNo().intValue() == 0) {
 					order.setOrderNo(OrderHelper.calculateOrderNo(order.getBusinessDate()));
 					OrderSQL.updateOrderNo(order);
 				}
@@ -148,8 +202,8 @@ public class MainPageOrderView extends LinearLayout {
 					@Override
 					public void run() {
 						Order placedOrder = OrderSQL.getOrder(order.getId());
-						List<OrderDetail> placedOrderDetails 
-									= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
+						List<OrderDetail> placedOrderDetails
+								= OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
 						KotSummary kotSummary = ObjectFactory.getInstance()
 								.getKotSummaryForPlace(
 										TableInfoSQL.getTableById(
@@ -157,7 +211,7 @@ public class MainPageOrderView extends LinearLayout {
 										App.instance.getRevenueCenter(),
 										App.instance.getBusinessDate());
 						User user = App.instance.getUser();
-						if(user != null){
+						if (user != null) {
 							String empName = user.getFirstName() + user.getLastName();
 							kotSummary.setEmpName(empName);
 							KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId().intValue());
@@ -215,11 +269,11 @@ public class MainPageOrderView extends LinearLayout {
 						}
 						if (!kotItemDetails.isEmpty()) {
 							KotSummarySQL.update(kotSummary);
-							if(!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()){
+							if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
 								PrinterDevice printer = App.instance.getCahierPrinter();
 								if (printer == null) {
 									UIHelp.showToast(
-											parent,parent.getResources().getString(R.string.setting_printer));
+											parent, parent.getResources().getString(R.string.setting_printer));
 								} else {
 									App.instance.remoteOrderSummaryPrint(printer, kotSummary, kotItemDetails, kotItemModifiers);
 								}
@@ -261,6 +315,7 @@ public class MainPageOrderView extends LinearLayout {
 						}
 					}
 				}).start();
+			}
 
 			}
 		});

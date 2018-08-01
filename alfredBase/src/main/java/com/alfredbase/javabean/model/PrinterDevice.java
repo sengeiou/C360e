@@ -100,9 +100,11 @@ public class PrinterDevice   implements Serializable{
 				", model='" + model + '\'' +
 				", mac='" + mac + '\'' +
 				", IP='" + IP + '\'' +
+				", type='" + type + '\'' +
 				", isCahierPrinter=" + isCahierPrinter +
+				", isLablePrinter=" + isLablePrinter +
 				", groupId=" + groupId +
-				", printerName=" + printerName +
+				", printerName='" + printerName + '\'' +
 				'}';
 	}
 }

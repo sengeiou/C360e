@@ -19,6 +19,7 @@ public class SystemSettings {
 	private boolean printPluModifier = true; //
 	private boolean printHourlyPayment = true; //
 	private boolean printLable = false; //
+	private boolean printLableDirection= false; //
 	private boolean printBill = true; // 打印账单
 	private boolean isOfPax = true;//开桌人数
 	private boolean printBeforCloseBill = true; // bill close need print Bill?
@@ -443,6 +444,30 @@ public class SystemSettings {
 	}
 
 
+	//打印方向
+	public boolean isPrintLableD() {
+		Integer value = Store.getInt(context,
+				Store.PRINT_LABLE_DIRECTION);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1){
+				this.printLableDirection = true;
+			}else{
+				this.printLableDirection = false;
+			}
+		}
+		return printLableDirection;
+	}
+
+
+	public void setPrintLableD(Integer printLableDirection) {
+		Store.putInt(this.context, Store.PRINT_LABLE_DIRECTION,
+				printLableDirection.intValue());
+		if(printLableDirection.intValue() == 1)
+			this.printLableDirection = true;
+		else
+			this.printLableDirection = false;
+	}
+
 
 	public void setPrintLable(Integer printLable) {
 		Store.putInt(this.context, Store.PRINT_LABLE,
@@ -452,6 +477,7 @@ public class SystemSettings {
 		else
 			this.printLable = false;
 	}
+
 
 
 	public boolean isPrintLable() {
@@ -506,7 +532,6 @@ public class SystemSettings {
 				this.isOfPax = true;
 			else
 				this.isOfPax = false;
-
 		}
 		return isOfPax;
 	}

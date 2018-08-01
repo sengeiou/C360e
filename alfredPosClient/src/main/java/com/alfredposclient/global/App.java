@@ -1710,9 +1710,18 @@ public class App extends BaseApplication {
             printerDialog();
             return;
         }
+        String  direction=null;
+        if(!App.instance.getSystemSettings().isPrintLableD()){
+            direction="0";
+
+        }else {
+            direction="1";
+        }
         try {
             //  mRemoteService.printTscBill("","","","");
-            mRemoteService.printTscBill(prtStr, titleStr, orderStr, orderDetailStr, orderModifiersStr, getLocalRestaurantConfig().getCurrencySymbol());
+
+
+            mRemoteService.printTscBill(prtStr, titleStr, orderStr, orderDetailStr, orderModifiersStr, getLocalRestaurantConfig().getCurrencySymbol(),direction);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

@@ -3,6 +3,7 @@ package com.alfredwaiter.global;
 import java.util.HashMap;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,7 +97,7 @@ public class UIHelp {
 	public static void startOrderDetail(BaseActivity context, Order order, ItemDetail itemDetail, OrderDetail orderDetail,int currentGroupId) {
 		Intent intent = new Intent(context, OrderDetailPage.class);
 		intent.putExtra("order", order);
-		intent.putExtra("itemDetail", itemDetail);
+		intent.putExtra("itemDetail", (Parcelable) itemDetail);
 		intent.putExtra("orderDetail", orderDetail);
 		intent.putExtra("currentGroupId", currentGroupId);
 		context.startActivity(intent);
@@ -110,7 +111,7 @@ public class UIHelp {
 
 	public static void startModifierDetail(BaseActivity context, ItemDetail itemDetail, Order order, OrderDetail orderDetail) {
 		Intent intent = new Intent(context, ModifierDetail.class);
-		intent.putExtra("itemDetail", itemDetail);
+		intent.putExtra("itemDetail", (Parcelable) itemDetail);
 		intent.putExtra("order", order);
 		intent.putExtra("orderDetail", orderDetail);
 		context.startActivity(intent);

@@ -30,11 +30,11 @@ public class OrderDetailSQL {
 
 	/**
 	 * 1.添加OrderDetail，
-	 * 
+	 *
 	 * 2.添加送的OrderDetail
-	 * 
+	 *
 	 * 3.刷新Order表
-	 * 
+	 *
 	 */
 	public static void addOrderDetailETC(OrderDetail orderDetail) {
 		if (orderDetail == null) {
@@ -66,7 +66,7 @@ public class OrderDetailSQL {
 
 	/**
 	 * 修改OrderDetail的Discount信息时调用
-	 * 
+	 *
 	 * @param orderDetail
 	 */
 	public static void updateOrderDetailAndOrderByDiscount(
@@ -91,7 +91,7 @@ public class OrderDetailSQL {
 
 	/**
 	 * 修改OrderDetail的非Discount信息时调用
-	 * 
+	 *
 	 * @param orderDetail
 	 */
 	public static void updateOrderDetailAndOrder(OrderDetail orderDetail) {
@@ -185,7 +185,7 @@ public class OrderDetailSQL {
 	}
 
 	public static void updateOrderDetailStatusById(int orderDetailStatus,
-			int id) {
+												   int id) {
 		try {
 			String sql = "update " + TableNames.OrderDetail
 					+ " set orderDetailStatus = ? where id = ?";
@@ -198,7 +198,7 @@ public class OrderDetailSQL {
 	}
 
 	public static void updateOrderDetailOrderIdById(int orderId,
-												   int id) {
+													int id) {
 		try {
 			String sql = "update " + TableNames.OrderDetail
 					+ " set orderId = ? where id = ?";
@@ -210,7 +210,7 @@ public class OrderDetailSQL {
 
 	}
 	public static void updateOrderDetailFireStatus(int fireStatus,
-			int id) {
+												   int id) {
 		try {
 			String sql = "update " + TableNames.OrderDetail
 					+ " set fireStatus = ? where id = ?";
@@ -388,7 +388,7 @@ public class OrderDetailSQL {
 			String sql = "insert into "
 					+ TableNames.OrderDetail
 					+ "(orderId, orderOriginId, userId, itemId, itemName, itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
-					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree," 
+					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
 					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
 					+ " fireStatus)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -624,8 +624,8 @@ public class OrderDetailSQL {
 		}
 		return result;
 	}
-	
-	
+
+
 	public static int getOrderDetailCountByGroupId(int groupId, int orderId) {
 		String sql = "select count(*) from " + TableNames.OrderDetail + " where groupId = ? and orderId = ? and orderDetailType <> " + ParamConst.ORDERDETAIL_TYPE_VOID;
 		int result = 0;
@@ -1091,7 +1091,7 @@ public class OrderDetailSQL {
 
 	/**
 	 * 作为展示的时候调用的
-	 * 
+	 *
 	 * @param orderId
 	 * @return
 	 */
@@ -1176,7 +1176,7 @@ public class OrderDetailSQL {
 				+ TableNames.OrderSplit
 				+ " where orderId = ? and orderStatus > "
 				+ ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
-		      	+ ") order by groupId desc";
+				+ ") order by groupId desc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -1237,7 +1237,7 @@ public class OrderDetailSQL {
 
 	/**
 	 * 作为算账的时候使用的
-	 * 
+	 *
 	 * @param orderId
 	 * @return
 	 */
@@ -1539,7 +1539,7 @@ public class OrderDetailSQL {
 	}
 
 	public static OrderDetail getUnFreeOrderDetail(Order order,
-			ItemDetail itemDetail, Integer groupId, int orderDetailStatus) {
+												   ItemDetail itemDetail, Integer groupId, int orderDetailStatus) {
 		OrderDetail orderDetail = null;
 		String sql = "select * from "
 				+ TableNames.OrderDetail
@@ -1660,7 +1660,7 @@ public class OrderDetailSQL {
 	}
 
 	public static List<OrderDetail> getOrderDetails(Order order,
-			Integer groupId, int orderDetailStatus) {
+													Integer groupId, int orderDetailStatus) {
 		List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 		OrderDetail orderDetail = null;
 		String sql = "select * from "
@@ -1722,7 +1722,7 @@ public class OrderDetailSQL {
 	}
 
 	public static List<OrderDetail> getOrderDetailsUnZero(Order order,
-			Integer groupId) {
+														  Integer groupId) {
 		List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 		OrderDetail orderDetail = null;
 		String sql = "select * from " + TableNames.OrderDetail
@@ -1921,7 +1921,7 @@ public class OrderDetailSQL {
 	}
 
 	public static OrderDetail getOrderDetail(int orderId,
-			OrderDetail fromOrderDetail) {
+											 OrderDetail fromOrderDetail) {
 		OrderDetail orderDetail = null;
 		String sql = "select * from " + TableNames.OrderDetail
 				+ " where orderId = ? and fromOrderDetailId = ? ";
@@ -2068,7 +2068,7 @@ public class OrderDetailSQL {
 	}
 
 	public static void setOrderDetailToVoidOrFree(OrderDetail orderDetail,
-			int type) {
+												  int type) {
 		if (orderDetail == null)
 			return;
 		orderDetail.setOrderDetailType(type);
@@ -2095,21 +2095,21 @@ public class OrderDetailSQL {
 
 	/**
 	 * 已经结账的订单修改OrderDetail
-     */
+	 */
 	public static void setOrderDetailToVoidOrFreeForClosedOrder(OrderDetail orderDetail, String oldTotal) {
 		if (orderDetail != null) {
-				orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_VOID);
-				orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
-				orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
-				orderDetail.setDiscountRate(ParamConst.DOUBLE_ZERO);
-				updateOrderDetail(orderDetail);
-				OrderDetail freeOrderDetail = getOrderDetail(orderDetail.getOrderId(),
-						orderDetail);
-				if (freeOrderDetail != null) {
-					freeOrderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_VOID);
-					updateOrderDetail(freeOrderDetail);
-				}
-				OrderDetailTaxSQL.deleteOrderDetailTax(orderDetail);
+			orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_VOID);
+			orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+			orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
+			orderDetail.setDiscountRate(ParamConst.DOUBLE_ZERO);
+			updateOrderDetail(orderDetail);
+			OrderDetail freeOrderDetail = getOrderDetail(orderDetail.getOrderId(),
+					orderDetail);
+			if (freeOrderDetail != null) {
+				freeOrderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_VOID);
+				updateOrderDetail(freeOrderDetail);
+			}
+			OrderDetailTaxSQL.deleteOrderDetailTax(orderDetail);
 			Order order = OrderSQL.getOrder(orderDetail.getOrderId());
 			OrderSQL.updateOrder(order);
 			if (orderDetail.getGroupId().intValue() > 0) {
@@ -2152,7 +2152,7 @@ public class OrderDetailSQL {
 	}
 
 	private static void updateFreeOrderDetail(Order order,
-			OrderDetail orderDetail) {
+											  OrderDetail orderDetail) {
 		ItemHappyHour itemHappyHour = OrderHelper.getItemHappyHour(order,
 				orderDetail);
 		if (itemHappyHour != null && itemHappyHour.getFreeNum().intValue() > 0) {
@@ -2169,7 +2169,7 @@ public class OrderDetailSQL {
 	}
 
 	private static void updateFreeOrderDetailForWaiter(Order order,
-			OrderDetail orderDetail) {
+													   OrderDetail orderDetail) {
 		ItemHappyHour itemHappyHour = OrderHelper.getItemHappyHour(order,
 				orderDetail);
 		if (itemHappyHour != null && itemHappyHour.getFreeNum().intValue() > 0) {
@@ -2496,8 +2496,8 @@ public class OrderDetailSQL {
 		}
 		return orderDetails;
 	}
-	
-	
+
+
 	public static List<OrderDetail> getOrderDetailsByOrderAndOrderSplit(OrderSplit orderSplit) {
 		List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 		OrderDetail orderDetail = null;
@@ -2559,7 +2559,7 @@ public class OrderDetailSQL {
 	}
 
 	public static OrderDetail getOrderDetailByCreateTime(long createTime,
-			int orderId) {
+														 int orderId) {
 		OrderDetail orderDetail = null;
 		String sql = "select * from "
 				+ TableNames.OrderDetail
@@ -2646,7 +2646,7 @@ public class OrderDetailSQL {
 				+ ParamConst.PAYMENT_SETT_IS_ACTIVE
 				+ " AND p.businessDate = ? AND t.orderDetailType = "
 				+ ParamConst.ORDERDETAIL_TYPE_GENERAL;
-		
+
 		String sql3 = "SELECT t.* FROM "
 				+ TableNames.Payment
 				+ " p, "
@@ -2707,7 +2707,7 @@ public class OrderDetailSQL {
 				orderDetail.setFireStatus(cursor.getInt(32));
 				result.add(orderDetail);
 			}
-			
+
 			cursor = db.rawQuery(sql2,
 					new String[] { String.valueOf(businessDate) });
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -2837,8 +2837,8 @@ public class OrderDetailSQL {
 		}
 		return result;
 	}
-	
-	
+
+
 	/*
 	 * Get void Items from ItemDetails,items in void bill are not included
 	 */
@@ -2877,9 +2877,9 @@ public class OrderDetailSQL {
 		}
 		return result;
 	}
-	
-	
-	
+
+
+
 	/*
 	 * Get foc Items from ItemDetails,items in foc bill are not included
 	 */
@@ -2918,7 +2918,7 @@ public class OrderDetailSQL {
 		}
 		return result;
 	}
-	
+
 	public static Map<Integer, Map<String, String>> getFocItemsByBusinessDateAndSession(
 			long businessDate, SessionStatus sessionStatus) {
 		Map<Integer, Map<String, String>> result = new HashMap<Integer, Map<String, String>>();
@@ -2988,7 +2988,7 @@ public class OrderDetailSQL {
 				+ ParamConst.PAYMENT_SETT_IS_ACTIVE
 				+ " AND p.businessDate = ? AND t.orderDetailType = "
 				+ ParamConst.ORDERDETAIL_TYPE_GENERAL;
-		
+
 		String sql3 = "SELECT t.* FROM "
 				+ TableNames.Payment
 				+ " p, "
@@ -3050,7 +3050,7 @@ public class OrderDetailSQL {
 				orderDetail.setFireStatus(cursor.getInt(32));
 				result.add(orderDetail);
 			}
-			
+
 			cursor = db.rawQuery(sql2,
 					new String[] { String.valueOf(businessDate) });
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
@@ -3091,46 +3091,46 @@ public class OrderDetailSQL {
 				orderDetail.setFireStatus(cursor.getInt(32));
 				result.add(orderDetail);
 			}
-				cursor = db.rawQuery(sql3,
-						new String[] { String.valueOf(businessDate) });
-				for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
-						.moveToNext()) {
-					OrderDetail orderDetail = new OrderDetail();
-					orderDetail.setId(cursor.getInt(0));
-					orderDetail.setOrderId(cursor.getInt(1));
-					orderDetail.setOrderOriginId(cursor.getInt(2));
-					orderDetail.setUserId(cursor.getInt(3));
-					orderDetail.setItemId(cursor.getInt(4));
-					orderDetail.setItemName(cursor.getString(5));
-					orderDetail.setItemNum(cursor.getInt(6));
-					orderDetail.setOrderDetailStatus(cursor.getInt(7));
-					orderDetail.setOrderDetailType(cursor.getInt(8));
-					orderDetail.setReason(cursor.getString(9));
-					orderDetail.setPrintStatus(cursor.getInt(10));
-					orderDetail.setItemPrice(cursor.getString(11));
-					orderDetail.setTaxPrice(cursor.getString(12));
-					orderDetail.setDiscountPrice(cursor.getString(13));
-					orderDetail.setModifierPrice(cursor.getString(14));
-					orderDetail.setRealPrice(cursor.getString(15));
-					orderDetail.setCreateTime(cursor.getLong(16));
-					orderDetail.setUpdateTime(cursor.getLong(17));
-					orderDetail.setDiscountRate(cursor.getString(18));
-					orderDetail.setDiscountType(cursor.getInt(19));
-					orderDetail.setFromOrderDetailId(cursor.getInt(20));
-					orderDetail.setIsFree(cursor.getInt(21));
-					orderDetail.setGroupId(cursor.getInt(22));
-					orderDetail.setIsOpenItem(cursor.getInt(23));
-					orderDetail.setSpecialInstractions(cursor.getString(24));
-					orderDetail.setOrderSplitId(cursor.getInt(25));
-					orderDetail.setIsTakeAway(cursor.getInt(26));
-					orderDetail.setWeight(cursor.getString(27));
-					orderDetail.setIsItemDiscount(cursor.getInt(28));
-					orderDetail.setIsSet(cursor.getInt(29));
-					orderDetail.setAppOrderDetailId(cursor.getInt(30));
-					orderDetail.setMainCategoryId(cursor.getInt(31));
-					orderDetail.setFireStatus(cursor.getInt(32));
-					result.add(orderDetail);
-				}
+			cursor = db.rawQuery(sql3,
+					new String[] { String.valueOf(businessDate) });
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				OrderDetail orderDetail = new OrderDetail();
+				orderDetail.setId(cursor.getInt(0));
+				orderDetail.setOrderId(cursor.getInt(1));
+				orderDetail.setOrderOriginId(cursor.getInt(2));
+				orderDetail.setUserId(cursor.getInt(3));
+				orderDetail.setItemId(cursor.getInt(4));
+				orderDetail.setItemName(cursor.getString(5));
+				orderDetail.setItemNum(cursor.getInt(6));
+				orderDetail.setOrderDetailStatus(cursor.getInt(7));
+				orderDetail.setOrderDetailType(cursor.getInt(8));
+				orderDetail.setReason(cursor.getString(9));
+				orderDetail.setPrintStatus(cursor.getInt(10));
+				orderDetail.setItemPrice(cursor.getString(11));
+				orderDetail.setTaxPrice(cursor.getString(12));
+				orderDetail.setDiscountPrice(cursor.getString(13));
+				orderDetail.setModifierPrice(cursor.getString(14));
+				orderDetail.setRealPrice(cursor.getString(15));
+				orderDetail.setCreateTime(cursor.getLong(16));
+				orderDetail.setUpdateTime(cursor.getLong(17));
+				orderDetail.setDiscountRate(cursor.getString(18));
+				orderDetail.setDiscountType(cursor.getInt(19));
+				orderDetail.setFromOrderDetailId(cursor.getInt(20));
+				orderDetail.setIsFree(cursor.getInt(21));
+				orderDetail.setGroupId(cursor.getInt(22));
+				orderDetail.setIsOpenItem(cursor.getInt(23));
+				orderDetail.setSpecialInstractions(cursor.getString(24));
+				orderDetail.setOrderSplitId(cursor.getInt(25));
+				orderDetail.setIsTakeAway(cursor.getInt(26));
+				orderDetail.setWeight(cursor.getString(27));
+				orderDetail.setIsItemDiscount(cursor.getInt(28));
+				orderDetail.setIsSet(cursor.getInt(29));
+				orderDetail.setAppOrderDetailId(cursor.getInt(30));
+				orderDetail.setMainCategoryId(cursor.getInt(31));
+				orderDetail.setFireStatus(cursor.getInt(32));
+				result.add(orderDetail);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -3143,7 +3143,7 @@ public class OrderDetailSQL {
 	}
 
 	public static Map<String, String> getItemCountAndItemAmountByBusinessDateAndItemId(int itemId,
-			long businessDate) {
+																					   long businessDate) {
 		Map<String, String> result = new HashMap<String, String>();
 		String sql = "select sum(itemNum), sum(realPrice) from "
 				+ TableNames.OrderDetail + " where itemId = ? and orderId in (select id from "
@@ -3158,18 +3158,18 @@ public class OrderDetailSQL {
 				String sumRealPrice = cursor.getString(1) == null ? "0.00" : cursor.getString(1);
 				result.put("sumItemNum", sumItemNum+"");
 				result.put("sumRealPrice", sumRealPrice);
-				}
-			}catch (Exception e) {
-				e.printStackTrace();
-
-			} finally {
-				if (cursor != null && !cursor.isClosed()) {
-					cursor.close();
-				}
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
 		return result;
 	}
-	
+
 	public static Map<Integer, Map<String, String>> getItemCountAndItemAmountByBusinessDate(
 			long businessDate) {
 		Map<Integer, Map<String, String>> result = new HashMap<Integer, Map<String, String>>();
@@ -3204,9 +3204,9 @@ public class OrderDetailSQL {
 		}
 		return result;
 	}
-	
+
 	public static Map<String, String> getItemCountAndItemAmountByBusinessDateAndItemIdAndSession(int itemId,
-			long businessDate, SessionStatus sessionStatus) {
+																								 long businessDate, SessionStatus sessionStatus) {
 		Map<String, String> result = new HashMap<String, String>();
 		String sql = "select sum(itemNum), sum(realPrice) from "
 				+ TableNames.OrderDetail + " where itemId = ? and orderId in (select id from "
@@ -3221,19 +3221,19 @@ public class OrderDetailSQL {
 				String sumRealPrice = cursor.getString(1) == null ? "0.00" : cursor.getString(1);
 				result.put("sumItemNum", sumItemNum+"");
 				result.put("sumRealPrice", sumRealPrice);
-				}
-			}catch (Exception e) {
-				e.printStackTrace();
-
-			} finally {
-				if (cursor != null && !cursor.isClosed()) {
-					cursor.close();
-				}
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
 		return result;
 	}
-	
-	
+
+
 	public static Map<Integer, Map<String, String>> getItemCountAndItemAmountByBusinessDateAndSession(
 			long businessDate, SessionStatus sessionStatus) {
 		Map<Integer, Map<String, String>> result = new HashMap<Integer, Map<String, String>>();
@@ -3268,12 +3268,12 @@ public class OrderDetailSQL {
 		}
 		return result;
 	}
-	
+
 	public static String getOrderDetailRealPriceWhenDiscountBySelf(Order order){
-		String sql = "select SUM(realPrice) from " 
-				+ TableNames.OrderDetail + " where (discountType = " 
-				+ ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE 
-				+ " or discountType = " 
+		String sql = "select SUM(realPrice) from "
+				+ TableNames.OrderDetail + " where (discountType = "
+				+ ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+				+ " or discountType = "
 				+ ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
 				+ ") and orderId = ?";
 		String sumRealPrice = "0.00";
@@ -3284,15 +3284,15 @@ public class OrderDetailSQL {
 					new String[] {order.getId() + ""});
 			if (cursor.moveToFirst()) {
 				sumRealPrice = cursor.getString(0) == null ? "0.00" : cursor.getString(0);
-				}
-			}catch (Exception e) {
-				e.printStackTrace();
-
-			} finally {
-				if (cursor != null && !cursor.isClosed()) {
-					cursor.close();
-				}
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
 		return sumRealPrice;
 	}
 

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.alfred.print.jobs.WifiCommunication;
+import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.WIFIPrintCallback;
 import com.alfredbase.utils.BitmapUtil;
@@ -138,19 +139,19 @@ public class ESCPrinter implements WIFIPrintCallback{
 //	}
 
 
-	public boolean setTscData(List<PrintTscData> data)
+	public boolean setTscData(List<PrintTscData> data,int direction)
 	{
 		boolean result = true;
 		try {
 
 			this.tprinter.addHome();
 		//	this.tprinter.resetPrinter();
-			this.tprinter.addTsize(30, 30, 1);//设置打印区域大小
+			this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
 
 			this.tprinter.addReference(0, 0); // 设置原点坐标
 			this.tprinter.addSpeed();// 设置打印速度
 			this.tprinter.addDensity();// 设置打印浓度
-			this.tprinter.addDirection();// 设置打印方向
+			this.tprinter.addDirection(direction);// 设置打印方向
 			this.tprinter.addCls();// 清除打印缓冲区
 			for(int i=0;i<data.size();i++)
 			{
@@ -163,12 +164,12 @@ public class ESCPrinter implements WIFIPrintCallback{
 						sendTData();
 
 						this.tprinter.addHome();
-						this.tprinter.addTsize(30, 30, 1);//设置打印区域大小
+						this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
 
 						this.tprinter.addReference(0, 0); // 设置原点坐标
 						this.tprinter.addSpeed();// 设置打印速度
 						this.tprinter.addDensity();// 设置打印浓度
-						this.tprinter.addDirection();// 设置打印方向
+						this.tprinter.addDirection(direction);// 设置打印方向
 						this.tprinter.addCls();// 清除打印缓冲区
 
 					}else {

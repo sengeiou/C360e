@@ -64,7 +64,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private MyToggleButton mt_top_screen_lock;
 	private MyToggleButton mt_cancel_order_void;
 	private MyToggleButton mt_transfer_print;
-	private MyToggleButton mt_auto_table,mt_of_pax;
+	private MyToggleButton mt_auto_table,mt_of_pax,mt_print_lable_direction;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
 	private int size = 0;
@@ -81,12 +81,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private LinearLayout ll_max_order_no;
 	private TextView tv_max_order_no,tv_print_lable;
 
-	private LinearLayout ll_print_lable,ll_print_bill;
+	private LinearLayout ll_print_lable,ll_print_bill,ll_print_lable_direction;
 	private View v_print_lable;
 	private int maxOrderNo;
 	MyToggleButton mt_print_lable;
 	MyToggleButton mt_print_bill;
 	private int textsize,textcolor;
+	private TextView tv_lable_upOrdown;
 
 	@Override
 	protected void initView() {
@@ -96,12 +97,19 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_print_lable).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_print_bill).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_print_lable_direction).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_of_pax).setVisibility(View.GONE);
+			findViewById(R.id.ll_pos_setting).setVisibility(View.GONE);
+			findViewById(R.id.ll_transfer_print).setVisibility(View.GONE);
+
 		}else{
 			findViewById(R.id.ll_print_lable).setVisibility(View.GONE);
 			findViewById(R.id.ll_app_order).setVisibility(View.GONE);
 			findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
+			findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
 			findViewById(R.id.ll_of_pax).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_pos_setting).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_transfer_print).setVisibility(View.VISIBLE);
 		}
 		syncMap = App.instance.getPushMsgMap();
 		settings = App.instance.getSystemSettings();
@@ -131,6 +139,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_transfer_print = (MyToggleButton)findViewById(R.id.mt_transfer_print);
 		mt_auto_table = (MyToggleButton)findViewById(R.id.mt_auto_table);
 		mt_of_pax=(MyToggleButton)findViewById(R.id.mt_of_pax);
+		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
 
 
 		if (syncMap.isEmpty()) {
@@ -144,7 +153,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		iv_sync_data.setOnClickListener(this);
 	//	iv_sync_data.setVisibility();
 		mt_print_lable =(MyToggleButton) findViewById(R.id.mt_print_lable);
+		mt_print_lable_direction =(MyToggleButton) findViewById(R.id.mt_print_lable_direction);
 		mt_print_bill=(MyToggleButton)findViewById(R.id.mt_print_bill) ;
+		mt_print_lable_direction.setOnStateChangeListeren(this);
 		mt_print_lable.setOnStateChangeListeren(this);
 		findViewById(R.id.iv_back).setOnClickListener(this);
 		mt_kot_print.setOnStateChangeListeren(this);
@@ -310,6 +321,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			mt_print_lable.setChecked(true);
 		}else{
 			mt_print_lable.setChecked(false);
+		}
+		if(settings.isPrintLableD()){
+			tv_lable_upOrdown.setText("Down");
+			mt_print_lable_direction.setChecked(true);
+		}else{
+			tv_lable_upOrdown.setText("Up");
+			mt_print_lable_direction.setChecked(false);
 		}
 
 		if(settings.isPrintBill()){
@@ -585,15 +603,20 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_transfer_print));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_bill));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_lable));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_lable_direction));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_of_pax));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_auto_table));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_set_lock_time));
+
+		textTypeFace.setTrajanProRegular(tv_lable_upOrdown);
+
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
+
+
 	}
 
 //	@Override
 	public void onToggleStateChangeListeren(MyToggleButton Mybutton, Boolean checkState) {
-
-
 		switch (Mybutton.getId()) {
 			case R.id.mt_kot_print:
 				if (checkState) {
@@ -775,6 +798,19 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 				}else{
 					mt_print_lable.setChecked(false);
 					settings.setPrintLable(ParamConst.DEFAULT_FALSE);
+				}
+				break;
+
+			case R.id.mt_print_lable_direction:
+
+				if(checkState){
+					tv_lable_upOrdown.setText("Down");
+					mt_print_lable_direction.setChecked(true);
+					settings.setPrintLableD(ParamConst.DEFAULT_TRUE);
+				}else{
+					tv_lable_upOrdown.setText("Up");
+					mt_print_lable_direction.setChecked(false);
+					settings.setPrintLableD(ParamConst.DEFAULT_FALSE);
 				}
 				break;
 

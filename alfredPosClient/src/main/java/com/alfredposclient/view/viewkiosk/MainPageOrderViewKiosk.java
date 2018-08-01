@@ -44,6 +44,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ColorUtils;
@@ -953,6 +954,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 										OrderDetailSQL.deleteOrderDetail(tag);
 										KotItemDetailSQL.deleteKotItemDetail(tag);
 										OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
+										ModifierCheckSql.deleteModifierCheck(tag.getId());
 										if(!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && ! IntegerUtils.isEmptyOrZero(tag.getGroupId())){
 											int count = OrderDetailSQL.getOrderDetailCountByGroupId(tag.getGroupId().intValue(), order.getId().intValue());
 											if(count == 0){

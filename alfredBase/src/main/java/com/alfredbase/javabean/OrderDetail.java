@@ -110,6 +110,8 @@ public class OrderDetail implements Serializable {
 	 * 只用于本地计算，方便计算
 	 */
 	private int isSet = 0;
+
+
 	/**
 	 * 不存数据库 临时缓存用
 	 */
@@ -119,7 +121,6 @@ public class OrderDetail implements Serializable {
 		// set openItem False
 		this.isOpenItem = 0;
 	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -443,5 +444,6 @@ public class OrderDetail implements Serializable {
 	public void setTransferFromDetailNum(int transferFromDetailNum) {
 		this.transferFromDetailNum = transferFromDetailNum;
 	}
+
 
 }

@@ -164,13 +164,13 @@ public class TscPOSPrinter {
 	// 设置打印浓度
 	public void addDensity() {
 		new String();
-		String str = "DENSITY " + 15 + "\r\n";
+		String str = "DENSITY " + 9 + "\r\n";
 		this.addStrToCommand(str);
 	}
 	// 设置打印方向
-	public void addDirection() {
+	public void addDirection(int dir) {
 		new String();
-		String str = "DIRECTION " + 0 + "\r\n";
+		String str = "DIRECTION " + dir + "\r\n";
 		this.addStrToCommand(str);
 	}
 

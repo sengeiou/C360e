@@ -34,6 +34,7 @@ public class TableNames {
 	public static final String HappyHourWeek = "HappyHourWeek_";
 	public static final String Payment = "Payment_";
 	public static final String PaymentSettlement = "PaymentSettlement_";
+	public static final String ModifierCheck = "ModifierCheck_";
 	public static final String NonChargableSettlement = "NonChargableSettlement_";
 	public static final String BohHoldSettlement = "BohHoldSettlement_";
 	public static final String SyncMsg = "SyncMsg_";

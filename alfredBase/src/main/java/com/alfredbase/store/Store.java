@@ -125,6 +125,8 @@ public class Store {
 	public static final String LOAD_CASH_DEFAULT = "LOAD_CASH_DEFAULT";
 	public static final String PRINT_LABLE = "PRINT_LABLE";
 
+	public static final String PRINT_LABLE_DIRECTION = "PRINT_LABLE_DIRECTION";
+
 	public static final String PRINT_BILL = "PRINT_BILL";
 	public static final String OF_PAX = "OF_PAX";
 

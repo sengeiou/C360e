@@ -41,6 +41,7 @@ import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
@@ -301,7 +302,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 
 //				SendEmailThread thread=new SendEmailThread();
 //				thread.start();
-
+				ModifierCheckSql.deleteAllModifierCheck();
                cashPay();
 				break;
 			default:

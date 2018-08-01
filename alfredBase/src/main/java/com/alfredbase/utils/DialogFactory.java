@@ -483,11 +483,10 @@ public class DialogFactory {
 				dialog.setCanceledOnTouchOutside(true);
 				dialog.setContentView(view);
 				dialog.setOwnerActivity(activity);
-				TextView tv_num = (TextView)view.findViewById(R.id.tv_change_num);
-				tv_num.setText(changeNum + "");
-
-
 				TextTypeFace textTypeFace = TextTypeFace.getInstance();
+				TextView tv_num = (TextView)view.findViewById(R.id.tv_change_num);
+				textTypeFace.setTrajanProBlod(tv_num);
+				tv_num.setText(changeNum + "");
 
 				textTypeFace.setTrajanProBlod((TextView) view
 						.findViewById(R.id.tv_dia_change));

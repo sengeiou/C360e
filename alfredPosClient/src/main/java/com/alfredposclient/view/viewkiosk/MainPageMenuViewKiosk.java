@@ -39,9 +39,13 @@ import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
+import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -64,97 +68,97 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainPageMenuViewKiosk extends LinearLayout {
-	private static final int WIDTH = (int) (ScreenSizeUtil.width*(1 - (700+300)/ScreenSizeUtil.WIDTH_POS));
-	private static final int OPEN_DELAY = 300;
-	private static final int ONELEVELMENU= 0;
-	private static final int TWOLEVELMENU = 1;
+    private static final int WIDTH = (int) (ScreenSizeUtil.width * (1 - (700 + 300) / ScreenSizeUtil.WIDTH_POS));
+    private static final int OPEN_DELAY = 300;
+    private static final int ONELEVELMENU = 0;
+    private static final int TWOLEVELMENU = 1;
 
-	private BaseActivity parent;
-	private Handler handler;
-	private RelativeLayout ll_menu;
-	private RecyclerView oneLevelMenu;
-	private RecyclerView twoLevelMenu;
-	private ImageView iv_up;
-	private ImageView iv_down;
-	private ImageView iv_done;
-	private LinearLayout ll_item_detail;
-	private LinearLayout ll_sub_menu;
-	private ScrollView sv_sub_menu;
-	private ImageView iv_sub_menu_index;
-	private Button btn_more_sub_menu;
-	private int current_index = 0;
-	private Order order;
-	private TextTypeFace textTypeFace;
-	private int height;
-	private boolean flag;
-	private int isSelectSub = 0;
-	private boolean isFirst = false;
-	private int touchRecyclerView = 0;
-	private PagerSnapHelper pagerSnapHelper;
-	private int allWidth; //Gridview的宽度
-	private CustomNoteView customNoteView;
-	private Context context;
-	int size,tsize,color,textcolor;
-	private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
-			.getItemMainCategories();
+    private BaseActivity parent;
+    private Handler handler;
+    private RelativeLayout ll_menu;
+    private RecyclerView oneLevelMenu;
+    private RecyclerView twoLevelMenu;
+    private ImageView iv_up;
+    private ImageView iv_down;
+    private ImageView iv_done;
+    private LinearLayout ll_item_detail;
+    private LinearLayout ll_sub_menu;
+    private ScrollView sv_sub_menu;
+    private ImageView iv_sub_menu_index;
+    private Button btn_more_sub_menu;
+    private int current_index = 0;
+    private Order order;
+    private TextTypeFace textTypeFace;
+    private int height;
+    private boolean flag;
+    private int isSelectSub = 0;
+    private boolean isFirst = false;
+    private int touchRecyclerView = 0;
+    private PagerSnapHelper pagerSnapHelper;
+    private int allWidth; //Gridview的宽度
+    private CustomNoteView customNoteView;
+    private Context context;
+    int size, tsize, color, textcolor;
+    private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
+            .getItemMainCategories();
 
-	
-	public MainPageMenuViewKiosk(Context context) {
-		super(context);
 
-		this.context= context;
-		init(context);
-		initTextTypeFace();
-		isFirst = true;
-	}
+    public MainPageMenuViewKiosk(Context context) {
+        super(context);
 
-	public MainPageMenuViewKiosk(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		this.context= context;
-		init(context);
-		initTextTypeFace();
-		isFirst = true;
-	}
-	
-	public void setParent(BaseActivity parent){
-		this.parent = parent;
+        this.context = context;
+        init(context);
+        initTextTypeFace();
+        isFirst = true;
+    }
+
+    public MainPageMenuViewKiosk(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        this.context = context;
+        init(context);
+        initTextTypeFace();
+        isFirst = true;
+    }
+
+    public void setParent(BaseActivity parent) {
+        this.parent = parent;
 //		initItemMainCategory();
 //		initItemDetail();
 //		initItemCategory(current_index);
-	}
+    }
 
-	public void setParam(Order order, Handler handler) {
-		this.handler = handler;
-		this.order = order;
+    public void setParam(Order order, Handler handler) {
+        this.handler = handler;
+        this.order = order;
 
-          size= Store.getInt(App.instance, Store.TEXT_SIZE, 0);
-		  tsize=Store.getInt(App.instance, Store.T_TEXT_SIZE, 0);
+        size = Store.getInt(App.instance, Store.TEXT_SIZE, 0);
+        tsize = Store.getInt(App.instance, Store.T_TEXT_SIZE, 0);
 
-		 color= Store.getInt(App.instance, Store.COLOR_PICKER, 0);
-		 textcolor=Store.getInt(App.instance, Store.T_COLOR_PICKER, 0);
+        color = Store.getInt(App.instance, Store.COLOR_PICKER, 0);
+        textcolor = Store.getInt(App.instance, Store.T_COLOR_PICKER, 0);
 
-	if(size!=tsize||color!=textcolor){
-		isFirst=true;
-		current_index = 0;
+        if (size != tsize || color != textcolor) {
+            isFirst = true;
+            current_index = 0;
 
-		Store.putInt(App.instance,Store.T_TEXT_SIZE,size);
-		Store.putInt(App.instance,Store.T_COLOR_PICKER,color);
-	}
-		if(isFirst){
-			oneLevelMenu.setAdapter(new OneLevelMenuAdapter());
-			twoLevelMenu.setAdapter(new TwoLevelMenuAdapter());
-			isFirst = false;
-		}
-		listMainCategorys = CoreData.getInstance()
-				.getItemMainCategories();
-		// ll_menu.setVisibility(View.VISIBLE);
+            Store.putInt(App.instance, Store.T_TEXT_SIZE, size);
+            Store.putInt(App.instance, Store.T_COLOR_PICKER, color);
+        }
+        if (isFirst) {
+            oneLevelMenu.setAdapter(new OneLevelMenuAdapter());
+            twoLevelMenu.setAdapter(new TwoLevelMenuAdapter());
+            isFirst = false;
+        }
+        listMainCategorys = CoreData.getInstance()
+                .getItemMainCategories();
+        // ll_menu.setVisibility(View.VISIBLE);
 
-	}
+    }
 
-	private void initTextTypeFace(){
-		textTypeFace = TextTypeFace.getInstance();
-		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_item_name));
-	}
+    private void initTextTypeFace() {
+        textTypeFace = TextTypeFace.getInstance();
+        textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_item_name));
+    }
 
 //	public void refreshItemOrderDetail(){
 //		itemAdp.notifyDataSetChanged();
@@ -236,8 +240,9 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //		}
 //	}
 
-	List<View> itemMainCategoryViews = new ArrayList<View>();
-//	private void initItemMainCategory() {
+    List<View> itemMainCategoryViews = new ArrayList<View>();
+
+    //	private void initItemMainCategory() {
 //		TextView textView = new TextView(parent);
 //		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 //				WIDTH / 3, LayoutParams.MATCH_PARENT);
@@ -306,15 +311,15 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //		}
 //	}
     private void hightlightMainCategoryLabel(int index) {
-    	Resources res = this.getResources();
-    	TextView currentLabel =  (TextView) itemMainCategoryViews.get(index+1);
-    	for (View txtview: itemMainCategoryViews) {
-    		if (txtview != currentLabel) {
-    			((TextView) txtview).setTextColor(res.getColor(R.color.black));
-    		}else {
-    			((TextView) txtview).setTextColor(res.getColor(R.color.white));
-    		}
-    	}
+        Resources res = this.getResources();
+        TextView currentLabel = (TextView) itemMainCategoryViews.get(index + 1);
+        for (View txtview : itemMainCategoryViews) {
+            if (txtview != currentLabel) {
+                ((TextView) txtview).setTextColor(res.getColor(R.color.black));
+            } else {
+                ((TextView) txtview).setTextColor(res.getColor(R.color.white));
+            }
+        }
     }
 //	private void initItemCategory(int index) {
 //		final List<View> oneLevelMenus = new ArrayList<View>();
@@ -394,257 +399,263 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //			}
 //		});
 //	}
-	
-	private List<ItemCategory> getItemCategory(int index){
-    	List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
-				.getItemMainCategories();
-    	ItemMainCategory itemMainCategory = null;
-		if (listMainCategorys==null){
-			return null;
-		}
-		itemMainCategory = listMainCategorys.get(index);
-		final List<ItemCategory> currentItemCategories = new ArrayList<ItemCategory>();
-		
-		for (ItemCategory itemCategory : CoreData.getInstance()
-				.getItemCategories()) {
-			if (itemCategory.getItemMainCategoryId().intValue() == itemMainCategory
-					.getId().intValue()) {
-				currentItemCategories.add(itemCategory);
-			}
-		}
-		return currentItemCategories;
+
+    private List<ItemCategory> getItemCategory(int index) {
+        List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
+                .getItemMainCategories();
+        ItemMainCategory itemMainCategory = null;
+        if (listMainCategorys == null) {
+            return null;
+        }
+        itemMainCategory = listMainCategorys.get(index);
+        final List<ItemCategory> currentItemCategories = new ArrayList<ItemCategory>();
+
+        for (ItemCategory itemCategory : CoreData.getInstance()
+                .getItemCategories()) {
+            if (itemCategory.getItemMainCategoryId().intValue() == itemMainCategory
+                    .getId().intValue()) {
+                currentItemCategories.add(itemCategory);
+            }
+        }
+        return currentItemCategories;
     }
-	
-	private void filterItemsInSubCategory (int maincategoryid) {
+
+    private void filterItemsInSubCategory(int maincategoryid) {
 //		LinearLayout ll_two_level_menu = (LinearLayout) findViewById(R.id.ll_two_level_menu);
 //		View view = ll_two_level_menu.getChildAt(current_index);
 //		MyGridView gv_menu_detail = (MyGridView)view.findViewById(gv_menu_detail);
 //		ItemDetailAdapter subadp = (ItemDetailAdapter) gv_menu_detail.getAdapter();
-		TwoLevelMenuAdapter.MenuViewHolder viewHolder = (TwoLevelMenuAdapter.MenuViewHolder) twoLevelMenu.findViewHolderForAdapterPosition(current_index);
-		if(viewHolder == null) {
-			return;
-		}
-		ItemDetailAdapter subadp = (ItemDetailAdapter) viewHolder.gv_menu_detail.getAdapter();
+        TwoLevelMenuAdapter.MenuViewHolder viewHolder = (TwoLevelMenuAdapter.MenuViewHolder) twoLevelMenu.findViewHolderForAdapterPosition(current_index);
+        if (viewHolder == null) {
+            return;
+        }
+        ItemDetailAdapter subadp = (ItemDetailAdapter) viewHolder.gv_menu_detail.getAdapter();
 
 
-		List<ItemDetail>  currentItemDetails = new ArrayList<ItemDetail>();
-		for (ItemDetail itemDetail : CoreData.getInstance()
-				.getItemDetails()) {
-			if ((itemDetail.getItemMainCategoryId().intValue() == maincategoryid)) {
-				currentItemDetails.add(itemDetail);
-			}
-		}
-		subadp.setItemDetails(currentItemDetails);
-	}   
-	public void filterItemsInSubCategory (int maincategoryid, int subcategoryid) {
+        List<ItemDetail> currentItemDetails = new ArrayList<ItemDetail>();
+        for (ItemDetail itemDetail : CoreData.getInstance()
+                .getItemDetails()) {
+            if ((itemDetail.getItemMainCategoryId().intValue() == maincategoryid)) {
+                currentItemDetails.add(itemDetail);
+            }
+        }
+        subadp.setItemDetails(currentItemDetails);
+    }
+
+    public void filterItemsInSubCategory(int maincategoryid, int subcategoryid) {
 //		LinearLayout ll_two_level_menu = (LinearLayout) findViewById(R.id.ll_two_level_menu);
 //		View view = ll_two_level_menu.getChildAt(current_index);
 //		MyGridView gv_menu_detail = (MyGridView)view.findViewById(R.id.gv_menu_detail);
 //		View view = twoLevelMenu.getChildAt(getIndex(twoLevelMenu));
-		TwoLevelMenuAdapter.MenuViewHolder viewHolder = (TwoLevelMenuAdapter.MenuViewHolder) twoLevelMenu.findViewHolderForAdapterPosition(current_index);
-		if(viewHolder == null) {
-			return;
-		}
-		ItemDetailAdapter subadp = (ItemDetailAdapter) viewHolder.gv_menu_detail.getAdapter();
-		
-		List<ItemDetail>  currentItemDetails = new ArrayList<ItemDetail>();
-		for (ItemDetail itemDetail : CoreData.getInstance()
-				.getItemDetails()) {
-			if ((itemDetail.getItemMainCategoryId().intValue() == maincategoryid) 
-					&& (itemDetail.getItemCategoryId().intValue() == subcategoryid)) {
-				currentItemDetails.add(itemDetail);
-			}
-		}
+        TwoLevelMenuAdapter.MenuViewHolder viewHolder = (TwoLevelMenuAdapter.MenuViewHolder) twoLevelMenu.findViewHolderForAdapterPosition(current_index);
+        if (viewHolder == null) {
+            return;
+        }
+        ItemDetailAdapter subadp = (ItemDetailAdapter) viewHolder.gv_menu_detail.getAdapter();
 
-		subadp.setItemDetails(currentItemDetails);		
-	}
+        List<ItemDetail> currentItemDetails = new ArrayList<ItemDetail>();
+        for (ItemDetail itemDetail : CoreData.getInstance()
+                .getItemDetails()) {
+            if ((itemDetail.getItemMainCategoryId().intValue() == maincategoryid)
+                    && (itemDetail.getItemCategoryId().intValue() == subcategoryid)) {
+                currentItemDetails.add(itemDetail);
+            }
+        }
 
-	class OneLevelMenuAdapter extends RecyclerView.Adapter<OneLevelMenuAdapter.CategoryViewHolder>{
-		private List<ItemMainCategory> itemMainCategoryList = new ArrayList<>();
-		public OneLevelMenuAdapter(){
-			itemMainCategoryList.addAll(CoreData.getInstance().getItemMainCategories());
-			itemMainCategoryList.add(0, null);
-			itemMainCategoryList.add(null);
+        subadp.setItemDetails(currentItemDetails);
+    }
 
-		}
+    class OneLevelMenuAdapter extends RecyclerView.Adapter<OneLevelMenuAdapter.CategoryViewHolder> {
+        private List<ItemMainCategory> itemMainCategoryList = new ArrayList<>();
+
+        public OneLevelMenuAdapter() {
+            itemMainCategoryList.addAll(CoreData.getInstance().getItemMainCategories());
+            itemMainCategoryList.add(0, null);
+            itemMainCategoryList.add(null);
+
+        }
 
 
-		@Override
-		public CategoryViewHolder onCreateViewHolder(ViewGroup arg1, int viewType) {
+        @Override
+        public CategoryViewHolder onCreateViewHolder(ViewGroup arg1, int viewType) {
 
-			return new CategoryViewHolder(LayoutInflater.from(parent).inflate(R.layout.item_main_category, null));
-		}
+            return new CategoryViewHolder(LayoutInflater.from(parent).inflate(R.layout.item_main_category, null));
+        }
 
-		@Override
-		public void onBindViewHolder(CategoryViewHolder holder, final int position) {
-			ItemMainCategory itemMainCategory = itemMainCategoryList.get(position);
-			if(itemMainCategory == null){
-				holder.tv_main_category.setText("");
-				holder.tv_main_category.setOnClickListener(null);
-			}else {
-				holder.tv_main_category.setText(itemMainCategory.getMainCategoryName());
-				LogUtil.e("TEST", itemMainCategory.getMainCategoryName());
-				holder.tv_main_category.setOnClickListener(
-						new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								if (!ButtonClickTimer.canClick(v)) {
-									return;
-								}
-								if(oneLevelMenu.isAnimating() || twoLevelMenu.isAnimating()){
-									return;
-								}
-								//
-								if(position == 0 || position == itemMainCategoryList.size() -1){
-									return;
-								}
-								if (position - 1 == current_index) {//éä¸­ç¹å»
-									if (!flag) {//ç¹å»åæ¢
-										openSubMenu();
-										flag = true;
-									} else {
-										closeSubMenu(listMainCategorys.get(current_index).getId());
-									}
+        @Override
+        public void onBindViewHolder(CategoryViewHolder holder, final int position) {
+            ItemMainCategory itemMainCategory = itemMainCategoryList.get(position);
+            if (itemMainCategory == null) {
+                holder.tv_main_category.setText("");
+                holder.tv_main_category.setOnClickListener(null);
+            } else {
+                holder.tv_main_category.setText(itemMainCategory.getMainCategoryName());
+                LogUtil.e("TEST", itemMainCategory.getMainCategoryName());
+                holder.tv_main_category.setOnClickListener(
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (!ButtonClickTimer.canClick(v)) {
+                                    return;
+                                }
+                                if (oneLevelMenu.isAnimating() || twoLevelMenu.isAnimating()) {
+                                    return;
+                                }
+                                //
+                                if (position == 0 || position == itemMainCategoryList.size() - 1) {
+                                    return;
+                                }
+                                if (position - 1 == current_index) {//éä¸­ç¹å»
+                                    if (!flag) {//ç¹å»åæ¢
+                                        openSubMenu();
+                                        flag = true;
+                                    } else {
+                                        closeSubMenu(listMainCategorys.get(current_index).getId());
+                                    }
 
-								} else {
-									LogUtil.e("TEST", "===" + position);
-									closeSubMenu(listMainCategorys.get(current_index).getId());
-									moveToPosition(oneLevelMenu, position - 1);
-									moveToPosition(twoLevelMenu, position - 1);
-									current_index = position - 1;
-								}
-							}
-						});
-			}
-		}
+                                } else {
+                                    LogUtil.e("TEST", "===" + position);
+                                    closeSubMenu(listMainCategorys.get(current_index).getId());
+                                    moveToPosition(oneLevelMenu, position - 1);
+                                    moveToPosition(twoLevelMenu, position - 1);
+                                    current_index = position - 1;
+                                }
+                            }
+                        });
+            }
+        }
 
-		@Override
-		public int getItemCount() {
-			return itemMainCategoryList.size();
-		}
+        @Override
+        public int getItemCount() {
+            return itemMainCategoryList.size();
+        }
 
-		class CategoryViewHolder extends RecyclerView.ViewHolder{
-			TextView tv_main_category;
-			public CategoryViewHolder(View itemView) {
-				super(itemView);
-				tv_main_category = (TextView) itemView
-						.findViewById(R.id.tv_main_category);
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-						WIDTH / 3, ScreenSizeUtil.dip2px(parent, 80));
-				tv_main_category.setLayoutParams(params);
-			}
-		}
-	}
+        class CategoryViewHolder extends RecyclerView.ViewHolder {
+            TextView tv_main_category;
 
-	class TwoLevelMenuAdapter extends RecyclerView.Adapter<TwoLevelMenuAdapter.MenuViewHolder>{
-		private List<ItemMainCategory> itemMainCategoryList = CoreData.getInstance().getItemMainCategories();;
-		@Override
-		public MenuViewHolder onCreateViewHolder(ViewGroup arg1, int viewType) {
-			View  itemView = LayoutInflater.from(parent).inflate(R.layout.item_menu_detial, arg1, false);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					WIDTH, LayoutParams.MATCH_PARENT);
-			itemView.setLayoutParams(params);
-			return new MenuViewHolder(itemView);
-		}
+            public CategoryViewHolder(View itemView) {
+                super(itemView);
+                tv_main_category = (TextView) itemView
+                        .findViewById(R.id.tv_main_category);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        WIDTH / 3, ScreenSizeUtil.dip2px(parent, 80));
+                tv_main_category.setLayoutParams(params);
+            }
+        }
+    }
 
-		@Override
-		public void onBindViewHolder(MenuViewHolder holder, int position) {
-			ItemMainCategory itemMainCategory = itemMainCategoryList.get(position);
-			List<ItemDetail> currentItemDetails = new ArrayList<ItemDetail>();
-			for (ItemDetail itemDetail : CoreData.getInstance()
-					.getItemDetails()) {
-				if (itemDetail.getItemMainCategoryId().intValue() == itemMainCategory
-						.getId().intValue()) {
-					currentItemDetails.add(itemDetail);
-				}
-			}
-			ItemDetailAdapter itemAdp = new ItemDetailAdapter(parent,
-					currentItemDetails);
-			holder.gv_menu_detail.setAdapter(itemAdp);
-		}
+    class TwoLevelMenuAdapter extends RecyclerView.Adapter<TwoLevelMenuAdapter.MenuViewHolder> {
+        private List<ItemMainCategory> itemMainCategoryList = CoreData.getInstance().getItemMainCategories();
+        ;
 
-		@Override
-		public int getItemCount() {
-			return itemMainCategoryList.size();
-		}
+        @Override
+        public MenuViewHolder onCreateViewHolder(ViewGroup arg1, int viewType) {
+            View itemView = LayoutInflater.from(parent).inflate(R.layout.item_menu_detial, arg1, false);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    WIDTH, LayoutParams.MATCH_PARENT);
+            itemView.setLayoutParams(params);
+            return new MenuViewHolder(itemView);
+        }
 
-		class MenuViewHolder extends RecyclerView.ViewHolder{
-			MyGridView gv_menu_detail;
-			public MenuViewHolder(View itemView) {
-				super(itemView);
-				gv_menu_detail = (MyGridView) itemView
-						.findViewById(R.id.gv_menu_detail);
+        @Override
+        public void onBindViewHolder(MenuViewHolder holder, int position) {
+            ItemMainCategory itemMainCategory = itemMainCategoryList.get(position);
+            List<ItemDetail> currentItemDetails = new ArrayList<ItemDetail>();
+            for (ItemDetail itemDetail : CoreData.getInstance()
+                    .getItemDetails()) {
+                if (itemDetail.getItemMainCategoryId().intValue() == itemMainCategory
+                        .getId().intValue()) {
+                    currentItemDetails.add(itemDetail);
+                }
+            }
+            ItemDetailAdapter itemAdp = new ItemDetailAdapter(parent,
+                    currentItemDetails);
+            holder.gv_menu_detail.setAdapter(itemAdp);
+        }
 
-				if( Store.getInt(App.instance, Store.TEXT_SIZE, 0)==1)
-				{
-					gv_menu_detail.setVerticalSpacing(ScreenSizeUtil.dip2px((Activity) context, 5));
-					gv_menu_detail.setHorizontalSpacing(ScreenSizeUtil.dip2px((Activity) context, 5));
-				}
-				gv_menu_detail.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+        @Override
+        public int getItemCount() {
+            return itemMainCategoryList.size();
+        }
 
-					@SuppressLint("NewApi")
-					@Override
-					public void onGlobalLayout() {
-						int numColumns = (int)Math.floor(gv_menu_detail.getWidth()/(gv_menu_detail.getVerticalSpacing() + ScreenSizeUtil.dip2px(parent, ItemDetailAdapter.ITEM_WIDTH_HEIGHT)));
-						gv_menu_detail.setNumColumns(numColumns);
-						LogUtil.e("TEST", "å®½===" + gv_menu_detail.getWidth() + "é«====" + gv_menu_detail.getHeight());
-					}
-				});
-				gv_menu_detail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> arg0, View arg1,
-											int arg2, long arg3) {
-						ItemDetail itemDetail = (ItemDetail) arg0
-								.getItemAtPosition(arg2);
-						OrderDetail orderDetail = ObjectFactory.getInstance()
-								.getOrderDetail(order, itemDetail, 0);
-						Message msg = handler.obtainMessage();
-						msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
-						msg.obj = orderDetail;
-						handler.sendMessage(msg);
-					}
-				});
-			}
-		}
-	}
+        class MenuViewHolder extends RecyclerView.ViewHolder {
+            MyGridView gv_menu_detail;
 
-	private void init(Context context) {
-		View.inflate(context, R.layout.main_page_menu_view_test, this);
-		ll_menu = (RelativeLayout) findViewById(R.id.rl_menu);
-		iv_done = (ImageView) findViewById(R.id.iv_done);
-		iv_done.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(!ButtonClickTimer.canClick(v)){
-					return;
-				}
-				closeModifiers();
-			}
-		});
-		ll_item_detail = (LinearLayout) findViewById(R.id.ll_item_detail);
-		ll_item_detail.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-			
-			@Override
-			public void onGlobalLayout() {
-				height = ll_item_detail.getMeasuredHeight();
-			}
-		});
-		customNoteView = (CustomNoteView) findViewById(R.id.custom_note_view);
-		sv_sub_menu = (ScrollView) findViewById(R.id.sv_sub_menu);
-		iv_sub_menu_index = (ImageView) findViewById(R.id.iv_sub_menu_index);
-		ll_sub_menu = (LinearLayout) findViewById(R.id.ll_sub_menu);
-		iv_up = (ImageView) findViewById(R.id.iv_up);
-		iv_down = (ImageView) findViewById(R.id.iv_down);
-		oneLevelMenu = (RecyclerView) findViewById(R.id.hsv_one_level_menu);
-		oneLevelMenu.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false));
-		LinearSnapHelper snapHelper = new LinearSnapHelper();
-		snapHelper.attachToRecyclerView(oneLevelMenu);
-		twoLevelMenu = (RecyclerView) findViewById(R.id.hsv_two_level_menu);
-		twoLevelMenu.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false));
-		twoLevelMenu.setNestedScrollingEnabled(false);
-		pagerSnapHelper = new PagerSnapHelper();
-		pagerSnapHelper.attachToRecyclerView(twoLevelMenu);
+            public MenuViewHolder(View itemView) {
+                super(itemView);
+                gv_menu_detail = (MyGridView) itemView
+                        .findViewById(R.id.gv_menu_detail);
+
+                if (Store.getInt(App.instance, Store.TEXT_SIZE, 0) == 1) {
+                    gv_menu_detail.setVerticalSpacing(ScreenSizeUtil.dip2px((Activity) context, 5));
+                    gv_menu_detail.setHorizontalSpacing(ScreenSizeUtil.dip2px((Activity) context, 5));
+                }
+                gv_menu_detail.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
+                    @SuppressLint("NewApi")
+                    @Override
+                    public void onGlobalLayout() {
+                        int numColumns = (int) Math.floor(gv_menu_detail.getWidth() / (gv_menu_detail.getVerticalSpacing() + ScreenSizeUtil.dip2px(parent, ItemDetailAdapter.ITEM_WIDTH_HEIGHT)));
+                        gv_menu_detail.setNumColumns(numColumns);
+                        LogUtil.e("TEST", "å®½===" + gv_menu_detail.getWidth() + "==é«====" + gv_menu_detail.getHeight());
+                    }
+                });
+                gv_menu_detail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1,
+                                            int arg2, long arg3) {
+                        ItemDetail itemDetail = (ItemDetail) arg0
+                                .getItemAtPosition(arg2);
+                        LogUtil.e("itemDetail", "å®½===" + itemDetail.getItemName() + "é«====" + itemDetail.getPrice());
+                        OrderDetail orderDetail = ObjectFactory.getInstance()
+                                .getOrderDetail(order, itemDetail, 0);
+                        Message msg = handler.obtainMessage();
+                        msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+                        msg.obj = orderDetail;
+                        handler.sendMessage(msg);
+                    }
+                });
+            }
+        }
+    }
+
+    private void init(Context context) {
+        View.inflate(context, R.layout.main_page_menu_view_test, this);
+        ll_menu = (RelativeLayout) findViewById(R.id.rl_menu);
+        iv_done = (ImageView) findViewById(R.id.iv_done);
+        iv_done.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (!ButtonClickTimer.canClick(v)) {
+                    return;
+                }
+                closeModifiers();
+            }
+        });
+        ll_item_detail = (LinearLayout) findViewById(R.id.ll_item_detail);
+        ll_item_detail.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                height = ll_item_detail.getMeasuredHeight();
+            }
+        });
+        customNoteView = (CustomNoteView) findViewById(R.id.custom_note_view);
+        sv_sub_menu = (ScrollView) findViewById(R.id.sv_sub_menu);
+        iv_sub_menu_index = (ImageView) findViewById(R.id.iv_sub_menu_index);
+        ll_sub_menu = (LinearLayout) findViewById(R.id.ll_sub_menu);
+        iv_up = (ImageView) findViewById(R.id.iv_up);
+        iv_down = (ImageView) findViewById(R.id.iv_down);
+        oneLevelMenu = (RecyclerView) findViewById(R.id.hsv_one_level_menu);
+        oneLevelMenu.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+        LinearSnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(oneLevelMenu);
+        twoLevelMenu = (RecyclerView) findViewById(R.id.hsv_two_level_menu);
+        twoLevelMenu.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+        twoLevelMenu.setNestedScrollingEnabled(false);
+        pagerSnapHelper = new PagerSnapHelper();
+        pagerSnapHelper.attachToRecyclerView(twoLevelMenu);
 
 //		detector = new GestureDetector(context, new CustomGestureListener(
 //				new OnFling() {
@@ -663,87 +674,87 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //						}
 //					}
 //				}));
-		oneLevelMenu.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-				super.onScrollStateChanged(recyclerView, newState);
-				LogUtil.e("TEST", "oneLevelMenuin == " + touchRecyclerView + "newState == " + newState );
-				if(newState == RecyclerView.SCROLL_STATE_IDLE) {
-					if (touchRecyclerView == ONELEVELMENU) {
-						closeSubMenu(listMainCategorys.get(current_index).getId());
-						int index = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-						moveToPosition(twoLevelMenu, index);
-						current_index = index;
+        oneLevelMenu.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LogUtil.e("TEST", "oneLevelMenuin == " + touchRecyclerView + "newState == " + newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (touchRecyclerView == ONELEVELMENU) {
+                        closeSubMenu(listMainCategorys.get(current_index).getId());
+                        int index = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                        moveToPosition(twoLevelMenu, index);
+                        current_index = index;
 
-					}
-				}
-			}
+                    }
+                }
+            }
 
-			@Override
-			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				super.onScrolled(recyclerView,dx,dy);
-			}
-		});
-		twoLevelMenu.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-				super.onScrollStateChanged(recyclerView, newState);
-				LogUtil.e("TEST", "twoLevelMenuin == " + touchRecyclerView + "newState == " + newState );
-				if(newState == RecyclerView.SCROLL_STATE_IDLE){
-					LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
-					int index = linearLayoutManager.findFirstVisibleItemPosition();
-					if(touchRecyclerView == TWOLEVELMENU){
-						moveToPosition(oneLevelMenu, index);
-						current_index = index;
-					}
-					if(listMainCategorys.get(current_index).getId() == isSelectSub){
-						closeSubMenu(isSelectSub);
-					}
-				}
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+        twoLevelMenu.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LogUtil.e("TEST", "twoLevelMenuin == " + touchRecyclerView + "newState == " + newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    int index = linearLayoutManager.findFirstVisibleItemPosition();
+                    if (touchRecyclerView == TWOLEVELMENU) {
+                        moveToPosition(oneLevelMenu, index);
+                        current_index = index;
+                    }
+                    if (listMainCategorys.get(current_index).getId() == isSelectSub) {
+                        closeSubMenu(isSelectSub);
+                    }
+                }
 
-			}
+            }
 
-			@Override
-			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				super.onScrolled(recyclerView,dx,dy);
-			}
-		});
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
 //		oneLevelMenu = (HorizontalScrollViewEx) findViewById(R.id.hsv_one_level_menu);
 //		oneLevelMenu.itemW = WIDTH / 3;
 //		twoLevelMenu = (HorizontalScrollViewEx) findViewById(R.id.hsv_two_level_menu);
 //		twoLevelMenu.itemW = WIDTH;
 //		threeLevelMenu = (HorizontalScrollViewEx) findViewById(R.id.hsv_three_level_menu);
 //		threeLevelMenu.itemW = (int) getResources().getDimension(R.dimen.dp60);
-		oneLevelMenu.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View arg0, MotionEvent event) {
-				touchRecyclerView = ONELEVELMENU;
-				LogUtil.e("TEST", "twoLevelMenu===in==" + touchRecyclerView);
-				return false;
-			}
-		});
+        oneLevelMenu.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent event) {
+                touchRecyclerView = ONELEVELMENU;
+                LogUtil.e("TEST", "twoLevelMenu===in==" + touchRecyclerView);
+                return false;
+            }
+        });
 
-		twoLevelMenu.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View arg0, MotionEvent event) {
-				touchRecyclerView = TWOLEVELMENU;
-				LogUtil.e("TEST", "twoLevelMenu===in==" + touchRecyclerView);
-				return false;
-			}
-		});
+        twoLevelMenu.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent event) {
+                touchRecyclerView = TWOLEVELMENU;
+                LogUtil.e("TEST", "twoLevelMenu===in==" + touchRecyclerView);
+                return false;
+            }
+        });
 
-		customNoteView.setCloseCustomNoteView(new CustomNoteView.CloseCustomNoteView() {
-			@Override
-			public void onClose() {
-				customNoteView.setShow(false);
-				Message controlHandler = handler.obtainMessage();
-				controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
-				controlHandler.obj = false;
-				handler.sendMessage(controlHandler);
-				closeCustomNoteView();
-			}
-		});
-	}
+        customNoteView.setCloseCustomNoteView(new CustomNoteView.CloseCustomNoteView() {
+            @Override
+            public void onClose() {
+                customNoteView.setShow(false);
+                Message controlHandler = handler.obtainMessage();
+                controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
+                controlHandler.obj = false;
+                handler.sendMessage(controlHandler);
+                closeCustomNoteView();
+            }
+        });
+    }
 
 //	public void opensubMenuDetail(final View view, int number) {
 //		if (AnimatorListenerImpl.isRunning) {
@@ -791,169 +802,188 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //		threeLevelMenu.startAnimation(trans);
 //	}
 
-	private void initMenuDetail(Order order, OrderDetail orderDetail,
-			List<ItemModifier> itemModifiers) {
-		ll_item_detail.removeAllViews();
-		for (ItemModifier itemModifier : itemModifiers) {
-			ModifierView modifierView = new ModifierView(parent);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+    private void initMenuDetail(Order order, OrderDetail orderDetail,
+                                List<ItemModifier> itemModifiers) {
+        ll_item_detail.removeAllViews();
+
+
+
+        for (ItemModifier itemModifier : itemModifiers) {
+            ModifierView modifierView = new ModifierView(parent);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 //			params.rightMargin = 10;
-			modifierView.setLayoutParams(params);
-			if (itemModifiers.indexOf(itemModifier) % 2 == 1) {//判断为奇数时，背景色改变
-				modifierView.setBackgroundResource(R.color.modifier_odd);
-			}
-			modifierView.setParams(order, orderDetail, itemModifier, handler,height);
-			ll_item_detail.addView(modifierView);
-		}
-	}
+            modifierView.setLayoutParams(params);
+            if (itemModifiers.indexOf(itemModifier) % 2 == 1) {//判断为奇数时，背景色改变
+                modifierView.setBackgroundResource(R.color.modifier_odd);
+            }
+           // add ModifierCheck
 
-	private void initSubMenu(List<ItemCategory> itemCategories){
-		ll_sub_menu.removeAllViews();
-		SubMenuView subMenuView = new SubMenuView(parent);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT,LayoutParams.MATCH_PARENT);
-		params.topMargin = 20;
-		subMenuView.setLayoutParams(params);
-		subMenuView.setParams(WIDTH, itemCategories, handler);
-		ll_sub_menu.addView(subMenuView);
-	}
-	
-	public void openSubMenu() {
-		initSubMenu(getItemCategory(current_index));
-		sv_sub_menu.setVisibility(View.VISIBLE);
-		iv_sub_menu_index.setVisibility(View.VISIBLE);
-		if (AnimatorListenerImpl.isRunning) {
-			return;
-		}
-	}
-	public void closeSubMenu(int maincategoryid,int subcategoryid){
-		isSelectSub = maincategoryid;
-		flag = false;
-		filterItemsInSubCategory(maincategoryid, subcategoryid);
-		if (AnimatorListenerImpl.isRunning) {
-			return;
-		}
-		sv_sub_menu.setVisibility(View.GONE);
-		iv_sub_menu_index.setVisibility(View.GONE);
-	}
-	public void closeSubMenu(int maincategoryid){
-		flag = false;
-		if(isSelectSub != 0) {
-			filterItemsInSubCategory(maincategoryid);
-		}
-		if (AnimatorListenerImpl.isRunning ) {
-			return;
-		}
-		sv_sub_menu.setVisibility(View.GONE);
-		iv_sub_menu_index.setVisibility(View.GONE);
-		isSelectSub = 0;
-	}
-	
-	public void openModifiers(Order order, OrderDetail orderDetail,
-			List<ItemModifier> itemModifiers) {
-		initMenuDetail(order, orderDetail, itemModifiers);
-		if (AnimatorListenerImpl.isRunning) {
-			return;
-		}
-		iv_up.setVisibility(View.VISIBLE);
-		iv_down.setVisibility(View.VISIBLE);
-		Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_menu);
-		iv_up.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
-				bitmap.getWidth(), bitmap.getHeight() / 2));
-		iv_down.setImageBitmap(Bitmap.createBitmap(bitmap, 0,
-				bitmap.getHeight() / 2, bitmap.getWidth(),
-				bitmap.getHeight() / 2));
-		if (!bitmap.isRecycled())
-			bitmap.recycle();
-		ll_menu.setVisibility(View.GONE);
-		((TextView) findViewById(R.id.tv_item_name)).setText(CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemName());
-		ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_up, "y",
-				iv_up.getY(), iv_up.getY() - iv_up.getHeight()).setDuration(
-				OPEN_DELAY);
-		ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_down, "y",
-				iv_down.getY(), iv_down.getY() + iv_down.getHeight())
-				.setDuration(OPEN_DELAY);
-		final ObjectAnimator animator3 = ObjectAnimator.ofFloat(iv_up, "y",
-				iv_up.getY() - iv_up.getHeight(), iv_up.getY()).setDuration(
-				1);
-		final ObjectAnimator animator4 = ObjectAnimator.ofFloat(iv_down, "y",
-				iv_down.getY() + iv_down.getHeight(), iv_down.getY())
-				.setDuration(1);
-		AnimatorSet animSet = new AnimatorSet();
-		animSet.playTogether(animator1, animator2);
-		animSet.addListener(new AnimatorListenerImpl(){
-			public void onAnimationEnd(Animator animation) {
-				super.onAnimationEnd(animation);
-				ll_menu.post(new Runnable() {
 
-					@Override
-					public void run() {
-						System.out.println("==========donghua");
-						AnimatorSet animSet1 = new AnimatorSet();
-						animSet1.playTogether(animator3, animator4);
-						animSet1.start();
-						iv_up.setVisibility(View.GONE);
-						iv_down.setVisibility(View.GONE);
-						
-					}
-				});
-			};
-		});
-		animSet.start();
-	}
+//            final Modifier modifier_type = CoreData.getInstance().getModifier(
+//                    itemModifier);
+//            if(modifier_type.getMinNumber()>0){
+//                ModifierCheck modifierCheck=null;
+//                modifierCheck =ObjectFactory.getInstance().getModifierCheck(order, orderDetail, modifier_type,itemModifier);
+//                ModifierCheckSql.addModifierCheck(modifierCheck);
+          //  }
+            modifierView.setParams(order, orderDetail, itemModifier, handler, height);
+            ll_item_detail.addView(modifierView);
+        }
+    }
 
-	public boolean isModifierOpen(){
-		if(ll_menu != null && ll_menu.getVisibility() != View.VISIBLE)
-			return true;
-		else
-			return false;
-	}
+    private void initSubMenu(List<ItemCategory> itemCategories) {
+        ll_sub_menu.removeAllViews();
+        SubMenuView subMenuView = new SubMenuView(parent);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        params.topMargin = 20;
+        subMenuView.setLayoutParams(params);
+        subMenuView.setParams(WIDTH, itemCategories, handler);
+        ll_sub_menu.addView(subMenuView);
+    }
 
-	public void closeModifiers() {
-		if (AnimatorListenerImpl.isRunning || ll_menu.getVisibility() == View.VISIBLE) {
-			return;
-		}
-		iv_up.setVisibility(View.VISIBLE);
-		iv_down.setVisibility(View.VISIBLE);
-		ObjectAnimator animator3 = ObjectAnimator.ofFloat(iv_up, "y",
-				iv_up.getY(), iv_up.getY() - iv_up.getHeight()).setDuration(
-				0);
-		ObjectAnimator animator4 = ObjectAnimator.ofFloat(iv_down, "y",
-				iv_down.getY(), iv_down.getY() + iv_down.getHeight())
-				.setDuration(0);
-		
-		AnimatorSet animSet = new AnimatorSet();
-		animSet.playTogether(animator3, animator4);
-		animSet.addListener(new AnimatorListenerImpl() {
-			public void onAnimationEnd(Animator animation) {
-				AnimatorSet animSet = new AnimatorSet();
-		ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_up, "y",
-				iv_up.getY(), iv_up.getY() + iv_up.getHeight()).setDuration(
-				OPEN_DELAY);
-		ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_down, "y",
-				iv_down.getY(), iv_down.getY() - iv_down.getHeight())
-				.setDuration(OPEN_DELAY);
+    public void openSubMenu() {
+        initSubMenu(getItemCategory(current_index));
+        sv_sub_menu.setVisibility(View.VISIBLE);
+        iv_sub_menu_index.setVisibility(View.VISIBLE);
+        if (AnimatorListenerImpl.isRunning) {
+            return;
+        }
+    }
+
+    public void closeSubMenu(int maincategoryid, int subcategoryid) {
+        isSelectSub = maincategoryid;
+        flag = false;
+        filterItemsInSubCategory(maincategoryid, subcategoryid);
+        if (AnimatorListenerImpl.isRunning) {
+            return;
+        }
+        sv_sub_menu.setVisibility(View.GONE);
+        iv_sub_menu_index.setVisibility(View.GONE);
+    }
+
+    public void closeSubMenu(int maincategoryid) {
+        flag = false;
+        if (isSelectSub != 0) {
+            filterItemsInSubCategory(maincategoryid);
+        }
+        if (AnimatorListenerImpl.isRunning) {
+            return;
+        }
+        sv_sub_menu.setVisibility(View.GONE);
+        iv_sub_menu_index.setVisibility(View.GONE);
+        isSelectSub = 0;
+    }
+
+    public void openModifiers(Order order, OrderDetail orderDetail,
+                              List<ItemModifier> itemModifiers ) {
+        initMenuDetail(order, orderDetail, itemModifiers);
+        if (AnimatorListenerImpl.isRunning) {
+            return;
+        }
+        iv_up.setVisibility(View.VISIBLE);
+        iv_down.setVisibility(View.VISIBLE);
+        Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_menu);
+        iv_up.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0,
+                bitmap.getWidth(), bitmap.getHeight() / 2));
+        iv_down.setImageBitmap(Bitmap.createBitmap(bitmap, 0,
+                bitmap.getHeight() / 2, bitmap.getWidth(),
+                bitmap.getHeight() / 2));
+        if (!bitmap.isRecycled())
+            bitmap.recycle();
+        ll_menu.setVisibility(View.GONE);
+        ((TextView) findViewById(R.id.tv_item_name)).setText(CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemName());
+        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_up, "y",
+                iv_up.getY(), iv_up.getY() - iv_up.getHeight()).setDuration(
+                OPEN_DELAY);
+        ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_down, "y",
+                iv_down.getY(), iv_down.getY() + iv_down.getHeight())
+                .setDuration(OPEN_DELAY);
+        final ObjectAnimator animator3 = ObjectAnimator.ofFloat(iv_up, "y",
+                iv_up.getY() - iv_up.getHeight(), iv_up.getY()).setDuration(
+                1);
+        final ObjectAnimator animator4 = ObjectAnimator.ofFloat(iv_down, "y",
+                iv_down.getY() + iv_down.getHeight(), iv_down.getY())
+                .setDuration(1);
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.playTogether(animator1, animator2);
+        animSet.addListener(new AnimatorListenerImpl() {
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                ll_menu.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        System.out.println("==========donghua");
+                        AnimatorSet animSet1 = new AnimatorSet();
+                        animSet1.playTogether(animator3, animator4);
+                        animSet1.start();
+                        iv_up.setVisibility(View.GONE);
+                        iv_down.setVisibility(View.GONE);
+
+                    }
+                });
+            }
+
+            ;
+        });
+        animSet.start();
+    }
+
+    public boolean isModifierOpen() {
+        if (ll_menu != null && ll_menu.getVisibility() != View.VISIBLE)
+            return true;
+        else
+            return false;
+    }
+
+    public void closeModifiers() {
+        if (AnimatorListenerImpl.isRunning || ll_menu.getVisibility() == View.VISIBLE) {
+            return;
+        }
+        iv_up.setVisibility(View.VISIBLE);
+        iv_down.setVisibility(View.VISIBLE);
+        ObjectAnimator animator3 = ObjectAnimator.ofFloat(iv_up, "y",
+                iv_up.getY(), iv_up.getY() - iv_up.getHeight()).setDuration(
+                0);
+        ObjectAnimator animator4 = ObjectAnimator.ofFloat(iv_down, "y",
+                iv_down.getY(), iv_down.getY() + iv_down.getHeight())
+                .setDuration(0);
+
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.playTogether(animator3, animator4);
+        animSet.addListener(new AnimatorListenerImpl() {
+            public void onAnimationEnd(Animator animation) {
+                AnimatorSet animSet = new AnimatorSet();
+                ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_up, "y",
+                        iv_up.getY(), iv_up.getY() + iv_up.getHeight()).setDuration(
+                        OPEN_DELAY);
+                ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_down, "y",
+                        iv_down.getY(), iv_down.getY() - iv_down.getHeight())
+                        .setDuration(OPEN_DELAY);
 //		AnimatorSet animSet = new AnimatorSet();
-		animSet.playTogether(animator1, animator2);
-		animSet.start();
-		animSet.addListener(new AnimatorListenerImpl() {
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				super.onAnimationEnd(animation);
-				ll_menu.post(new Runnable() {
+                animSet.playTogether(animator1, animator2);
+                animSet.start();
+                animSet.addListener(new AnimatorListenerImpl() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        ll_menu.post(new Runnable() {
 
-					@Override
-					public void run() {
-						ll_menu.setVisibility(View.VISIBLE);
-					}
-				});
-					}
-				});
-			};
-		});
-		animSet.start();
-	}
+                            @Override
+                            public void run() {
+                                ll_menu.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                });
+            }
+
+            ;
+        });
+        animSet.start();
+    }
 
 //	@Override
 //	public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -1000,46 +1030,47 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //
 //	}
 
-	private void moveToPosition(final RecyclerView hsv, final int index) {
-		hsv.post(new Runnable() {
-			@Override
-			public void run() {
-				//先从RecyclerView的LayoutManager中获取第一项和最后一项的Position
-				int firstItem = ((LinearLayoutManager)hsv.getLayoutManager()).findFirstVisibleItemPosition();
-				int lastItem = ((LinearLayoutManager)hsv.getLayoutManager()).findLastVisibleItemPosition();
-				if(hsv.getId() == R.id.hsv_one_level_menu){
-					//然后区分情况
-					if (index <= firstItem) {
-						//当要置顶的项在当前显示的第一个项的前面时
-						hsv.scrollToPosition(index);
-					} else if (index <= lastItem) {
-						//当要置顶的项已经在屏幕上显示时
-						int top = hsv.getLayoutManager().findViewByPosition(index).getLeft();
-						hsv.scrollBy(top, 0);
-					} else {
-						//当要置顶的项在当前显示的最后一项的后面时
-						hsv.scrollToPosition(index);
-						//这里这个变量是用在RecyclerView滚动监听里面的
-					}
-				}else {
-					//然后区分情况
-					if (index <= firstItem) {
-						//当要置顶的项在当前显示的第一个项的前面时
-						hsv.smoothScrollToPosition(index);
-					} else if (index <= lastItem) {
-						//当要置顶的项已经在屏幕上显示时
-						int top = hsv.getLayoutManager().findViewByPosition(index).getLeft();
-						hsv.smoothScrollBy(top, 0);
-					} else {
-						//当要置顶的项在当前显示的最后一项的后面时
-						hsv.smoothScrollToPosition(index);
-						//这里这个变量是用在RecyclerView滚动监听里面的
-					}
-				}
-			}
-		});
-	}
-//
+    private void moveToPosition(final RecyclerView hsv, final int index) {
+        hsv.post(new Runnable() {
+            @Override
+            public void run() {
+                //先从RecyclerView的LayoutManager中获取第一项和最后一项的Position
+                int firstItem = ((LinearLayoutManager) hsv.getLayoutManager()).findFirstVisibleItemPosition();
+                int lastItem = ((LinearLayoutManager) hsv.getLayoutManager()).findLastVisibleItemPosition();
+                if (hsv.getId() == R.id.hsv_one_level_menu) {
+                    //然后区分情况
+                    if (index <= firstItem) {
+                        //当要置顶的项在当前显示的第一个项的前面时
+                        hsv.scrollToPosition(index);
+                    } else if (index <= lastItem) {
+                        //当要置顶的项已经在屏幕上显示时
+                        int top = hsv.getLayoutManager().findViewByPosition(index).getLeft();
+                        hsv.scrollBy(top, 0);
+                    } else {
+                        //当要置顶的项在当前显示的最后一项的后面时
+                        hsv.scrollToPosition(index);
+                        //这里这个变量是用在RecyclerView滚动监听里面的
+                    }
+                } else {
+                    //然后区分情况
+                    if (index <= firstItem) {
+                        //当要置顶的项在当前显示的第一个项的前面时
+                        hsv.smoothScrollToPosition(index);
+                    } else if (index <= lastItem) {
+                        //当要置顶的项已经在屏幕上显示时
+                        int top = hsv.getLayoutManager().findViewByPosition(index).getLeft();
+                        hsv.smoothScrollBy(top, 0);
+                    } else {
+                        //当要置顶的项在当前显示的最后一项的后面时
+                        hsv.smoothScrollToPosition(index);
+                        //这里这个变量是用在RecyclerView滚动监听里面的
+                    }
+                }
+            }
+        });
+    }
+
+    //
 //	public void bgChang(List<View> views,int index){
 ////		for (int i = 0; i < views.size(); i++) {
 ////			views.get(i).setBackgroundResource(R.drawable.box_center);
@@ -1096,95 +1127,94 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //	}
 //
 //
-	private void showCustomNoteView(){
-		if (AnimatorListenerImpl.isRunning) {
-			return;
-		}
+    private void showCustomNoteView() {
+        if (AnimatorListenerImpl.isRunning) {
+            return;
+        }
 
-		TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0f,
-				Animation.RELATIVE_TO_SELF,0f,
-				Animation.RELATIVE_TO_SELF,-1f,
-				Animation.RELATIVE_TO_SELF,0f);
-		translateAnimation.setDuration(OPEN_DELAY);
-		translateAnimation.setAnimationListener(new AnimationListener() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, -1f,
+                Animation.RELATIVE_TO_SELF, 0f);
+        translateAnimation.setDuration(OPEN_DELAY);
+        translateAnimation.setAnimationListener(new AnimationListener() {
 
-			@Override
-			public void onAnimationStart(Animation animation) {
-				AnimatorListenerImpl.isRunning = true;
-				customNoteView.setVisibility(View.VISIBLE);
-			}
+            @Override
+            public void onAnimationStart(Animation animation) {
+                AnimatorListenerImpl.isRunning = true;
+                customNoteView.setVisibility(View.VISIBLE);
+            }
 
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				AnimatorListenerImpl.isRunning = true;
-			}
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                AnimatorListenerImpl.isRunning = true;
+            }
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				AnimatorListenerImpl.isRunning = false;
-			}
-		});
-		if (customNoteView.getVisibility() == View.GONE) {
-			customNoteView.setVisibility(View.VISIBLE);
-		}
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                AnimatorListenerImpl.isRunning = false;
+            }
+        });
+        if (customNoteView.getVisibility() == View.GONE) {
+            customNoteView.setVisibility(View.VISIBLE);
+        }
 
-		customNoteView.startAnimation(translateAnimation);
+        customNoteView.startAnimation(translateAnimation);
 
-	}
+    }
 
-	public void checkToCloseCustomNoteView(){
-		if (customNoteView.isShow()) {
-			customNoteView.setShow(false);
+    public void checkToCloseCustomNoteView() {
+        if (customNoteView.isShow()) {
+            customNoteView.setShow(false);
 
-			Message controlHandler = handler.obtainMessage();
-			controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
-			controlHandler.obj = false;
-			handler.sendMessage(controlHandler);
+            Message controlHandler = handler.obtainMessage();
+            controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
+            controlHandler.obj = false;
+            handler.sendMessage(controlHandler);
 
-			closeCustomNoteView();
-		}
-	}
+            closeCustomNoteView();
+        }
+    }
 
 
+    private void closeCustomNoteView() {
+        if (AnimatorListenerImpl.isRunning) {
+            return;
+        }
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, -1f);
+        translateAnimation.setDuration(OPEN_DELAY);
+        translateAnimation.setAnimationListener(new AnimationListener() {
 
-	private void closeCustomNoteView(){
-		if (AnimatorListenerImpl.isRunning) {
-			return;
-		}
-		TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0f,
-				Animation.RELATIVE_TO_SELF,0f,
-				Animation.RELATIVE_TO_SELF,0f,
-				Animation.RELATIVE_TO_SELF,-1f);
-		translateAnimation.setDuration(OPEN_DELAY);
-		translateAnimation.setAnimationListener(new AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                AnimatorListenerImpl.isRunning = true;
+            }
 
-			@Override
-			public void onAnimationStart(Animation animation) {
-				AnimatorListenerImpl.isRunning = true;
-			}
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                AnimatorListenerImpl.isRunning = true;
+            }
 
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				AnimatorListenerImpl.isRunning = true;
-			}
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                AnimatorListenerImpl.isRunning = false;
+                customNoteView.setVisibility(View.INVISIBLE);
+            }
+        });
+        customNoteView.startAnimation(translateAnimation);
+    }
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				AnimatorListenerImpl.isRunning = false;
-				customNoteView.setVisibility(View.INVISIBLE);
-			}
-		});
-		customNoteView.startAnimation(translateAnimation);
-	}
-
-	public void openCustomNoteView(){
-		if (!customNoteView.isShown()) {
-			Message controlHandler = handler.obtainMessage();
-			controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
-			controlHandler.obj = true;
-			handler.sendMessage(controlHandler);
-			showCustomNoteView();
-		}
-		customNoteView.setValue(parent, order, handler, WIDTH-50);
-	}
+    public void openCustomNoteView() {
+        if (!customNoteView.isShown()) {
+            Message controlHandler = handler.obtainMessage();
+            controlHandler.what = MainPageKiosk.CONTROL_PAGE_ORDER_VIEW_MASK;
+            controlHandler.obj = true;
+            handler.sendMessage(controlHandler);
+            showCustomNoteView();
+        }
+        customNoteView.setValue(parent, order, handler, WIDTH - 50);
+    }
 }
