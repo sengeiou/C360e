@@ -1,0 +1,58 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.alfredselfhelp"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+    }
+
+    compileOptions {
+        sourceCompatibility javaVersion
+        targetCompatibility javaVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        }
+    }
+//    android.applicationVariants.all { variant ->
+//        variant.outputs.each { output ->
+//            def outputFile = output.outputFile
+//            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                // 修改apk文件名
+//                def fileName = "waiter.apk"
+//                output.outputFile = new File(output.outputFile.parent, fileName)
+//            }
+//        }
+//    }
+
+//    as3.0以上
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            // each 改为 all
+            def fileName = "selfHelp.apk"
+            def outFile = output.outputFile
+            if (outFile != null && outFile.name.endsWith('.apk')) {
+                outputFileName = fileName
+                // output.outputFile 改为 outputFileName
+            }
+        }
+    }
+
+
+}
+
+dependencies {
+    implementation project(':alfredBase')
+//    implementation rootProject.ext.libSupportV4
+//    implementation 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
+}
+

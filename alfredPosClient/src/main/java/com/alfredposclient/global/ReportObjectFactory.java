@@ -1599,7 +1599,6 @@ public class ReportObjectFactory {
 				String qty = paymentMap.get("count");
 				String overPaymentAmount = paymentMap.get("partChange");
 				reportDayPayment = new ReportDayPayment();
-				reportDayPayment.setId(CommonSQL.getNextSeq(TableNames.ReportDayPayment));
 				reportDayPayment.setBusinessDate(businessDate);
 				reportDayPayment.setCreateTime(System.currentTimeMillis());
 				reportDayPayment.setPaymentName(paymentMethod.getNameOt());
@@ -1611,7 +1610,6 @@ public class ReportObjectFactory {
 				reportDayPayment.setRestaurantName(restaurant.getRestaurantName());
 				reportDayPayment.setRevenueId(revenueCenter.getId());
 				reportDayPayment.setRevenueName(revenueCenter.getRevName());
-				ReportDayPaymentSQL.addReportDayPayment(reportDayPayment);
 				reportDayPayments.add(reportDayPayment);
 			}
 		}

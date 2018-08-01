@@ -2,13 +2,13 @@ package com.alfred.print.jobs;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alfred.printer.ESCPrinter;
 import com.alfred.printer.PrintData;
 import com.alfred.printer.PrintTscData;
 import com.alfred.printer.StringUtil;
-import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PrintQueueMsg;
@@ -16,12 +16,11 @@ import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.NetUtil;
 import com.birbit.android.jobqueue.CancelReason;
+import com.birbit.android.jobqueue.Job;
+import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.birbit.android.jobqueue.Job;
-import com.birbit.android.jobqueue.Params;
-
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -112,6 +111,14 @@ public class PrintJob extends Job  {
 
     public void setCharSize(int size) {
         this.charSize = size;
+    }
+    public void setCharSize(String modifer) {
+        if(!TextUtils.isEmpty(modifer) && modifer.toUpperCase().startsWith("TM-T88")){
+            this.charSize = 42;
+        }else{
+            this.charSize = 48;
+        }
+
     }
 
 
