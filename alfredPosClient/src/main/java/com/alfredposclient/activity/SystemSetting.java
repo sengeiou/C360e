@@ -85,7 +85,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private View v_print_lable;
 	private int maxOrderNo;
 	MyToggleButton mt_print_lable;
-	MyToggleButton mt_print_bill;
+	MyToggleButton mt_print_bill,mt_credit_card_rounding;
 	private int textsize,textcolor;
 	private TextView tv_lable_upOrdown;
 
@@ -139,6 +139,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_transfer_print = (MyToggleButton)findViewById(R.id.mt_transfer_print);
 		mt_auto_table = (MyToggleButton)findViewById(R.id.mt_auto_table);
 		mt_of_pax=(MyToggleButton)findViewById(R.id.mt_of_pax);
+		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
 		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
 
 
@@ -155,6 +156,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_print_lable =(MyToggleButton) findViewById(R.id.mt_print_lable);
 		mt_print_lable_direction =(MyToggleButton) findViewById(R.id.mt_print_lable_direction);
 		mt_print_bill=(MyToggleButton)findViewById(R.id.mt_print_bill) ;
+		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
+		mt_credit_card_rounding.setOnStateChangeListeren(this);
 		mt_print_lable_direction.setOnStateChangeListeren(this);
 		mt_print_lable.setOnStateChangeListeren(this);
 		findViewById(R.id.iv_back).setOnClickListener(this);
@@ -328,6 +331,14 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		}else{
 			tv_lable_upOrdown.setText("Up");
 			mt_print_lable_direction.setChecked(false);
+		}
+
+		if(settings.isCardRounding()){
+
+			mt_credit_card_rounding.setChecked(true);
+		}else{
+
+			mt_credit_card_rounding.setChecked(false);
 		}
 
 		if(settings.isPrintBill()){
@@ -611,6 +622,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		textTypeFace.setTrajanProRegular(tv_lable_upOrdown);
 
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_credit_card_rounding));
 
 
 	}
@@ -811,6 +823,19 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 					tv_lable_upOrdown.setText("Up");
 					mt_print_lable_direction.setChecked(false);
 					settings.setPrintLableD(ParamConst.DEFAULT_FALSE);
+				}
+				break;
+
+			case R.id.mt_credit_card_rounding:
+
+				if(checkState){
+
+					mt_credit_card_rounding.setChecked(true);
+					settings.setCardRounding(ParamConst.DEFAULT_TRUE);
+				}else{
+
+					mt_credit_card_rounding.setChecked(false);
+					settings.setCardRounding(ParamConst.DEFAULT_FALSE);
 				}
 				break;
 

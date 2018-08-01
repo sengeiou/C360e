@@ -20,6 +20,7 @@ public class SystemSettings {
 	private boolean printHourlyPayment = true; //
 	private boolean printLable = false; //
 	private boolean printLableDirection= false; //
+	private boolean cardRounding= false; // 是否四舍五入
 	private boolean printBill = true; // 打印账单
 	private boolean isOfPax = true;//开桌人数
 	private boolean printBeforCloseBill = true; // bill close need print Bill?
@@ -466,6 +467,31 @@ public class SystemSettings {
 			this.printLableDirection = true;
 		else
 			this.printLableDirection = false;
+	}
+
+
+	//信用卡四舍五入
+	public boolean isCardRounding() {
+		Integer value = Store.getInt(context,
+				Store.CREDIT_CARD_ROUNDING);
+		if(value != null && value != Store.DEFAULT_INT_TYPE){
+			if(value.intValue() == 1){
+				this.cardRounding = true;
+			}else{
+				this.cardRounding = false;
+			}
+		}
+		return cardRounding;
+	}
+
+
+	public void setCardRounding(Integer cardRound) {
+		Store.putInt(this.context, Store.CREDIT_CARD_ROUNDING,
+				cardRound.intValue());
+		if(cardRound.intValue() == 1)
+			this.cardRounding = true;
+		else
+			this.cardRounding = false;
 	}
 
 
