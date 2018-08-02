@@ -99,6 +99,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 2:
                         onUpgradeForOldVersion2(db);
@@ -123,6 +124,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 3:
                         onUpgradeForOldVersion3(db);
@@ -146,6 +148,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 4:
                         onUpgradeForOldVersion4(db);
@@ -168,6 +171,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 5:
                         onUpgradeForOldVersion5(db);
@@ -189,6 +193,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 6:
                         onUpgradeForOldVersion6(db);
@@ -209,6 +214,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 7:
                         onUpgradeForOldVersion7(db);
@@ -228,6 +234,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 8:
                         onUpgradeForOldVersion8(db);
@@ -246,6 +253,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 9:
                         onUpgradeForOldVersion9(db);
@@ -263,6 +271,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 10:
                         onUpgradeForOldVersion10(db);
@@ -279,6 +288,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 11:
                         onUpgradeForOldVersion11(db);
@@ -294,6 +304,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 12:
                         onUpgradeForOldVersion12(db);
@@ -308,6 +319,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 13:
                         onUpgradeForOldVersion13(db);
@@ -321,6 +333,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 14:
                         onUpgradeForOldVersion14(db);
@@ -333,6 +346,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 15:
                         onUpgradeForOldVersion15(db);
@@ -344,6 +358,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 16:
                         onUpgradeForOldVersion16(db);
@@ -354,6 +369,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 17:
                         onUpgradeForOldVersion17(db);
@@ -363,6 +379,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 18:
                         onUpgradeForOldVersion18(db);
@@ -371,6 +388,7 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 19:
                         onUpgradeForOldVersion19(db);
@@ -378,26 +396,30 @@ public class DataHelper {
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 20:
                         onUpgradeForOldVersion20(db);
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 21:
                         onUpgradeForOldVersion21(db);
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 22:
                         onUpgradeForOldVersion22(db);
                         onUpgradeForOldVersion23(db);
+                        onUpgradeForOldVersion24(db);
                         break;
                     //1.0.28
                     case 23:
                         onUpgradeForOldVersion23(db);
-
+                        onUpgradeForOldVersion24(db);
                         break;
                     case 24:
                         onUpgradeForOldVersion24(db);

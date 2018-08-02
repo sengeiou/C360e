@@ -1,4 +1,4 @@
-package com.alfred.callnum.callutils;
+package com.alfred.callnum.utils;
 
 import android.content.Context;
 import android.media.AudioFormat;

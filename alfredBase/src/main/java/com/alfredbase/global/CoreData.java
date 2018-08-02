@@ -354,14 +354,18 @@ public class CoreData {
 					return itemHappyHour1;
 				}
 				// 然后按照分类来找
-				if (itemHappyHour1.getItemCategoryId().intValue() == itemDetail
-						.getItemCategoryId().intValue()) {
-					return itemHappyHour1;
+				if(itemHappyHour1.getItemId().intValue() <= 0) {
+					if (itemHappyHour1.getItemCategoryId().intValue() == itemDetail
+							.getItemCategoryId().intValue()) {
+						return itemHappyHour1;
+					}
 				}
 				// 最后按照主分类找
-				if (itemHappyHour1.getItemMainCategoryId().intValue() == itemDetail
-						.getItemMainCategoryId().intValue()) {
-					return itemHappyHour1;
+				if(itemHappyHour1.getItemId().intValue() <= 0 && itemHappyHour1.getItemCategoryId() <=0) {
+					if (itemHappyHour1.getItemMainCategoryId().intValue() == itemDetail
+							.getItemMainCategoryId().intValue()) {
+						return itemHappyHour1;
+					}
 				}
 			}
 		}

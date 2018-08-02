@@ -147,10 +147,10 @@ public class OrderHelper {
 		BigDecimal price = BH.getBD(ParamConst.DOUBLE_ZERO);
 		ItemHappyHour itemHappyHour = getItemHappyHour(order, orderDetail);
 		if (itemHappyHour != null) {
-			if (Double.parseDouble(itemHappyHour.getDiscountPrice()) > 0) {
+			if (BH.getBD(itemHappyHour.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
 				price = BH.sub(BH.getBD(orderDetail.getItemPrice()),
 						BH.getBDNoFormat(itemHappyHour.getDiscountPrice()), false);
-			} else if (Double.parseDouble(itemHappyHour.getDiscountRate()) > 0) {
+			}  else if (Double.parseDouble(itemHappyHour.getDiscountRate()) > 0) {
 				orderDetail.setDiscountRate(itemHappyHour.getDiscountRate());
 				price = BH.sub(BH.getBD(orderDetail.getItemPrice()), BH
 						.mul(BH.getBD(orderDetail.getItemPrice()),
