@@ -2458,7 +2458,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //			if (!verifyCardNo()) {
 //				return;
 //			} else {
-                BigDecimal paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+                BigDecimal paidBD;
+
+                //四舍五入
+                if(!App.instance.getSystemSettings().isCardRounding()) {
+                   paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+                }else {
+                    paidBD= RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(),  BH.getBD(tv_cards_amount_paid_num.getText().toString()));
+                }
                 if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                     PaymentSettlement paymentSettlement = ObjectFactory
                             .getInstance().getPaymentSettlementForCard(

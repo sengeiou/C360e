@@ -1132,7 +1132,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         if (BH.getBD(0).compareTo(BH.getBD(order.getTotal())) == 0
-                                && !(parent instanceof EditSettlementPage)){
+                                && !(parent instanceof EditSettlementPage)) {
                             printBill(null);
                         }
                     }
@@ -1237,10 +1237,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 String changeNum = "";
                 if (!TextUtils.isEmpty(change)) {
                     try {
-                        if(Double.parseDouble(change.replace(App.instance.getLocalRestaurantConfig().getCurrencySymbol(), "")) > 0) {
+                        if (Double.parseDouble(change.replace(App.instance.getLocalRestaurantConfig().getCurrencySymbol(), "")) > 0) {
                             changeNum = change;
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -1513,7 +1513,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
                 case R.id.tv_VOID:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
-                         showPaymentReminder();
+                        showPaymentReminder();
                         return;
                     }
                     handler.sendMessage(handler
@@ -2095,7 +2095,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //			if (!verifyCardNo()) {
 //				return;
 //			} else {
-                BigDecimal paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+                BigDecimal paidBD;
+                //四舍五入
+                if (!App.instance.getSystemSettings().isCardRounding()) {
+                    paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+                } else {
+                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(tv_cards_amount_paid_num.getText().toString()));
+                }
+
                 if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                     PaymentSettlement paymentSettlement = ObjectFactory
                             .getInstance().getPaymentSettlementForCard(
@@ -2560,7 +2567,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                 : BH.getBD(show.toString());
                         if (!BH.compare(selectBD, remainTotal)) {
                             selectView.setText(selectBD.toString());
-                        }else {
+                        } else {
                             show.delete(show.length() - key.length(), show.length());
                         }
                     }
@@ -2837,13 +2844,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     rl_special_settlement_phone.setVisibility(View.GONE);
                     contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                             View.VISIBLE);
-                   // show.append(0);
+                    // show.append(0);
                     EditText et_special_settlement_person_name = (EditText) contentView
                             .findViewById(R.id.et_special_settlement_person_name);
-                    if(TextUtils.isEmpty(paymentMethod.getDescription()))
-                    {
+                    if (TextUtils.isEmpty(paymentMethod.getDescription())) {
                         et_special_settlement_person_name.setText("");
-                    }else {
+                    } else {
                         et_special_settlement_person_name.setText(paymentMethod.getDescription().toString());
                     }
                     moneyKeyboard.setVisibility(View.VISIBLE);
@@ -2886,13 +2892,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         View.VISIBLE);
                 EditText et_special_settlement_person_name = (EditText) contentView
                         .findViewById(R.id.et_special_settlement_person_name);
-                if(TextUtils.isEmpty(paymentMethod.getDescription()))
-                {
+                if (TextUtils.isEmpty(paymentMethod.getDescription())) {
                     et_special_settlement_person_name.setText("");
-                }else {
+                } else {
                     et_special_settlement_person_name.setText(paymentMethod.getDescription().toString());
                 }
-          //      show.append(0);
+                //      show.append(0);
                 moneyKeyboard.setVisibility(View.VISIBLE);
                 moneyKeyboard.setMoneyPanel(View.GONE);
                 Bitmap bitmap = BitmapUtil.convertViewToBitmap(ll_pay);
@@ -2939,7 +2944,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
 
     private void showPaymentReminder() {
-        UIHelp.showToast(parent,parent.getResources().getString(R.string.close_payment_reminder));
+        UIHelp.showToast(parent, parent.getResources().getString(R.string.close_payment_reminder));
 
     }
 
