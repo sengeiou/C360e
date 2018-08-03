@@ -44,10 +44,11 @@
         android:layout_below="@+id/ll_title_bar"
         android:scaleType="fitXY"
         android:src="@drawable/shadow" />
-    
+
     <ImageView
+        android:id="@+id/iv_sub"
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="92dp"
         android:layout_marginLeft="10dp"
         android:src="@drawable/logo" />
 

@@ -139,7 +139,7 @@ public class SyncData extends BaseActivity {
 		
 		tv_title_name_one = (TextView) findViewById(R.id.tv_title_name_one);
 		tv_title_name_two = (TextView) findViewById(R.id.tv_title_name_two);
-		
+		findViewById(R.id.iv_sub).setOnClickListener(this);
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
 		initTextTypeFace();
 		App.instance.showWelcomeToSecondScreen();
@@ -154,6 +154,12 @@ public class SyncData extends BaseActivity {
 			login();
 			break;
 		}
+		case R.id.iv_sub:{
+			Store.putInt(this, Store.POS_TYPE, 1);
+			App.instance.setPosType(1);
+			UIHelp.startLogin(SyncData.this);
+		}
+			break;
 		default:
 			break;
 		}

@@ -86,12 +86,11 @@ public class Welcome extends BaseActivity {
 		BaseApplication.postHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-//				if(!checkVersion()){
-//					if(!updateData()){
-						startNextActivity();
-//					}
-//
-//				}
+				if(App.instance.getPosType() == 1){
+					UIHelp.startSelectRevenu(Welcome.this);
+				}else {
+					startNextActivity();
+				}
 			}
 		}, 2000);
 		downFilter = new IntentFilter();

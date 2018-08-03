@@ -35,6 +35,7 @@ import com.alfredposclient.activity.TableSummaryActivity;
 import com.alfredposclient.activity.XZReportActivity;
 import com.alfredposclient.activity.kioskactivity.KioskHoldActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
+import com.alfredposclient.activity.kioskactivity.subpos.SelectRevenue;
 
 public class UIHelp {
 	public static void startLogin(BaseActivity context) {
@@ -42,6 +43,11 @@ public class UIHelp {
 		context.startActivity(intent);
 		context.overridePendingTransition(R.anim.centre_open,
 				R.anim.slide_bottom_out);
+	}
+
+	public static void startSelectRevenu(BaseActivity context){
+		Intent intent = new Intent(context, SelectRevenue.class);
+		context.startActivity(intent);
 	}
 
 	public static void startOpenRestaruant(BaseActivity context) {

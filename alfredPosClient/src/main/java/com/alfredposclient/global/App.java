@@ -261,6 +261,7 @@ public class App extends BaseApplication {
      */
     private RemotePrintServiceCallback mCallback = new RemotePrintServiceCallback();
 
+    private int posType = 0; // 0--> main Pos， 1 -->sub Pos
 
     /*
      * Remote Print Service Connection
@@ -467,6 +468,7 @@ public class App extends BaseApplication {
         }
         xmppThread = new XmppThread();
         xmppThread.start();
+        posType = Store.getInt(instance, Store.POS_TYPE, 0);
         wifiPolicyNever();
         update15to16();
     }
@@ -2938,5 +2940,13 @@ public class App extends BaseApplication {
 
     public void setClosingOrderId(int closingOrderId) {
         this.closingOrderId = closingOrderId;
+    }
+
+    public int getPosType() {
+        return posType;
+    }
+
+    public void setPosType(int posType) {
+        this.posType = posType;
     }
 }
