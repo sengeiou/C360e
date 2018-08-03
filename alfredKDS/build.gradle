@@ -51,7 +51,7 @@ dependencies {
 //    implementation rootProject.ext.libSupportV4
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
 //    implementation 'com.tencent.bugly:crashreport:latest.release'
-//    compile 'com.android.support:appcompat-v7:20.0.0'
+   // implementation 'com.android.support:appcompat-v7:20.0.0'
 //    implementation 'com.android.support:recyclerview-v7:22.2.1'
     implementation 'com.google.android.gms:play-services-appindexing:8.4.0'
 }
