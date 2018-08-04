@@ -21,6 +21,8 @@ OneFragment oneFragment;
 
 private Button one,two,three,four;
 
+int viewId;
+
 //    @Override
 //    protected void initView() {
 //        super.initView();
@@ -48,15 +50,36 @@ private Button one,two,three,four;
 
     @Override
     public void onClick(View v) {
+        Intent intent=new Intent();
 switch (v.getId())
 {
+
     case R.id.btn_one:
-    case R.id.btn_two:
-    case R.id.btn_three:
-    case R.id.btn_four:
-        Intent intent=new Intent();
+        viewId=1;
+        intent.putExtra("viewId",viewId);
         intent.setClass(WelcomeActivity.this,MainActivity.class);
         startActivity(intent);
+        break;
+    case R.id.btn_two:
+        viewId=2;
+        intent.putExtra("viewId",viewId);
+        intent.setClass(WelcomeActivity.this,MainActivity.class);
+        startActivity(intent);
+        break;
+    case R.id.btn_three:
+        viewId=3;
+        intent.putExtra("viewId",viewId);
+        intent.setClass(WelcomeActivity.this,MainActivity.class);
+        startActivity(intent);
+        break;
+    case R.id.btn_four:
+        viewId=4;
+        intent.putExtra("viewId",viewId);
+        intent.setClass(WelcomeActivity.this,MainActivity.class);
+        startActivity(intent);
+        break;
+
+
 
 }
     }

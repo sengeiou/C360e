@@ -8,16 +8,28 @@ import android.widget.TextView;
 
 import com.alfred.callnum.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MycallAdapter extends RvAdapter<CallBean> {
+    public  List<CallBean> callList=new ArrayList<CallBean>();
 
     public MycallAdapter(Context context, List<CallBean> list, RvListener listener) {
+
+
         super(context, list, listener);
+        this.callList=list;
     }
 
-
+    public void addData(int position) {
+        CallBean callBean=new CallBean();
+        callBean.setId(0);
+        callBean.setName("Insert One");
+        callList.add(position, callBean);
+        //notifyItemInserted(position);
+        notifyItemRangeChanged(position,callList.size()-position);
+    }
     @Override
     protected int getLayoutId(int viewType) {
         return viewType == 0 ? R.layout.item_mycall : R.layout.item_mycall_small;

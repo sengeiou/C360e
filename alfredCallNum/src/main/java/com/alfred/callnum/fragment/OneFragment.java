@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,9 +46,11 @@ public class OneFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private RecyclerView  re_one,re_two,re_three,re_four;
+    private RecyclerView re_one, re_two, re_three, re_four;
     private List<CallBean> mDatas = new ArrayList<>();
     MycallAdapter mAdapter;
+    private int vid;
+
     public OneFragment() {
 
     }
@@ -93,13 +96,19 @@ public class OneFragment extends Fragment {
         initView();
     }
 
+    public void setViewId(int vid) {
+        this.vid = vid;
+
+
+    }
+
     private void initData() {
 
-        for (int i = 0; i <20 ; i++) {
+        for (int i = 0; i < 20; i++) {
 
-            CallBean call=new CallBean();
+            CallBean call = new CallBean();
             call.setId(i);
-            call.setName("name "+i);
+            call.setName("name " + i);
             mDatas.add(call);
         }
 
@@ -108,24 +117,35 @@ public class OneFragment extends Fragment {
     }
 
     private void initView() {
-        re_one=(RecyclerView)getActivity().findViewById(R.id.review_one);
-        re_two=(RecyclerView)getActivity().findViewById(R.id.review_two);
-//        re_three=(RecyclerView)getActivity().findViewById(R.id.review_three);
-//        re_four=(RecyclerView)getActivity().findViewById(R.id.review_four);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity() ); //设置布局管理器
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity() ); //设置布局管理器
-        LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity() ); //设置布局管理器
-        LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity() ); //设置布局管理器
-         re_one.setLayoutManager(layoutManager); //设置为垂直布局，这也是默认的
-         re_two.setLayoutManager(layoutManager2);
-//         re_three.setLayoutManager(layoutManager3);
-//         re_four.setLayoutManager(layoutManager4);
-        layoutManager.setOrientation(OrientationHelper.VERTICAL);
+        re_one = (RecyclerView) getActivity().findViewById(R.id.review_one);
+        re_two = (RecyclerView) getActivity().findViewById(R.id.review_two);
+        re_three = (RecyclerView) getActivity().findViewById(R.id.review_three);
+        re_four = (RecyclerView) getActivity().findViewById(R.id.review_four);
+        if (vid == 1) {
+
+            re_three.setVisibility(View.VISIBLE);
+            re_four.setVisibility(View.VISIBLE);
+        } else {
+            re_three.setVisibility(View.GONE);
+            re_four.setVisibility(View.GONE);
+        }
+        LinearLayoutManager layoutManager1= new LinearLayoutManager(getActivity()); //设置布局管理器
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity()); //设置布局管理器
+        LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity()); //设置布局管理器
+        LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity()); //设置布局管理器
+        re_one.setLayoutManager(layoutManager1); //设置为垂直布局，这也是默认的
+        re_two.setLayoutManager(layoutManager2);
+        if (vid == 1) {
+            re_three.setLayoutManager(layoutManager3);
+            re_four.setLayoutManager(layoutManager4);
+        }
+
+        layoutManager1.setOrientation(OrientationHelper.VERTICAL);
 
         mAdapter = new MycallAdapter(getActivity(), mDatas, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
-               // mAdapter.notifyItemChanged(position);
+                // mAdapter.notifyItemChanged(position);
 //                String content = "";
 //                Intent intent=new Intent();
 //                intent.setClass(getActivity(), MainActivity.class);
@@ -133,15 +153,20 @@ public class OneFragment extends Fragment {
             }
         });
 
-       re_one.setAdapter(mAdapter);
+        re_one.setAdapter(mAdapter);
         re_two.setAdapter(mAdapter);
-//        re_three.setAdapter(mAdapter);
-//        re_four.setAdapter(mAdapter);
-
+        if (vid == 1) {
+            re_three.setAdapter(mAdapter);
+            re_four.setAdapter(mAdapter);
+        }
         initData();
-   //
-
-
+        //
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+            mAdapter.addData(0);
+            }
+        },3000);
 
     }
 
