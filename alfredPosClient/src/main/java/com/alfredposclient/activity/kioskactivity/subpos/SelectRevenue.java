@@ -61,7 +61,7 @@ public class SelectRevenue extends BaseActivity {
                 revenueListAdapter.notifyDataSetChanged();
             }
         });
-        App.instance.startUDPService(App.UDP_INDEX_KDS, "KDS", new UdpServiceCallBack() {
+        App.instance.startUDPService(App.UDP_INDEX_SUB_POS, "KDS", new UdpServiceCallBack() {
             @Override
             public void callBack(final UdpMsg udpMsg) {
                 RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
