@@ -124,7 +124,11 @@ public class DevicesAdapter extends CustomAdapter {
 		if(!TextUtils.isEmpty(printerDevice.getIP())) {
 			if (printerDevice.getIP().indexOf(":") != -1) {
 				holder.devices_item_type.setText(con.getResources().getString(R.string.devices_bluetooth));
-			} else {
+			} else if(printerDevice.getIP().length()>20){
+				holder.devices_item_type.setText("USB");
+
+			}
+			else {
 				holder.devices_item_type.setText(con.getResources().getString(R.string.devices_network));
 			}
 		}
@@ -174,7 +178,13 @@ public class DevicesAdapter extends CustomAdapter {
 			} else if (type == 2) {
 				holder.devices_unbund_tv.setVisibility(View.GONE);
 			}
-			holder.tv_device_ip.setText(printerDevice.getIP());
+
+			if(printerDevice.getIP().length()>20){
+				holder.tv_device_ip.setText("");
+			}else {
+				holder.tv_device_ip.setText(printerDevice.getIP());
+			}
+
 		}
 
 		return convertView;

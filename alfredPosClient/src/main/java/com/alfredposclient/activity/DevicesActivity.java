@@ -262,7 +262,14 @@ public class DevicesActivity extends BaseActivity {
 
                     Log.d("refreshPrinterDevices", " ---包含该字符串---" + entry.getKey());
                     System.out.println("包含该字符串");
-                } else {
+                } else if(entry.getKey().toString().length()>=20){
+                    tmppt.setIP(entry.getKey());
+                    tmppt.setName(entry.getValue());
+                    tmppt.setDevice_id(-1);
+                    Log.d("refreshPrinterDevices", " ---USB---" + entry.getKey());
+                }
+
+                else  {
                     tmppt.setIP(entry.getKey());
                     tmppt.setName(entry.getValue());
                     tmppt.setDevice_id(-1);

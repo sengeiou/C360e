@@ -3,7 +3,9 @@ package com.alfred.remote.printservice;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.hardware.usb.UsbDevice;
+import android.os.Build;
 import android.os.RemoteException;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -132,24 +134,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             public void getBluetoothDevices(PrintBean mBluetoothDevicesDatas) {
                 Log.d("搜索", "   " + mBluetoothDevicesDatas.getAddress());
 
-
                 Map<String, String> ret = new HashMap<String, String>();
-
-
                 ret.put(mBluetoothDevicesDatas.getAddress(), mBluetoothDevicesDatas.getName());
-//				if (mBluetoothDevicesDatas.size()>0) {
-//					for (int i = 0; i < mBluetoothDevicesDatas.size(); i++) {
-//						PrinterDevice p = new PrinterDevice();
 //
-//						p.setDevice_id(-1);
-//						p.setType("2");
-//						p.setIP(mBluetoothDevicesDatas.get(i).getAddress());
-//						p.setName(mBluetoothDevicesDatas.get(i).getName());
-//						pList.add(p);
-////				 ret = new HashMap<String, String>();
-////					mBluetoothDevicesDatas.get(i).getDevice();
-////					ret.put(mBluetoothDevicesDatas.get(i).getAddress(),mBluetoothDevicesDatas.get(i).getName());
-//					}
+//
                 synchronized (service.mCallbacks) {
                     for (IAlfredRemotePrintServiceCallback listener : service.mCallbacks) {
                         try {
@@ -164,7 +152,23 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
             @Override
             public void getUsbDevices(UsbDevice ud) {
+                Gson gson = new Gson();
+                String prtStr = gson.toJson(ud);
 
+                Map<String, String> ret = new HashMap<String, String>();
+                ret.put(prtStr, ud.getDeviceName());
+//
+//
+                synchronized (service.mCallbacks) {
+                    for (IAlfredRemotePrintServiceCallback listener : service.mCallbacks) {
+                        try {
+
+                            listener.fromService("PRINTS_FOUND", gson.toJson(ret));
+                        } catch (RemoteException e) {
+                            Log.w("Printer Lookup", "Failed to notify listener " + listener, e);
+                        }
+                    }
+                }
             }
 
         });
@@ -1064,6 +1068,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void listPrinters() {
         if (service.registerReceiverBluetooth()) {

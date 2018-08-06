@@ -3,6 +3,12 @@ package com.alfred.printer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.usb.UsbConstants;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbEndpoint;
+import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbManager;
 import android.util.Log;
 
 import com.alfred.print.jobs.WifiCommunication;
@@ -46,6 +52,9 @@ public class ESCPrinter implements WIFIPrintCallback{
 
 	TscPOSPrinter tprinter;
 
+	private UsbManager mUsbManager;
+	private UsbDeviceConnection mUsbDeviceConnection;
+
 	//data
 //	private ArrayList<PrintData> data;
 
@@ -60,9 +69,7 @@ public class ESCPrinter implements WIFIPrintCallback{
 		
 //		hdl.setPrinterCbk(this);
 
-
 		this.ip = ip;
-
 
 			this.printer = new ESCPOSPrinter((PrintService) context);
 	}
@@ -223,6 +230,42 @@ public class ESCPrinter implements WIFIPrintCallback{
 		}
 
 		return  result;
+	}
+
+
+
+
+	public void print(String msg) {
+		final String printData = msg;
+		UsbDevice mUsbDevice = null;
+		if (mUsbDevice != null) {
+			UsbInterface usbInterface = mUsbDevice.getInterface(0);
+			for (int i = 0; i < usbInterface.getEndpointCount(); i++) {
+				final UsbEndpoint ep = usbInterface.getEndpoint(i);
+				if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
+					if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
+						mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
+						if (mUsbDeviceConnection != null) {
+							//Toast.makeText(mContext, "Device connected", Toast.LENGTH_SHORT).show();
+							mUsbDeviceConnection.claimInterface(usbInterface, true);
+							new Thread(new Runnable() {
+								@Override
+								public void run() {
+									byte[] bytes = printData.getBytes();
+									int b = mUsbDeviceConnection.bulkTransfer(ep, bytes, bytes.length, 100000);
+									Log.i("Return Status", "b-->" + b);
+								}
+							}).start();
+
+							mUsbDeviceConnection.releaseInterface(usbInterface);
+							break;
+						}
+					}
+				}
+			}
+		} else {
+	//		Toast.makeText(mContext, "No available USB print device", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	public boolean setData(List<PrintData> data) {

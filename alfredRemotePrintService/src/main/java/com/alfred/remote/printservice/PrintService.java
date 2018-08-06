@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.view.InputDevice;
 import android.widget.Toast;
 
 import com.alfred.print.jobs.PrintManager;
@@ -245,11 +246,17 @@ public class PrintService extends Service {
         InputManager im = (InputManager) getSystemService(INPUT_SERVICE);
         int[] devices = im.getInputDeviceIds();
         Log.d("typeUsb", " 55555555--"+devices.length);
+        InputDevice device;
+        for (int id : devices) {
+             device = im.getInputDevice(id);
+            Log.d(TAG, "detectUsbDeviceWithInputManager: " + device.getName());
+            //do something
+        }
         HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
         Log.d("typeUsb", " 33333333--"+deviceList.size());
-        for (UsbDevice device : deviceList.values()) {
-           mUsbManager.requestPermission(device, mPermissionIntent);
-        }
+//        for (UsbDevice device : deviceList.values()) {
+//           mUsbManager.requestPermission(device, mPermissionIntent);
+//        }
 
 
     }

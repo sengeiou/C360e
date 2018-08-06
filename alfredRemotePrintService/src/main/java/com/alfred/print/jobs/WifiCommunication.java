@@ -3,20 +3,20 @@ package com.alfred.print.jobs;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.alfred.remote.printservice.App;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.util.Set;
 import java.util.UUID;
-
-import static android.content.ContentValues.TAG;
 
 public class WifiCommunication {
     public static final int WFPRINTER_CONNECTED = 110;
@@ -36,6 +36,8 @@ public class WifiCommunication {
     private String ipAddress;
     private int port = 9100;
 
+    private UsbManager mUsbManager;
+    private UsbDeviceConnection mUsbDeviceConnection;
     public WifiCommunication() {
     }
 
@@ -56,6 +58,13 @@ public class WifiCommunication {
             return clientStartBluetooth(ipAddress);
         }
 
+        if(ipAddress.length()>20)
+        {
+             clientStartUsb(ipAddress);
+
+
+        }
+
         return clientStartSocket();
 //		new Thread(new Runnable() {
 //
@@ -65,6 +74,13 @@ public class WifiCommunication {
 //			}
 //		}
 // ).start();
+
+    }
+
+    private void clientStartUsb(String ipAddress) {
+
+        mUsbManager = (UsbManager) App.instance.getSystemService(Context.USB_SERVICE);
+      //  mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
 
     }
 
