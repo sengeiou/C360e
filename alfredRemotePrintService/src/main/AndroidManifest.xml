@@ -4,7 +4,9 @@
     android:versionName="1.0.11" >
 
     <uses-sdk android:minSdkVersion="9"/>
-    
+
+    <!--声明使用usb-->
+    <uses-feature android:name="android.hardware.usb.host"></uses-feature>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>     
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

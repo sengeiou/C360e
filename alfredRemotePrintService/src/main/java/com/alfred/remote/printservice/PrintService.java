@@ -1,6 +1,7 @@
 package com.alfred.remote.printservice;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,9 +9,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.input.InputManager;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.alfred.print.jobs.PrintManager;
 import com.alfred.printer.ESCPrinter;
@@ -55,6 +63,16 @@ public class PrintService extends Service {
     BluetoothAdapter mBluetoothAdapter;
     private Callback callback;
 
+
+    private static final String ACTION_USB_PERMISSION = "com.usb.printer.USB_PERMISSION";
+
+
+
+    private Context mContext;
+    private UsbDevice mUsbDevice;
+    private PendingIntent mPermissionIntent;
+    private UsbManager mUsbManager;
+    private UsbDeviceConnection mUsbDeviceConnection;
 
     //IP Printer Handler
 //    static Map<String, WIFIPrinterHandler> printerHandlers = new ConcurrentHashMap<String, WIFIPrinterHandler>();
@@ -204,13 +222,74 @@ public class PrintService extends Service {
     }
 
 
+
+    //搜索USB
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void SearchUsb() {
+//        Log.d("SearchBluetooth", "start");
+
+        mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+    // mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+        mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+        //注册USB设备权限管理广播
+        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
+        filter.addAction("android.hardware.usb.action.USB_STATE");
+//        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        registerReceiver(mUsbDeviceReceiver, filter);
+
+        // 列出所有的USB设备，并且都请求获取USB权限
+        InputManager im = (InputManager) getSystemService(INPUT_SERVICE);
+        int[] devices = im.getInputDeviceIds();
+        Log.d("typeUsb", " 55555555--"+devices.length);
+        HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
+        Log.d("typeUsb", " 33333333--"+deviceList.size());
+        for (UsbDevice device : deviceList.values()) {
+           mUsbManager.requestPermission(device, mPermissionIntent);
+        }
+
+
+    }
+
+
+    private final BroadcastReceiver mUsbDeviceReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d("typeUsb", " 444444444444" +action);
+            UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                Log.d("typeUsb", " 111111111111111");
+                synchronized (this) {
+                   // UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        mUsbDevice = usbDevice;
+                    } else {
+                        Toast.makeText(context, "Permission denied for device " + usbDevice, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+                Log.d("typeUsb", " 222222222");
+                if (mUsbDevice != null) {
+                    Toast.makeText(context, "Device closed", Toast.LENGTH_SHORT).show();
+                    if (mUsbDeviceConnection != null) {
+                        mUsbDeviceConnection.close();
+                    }
+                }
+            }
+        }
+    };
+
     //搜索蓝牙
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void SearchBluetooth() {
         Log.d("SearchBluetooth", "start");
 
         mBluetoothDevicesDatas.clear();
         mBluetoothAdapter.startDiscovery();
-
+        SearchUsb();
     }
 
 
@@ -380,5 +459,6 @@ public class PrintService extends Service {
          * @return
          */
         void getBluetoothDevices(PrintBean pd);
+        void getUsbDevices(UsbDevice ud);
     }
 }

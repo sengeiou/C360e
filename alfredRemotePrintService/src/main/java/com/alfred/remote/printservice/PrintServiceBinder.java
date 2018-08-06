@@ -2,6 +2,7 @@ package com.alfred.remote.printservice;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.hardware.usb.UsbDevice;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
@@ -125,6 +126,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             this.service.mCallbacks.add(cb);
         }
         service.setCallback(new PrintService.Callback() {
+
+
             @Override
             public void getBluetoothDevices(PrintBean mBluetoothDevicesDatas) {
                 Log.d("搜索", "   " + mBluetoothDevicesDatas.getAddress());
@@ -157,6 +160,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
                     }
                 }
+            }
+
+            @Override
+            public void getUsbDevices(UsbDevice ud) {
+
             }
 
         });
@@ -1061,6 +1069,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         if (service.registerReceiverBluetooth()) {
             service.SearchBluetooth();
         }
+     //   service.SearchUsb();
         final Gson gson = new Gson();
 //        Log.e("PrintServiceBinder", " -----1054 listPrinters-----" );
 //        if (scheduler == null) {
