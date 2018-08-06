@@ -84,6 +84,13 @@ public class APIName {
 	public static final String DESKTOP_GETBILL= "desktop/getBill";
 	public static final String DESKTOP_PRINTBILL= "desktop/printBill";
 
+
+	// subPos专用
+	public static final String SUBPOS_LOGIN = "subPos/login";
+	public static final String SUBPOS_SYNCDATA = "subPos/syncData";
+	public static final String SUBPOS_ADDORDER = "subPos/addOrder";
+	public static final String SUBPOS_SESSIONSTATUS = "subPos/sessionStatus";
+
 	/**
 	 * 以kds作为服务器
 	 */

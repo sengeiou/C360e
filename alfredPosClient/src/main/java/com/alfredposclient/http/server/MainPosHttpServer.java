@@ -98,7 +98,6 @@ import java.util.UUID;
 
 public class MainPosHttpServer extends AlfredHttpServer {
 	private String TAG = MainPosHttpServer.class.getSimpleName();
-
 	public MainPosHttpServer() {
 		super(APPConfig.HTTP_SERVER_PORT);
 	}
@@ -111,6 +110,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	public static final String MIME_PNG = "image/png";
 	public static final String MIME_SVG = "image/svg+xml";
 	public static final String MIME_JSON = "application/json";
+	public static final String RESULT_CODE = "resultCode";
 
 	@Override
 	public Response doGet(String uri, Method mothod, final Map<String, String> params, String body){
@@ -632,6 +632,78 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				}
 			}
 		}
+	}
+
+
+	@Override
+	public Response doSubPosPost(String apiName, Method mothod, Map<String, String> params, String body) {
+		if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN){
+			LogUtil.d(TAG, "apiName : " + apiName + " body : " + body);
+			JSONObject jsonObject;
+			try {
+				jsonObject = new JSONObject(body);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return this.getForbiddenResponse("");
+			}
+			String appVersion = jsonObject.optString("appVersion");
+			if (apiName == null || TextUtils.isEmpty(appVersion)) {
+				return this.getForbiddenResponse("");
+			}
+			if(!appVersion.endsWith(App.instance.VERSION)){
+				Map<String, Object> result = new HashMap<String, Object>();
+				result.put("resultCode", ResultCode.APP_VERSION_UNREAL);
+				result.put("posVersion", App.instance.VERSION);
+				String value = MobclickAgent.getConfigParams(App.getTopActivity(), "updateVersion");
+				result.put("versionUpdate", value);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}else if(apiName.equals(APIName.SUBPOS_LOGIN)){
+
+			}
+
+			return getForbiddenResponse("Not Support yet");
+		}else{
+			return getForbiddenResponse("Not Support yet");
+		}
+	}
+
+	private Response subPosLogin(String params){
+		Response resp = null;
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			String employee_ID = jsonObject.optString("employee_ID");
+			String password = jsonObject.optString("password");
+			String subPosName = jsonObject.optString("subPosName");
+			User user = CoreData.getInstance().getUser(employee_ID, password);
+			Map<String, Object> result = new HashMap<String, Object>();
+			if (user != null) {
+				if(user.getType() != ParamConst.USER_TYPE_MANAGER && user.getType() != ParamConst.USER_TYPE_POS){
+					result.put(RESULT_CODE, ResultCode.USER_NO_PERMIT);
+					return this.getJsonResponse(new Gson().toJson(result));
+				}
+
+				SessionStatus sessionStatus = App.instance.getSessionStatus();
+				if (sessionStatus == null) {
+					result.put("resultCode", ResultCode.SESSION_IS_CLOSED);
+					resp = this.getJsonResponse(new Gson().toJson(result));
+				} else {
+					String userKey = UUID.randomUUID().toString();
+					MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
+					App.instance.addActiveUser(userKey, user);
+					Gson gson = new Gson();
+
+
+				}
+			} else {
+				result.put("resultCode", ResultCode.USER_NO_PERMIT);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.login_failed));
+		}
+		return resp;
 	}
 
 	@Override

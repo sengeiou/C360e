@@ -450,4 +450,9 @@ public class ParamConst {
 	public static final int APP_ORDER_TAKE_AWAY = 2;
 
 
+	public static final int POS_TYPE_MAIN = 0;
+
+	public static final int POS_TYPE_SUB = 1;
+
+
 }

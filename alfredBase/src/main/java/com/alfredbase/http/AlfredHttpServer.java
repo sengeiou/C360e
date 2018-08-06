@@ -35,7 +35,9 @@ import java.util.Map;
             if(apiName.startsWith("desktop")){
 
                 return this.doDesktopPost(apiName, method, params, body.get("postData"));
-            }else {
+            }else if(apiName.startsWith("subPos")) {
+                return  this.doSubPosPost(apiName, method, params, body.get("postData"));
+            } else {
                 return this.doPost(apiName, method, params, body.get("postData"));
             }
         }else if(Method.GET.equals(method)){
@@ -93,8 +95,14 @@ import java.util.Map;
 		return getForbiddenResponse("Not Support yet");
 	}
 
+
     @Override
     public Response doDesktopPost(String uri, Method mothod, Map<String, String> params, String body) {
+        return getForbiddenResponse("Not Support yet");
+    }
+
+    @Override
+    public Response doSubPosPost(String uri, Method mothod, Map<String, String> params, String body) {
         return getForbiddenResponse("Not Support yet");
     }
 
