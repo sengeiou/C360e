@@ -7,6 +7,7 @@
 
     <!--声明使用usb-->
     <uses-feature android:name="android.hardware.usb.host"></uses-feature>
+    <uses-permission android:name="android.hardware.usb.accessory"/>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>     
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -26,14 +27,8 @@
             <intent-filter>
                 <action android:name="alfred.intent.action.bindPrintService"></action>
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
-            </intent-filter>
-            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter"/>
-            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" android:resource="@xml/device_filter"/>
+            <meta-data android:name="com.usb.printer.USB_PERMISSION" android:resource="@xml/device_filter"/>
+            <!--<meta-data android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" android:resource="@xml/device_filter"/>-->
         </service>        
     </application>
 

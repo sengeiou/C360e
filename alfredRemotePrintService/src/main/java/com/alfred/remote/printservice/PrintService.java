@@ -12,10 +12,8 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.alfred.print.jobs.PrintManager;
@@ -232,26 +230,17 @@ public class PrintService extends Service {
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         //注册USB设备权限管理广播
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
-        filter.addAction("android.hardware.usb.action.USB_STATE");
-//        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(mUsbDeviceReceiver, filter);
-
         // 列出所有的USB设备，并且都请求获取USB权限
-
         HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
         Log.d("typeUsb", " 33333333--"+deviceList.size());
         if(deviceList.size()>0) {
+            for (UsbDevice device : deviceList.values()) {
+                mUsbManager.requestPermission(device, mPermissionIntent);
 
-        //    Toast.makeText(App.instance, deviceList.get(0).toString(), Toast.LENGTH_LONG).show();
+            }
         }
-        for (UsbDevice device : deviceList.values()) {
-           mUsbManager.requestPermission(device, mPermissionIntent);
 
-        }
 
 
     }
@@ -261,20 +250,15 @@ public class PrintService extends Service {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d("typeUsb", " 444444444444" +action);
-//            UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
             if (ACTION_USB_PERMISSION.equals(action)) {
                // Log.d("typeUsb", " 111111111111111");
                 synchronized (this) {
                     UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         Log.d("typeUsb", usbDevice.getProductId()+" --111111111111111--"+usbDevice.getVendorId());
-
-                        if (usbDevice.getVendorId() == 1155 && usbDevice.getProductId() == 22304) {
                          // 获取USBDevice
                             mUsbDevice = usbDevice;
                             callback.getUsbDevices(mUsbDevice);
-                        }
-
                     } else {
                         //Toast.makeText(context, "Permission denied for device " + usbDevice, Toast.LENGTH_SHORT).show();
                     }
@@ -282,7 +266,6 @@ public class PrintService extends Service {
             } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
                 Log.d("typeUsb", " 222222222");
                 if (mUsbDevice != null) {
-                   // Toast.makeText(context, "Device closed", Toast.LENGTH_SHORT).show();
                     if (mUsbDeviceConnection != null) {
                         mUsbDeviceConnection.close();
                     }
