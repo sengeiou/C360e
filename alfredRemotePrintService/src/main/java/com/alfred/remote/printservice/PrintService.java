@@ -225,7 +225,7 @@ public class PrintService extends Service {
 
 
     //搜索USB
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+
     public void SearchUsb() {
 //        Log.d("SearchBluetooth", "start");
 
@@ -243,6 +243,7 @@ public class PrintService extends Service {
         registerReceiver(mUsbDeviceReceiver, filter);
 
         // 列出所有的USB设备，并且都请求获取USB权限
+
         HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
         Log.d("typeUsb", " 33333333--"+deviceList.size());
         if(deviceList.size()>0) {
@@ -287,13 +288,13 @@ public class PrintService extends Service {
     };
 
     //搜索蓝牙
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+
     public void SearchBluetooth() {
         Log.d("SearchBluetooth", "start");
 
         mBluetoothDevicesDatas.clear();
         mBluetoothAdapter.startDiscovery();
-        SearchUsb();
+       SearchUsb();
     }
 
 

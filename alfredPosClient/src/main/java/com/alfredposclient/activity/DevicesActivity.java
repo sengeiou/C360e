@@ -635,7 +635,7 @@ public class DevicesActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-        App.instance.closeDiscovery();
+    //    App.instance.closeDiscovery();
         super.onPause();
     }
 
