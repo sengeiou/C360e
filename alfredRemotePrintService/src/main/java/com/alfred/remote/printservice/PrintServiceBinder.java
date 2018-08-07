@@ -3,9 +3,7 @@ package com.alfred.remote.printservice;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.hardware.usb.UsbDevice;
-import android.os.Build;
 import android.os.RemoteException;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -2500,7 +2498,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
     }
 
-
+    @Override
     public void printTscBill(String printer, String title, String order, String orderdetail, String modifiers, String currencySymbol,String  direction) throws RemoteException {
         String name;
         Gson gson = new Gson();

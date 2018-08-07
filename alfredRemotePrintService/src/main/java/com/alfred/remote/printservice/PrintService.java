@@ -69,7 +69,7 @@ public class PrintService extends Service {
     private PendingIntent mPermissionIntent;
     private UsbManager mUsbManager;
     private UsbDeviceConnection mUsbDeviceConnection;
-
+    private Map<Integer, List<Integer>> usbMap= new HashMap<>();
     //IP Printer Handler
 //    static Map<String, WIFIPrinterHandler> printerHandlers = new ConcurrentHashMap<String, WIFIPrinterHandler>();
     private Map<String, ESCPrinter> escPrinterMap = new HashMap<String, ESCPrinter>();
@@ -85,8 +85,30 @@ public class PrintService extends Service {
 
         this.printJobMgr.start();
         this.pqMgr.start();
-
-
+        List<Integer> l1 = new ArrayList<>();
+        l1.add(85);
+        l1.add(23);
+        List<Integer> l2 = new ArrayList<>();
+        l2.add(22304);
+        List<Integer> l3 = new ArrayList<>();
+        l3.add(8963);
+        l3.add(8965);
+        List<Integer> l4 = new ArrayList<>();
+        l4.add(30084);
+        List<Integer> l5 = new ArrayList<>();
+        l5.add(256);
+        l5.add(512);
+        l5.add(768);
+        l5.add(1024);
+        l5.add(1280);
+        List<Integer> l6 = new ArrayList<>();
+        l6.add(256);
+        usbMap.put(1137, l1);
+        usbMap.put(1155, l2);
+        usbMap.put(1659, l3);
+        usbMap.put(6790, l4);
+        usbMap.put(26728, l5);
+        usbMap.put(34918, l6);
 
         Log.d(TAG, "Creating Service");
     }
@@ -256,8 +278,17 @@ public class PrintService extends Service {
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) && usbDevice != null) {
                         Log.d("typeUsb", usbDevice.getProductId()+" --111111111111111--"+usbDevice.getVendorId());
                      // 获取USBDevice
-                        mUsbDevice = usbDevice;
-                        callback.getUsbDevices(mUsbDevice);
+                        if(usbMap.containsKey(usbDevice.getProductId())){
+                            List<Integer> list = usbMap.get(usbDevice.getProductId());
+                            for(Integer item : list){
+                                if(usbDevice.getVendorId() == item.intValue()){
+                                    mUsbDevice = usbDevice;
+                                    callback.getUsbDevices(mUsbDevice);
+                                    return;
+                                }
+                            }
+                        }
+
                     } else {
                         //Toast.makeText(context, "Permission denied for device " + usbDevice, Toast.LENGTH_SHORT).show();
                     }
