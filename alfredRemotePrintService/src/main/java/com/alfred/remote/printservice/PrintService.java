@@ -230,11 +230,7 @@ public class PrintService extends Service {
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         //注册USB设备权限管理广播
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
-        filter.addAction("android.hardware.usb.action.USB_STATE");
+
 //        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(mUsbDeviceReceiver, filter);
 
@@ -242,10 +238,7 @@ public class PrintService extends Service {
 
         HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
         Log.d("typeUsb", " 33333333--"+deviceList.size());
-        if(deviceList.size()>0) {
 
-        //    Toast.makeText(App.instance, deviceList.get(0).toString(), Toast.LENGTH_LONG).show();
-        }
         for (UsbDevice device : deviceList.values()) {
            mUsbManager.requestPermission(device, mPermissionIntent);
 

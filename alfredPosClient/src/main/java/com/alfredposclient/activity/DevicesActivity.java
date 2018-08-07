@@ -90,8 +90,11 @@ public class DevicesActivity extends BaseActivity {
         super.initView();
         setContentView(R.layout.devices_layout);
         map.clear();
+        Log.d("DevicesActivity", " 11111111111" );
         initUI();
         initData();
+      //  new MyThread().start();
+
     }
 
     Handler handler = new Handler() {
@@ -252,9 +255,9 @@ public class DevicesActivity extends BaseActivity {
 
 
                 PrinterDevice tmppt = new PrinterDevice();
-              //  UIHelp.showToast(this, entry.getKey());
+                //  UIHelp.showToast(this, entry.getKey());
 
-                if (entry.getKey().indexOf(":") != -1) {
+                if (entry.getKey().contains(":")) {
                     tmppt.setIP(entry.getKey());
                     tmppt.setName(entry.getValue());
                     tmppt.setDevice_id(-1);
@@ -262,7 +265,7 @@ public class DevicesActivity extends BaseActivity {
 
                     Log.d("refreshPrinterDevices", " ---包含该字符串---" + entry.getKey());
                     System.out.println("包含该字符串");
-                } else if (entry.getKey().toString().length() >= 20) {
+                } else if (entry.getKey().contains(",")) {
                     tmppt.setIP(entry.getKey());
                     tmppt.setName(entry.getValue());
                     tmppt.setDevice_id(-1);
@@ -366,6 +369,22 @@ public class DevicesActivity extends BaseActivity {
             map.clear();
             refreshPrinterDevices(null);
             App.instance.discoverPrinter(handler);
+        }
+    }
+
+
+    public class MyThread extends Thread {
+
+        //继承Thread类，并改写其run方法
+        private final static String TAG = "My Thread ===> ";
+
+        public void run() {
+            Log.d(TAG, "run");
+            //    App.instance.discoverPrinter(handler);
+            Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
+            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
+            Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
+            device_code_img.setImageBitmap(mBitmap);
         }
     }
 
@@ -491,9 +510,14 @@ public class DevicesActivity extends BaseActivity {
     private void initData() {
 
         //本机IP地址和MAC地址
+        Log.d("DevicesActivity", " 22222222" );
         if (!TextUtils.isEmpty(CommonUtil.getLocalIpAddress()) && !TextUtils.isEmpty(CommonUtil.getLocalMacAddress(context))) {
             devices_ip_tv.setText(CommonUtil.getLocalIpAddress() + "\n"
                     + CommonUtil.getLocalMacAddress(context));
+            Log.d("DevicesActivity", " 6666666" );
+         //   new MyThread().start();
+
+
             Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
             Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
             Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
@@ -502,18 +526,23 @@ public class DevicesActivity extends BaseActivity {
             devices_ip_tv.setVisibility(View.GONE);
             device_code_img.setVisibility(View.GONE);
         }
+        Log.d("DevicesActivity", " 444444444444" );
         printerDBModelList = new ArrayList<PrinterDevice>(App.instance.getPrinterDevices().values());
         printerDeptModelList = PrinterSQL.getAllPrinterByType(1);
+        Log.d("DevicesActivity", " 555555555" );
         if (printerDeptModelList.size() > 0) {
             deviceGroupAdapter = new DeviceGroupAdapter(this, printerDeptModelList);
             hv_printer_group.setAdapter(deviceGroupAdapter);
         }
+        Log.d("DevicesActivity", " 3333333333333" );
+
         refreshPrinterDevices(null);
+
         App.instance.discoverPrinter(handler);
         deviceGroupAdapter.setSelectIndex(dex);
         registEvent();
-
     }
+
 
     private void initUI() {
         btn_back = (ImageButton) findViewById(R.id.btn_back);
@@ -635,7 +664,7 @@ public class DevicesActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-    //    App.instance.closeDiscovery();
+        //    App.instance.closeDiscovery();
         super.onPause();
     }
 

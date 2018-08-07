@@ -1477,6 +1477,10 @@ public class App extends BaseApplication {
             if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().indexOf(":") != -1) {
                 printlist.add(devPrinter);
             }
+
+            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().contains(",")) {
+                printlist.add(devPrinter);
+            }
         }
 
 
