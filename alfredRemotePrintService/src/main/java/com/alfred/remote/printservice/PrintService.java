@@ -9,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.input.InputManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -18,8 +17,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.view.InputDevice;
-import android.widget.Toast;
 
 import com.alfred.print.jobs.PrintManager;
 import com.alfred.printer.ESCPrinter;
@@ -126,11 +123,12 @@ public class PrintService extends Service {
         //close all sockets
         this.pqMgr.stop();
         closeAllSockets();
-
-            try {
-                unregisterReceiver(mReceiver);
-            } catch (IllegalArgumentException e) {
-            }
+        try {
+            unregisterReceiver(mReceiver);
+            unregisterReceiver(mUsbDeviceReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
 
 
