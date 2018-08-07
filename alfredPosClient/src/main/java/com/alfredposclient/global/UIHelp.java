@@ -35,6 +35,7 @@ import com.alfredposclient.activity.TableSummaryActivity;
 import com.alfredposclient.activity.XZReportActivity;
 import com.alfredposclient.activity.kioskactivity.KioskHoldActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
+import com.alfredposclient.activity.kioskactivity.subpos.ConnectMainPos;
 import com.alfredposclient.activity.kioskactivity.subpos.SelectRevenue;
 
 public class UIHelp {
@@ -232,5 +233,10 @@ public class UIHelp {
 		intent.putExtra("hasOrder", hasOrder);
 		intent.putExtra("currentOrder", currentOrder);
 		context.startActivityForResult(intent, KioskHoldActivity.CHECK_REQUEST_CODE);
+	}
+
+	public static void startConnectMainPOS(BaseActivity context){
+		Intent intent = new Intent(context, ConnectMainPos.class);
+		context.startActivity(intent);
 	}
 }

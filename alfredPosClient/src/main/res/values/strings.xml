@@ -421,4 +421,8 @@
     <string name="devices_network">Network</string>
 
     <string name="devices_bluetooth">Bluetooth</string>
+
+
+    <string name="ipaddr_tips">Device Pairing\nSet up POS IP Address</string>
+    <string name="connect">Connect</string>
 </resources>

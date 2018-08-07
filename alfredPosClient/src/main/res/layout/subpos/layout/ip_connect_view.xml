@@ -100,5 +100,15 @@
 	            android:layout_marginBottom="20dp"
 	            android:textColor="@color/black"
 	            android:textSize="@dimen/text_size_b" />             
-    </LinearLayout>        
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_app_version"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/version"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_s"
+        android:layout_alignParentBottom="true"/>
 </RelativeLayout>

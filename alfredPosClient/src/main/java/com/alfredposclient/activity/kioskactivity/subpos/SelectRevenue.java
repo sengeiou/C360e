@@ -14,6 +14,7 @@ import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.UIHelp;
 import com.moonearly.model.UdpMsg;
 import com.moonearly.utils.service.UdpServiceCallBack;
 
@@ -88,7 +89,7 @@ public class SelectRevenue extends BaseActivity {
         super.handlerClickEvent(v);
         switch (v.getId()) {
             case R.id.btn_manually:
-//                UIHelp.startConnectPOS(context);
+                UIHelp.startConnectMainPOS(context);
                 break;
             case R.id.iv_refresh:
                 loadingDialog.setTitle("Search Revenue ...");
@@ -141,7 +142,7 @@ public class SelectRevenue extends BaseActivity {
             arg1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    App.instance.setPairingIp(udpMsg.getIp());
+                    App.instance.setPairingIp(udpMsg.getIp());
 //                    UIHelp.startEmployeeID(SelectRevenue.this);
                 }
             });

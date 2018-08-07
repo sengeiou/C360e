@@ -403,4 +403,6 @@
     <string name="devices_network">网络</string>
     <string name="devices_bluetooth">蓝牙</string>
     <string name="day_sales_report">日销售报表</string>
+    <string name="ipaddr_tips">设置IP连接收银中心</string>
+    <string name="connect">连接</string>
 </resources>
