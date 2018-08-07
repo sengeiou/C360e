@@ -123,7 +123,7 @@ public class DevicesAdapter extends CustomAdapter {
 
 		if(!TextUtils.isEmpty(printerDevice.getIP())) {
 
-			if(printerDevice.getIP().length()>20){
+			if(printerDevice.getIP().contains(",")){
 				holder.devices_item_type.setText("USB");
 			}else {
 
@@ -164,7 +164,7 @@ public class DevicesAdapter extends CustomAdapter {
 			if (printerDevice.getDevice_id() != -1) {
 				holder.devices_unbund_tv.setOnClickListener(ocl);
 				holder.devices_unbund_tv.setText(con.getResources().getString(R.string.unassign));
-				if(printerDevice.getIP().length()>20) {
+				if(printerDevice.getIP().contains(",")) {
 					holder.devices_ip_tv.setText("");
 				}else {
 					holder.devices_ip_tv.setText(printerDevice.getName());
@@ -172,7 +172,7 @@ public class DevicesAdapter extends CustomAdapter {
 			} else {
 				holder.devices_unbund_tv.setOnClickListener(listener);
 				holder.devices_unbund_tv.setText(con.getResources().getString(R.string.assign));
-				if(printerDevice.getIP().length()>20) {
+				if(printerDevice.getIP().contains(",")) {
 					holder.devices_ip_tv.setText("");
 				}else {
 					holder.devices_ip_tv.setText(printerDevice.getName());
@@ -181,7 +181,7 @@ public class DevicesAdapter extends CustomAdapter {
 			}
 			if (!TextUtils.isEmpty(printerDevice.getName())) {
 				holder.devices_ip_tv.setVisibility(View.VISIBLE);
-				if(printerDevice.getIP().length()>20) {
+				if(printerDevice.getIP().contains(",")) {
 					holder.devices_ip_tv.setText("");
 				}else {
 					holder.devices_ip_tv.setText(printerDevice.getName());
@@ -196,7 +196,7 @@ public class DevicesAdapter extends CustomAdapter {
 				holder.devices_unbund_tv.setVisibility(View.GONE);
 			}
 
-			if(printerDevice.getIP().length()>20){
+			if(printerDevice.getIP().contains(",")){
 				holder.tv_device_ip.setText("");
 			}else {
 				holder.tv_device_ip.setText(printerDevice.getIP());

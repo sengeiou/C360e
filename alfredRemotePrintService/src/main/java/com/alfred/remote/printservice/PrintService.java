@@ -251,8 +251,12 @@ public class PrintService extends Service {
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         //注册USB设备权限管理广播
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+
+//        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(mUsbDeviceReceiver, filter);
+
         // 列出所有的USB设备，并且都请求获取USB权限
+
         HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
         Log.d("typeUsb", " 33333333--"+deviceList.size());
         if(deviceList.size()>0) {

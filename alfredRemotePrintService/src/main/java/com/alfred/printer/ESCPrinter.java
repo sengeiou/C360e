@@ -83,6 +83,8 @@ public class ESCPrinter implements WIFIPrintCallback {
         this.tprinter = new TscPOSPrinter((PrintService) context);
 
 
+
+
     }
 
     public ArrayList<String> discovery() {
@@ -320,8 +322,25 @@ public class ESCPrinter implements WIFIPrintCallback {
 
 
     public void UsbPrint(final byte[] bytes) {
-        Gson gson = new Gson();
-        UsbDevice mUsbDevice = gson.fromJson(ip, UsbDevice.class);
+          UsbDevice mUsbDevice = null;
+        String [] temp = null;
+        temp = ip.split(",");
+
+        String  vendorId= temp[0];
+        String  productId= temp[1];
+
+        mUsbManager = (UsbManager) App.instance.getSystemService(Context.USB_SERVICE);
+
+        HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
+        Log.d("UsbPrint", " -----"+deviceList.size());
+
+        for (UsbDevice device : deviceList.values()) {
+            if(device.getProductId()==Integer.valueOf(productId).intValue()&&device.getVendorId()==Integer.valueOf(vendorId).intValue()){
+       mUsbDevice=device;
+            }
+
+        }
+
 
         if (mUsbDevice != null) {
             UsbInterface usbInterface = mUsbDevice.getInterface(0);
@@ -341,6 +360,8 @@ public class ESCPrinter implements WIFIPrintCallback {
                                     Log.i("Return Status", "b-->" + b);
                                 }
                             }).start();
+
+
 
                             mUsbDeviceConnection.releaseInterface(usbInterface);
                             break;
@@ -470,7 +491,7 @@ public class ESCPrinter implements WIFIPrintCallback {
 
         this.tprinter.resetPrinter();
         byte[] b = ByteTo_byte(this.tprinter.getCommand());
-        UsbPrint(b);
+         UsbPrint(b);
         //this.close();
 
     }

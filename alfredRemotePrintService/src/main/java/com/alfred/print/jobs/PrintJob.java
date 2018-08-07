@@ -216,7 +216,10 @@ public class PrintJob extends Job  {
         ESCPrinter printer = PrintService.instance.getEscPrinterMap().get(this.printerIp);
         //ping printer first
 
-
+        if(printerIp.contains(",")){
+            printer = new ESCPrinter(this.printerIp,isLablePrinter);
+            printer.setUSBData(this.tdata,this.direction);
+        }
 
         if (printerIp.indexOf(":") != -1) {
 
@@ -239,10 +242,7 @@ public class PrintJob extends Job  {
                 }
 
             }else {
-                if(printerIp.length()>20){
-                    printer = new ESCPrinter(this.printerIp,isLablePrinter);
-                  printer.setUSBData(this.tdata,this.direction);
-                }else {
+
                     if (printer == null) {
 
                         printer = new ESCPrinter(this.printerIp,this.isLablePrinter);
@@ -255,7 +255,7 @@ public class PrintJob extends Job  {
                         } else {
                             isPrintLink = true;
                         }
-                    }
+
 
 
                     if (isPrintLink) {

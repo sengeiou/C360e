@@ -150,8 +150,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
             @Override
             public void getUsbDevices(UsbDevice ud) {
-                Gson gson = new Gson();
-                String prtStr = gson.toJson(ud);
+              Gson gson=new Gson();
+                String prtStr = ud.getVendorId()+","+ud.getProductId();
 
                 Map<String, String> ret = new HashMap<String, String>();
                 ret.put(prtStr, ud.getDeviceName());
@@ -2514,10 +2514,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         PrintManager printMgr = this.service.getPrintMgr();
         JobManager printJobMgr;
-        if(prtDevice.getIP().length()>20){
-           //  printJobMgr = printMgr.configureJobManager("12:12:12");
+        if(prtDevice.getIP().contains(",")){
+            printJobMgr = printMgr.configureJobManager("12:12:12");
         }else {
-          //   printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
+            printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
         }
 
         PrinterQueueManager pqMgr = this.service.getPqMgr();
@@ -2584,7 +2584,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
         pqMgr.queuePrint(b.getJobForQueue());
 
-        if(prtDevice.getIP().length()>20){
+        if(prtDevice.getIP().contains(",")){
             printMgr.addJob("12:12:12", b);
         }else {
             printMgr.addJob(prtDevice.getIP(), b);

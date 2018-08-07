@@ -58,13 +58,6 @@ public class WifiCommunication {
             return clientStartBluetooth(ipAddress);
         }
 
-        if(ipAddress.length()>20)
-        {
-             clientStartUsb(ipAddress);
-
-
-        }
-
         return clientStartSocket();
 //		new Thread(new Runnable() {
 //
@@ -77,12 +70,7 @@ public class WifiCommunication {
 
     }
 
-    private void clientStartUsb(String ipAddress) {
 
-        mUsbManager = (UsbManager) App.instance.getSystemService(Context.USB_SERVICE);
-      //  mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
-
-    }
 
     private boolean clientStartSocket() {
         boolean isStart;
