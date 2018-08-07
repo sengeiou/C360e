@@ -278,10 +278,10 @@ public class PrintService extends Service {
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) && usbDevice != null) {
                         Log.d("typeUsb", usbDevice.getProductId()+" --111111111111111--"+usbDevice.getVendorId());
                      // 获取USBDevice
-                        if(usbMap.containsKey(usbDevice.getProductId())){
-                            List<Integer> list = usbMap.get(usbDevice.getProductId());
+                        if(usbMap.containsKey(usbDevice.getVendorId())){
+                            List<Integer> list = usbMap.get(usbDevice.getVendorId());
                             for(Integer item : list){
-                                if(usbDevice.getVendorId() == item.intValue()){
+                                if(usbDevice.getProductId() == item.intValue()){
                                     mUsbDevice = usbDevice;
                                     callback.getUsbDevices(mUsbDevice);
                                     return;
