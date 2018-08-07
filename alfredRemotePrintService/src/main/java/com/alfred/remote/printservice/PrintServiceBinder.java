@@ -1068,7 +1068,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+
     @Override
     public void listPrinters() {
         if (service.registerReceiverBluetooth()) {
