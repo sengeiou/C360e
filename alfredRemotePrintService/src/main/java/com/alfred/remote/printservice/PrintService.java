@@ -254,11 +254,11 @@ public class PrintService extends Service {
                // Log.d("typeUsb", " 111111111111111");
                 synchronized (this) {
                     UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) && usbDevice != null) {
                         Log.d("typeUsb", usbDevice.getProductId()+" --111111111111111--"+usbDevice.getVendorId());
-                         // 获取USBDevice
-                            mUsbDevice = usbDevice;
-                            callback.getUsbDevices(mUsbDevice);
+                     // 获取USBDevice
+                        mUsbDevice = usbDevice;
+                        callback.getUsbDevices(mUsbDevice);
                     } else {
                         //Toast.makeText(context, "Permission denied for device " + usbDevice, Toast.LENGTH_SHORT).show();
                     }
@@ -278,7 +278,6 @@ public class PrintService extends Service {
 
     public void SearchBluetooth() {
         Log.d("SearchBluetooth", "start");
-
         mBluetoothDevicesDatas.clear();
         mBluetoothAdapter.startDiscovery();
        SearchUsb();
