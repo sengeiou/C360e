@@ -250,7 +250,7 @@ public class PrintService extends Service {
         }
         for (UsbDevice device : deviceList.values()) {
            mUsbManager.requestPermission(device, mPermissionIntent);
-            callback.getUsbDevices(device);
+
         }
 
 
@@ -267,8 +267,14 @@ public class PrintService extends Service {
                 synchronized (this) {
                     UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        Log.d("typeUsb", " 111111111111111");
-                        mUsbDevice = usbDevice;
+                        Log.d("typeUsb", usbDevice.getProductId()+" --111111111111111--"+usbDevice.getVendorId());
+
+                        if (usbDevice.getVendorId() == 1155 && usbDevice.getProductId() == 22304) {
+                         // 获取USBDevice
+                            mUsbDevice = usbDevice;
+                            callback.getUsbDevices(mUsbDevice);
+                        }
+
                     } else {
                         //Toast.makeText(context, "Permission denied for device " + usbDevice, Toast.LENGTH_SHORT).show();
                     }
