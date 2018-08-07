@@ -2515,7 +2515,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 }.getType());
 
         PrintManager printMgr = this.service.getPrintMgr();
-        JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
+        JobManager printJobMgr;
+        if(prtDevice.getIP().length()>20){
+           //  printJobMgr = printMgr.configureJobManager("12:12:12");
+        }else {
+          //   printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
+        }
+
         PrinterQueueManager pqMgr = this.service.getPqMgr();
         Log.d(TAG, "setIsLablePrinter--:" + printer);
 
@@ -2579,7 +2585,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         }
         pqMgr.queuePrint(b.getJobForQueue());
-        printMgr.addJob(prtDevice.getIP(), b);
+
+        if(prtDevice.getIP().length()>20){
+            printMgr.addJob("12:12:12", b);
+        }else {
+            printMgr.addJob(prtDevice.getIP(), b);
+        }
     }
 
     @Override

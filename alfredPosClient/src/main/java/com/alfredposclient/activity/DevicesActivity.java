@@ -122,7 +122,7 @@ public class DevicesActivity extends BaseActivity {
                                             printerModel,
                                             ParamConst.DEVICE_TYPE_PRINTER,
                                             printerDeptModelList.get(dex).getId(),
-                                            printer.get("printerIp"), "", printerName,printerDeptModelList.get(dex).getIsLablePrinter());
+                                            printer.get("printerIp"), "", printerName, printerDeptModelList.get(dex).getIsLablePrinter());
                             CoreData.getInstance().addLocalDevice(localDevice);
 
                             PrinterDevice prtDev = new PrinterDevice();
@@ -185,7 +185,7 @@ public class DevicesActivity extends BaseActivity {
 //                    adapter.setList(list, 1);
 //                    App.instance.setPrinterDevice(prt.getId(), printerDevice);
 
-                    Log.d("ASSIGN_PRINTER_DEVICE", " ---绑定打印机---IsLablePrinter---"+printerDeptModelList.get(dex).getIsLablePrinter());
+                    Log.d("ASSIGN_PRINTER_DEVICE", " ---绑定打印机---IsLablePrinter---" + printerDeptModelList.get(dex).getIsLablePrinter());
                     LocalDevice localDevice = ObjectFactory.getInstance().getLocalDevice(printerDevice.getName(), printerDevice.getModel(),
                             ParamConst.DEVICE_TYPE_PRINTER,
                             printerDeptModelList.get(dex).getId(),
@@ -197,7 +197,7 @@ public class DevicesActivity extends BaseActivity {
                     map.clear();
                     refreshPrinterDevices(null);
 
-                   App.instance.closeDiscovery();
+                    App.instance.closeDiscovery();
                     App.instance.discoverPrinter(handler);
                     break;
                 default:
@@ -252,7 +252,7 @@ public class DevicesActivity extends BaseActivity {
 
 
                 PrinterDevice tmppt = new PrinterDevice();
-
+              //  UIHelp.showToast(this, entry.getKey());
 
                 if (entry.getKey().indexOf(":") != -1) {
                     tmppt.setIP(entry.getKey());
@@ -262,14 +262,12 @@ public class DevicesActivity extends BaseActivity {
 
                     Log.d("refreshPrinterDevices", " ---包含该字符串---" + entry.getKey());
                     System.out.println("包含该字符串");
-                } else if(entry.getKey().toString().length()>=20){
+                } else if (entry.getKey().toString().length() >= 20) {
                     tmppt.setIP(entry.getKey());
                     tmppt.setName(entry.getValue());
                     tmppt.setDevice_id(-1);
                     Log.d("refreshPrinterDevices", " ---USB---" + entry.getKey());
-                }
-
-                else  {
+                } else {
                     tmppt.setIP(entry.getKey());
                     tmppt.setName(entry.getValue());
                     tmppt.setDevice_id(-1);
@@ -289,7 +287,7 @@ public class DevicesActivity extends BaseActivity {
                 } else {
 
                     List<PrinterDevice> printerDevices = map.get(tmppt.getDevice_id());
-                    Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合111---" );
+                    Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合111---");
 //                    Iterator iterator = map.keySet().iterator();
 //                    while (iterator.hasNext()) {
 //                        int key = (Integer) iterator.next();
@@ -300,15 +298,15 @@ public class DevicesActivity extends BaseActivity {
 //                        }
 //                    }
 //
-                       boolean is=true;
+                    boolean is = true;
                     for (int i = 0; i < printerDevices.size(); i++) {
                         PrinterDevice printerDevice = printerDevices.get(i);
-                        if(printerDevice != null && printerDevice.getIP().equals(tmppt.getIP())){
-                            Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---" );
-                          is=false;
+                        if (printerDevice != null && printerDevice.getIP().equals(tmppt.getIP())) {
+                            Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---");
+                            is = false;
                         }
                     }
-                    if(is) {
+                    if (is) {
                         printerDevices.add(tmppt);
                     }
 
@@ -340,7 +338,7 @@ public class DevicesActivity extends BaseActivity {
         if (selectedViewId == R.id.devices_printe_lyt) {
             if (adapter != null) {
 
-            //     Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size()+"--"+printerDBModelList.get(0).getIP());
+                //     Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size()+"--"+printerDBModelList.get(0).getIP());
 
 
                 adapter.setList(printerDBModelList, 1);

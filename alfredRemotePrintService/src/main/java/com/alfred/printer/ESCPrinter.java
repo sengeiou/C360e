@@ -15,7 +15,9 @@ import com.alfred.print.jobs.WifiCommunication;
 import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.WIFIPrintCallback;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.BitmapUtil;
+import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
@@ -33,10 +35,10 @@ import java.util.Vector;
 import static android.content.ContentValues.TAG;
 
 
-public class ESCPrinter implements WIFIPrintCallback{
+public class ESCPrinter implements WIFIPrintCallback {
 
-	/**
-	 */
+    /**
+     */
 //	public static final int FONT_A = ESCPOSPrinter.FONT_A;
 //	public static final int FONT_B = ESCPOSPrinter.FONT_B;
 //	public static final int FONT_C = ESCPOSPrinter.FONT_C;
@@ -45,77 +47,78 @@ public class ESCPrinter implements WIFIPrintCallback{
 //	public final static int MSG_PRINTER_FOUND = 1;
 //	public final static boolean TXT_UNDERLINE = true;
 
-	Context context;
-	
-	private String ip;
-	ESCPOSPrinter printer;
+    Context context;
 
-	TscPOSPrinter tprinter;
+    private String ip;
+    ESCPOSPrinter printer;
 
-	private UsbManager mUsbManager;
-	private UsbDeviceConnection mUsbDeviceConnection;
+    TscPOSPrinter tprinter;
 
-	//data
+    private UsbManager mUsbManager;
+    private UsbDeviceConnection mUsbDeviceConnection;
+
+    //data
 //	private ArrayList<PrintData> data;
 
-	private boolean connected = false;
+    private boolean connected = false;
 
-	WifiCommunication wfComm = null;
+    WifiCommunication wfComm = null;
 
-	public static final int DEFAULT_PORT = 9100;
+    public static final int DEFAULT_PORT = 9100;
 
 
-	public ESCPrinter(String ip ) {
-		
+    public ESCPrinter(String ip) {
+
 //		hdl.setPrinterCbk(this);
 
-		this.ip = ip;
+        this.ip = ip;
 
-			this.printer = new ESCPOSPrinter((PrintService) context);
-	}
+        this.printer = new ESCPOSPrinter((PrintService) context);
+    }
 
-	public ESCPrinter(String ip,int labe) {
+    public ESCPrinter(String ip, int labe) {
 
-		this.ip = ip;
+        this.ip = ip;
 
-			this.tprinter=new TscPOSPrinter((PrintService)context);
-
-
-	}
-	
-	public ArrayList<String> discovery() {
-		
-		return null;
-	}
-	
-	public boolean reconnect() {
-		return open();
-	}
-
-	public boolean open() {
-		if (wfComm == null) {
-			wfComm = new WifiCommunication();
-		}
-		return wfComm.initSocket(ip,DEFAULT_PORT);
-	}
-	public boolean isConnected() {
-		boolean ret = false;
-		if (wfComm != null) {
-			ret = wfComm.isConnected();
-		}
-		return ret;
-	}
+        this.tprinter = new TscPOSPrinter((PrintService) context);
 
 
-	//tested
-	public synchronized void close() {
-		Log.d(TAG, "printer ("+ip+") close");
-		if (wfComm !=null) {
-			wfComm.close();
-			wfComm = null;
-		}
-		this.connected = false;
-	}
+    }
+
+    public ArrayList<String> discovery() {
+
+        return null;
+    }
+
+    public boolean reconnect() {
+        return open();
+    }
+
+    public boolean open() {
+        if (wfComm == null) {
+            wfComm = new WifiCommunication();
+        }
+        return wfComm.initSocket(ip, DEFAULT_PORT);
+    }
+
+    public boolean isConnected() {
+        boolean ret = false;
+        if (wfComm != null) {
+            ret = wfComm.isConnected();
+        }
+        return ret;
+    }
+
+
+    //tested
+    public synchronized void close() {
+        Log.d(TAG, "printer (" + ip + ") close");
+        if (wfComm != null) {
+            wfComm.close();
+            wfComm = null;
+        }
+        this.connected = false;
+    }
 
 
 //	public boolean ping(){
@@ -123,14 +126,14 @@ public class ESCPrinter implements WIFIPrintCallback{
 //		return connected;
 //	}
 
-	public void setConnected(boolean connected) {
-		this.connected = connected;
-	}
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
 
-	@Override
-	public void onConnected() {
-		this.connected = true;
-	}
+    @Override
+    public void onConnected() {
+        this.connected = true;
+    }
 
 //	public  void checkStatus()  throws Exception{
 //		byte[] tcmd = new byte[3];
@@ -146,271 +149,363 @@ public class ESCPrinter implements WIFIPrintCallback{
 //	}
 
 
-	public boolean setTscData(List<PrintTscData> data,int direction)
-	{
-		boolean result = true;
-		try {
+    public boolean setUSBData(List<PrintTscData> data, int direction) {
+        boolean result = true;
+        try {
 
-			this.tprinter.addHome();
-		//	this.tprinter.resetPrinter();
-			this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+            this.tprinter.addHome();
+            //	this.tprinter.resetPrinter();
+            this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
 
-			this.tprinter.addReference(0, 0); // 设置原点坐标
-			this.tprinter.addSpeed();// 设置打印速度
-			this.tprinter.addDensity();// 设置打印浓度
-			this.tprinter.addDirection(direction);// 设置打印方向
-			this.tprinter.addCls();// 清除打印缓冲区
-			for(int i=0;i<data.size();i++)
-			{
-				PrintTscData toPrint = data.get(i);
+            this.tprinter.addReference(0, 0); // 设置原点坐标
+            this.tprinter.addSpeed();// 设置打印速度
+            this.tprinter.addDensity();// 设置打印浓度
+            this.tprinter.addDirection(direction);// 设置打印方向
+            this.tprinter.addCls();// 清除打印缓冲区
+            for (int i = 0; i < data.size(); i++) {
+                PrintTscData toPrint = data.get(i);
 
-				if(toPrint.getDataFormat()==PrintTscData.FORMAT_RESET){
-					this.tprinter.addPrint();
+                if (toPrint.getDataFormat() == PrintTscData.FORMAT_RESET) {
+                    this.tprinter.addPrint();
 
-					if (i<data.size()-1) {
-						sendTData();
+                    if (i < data.size() - 1) {
+                        sendUsbData();
 
-						this.tprinter.addHome();
-						this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+                        this.tprinter.addHome();
+                        this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
 
-						this.tprinter.addReference(0, 0); // 设置原点坐标
-						this.tprinter.addSpeed();// 设置打印速度
-						this.tprinter.addDensity();// 设置打印浓度
-						this.tprinter.addDirection(direction);// 设置打印方向
-						this.tprinter.addCls();// 清除打印缓冲区
+                        this.tprinter.addReference(0, 0); // 设置原点坐标
+                        this.tprinter.addSpeed();// 设置打印速度
+                        this.tprinter.addDensity();// 设置打印浓度
+                        this.tprinter.addDirection(direction);// 设置打印方向
+                        this.tprinter.addCls();// 清除打印缓冲区
 
-					}else {
-						sendTData();
-					}
+                    } else {
+                        sendUsbData();
 
-				}else {
+                    }
 
-					if(toPrint.getDataFormat()==PrintTscData.FORMAT_BAR){
+                } else {
 
-						this.tprinter.addBar(toPrint.getX(),toPrint.getY(),500,5);
+                    if (toPrint.getDataFormat() == PrintTscData.FORMAT_BAR) {
 
-					}else if(toPrint.getDataFormat()==PrintTscData.FORMAT_TXT){
-						this.tprinter.addText(toPrint.getX(), toPrint.getY(), toPrint.getFontsizeX(), toPrint.getFontsizeY(), toPrint.getText());
-					}
-				}
-			}
+                        this.tprinter.addBar(toPrint.getX(), toPrint.getY(), 500, 5);
+
+                    } else if (toPrint.getDataFormat() == PrintTscData.FORMAT_TXT) {
+                        this.tprinter.addText(toPrint.getX(), toPrint.getY(), toPrint.getFontsizeX(), toPrint.getFontsizeY(), toPrint.getText());
+                    }
+                }
+            }
 
 
-		//	this.tprinter.resetPrinter();
+            //	this.tprinter.resetPrinter();
 //
 
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			this.close();
-			result = false;
-			return result;
-		}
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+            this.close();
+            result = false;
+            return result;
+        }
 
 
-		try {
-			//kickdrawer no need wait for a long time
+        try {
+            //kickdrawer no need wait for a long time
 
-			if (data.size()<2 ) {
-				Thread.sleep(100);
-			}else if (data.size()<40) {
-				Thread.sleep(1000);
-			}else {
-				Thread.sleep(data.size()*40);
-			}
+            if (data.size() < 2) {
+                Thread.sleep(100);
+            } else if (data.size() < 40) {
+                Thread.sleep(1000);
+            } else {
+                Thread.sleep(data.size() * 40);
+            }
 
-			close();
-			Thread.sleep(200);
+            close();
+            Thread.sleep(200);
 
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		return  result;
-	}
+        return result;
+    }
+
+    public boolean setTscData(List<PrintTscData> data, int direction) {
+        boolean result = true;
+        try {
+
+            this.tprinter.addHome();
+            //	this.tprinter.resetPrinter();
+            this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+
+            this.tprinter.addReference(0, 0); // 设置原点坐标
+            this.tprinter.addSpeed();// 设置打印速度
+            this.tprinter.addDensity();// 设置打印浓度
+            this.tprinter.addDirection(direction);// 设置打印方向
+            this.tprinter.addCls();// 清除打印缓冲区
+            for (int i = 0; i < data.size(); i++) {
+                PrintTscData toPrint = data.get(i);
+
+                if (toPrint.getDataFormat() == PrintTscData.FORMAT_RESET) {
+                    this.tprinter.addPrint();
+
+                    if (i < data.size() - 1) {
+                        sendTData();
+
+                        this.tprinter.addHome();
+                        this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+
+                        this.tprinter.addReference(0, 0); // 设置原点坐标
+                        this.tprinter.addSpeed();// 设置打印速度
+                        this.tprinter.addDensity();// 设置打印浓度
+                        this.tprinter.addDirection(direction);// 设置打印方向
+                        this.tprinter.addCls();// 清除打印缓冲区
+
+                    } else {
+                        sendTData();
+                    }
+
+                } else {
+
+                    if (toPrint.getDataFormat() == PrintTscData.FORMAT_BAR) {
+
+                        this.tprinter.addBar(toPrint.getX(), toPrint.getY(), 500, 5);
+
+                    } else if (toPrint.getDataFormat() == PrintTscData.FORMAT_TXT) {
+                        this.tprinter.addText(toPrint.getX(), toPrint.getY(), toPrint.getFontsizeX(), toPrint.getFontsizeY(), toPrint.getText());
+                    }
+                }
+            }
 
 
+            //	this.tprinter.resetPrinter();
+//
+
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+            this.close();
+            result = false;
+            return result;
+        }
 
 
-	public void print(String msg) {
-		final String printData = msg;
-		UsbDevice mUsbDevice = null;
-		if (mUsbDevice != null) {
-			UsbInterface usbInterface = mUsbDevice.getInterface(0);
-			for (int i = 0; i < usbInterface.getEndpointCount(); i++) {
-				final UsbEndpoint ep = usbInterface.getEndpoint(i);
-				if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
-					if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
-						mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
-						if (mUsbDeviceConnection != null) {
-							//Toast.makeText(mContext, "Device connected", Toast.LENGTH_SHORT).show();
-							mUsbDeviceConnection.claimInterface(usbInterface, true);
-							new Thread(new Runnable() {
-								@Override
-								public void run() {
-									byte[] bytes = printData.getBytes();
-									int b = mUsbDeviceConnection.bulkTransfer(ep, bytes, bytes.length, 100000);
-									Log.i("Return Status", "b-->" + b);
-								}
-							}).start();
+        try {
+            //kickdrawer no need wait for a long time
 
-							mUsbDeviceConnection.releaseInterface(usbInterface);
-							break;
-						}
-					}
-				}
-			}
-		} else {
-	//		Toast.makeText(mContext, "No available USB print device", Toast.LENGTH_SHORT).show();
-		}
-	}
+            if (data.size() < 2) {
+                Thread.sleep(100);
+            } else if (data.size() < 40) {
+                Thread.sleep(1000);
+            } else {
+                Thread.sleep(data.size() * 40);
+            }
 
-	public boolean setData(List<PrintData> data) {
-		boolean result = true;
-		boolean isKickDrawer = false;
-		try {
+            close();
+            Thread.sleep(200);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
+    public void UsbPrint(final byte[] bytes) {
+        Gson gson = new Gson();
+        UsbDevice mUsbDevice = gson.fromJson(ip, UsbDevice.class);
+
+        if (mUsbDevice != null) {
+            UsbInterface usbInterface = mUsbDevice.getInterface(0);
+            for (int i = 0; i < usbInterface.getEndpointCount(); i++) {
+                final UsbEndpoint ep = usbInterface.getEndpoint(i);
+                if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
+                    if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
+                        mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
+                        if (mUsbDeviceConnection != null) {
+                            //Toast.makeText(mContext, "Device connected", Toast.LENGTH_SHORT).show();
+                            mUsbDeviceConnection.claimInterface(usbInterface, true);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    int b = mUsbDeviceConnection.bulkTransfer(ep, bytes, bytes.length, 100000);
+                                    Log.i("Return Status", "b-->" + b);
+                                }
+                            }).start();
+
+                            mUsbDeviceConnection.releaseInterface(usbInterface);
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            //		Toast.makeText(mContext, "No available USB print device", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public boolean setData(List<PrintData> data) {
+        boolean result = true;
+        boolean isKickDrawer = false;
+        try {
 //			checkStatus();
-			this.printer.reset();
+            this.printer.reset();
 
-			for (int i=0; i<data.size(); i++) {
-				PrintData toPrint = data.get(i);
-				byte isUnderline = ESCPOSPrinter.UNDERLINE_NONE;
-				if (toPrint.isUnderline())
-					isUnderline = ESCPOSPrinter.UNDERLINE_SINGLE;
+            for (int i = 0; i < data.size(); i++) {
+                PrintData toPrint = data.get(i);
+                byte isUnderline = ESCPOSPrinter.UNDERLINE_NONE;
+                if (toPrint.isUnderline())
+                    isUnderline = ESCPOSPrinter.UNDERLINE_SINGLE;
 
-				if (toPrint.getTextBold() != -1) {
-					this.printer.setBold((byte) 1);
-				}else {
-					this.printer.setBold((byte) 0);
-				}
+                if (toPrint.getTextBold() != -1) {
+                    this.printer.setBold((byte) 1);
+                } else {
+                    this.printer.setBold((byte) 0);
+                }
 
-				if (toPrint.getFontsize() == -1)
-					this.printer.setFontSize(1);
-				else
-					this.printer.setFontSize(toPrint.getFontsize());
+                if (toPrint.getFontsize() == -1)
+                    this.printer.setFontSize(1);
+                else
+                    this.printer.setFontSize(toPrint.getFontsize());
 
-				if (toPrint.getTextAlign() == PrintData.ALIGN_RIGHT)
-					this.printer.setJustification(ESCPOSPrinter.JUSTIFY_RIGHT);
-				else if (toPrint.getTextAlign() == PrintData.ALIGN_CENTRE)
-					this.printer.setJustification(ESCPOSPrinter.JUSTIFY_CENTER);
-				else
-					this.printer.setJustification(ESCPOSPrinter.JUSTIFY_LEFT);
+                if (toPrint.getTextAlign() == PrintData.ALIGN_RIGHT)
+                    this.printer.setJustification(ESCPOSPrinter.JUSTIFY_RIGHT);
+                else if (toPrint.getTextAlign() == PrintData.ALIGN_CENTRE)
+                    this.printer.setJustification(ESCPOSPrinter.JUSTIFY_CENTER);
+                else
+                    this.printer.setJustification(ESCPOSPrinter.JUSTIFY_LEFT);
 
-				if (toPrint.getDataFormat() == PrintData.FORMAT_FEED)  {
-					if(toPrint.getMarginTop() != -1)
-						this.printer.feed((byte) toPrint.getMarginTop());
-				}
+                if (toPrint.getDataFormat() == PrintData.FORMAT_FEED) {
+                    if (toPrint.getMarginTop() != -1)
+                        this.printer.feed((byte) toPrint.getMarginTop());
+                }
 
-				if (toPrint.getDataFormat() == PrintData.FORMAT_SING) {
-					this.printer.sing();
-				}
+                if (toPrint.getDataFormat() == PrintData.FORMAT_SING) {
+                    this.printer.sing();
+                }
 
-				//content
-				if (toPrint.getDataFormat() == PrintData.FORMAT_TXT) {
-					this.printer.printText(toPrint.getText());
+                //content
+                if (toPrint.getDataFormat() == PrintData.FORMAT_TXT) {
+                    this.printer.printText(toPrint.getText());
 
-				}else if(toPrint.getDataFormat() == PrintData.FORMAT_IMG) {
-					byte bitmapBytes[] = toPrint.getImage();
-					Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-					this.printer.printBitmap(bitmap);
-				}else if (toPrint.getDataFormat() == PrintData.FORMAT_CUT) {
-					this.printer.cut();
-				}else if (toPrint.getDataFormat() == PrintData.FORMAT_QR) {
-					String qrCode = toPrint.getQrCode();
-					qrCode = URLEncoder.encode(qrCode, "UTF-8");
-					Map<EncodeHintType, ErrorCorrectionLevel> map = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
-					map.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-					QRCodeWriter writer = new QRCodeWriter();
-					BitMatrix matrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500, map);
-					Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
-					this.printer.printQRBitmap(bitmap);
-				}else if(toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {
-					if(ip.equals(WifiCommunication.localIPAddress)){
-						this.printer.kickDrawerForSunmi();
-					}else {
-						this.printer.kickDrawer();
-					}
-					isKickDrawer = true;
-				}
-			}
-			sendData();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			this.close();
-			result = false;
-			return result;
-		}
-		//printer.close();
-		try {
-			//kickdrawer no need wait for a long time
+                } else if (toPrint.getDataFormat() == PrintData.FORMAT_IMG) {
+                    byte bitmapBytes[] = toPrint.getImage();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+                    this.printer.printBitmap(bitmap);
+                } else if (toPrint.getDataFormat() == PrintData.FORMAT_CUT) {
+                    this.printer.cut();
+                } else if (toPrint.getDataFormat() == PrintData.FORMAT_QR) {
+                    String qrCode = toPrint.getQrCode();
+                    qrCode = URLEncoder.encode(qrCode, "UTF-8");
+                    Map<EncodeHintType, ErrorCorrectionLevel> map = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
+                    map.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+                    QRCodeWriter writer = new QRCodeWriter();
+                    BitMatrix matrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500, map);
+                    Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
+                    this.printer.printQRBitmap(bitmap);
+                } else if (toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {
+                    if (ip.equals(WifiCommunication.localIPAddress)) {
+                        this.printer.kickDrawerForSunmi();
+                    } else {
+                        this.printer.kickDrawer();
+                    }
+                    isKickDrawer = true;
+                }
+            }
+            sendData();
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+            this.close();
+            result = false;
+            return result;
+        }
+        //printer.close();
+        try {
+            //kickdrawer no need wait for a long time
 
-			if (data.size()<2 && isKickDrawer) {
-				Thread.sleep(100);
-			}else if (data.size()<40) {
-				Thread.sleep(1000);
-			}else {
-				Thread.sleep(data.size()*40);
-			}
+            if (data.size() < 2 && isKickDrawer) {
+                Thread.sleep(100);
+            } else if (data.size() < 40) {
+                Thread.sleep(1000);
+            } else {
+                Thread.sleep(data.size() * 40);
+            }
 
-			close();
-			Thread.sleep(200);
+            close();
+            Thread.sleep(200);
 
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return result;
-	}
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
 
 
-	public void sendTData() {
+    public void sendTData() {
 
-		this.tprinter.resetPrinter();
-		byte[] b=ByteTo_byte(this.tprinter.getCommand());
-		boolean result = wfComm.sndByte(b);
-		this.tprinter.clrCommand();
-		//this.close();
-		if (!result) {
-			throw new RuntimeException("Print action Failed");
-		}
-	}
+        this.tprinter.resetPrinter();
+        byte[] b = ByteTo_byte(this.tprinter.getCommand());
+        boolean result = wfComm.sndByte(b);
+        this.tprinter.clrCommand();
+        //this.close();
+        if (!result) {
+            throw new RuntimeException("Print action Failed");
+        }
+    }
 
-	public static byte[] ByteTo_byte(Vector<Byte> vector) {
-		int len = vector.size();
-		byte[] data = new byte[len];
+    public void sendUsbData() {
 
-		for (int i = 0; i < len; ++i) {
-			data[i] = ((Byte) vector.get(i)).byteValue();
-		}
+        this.tprinter.resetPrinter();
+        byte[] b = ByteTo_byte(this.tprinter.getCommand());
+        UsbPrint(b);
+        //this.close();
 
-		return data;
-	}
-	public void sendData() {
-		boolean result = wfComm.sndByte(this.printer.getOut().toByteArray());
-	//boolean	result=true;
-		this.printer.getOut().reset();
+    }
+
+    public static byte[] ByteTo_byte(Vector<Byte> vector) {
+        int len = vector.size();
+        byte[] data = new byte[len];
+
+        for (int i = 0; i < len; ++i) {
+            data[i] = ((Byte) vector.get(i)).byteValue();
+        }
+
+        return data;
+    }
+
+    public void sendData() {
+        boolean result = wfComm.sndByte(this.printer.getOut().toByteArray());
+        //boolean	result=true;
+        this.printer.getOut().reset();
 //		wfComm.close();
-		if (!result) {
-			throw new RuntimeException("Print action Failed");
-		}
-	}
+        if (!result) {
+            throw new RuntimeException("Print action Failed");
+        }
+    }
 
-	@Override
-	public void onDisconnected() {
-		close();
-		PrintService.instance.removePrinterByIP(this.ip);
-	}
+    @Override
+    public void onDisconnected() {
+        close();
+        PrintService.instance.removePrinterByIP(this.ip);
+    }
 
-	@Override
-	public void onSendFailed() {
-		close();
-		PrintService.instance.removePrinterByIP(this.ip);
-	}
+    @Override
+    public void onSendFailed() {
+        close();
+        PrintService.instance.removePrinterByIP(this.ip);
+    }
 
 }

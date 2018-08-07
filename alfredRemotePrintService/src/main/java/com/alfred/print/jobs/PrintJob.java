@@ -161,7 +161,7 @@ public class PrintJob extends Job  {
 
     @Override
     public void onRun() throws Throwable {
-        boolean isPrintLink;
+        boolean isPrintLink = false;
         boolean printed = false;
         boolean pingSuccess;
         Log.d(TAG, "onRun:" + this.printerIp);
@@ -239,24 +239,31 @@ public class PrintJob extends Job  {
                 }
 
             }else {
-                if (printer == null) {
+                if(printerIp.length()>20){
+                    printer = new ESCPrinter(this.printerIp,isLablePrinter);
+                  printer.setUSBData(this.tdata,this.direction);
+                }else {
+                    if (printer == null) {
 
-                    printer = new ESCPrinter(this.printerIp,this.isLablePrinter);
-                    isPrintLink = printer.open();
-                    PrintService.instance.putEscPrinterMap(this.printerIp, printer);
-                } else {
-
-                    if (!printer.isConnected()) {
-                        isPrintLink = printer.reconnect();
+                        printer = new ESCPrinter(this.printerIp,this.isLablePrinter);
+                        isPrintLink = printer.open();
+                        PrintService.instance.putEscPrinterMap(this.printerIp, printer);
                     } else {
-                        isPrintLink = true;
+
+                        if (!printer.isConnected()) {
+                            isPrintLink = printer.reconnect();
+                        } else {
+                            isPrintLink = true;
+                        }
+                    }
+
+
+                    if (isPrintLink) {
+                        printed = printer.setTscData(this.tdata,this.direction);
                     }
                 }
 
 
-                if (isPrintLink) {
-                    printed = printer.setTscData(this.tdata,this.direction);
-                }
             }
 
 
