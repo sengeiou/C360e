@@ -224,7 +224,6 @@ public class PrintService extends Service {
 
     public void SearchUsb() {
 //        Log.d("SearchBluetooth", "start");
-
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
     // mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
