@@ -15,15 +15,12 @@ import com.alfred.print.jobs.WifiCommunication;
 import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.WIFIPrintCallback;
-import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.BitmapUtil;
-import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -190,9 +187,7 @@ public class ESCPrinter implements WIFIPrintCallback {
                 } else {
 
                     if (toPrint.getDataFormat() == PrintTscData.FORMAT_BAR) {
-
                         this.tprinter.addBar(toPrint.getX(), toPrint.getY(), 500, 5);
-
                     } else if (toPrint.getDataFormat() == PrintTscData.FORMAT_TXT) {
                         this.tprinter.addText(toPrint.getX(), toPrint.getY(), toPrint.getFontsizeX(), toPrint.getFontsizeY(), toPrint.getText());
                     }
@@ -481,6 +476,11 @@ public class ESCPrinter implements WIFIPrintCallback {
         byte[] b = ByteTo_byte(this.tprinter.getCommand());
         boolean result = wfComm.sndByte(b);
         this.tprinter.clrCommand();
+        try {
+            Thread.sleep(400);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         //this.close();
         if (!result) {
             throw new RuntimeException("Print action Failed");
@@ -493,6 +493,12 @@ public class ESCPrinter implements WIFIPrintCallback {
         byte[] b = ByteTo_byte(this.tprinter.getCommand());
          UsbPrint(b);
         //this.close();
+        this.tprinter.clrCommand();
+        try {
+            Thread.sleep(400);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 

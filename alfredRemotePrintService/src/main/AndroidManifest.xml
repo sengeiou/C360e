@@ -27,10 +27,6 @@
             <intent-filter>
                 <action android:name="alfred.intent.action.bindPrintService"></action>
             </intent-filter>
-            <intent-filter>
-                <action android:name="com.usb.printer.USB_PERMISSION"></action>
-            </intent-filter>
-            <meta-data android:name="com.usb.printer.USB_PERMISSION" android:resource="@xml/device_filter"/>
         </service>
     </application>
 

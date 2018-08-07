@@ -217,11 +217,16 @@ public class PrintJob extends Job  {
         //ping printer first
 
         if(printerIp.contains(",")){
-            printer = new ESCPrinter(this.printerIp,isLablePrinter);
-            printer.setUSBData(this.tdata,this.direction);
+            if(getIsLablePrinter() == 1) {
+                printer = new ESCPrinter(this.printerIp, isLablePrinter);
+                printed =  printer.setUSBData(this.tdata, this.direction);
+                if (printed) {
+                    PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_SUCCESS, this.msgUUID, this.created);
+                    return;
+                }
+            }
         }
-
-        if (printerIp.indexOf(":") != -1) {
+        if (printerIp.contains(":")) {
 
             if(getIsLablePrinter()==0) {
                 if (printer == null) {

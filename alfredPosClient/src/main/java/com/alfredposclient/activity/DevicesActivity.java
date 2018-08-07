@@ -3,6 +3,7 @@ package com.alfredposclient.activity;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -90,7 +91,6 @@ public class DevicesActivity extends BaseActivity {
         super.initView();
         setContentView(R.layout.devices_layout);
         map.clear();
-        Log.d("DevicesActivity", " 11111111111" );
         initUI();
         initData();
       //  new MyThread().start();
@@ -507,37 +507,65 @@ public class DevicesActivity extends BaseActivity {
         }
     }
 
+
+
+    class MyAsyncTask extends AsyncTask<String, Integer, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            //这是在后台子线程中执行的
+            Bitmap mBitmap = null;
+            try {
+                Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
+                Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
+                mBitmap = BarcodeUtil.addLogo(bitmap, logo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return mBitmap;
+        }
+
+        @Override
+        protected void onCancelled() {
+            //当任务被取消时回调
+            super.onCancelled();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            //更新进度
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            //当任务执行完成是调用,在UI线程
+            if(bitmap != null) {
+                device_code_img.setImageBitmap(bitmap);
+            }
+        }
+    }
     private void initData() {
 
         //本机IP地址和MAC地址
-        Log.d("DevicesActivity", " 22222222" );
         if (!TextUtils.isEmpty(CommonUtil.getLocalIpAddress()) && !TextUtils.isEmpty(CommonUtil.getLocalMacAddress(context))) {
             devices_ip_tv.setText(CommonUtil.getLocalIpAddress() + "\n"
                     + CommonUtil.getLocalMacAddress(context));
-            Log.d("DevicesActivity", " 6666666" );
          //   new MyThread().start();
-
-
-            Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
-            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
-            Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
-            device_code_img.setImageBitmap(mBitmap);
+            new MyAsyncTask().execute();
         } else {
             devices_ip_tv.setVisibility(View.GONE);
             device_code_img.setVisibility(View.GONE);
         }
-        Log.d("DevicesActivity", " 444444444444" );
         printerDBModelList = new ArrayList<PrinterDevice>(App.instance.getPrinterDevices().values());
         printerDeptModelList = PrinterSQL.getAllPrinterByType(1);
-        Log.d("DevicesActivity", " 555555555" );
         if (printerDeptModelList.size() > 0) {
             deviceGroupAdapter = new DeviceGroupAdapter(this, printerDeptModelList);
             hv_printer_group.setAdapter(deviceGroupAdapter);
         }
-        Log.d("DevicesActivity", " 3333333333333" );
 
-        refreshPrinterDevices(null);
-
+//        refreshPrinterDevices(null);
         App.instance.discoverPrinter(handler);
         deviceGroupAdapter.setSelectIndex(dex);
         registEvent();
