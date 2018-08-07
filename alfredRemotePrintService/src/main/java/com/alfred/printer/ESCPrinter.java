@@ -361,6 +361,8 @@ public class ESCPrinter implements WIFIPrintCallback {
                                 }
                             }).start();
 
+
+
                             mUsbDeviceConnection.releaseInterface(usbInterface);
                             break;
                         }
