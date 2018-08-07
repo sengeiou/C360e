@@ -1474,7 +1474,7 @@ public class App extends BaseApplication {
         for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
             Integer key = dev.getKey();
             PrinterDevice devPrinter = dev.getValue();
-            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().indexOf(":") != -1) {
+            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().contains(":")) {
                 printlist.add(devPrinter);
             }
         }
