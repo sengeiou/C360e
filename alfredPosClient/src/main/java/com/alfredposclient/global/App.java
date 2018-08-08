@@ -1930,7 +1930,11 @@ public class App extends BaseApplication {
             public void run() {
                 try {
                     mCallback.setHandler(handler);
-                    mRemoteService.listPrinters();
+                    if(App.instance.getSystemSettings().isPrintLable()) {
+                        mRemoteService.listPrinters("1");
+                    }else {
+                        mRemoteService.listPrinters("0");
+                    }
                     Log.d("discoverPrinter", "1860");
                 } catch (RemoteException e) {
                     e.printStackTrace();

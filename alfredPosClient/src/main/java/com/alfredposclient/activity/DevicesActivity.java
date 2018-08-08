@@ -373,20 +373,6 @@ public class DevicesActivity extends BaseActivity {
     }
 
 
-    public class MyThread extends Thread {
-
-        //继承Thread类，并改写其run方法
-        private final static String TAG = "My Thread ===> ";
-
-        public void run() {
-            Log.d(TAG, "run");
-            //    App.instance.discoverPrinter(handler);
-            Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
-            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
-            Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
-            device_code_img.setImageBitmap(mBitmap);
-        }
-    }
 
     @Override
     public void handlerClickEvent(View v) {
