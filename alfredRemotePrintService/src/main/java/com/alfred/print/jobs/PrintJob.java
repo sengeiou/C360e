@@ -37,7 +37,7 @@ public class PrintJob extends Job  {
     public static String reNext = "\n";
     public static final String localIPAddress = "127.0.0.1";
 
-    protected int charSize = 33;  //tm81: 48 tm-u220:33
+    protected int charSize = 33;  //tm81: 48, tm-u220:33, tm88:42
     //Print Data
     protected ArrayList<PrintData> data;
 

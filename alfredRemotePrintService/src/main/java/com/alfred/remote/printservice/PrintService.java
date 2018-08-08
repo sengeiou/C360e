@@ -188,7 +188,15 @@ public class PrintService extends Service {
 
     public boolean isTMU220(String model) {
         if (model != null && model.length() > 0) {
-            if (model.toLowerCase().contains("u220"))
+            if (model.toLowerCase().contains("tm-u220"))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isTM88(String model) {
+        if (model != null && model.length() > 0) {
+            if (model.toLowerCase().contains("tm-t88"))
                 return true;
         }
         return false;
