@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
@@ -137,55 +138,75 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		}
 		int key_len = keyBuf.length();
 		setPassword(key_len);
-		if (key_len == KEY_LENGTH) {
-			if (state == STATE_IN_ENTER_ID) {
-				String title = getString(R.string.cashier_login_tips1);
-				((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
+		if(App.instance.getPosType() == ParamConst.POS_TYPE_SUB) {
+			if (key_len == KEY_LENGTH) {
+				if (state == STATE_IN_ENTER_ID) {
+					String title = getString(R.string.cashier_login_tips1);
+					((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
+
+					state = STATE_IN_ENTER_PASSWORD;
+					employee_ID = keyBuf.toString();
+					keyBuf.delete(0, key_len);
+					setPassword(key_len);
+				} else if (state == STATE_IN_ENTER_PASSWORD) {
+					password = keyBuf.toString();
+
+
+					keyBuf.delete(0, key_len);
+					setPassword(key_len);
+				}
+			}
+		}else {
+			if (key_len == KEY_LENGTH) {
+				if (state == STATE_IN_ENTER_ID) {
+					String title = getString(R.string.cashier_login_tips1);
+					((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
 
 //				state = STATE_IN_ENTER_PASSWORD;
-				employee_ID = keyBuf.toString();
-				keyBuf.delete(0, key_len);
-				setPassword(keyBuf.length());
+					employee_ID = keyBuf.toString();
+					keyBuf.delete(0, key_len);
+					setPassword(key_len);
 //			} else if (state == STATE_IN_ENTER_PASSWORD) {
 //				password = keyBuf.toString();
 
 //				User user = CoreData.getInstance().getUser(employee_ID,
 //						password);
-				User user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
-				boolean cashierAccess = false;
-				if (user != null) {
-					RevenueCenter revenueCenter = App.instance
-							.getRevenueCenter();
-					cashierAccess = CoreData.getInstance()
-							.checkUserCashierAccessInRevcenter(user,
-									revenueCenter.getRestaurantId(),
-									revenueCenter.getId());
+					User user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
+					boolean cashierAccess = false;
+					if (user != null) {
+						RevenueCenter revenueCenter = App.instance
+								.getRevenueCenter();
+						cashierAccess = CoreData.getInstance()
+								.checkUserCashierAccessInRevcenter(user,
+										revenueCenter.getRestaurantId(),
+										revenueCenter.getId());
 
-					if (cashierAccess) {
-						App.instance.setUser(user);
-						context.overridePendingTransition(
-								R.anim.slide_bottom_in, R.anim.slide_top_out);
-						UIHelp.startOpenRestaruant(context);
-						finish();
-						return;
+						if (cashierAccess) {
+							App.instance.setUser(user);
+							context.overridePendingTransition(
+									R.anim.slide_bottom_in, R.anim.slide_top_out);
+							UIHelp.startOpenRestaruant(context);
+							finish();
+							return;
+						} else {
+							UIHelp.showToast(context, context.getResources().getString(R.string.login_required));
+							title = getString(R.string.cashier_login_tips1);
+							((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
+							state = STATE_IN_ENTER_ID;
+							employee_ID = null;
+							password = null;
+						}
 					} else {
-						UIHelp.showToast(context, context.getResources().getString(R.string.login_required));
+						UIHelp.showToast(context, context.getResources().getString(R.string.invalid_employee));
 						title = getString(R.string.cashier_login_tips1);
 						((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
 						state = STATE_IN_ENTER_ID;
 						employee_ID = null;
 						password = null;
 					}
-				}else{
-					UIHelp.showToast(context, context.getResources().getString(R.string.invalid_employee));
-					title = getString(R.string.cashier_login_tips1);
-					((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
-					state = STATE_IN_ENTER_ID;
-					employee_ID = null;
-					password = null;
+					keyBuf.delete(0, key_len);
+					setPassword(keyBuf.length());
 				}
-				keyBuf.delete(0, key_len);
-				setPassword(keyBuf.length());
 			}
 		}
 	}

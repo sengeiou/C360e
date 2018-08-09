@@ -143,7 +143,7 @@ public class SelectRevenue extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     App.instance.setPairingIp(udpMsg.getIp());
-//                    UIHelp.startEmployeeID(SelectRevenue.this);
+                    UIHelp.startLogin(SelectRevenue.this);
                 }
             });
             return arg1;

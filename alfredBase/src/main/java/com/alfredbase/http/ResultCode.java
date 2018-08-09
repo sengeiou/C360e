@@ -199,6 +199,8 @@ public class ResultCode {
 	public static final int ORDER_HAS_CLOSING= -991;
 	public static final int ORDER_NO_PLACE= -990;
 
+	public static final int IS_NOT_KIOSK = -989;
+
 	/**
 	 * waiter提交的拆单在POS机上已经结账的返回
 	 */
@@ -277,8 +279,10 @@ public class ResultCode {
 				return context.getResources().getString(R.string.upgrade_app_version) + information + 
 						context.getResources().getString(R.string.comatible_pos);
 			}
-			
+		case IS_NOT_KIOSK:
+			return "Please choose the kiosk revenue";
 		}
+
 		return "";
 
 	}

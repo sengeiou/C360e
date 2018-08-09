@@ -111,6 +111,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	public static final String MIME_SVG = "image/svg+xml";
 	public static final String MIME_JSON = "application/json";
 	public static final String RESULT_CODE = "resultCode";
+	public static final Gson gson = new Gson();
 
 	@Override
 	public Response doGet(String uri, Method mothod, final Map<String, String> params, String body){
@@ -651,21 +652,33 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			if (apiName == null || TextUtils.isEmpty(appVersion)) {
 				return this.getForbiddenResponse("");
 			}
+			Map<String, Object> result = new HashMap<String, Object>();
+			if(!App.instance.isRevenueKiosk()){
+				result.put(RESULT_CODE, ResultCode.IS_NOT_KIOSK);
+				return this.getJsonResponse(gson.toJson(result));
+			}
 			if(!appVersion.endsWith(App.instance.VERSION)){
-				Map<String, Object> result = new HashMap<String, Object>();
 				result.put("resultCode", ResultCode.APP_VERSION_UNREAL);
 				result.put("posVersion", App.instance.VERSION);
 				String value = MobclickAgent.getConfigParams(App.getTopActivity(), "updateVersion");
 				result.put("versionUpdate", value);
 				return this.getJsonResponse(new Gson().toJson(result));
-			}else if(apiName.equals(APIName.SUBPOS_LOGIN)){
-
+			}else if(apiName.equals(APIName.SUBPOS_CHOOSEREVENUE)) {
+				return subChooseRevenue();
+			} else if(apiName.equals(APIName.SUBPOS_LOGIN)){
+				return subPosLogin(body);
 			}
 
 			return getForbiddenResponse("Not Support yet");
 		}else{
 			return getForbiddenResponse("Not Support yet");
 		}
+	}
+
+	private Response subChooseRevenue(){
+		Map<String, Object> result = new HashMap<>();
+		result.put(RESULT_CODE, ResultCode.SUCCESS);
+		return this.getJsonResponse(gson.toJson(result));
 	}
 
 	private Response subPosLogin(String params){

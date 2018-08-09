@@ -262,7 +262,7 @@ public class App extends BaseApplication {
     private RemotePrintServiceCallback mCallback = new RemotePrintServiceCallback();
 
     private int posType = 0; // 0--> main Pos， 1 -->sub Pos
-
+    private String pairingIp;
     /*
      * Remote Print Service Connection
      */
@@ -2948,5 +2948,13 @@ public class App extends BaseApplication {
 
     public void setPosType(int posType) {
         this.posType = posType;
+    }
+
+    public String getPairingIp() {
+        return pairingIp;
+    }
+
+    public void setPairingIp(String pairingIp) {
+        this.pairingIp = pairingIp;
     }
 }

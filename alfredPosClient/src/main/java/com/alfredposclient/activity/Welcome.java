@@ -87,7 +87,7 @@ public class Welcome extends BaseActivity {
 			@Override
 			public void run() {
 				if(App.instance.getPosType() == 1){
-					UIHelp.startSelectRevenu(Welcome.this);
+					startSubPosNextActivity();
 				}else {
 					startNextActivity();
 				}
@@ -166,6 +166,40 @@ public class Welcome extends BaseActivity {
 			}).start();
 		}
 	
+	}
+
+
+	private void startSubPosNextActivity(){
+		String str = Store.getString(
+				context, Store.SYNC_DATA_TAG);
+		App.instance.bindSyncService();
+		App.instance.connectRemotePrintService();
+		int time = Store.getInt(App.instance, Store.RELOGIN_TIME);
+		App.instance.setTime(time);
+		if (TextUtils.isEmpty(str)) {// 认为没有同步过服务器数据
+			UIHelp.startSelectRevenu(Welcome.this);
+			this.finish();
+		} else {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					CoreData.getInstance().init(context);
+					App.instance.setLocalRestaurantConfig(CoreData.getInstance().getRestaurantConfigs());
+					App.instance.initKdsAndPrinters();
+					MainPosInfo mps = Store.getObject(context, Store.MAINPOSINFO, MainPosInfo.class);
+					checkAndUpdateMainPOS(mps);
+					clearNoActivePaymentSettlement();
+					context.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							UIHelp.startLogin(context);
+							context.finish();
+						}
+					});
+				}
+			}).start();
+		}
+
 	}
 	
 	boolean isPosDownloaded = false;

@@ -87,6 +87,7 @@ public class APIName {
 
 	// subPos专用
 	public static final String SUBPOS_LOGIN = "subPos/login";
+	public static final String SUBPOS_CHOOSEREVENUE = "subPos/chooseRevenue";
 	public static final String SUBPOS_SYNCDATA = "subPos/syncData";
 	public static final String SUBPOS_ADDORDER = "subPos/addOrder";
 	public static final String SUBPOS_SESSIONSTATUS = "subPos/sessionStatus";
