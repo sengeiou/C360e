@@ -43,7 +43,7 @@ public class PrintManager {
 	    	jobManager = PrintManager.printJobManagers.get(ip);
 		    	if (jobManager == null) {
 
-					if (ip.indexOf(":") != -1) {
+					if (ip.contains(":")) {
 
 						Configuration printjobconfiguration = new Configuration.Builder(context)
 								.customLogger(new AlfredJobLogger("PRINTER_JOBS_"+ip))

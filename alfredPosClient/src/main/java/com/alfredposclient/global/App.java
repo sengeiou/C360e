@@ -1476,7 +1476,11 @@ public class App extends BaseApplication {
         for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
             Integer key = dev.getKey();
             PrinterDevice devPrinter = dev.getValue();
-            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().indexOf(":") != -1) {
+            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().contains(":")) {
+                printlist.add(devPrinter);
+            }
+
+            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().contains(",")) {
                 printlist.add(devPrinter);
             }
         }
@@ -1916,20 +1920,26 @@ public class App extends BaseApplication {
      * Discover all physical printer devices Result is retured from callback
      * Param: Handler: callback when printers are found
      */
-    public void discoverPrinter(Handler handler) {
+    public void discoverPrinter(final Handler handler) {
         if (mRemoteService == null) {
             printerDialog();
             return;
         }
 
         Log.d("discoverPrinter", "1856");
-        try {
-            mCallback.setHandler(handler);
-            mRemoteService.listPrinters();
-            Log.d("discoverPrinter", "1860");
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mCallback.setHandler(handler);
+                    mRemoteService.listPrinters();
+                    Log.d("discoverPrinter", "1860");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     public void closeDiscovery() {

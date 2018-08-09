@@ -135,7 +135,7 @@ public class KotJobManager {
 
 					boolean printed = false;
 
-					if(prntd.getIP().indexOf(":") == -1 || prntd.getIsLablePrinter() != 1){
+					if((!prntd.getIP().contains(":") && !prntd.getIP().contains(",") )|| prntd.getIsLablePrinter() != 1){
 						printed = App.instance.remoteKotPrint(prntd,
 								kotSummary, kots.get(prgid), mods.get(prgid), false);
 

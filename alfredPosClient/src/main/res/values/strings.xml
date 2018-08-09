@@ -260,6 +260,10 @@
     <string name="table_dining">The table has been occupied</string>
     <string name="name_of_the_place">Name of the Place</string>
 
+    <string name="At_least">At least </string>
+    <string name="items"> item</string>
+
+
     <!-- html -->
     <string name="no_sales_print">No sales data to print</string>
     <string name="no_printer_devices">No Printer Devices</string>

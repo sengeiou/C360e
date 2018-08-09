@@ -90,7 +90,8 @@ public class ModifierView extends LinearLayout implements OnClickListener {
         }else {
             tv_type_min.setVisibility(GONE);
         }
-        tv_type_min.setText("至少"+modifier_type.getMinNumber()+"项");
+
+        tv_type_min.setText(context.getResources().getString(R.string.At_least)+modifier_type.getMinNumber()+context.getResources().getString(R.string.items));
         List<Modifier> modifiers = CoreData.getInstance().getModifiers(
                 modifier_type);
         int childCount = modifiers.size();

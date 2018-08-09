@@ -122,11 +122,19 @@ public class DevicesAdapter extends CustomAdapter {
 		holder.devices_unbund_tv.setTag(printerDevice);
 
 		if(!TextUtils.isEmpty(printerDevice.getIP())) {
-			if (printerDevice.getIP().indexOf(":") != -1) {
-				holder.devices_item_type.setText(con.getResources().getString(R.string.devices_bluetooth));
-			} else {
-				holder.devices_item_type.setText(con.getResources().getString(R.string.devices_network));
+
+			if(printerDevice.getIP().contains(",")){
+				holder.devices_item_type.setText("USB");
+			}else {
+
+				if (printerDevice.getIP().indexOf(":") != -1) {
+					holder.devices_item_type.setText(con.getResources().getString(R.string.devices_bluetooth));
+				}
+				else {
+					holder.devices_item_type.setText(con.getResources().getString(R.string.devices_network));
+				}
 			}
+
 		}
 
 //		if(!TextUtils.isEmpty(printerDevice.getType()))
@@ -156,15 +164,28 @@ public class DevicesAdapter extends CustomAdapter {
 			if (printerDevice.getDevice_id() != -1) {
 				holder.devices_unbund_tv.setOnClickListener(ocl);
 				holder.devices_unbund_tv.setText(con.getResources().getString(R.string.unassign));
-				holder.devices_ip_tv.setText(printerDevice.getName());
+				if(printerDevice.getIP().contains(",")) {
+					holder.devices_ip_tv.setText("");
+				}else {
+					holder.devices_ip_tv.setText(printerDevice.getName());
+				}
 			} else {
 				holder.devices_unbund_tv.setOnClickListener(listener);
 				holder.devices_unbund_tv.setText(con.getResources().getString(R.string.assign));
-				holder.devices_ip_tv.setText(printerDevice.getName());
+				if(printerDevice.getIP().contains(",")) {
+					holder.devices_ip_tv.setText("");
+				}else {
+					holder.devices_ip_tv.setText(printerDevice.getName());
+				}
+
 			}
 			if (!TextUtils.isEmpty(printerDevice.getName())) {
 				holder.devices_ip_tv.setVisibility(View.VISIBLE);
-				holder.devices_ip_tv.setText(printerDevice.getName());
+				if(printerDevice.getIP().contains(",")) {
+					holder.devices_ip_tv.setText("");
+				}else {
+					holder.devices_ip_tv.setText(printerDevice.getName());
+				}
 			} else {
 				holder.devices_ip_tv.setVisibility(View.GONE);
 			}
@@ -174,7 +195,13 @@ public class DevicesAdapter extends CustomAdapter {
 			} else if (type == 2) {
 				holder.devices_unbund_tv.setVisibility(View.GONE);
 			}
-			holder.tv_device_ip.setText(printerDevice.getIP());
+
+			if(printerDevice.getIP().contains(",")){
+				holder.tv_device_ip.setText("");
+			}else {
+				holder.tv_device_ip.setText(printerDevice.getIP());
+			}
+
 		}
 
 		return convertView;

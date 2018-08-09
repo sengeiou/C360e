@@ -3,6 +3,7 @@ package com.alfredposclient.activity;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -92,6 +93,8 @@ public class DevicesActivity extends BaseActivity {
         map.clear();
         initUI();
         initData();
+      //  new MyThread().start();
+
     }
 
     Handler handler = new Handler() {
@@ -122,7 +125,7 @@ public class DevicesActivity extends BaseActivity {
                                             printerModel,
                                             ParamConst.DEVICE_TYPE_PRINTER,
                                             printerDeptModelList.get(dex).getId(),
-                                            printer.get("printerIp"), "", printerName,printerDeptModelList.get(dex).getIsLablePrinter());
+                                            printer.get("printerIp"), "", printerName, printerDeptModelList.get(dex).getIsLablePrinter());
                             CoreData.getInstance().addLocalDevice(localDevice);
 
                             PrinterDevice prtDev = new PrinterDevice();
@@ -185,7 +188,7 @@ public class DevicesActivity extends BaseActivity {
 //                    adapter.setList(list, 1);
 //                    App.instance.setPrinterDevice(prt.getId(), printerDevice);
 
-                    Log.d("ASSIGN_PRINTER_DEVICE", " ---绑定打印机---IsLablePrinter---"+printerDeptModelList.get(dex).getIsLablePrinter());
+                    Log.d("ASSIGN_PRINTER_DEVICE", " ---绑定打印机---IsLablePrinter---" + printerDeptModelList.get(dex).getIsLablePrinter());
                     LocalDevice localDevice = ObjectFactory.getInstance().getLocalDevice(printerDevice.getName(), printerDevice.getModel(),
                             ParamConst.DEVICE_TYPE_PRINTER,
                             printerDeptModelList.get(dex).getId(),
@@ -197,7 +200,7 @@ public class DevicesActivity extends BaseActivity {
                     map.clear();
                     refreshPrinterDevices(null);
 
-                   App.instance.closeDiscovery();
+                    App.instance.closeDiscovery();
                     App.instance.discoverPrinter(handler);
                     break;
                 default:
@@ -252,9 +255,9 @@ public class DevicesActivity extends BaseActivity {
 
 
                 PrinterDevice tmppt = new PrinterDevice();
+                //  UIHelp.showToast(this, entry.getKey());
 
-
-                if (entry.getKey().indexOf(":") != -1) {
+                if (entry.getKey().contains(":")) {
                     tmppt.setIP(entry.getKey());
                     tmppt.setName(entry.getValue());
                     tmppt.setDevice_id(-1);
@@ -262,6 +265,11 @@ public class DevicesActivity extends BaseActivity {
 
                     Log.d("refreshPrinterDevices", " ---包含该字符串---" + entry.getKey());
                     System.out.println("包含该字符串");
+                } else if (entry.getKey().contains(",")) {
+                    tmppt.setIP(entry.getKey());
+                    tmppt.setName(entry.getValue());
+                    tmppt.setDevice_id(-1);
+                    Log.d("refreshPrinterDevices", " ---USB---" + entry.getKey());
                 } else {
                     tmppt.setIP(entry.getKey());
                     tmppt.setName(entry.getValue());
@@ -282,7 +290,7 @@ public class DevicesActivity extends BaseActivity {
                 } else {
 
                     List<PrinterDevice> printerDevices = map.get(tmppt.getDevice_id());
-                    Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合111---" );
+                    Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合111---");
 //                    Iterator iterator = map.keySet().iterator();
 //                    while (iterator.hasNext()) {
 //                        int key = (Integer) iterator.next();
@@ -293,15 +301,15 @@ public class DevicesActivity extends BaseActivity {
 //                        }
 //                    }
 //
-                       boolean is=true;
+                    boolean is = true;
                     for (int i = 0; i < printerDevices.size(); i++) {
                         PrinterDevice printerDevice = printerDevices.get(i);
-                        if(printerDevice != null && printerDevice.getIP().equals(tmppt.getIP())){
-                            Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---" );
-                          is=false;
+                        if (printerDevice != null && printerDevice.getIP().equals(tmppt.getIP())) {
+                            Log.d("refreshPrinterDevices", " ---获取所有键值对对象的集合remove---");
+                            is = false;
                         }
                     }
-                    if(is) {
+                    if (is) {
                         printerDevices.add(tmppt);
                     }
 
@@ -333,7 +341,7 @@ public class DevicesActivity extends BaseActivity {
         if (selectedViewId == R.id.devices_printe_lyt) {
             if (adapter != null) {
 
-            //     Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size()+"--"+printerDBModelList.get(0).getIP());
+                //     Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size()+"--"+printerDBModelList.get(0).getIP());
 
 
                 adapter.setList(printerDBModelList, 1);
@@ -361,6 +369,22 @@ public class DevicesActivity extends BaseActivity {
             map.clear();
             refreshPrinterDevices(null);
             App.instance.discoverPrinter(handler);
+        }
+    }
+
+
+    public class MyThread extends Thread {
+
+        //继承Thread类，并改写其run方法
+        private final static String TAG = "My Thread ===> ";
+
+        public void run() {
+            Log.d(TAG, "run");
+            //    App.instance.discoverPrinter(handler);
+            Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
+            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
+            Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
+            device_code_img.setImageBitmap(mBitmap);
         }
     }
 
@@ -483,16 +507,53 @@ public class DevicesActivity extends BaseActivity {
         }
     }
 
+
+
+    class MyAsyncTask extends AsyncTask<String, Integer, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            //这是在后台子线程中执行的
+            Bitmap mBitmap = null;
+            try {
+                Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
+                Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
+                mBitmap = BarcodeUtil.addLogo(bitmap, logo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return mBitmap;
+        }
+
+        @Override
+        protected void onCancelled() {
+            //当任务被取消时回调
+            super.onCancelled();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            //更新进度
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            //当任务执行完成是调用,在UI线程
+            if(bitmap != null) {
+                device_code_img.setImageBitmap(bitmap);
+            }
+        }
+    }
     private void initData() {
 
         //本机IP地址和MAC地址
         if (!TextUtils.isEmpty(CommonUtil.getLocalIpAddress()) && !TextUtils.isEmpty(CommonUtil.getLocalMacAddress(context))) {
             devices_ip_tv.setText(CommonUtil.getLocalIpAddress() + "\n"
                     + CommonUtil.getLocalMacAddress(context));
-            Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
-            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
-            Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
-            device_code_img.setImageBitmap(mBitmap);
+         //   new MyThread().start();
+            new MyAsyncTask().execute();
         } else {
             devices_ip_tv.setVisibility(View.GONE);
             device_code_img.setVisibility(View.GONE);
@@ -503,12 +564,13 @@ public class DevicesActivity extends BaseActivity {
             deviceGroupAdapter = new DeviceGroupAdapter(this, printerDeptModelList);
             hv_printer_group.setAdapter(deviceGroupAdapter);
         }
-        refreshPrinterDevices(null);
+
+//        refreshPrinterDevices(null);
         App.instance.discoverPrinter(handler);
         deviceGroupAdapter.setSelectIndex(dex);
         registEvent();
-
     }
+
 
     private void initUI() {
         btn_back = (ImageButton) findViewById(R.id.btn_back);
@@ -630,7 +692,7 @@ public class DevicesActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-        App.instance.closeDiscovery();
+        //    App.instance.closeDiscovery();
         super.onPause();
     }
 

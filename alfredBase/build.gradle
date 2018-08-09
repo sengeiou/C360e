@@ -34,7 +34,7 @@ android {
 //}
 
 dependencies {
-    api  rootProject.ext.libSupportV4
+    api rootProject.ext.libSupportV4
     api 'com.google.code.gson:gson:2.2.4'
     api files('libs/commons-codec-1.9.jar')
     api files('libs/mina-core-2.0.7.jar')
@@ -45,18 +45,19 @@ dependencies {
     api files('libs/universal-image-loader-1.9.2.jar')
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
     api 'com.tencent.bugly:crashreport:latest.release'
-//    compile files('libs/zxing.jar')
+    //    compile files('libs/zxing.jar')
     api files('libs/core-3.2.1.jar')
     api 'io.reactivex:rxjava:1.1.5'
     api 'io.reactivex:rxandroid:1.2.0'
     api 'com.moonearly.utils:app:1.0.22'
     //noinspection GradleCompatible
     api 'com.android.support:recyclerview-v7:25.1.1'
-//    compile 'org.greenrobot:greendao:3.2.0'
-//    compile 'org.greenrobot:greendao-generator:3.2.0'
-//    runtime(
-//            [group: 'org.nanohttpd', name: 'nanohttpd-webserver', version: 'CURRENT_VERSION']
-//    )
-//    compile 'org.nanohttpd:nanohttpd-samples:2.3.1'
+    //    compile 'org.greenrobot:greendao:3.2.0'
+    //    compile 'org.greenrobot:greendao-generator:3.2.0'
+    //    runtime(
+    //            [group: 'org.nanohttpd', name: 'nanohttpd-webserver', version: 'CURRENT_VERSION']
+    //    )
+    //    compile 'org.nanohttpd:nanohttpd-samples:2.3.1'
     api 'com.android.support:multidex:1.0.0'
+
 }

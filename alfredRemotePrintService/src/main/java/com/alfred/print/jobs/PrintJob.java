@@ -37,7 +37,7 @@ public class PrintJob extends Job  {
     public static String reNext = "\n";
     public static final String localIPAddress = "127.0.0.1";
 
-    protected int charSize = 33;  //tm81: 48 tm-u220:33
+    protected int charSize = 33;  //tm81: 48, tm-u220:33, tm88:42
     //Print Data
     protected ArrayList<PrintData> data;
 
@@ -161,7 +161,7 @@ public class PrintJob extends Job  {
 
     @Override
     public void onRun() throws Throwable {
-        boolean isPrintLink;
+        boolean isPrintLink = false;
         boolean printed = false;
         boolean pingSuccess;
         Log.d(TAG, "onRun:" + this.printerIp);
@@ -216,9 +216,17 @@ public class PrintJob extends Job  {
         ESCPrinter printer = PrintService.instance.getEscPrinterMap().get(this.printerIp);
         //ping printer first
 
-
-
-        if (printerIp.indexOf(":") != -1) {
+        if(printerIp.contains(",")){
+            if(getIsLablePrinter() == 1) {
+                printer = new ESCPrinter(this.printerIp, isLablePrinter);
+                printed =  printer.setUSBData(this.tdata, this.direction);
+                if (printed) {
+                    PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_SUCCESS, this.msgUUID, this.created);
+                    return;
+                }
+            }
+        }
+        if (printerIp.contains(":")) {
 
             if(getIsLablePrinter()==0) {
                 if (printer == null) {
@@ -239,24 +247,28 @@ public class PrintJob extends Job  {
                 }
 
             }else {
-                if (printer == null) {
 
-                    printer = new ESCPrinter(this.printerIp,this.isLablePrinter);
-                    isPrintLink = printer.open();
-                    PrintService.instance.putEscPrinterMap(this.printerIp, printer);
-                } else {
+                    if (printer == null) {
 
-                    if (!printer.isConnected()) {
-                        isPrintLink = printer.reconnect();
+                        printer = new ESCPrinter(this.printerIp,this.isLablePrinter);
+                        isPrintLink = printer.open();
+                        PrintService.instance.putEscPrinterMap(this.printerIp, printer);
                     } else {
-                        isPrintLink = true;
+
+                        if (!printer.isConnected()) {
+                            isPrintLink = printer.reconnect();
+                        } else {
+                            isPrintLink = true;
+                        }
+
+
+
+                    if (isPrintLink) {
+                        printed = printer.setTscData(this.tdata,this.direction);
                     }
                 }
 
 
-                if (isPrintLink) {
-                    printed = printer.setTscData(this.tdata,this.direction);
-                }
             }
 
 
