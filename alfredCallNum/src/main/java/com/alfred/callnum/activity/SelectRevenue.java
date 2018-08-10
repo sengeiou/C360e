@@ -1,6 +1,8 @@
 package com.alfred.callnum.activity;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +12,11 @@ import android.widget.TextView;
 
 import com.alfred.callnum.R;
 import com.alfred.callnum.global.App;
+import com.alfred.callnum.http.SyncCentre;
 import com.alfred.callnum.utils.UIHelp;
+import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
-import com.alfredbase.MyBaseActivity;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.moonearly.model.UdpMsg;
@@ -29,7 +33,7 @@ import rx.functions.Action1;
  * Created by Alex on 2017/11/10.
  */
 
-public class SelectRevenue extends MyBaseActivity {
+public class SelectRevenue extends BaseActivity {
     List<UdpMsg> udpMsgList = new ArrayList<>();
     private ListView listView;
     private RevenueListAdapter revenueListAdapter;
@@ -70,6 +74,23 @@ public class SelectRevenue extends MyBaseActivity {
         });
         App.instance.searchRevenueIp();
     }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case ResultCode.SUCCESS:
+                    dismissLoadingDialog();
+                    UIHelp.startMainActivity(context, App.instance.getMainPageType());
+                    finish();
+                    break;
+                case ResultCode.CONNECTION_FAILED:
+                    dismissLoadingDialog();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onDestroy() {
@@ -140,7 +161,9 @@ public class SelectRevenue extends MyBaseActivity {
                 @Override
                 public void onClick(View v) {
                     App.instance.setPosIp(udpMsg.getIp());
-                    UIHelp.startMainActivity(context, App.instance.getMainPageType());
+                    loadingDialog.setTitle("loading");
+                    loadingDialog.show();
+                    SyncCentre.assignRevenue(context, App.instance.getPosIp(), handler);
                 }
             });
             return arg1;
