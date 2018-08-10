@@ -157,7 +157,7 @@ public class SyncData extends BaseActivity {
 		case R.id.iv_sub:{
 			Store.putInt(this, Store.POS_TYPE, 1);
 			App.instance.setPosType(1);
-			UIHelp.startLogin(SyncData.this);
+			UIHelp.startSelectRevenu(SyncData.this);
 		}
 			break;
 		default:

@@ -1,6 +1,8 @@
 package com.alfredposclient.activity.kioskactivity.subpos;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +12,12 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SubPosSyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.moonearly.model.UdpMsg;
 import com.moonearly.utils.service.UdpServiceCallBack;
@@ -108,6 +112,7 @@ public class SelectRevenue extends BaseActivity {
         private LayoutInflater inflater;
         public RevenueListAdapter(Context context) {
             inflater = LayoutInflater.from(context);
+            this.context = context;
         }
 
         @Override
@@ -143,7 +148,9 @@ public class SelectRevenue extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     App.instance.setPairingIp(udpMsg.getIp());
-                    UIHelp.startLogin(SelectRevenue.this);
+                    loadingDialog.setTitle("Loading");
+                    loadingDialog.show();
+                    SubPosSyncCentre.getInstance().chooseRevenue(context, handler);
                 }
             });
             return arg1;
@@ -153,4 +160,21 @@ public class SelectRevenue extends BaseActivity {
             public TextView tv_text;
         }
     }
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case ResultCode.SUCCESS:
+                    dismissLoadingDialog();
+                    UIHelp.startLogin(SelectRevenue.this);
+                    break;
+                case ResultCode.CONNECTION_FAILED:
+                    dismissLoadingDialog();
+                    break;
+            }
+
+        }
+    };
 }
