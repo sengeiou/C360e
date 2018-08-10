@@ -1,5 +1,7 @@
 package com.alfredposclient.activity;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
@@ -7,8 +9,10 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.User;
@@ -18,9 +22,12 @@ import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
 import com.alfredposclient.R;
 import com.alfredposclient.adapter.HomePageViewPagerAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SubPosSyncCentre;
 import com.alfredposclient.global.UIHelp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Login extends BaseActivity implements KeyBoardClickListener {
 
@@ -60,7 +67,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		views.add(login_view_2);
 		viewPager.setAdapter(new HomePageViewPagerAdapter(views));
 		login_view_1.findViewById(R.id.btn_sign_up).setOnClickListener(this);
-
+		loadingDialog = new LoadingDialog(context);
 		String title = getString(R.string.cashier_login_tips1);
 		Restaurant rest = CoreData.getInstance().getRestaurant();
 		RevenueCenter revenueCenter = App.instance.getRevenueCenter();
@@ -125,6 +132,22 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		}
 	}
 
+
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what){
+				case ResultCode.SUCCESS:
+
+					break;
+				case ResultCode.CONNECTION_FAILED:
+
+					break;
+			}
+		}
+	};
+
 	@Override
 	public void onKeyBoardClick(String key) {
 		if (keyBuf.length() >= KEY_LENGTH)
@@ -143,17 +166,20 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 				if (state == STATE_IN_ENTER_ID) {
 					String title = getString(R.string.cashier_login_tips1);
 					((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
-
 					state = STATE_IN_ENTER_PASSWORD;
 					employee_ID = keyBuf.toString();
 					keyBuf.delete(0, key_len);
 					setPassword(key_len);
 				} else if (state == STATE_IN_ENTER_PASSWORD) {
 					password = keyBuf.toString();
-
-
 					keyBuf.delete(0, key_len);
 					setPassword(key_len);
+					Map<String, Object> paras = new HashMap<>();
+					paras.put("employeeId", employee_ID);
+					paras.put("password", password);
+					loadingDialog.setTitle("Loading");
+					loadingDialog.show();
+					SubPosSyncCentre.getInstance().login(context, paras, handler);
 				}
 			}
 		}else {

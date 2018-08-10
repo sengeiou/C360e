@@ -27,7 +27,7 @@ public class CallNumHttpServer extends AlfredHttpServer {
 			if(uri.equals(APIName.CALL_POS_NUM)) {
 				// TODO 在这边解析 pos 放过来的号码，开始叫号。
 				/*
-					叫号内容{"type" : 1, ""}
+					叫号内容{"type" : 1, "callnumber":"A1235"}
 				 */
 
 				/**
