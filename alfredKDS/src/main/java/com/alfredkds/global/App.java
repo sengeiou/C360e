@@ -26,6 +26,7 @@ import com.alfredkds.R;
 import com.alfredkds.activity.Welcome;
 import com.alfredkds.http.server.KdsHttpServer;
 import com.alfredkds.javabean.Kot;
+import com.alfredkds.view.SystemSettings;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -48,6 +49,7 @@ public class App extends BaseApplication {
 	public static final int HANDLER_RETURN_ERROR_SHOW = 16;
 	public static final int HANDLER_KOTSUMMARY_IS_UNREAL = 17;
 	public static final int HANDLER_KOT_COMPLETE_USER_FAILED = 18;
+	public static final int HANDLER_KOT_ITEM_CALL = 19;
 
 	public static final int HANDLER_KOT_CALL_NUM = 101;
 	public static final int HANDLER_KOT_COMPLETE_ALL = 102;
@@ -69,7 +71,7 @@ public class App extends BaseApplication {
 	
 	private SessionStatus sessionStatus;
 	private Long businessDate;
-	
+	private SystemSettings systemSettings;
 	public String VERSION = "0.0.0";
 
 	@Override
@@ -77,6 +79,8 @@ public class App extends BaseApplication {
 		super.onCreate();
 		instance = this;
 		SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+
+		systemSettings = new SystemSettings(this);
 		update15to16();
 		if (kdsDevice == null) {
 			kdsDevice = new KDSDevice();
@@ -157,6 +161,11 @@ public class App extends BaseApplication {
 	public void setKdsDevice(KDSDevice kdsDevice) {
 		this.kdsDevice = kdsDevice;
 		Store.saveObject(this, Store.KDS_DEVICE, kdsDevice);
+	}
+
+
+	public SystemSettings getSystemSettings() {
+		return systemSettings;
 	}
 
 	public synchronized Map<Integer, MainPosInfo> getMainPosInfos() {

@@ -309,8 +309,8 @@ public class HttpAPI {
 	}
 
 	public static void callSpecifyNum(Context context,
-			final Map<String, Object> parameters, String url,
-			AsyncHttpClient httpClient, final Handler handler){
+									  final Map<String, Object> parameters, String url,
+									  AsyncHttpClient httpClient, final Handler handler, final int id){
 		if (parameters != null) {
 			parameters.put("userKey", CoreData.getInstance().getUserKey());
 			parameters.put("appVersion", App.instance.VERSION);
@@ -325,7 +325,12 @@ public class HttpAPI {
 								byte[] responseBody) {
 							super.onSuccess(statusCode, headers, responseBody);
 								if (resultCode == ResultCode.SUCCESS){
+									if(id>=0){
+										KotSummarySQL.updateKotCallById(id);
+										handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL, null));
+									}
 									handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+
 								}else {
 									elseResultCodeAction(resultCode, statusCode, headers, responseBody);
 								}

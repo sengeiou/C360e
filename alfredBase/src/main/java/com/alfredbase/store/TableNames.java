@@ -8,6 +8,7 @@ public class TableNames {
 	public static final String ItemMainCategory = "ItemMainCategory_";
 	public static final String ItemModifier = "ItemModifier_";
 	public static final String Modifier = "Modifier_";
+	public static final String KotItem = "KotItem_";
 	public static final String Permission = "Permission_";
 //	public static final String Places = "Places_";
 	public static final String Printer = "Printer_";

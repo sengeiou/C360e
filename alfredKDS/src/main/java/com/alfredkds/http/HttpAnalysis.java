@@ -69,7 +69,7 @@ public class HttpAnalysis {
 					}.getType());
 			if (kotSummaryList != null && kotItemDetails != null
 					&& kotItemModifiers != null) {
-				KotSummarySQL.deleteAllKotSummary();
+			   KotSummarySQL.deleteAllKotSummary();
 				KotItemDetailSQL.deleteAllKotItemDetail();
 				KotItemModifierSQL.deleteAllKotItemModifier();
 				for (int i = 0; i < kotSummaryList.size(); i++) {

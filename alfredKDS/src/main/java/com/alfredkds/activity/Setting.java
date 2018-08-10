@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
@@ -21,15 +23,22 @@ import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
+import com.alfredkds.view.MyToggleButton;
+import com.alfredkds.view.SystemSettings;
 
-public class Setting extends BaseActivity{
+public class Setting extends BaseActivity implements MyToggleButton.OnToggleStateChangeListeren{
 	public static final String TAG = Setting.class.getSimpleName();
 	public static final int HANDLER_LOGOUT_SUCCESS = 1;
 	public static final int HANDLER_LOGOUT_FAILED = 2;
 
+
 	private TextView tv_kot_history;
 	private TextView tv_kot_reset;
 	private TextView tv_switch_account;
+
+	private MyToggleButton mt_kot_lan;
+	private SystemSettings settings;
+
 	private Handler handler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -57,7 +66,7 @@ public class Setting extends BaseActivity{
 		setContentView(R.layout.activity_setting);
 		
 		((TextView)findViewById(R.id.tv_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
-		
+		settings = App.instance.getSystemSettings();
 		findView();
 	}
 	
@@ -66,10 +75,18 @@ public class Setting extends BaseActivity{
 		this.tv_kot_history = (TextView) findViewById(R.id.tv_history);
 		this.tv_kot_reset = (TextView) findViewById(R.id.tv_reset);
 		this.tv_switch_account = (TextView) findViewById(R.id.tv_switch_account);
-		
+		this.mt_kot_lan=(MyToggleButton) findViewById(R.id.mt_kot_lan);
+		this.mt_kot_lan.setOnStateChangeListeren(this);
 		this.tv_kot_history.setOnClickListener(this);
 		this.tv_kot_reset.setOnClickListener(this);
 		this.tv_switch_account.setOnClickListener(this);
+
+		if (settings.isKdsLan()) {
+			mt_kot_lan.setChecked(true);
+		}else {
+			mt_kot_lan.setChecked(false);
+		}
+
 	}
 	
 	@Override
@@ -117,4 +134,23 @@ public class Setting extends BaseActivity{
 		
 	}
 
+	@Override
+	public void onToggleStateChangeListeren(MyToggleButton Mybutton, Boolean checkState) {
+
+
+		switch (Mybutton.getId()) {
+			case R.id.mt_kot_lan:
+
+
+				if(checkState){
+					mt_kot_lan.setChecked(true);
+					settings.setKdsLan(ParamConst.DEFAULT_TRUE);
+				}else{
+					mt_kot_lan.setChecked(false);
+					settings.setKdsLan(ParamConst.DEFAULT_FALSE);
+				}
+
+				break;
+		}
+	}
 }

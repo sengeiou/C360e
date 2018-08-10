@@ -101,9 +101,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
 	}
 
-	public Long getTime(){
-		return tv_progress.getBase();
-	}
+//	public Long getTime(){
+//		return tv_progress.getBase();
+//	}
 	
 	public void setParams(Context context, Handler handler){
 		this.parent = (KitchenOrder) context;
@@ -238,9 +238,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}
 		orderId.setText(orderNoStr);
-		tv_kiosk_order_id.setText(kioskOrderNoStr);
+		//tv_kiosk_order_id.setText(kioskOrderNoStr);
 		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
-		posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
+	//	posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
 
 		String remark = kot.getKotSummary().getOrderRemark();
 		if (TextUtils.isEmpty(remark)){
@@ -310,12 +310,16 @@ public class KOTView extends LinearLayout implements AnimationListener,
 				if(!ButtonClickTimer.canClick()){
 					return;
 				}
+
+
 				Message message = new Message();
 				if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
 					int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo());
 					message.arg1 = orderNoStr;
+					message.arg2=-1;
 				}else {
 					message.arg1 = kot.getKotSummary().getOrderNo();
+					message.arg2=-1;
 				}
 				message.what = App.HANDLER_KOT_CALL_NUM;
 				handler.sendMessage(message);

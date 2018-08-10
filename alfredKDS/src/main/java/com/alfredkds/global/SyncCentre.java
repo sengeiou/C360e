@@ -83,9 +83,9 @@ public class SyncCentre {
 	}
 
 	public void callSpecifyNum(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
-			Handler handler) {
+			Handler handler,int id) {
 		HttpAPI.callSpecifyNum(context, parameters,
-				getAbsoluteUrl(mainPosInfo, APIName.CALL_SPECIFY_THE_NUMBER), httpClient, handler);
+				getAbsoluteUrl(mainPosInfo, APIName.CALL_SPECIFY_THE_NUMBER), httpClient, handler,id);
 	}
 
 	/* cancel KOT Complete to main POS*/

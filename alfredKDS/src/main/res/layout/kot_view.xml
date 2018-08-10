@@ -256,7 +256,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/linear_progress"
-            android:layout_below="@+id/ll_kot_info" >
+            android:layout_below="@+id/ll_kot_info"
+
+            >
         </ListView>
 
         <View

@@ -62,6 +62,7 @@ public class DataHelper {
                 //1.0.28
                 onUpgradeForOldVersion23(db);
                 onUpgradeForOldVersion24(db);
+                onUpgradeForOldVersion25(db);
                 db.setTransactionSuccessful();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1206,6 +1207,16 @@ public class DataHelper {
             db.execSQL("CREATE TABLE "
                     + TableNames.ModifierCheck
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderDetailId INTEGER, orderId INTEGER, modifierCategoryId INTEGER, itemName TEXT,  modifierCategoryName TEXT, num INTEGER,minNum INTEGER)");
+
+
+
+        }
+
+        private void onUpgradeForOldVersion25(SQLiteDatabase db) {
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.KotItem
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, itemDetailName TEXT, itemDetail TEXT, itemModName TEXT,  tableName TEXT, callType INTEGER,kotStatus INTEGER,createTime LONG,updateTime LONG,orderNo INTEGER,summaryId INTEGER)");
 
 
 

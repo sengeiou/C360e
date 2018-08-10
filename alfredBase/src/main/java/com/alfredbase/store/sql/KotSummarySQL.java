@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.KotItem;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.store.SQLExe;
@@ -16,6 +17,106 @@ import java.util.List;
 
 public class KotSummarySQL {
 
+	public static void addKotItem(KotItem kotItem) {
+		if (kotItem == null) {
+			return;
+		}
+		try {
+			String sql = "replace into "
+					+ TableNames.KotItem
+					+ "(id, itemDetailName, itemDetail, itemModName, tableName, callType,kotStatus, createTime, updateTime,"
+					+ " orderNo,summaryId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
+			SQLExe.getDB().execSQL(
+					sql,
+					new Object[]{kotItem.getId(),
+							kotItem.getItemDetailName(),
+							kotItem.getItemDetail(),
+							kotItem.getItemModName(),
+							kotItem.getTableName(),
+							kotItem.getCallType(),
+							kotItem.getKotStatus(),
+							kotItem.getCreateTime(),
+							kotItem.getUpdateTime(),
+							kotItem.getOrderNo(),
+							kotItem.getSummaryId()
+
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void updateKotCallById( int id){
+		String sql = "update " + TableNames.KotItem + " set callType = ? where id = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {1, id});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void updateKotStatusById( int id){
+		String sql = "update " + TableNames.KotItem + " set kotStatus = ? where id = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {3, id});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static ArrayList<KotItem> getAllKotItem() {
+		ArrayList<KotItem> result = new ArrayList<KotItem>();
+		String sql = "select * from " + TableNames.KotItem ;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+
+			KotItem kotItem = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				kotItem = new KotItem();
+				kotItem.setId(cursor.getInt(0));
+				kotItem.setItemDetailName(cursor.getString(1));
+				kotItem.setItemDetail(cursor.getString(2));
+				kotItem.setItemModName(cursor.getString(3));
+				kotItem.setTableName(cursor.getString(4));
+				kotItem.setCallType(cursor.getInt(5));
+				kotItem.setKotStatus(cursor.getInt(6));
+				kotItem.setCreateTime(cursor.getLong(7));
+				kotItem.setUpdateTime(cursor.getLong(8));
+				kotItem.setOrderNo(cursor.getInt(9));
+           kotItem.setSummaryId(cursor.getInt(10));
+				result.add(kotItem);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
+
+	public static void deleteAllKotItem() {
+		String sql = "delete from " + TableNames.KotItem;
+
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {});
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void update(KotSummary kotSummary) {
 		if (kotSummary == null) {
 			return;

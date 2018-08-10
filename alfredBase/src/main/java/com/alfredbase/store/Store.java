@@ -131,6 +131,7 @@ public class Store {
 	public static final String OF_PAX = "OF_PAX";
 
 	public static final String OPEN_BALANCE = "OPEN_BALANCE";
+	public static final String KDS_LANDSCAPE= "KDS_LANDSCAPE";
 
 
 	private Store() {

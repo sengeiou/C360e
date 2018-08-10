@@ -35,6 +35,7 @@ public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHo
 
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
 		View convertView = View.inflate(mContext,R.layout.kot_array_view, null);
 		ViewHolder viewHolder = new ViewHolder(convertView);
 		viewHolder.kotView = (KOTView) convertView.findViewById(R.id.kotview);
