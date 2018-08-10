@@ -94,4 +94,6 @@
     <string name="enter">确认</string>      
     <string name="search_item">搜索菜单</string>
     <string name="check">下单</string>
+
+    <string name="check_ip">检查到的IP地址是不正确的</string>
 </resources>

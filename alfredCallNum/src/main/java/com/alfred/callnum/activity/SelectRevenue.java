@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.alfred.callnum.R;
 import com.alfred.callnum.global.App;
+import com.alfred.callnum.utils.UIHelp;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.MyBaseActivity;
 import com.alfredbase.utils.RxBus;
@@ -88,8 +89,7 @@ public class SelectRevenue extends MyBaseActivity {
         super.handlerClickEvent(v);
         switch (v.getId()) {
             case R.id.btn_manually:
-//                UIHelp.startConnectPOS(context);
-                // TODO 没有search到Pos 手动输入pos的IP;
+                UIHelp.startConnectPOS(context);
                 break;
             case R.id.iv_refresh:
                 loadingDialog.setTitle("Search Revenue ...");
@@ -102,9 +102,6 @@ public class SelectRevenue extends MyBaseActivity {
     }
 
     class RevenueListAdapter extends BaseAdapter {
-        private Context context;
-
-
         private LayoutInflater inflater;
         public RevenueListAdapter(Context context) {
             inflater = LayoutInflater.from(context);
@@ -143,8 +140,7 @@ public class SelectRevenue extends MyBaseActivity {
                 @Override
                 public void onClick(View v) {
                     App.instance.setPosIp(udpMsg.getIp());
-//                    UIHelp.startEmployeeID(SelectRevenue.this);
-                    // TODO 获取Pos的IP之后需要，告诉Pos自己的IP，跳转到主页面
+                    UIHelp.startMainActivity(context, App.instance.getMainPageType());
                 }
             });
             return arg1;

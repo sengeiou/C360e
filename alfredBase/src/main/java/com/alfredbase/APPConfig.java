@@ -10,6 +10,9 @@ public interface APPConfig {
 	
 	/*Waiter HTTP Server*/
 	public static final int WAITER_HTTP_SERVER_PORT = 8184;
+	/*CallNum HTTP Server*/
+	public static final int CALLNUM_HTTP_SERVER_PORT = 8185;
+
 	public static final String FILE_SERVER_START_FLAG = "/file";
 
 	public static final String FILE_SERVER_DIRECTORY = "/mnt/sdcard/";

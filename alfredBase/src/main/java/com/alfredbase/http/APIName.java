@@ -92,6 +92,11 @@ public class APIName {
 	public static final String SUBPOS_ADDORDER = "subPos/addOrder";
 	public static final String SUBPOS_SESSIONSTATUS = "subPos/sessionStatus";
 
+
+
+	// CallNum
+	public static final String CALLNUM_ASSIGNREVENUE = "callNum/assignRevenue";
+
 	/**
 	 * 以kds作为服务器
 	 */
@@ -104,6 +109,11 @@ public class APIName {
 	public static final String SYSTEM_MESSAGE = "system_msg";
 	public static final String CLOSE_SESSION = "close_session";
 	public static final String TRANSFER_TABLE = "transfer_table";
+
+	/**  给callnum 发送信息
+	 *
+	 */
+	public static final String CALL_POS_NUM = "call_pos_num";
 
 
 }
