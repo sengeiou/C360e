@@ -262,6 +262,11 @@ public class DaySalesReportPrint extends ReportBasePrint{
 				  reportDaySales.getDiscountPer(), 1);
 		this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
 				  reportDaySales.getDiscount(), PrintData.LANG_EN, 1);
+
+		this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.sub( BH.getBD(reportDaySales.getTotalSales()), BH.getBD(reportDaySales.getTotalTax()), true).toString(), 1);
+
+
+		this.addItem(PrintService.instance.getResources().getString(R.string.next_saels), " ", BH.sub( BH.getBD(reportDaySales.getTotalSales()), BH.getBD(reportDaySales.getTotalTax()), true).toString(), 1);
 		if(App.countryCode != ParamConst.CHINA){
 			this.addItem(PrintService.instance.getResources().getString(R.string.total_tax), " ", BH.getBD(reportDaySales.getTotalTax()).toString(), 1);
 			this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), " ", BH.getBD(reportDaySales.getInclusiveTaxAmt()).toString(), 1);
@@ -276,7 +281,7 @@ public class DaySalesReportPrint extends ReportBasePrint{
 			}
 		}
 		this.addItem(PrintService.instance.getResources().getString(R.string.rounding), " ", reportDaySales.getTotalBalancePrice(), 1);
-		this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true).toString(), 1);
+		this.addItem(PrintService.instance.getResources().getString(R.string.gross_total), " ", BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true).toString(), 1);
 		this.addSectionHeader(PrintService.instance.getResources().getString(R.string.media));
 		if(BH.getBD(reportDaySales.getCash()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
 			this.addItem(PrintService.instance.getResources().getString(R.string.cash), reportDaySales.getCashQty().toString(),

@@ -74,6 +74,8 @@
     <string name="total_tax">总税</string>
     <string name="rounding">抹零</string>
     <string name="nett_sales">销售净额</string>
+    <string name="gross_total">Gross Total Sales</string>
+    <string name="next_saels">Next Saels + SVG</string>
     <string name="media">支付汇总</string>
     <string name="cash">现金</string>
     <string name="mc">万事达</string>
