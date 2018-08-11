@@ -111,13 +111,16 @@ public class KitchenOrder extends BaseActivity {
 						madapter.setKots(getKotItem());
 						madapter.setAddFirstItem(true);
 						madapter.notifyDataSetChanged();
+
+						tv_order_qyt.setText(kotItems.size()+"");
 					}else {
 						adapter.setKots(kots);
 						adapter.setAddFirstItem(true);
 						adapter.notifyDataSetChanged();
+
+						tv_order_qyt.setText(kots.size()+"");
 					}
 
-					tv_order_qyt.setText(kots.size()+"");
 					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 						popItemAdapter.setKot(App.instance.getKot(kotSummary));
 						popItemAdapter.notifyDataSetChanged();
@@ -128,11 +131,13 @@ public class KitchenOrder extends BaseActivity {
 					if(App.instance.getSystemSettings().isKdsLan()){
 						madapter.setKots(getKotItem());
 						madapter.notifyDataSetChanged();
+						tv_order_qyt.setText(kotItems.size()+"");
 					}else {
 						adapter.setKots(kots);
 						adapter.notifyDataSetChanged();
+						tv_order_qyt.setText(kots.size()+"");
 					}
-					tv_order_qyt.setText(kots.size()+"");
+
 					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 						popItemAdapter.setKot(App.instance.getKot(kotSummary));
 						popItemAdapter.notifyDataSetChanged();
@@ -209,8 +214,13 @@ public class KitchenOrder extends BaseActivity {
 					break;
 
 				case App.HANDLER_KOT_ITEM_CALL:
-					madapter.setKots(getKotItem());
-					madapter.notifyDataSetChanged();
+					if(loadingDialog!=null) {
+						loadingDialog.dismiss();
+						madapter.setKots(getKotItem());
+						madapter.notifyDataSetChanged();
+						tv_order_qyt.setText(kotItems.size()+"");
+
+					}
 
 					break;
 				case App.HANDLER_KOT_CALL_NUM:
@@ -249,11 +259,49 @@ public class KitchenOrder extends BaseActivity {
 							parameters.put("kotItemDetails", itemDetails);
 							parameters.put("type", 1);
 							SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-									App.instance.getCurrentConnectedMainPos(), parameters, handler);
+									App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
 							loadingDialog.show();
 						}
 					});
 					break;
+
+
+
+				case App.HANDLER_KOT_COMPLETE:
+					Bundle bundle1 = msg.getData();
+					final KotSummary kotSummary1 = (KotSummary) bundle1.getSerializable("kotSummary");
+					final KotItemDetail  iKotItemDetail = (KotItemDetail) bundle1.getSerializable("kotItemDetail");
+
+					final int kotItemId=bundle1.getInt("id");
+					String title1 = getResources().getString(R.string.warning);
+					String content1 = "Confirm  completed?";
+					String left1 = getResources().getString(R.string.no);
+					String right1 = getResources().getString(R.string.yes);
+					DialogFactory.commonTwoBtnDialog(KitchenOrder.this, title1, content1, left1, right1, null, new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+							for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary1).getKotItemDetails()) {
+
+								if(kotItemDetail.getId()==iKotItemDetail.getId()) {
+									kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+1);
+									kotItemDetail.setUnFinishQty(kotItemDetail.getUnFinishQty()-1);
+									if(kotItemDetail.getUnFinishQty()==0) {
+										kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+									}
+								}
+								KotItemDetailSQL.update(kotItemDetail);
+								itemDetails.add(kotItemDetail);
+							}
+							Map<String, Object> parameters = new HashMap<String, Object>();
+							parameters.put("kotSummary", kotSummary1);
+							parameters.put("kotItemDetails", itemDetails);
+							parameters.put("type", 1);
+							SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+									App.instance.getCurrentConnectedMainPos(), parameters, handler,kotItemId);
+							loadingDialog.show();
+						}
+					});
 				default:
 					break;
 			}
@@ -336,7 +384,6 @@ public class KitchenOrder extends BaseActivity {
 //
 //		}
 
-		tv_order_qyt.setText(kots.size()+"");
 		if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 			popItemAdapter.setKot(App.instance.getKot(kotSummary));
 			popItemAdapter.notifyDataSetChanged();
@@ -411,7 +458,7 @@ public class KitchenOrder extends BaseActivity {
 			kots = App.instance.getInitKots();
 			madapter.setKots(getKotItem());
 			ll_orders.setAdapter(madapter);
-			tv_order_qyt.setText(App.instance.getRefreshKots().size()+"");
+			tv_order_qyt.setText(kotItems.size()+"");
 		}else {
 
 			adapter = new KOTArrayAdapter(context, handler);
@@ -472,7 +519,7 @@ public class KitchenOrder extends BaseActivity {
 						parameters.put("kotItemDetails", itemDetails);
 						parameters.put("type", 1);
 						SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-								App.instance.getCurrentConnectedMainPos(), parameters, handler);
+								App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
 						loadingDialog.show();
 					}
 				});
@@ -582,7 +629,7 @@ public class KitchenOrder extends BaseActivity {
 							parameters.put("kotSummary", popKot.getKotSummary());
 							parameters.put("kotItemDetails", itemDetails);
 							SyncCentre.getInstance().kotComplete(context,
-									App.instance.getCurrentConnectedMainPos(), parameters, handler);
+									App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
 						}
 
 						break;

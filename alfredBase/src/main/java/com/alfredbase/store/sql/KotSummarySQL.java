@@ -65,10 +65,15 @@ public class KotSummarySQL {
 		}
 	}
 
+//	String sql = "select * from " + TableNames.KotSummary + " where orderId = ?";
+//	Cursor cursor = null;
+//	SQLiteDatabase db = SQLExe.getDB();
+//		try {
+//		cursor = db.rawQuery(sql, new String[] {orderId+""});
 
 	public static ArrayList<KotItem> getAllKotItem() {
 		ArrayList<KotItem> result = new ArrayList<KotItem>();
-		String sql = "select * from " + TableNames.KotItem ;
+		String sql = "select * from " + TableNames.KotItem + " where kotStatus <3";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {

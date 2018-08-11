@@ -77,9 +77,9 @@ public class SyncCentre {
 
 	/* Send KOT Complete to main POS*/
 	public void kotComplete(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
-			Handler handler) {
+			Handler handler,int id) {
 		HttpAPI.KotComplete(context, parameters,
-				getAbsoluteUrl(mainPosInfo, APIName.KOT_ITEM_COMPLETE), httpClient, handler);
+				getAbsoluteUrl(mainPosInfo, APIName.KOT_ITEM_COMPLETE), httpClient, handler,id);
 	}
 
 	public void callSpecifyNum(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,

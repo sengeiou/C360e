@@ -187,8 +187,8 @@ public class HttpAPI {
 	
 	/*Complete items in KOT*/
 	public static void KotComplete(final Context context,
-			final Map<String, Object> parameters, String url,
-			AsyncHttpClient httpClient, final Handler handler) {
+								   final Map<String, Object> parameters, String url,
+								   AsyncHttpClient httpClient, final Handler handler, final int id) {
 		if (parameters != null) {
 			parameters.put("userKey", CoreData.getInstance().getUserKey());
 			parameters.put("appVersion", App.instance.VERSION);
@@ -205,7 +205,14 @@ public class HttpAPI {
 							if (resultCode == ResultCode.SUCCESS) {
 								List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
 								HttpAnalysis.getKotItemDetail(statusCode,headers,responseBody, handler);
-								handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT,kotItemDetails));
+
+
+								if(id>=0){
+									KotSummarySQL.updateKotStatusById(id);
+									handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL,kotItemDetails));
+								}else {
+									handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT,kotItemDetails));
+								}
 							}else if (resultCode == ResultCode.USER_NO_PERMIT) {
 								handler.sendMessage(handler.obtainMessage(App.HANDLER_RECONNECT_POS));
 							}else if (resultCode == ResultCode.KOT_COMPLETE_USER_FAILED) {
