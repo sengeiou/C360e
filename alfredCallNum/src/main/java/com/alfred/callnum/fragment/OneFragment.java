@@ -1,5 +1,6 @@
 package com.alfred.callnum.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,12 +16,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alfred.callnum.R;
 import com.alfred.callnum.activity.MainActivity;
 import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.adapter.MycallAdapter;
 import com.alfred.callnum.adapter.RvListener;
+import com.alfred.callnum.global.App;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +53,9 @@ public class OneFragment extends Fragment {
     private List<CallBean> mDatas = new ArrayList<>();
     MycallAdapter mAdapter;
     private int vid;
+    Handler handler;
 
+    @SuppressLint("ValidFragment")
     public OneFragment() {
 
     }
@@ -96,24 +101,24 @@ public class OneFragment extends Fragment {
         initView();
     }
 
-    public void setViewId(int vid) {
+    public void setViewId(int vid,Handler mhandler) {
         this.vid = vid;
-
+        this.handler = mhandler;
 
     }
 
     private void initData() {
 
-        for (int i = 0; i < 20; i++) {
-
-            CallBean call = new CallBean();
-            call.setId(i);
-            call.setName("name " + i);
-            mDatas.add(call);
-        }
-
-        Collections.reverse(mDatas);
-        mAdapter.notifyDataSetChanged();
+//        for (int i = 0; i < 20; i++) {
+//
+//            CallBean call = new CallBean();
+//            call.setId(i);
+//            call.setName("name " + i);
+//            mDatas.add(call);
+//        }
+//
+//        Collections.reverse(mDatas);
+//        mAdapter.notifyDataSetChanged();
     }
 
     private void initView() {
@@ -129,7 +134,7 @@ public class OneFragment extends Fragment {
             re_three.setVisibility(View.GONE);
             re_four.setVisibility(View.GONE);
         }
-        LinearLayoutManager layoutManager1= new LinearLayoutManager(getActivity()); //设置布局管理器
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity()); //设置布局管理器
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity()); //设置布局管理器
         LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity()); //设置布局管理器
         LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity()); //设置布局管理器
@@ -145,6 +150,9 @@ public class OneFragment extends Fragment {
         mAdapter = new MycallAdapter(getActivity(), mDatas, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
+                Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
+
+                handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_CALL_ON, null));
                 // mAdapter.notifyItemChanged(position);
 //                String content = "";
 //                Intent intent=new Intent();
@@ -160,13 +168,28 @@ public class OneFragment extends Fragment {
             re_four.setAdapter(mAdapter);
         }
         initData();
-        //
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-            mAdapter.addData(0);
-            }
-        },3000);
+//        //
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                addData(0);
+//            }
+//        }, 3000);
+
+    }
+
+    public void addData(int position) {
+        CallBean callBean = new CallBean();
+        callBean.setId(0);
+        callBean.setName("Insert One");
+        mDatas.add(position, callBean);
+        mAdapter.notifyItemInserted(position);
+        //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+
+        re_one.scrollToPosition(position);
+        re_two.scrollToPosition(position);
+        re_three.scrollToPosition(position);
+        re_four.scrollToPosition(position);
 
     }
 

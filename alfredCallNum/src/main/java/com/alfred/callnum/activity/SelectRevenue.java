@@ -163,7 +163,7 @@ public class SelectRevenue extends BaseActivity {
                     App.instance.setPosIp(udpMsg.getIp());
                     loadingDialog.setTitle("loading");
                     loadingDialog.show();
-                    SyncCentre.assignRevenue(context, App.instance.getPosIp(), handler);
+                    SyncCentre.getInstance().assignRevenue(context, App.instance.getPosIp(), handler);
                 }
             });
             return arg1;
