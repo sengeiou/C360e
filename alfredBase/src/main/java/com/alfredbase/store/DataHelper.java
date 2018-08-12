@@ -1194,7 +1194,6 @@ public class DataHelper {
         }
 
         private void onUpgradeForOldVersion24(SQLiteDatabase db) {
-
             db.execSQL("ALTER TABLE "
                     + TableNames.Modifier
                     + " ADD COLUMN  minNumber INTEGER default 0");
@@ -1207,7 +1206,9 @@ public class DataHelper {
                     + TableNames.ModifierCheck
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderDetailId INTEGER, orderId INTEGER, modifierCategoryId INTEGER, itemName TEXT,  modifierCategoryName TEXT, num INTEGER,minNum INTEGER)");
 
-
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Order
+                    + " ADD COLUMN  isSubPos INTEGER default 0");
 
         }
     }

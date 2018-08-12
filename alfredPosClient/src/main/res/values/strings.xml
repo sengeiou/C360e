@@ -285,6 +285,7 @@
     <string name="internal_error">Internal Error</string>
     <string name="device_invalid">Device is invalid</string>
     <string name="login_failed">login failed</string>
+    <string name="sync_data_failed">sync data failed</string>
 
     <!-- CloseOrderWindow -->
     <string name="ref_id_not_empty">Ref id not empty</string>
@@ -426,7 +427,7 @@
 
     <string name="devices_bluetooth">Bluetooth</string>
 
-
+    <string name="revenue_center">Revenue Center</string>
     <string name="ipaddr_tips">Device Pairing\nSet up POS IP Address</string>
     <string name="connect">Connect</string>
 </resources>

@@ -11,6 +11,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredposclient.activity.kioskactivity.subpos.SubPosLogin;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.google.gson.Gson;
@@ -82,7 +83,7 @@ public class SubPosHttpAPI {
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
                             // TODO Auto-generated method stub
-                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED,error));
+                            errorAction(error);
                             super.onFailure(statusCode, headers, responseBody, error);
                         }
                     });
@@ -113,10 +114,76 @@ public class SubPosHttpAPI {
                             }
                         }
                         @Override
-                        public void onFailure(int statusCode, Header[] headers,
-                                              byte[] responseBody, Throwable error) {
-                            // TODO Auto-generated method stub
-                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED,error));
+                        public void onFailure(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody, final Throwable error) {
+                            errorAction(error);
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void updaetAllData(final Context context,
+                             String url, AsyncHttpClient httpClient, final Handler handler) {
+        Map<String, Object> parameters = new HashMap<>();
+        if (parameters != null) {
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters) + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            String body = new String(responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                SubPosHttpAnalysis.updateAllData(body, handler);
+
+                            } else {
+                                elseResultCodeAction(resultCode, body);
+                            }
+                        }
+                        @Override
+                        public void onFailure(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody, final Throwable error) {
+                            errorAction(error);
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void getOrder(final Context context, Map<String, Object> parameters,
+                             String url, AsyncHttpClient httpClient, final Handler handler) {
+        if (parameters != null) {
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters) + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            String body = new String(responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                SubPosHttpAnalysis.getOrder(body);
+                                handler.sendEmptyMessage(SubPosLogin.GET_ORDER_SUCCESS);
+                            } else {
+                                elseResultCodeAction(resultCode, body);
+                            }
+                        }
+                        @Override
+                        public void onFailure(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody, final Throwable error) {
+                            errorAction(error);
                             super.onFailure(statusCode, headers, responseBody, error);
                         }
                     });
@@ -156,5 +223,18 @@ public class SubPosHttpAPI {
                 UIHelp.showToast(App.getTopActivity(), ResultCode.getErrorResultStrByCode(App.instance, resultCode, information));
             }
         });
+    }
+    // 返回错误不需要特殊处理的提醒
+    private static  void errorAction(final Throwable error){
+        App.getTopActivity().runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        App.getTopActivity().dismissLoadingDialog();
+                        UIHelp.showToast(App.getTopActivity(), ResultCode.getErrorResultStr(App.instance, error,
+                                "Revenue Center"));
+                    }
+                }
+        );
     }
 }

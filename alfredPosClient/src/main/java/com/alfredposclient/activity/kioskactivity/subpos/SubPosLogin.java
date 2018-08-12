@@ -1,5 +1,7 @@
-package com.alfredposclient.activity;
+package com.alfredposclient.activity.kioskactivity.subpos;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
@@ -7,21 +9,28 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.LoadingDialog;
+import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
-import com.alfredbase.javabean.User;
+import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
 import com.alfredposclient.R;
 import com.alfredposclient.adapter.HomePageViewPagerAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SubPosSyncCentre;
 import com.alfredposclient.global.UIHelp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Login extends BaseActivity implements KeyBoardClickListener {
+public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 
 	private static final int KEY_LENGTH = 5;
 	private static final int STATE_IN_ENTER_ID = 0;
@@ -48,6 +57,10 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 	private TextView tv_title_name_two;
 	private TextTypeFace textTypeFace;
 
+	public static final int UPDATE_ALL_DATA_SUCCESS = 100;
+	public static final int UPDATE_ALL_DATA_FAILURE = -100;
+	public static final int GET_ORDER_SUCCESS = 101;
+
 	@Override
 	protected void initView() {
 		super.initView();
@@ -59,7 +72,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		views.add(login_view_2);
 		viewPager.setAdapter(new HomePageViewPagerAdapter(views));
 		login_view_1.findViewById(R.id.btn_sign_up).setOnClickListener(this);
-
+		loadingDialog = new LoadingDialog(context);
 		String title = getString(R.string.cashier_login_tips1);
 		Restaurant rest = CoreData.getInstance().getRestaurant();
 		RevenueCenter revenueCenter = App.instance.getRevenueCenter();
@@ -87,7 +100,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		initTextTypeFace(login_view_1,login_view_2);
 		
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version)+": " + App.instance.VERSION);
-
+		App.instance.showWelcomeToSecondScreen();
 	}
 
 	public void initTitle(){
@@ -124,6 +137,56 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		}
 	}
 
+
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what){
+				case ResultCode.SUCCESS: {
+					dismissLoadingDialog();
+					int subPosStatus = (int) msg.obj;
+					if (App.instance.getSubPosStatus() == ParamConst.SUB_POS_STATUS_CLOSE) {
+						loadingDialog.setTitle("update all data");
+						loadingDialog.show();
+						SubPosSyncCentre.getInstance().updaetAllData(context, handler);
+					}else{
+						startMainPage();
+					}
+					App.instance.setSubPosStatus(subPosStatus);
+				}
+					break;
+				case UPDATE_ALL_DATA_SUCCESS:
+					dismissLoadingDialog();
+					startMainPage();
+					finish();
+					break;
+				case UPDATE_ALL_DATA_FAILURE:
+					dismissLoadingDialog();
+					break;
+				case GET_ORDER_SUCCESS:
+					dismissLoadingDialog();
+					UIHelp.startMainPageKiosk(context);
+					break;
+
+			}
+		}
+	};
+
+	private void startMainPage(){
+		long businessDate = App.instance.getBusinessDate();
+		if(OrderSQL.getUnfinishedOrderAtTable(TableInfoSQL.getKioskTable().getPosId(), businessDate) != null) {
+			UIHelp.startMainPageKiosk(context);
+		}else{
+			loadingDialog.setTitle("loading");
+			loadingDialog.show();
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("userId", App.instance.getUser().getId());
+			SubPosSyncCentre.getInstance().getOrder(context, parameters, handler);
+		}
+
+	}
+
 	@Override
 	public void onKeyBoardClick(String key) {
 		if (keyBuf.length() >= KEY_LENGTH)
@@ -141,51 +204,20 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 			if (state == STATE_IN_ENTER_ID) {
 				String title = getString(R.string.cashier_login_tips1);
 				((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
-
-//				state = STATE_IN_ENTER_PASSWORD;
+				state = STATE_IN_ENTER_PASSWORD;
 				employee_ID = keyBuf.toString();
 				keyBuf.delete(0, key_len);
-				setPassword(keyBuf.length());
-//			} else if (state == STATE_IN_ENTER_PASSWORD) {
-//				password = keyBuf.toString();
-
-//				User user = CoreData.getInstance().getUser(employee_ID,
-//						password);
-				User user = CoreData.getInstance().getUserByEmpId(Integer.parseInt(employee_ID));
-				boolean cashierAccess = false;
-				if (user != null) {
-					RevenueCenter revenueCenter = App.instance
-							.getRevenueCenter();
-					cashierAccess = CoreData.getInstance()
-							.checkUserCashierAccessInRevcenter(user,
-									revenueCenter.getRestaurantId(),
-									revenueCenter.getId());
-
-					if (cashierAccess) {
-						App.instance.setUser(user);
-						context.overridePendingTransition(
-								R.anim.slide_bottom_in, R.anim.slide_top_out);
-						UIHelp.startOpenRestaruant(context);
-						finish();
-						return;
-					} else {
-						UIHelp.showToast(context, context.getResources().getString(R.string.login_required));
-						title = getString(R.string.cashier_login_tips1);
-						((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
-						state = STATE_IN_ENTER_ID;
-						employee_ID = null;
-						password = null;
-					}
-				}else{
-					UIHelp.showToast(context, context.getResources().getString(R.string.invalid_employee));
-					title = getString(R.string.cashier_login_tips1);
-					((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
-					state = STATE_IN_ENTER_ID;
-					employee_ID = null;
-					password = null;
-				}
+				setPassword(key_len);
+			} else if (state == STATE_IN_ENTER_PASSWORD) {
+				password = keyBuf.toString();
 				keyBuf.delete(0, key_len);
-				setPassword(keyBuf.length());
+				setPassword(key_len);
+				Map<String, Object> parameters = new HashMap<>();
+				parameters.put("employeeId", employee_ID);
+				parameters.put("password", password);
+				loadingDialog.setTitle("Loading");
+				loadingDialog.show();
+				SubPosSyncCentre.getInstance().login(context, parameters, handler);
 			}
 		}
 	}
