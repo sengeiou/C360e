@@ -6,6 +6,7 @@ import android.os.Handler;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotItem;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
@@ -14,6 +15,8 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.TableNames;
+import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -69,17 +72,59 @@ public class HttpAnalysis {
 					}.getType());
 			if (kotSummaryList != null && kotItemDetails != null
 					&& kotItemModifiers != null) {
-				KotSummarySQL.deleteAllKotSummary();
+				KotSummarySQL.deleteAllKotItem();
+			   KotSummarySQL.deleteAllKotSummary();
 				KotItemDetailSQL.deleteAllKotItemDetail();
 				KotItemModifierSQL.deleteAllKotItemModifier();
 				for (int i = 0; i < kotSummaryList.size(); i++) {
+
+
 					boolean flag = false;
 					KotSummary kotSummary = kotSummaryList.get(i);
+
+					KotItem item=new KotItem();
+
+					item.setOrderNo(kotSummary.getOrderNo());
+					item.setTableName(kotSummary.getTableName());
+					item.setSummaryId(kotSummary.getId());
+					item.setCallType(0);
+					item.setCreateTime(kotSummary.getCreateTime());
+					item.setUpdateTime(kotSummary.getUpdateTime());
+					item.setKotStatus(0);
+
 					for (int j = 0; j < kotItemDetails.size(); j++) {
 						KotItemDetail kotItemDetail = kotItemDetails.get(j);
+						if(kotSummary.getId().intValue() == kotItemDetail.getKotSummaryId().intValue())
+						{
+							item.setItemDetailName(kotItemDetails.get(i).getItemName());
+							int  unFinishQty=kotItemDetails.get(i).getUnFinishQty();
+
+							for (int k = 0; k <unFinishQty ; k++) {
+								StringBuffer sBuffer = new StringBuffer();
+								kotItemDetail.setUnFinishQty(1);
+								item.setId(CommonSQL.getNextSeq(TableNames.KotItem));
+								item.setItemDetail(	gson.toJson(kotItemDetail));
+
+
+								for (int s = 0; s < kotItemModifiers.size(); s++) {
+									KotItemModifier kotItemModifier = kotItemModifiers.get(s) ;
+									if (kotItemModifier != null
+											&& kotItemDetail.getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+										sBuffer.append("" + kotItemModifier.getModifierName() + ",");
+
+									}
+								}
+								item.setItemModName(sBuffer.toString());
+								KotSummarySQL.addKotItem(item);
+
+							}
+
+
+						}
+
 						//对未完成的item和完成了一部分但status未done的item做处理
 						if(kotSummary.getId().intValue() == kotItemDetail.getKotSummaryId().intValue()
-							&& kotItemDetail.getUnFinishQty().intValue() > 0){
+							&& kotItemDetail.getUnFinishQty().intValue() > 0) {
 							flag = true;
 						}
 //						if (kotItemDetail.getKotStatus() < ParamConst.KOT_STATUS_DONE
@@ -104,6 +149,12 @@ public class HttpAnalysis {
 				// KotSummarySQL.addKotSummaryList(kotSummaryList);
 				KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
 				KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
+
+
+
+
+
+
 			}
 			Store.saveObject(context, Store.SESSION_STATUS,
 					receiveSessionStatus);

@@ -23,9 +23,11 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -37,8 +39,10 @@ import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 import com.alfredkds.javabean.Kot;
+import com.alfredbase.javabean.KotItem;
 import com.alfredkds.view.FinishQtyWindow;
 import com.alfredkds.view.KOTArrayAdapter;
+import com.alfredkds.view.KOTArrayLanAdapter;
 import com.alfredkds.view.PopItemAdapter;
 import com.alfredkds.view.PopItemListView;
 import com.alfredkds.view.PopItemListView.RemoveDirection;
@@ -60,6 +64,7 @@ public class KitchenOrder extends BaseActivity {
 
 	private RecyclerView ll_orders;    //水平列表
 	public KOTArrayAdapter adapter;
+	public KOTArrayLanAdapter madapter;
 	private List<Kot> kots = new ArrayList<Kot>();
 
 	private TopBarView topBarView;    //页面顶部view
@@ -71,6 +76,7 @@ public class KitchenOrder extends BaseActivity {
 	private MainPosInfo mainPosInfo;
 	private boolean doubleBackToExitPressedOnce = false;
 	private TextView tv_order_qyt;
+	private List<KotItem> kotItems= new ArrayList<KotItem>();
 	@Override
 	protected void initView() {
 		super.initView();
@@ -87,11 +93,11 @@ public class KitchenOrder extends BaseActivity {
 		//initProgressList();
 		ll_orders = (RecyclerView) findViewById(R.id.ll_orders);
 		tv_order_qyt = (TextView) findViewById(R.id.tv_order_qyt);
-		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-		linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-		ll_orders.setLayoutManager(linearLayoutManager);
+
+
+
 		finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
-		initKOTList();
+
 		initTopBarView();
 		initTextTypeFace();
 		client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -101,10 +107,20 @@ public class KitchenOrder extends BaseActivity {
 			switch (msg.what) {
 				case App.HANDLER_NEW_KOT:
 					kots = App.instance.getRefreshKots();
-					adapter.setKots(kots);
-					adapter.setAddFirstItem(true);
-					adapter.notifyDataSetChanged();
-					tv_order_qyt.setText(kots.size()+"");
+					if(App.instance.getSystemSettings().isKdsLan()){
+						madapter.setKots(getKotItem());
+						madapter.setAddFirstItem(true);
+						madapter.notifyDataSetChanged();
+
+						tv_order_qyt.setText(kotItems.size()+"");
+					}else {
+						adapter.setKots(kots);
+						adapter.setAddFirstItem(true);
+						adapter.notifyDataSetChanged();
+
+						tv_order_qyt.setText(kots.size()+"");
+					}
+
 					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 						popItemAdapter.setKot(App.instance.getKot(kotSummary));
 						popItemAdapter.notifyDataSetChanged();
@@ -112,9 +128,16 @@ public class KitchenOrder extends BaseActivity {
 					break;
 				case App.HANDLER_UPDATE_KOT:
 					kots = App.instance.getRefreshKots();
-					adapter.setKots(kots);
-					adapter.notifyDataSetChanged();
-					tv_order_qyt.setText(kots.size()+"");
+					if(App.instance.getSystemSettings().isKdsLan()){
+						madapter.setKots(getKotItem());
+						madapter.notifyDataSetChanged();
+						tv_order_qyt.setText(kotItems.size()+"");
+					}else {
+						adapter.setKots(kots);
+						adapter.notifyDataSetChanged();
+						tv_order_qyt.setText(kots.size()+"");
+					}
+
 					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 						popItemAdapter.setKot(App.instance.getKot(kotSummary));
 						popItemAdapter.notifyDataSetChanged();
@@ -186,15 +209,29 @@ public class KitchenOrder extends BaseActivity {
 					break;
 				case ResultCode.SUCCESS:
 					loadingDialog.dismiss();
+
+
+					break;
+
+				case App.HANDLER_KOT_ITEM_CALL:
+					if(loadingDialog!=null) {
+						loadingDialog.dismiss();
+						madapter.setKots(getKotItem());
+						madapter.notifyDataSetChanged();
+						tv_order_qyt.setText(kotItems.size()+"");
+
+					}
+
 					break;
 				case App.HANDLER_KOT_CALL_NUM:
 					int i = msg.arg1;
+					int id=msg.arg2;
 					String str = i + "";
 					if (!TextUtils.isEmpty(str)) {
 						loadingDialog.show();
 						Map<String, Object> parameters = new HashMap<String, Object>();
 						parameters.put("callnumber", str);
-						SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler);
+						SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler,id);
 					}else {
 						UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
 					}
@@ -222,11 +259,49 @@ public class KitchenOrder extends BaseActivity {
 							parameters.put("kotItemDetails", itemDetails);
 							parameters.put("type", 1);
 							SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-									App.instance.getCurrentConnectedMainPos(), parameters, handler);
+									App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
 							loadingDialog.show();
 						}
 					});
 					break;
+
+
+
+				case App.HANDLER_KOT_COMPLETE:
+					Bundle bundle1 = msg.getData();
+					final KotSummary kotSummary1 = (KotSummary) bundle1.getSerializable("kotSummary");
+					final KotItemDetail  iKotItemDetail = (KotItemDetail) bundle1.getSerializable("kotItemDetail");
+
+					final int kotItemId=bundle1.getInt("id");
+					String title1 = getResources().getString(R.string.warning);
+					String content1 = "Confirm  completed?";
+					String left1 = getResources().getString(R.string.no);
+					String right1 = getResources().getString(R.string.yes);
+					DialogFactory.commonTwoBtnDialog(KitchenOrder.this, title1, content1, left1, right1, null, new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+							for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary1).getKotItemDetails()) {
+
+								if(kotItemDetail.getId()==iKotItemDetail.getId()) {
+									kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+1);
+									kotItemDetail.setUnFinishQty(kotItemDetail.getUnFinishQty()-1);
+									if(kotItemDetail.getUnFinishQty()==0) {
+										kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+									}
+								}
+								KotItemDetailSQL.update(kotItemDetail);
+								itemDetails.add(kotItemDetail);
+							}
+							Map<String, Object> parameters = new HashMap<String, Object>();
+							parameters.put("kotSummary", kotSummary1);
+							parameters.put("kotItemDetails", itemDetails);
+							parameters.put("type", 1);
+							SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+									App.instance.getCurrentConnectedMainPos(), parameters, handler,kotItemId);
+							loadingDialog.show();
+						}
+					});
 				default:
 					break;
 			}
@@ -289,19 +364,69 @@ public class KitchenOrder extends BaseActivity {
 //		public void onReceive(Context arg0, Intent arg1) {
 //			adapter.notifyDataSetChanged();
 //		}
-//	};
+//	}
+
+
+
 
 	@Override
 	protected void onResume() {
 		doubleBackToExitPressedOnce = false;
-		adapter.setKots(App.instance.getRefreshKots());
-		adapter.notifyDataSetChanged();
-		tv_order_qyt.setText(kots.size()+"");
+
+		initKOTList();
+//		if(App.instance.getSystemSettings().isKdsLan()){
+//			kots=App.instance.getRefreshKots();
+//			kots.clear();
+//			kotItems=	getKotItem();
+//			madapter.setKots(kotItems);
+//			madapter.notifyDataSetChanged();
+//		}else {
+//
+//		}
+
 		if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 			popItemAdapter.setKot(App.instance.getKot(kotSummary));
 			popItemAdapter.notifyDataSetChanged();
 		}
 		super.onStart();
+	}
+
+	private List<KotItem> getKotItem() {
+           kotItems.clear();
+           kotItems= KotSummarySQL.getAllKotItem();
+//		for (int i = 0; i <kotlist.size() ; i++) {
+//			KotItem item=new KotItem();
+//			item.setOrderNo(kotlist.get(i).getKotSummary().getOrderNo());
+//			item.setTableName(kotlist.get(i).getKotSummary().getTableName());
+//
+//			List<KotItemDetail> detailList=kotlist.get(i).getKotItemDetails();
+//			for (int j = 0; j <detailList.size() ; j++) {
+//
+//				int  unFinishQty=detailList.get(j).getUnFinishQty();
+//				for (int k = 0; k <unFinishQty ; k++) {
+//					StringBuffer sBuffer = new StringBuffer();
+//					item.setKotStatus(detailList.get(j).getKotStatus());
+//					item.setItemDetailName(detailList.get(j).getItemName());
+//					List<KotItemModifier> itemModifierlist=kotlist.get(i).getKotItemModifiers();
+//					for (int s = 0; s < itemModifierlist.size(); s++) {
+//						KotItemModifier kotItemModifier = itemModifierlist.get(j) ;
+//						if (kotItemModifier != null
+//								&& detailList.get(j).getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+//							sBuffer.append("" + kotItemModifier.getModifierName() + ",");
+//
+//
+//
+//
+//						}
+//					}
+//					item.setItemModName(sBuffer.toString());
+//					kotItems.add(item);
+//				}
+//			}
+//
+//		}
+  return  kotItems;
+
 	}
 
 	private void initTopBarView() {
@@ -315,12 +440,34 @@ public class KitchenOrder extends BaseActivity {
 	}
 
 	private void initKOTList() {
+
+		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+		if(App.instance.getSystemSettings().isKdsLan()){
+			linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		}else {
+			linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+		}
+
+		ll_orders.setLayoutManager(linearLayoutManager);
 		// Assign adapter to the HorizontalListView
-		adapter = new KOTArrayAdapter(context, handler);
-		kots = App.instance.getInitKots();
-		adapter.setKots(kots);
-		ll_orders.setAdapter(adapter);
-		tv_order_qyt.setText(kots.size()+"");
+		if(App.instance.getSystemSettings().isKdsLan()){
+
+			madapter = new KOTArrayLanAdapter(context, handler);
+		//	Kot k=new Kot();
+			//kots.add(k);
+			kots = App.instance.getInitKots();
+			madapter.setKots(getKotItem());
+			ll_orders.setAdapter(madapter);
+			tv_order_qyt.setText(kotItems.size()+"");
+		}else {
+
+			adapter = new KOTArrayAdapter(context, handler);
+			kots = App.instance.getInitKots();
+			adapter.setKots(kots);
+			ll_orders.setAdapter(adapter);
+			tv_order_qyt.setText(kots.size()+"");
+		}
+
 	}
 
 
@@ -331,8 +478,16 @@ public class KitchenOrder extends BaseActivity {
 			case R.id.iv_complete:
 				if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
 					kots = App.instance.getRefreshKots();
-					adapter.setKots(kots);
-					adapter.notifyDataSetChanged();
+
+					if(App.instance.getSystemSettings().isKdsLan()){
+						madapter.setKots(getKotItem());
+
+						madapter.notifyDataSetChanged();
+					}else {
+						adapter.setKots(kots);
+						adapter.notifyDataSetChanged();
+					}
+
 					itemPopupWindow.dismiss();
 //				refresh();
 				}
@@ -364,7 +519,7 @@ public class KitchenOrder extends BaseActivity {
 						parameters.put("kotItemDetails", itemDetails);
 						parameters.put("type", 1);
 						SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-								App.instance.getCurrentConnectedMainPos(), parameters, handler);
+								App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
 						loadingDialog.show();
 					}
 				});
@@ -474,7 +629,7 @@ public class KitchenOrder extends BaseActivity {
 							parameters.put("kotSummary", popKot.getKotSummary());
 							parameters.put("kotItemDetails", itemDetails);
 							SyncCentre.getInstance().kotComplete(context,
-									App.instance.getCurrentConnectedMainPos(), parameters, handler);
+									App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
 						}
 
 						break;

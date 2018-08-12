@@ -187,8 +187,8 @@ public class HttpAPI {
 	
 	/*Complete items in KOT*/
 	public static void KotComplete(final Context context,
-			final Map<String, Object> parameters, String url,
-			AsyncHttpClient httpClient, final Handler handler) {
+								   final Map<String, Object> parameters, String url,
+								   AsyncHttpClient httpClient, final Handler handler, final int id) {
 		if (parameters != null) {
 			parameters.put("userKey", CoreData.getInstance().getUserKey());
 			parameters.put("appVersion", App.instance.VERSION);
@@ -205,7 +205,14 @@ public class HttpAPI {
 							if (resultCode == ResultCode.SUCCESS) {
 								List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
 								HttpAnalysis.getKotItemDetail(statusCode,headers,responseBody, handler);
-								handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT,kotItemDetails));
+
+
+								if(id>=0){
+									KotSummarySQL.updateKotStatusById(id);
+									handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL,kotItemDetails));
+								}else {
+									handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT,kotItemDetails));
+								}
 							}else if (resultCode == ResultCode.USER_NO_PERMIT) {
 								handler.sendMessage(handler.obtainMessage(App.HANDLER_RECONNECT_POS));
 							}else if (resultCode == ResultCode.KOT_COMPLETE_USER_FAILED) {
@@ -309,8 +316,8 @@ public class HttpAPI {
 	}
 
 	public static void callSpecifyNum(Context context,
-			final Map<String, Object> parameters, String url,
-			AsyncHttpClient httpClient, final Handler handler){
+									  final Map<String, Object> parameters, String url,
+									  AsyncHttpClient httpClient, final Handler handler, final int id){
 		if (parameters != null) {
 			parameters.put("userKey", CoreData.getInstance().getUserKey());
 			parameters.put("appVersion", App.instance.VERSION);
@@ -325,7 +332,12 @@ public class HttpAPI {
 								byte[] responseBody) {
 							super.onSuccess(statusCode, headers, responseBody);
 								if (resultCode == ResultCode.SUCCESS){
+									if(id>=0){
+										KotSummarySQL.updateKotCallById(id);
+										handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL, null));
+									}
 									handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+
 								}else {
 									elseResultCodeAction(resultCode, statusCode, headers, responseBody);
 								}

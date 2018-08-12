@@ -192,7 +192,7 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener{
 						parameters.put("kotSummary", kotSummary);
 						parameters.put("kotItemDetails", itemDetails);
 						SyncCentre.getInstance().kotComplete(parent, 
-								App.instance.getCurrentConnectedMainPos(),parameters, handler);
+								App.instance.getCurrentConnectedMainPos(),parameters, handler,-1);
 					}else {
 						kotItemDetail.setUnFinishQty(Integer.parseInt(str)-Integer.parseInt(itemnum));
 //						kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+Integer.parseInt(itemnum));
@@ -206,7 +206,7 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener{
 						parameters.put("kotSummary", kotSummary);
 						parameters.put("kotItemDetails", itemDetails);
 						SyncCentre.getInstance().kotComplete(parent, 
-								App.instance.getCurrentConnectedMainPos(),parameters, handler);
+								App.instance.getCurrentConnectedMainPos(),parameters, handler,-1);
 					}
 				}
 

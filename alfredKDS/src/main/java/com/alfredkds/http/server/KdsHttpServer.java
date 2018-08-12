@@ -10,11 +10,14 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.http.APIName;
 import com.alfredbase.http.AlfredHttpServer;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotItem;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.store.TableNames;
+import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -143,7 +146,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 		int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
 		try {
 			JSONObject jsonObject = new JSONObject(params);
-			Gson gson = new Gson();
+			final Gson gson = new Gson();
 			String method = jsonObject.optString("method");
 			final List<Integer> orderDetailIds = new ArrayList<Integer>();
 			if (TextUtils.isEmpty(method)) {
@@ -170,6 +173,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
+
 						KotSummarySQL.update(kotSummary);
 						if (kotItemDetails != null ) {
 							KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -177,6 +181,49 @@ public class KdsHttpServer extends AlfredHttpServer {
 						if (kotItemModifiers != null) {
 							KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
 						}
+
+
+
+						KotItem item=new KotItem();
+
+						item.setOrderNo(kotSummary.getOrderNo());
+						item.setTableName(kotSummary.getTableName());
+						item.setSummaryId(kotSummary.getId());
+						item.setCallType(0);
+						item.setCreateTime(kotSummary.getCreateTime());
+						item.setUpdateTime(kotSummary.getUpdateTime());
+						item.setKotStatus(0);
+
+						if (kotItemDetails != null ) {
+							for (int i = 0; i <kotItemDetails.size() ; i++) {
+								item.setItemDetailName(kotItemDetails.get(i).getItemName());
+								int  unFinishQty=kotItemDetails.get(i).getUnFinishQty();
+
+								for (int j = 0; j <unFinishQty ; j++) {
+									StringBuffer sBuffer = new StringBuffer();
+									KotItemDetail kotItemDetail=kotItemDetails.get(i);
+									kotItemDetail.setUnFinishQty(1);
+									item.setId(CommonSQL.getNextSeq(TableNames.KotItem));
+									item.setItemDetail(	gson.toJson(kotItemDetail));
+
+
+									for (int s = 0; s < kotItemModifiers.size(); s++) {
+										KotItemModifier kotItemModifier = kotItemModifiers.get(s) ;
+										if (kotItemModifier != null
+												&& kotItemDetails.get(i).getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+											sBuffer.append("" + kotItemModifier.getModifierName() + ",");
+
+										}
+									}
+									item.setItemModName(sBuffer.toString());
+									KotSummarySQL.addKotItem(item);
+
+								}
+							}
+						}
+
+
+
 						App.getTopActivity().httpRequestAction(App.HANDLER_NEW_KOT, null);
 					}
 				}).start();
@@ -216,6 +263,48 @@ public class KdsHttpServer extends AlfredHttpServer {
 								orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
 							}
 						}
+
+						KotItem item=new KotItem();
+
+						item.setOrderNo(kotSummary.getOrderNo());
+						item.setTableName(kotSummary.getTableName());
+						item.setSummaryId(kotSummary.getId());
+						item.setCallType(0);
+						item.setCreateTime(kotSummary.getCreateTime());
+						item.setUpdateTime(kotSummary.getUpdateTime());
+						item.setKotStatus(0);
+
+						if (kotItemDetails != null ) {
+							for (int i = 0; i <kotItemDetails.size() ; i++) {
+								item.setItemDetailName(kotItemDetails.get(i).getItemName());
+								int  unFinishQty=kotItemDetails.get(i).getUnFinishQty();
+
+								for (int j = 0; j <unFinishQty ; j++) {
+									StringBuffer sBuffer = new StringBuffer();
+									KotItemDetail kotItemDetail=kotItemDetails.get(i);
+									kotItemDetail.setUnFinishQty(1);
+									item.setId(CommonSQL.getNextSeq(TableNames.KotItem));
+									item.setItemDetail(	gson.toJson(kotItemDetail));
+
+
+									for (int s = 0; s < kotItemModifiers.size(); s++) {
+										KotItemModifier kotItemModifier = kotItemModifiers.get(s) ;
+										if (kotItemModifier != null
+												&& kotItemDetails.get(i).getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+											sBuffer.append("" + kotItemModifier.getModifierName() + ",");
+
+										}
+									}
+									item.setItemModName(sBuffer.toString());
+									KotSummarySQL.addKotItem(item);
+
+								}
+							}
+						}
+
+
+
+
 						App.getTopActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {

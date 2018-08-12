@@ -45,7 +45,33 @@
         android:textSize="@dimen/text_size_small"
         android:textColor="@color/black"/>
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_marginTop="10dp"
+    >
 
+    <TextView
+        android:id="@+id/tv_kot_lan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:padding="10dp"
+        android:text="Somehow the screen"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_m" />
+
+    <com.alfredkds.view.MyToggleButton
+        android:id="@+id/mt_kot_lan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp" />
+
+</LinearLayout>
 
     <TextView 
         android:id="@+id/tv_switch_account"

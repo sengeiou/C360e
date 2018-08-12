@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+
+    
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/white"
+      android:orientation="horizontal"
+
+>
+
+
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+
+        <!--android:background="@android:color/black"-->
+        <!--android:text="111"-->
+        <!--android:textSize="20sp" />-->
+
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+
+        <!--android:background="@android:color/holo_green_light"-->
+        <!--android:text="222"-->
+        <!--android:textSize="20sp" />-->
+    >
+      <RelativeLayout
+          android:id="@+id/ll_lan_progress"
+          android:layout_width="120dp"
+          android:layout_height="60dp"
+          android:background="@color/color_kotview"
+          android:gravity="center" >
+
+          <ImageView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_centerVertical="true"
+              android:layout_toLeftOf="@+id/tv_progress"
+              android:src="@drawable/icon_clock"
+              android:layout_marginRight="8dp"/>
+
+          <Chronometer
+              android:id="@+id/tv_lan_progress"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_size_s"
+              android:layout_centerInParent="true"/>
+
+          <TextView
+              android:id="@+id/tv_complete"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:text="Complete"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_size_s"
+              android:layout_centerInParent="true"
+              android:visibility="gone" />
+      </RelativeLayout>
+
+      <View
+          android:layout_width="1dp"
+
+          android:layout_height="match_parent"
+
+          android:background="@color/black"
+          >
+      </View>
+
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1.5"
+
+    android:orientation="vertical"
+     android:gravity="center_horizontal"
+    >
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:id="@+id/tv_kot_detail"
+      android:textColor="@color/black"
+      android:layout_marginTop="5dp"
+      />
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:textColor="@color/black"
+    android:text="12sp"
+    android:textSize="12sp"
+    android:id="@+id/tv_kot_mod"
+    />
+
+</LinearLayout>
+      <View
+          android:layout_width="1dp"
+          android:layout_height="match_parent"
+
+          android:background="@color/black"
+          >
+      </View>
+          <TextView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:id="@+id/tv_kot_item_status"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:layout_weight="1"
+              android:textColor="@color/black"
+              android:text="正在做"
+              />
+
+      <View
+          android:layout_width="1dp"
+          android:layout_height="match_parent"
+          android:background="@color/black"
+          >
+      </View>
+
+          <TextView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:id="@+id/tv_kot_item_table"
+              android:layout_gravity="center"
+              android:gravity="center"
+            android:layout_weight="1"
+              android:textColor="@color/black"
+              android:text="桌号"
+              />
+
+      <View
+          android:layout_width="1dp"
+          android:layout_height="match_parent"
+          android:background="@color/black"
+          >
+      </View>
+
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="1.5"
+          >
+          <TextView
+              android:layout_width="90dp"
+              android:layout_height="wrap_content"
+              android:id="@+id/tv_kot_item_orderno"
+              android:layout_gravity="center_vertical"
+              android:gravity="center"
+              android:text="111"
+              android:textColor="@color/black"
+              android:layout_margin="5dp"
+
+
+
+              />
+
+          <Button
+               android:id="@+id/btn_kot_complete"
+               android:layout_width="80dp"
+              android:layout_height="50dp"
+              android:layout_gravity="center_vertical"
+              android:background="@color/color_kotview"
+              android:text="complete"
+              />
+<Button
+    android:id="@+id/btn_kot_call"
+    android:layout_width="80dp"
+    android:layout_height="50dp"
+    android:layout_marginLeft="10dp"
+    android:layout_gravity="center_vertical"
+    android:text="call"
+    android:background="@color/color_kotview"
+    />
+      </LinearLayout>
+
+
+  </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        ></View>
+</LinearLayout>

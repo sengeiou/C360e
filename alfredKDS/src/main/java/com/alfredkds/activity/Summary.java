@@ -394,7 +394,7 @@ public class Summary extends BaseActivity {
 						parameters.put("kotSummary", kotSummary);
 						parameters.put("kotItemDetails", itemDetails);
 						SyncCentre.getInstance().kotComplete(context, 
-								App.instance.getCurrentConnectedMainPos(), parameters, handler);
+								App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
 						
 //						kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(kotItemDetail.getItemName()));
 //						kotdetailsAdapter.notifyDataSetChanged();
@@ -476,7 +476,7 @@ public class Summary extends BaseActivity {
 						parameters.put("kotSummary", kot.getKotSummary());
 						parameters.put("kotItemDetails", itemDetails);
 						SyncCentre.getInstance().kotComplete(context, 
-								App.instance.getCurrentConnectedMainPos(),parameters, handler);
+								App.instance.getCurrentConnectedMainPos(),parameters, handler,-1);
 					}
 					break;
 				default:
