@@ -54,6 +54,8 @@ public class WelcomeActivity extends FragmentActivity implements View.OnClickLis
 
         }
         App.instance.setMainPageType(viewId);
-        UIHelp.startSelectRevenue(this);
+     //   UIHelp.startSelectRevenue(this);
+
+        UIHelp.startMainActivity(WelcomeActivity.this, App.instance.getMainPageType());
     }
 }

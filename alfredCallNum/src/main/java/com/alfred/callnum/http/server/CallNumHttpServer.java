@@ -1,5 +1,7 @@
 package com.alfred.callnum.http.server;
 
+import com.alfred.callnum.adapter.CallBean;
+import com.alfred.callnum.global.App;
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.http.APIName;
@@ -29,7 +31,7 @@ public class CallNumHttpServer extends AlfredHttpServer {
 				/*
 					叫号内容{"type" : 1, "callnumber":"A1235"}
 				 */
-
+				App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_CALL, null);
 				/**
 				 * 返回成功
 				 */

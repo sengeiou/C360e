@@ -58,7 +58,8 @@ public class SyncCentre {
 		try {
 			httpClient.post(context, url,
 					new StringEntity(new Gson().toJson(parameters) + EOF,
-							"UTF-8"), CONTENT_TYPE,
+							"UTF-8"),
+					CONTENT_TYPE,
 					new AsyncHttpResponseHandlerEx(){
 						@Override
 						public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {

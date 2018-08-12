@@ -22,14 +22,14 @@ public class MycallAdapter extends RvAdapter<CallBean> {
         this.callList=list;
     }
 
-    public void addData(int position) {
-        CallBean callBean=new CallBean();
-        callBean.setId(0);
-        callBean.setName("Insert One");
-        callList.add(position, callBean);
-        //notifyItemInserted(position);
-        notifyItemRangeChanged(position,callList.size()-position);
-    }
+//    public void addData(int position) {
+//        CallBean callBean=new CallBean();
+//        callBean.setId(0);
+//        callBean.setName("Insert One");
+//        callList.add(position, callBean);
+//        //  notifyItemInserted(position);
+//        notifyItemRangeChanged(position,callList.size()-position);
+//    }
     @Override
     protected int getLayoutId(int viewType) {
         return viewType == 0 ? R.layout.item_mycall : R.layout.item_mycall_small;

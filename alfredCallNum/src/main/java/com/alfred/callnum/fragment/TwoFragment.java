@@ -35,6 +35,7 @@ import com.alfred.callnum.utils.VideoResManager;
 import com.alfred.callnum.widget.PictureSwitch;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -94,6 +95,8 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
     private int counter = 0;
     private LinearLayout li_select;
     RelativeLayout re_video_pic;
+
+    Handler handler;
 
     public static TwoFragment newInstance(String param1, String param2) {
         TwoFragment fragment = new TwoFragment();
@@ -176,6 +179,19 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 //                Intent intent=new Intent();
 //                intent.setClass(getActivity(), MainActivity.class);
 //                 startActivity(intent);
+
+                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+
+
+//                LogFile.i(String.format("OnPrepared,duration=%d",
+//                        mp.getDuration()));
+                        mp.setVolume(0f, 0f);
+                        adjustVideoView();
+                    }
+                });
             }
         });
 
@@ -190,25 +206,61 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
     }
 
     private void initData() {
+//
+//        for (int i = 0; i < 20; i++) {
+//
+//            CallBean call = new CallBean();
+//            call.setId(i);
+//            call.setName("name " + i);
+//            mDatas.add(call);
+//        }
 
-        for (int i = 0; i < 20; i++) {
-
-            CallBean call = new CallBean();
-            call.setId(i);
-            call.setName("name " + i);
-            mDatas.add(call);
-        }
-
-        Collections.reverse(mDatas);
-        mAdapter.notifyDataSetChanged();
+//        Collections.reverse(mDatas);
+//        mAdapter.notifyDataSetChanged();
     }
 
-    public void setViewId(int vid) {
+    public void setViewId(int vid ,Handler mhandler) {
         this.vid = vid;
 
 
     }
 
+    public void addData(int position) {
+        CallBean callBean = new CallBean();
+        callBean.setId(0);
+        callBean.setName("Insert One");
+        mDatas.add(position, callBean);
+        mAdapter.notifyItemInserted(position);
+        //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+
+        re_left.scrollToPosition(position);
+        re_right.scrollToPosition(position);
+
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+
+                mp.setVolume(0f, 0f);
+
+
+            }
+        });
+
+    }
+
+
+    private void setVolume(float volume,Object object) {
+        try {
+            Class<?> forName = Class.forName("android.widget.VideoView");
+            Field field = forName.getDeclaredField("mMediaPlayer");
+            field.setAccessible(true);
+            MediaPlayer mMediaPlayer = (MediaPlayer) field.get(object);
+            mMediaPlayer.setVolume(volume, volume);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -597,6 +649,8 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 
 //                LogFile.i(String.format("OnPrepared,duration=%d",
 //                        mp.getDuration()));
+                mp.setVolume(0.1f, 0.1f);
+
                 adjustVideoView();
             }
         });
