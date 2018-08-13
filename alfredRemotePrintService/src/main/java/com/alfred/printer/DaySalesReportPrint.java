@@ -9,6 +9,7 @@ import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
+import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.utils.BH;
 
 import java.io.UnsupportedEncodingException;
@@ -263,14 +264,17 @@ public class DaySalesReportPrint extends ReportBasePrint{
 		this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
 				  reportDaySales.getDiscount(), PrintData.LANG_EN, 1);
 
-		this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.sub( BH.getBD(reportDaySales.getTotalSales()), BH.getBD(reportDaySales.getTotalTax()), true).toString(), 1);
-
+		double nSales= Double.parseDouble(reportDaySales.getItemSales())+Double.parseDouble(reportDaySales.getTopUps())-Double.parseDouble(reportDaySales.getFocItem())-Double.parseDouble( reportDaySales.getFocBill())-Double.parseDouble( reportDaySales.getItemVoid())-Double.parseDouble( reportDaySales.getBillVoid())-Double.parseDouble( reportDaySales.getBillRefund())-Double.parseDouble(reportDaySales.getDiscount())-Double.parseDouble(reportDaySales.getDiscountPer());
+		//this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.sub( BH.getBD(reportDaySales.getTotalSales()), BH.getBD(reportDaySales.getTotalTax()), true).toString(), 1);
+		this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ",  BH.getBD(nSales).toString(), 1);
+//reportDay
 
 		this.addItem(PrintService.instance.getResources().getString(R.string.next_saels), " ", BH.sub( BH.getBD(reportDaySales.getTotalSales()), BH.getBD(reportDaySales.getTotalTax()), true).toString(), 1);
 		if(App.countryCode != ParamConst.CHINA){
 			this.addItem(PrintService.instance.getResources().getString(R.string.total_tax), " ", BH.getBD(reportDaySales.getTotalTax()).toString(), 1);
 			this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), " ", BH.getBD(reportDaySales.getInclusiveTaxAmt()).toString(), 1);
 		}
+
 		BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if(reportDayPayments != null && reportDayPayments.size() >0){
 			for(ReportDayPayment reportDayPayment : reportDayPayments){
@@ -281,7 +285,10 @@ public class DaySalesReportPrint extends ReportBasePrint{
 			}
 		}
 		this.addItem(PrintService.instance.getResources().getString(R.string.rounding), " ", reportDaySales.getTotalBalancePrice(), 1);
-		this.addItem(PrintService.instance.getResources().getString(R.string.gross_total), " ", BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true).toString(), 1);
+		double  grossTotal=Double.parseDouble(reportDaySales.getItemSales())+Double.parseDouble(reportDaySales.getTotalTax())+Double.parseDouble(reportDaySales.getTotalBalancePrice())+overPaymentAmount.doubleValue();
+	//	this.addItem(PrintService.instance.getResources().getString(R.string.gross_total), " ", BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true).toString(), 1);
+
+        this.addItem(PrintService.instance.getResources().getString(R.string.gross_total), " ", BH.getBD(grossTotal).toString(), 1);
 		this.addSectionHeader(PrintService.instance.getResources().getString(R.string.media));
 		if(BH.getBD(reportDaySales.getCash()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
 			this.addItem(PrintService.instance.getResources().getString(R.string.cash), reportDaySales.getCashQty().toString(),

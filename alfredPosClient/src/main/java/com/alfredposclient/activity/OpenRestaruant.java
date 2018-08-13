@@ -37,6 +37,7 @@ import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
+import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
@@ -1052,8 +1053,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		//bob add to filter ENT and VOID item in PLU items
 //		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
 //			.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
-		//
-		
+			LoginResult loginResult = CoreData.getInstance().getLoginResult();
+
+				List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory.getInstance().loadReportSvgDayTax(businessDate,1);
+//
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers =  (ArrayList<ReportPluDayModifier>) xReport.get("reportPluDayModifiers");
 		ArrayList<ReportHourly> reportHourlys = (ArrayList<ReportHourly>) xReport.get("reportHourlys");
 		ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
@@ -1128,9 +1131,12 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
 			return;
 		}
-		String bizDate = TimeUtil.getPrintingDate(businessDate);		
-		List<ReportDayTax> reportDayTaxs = ReportObjectFactory
+		String bizDate = TimeUtil.getPrintingDate(businessDate);
+		List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory
 				.getInstance().loadReportDayTax(businessDate);
+		LoginResult loginResult = CoreData.getInstance().getLoginResult();
+		List<ReportDayTax> reportDayTaxs = ReportObjectFactory
+				.getInstance().loadReportSvgDayTax(businessDate,Integer.valueOf(loginResult.getRestaurantKey()).intValue());
 		List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
 		ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory
 				.getInstance().loadReportPluDayItem(businessDate);

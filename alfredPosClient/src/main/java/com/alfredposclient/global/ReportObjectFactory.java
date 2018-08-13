@@ -585,6 +585,11 @@ public class ReportObjectFactory {
 		List<ReportDayTax> reportDayTaxList = ReportDayTaxSQL.getReportDayTaxsForZReport(businessDate);
 		return reportDayTaxList;
 	}
+
+	public List<ReportDayTax> loadReportSvgDayTax(long businessDate,int rid){
+		List<ReportDayTax> reportDayTaxList = ReportDayTaxSQL.getReportDayTaxsSvg(businessDate,rid);
+		return reportDayTaxList;
+	}
 	public List<ReportDayPayment> loadReportDayPayment(long businessDate){
 		List<ReportDayPayment> ReportDayPaymentList = ReportDayPaymentSQL.getReportDayPaymentsForZReport(businessDate);
 		return ReportDayPaymentList;
