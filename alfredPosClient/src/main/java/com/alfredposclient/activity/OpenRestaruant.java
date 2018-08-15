@@ -1053,9 +1053,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		//bob add to filter ENT and VOID item in PLU items
 //		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
 //			.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
-			LoginResult loginResult = CoreData.getInstance().getLoginResult();
 
-				List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory.getInstance().loadReportSvgDayTax(businessDate,1);
+
+			//	List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory.getInstance().loadReportSvgDayTax(businessDate,1);
 //
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers =  (ArrayList<ReportPluDayModifier>) xReport.get("reportPluDayModifiers");
 		ArrayList<ReportHourly> reportHourlys = (ArrayList<ReportHourly>) xReport.get("reportHourlys");
