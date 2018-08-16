@@ -134,6 +134,11 @@ public class Store {
 	public static final String OPEN_BALANCE = "OPEN_BALANCE";
 
 
+	//subPos
+	public static final String SUB_POS_STATUS = "SUB_POS_STATUS";
+	public static final String SUB_POS_INFO = "SUB_POS_INFO";
+
+
 	private Store() {
 	};
 	

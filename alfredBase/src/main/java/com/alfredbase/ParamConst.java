@@ -60,6 +60,7 @@ public class ParamConst {
 	public static final int ORDER_ORIGIN_WAITER = 2;
 	public static final int ORDER_ORIGIN_TABLE = 3;
 	public static final int ORDER_ORIGIN_APP = 4;
+	public static final int ORDER_ORIGIN_SUB_POS = 0;
 
 	// 配料订单状态(-1删除，0正常)
 	public static final int ORDER_MODIFIER_STATUS_DELETE = -1;
@@ -454,5 +455,8 @@ public class ParamConst {
 
 	public static final int POS_TYPE_SUB = 1;
 
+	public static final int SUB_POS_STATUS_OPEN = 1;
+
+	public static final int SUB_POS_STATUS_CLOSE = 0;
 
 }

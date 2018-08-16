@@ -109,6 +109,47 @@ public class ObjectFactory {
 		return getOrder(orderOriginId, tables, revenueCenter, user, sessionStatus, businessDate, orderNOTitle, orderStatus, inclusiveTax, 0);
 	}
 
+	public Order getSubPosOrder(Integer orderOriginId, TableInfo tables,
+						  RevenueCenter revenueCenter, User user,
+						  SessionStatus sessionStatus, long businessDate, int orderNOTitle,
+						  int orderStatus, Tax inclusiveTax){
+
+		Order order = null;
+		synchronized (lock_order) {
+			order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate);
+			if (order == null) {
+
+				order = new Order();
+				order.setId(CommonSQL.getNextSeq(TableNames.Order));
+				order.setOrderOriginId(orderOriginId);
+				order.setUserId(user.getId());
+				order.setPersons(tables.getPacks());
+				order.setOrderStatus(orderStatus);
+				order.setDiscountRate(ParamConst.DOUBLE_ZERO);
+				order.setSessionStatus(sessionStatus.getSession_status());
+				order.setRestId(CoreData.getInstance().getRestaurant().getId());
+				order.setRevenueId(revenueCenter.getId());
+				order.setPlaceId(tables.getPlacesId());
+				order.setTableId(tables.getPosId());
+				long time = System.currentTimeMillis();
+				order.setCreateTime(time);
+				order.setUpdateTime(time);
+				order.setBusinessDate(businessDate);
+//					order.setOrderNo(order.getId());
+				order.setOrderNo(OrderHelper.calculateOrderNo(businessDate));//流水号
+				order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_NULL);
+				order.setAppOrderId(0);
+				order.setIsSubPos(1);
+				if(inclusiveTax != null){
+					order.setInclusiveTaxName(inclusiveTax.getTaxName());
+					order.setInclusiveTaxPercentage(inclusiveTax.getTaxPercentage());
+				}
+				OrderSQL.addOrder(order);
+			}
+		}
+		return order;
+	}
+
 	public Order getOrder(Integer orderOriginId, TableInfo tables,
 			RevenueCenter revenueCenter, User user,
 			SessionStatus sessionStatus, long businessDate, int orderNOTitle,

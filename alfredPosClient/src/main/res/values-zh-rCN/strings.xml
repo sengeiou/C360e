@@ -196,9 +196,9 @@
     <string name="employee_no_exist">当前员工不存在，请联系餐厅管理员</string>
     <string name="table_dining">当前桌子已经被占用</string>
     <!-- syncdate -->
-    <string name="binding_to_already">改收银中心已经绑定了其他收银设备. 如果需要使用该设备，请先到云后台收银中心管理解除已经绑定的设备再试.</string>
+    <string name="binding_to_already">该收银中心已经绑定了其他收银设备. 如果需要使用该设备，请先到云后台收银中心管理解除已经绑定的设备再试.</string>
     <string name="be_bound_already">该设备已经应用在其他收银中心。如果需要使用该设备，请先到云后台收银中心管理中解除改设备.</string>
-    <string name="sync_date_warning_tips">改收银中心的数据没有完全初始化:</string>
+    <string name="sync_date_warning_tips">该收银中心的数据没有完全初始化:</string>
     <string name="users">用户</string>
     <string name="tables">桌台</string>
     <string name="printers">打印机</string>
@@ -275,7 +275,7 @@
     <string name="internal_error">内部错误</string>
     <string name="device_invalid">无效设备</string>
     <string name="login_failed">登录失败</string>
-    
+    <string name="sync_data_failed">同步数据失败</string>
     <!-- CloseOrderWindow -->
     <string name="ref_id_not_empty">参考号不能为空</string>
     <string name="card_no_not_empty">卡号不能为空</string>

@@ -14,8 +14,11 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.http.AlfredHttpServer;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.HappyHour;
+import com.alfredbase.javabean.HappyHourWeek;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
@@ -28,13 +31,20 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.Restaurant;
+import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.SettlementRestaurant;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.javabean.Tax;
+import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.KotNotification;
 import com.alfredbase.javabean.model.MainPosInfo;
@@ -46,16 +56,21 @@ import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.HappyHourSQL;
+import com.alfredbase.store.sql.HappyHourWeekSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
+import com.alfredbase.store.sql.ItemHappyHourSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
@@ -63,9 +78,16 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.RestaurantConfigSQL;
+import com.alfredbase.store.sql.RestaurantSQL;
+import com.alfredbase.store.sql.SettlementRestaurantSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.TaxCategorySQL;
+import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
@@ -663,10 +685,27 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				String value = MobclickAgent.getConfigParams(App.getTopActivity(), "updateVersion");
 				result.put("versionUpdate", value);
 				return this.getJsonResponse(new Gson().toJson(result));
-			}else if(apiName.equals(APIName.SUBPOS_CHOOSEREVENUE)) {
+			}
+			if(App.instance.getSessionStatus() == null){
+				result.put("resultCode", ResultCode.SESSION_IS_CLOSED);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}
+
+			if(apiName.equals(APIName.SUBPOS_CHOOSEREVENUE)) {
 				return subChooseRevenue();
 			} else if(apiName.equals(APIName.SUBPOS_LOGIN)){
 				return subPosLogin(body);
+			} else if(apiName.equals(APIName.SUBPOS_UPDATE_DATA)){
+				return updateAllData();
+			}
+			int userId = jsonObject.optInt("userId");
+			User user = CoreData.getInstance().getUserById(userId);
+			if(user == null){
+				result.put("resultCode", ResultCode.USER_NO_PERMIT);
+				return this.getJsonResponse(new Gson().toJson(result));
+			}
+			if(apiName.equals(APIName.SUBPOS_ADDORDER)){
+				return getSubPosOrder(body, user);
 			}
 
 			return getForbiddenResponse("Not Support yet");
@@ -687,7 +726,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			JSONObject jsonObject = new JSONObject(params);
 			String employee_ID = jsonObject.optString("employee_ID");
 			String password = jsonObject.optString("password");
-			String subPosName = jsonObject.optString("subPosName");
+			String deviceId = jsonObject.optString("deviceId");
 			User user = CoreData.getInstance().getUser(employee_ID, password);
 			Map<String, Object> result = new HashMap<String, Object>();
 			if (user != null) {
@@ -695,22 +734,21 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					result.put(RESULT_CODE, ResultCode.USER_NO_PERMIT);
 					return this.getJsonResponse(new Gson().toJson(result));
 				}
-
-				SessionStatus sessionStatus = App.instance.getSessionStatus();
-				if (sessionStatus == null) {
-					result.put("resultCode", ResultCode.SESSION_IS_CLOSED);
-					resp = this.getJsonResponse(new Gson().toJson(result));
-				} else {
-					String userKey = UUID.randomUUID().toString();
-					MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
-					App.instance.addActiveUser(userKey, user);
-					Gson gson = new Gson();
-
-
+				result.put("resultCode", ResultCode.SUCCESS);
+				result.put("subPosStatus", ParamConst.SUB_POS_STATUS_OPEN);
+				result.put("user", user);
+				Map<String, User> subPosMap = Store.getObject(App.instance, Store.SUB_POS_INFO,
+						new TypeToken<Map<String, User>>() {
+						}.getType());
+				if(subPosMap == null){
+					subPosMap = new HashMap<>();
 				}
+				subPosMap.put(deviceId, user);
+				Store.saveObject(App.instance, Store.SUB_POS_INFO, subPosMap);
+				resp = this.getJsonResponse(gson.toJson(result));
 			} else {
 				result.put("resultCode", ResultCode.USER_NO_PERMIT);
-				resp = this.getJsonResponse(new Gson().toJson(result));
+				resp = this.getJsonResponse(gson.toJson(result));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -718,6 +756,83 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		}
 		return resp;
 	}
+
+
+	private Response updateAllData(){
+		Response resp = null;
+		try {
+			List<User> users = UserSQL.getAllUser();
+			Restaurant restaurant = RestaurantSQL.getRestaurant();
+			RevenueCenter revenueCenter = App.instance.getRevenueCenter();
+			List<ItemMainCategory> itemMainCategories = ItemMainCategorySQL.getAllItemMainCategory();
+			List<ItemCategory> itemCategories = ItemCategorySQL.getAllItemCategory();
+			List<ItemDetail> itemDetails = ItemDetailSQL.getAllItemDetail();
+			List<Modifier> modifiers = ModifierSQL.getAllModifier();
+			List<Printer> printers = PrinterSQL.getAllPrinter();
+			List<TableInfo> tableInfos = TableInfoSQL.getAllTables();
+			List<PlaceInfo> placeInfos = PlaceInfoSQL.getAllPlaceInfo();
+			List<ItemModifier> itemModifiers = ItemModifierSQL.getAllItemModifier();
+			List<TaxCategory> taxCategories = TaxCategorySQL.getAllTaxCategory();
+			List<Tax> taxes = TaxSQL.getAllTax();
+			List<ItemHappyHour> itemHappyHours = ItemHappyHourSQL.getAllItemHappyHour();
+			List<HappyHourWeek> happyHourWeeks = HappyHourWeekSQL.getAllHappyHourWeek();
+			List<HappyHour> happyHours = HappyHourSQL.getAllHappyHour();
+			List<RestaurantConfig> restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
+			List<PrinterGroup> printerGroups = PrinterGroupSQL.getAllPrinterGroup();
+			List<UserRestaurant> userRestaurants = UserRestaurantSQL.getAll();
+			List<LocalDevice> localDevices = LocalDeviceSQL.getAllLocalDevice();
+			List<PaymentMethod> paymentMethods = PaymentMethodSQL.getAllPaymentMethod();
+			List<SettlementRestaurant> settlementRestaurants = SettlementRestaurantSQL.getAllSettlementRestaurant();
+			Map<String, Object> map = new HashMap<>();
+			map.put("users", users);
+			map.put("restaurant", restaurant);
+			map.put("revenueCenter", revenueCenter);
+			map.put("itemMainCategories", itemMainCategories);
+			map.put("itemCategories", itemCategories);
+			map.put("itemDetails", itemDetails);
+			map.put("modifiers", modifiers);
+			map.put("printers", printers);
+			map.put("tableInfos", tableInfos);
+			map.put("placeInfos", placeInfos);
+			map.put("itemModifiers", itemModifiers);
+			map.put("taxCategories", taxCategories);
+			map.put("taxes", taxes);
+			map.put("itemHappyHours", itemHappyHours);
+			map.put("happyHourWeeks", happyHourWeeks);
+			map.put("happyHours", happyHours);
+			map.put("restaurantConfigs", restaurantConfigs);
+			map.put("printerGroups", printerGroups);
+			map.put("userRestaurants", userRestaurants);
+			map.put("localDevices", localDevices);
+			map.put("paymentMethods", paymentMethods);
+			map.put("settlementRestaurants", settlementRestaurants);
+			map.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(gson.toJson(map));
+		} catch (Exception e){
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
+		}
+		return resp;
+	}
+	private Response getSubPosOrder(String params, User user){
+		Response resp = null;
+		try {
+			Map<String, Object> map = new HashMap<>();
+			TableInfo tableInfo = TableInfoSQL.getKioskTable();
+			Order order = ObjectFactory.getInstance().getSubPosOrder(ParamConst.ORDER_ORIGIN_SUB_POS, tableInfo,
+					App.instance.getRevenueCenter(), user, App.instance.getSessionStatus(), App.instance.getBusinessDate(),
+					App.instance.getIndexOfRevenueCenter(), ParamConst.ORDER_STATUS_OPEN_IN_POS,
+					App.instance.getLocalRestaurantConfig().getIncludedTax().getTax());
+			map.put(RESULT_CODE, ResultCode.SUCCESS);
+			map.put("order", order);
+			resp = this.getJsonResponse(gson.toJson(map));
+		} catch (Exception e){
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
+		}
+		return resp;
+	}
+
 
 	@Override
 	public Response doPost(String apiName, Method mothod,

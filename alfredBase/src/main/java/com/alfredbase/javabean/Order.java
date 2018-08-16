@@ -112,6 +112,8 @@ public class Order implements Serializable {
 	private String discountCategoryId;
 	// 在已经结账的订单上面做修改的时候 用到 临时用 不存数据库
 	private String oldTotal;
+
+	private int isSubPos;
 	
 	public Order() {
 	}
@@ -425,6 +427,14 @@ public class Order implements Serializable {
 		this.oldTotal = oldTotal;
 	}
 
+	public int getIsSubPos() {
+		return isSubPos;
+	}
+
+	public void setIsSubPos(int isSubPos) {
+		this.isSubPos = isSubPos;
+	}
+
 	@Override
 	public String toString() {
 		return "Order{" +
@@ -458,7 +468,9 @@ public class Order implements Serializable {
 				", orderRemark='" + orderRemark + '\'' +
 				", discountCategoryId='" + discountCategoryId + '\'' +
 				", oldTotal='" + oldTotal + '\'' +
+				", isSubPos=" + isSubPos +
 				'}';
 	}
+
 
 }

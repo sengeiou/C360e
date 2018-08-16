@@ -2,12 +2,15 @@ package com.alfredbase.store.sql;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class LocalDeviceSQL {
 
@@ -39,47 +42,53 @@ public class LocalDeviceSQL {
 		}
 	}
 
-//	public static void addLocalDeviceList(List<LocalDevice> localDeviceList) {
-//		if (localDeviceList == null) {
-//			return;
-//		}
-//		SQLiteDatabase db = SQLExe.getDB();
-//		try {
-//			db.beginTransaction();
-//			String sql = "replace into "
-//					+ TableNames.LocalDevice
-//					+ "(deviceId, deviceName, userName, deviceType, ip, macAddress, connected,cashierPrinter,deviceMode)"
-//					+ " values (?,?,?,?,?,?,?,?,?)";
-//			SQLiteStatement sqLiteStatement = db.compileStatement(
-//					sql);
-//				for (LocalDevice localDevice : localDeviceList) {
-//					SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
-//							localDevice.getDeviceId());
-//					SQLiteStatementHelper.bindString(sqLiteStatement, 2,
-//							localDevice.getDeviceName());
-//					SQLiteStatementHelper.bindString(sqLiteStatement, 3,
-//							localDevice.getUserName());
-//					SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
-//							localDevice.getDeviceType());
-//					SQLiteStatementHelper.bindString(sqLiteStatement, 5,
-//							localDevice.getIp());
-//					SQLiteStatementHelper.bindString(sqLiteStatement, 6,
-//							localDevice.getMacAddress());
-//					SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
-//							localDevice.getConnected());
-//					SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
-//							localDevice.getCashierPrinter());
-//					SQLiteStatementHelper.bindString(sqLiteStatement, 9,
-//							localDevice.getDeviceMode());
-//					sqLiteStatement.executeInsert();
-//				}
-//				db.setTransactionSuccessful();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//			db.endTransaction();
-//		}
-//	}
+	public static void addLocalDeviceList(List<LocalDevice> localDeviceList) {
+		if (localDeviceList == null) {
+			return;
+		}
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			db.beginTransaction();
+			String sql = "replace into "
+					+ TableNames.LocalDevice
+					+ "(id, deviceId, deviceName, userName, deviceType, ip, macAddress, connected, cashierPrinter,deviceMode, printerName,isLablePrinter)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+			SQLiteStatement sqLiteStatement = db.compileStatement(
+					sql);
+				for (LocalDevice localDevice : localDeviceList) {
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
+							localDevice.getId());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
+							localDevice.getDeviceId());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 3,
+							localDevice.getDeviceName());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 4,
+							localDevice.getUserName());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 5,
+							localDevice.getDeviceType());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 6,
+							localDevice.getIp());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 7,
+							localDevice.getMacAddress());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
+							localDevice.getConnected());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
+							localDevice.getCashierPrinter());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 10,
+							localDevice.getDeviceMode());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 11,
+							localDevice.getPrinterName());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 12,
+							localDevice.getIsLablePrinter());
+					sqLiteStatement.executeInsert();
+				}
+				db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+	}
 
 	public static ArrayList<LocalDevice> getAllLocalDevice() {
 		ArrayList<LocalDevice> result = new ArrayList<LocalDevice>();
@@ -186,6 +195,16 @@ public class LocalDeviceSQL {
 		try {
 			SQLExe.getDB().execSQL(sql,
 					new Object[] { localDeviceId });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void deleteAllLocalDevice() {
+		String sql = "delete from " + TableNames.LocalDevice;
+		try {
+			SQLExe.getDB().execSQL(sql,
+					new Object[] {  });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
