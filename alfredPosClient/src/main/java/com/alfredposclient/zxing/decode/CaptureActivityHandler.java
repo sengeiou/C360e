@@ -116,9 +116,9 @@ public final class CaptureActivityHandler extends Handler {
           Result result = new Result(codedContent, new byte[]{}, new ResultPoint[]{}, null);
           activity.handleDecode(result);
         }
-//        activity.setResult(Activity.RESULT_OK, (Intent) message.obj);
+//        com.alfredselfhelp.activity.setResult(Activity.RESULT_OK, (Intent) message.obj);
 
-//        activity.finish();
+//        com.alfredselfhelp.activity.finish();
       }
         break;
       case R.id.launch_product_query:

@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 
 /**
- * Finishes an activity after a period of inactivity.
+ * Finishes an com.alfredselfhelp.activity after a period of inactivity.
  */
 public final class InactivityTimer {
 

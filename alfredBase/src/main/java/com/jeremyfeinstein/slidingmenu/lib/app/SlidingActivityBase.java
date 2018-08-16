@@ -35,9 +35,9 @@ public interface SlidingActivityBase {
 	public void setBehindContentView(int layoutResID);
 
 	/**
-	 * Gets the SlidingMenu associated with this activity.
+	 * Gets the SlidingMenu associated with this com.alfredselfhelp.activity.
 	 *
-	 * @return the SlidingMenu associated with this activity.
+	 * @return the SlidingMenu associated with this com.alfredselfhelp.activity.
 	 */
 	public SlidingMenu getSlidingMenu();
 		

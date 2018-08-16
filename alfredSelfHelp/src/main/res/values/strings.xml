@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- global -->
+	<!-- com.alfredselfhelp.global -->
     <string name="app_name">Self Help Kiosk</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>

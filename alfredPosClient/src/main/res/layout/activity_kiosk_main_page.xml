@@ -98,7 +98,7 @@
                 android:background="#cc000000">
 
                 <fragment
-                    android:name="com.alfredposclient.activity.StoredCardActivity"
+                    android:name="com.alfredposclient.com.alfredselfhelp.activity.StoredCardActivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true" />

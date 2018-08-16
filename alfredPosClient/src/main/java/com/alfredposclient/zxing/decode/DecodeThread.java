@@ -63,7 +63,7 @@ final class DecodeThread extends Thread {
 		// once here.
 		if (decodeFormats == null || decodeFormats.isEmpty()) {
 			// SharedPreferences prefs = PreferenceManager
-			// .getDefaultSharedPreferences(activity);
+			// .getDefaultSharedPreferences(com.alfredselfhelp.activity);
 			decodeFormats = EnumSet.noneOf(BarcodeFormat.class);
 
 			/* �����޸� */

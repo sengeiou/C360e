@@ -183,7 +183,7 @@ public class SlidingMenu extends RelativeLayout {
 	 * Instantiates a new SlidingMenu and attach to Activity.
 	 * 
 	 * @param activity
-	 *            the activity to attach slidingmenu
+	 *            the com.alfredselfhelp.activity to attach slidingmenu
 	 * @param slideStyle
 	 *            the slidingmenu style
 	 */
