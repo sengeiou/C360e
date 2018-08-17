@@ -1136,7 +1136,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				.getInstance().loadReportDayTax(businessDate);
 		LoginResult loginResult = CoreData.getInstance().getLoginResult();
 		List<ReportDayTax> reportDayTaxs = ReportObjectFactory
-				.getInstance().loadReportSvgDayTax(businessDate,Integer.valueOf(loginResult.getRestaurantKey()).intValue());
+				.getInstance().loadReportDayTax(businessDate);
 		List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
 		ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory
 				.getInstance().loadReportPluDayItem(businessDate);

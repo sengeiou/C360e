@@ -138,82 +138,82 @@ import rx.functions.Action1;
 
 public class MainPage extends BaseActivity {
 
-	private String TAG = MainPage.class.getSimpleName();
-	public static final int VIEW_EVENT_CLOSE_PAY_WINDOW = 99;
-	private static final int GET_TABLESTATUSINFO_DATA = 100;
+    private String TAG = MainPage.class.getSimpleName();
+    public static final int VIEW_EVENT_CLOSE_PAY_WINDOW = 99;
+    private static final int GET_TABLESTATUSINFO_DATA = 100;
 
-	public static final int CHECK_REQUEST_CODE = 98;
+    public static final int CHECK_REQUEST_CODE = 98;
 
-	public static final int REFRESH_UNSEAT_TABLE_VIEW = 97;
-	public static final int REFRESH_ORDER_STATUS = 101;
-	public static final int REFRESH_TABLES_STATUS = 102;
-	public static final int VIEW_EVENT_DISMISS_TABLES = 103;
-	public static final int VIEW_EVENT_SET_TABLE_PACKS = 104;
-	public static final int VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW = 105;
-	public static final int VIEW_EVENT_SHOW_TABLES = 106;
-	public static final int VIEW_EVENT_SHOW_OPEN_ITEM_WINDOW = 107;
-	public static final int VIEW_EVENT_SHOW_DISCOUNT_WINDOW = 108;
-	public static final int VIEW_EVENT_ADD_ORDER_DETAIL = 109;
-	public static final int VIEW_EVENT_SHOW_SEARCH = 110;
-	public static final int VIEW_EVENT_DISMISS_OPEN_ITEM_WINDOW = 111;
-	public static final int VIEW_EVENT_OPEN_MODIFIERS = 112;
-	public static final int VIEW_EVENT_SET_DATA = 113;
-	public static final int VIEW_EVENT_SHOW_MODIFY_QUANTITY_WINDOW = 114;
-	public static final int VIEW_EVENT_DISMISS_SEARCH = 115;
-	public static final int DISMISS_SOFT_INPUT = 116;
-	public static final int VIEW_EVENT_SEARCH = 117;
-	public static final int VIEW_EVENT_OPERATEPANEL = 118;
-	public static final int VIEW_EVENT_CLOSE_BILL = 119;
-	public static final int KOT_DONE_SET_DATA = 120;
-	public static final int VIEW_EVNT_GET_BILL_PRINT = 121;
-	public static final int VIEW_EVENT_SELECT_BILL = 122;
-	public static final int DIALOG_DISMISS = 1000;
-	public static final int VIEW_EVENT_SHOW_BILL_ON_HOLD = 123;
-	public static final int VIEW_EVENT_SHOW_VOID = 124;
-	public static final int VIEW_EVENT_SHOW_ENTERTAINMENT = 125;
-	public static final int VIEW_EVENT_TANSFER_TABLE = 126;
-	public static final int VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER = 127;
-	public static final int VIEW_EVENT_PLACE_ORDER = 128;
-	public static final int ACTION_SWITCH_USER = 129;
-	// public static final int ACTION_SWITCH_USER_ERROR = 130;
-	private static final int VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER = 131;
-	private static final int ACTION_TRANSFER_TABLE = 132;
-	public static final int WAITER_SEND_KDS = 133;
-	public static final int VIEW_EVENT_KICK_CASHDRAWER = 134;
-	public static final int VIEW_EVENT_SHOW_VOIDORFREE_WINDOW = 135;
-	public static final int VIEW_EVENT_TANSFER_PAX = 136;
-	public static final int VIEW_EVENT_VOID_OR_FREE = 137;
-	public static final int VIEW_EVENT_SHOW_SPECIAL_INSTRACTIONS_WINDOW = 138;
-	public static final int VIEW_EVENT_CLOSE_MODIFIER_VIEW = 139;
-	public static final int VIEW_SUB_MENU = 140;
-	public static final int VIEW_SUB_MENU_ALL = 141;
-	public static final int VIEW_EVENT_SHOW_CLOSE_SPLIT_BILL= 142;
-	public static final int VIEW_EVENT_CLOSE_SPLIT_BILL = 143;
-	public static final int VIEW_EVENT_SHOW_TABLES_AFTER_CLOSE_BILL = 144;
-	// KOT PRINT
-	public static final int KOT_PRINT_FAILED = 200;
-	public static final int KOT_PRINT_SUCCEED = 201;
-	public static final int KOT_PRINT_NULL = 202;
-	public static final int KOT_ITEM_PRINT_NULL = 203;
-	//
-	public static final int ORDER_TIME_OUT = 145;
-	public static final int VIEW_EVENT_TAKE_AWAY = 146;
-	public static final int VIEW_EVENT_SET_WEIGHT = 147;
+    public static final int REFRESH_UNSEAT_TABLE_VIEW = 97;
+    public static final int REFRESH_ORDER_STATUS = 101;
+    public static final int REFRESH_TABLES_STATUS = 102;
+    public static final int VIEW_EVENT_DISMISS_TABLES = 103;
+    public static final int VIEW_EVENT_SET_TABLE_PACKS = 104;
+    public static final int VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW = 105;
+    public static final int VIEW_EVENT_SHOW_TABLES = 106;
+    public static final int VIEW_EVENT_SHOW_OPEN_ITEM_WINDOW = 107;
+    public static final int VIEW_EVENT_SHOW_DISCOUNT_WINDOW = 108;
+    public static final int VIEW_EVENT_ADD_ORDER_DETAIL = 109;
+    public static final int VIEW_EVENT_SHOW_SEARCH = 110;
+    public static final int VIEW_EVENT_DISMISS_OPEN_ITEM_WINDOW = 111;
+    public static final int VIEW_EVENT_OPEN_MODIFIERS = 112;
+    public static final int VIEW_EVENT_SET_DATA = 113;
+    public static final int VIEW_EVENT_SHOW_MODIFY_QUANTITY_WINDOW = 114;
+    public static final int VIEW_EVENT_DISMISS_SEARCH = 115;
+    public static final int DISMISS_SOFT_INPUT = 116;
+    public static final int VIEW_EVENT_SEARCH = 117;
+    public static final int VIEW_EVENT_OPERATEPANEL = 118;
+    public static final int VIEW_EVENT_CLOSE_BILL = 119;
+    public static final int KOT_DONE_SET_DATA = 120;
+    public static final int VIEW_EVNT_GET_BILL_PRINT = 121;
+    public static final int VIEW_EVENT_SELECT_BILL = 122;
+    public static final int DIALOG_DISMISS = 1000;
+    public static final int VIEW_EVENT_SHOW_BILL_ON_HOLD = 123;
+    public static final int VIEW_EVENT_SHOW_VOID = 124;
+    public static final int VIEW_EVENT_SHOW_ENTERTAINMENT = 125;
+    public static final int VIEW_EVENT_TANSFER_TABLE = 126;
+    public static final int VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER = 127;
+    public static final int VIEW_EVENT_PLACE_ORDER = 128;
+    public static final int ACTION_SWITCH_USER = 129;
+    // public static final int ACTION_SWITCH_USER_ERROR = 130;
+    private static final int VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER = 131;
+    private static final int ACTION_TRANSFER_TABLE = 132;
+    public static final int WAITER_SEND_KDS = 133;
+    public static final int VIEW_EVENT_KICK_CASHDRAWER = 134;
+    public static final int VIEW_EVENT_SHOW_VOIDORFREE_WINDOW = 135;
+    public static final int VIEW_EVENT_TANSFER_PAX = 136;
+    public static final int VIEW_EVENT_VOID_OR_FREE = 137;
+    public static final int VIEW_EVENT_SHOW_SPECIAL_INSTRACTIONS_WINDOW = 138;
+    public static final int VIEW_EVENT_CLOSE_MODIFIER_VIEW = 139;
+    public static final int VIEW_SUB_MENU = 140;
+    public static final int VIEW_SUB_MENU_ALL = 141;
+    public static final int VIEW_EVENT_SHOW_CLOSE_SPLIT_BILL = 142;
+    public static final int VIEW_EVENT_CLOSE_SPLIT_BILL = 143;
+    public static final int VIEW_EVENT_SHOW_TABLES_AFTER_CLOSE_BILL = 144;
+    // KOT PRINT
+    public static final int KOT_PRINT_FAILED = 200;
+    public static final int KOT_PRINT_SUCCEED = 201;
+    public static final int KOT_PRINT_NULL = 202;
+    public static final int KOT_ITEM_PRINT_NULL = 203;
+    //
+    public static final int ORDER_TIME_OUT = 145;
+    public static final int VIEW_EVENT_TAKE_AWAY = 146;
+    public static final int VIEW_EVENT_SET_WEIGHT = 147;
 
-	public static final int VIEW_EVENT_SET_APPORDER_TABLE_PACKS = 148;
-	public static final int VIEW_EVENT_UNSEAT_ORDER = 149;
-	public static final int VIEW_EVENT_FIRE = 150;
-	public static final int VIEW_EVENT_TANSFER_ITEM= 151;
-	public static final int ACTION_TRANSFER_ITEM = 152;
-	public static final int VIEW_EVENT_SPLIT_BY_PAX = 154;
-	public static final int ACTION_PAX_SPLIT_BY_PAX = 156;
-	public static final int ACTION_PAX_SPLIT_BY_PAX_WINDOW = 157;
-	public static final int ACTION_PRINT_PAX_SPLIT_BY_PAX = 158;
-	public static final int VIEW_EVENT_SHOW_CLOSE_SPLIT_BY_PAX_BILL = 159;
-	public static final int ACTION_TRANSFER_SPLIT_BY_NUM = 160;
-	public static final int ACTION_REMOVE_ORDER_DETAIL = 161;
-	public static final int ACTION_CANCEL_ORDER_DETAIL = 162;
-	public static final int VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER = 163;
+    public static final int VIEW_EVENT_SET_APPORDER_TABLE_PACKS = 148;
+    public static final int VIEW_EVENT_UNSEAT_ORDER = 149;
+    public static final int VIEW_EVENT_FIRE = 150;
+    public static final int VIEW_EVENT_TANSFER_ITEM = 151;
+    public static final int ACTION_TRANSFER_ITEM = 152;
+    public static final int VIEW_EVENT_SPLIT_BY_PAX = 154;
+    public static final int ACTION_PAX_SPLIT_BY_PAX = 156;
+    public static final int ACTION_PAX_SPLIT_BY_PAX_WINDOW = 157;
+    public static final int ACTION_PRINT_PAX_SPLIT_BY_PAX = 158;
+    public static final int VIEW_EVENT_SHOW_CLOSE_SPLIT_BY_PAX_BILL = 159;
+    public static final int ACTION_TRANSFER_SPLIT_BY_NUM = 160;
+    public static final int ACTION_REMOVE_ORDER_DETAIL = 161;
+    public static final int ACTION_CANCEL_ORDER_DETAIL = 162;
+    public static final int VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER = 163;
 
 
     public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
@@ -792,10 +792,12 @@ public class MainPage extends BaseActivity {
                         KotSummarySQL.update(kotSummary);
                     }
 
-                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                            context);
-                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-                    printerLoadingDialog.showByTime(3000);
+                  //  if (App.instance.getSystemSettings().isCashClosePrint()) {
+                        PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                                context);
+                        printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+                        printerLoadingDialog.showByTime(3000);
+             //       }
 
                     changeNum = paymentMap.get("changeNum");
                     if (!TextUtils.isEmpty(changeNum)) {
@@ -828,19 +830,26 @@ public class MainPage extends BaseActivity {
                             .getInstance().getItemModifierList(paidOrder, OrderDetailSQL.getOrderDetails(paidOrder
                                     .getId()));
 
-				// ArrayList<OrderModifier> orderModifiers =
-				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
-				OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
-						paidOrder, App.instance.getRevenueCenter());
-				RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
-				if (orderItems.size() > 0 && printer != null) {
-					App.instance.remoteBillPrint(printer, title, paidOrder,
-							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-				}
-				// remove get bill notification
-				removeNotificationTables();
-				topMenuView.setGetBillNum(App.instance
-						.getGetTingBillNotifications().size());
+                    // ArrayList<OrderModifier> orderModifiers =
+                    // OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
+                    OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+                            paidOrder, App.instance.getRevenueCenter());
+                    RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
+                    if (orderItems.size() > 0 && printer != null) {
+
+                      //  if (App.instance.getSystemSettings().isCashClosePrint()) {
+
+                            App.instance.remoteBillPrint(printer, title, paidOrder,
+                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+//                        } else {
+//                            App.instance.kickOutCashDrawer(printer);
+//                        }
+
+                    }
+                    // remove get bill notification
+                    removeNotificationTables();
+                    topMenuView.setGetBillNum(App.instance
+                            .getGetTingBillNotifications().size());
 //				final Order sendOrder = currentOrder;
                     /**
                      通知桌面系统 菜已经做完
@@ -939,80 +948,80 @@ public class MainPage extends BaseActivity {
                     ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                             .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
 
-				// ArrayList<OrderModifier> orderModifiers =
-				// OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
-				Order temporaryOrder = new Order();
-				temporaryOrder.setPersons(paidOrderSplit.getPersons());
-				temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-				temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-				temporaryOrder.setTotal(paidOrderSplit.getTotal());
-				temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
-				temporaryOrder.setOrderNo(currentOrder.getOrderNo());
-				if (orderItems.size() > 0 && printer != null) {
-					RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
-					App.instance.remoteBillPrint(printer, title, temporaryOrder,
-							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-				}
-				// remove get bill notification
-				removeNotificationTables();
-				topMenuView.setGetBillNum(App.instance
-						.getGetTingBillNotifications().size());
-				setData();
-				/**
-				 * 给后台发送log 信息
-				 */
-				if(OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED){
-					new Thread(new Runnable() {
+                    // ArrayList<OrderModifier> orderModifiers =
+                    // OrderModifierSQL.getAllOrderModifierByOrderAndNormal(currentOrder);
+                    Order temporaryOrder = new Order();
+                    temporaryOrder.setPersons(paidOrderSplit.getPersons());
+                    temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
+                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
+                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
+                    temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+                    temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    if (orderItems.size() > 0 && printer != null) {
+                        RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                    }
+                    // remove get bill notification
+                    removeNotificationTables();
+                    topMenuView.setGetBillNum(App.instance
+                            .getGetTingBillNotifications().size());
+                    setData();
+                    /**
+                     * 给后台发送log 信息
+                     */
+                    if (OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
+                        new Thread(new Runnable() {
 
-						@Override
-						public void run() {
-							CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-							if (cloudSync!=null) {
-								int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(currentOrder.getId());
-								cloudSync.syncOrderInfoForLog(currentOrder.getId(),
-											App.instance.getRevenueCenter().getId(),
-											App.instance.getBusinessDate(), currCount + 1);
+                            @Override
+                            public void run() {
+                                CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                                if (cloudSync != null) {
+                                    int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(currentOrder.getId());
+                                    cloudSync.syncOrderInfoForLog(currentOrder.getId(),
+                                            App.instance.getRevenueCenter().getId(),
+                                            App.instance.getBusinessDate(), currCount + 1);
 
-							}
-						}
-					}).start();
-				}
+                                }
+                            }
+                        }).start();
+                    }
 
-			}
-				break;
-			case VIEW_EVENT_SHOW_DISCOUNT_WINDOW: {
-				verifyDialog.show(HANDLER_MSG_OBJECT_DISCOUNT,
-						(Map<String, Object>) msg.obj);
-				break;
-			}
-			case VIEW_EVENT_SHOW_MODIFY_QUANTITY_WINDOW: {
-				Map<String, Object> qtyMap = (Map<String, Object>) msg.obj;
-				showModifyQuantityWindow(
-						Integer.parseInt(qtyMap.get("quantity").toString()),
-						(DismissCall) qtyMap.get("dismissCall"));
-				break;
-			}
-			case VIEW_EVENT_ADD_ORDER_DETAIL:
-				addOrderDetail((OrderDetail) msg.obj);
-				break;
-			case VIEW_EVENT_SET_DATA:
-				setData();
-				break;
-			case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
-				setData();
-				if(mainPageMenuView.isModifierOpen()){
-					mainPageMenuView.closeModifiers();
-				}
-				break;
-			case DISMISS_SOFT_INPUT:
-				dismissSoftInput();
-				break;
-			case VIEW_EVENT_OPEN_MODIFIERS: {
-				Map<String, Object> map = (Map<String, Object>) msg.obj;
-				openModifiers((OrderDetail) map.get("orderDetail"),
-						(List<ItemModifier>) map.get("itemModifiers"), (View)map.get("view"));
-				break;
-			}
+                }
+                break;
+                case VIEW_EVENT_SHOW_DISCOUNT_WINDOW: {
+                    verifyDialog.show(HANDLER_MSG_OBJECT_DISCOUNT,
+                            (Map<String, Object>) msg.obj);
+                    break;
+                }
+                case VIEW_EVENT_SHOW_MODIFY_QUANTITY_WINDOW: {
+                    Map<String, Object> qtyMap = (Map<String, Object>) msg.obj;
+                    showModifyQuantityWindow(
+                            Integer.parseInt(qtyMap.get("quantity").toString()),
+                            (DismissCall) qtyMap.get("dismissCall"));
+                    break;
+                }
+                case VIEW_EVENT_ADD_ORDER_DETAIL:
+                    addOrderDetail((OrderDetail) msg.obj);
+                    break;
+                case VIEW_EVENT_SET_DATA:
+                    setData();
+                    break;
+                case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
+                    setData();
+                    if (mainPageMenuView.isModifierOpen()) {
+                        mainPageMenuView.closeModifiers();
+                    }
+                    break;
+                case DISMISS_SOFT_INPUT:
+                    dismissSoftInput();
+                    break;
+                case VIEW_EVENT_OPEN_MODIFIERS: {
+                    Map<String, Object> map = (Map<String, Object>) msg.obj;
+                    openModifiers((OrderDetail) map.get("orderDetail"),
+                            (List<ItemModifier>) map.get("itemModifiers"), (View) map.get("view"));
+                    break;
+                }
 
                 case JavaConnectJS.ACTION_CLICK_TABLE: {
                     currentTable = (TableInfo) msg.obj;
@@ -1034,7 +1043,7 @@ public class MainPage extends BaseActivity {
                                     }
                                 }
                             }).start();
-                            if(App.instance.getSystemSettings().isOfPax()) {
+                            if (App.instance.getSystemSettings().isOfPax()) {
                                 setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
                             } else {
                                 setTablePacks("4");
@@ -1383,22 +1392,18 @@ public class MainPage extends BaseActivity {
                         showDiscountWindow((Order) map.get("order"),
                                 (OrderDetail) map.get("orderDetail"),
                                 (ResultCall) map.get("resultCall"));
-                    }
-                    else if(result.get("MsgObject").equals(
-                            PAMENT_METHOD))
-                    {
-                        if(closeOrderWindow.isShowing()){
+                    } else if (result.get("MsgObject").equals(
+                            PAMENT_METHOD)) {
+                        if (closeOrderWindow.isShowing()) {
                             closeOrderWindow.setUser(user);
                             closeOrderWindow.openMoneyKeyboard(View.GONE,
                                     ParamConst.SETTLEMENT_TYPE_PART_PAYMENT);
-                        } else if(closeOrderSplitWindow.isShowing()) {
+                        } else if (closeOrderSplitWindow.isShowing()) {
                             closeOrderSplitWindow.setUser(user);
                             closeOrderSplitWindow.openMoneyKeyboard(View.GONE,
                                     ParamConst.SETTLEMENT_TYPE_PART_PAYMENT);
                         }
-                    }
-
-                    else if (result.get("MsgObject").equals(
+                    } else if (result.get("MsgObject").equals(
                             HANDLER_MSG_OBJECT_BILL_ON_HOLD)) {
                         if (!verifyDialog.isShowing()) {
                             if (closeOrderWindow.isShowing()) {
@@ -1653,13 +1658,12 @@ public class MainPage extends BaseActivity {
                     }
 
 
-                    if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
-                    {
+                    if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
                         return;
-                    }else {
+                    } else {
                         UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
                     }
-                 //   UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+                    //   UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
                 }
                 break;
                 // kot Print status
@@ -1672,15 +1676,14 @@ public class MainPage extends BaseActivity {
                         UIHelp.showToast(context, "Please log in KDS");
                     } else {
 
-                        if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
-                        {
+                        if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
                             return;
                             //	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
 
-                        }else {
+                        } else {
                             UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
                         }
-                     //   UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
+                        //   UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
                     }
                 }
                 break;
@@ -1942,30 +1945,30 @@ public class MainPage extends BaseActivity {
                     List<Map<String, String>> taxMap = OrderDetailTaxSQL
                             .getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
 
-				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
-						.getInstance().getItemModifierList(currentOrder, orderSplitDetails);
-				Order temporaryOrder = new Order();
-				temporaryOrder.setPersons(paidOrderSplit.getPersons());
-				temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-				temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-				temporaryOrder.setTotal(paidOrderSplit.getTotal());
-				temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
-				temporaryOrder.setOrderNo(currentOrder.getOrderNo());
-				if (orderItems.size() > 0 && printer != null) {
-					RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
-					App.instance.remoteBillPrint(printer, title, temporaryOrder,
-							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-				}
-				// remove get bill notification
-				removeNotificationTables();
-				topMenuView.setGetBillNum(App.instance
-						.getGetTingBillNotifications().size());
-				setData();
-				/**
-				 * 给后台发送log 信息
-				 */
-				if (OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
-					new Thread(new Runnable() {
+                    ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                            .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
+                    Order temporaryOrder = new Order();
+                    temporaryOrder.setPersons(paidOrderSplit.getPersons());
+                    temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
+                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
+                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
+                    temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+                    temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    if (orderItems.size() > 0 && printer != null) {
+                        RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                    }
+                    // remove get bill notification
+                    removeNotificationTables();
+                    topMenuView.setGetBillNum(App.instance
+                            .getGetTingBillNotifications().size());
+                    setData();
+                    /**
+                     * 给后台发送log 信息
+                     */
+                    if (OrderSQL.getOrder(paidOrderSplit.getOrderId()).getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
+                        new Thread(new Runnable() {
 
                             @Override
                             public void run() {
@@ -2272,16 +2275,16 @@ public class MainPage extends BaseActivity {
         if (itemModifiers.size() > 0) {
 
 
-                for (ItemModifier itemModifier : itemModifiers) {
+            for (ItemModifier itemModifier : itemModifiers) {
 
-                    final Modifier modifier_type = CoreData.getInstance().getModifier(
-                            itemModifier);
-                    if (modifier_type.getMinNumber() > 0) {
-                        ModifierCheck modifierCheck = null;
-                        modifierCheck = ObjectFactory.getInstance().getModifierCheck(currentOrder, orderDetail, modifier_type, itemModifier);
-                        ModifierCheckSql.addModifierCheck(modifierCheck);
-                    }
+                final Modifier modifier_type = CoreData.getInstance().getModifier(
+                        itemModifier);
+                if (modifier_type.getMinNumber() > 0) {
+                    ModifierCheck modifierCheck = null;
+                    modifierCheck = ObjectFactory.getInstance().getModifierCheck(currentOrder, orderDetail, modifier_type, itemModifier);
+                    ModifierCheckSql.addModifierCheck(modifierCheck);
                 }
+            }
             mainPageMenuView.openModifiers(currentOrder, orderDetail,
                     itemModifiers);
         }

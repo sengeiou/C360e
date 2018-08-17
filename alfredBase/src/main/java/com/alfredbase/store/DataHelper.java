@@ -966,7 +966,6 @@ public class DataHelper {
                     + " ADD COLUMN topUpsQty INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.ItemDetail
                     + " ADD COLUMN barcode TEXT");
-
         }
 
         private void onUpgradeForOldVersion9(SQLiteDatabase db) {

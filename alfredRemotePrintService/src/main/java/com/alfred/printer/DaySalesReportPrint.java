@@ -271,8 +271,6 @@ public class DaySalesReportPrint extends ReportBasePrint {
         //this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.sub( BH.getBD(reportDaySales.getTotalSales()), BH.getBD(reportDaySales.getTotalTax()), true).toString(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.getBD(nSales).toString(), 1);
 //reportDay
-
-
         if (reportDayTaxs != null) {
 
             BigDecimal taxSvg = BH.getBD("0.00");
