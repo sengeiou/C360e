@@ -713,7 +713,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                 @Override
                 public void call(PaymentSettlement paymentSettlement) {
-                    int paymentTypeId = paymentSettlement.getId()
+                    int paymentTypeId = paymentSettlement.getPaymentTypeId()
                             .intValue();
 //					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL)
 //						return;

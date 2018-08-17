@@ -54,7 +54,20 @@ public class KotItemDetail implements Serializable{
 
 	private int fireStatus;
 
+	/**
+	 * (0未叫号、1已叫号)
+	 */
+	private  int callType;
+
 	public KotItemDetail() {
+	}
+
+	public int getCallType() {
+		return callType;
+	}
+
+	public void setCallType(int callType) {
+		this.callType = callType;
 	}
 
 	public Integer getId() {

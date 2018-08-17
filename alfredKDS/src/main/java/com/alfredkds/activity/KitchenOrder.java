@@ -108,7 +108,7 @@ public class KitchenOrder extends BaseActivity {
 				case App.HANDLER_NEW_KOT:
 					kots = App.instance.getRefreshKots();
 					if(App.instance.getSystemSettings().isKdsLan()){
-						madapter.setKots(getKotItem());
+						madapter.setKots(getKotItem(kots));
 						madapter.setAddFirstItem(true);
 						madapter.notifyDataSetChanged();
 
@@ -129,7 +129,7 @@ public class KitchenOrder extends BaseActivity {
 				case App.HANDLER_UPDATE_KOT:
 					kots = App.instance.getRefreshKots();
 					if(App.instance.getSystemSettings().isKdsLan()){
-						madapter.setKots(getKotItem());
+						madapter.setKots(getKotItem(kots));
 						madapter.notifyDataSetChanged();
 						tv_order_qyt.setText(kotItems.size()+"");
 					}else {
@@ -191,7 +191,7 @@ public class KitchenOrder extends BaseActivity {
 				case App.HANDLER_KOTSUMMARY_IS_UNREAL:
 					loadingDialog.dismiss();
 					UIHelp.showToast(context, context.getResources().getString(R.string.order_discarded));
-					List<Kot> kots = App.instance.getRefreshKots();
+					List<Kot> kots = App.instance.getInitKots();
 					adapter.setKots(kots);
 					adapter.notifyDataSetChanged();
 					if (kots.isEmpty()) {
@@ -215,8 +215,9 @@ public class KitchenOrder extends BaseActivity {
 
 				case App.HANDLER_KOT_ITEM_CALL:
 					if(loadingDialog!=null) {
+						kots = App.instance.getInitKots();
 						loadingDialog.dismiss();
-						madapter.setKots(getKotItem());
+						madapter.setKots(getKotItem(kots));
 						madapter.notifyDataSetChanged();
 						tv_order_qyt.setText(kotItems.size()+"");
 
@@ -265,12 +266,10 @@ public class KitchenOrder extends BaseActivity {
 					});
 					break;
 
-
-
 				case App.HANDLER_KOT_COMPLETE:
 					Bundle bundle1 = msg.getData();
 					final KotSummary kotSummary1 = (KotSummary) bundle1.getSerializable("kotSummary");
-					final KotItemDetail  iKotItemDetail = (KotItemDetail) bundle1.getSerializable("kotItemDetail");
+					final int  kotItemDetailId = bundle1.getInt("kotItemDetailId");
 
 					final int kotItemId=bundle1.getInt("id");
 					String title1 = getResources().getString(R.string.warning);
@@ -283,22 +282,26 @@ public class KitchenOrder extends BaseActivity {
 							List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
 							for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary1).getKotItemDetails()) {
 
-								if(kotItemDetail.getId()==iKotItemDetail.getId()) {
-									kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+1);
-									kotItemDetail.setUnFinishQty(kotItemDetail.getUnFinishQty()-1);
-									if(kotItemDetail.getUnFinishQty()==0) {
-										kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-									}
-								}
+								if(kotItemDetail.getId()==kotItemDetailId) {
+									kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
+									kotItemDetail.setUnFinishQty(0);
+									kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+//									kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+1);
+//									kotItemDetail.setUnFinishQty(kotItemDetail.getUnFinishQty()-1);
+//									if(kotItemDetail.getUnFinishQty()==0) {
+//										kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+//									}
+
 								KotItemDetailSQL.update(kotItemDetail);
 								itemDetails.add(kotItemDetail);
+								}
 							}
 							Map<String, Object> parameters = new HashMap<String, Object>();
 							parameters.put("kotSummary", kotSummary1);
 							parameters.put("kotItemDetails", itemDetails);
 							parameters.put("type", 1);
 							SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-									App.instance.getCurrentConnectedMainPos(), parameters, handler,kotItemId);
+									App.instance.getCurrentConnectedMainPos(), parameters, handler,1);
 							loadingDialog.show();
 						}
 					});
@@ -391,40 +394,43 @@ public class KitchenOrder extends BaseActivity {
 		super.onStart();
 	}
 
-	private List<KotItem> getKotItem() {
-           kotItems.clear();
-           kotItems= KotSummarySQL.getAllKotItem();
-//		for (int i = 0; i <kotlist.size() ; i++) {
-//			KotItem item=new KotItem();
-//			item.setOrderNo(kotlist.get(i).getKotSummary().getOrderNo());
-//			item.setTableName(kotlist.get(i).getKotSummary().getTableName());
-//
-//			List<KotItemDetail> detailList=kotlist.get(i).getKotItemDetails();
-//			for (int j = 0; j <detailList.size() ; j++) {
-//
-//				int  unFinishQty=detailList.get(j).getUnFinishQty();
-//				for (int k = 0; k <unFinishQty ; k++) {
-//					StringBuffer sBuffer = new StringBuffer();
-//					item.setKotStatus(detailList.get(j).getKotStatus());
-//					item.setItemDetailName(detailList.get(j).getItemName());
-//					List<KotItemModifier> itemModifierlist=kotlist.get(i).getKotItemModifiers();
-//					for (int s = 0; s < itemModifierlist.size(); s++) {
-//						KotItemModifier kotItemModifier = itemModifierlist.get(j) ;
-//						if (kotItemModifier != null
-//								&& detailList.get(j).getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
-//							sBuffer.append("" + kotItemModifier.getModifierName() + ",");
-//
-//
-//
-//
-//						}
-//					}
-//					item.setItemModName(sBuffer.toString());
-//					kotItems.add(item);
-//				}
-//			}
-//
-//		}
+	private List<KotItem> getKotItem(List<Kot> kotlist) {
+                kotItems.clear();
+//           kotItems= KotSummarySQL.getAllKotItem();
+		for (int i = 0; i <kotlist.size() ; i++) {
+
+
+			List<KotItemDetail> detailList=kotlist.get(i).getKotItemDetails();
+			for (int j = 0; j <detailList.size() ; j++) {
+				if(detailList.get(j).getKotStatus()<3) {
+					int unFinishQty = detailList.get(j).getUnFinishQty();
+					KotItem item = new KotItem();
+					item.setOrderNo(kotlist.get(i).getKotSummary().getOrderNo());
+					item.setTableName(kotlist.get(i).getKotSummary().getTableName());
+					item.setSummaryId(kotlist.get(i).getKotSummary().getId());
+					StringBuffer sBuffer = new StringBuffer();
+
+					item.setKotStatus(detailList.get(j).getKotStatus());
+					item.setItemDetailName(detailList.get(j).getItemName());
+					item.setUpdateTime(detailList.get(j).getUpdateTime());
+					item.setCallType(detailList.get(j).getCallType());
+					item.setQty(unFinishQty);
+					item.setItemDetailId(detailList.get(j).getId());
+					List<KotItemModifier> itemModifierlist = kotlist.get(i).getKotItemModifiers();
+					for (int s = 0; s < itemModifierlist.size(); s++) {
+						KotItemModifier kotItemModifier = itemModifierlist.get(j);
+						if (kotItemModifier != null
+								&& detailList.get(j).getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+							sBuffer.append("" + kotItemModifier.getModifierName() + ";");
+
+						}
+					}
+					item.setItemModName(sBuffer.toString());
+					kotItems.add(item);
+				}
+			}
+
+		}
   return  kotItems;
 
 	}
@@ -456,7 +462,7 @@ public class KitchenOrder extends BaseActivity {
 		//	Kot k=new Kot();
 			//kots.add(k);
 			kots = App.instance.getInitKots();
-			madapter.setKots(getKotItem());
+			madapter.setKots(getKotItem(kots));
 			ll_orders.setAdapter(madapter);
 			tv_order_qyt.setText(kotItems.size()+"");
 		}else {
@@ -480,7 +486,7 @@ public class KitchenOrder extends BaseActivity {
 					kots = App.instance.getRefreshKots();
 
 					if(App.instance.getSystemSettings().isKdsLan()){
-						madapter.setKots(getKotItem());
+						madapter.setKots(getKotItem(kots));
 
 						madapter.notifyDataSetChanged();
 					}else {

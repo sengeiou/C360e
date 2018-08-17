@@ -27,8 +27,8 @@ public class KotItemDetailSQL {
 					+ TableNames.KotItemDetail
 					+ "(id, restaurantId, revenueId, orderId, orderDetailId, printerGroupId, kotSummaryId, "
 					+ "itemName,itemNum,finishQty,sessionStatus,kotStatus,specialInstractions ,version,createTime,"
-					+ "updateTime, unFinishQty, categoryId,isTakeAway, fireStatus)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "updateTime, unFinishQty, categoryId,isTakeAway, fireStatus,callType)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { kotItemDetail.getId(),
@@ -51,6 +51,17 @@ public class KotItemDetailSQL {
 							kotItemDetail.getCategoryId(),
 							kotItemDetail.getIsTakeAway(),
 							kotItemDetail.getFireStatus()});
+			                kotItemDetail.getCallType();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static void updateCallById( int id){
+		String sql = "update " + TableNames.KotItemDetail + " set callType = ? where id = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {1, id});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -68,8 +79,8 @@ public class KotItemDetailSQL {
 					+ "(id, restaurantId, revenueId, orderId, orderDetailId,  printerGroupId, kotSummaryId, "
 					+ "itemName,itemNum,finishQty,sessionStatus,"
 					+ "kotStatus,specialInstractions ,version," +
-					"createTime,updateTime, unFinishQty, categoryId,isTakeAway, fireStatus)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					"createTime,updateTime, unFinishQty, categoryId,isTakeAway, fireStatus,callType)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (KotItemDetail kotItemDetail : kotItemDetails) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
@@ -112,6 +123,8 @@ public class KotItemDetailSQL {
 						kotItemDetail.getIsTakeAway());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 20,
 						kotItemDetail.getFireStatus());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 21,
+						kotItemDetail.getCallType());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -158,6 +171,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -207,6 +221,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -248,6 +263,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -289,6 +305,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -329,6 +346,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -378,6 +396,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -428,6 +447,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -477,6 +497,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -521,6 +542,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -564,6 +586,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				kotItemDetails.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -614,6 +637,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -687,6 +711,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {
@@ -736,6 +761,7 @@ public class KotItemDetailSQL {
 				kotItemDetail.setCategoryId(cursor.getInt(17));
 				kotItemDetail.setIsTakeAway(cursor.getInt(18));
 				kotItemDetail.setFireStatus(cursor.getInt(19));
+				kotItemDetail.setCallType(cursor.getInt(20));
 				result.add(kotItemDetail);
 			}
 		} catch (Exception e) {

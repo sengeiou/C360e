@@ -1207,6 +1207,9 @@ public class DataHelper {
                     + TableNames.ModifierCheck
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderDetailId INTEGER, orderId INTEGER, modifierCategoryId INTEGER, itemName TEXT,  modifierCategoryName TEXT, num INTEGER,minNum INTEGER)");
 
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  callType INTEGER default 0");
 
 
         }

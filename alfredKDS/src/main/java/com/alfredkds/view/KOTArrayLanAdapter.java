@@ -87,6 +87,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 			viewHolder.tv_lan_progress=(Chronometer)convertView.findViewById(R.id.tv_lan_progress);
 			viewHolder.btn_complete=(Button) convertView.findViewById(R.id.btn_kot_complete);
 			viewHolder.btn_call=(Button)convertView.findViewById(R.id.btn_kot_call);
+			viewHolder.qty=(TextView)convertView.findViewById(R.id.tv_kot_item_qty);
 
 		}
 
@@ -103,45 +104,68 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 
 			holder.orderNo.setText(kotItem.getOrderNo() + "");
 			holder.mod.setText(kotItem.getItemModName());
-
-
 			holder.detail.setText(kotItem.getItemDetailName());
 			holder.table.setText(kotItem.getTableName());
 
+			//0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
+
+			if(kotItem.getKotStatus()==1)
+			{
+				holder.status.setText("正在做");
+			}else if(kotItem.getKotStatus()==0){
+				holder.status.setText("未发送");
+			}
+			else if(kotItem.getKotStatus()==2){
+				holder.status.setText("更新");
+			}
+			else if(kotItem.getKotStatus()==3){
+				holder.status.setText("已完成");
+			}
+			else if(kotItem.getKotStatus()==4){
+				holder.status.setText("已退单");
+			}
+			else if(kotItem.getKotStatus()==-1){
+				holder.status.setText("已删除");
+			}
 			long createTime = kotItem.getUpdateTime();
 
 			holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - System.currentTimeMillis() + createTime);
 //
+			holder.qty.setText(kotItem.getQty()+"");
 			holder.tv_lan_progress.start();
 			if (kotItem.getCallType() == 1) {
-				holder.btn_call.setClickable(false);
-				//	holder.btn_call.setText("void");
-				holder.btn_call.setBackgroundColor(Color.GRAY);
+			//	holder.btn_call.setClickable(false);
+					holder.btn_call.setText("call again");
+
 			} else {
-				holder.btn_call.setClickable(true);
-				//	holder.btn_call.setText("void");
-				holder.btn_call.setBackgroundColor(mContext.getResources().getColor(R.color.color_kotview));
-				holder.btn_call.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						if (!ButtonClickTimer.canClick()) {
-							return;
-						}
-						mainPosInfo = App.instance.getCurrentConnectedMainPos();
-						Message message = new Message();
-						if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-							//	int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kotItem.getOrderNo());
-							//message.arg1 = -1;
-						} else {
-							message.arg1 = kotItem.getOrderNo();
-							message.arg2 = kotItem.getId();
-						}
-						message.what = App.HANDLER_KOT_CALL_NUM;
-						handler.sendMessage(message);
-					}
-				});
+				holder.btn_call.setText("call");
+			//	holder.btn_call.setClickable(true);
+				// holder.btn_call.setText("void");
 
 			}
+
+
+			holder.btn_call.setBackgroundColor(mContext.getResources().getColor(R.color.color_kotview));
+			holder.btn_call.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (!ButtonClickTimer.canClick()) {
+						return;
+					}
+					mainPosInfo = App.instance.getCurrentConnectedMainPos();
+					Message message = new Message();
+					if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+						//	int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kotItem.getOrderNo());
+						//message.arg1 = -1;
+					} else {
+						message.arg1 = kotItem.getOrderNo();
+						message.arg2 = kotItem.getItemDetailId();
+					}
+					message.what = App.HANDLER_KOT_CALL_NUM;
+					handler.sendMessage(message);
+				}
+			});
+
 			holder.btn_complete.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -157,27 +181,15 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 					Bundle bundle = new Bundle();
 					bundle.putSerializable("kotSummary", KotSummarySQL.getKotSummaryById(kotItem.getSummaryId()));
 
-					bundle.putSerializable("kotItemDetail", kotItemDetail);
-					bundle.putInt("id", kotItem.getId());
+					bundle.putInt("kotItemDetailId", kotItem.getItemDetailId());
+					bundle.putInt("id", 1);
 					message.setData(bundle);
 					message.what = App.HANDLER_KOT_COMPLETE;
 					handler.sendMessage(message);
 				}
 			});
 		}
-//		holder.orderNo.setText(kotItem.getOrderNo());
-//		holder.orderNo.setText(kotItem.getOrderNo());
 
-
-	//	holder.kotLanView.setData(originKot);
-//		Kot kot = kots.get(position);
-//		//holder.name.setText(kot.getKotItemDetails().get());
-////		Kot originKot = kots.get(position);
-//		holder.kotLanView.setData(kot);
-//		if (addFirstItem && position == 0) {
-//			holder.kotView.showNewKOT();
-//			addFirstItem = false;
-//		}}
 	}
 
 
@@ -205,7 +217,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 	class ViewHolder extends  RecyclerView.ViewHolder{
 
 		   Chronometer  tv_lan_progress;
-           TextView name,status,table,orderNo,detail,mod;
+           TextView name,status,table,orderNo,detail,mod,qty;
            Button btn_complete,btn_call;
            Button complete,call;
 		public ViewHolder(View itemView) {
@@ -226,7 +238,9 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 	 */
 	public void setKots(List<KotItem> kotlist) {
 		kots.clear();
-		this.kots.add(null);
+		if(kotlist.size()>0) {
+			this.kots.add(null);
+		}
 		this.kots.addAll(kotlist);
 	//	this.kots = kots;
 	}

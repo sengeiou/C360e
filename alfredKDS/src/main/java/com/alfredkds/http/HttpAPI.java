@@ -205,11 +205,8 @@ public class HttpAPI {
 							if (resultCode == ResultCode.SUCCESS) {
 								List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
 								HttpAnalysis.getKotItemDetail(statusCode,headers,responseBody, handler);
-
-
-								if(id>=0){
-									KotSummarySQL.updateKotStatusById(id);
-									handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL,kotItemDetails));
+								if(id>=0) {
+									handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL, kotItemDetails));
 								}else {
 									handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT,kotItemDetails));
 								}
@@ -333,7 +330,7 @@ public class HttpAPI {
 							super.onSuccess(statusCode, headers, responseBody);
 								if (resultCode == ResultCode.SUCCESS){
 									if(id>=0){
-										KotSummarySQL.updateKotCallById(id);
+										KotItemDetailSQL.updateCallById(id);
 										handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL, null));
 									}
 									handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
