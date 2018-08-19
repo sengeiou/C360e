@@ -15,6 +15,7 @@ import com.alfred.callnum.fragment.TwoFragment;
 import com.alfred.callnum.global.App;
 import com.alfred.callnum.utils.CallNumQueueUtil;
 import com.alfred.callnum.utils.CallNumUtil;
+import com.alfred.callnum.utils.MyQueue;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.MyBaseActivity;
 import com.alfredbase.ParamConst;
@@ -24,6 +25,7 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.BarcodeUtil;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +41,8 @@ public class MainActivity extends BaseActivity {
 	TwoFragment twoFragment;
 	int viewId;
 	Timer timer11;
+   Timer	timer = new Timer();
+	MyQueue queue = new MyQueue();
 
 
 	public Handler handler = new Handler() {
@@ -46,21 +50,22 @@ public class MainActivity extends BaseActivity {
 			switch (msg.what) {
 				case App.HANDLER_REFRESH_CALL:
 
-					CallNumQueueUtil num1 = new CallNumQueueUtil("A123,", 1,0,1);;
-					CallNumUtil.call(num1);
+                         queue.enQueue("A123");
+					timer.schedule(new MyTimertask(),1000);
+
 
 					if(oneFragment!=null){
-						oneFragment.addData(0);
+						oneFragment.addData(0,"");
 					}
 					if(twoFragment!=null){
-						twoFragment.addData(0);
+						twoFragment.addData(0,"");
 					}
 					break;
 
 
 				case App.HANDLER_REFRESH_CALL_ON:
 
-					CallNumQueueUtil num = new CallNumQueueUtil("A123,", 1,0,1);;
+					CallNumQueueUtil num = new CallNumQueueUtil("A123,", 1,0,3);
 					CallNumUtil.call(num);
 
 					break;
@@ -72,6 +77,45 @@ public class MainActivity extends BaseActivity {
 		;
 	};
 
+
+
+	class MyTimertask extends TimerTask {
+
+		@Override
+		public void run() {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+
+					if(queue.QueueLength()>0){
+					LogUtil.e("qqqqqqqqq-",queue.QueuePeek().toString()+"-"+queue.QueueLength());
+
+					String name=queue.deQueue().toString();
+						CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1,0,1);
+
+						CallNumUtil.call(num1);
+						if(oneFragment!=null) {
+							oneFragment.addData(0, name);
+						}
+						if(twoFragment!=null){
+							twoFragment.addData(0, name);
+						}
+//
+					}else {
+                     queue.clear();
+						timer.cancel();
+
+					}
+
+				}
+			});
+
+
+			timer.schedule(new MyTimertask(), 1000);
+
+		}
+
+	}
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_main);
@@ -84,7 +128,15 @@ public class MainActivity extends BaseActivity {
 
 	//	timer11 = new Timer();
 	//	timer11.schedule(new MyTimertask(),1000);
+		for (int j = 0; j <5 ; j++) {
+			queue.enQueue("A12"+j);
+			if(j==4){
+				queue.enQueue("A120");
+			}
 
+
+		}
+		timer.schedule(new MyTimertask(),1000);
 	}
 
 //
