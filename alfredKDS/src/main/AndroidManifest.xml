@@ -35,13 +35,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".com.alfredselfhelp.global.App"
+        android:name=".global.App"
         android:allowBackup="true"
         android:icon="@drawable/logo_icon"
         android:label="@string/app_name"
         android:largeHeap="true">
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.com.alfredselfhelp.activity.Welcome"
+        <activity
+            android:name=".activity.Welcome"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/NullActivityTheme">
@@ -50,49 +50,49 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </com.alfredselfhelp.activity>
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.ConnectPOS"
+        </activity>
+        <activity
+            android:name=".activity.ConnectPOS"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/NullActivityTheme" />
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.EmployeeID"
+        <activity
+            android:name=".activity.EmployeeID"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/CentreOpenMainActivityTheme" />
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.Login"
+        <activity
+            android:name=".activity.Login"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/CentreOpenMainActivityTheme" />
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.KitchenOrder"
+        <activity
+            android:name=".activity.KitchenOrder"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.SelectKitchen"
+        <activity
+            android:name=".activity.SelectKitchen"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.SelectRevenue"
+        <activity
+            android:name=".activity.SelectRevenue"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.Setting"
+        <activity
+            android:name=".activity.Setting"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.KotHistory"
+        <activity
+            android:name=".activity.KotHistory"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
-        <com.alfredselfhelp.activity
-            android:name=".com.alfredselfhelp.activity.Summary"
+        <activity
+            android:name=".activity.Summary"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
@@ -122,10 +122,10 @@
             android:name="UMENG_CHANNEL"
             android:value="Umeng" />
 
-        <com.alfredselfhelp.activity android:name=".com.alfredselfhelp.activity.CallNumActivity"
+        <activity android:name=".activity.CallNumActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
-            android:theme="@style/MainActivityTheme"></com.alfredselfhelp.activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+            android:theme="@style/MainActivityTheme"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
