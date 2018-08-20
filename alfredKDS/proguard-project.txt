@@ -23,9 +23,9 @@
 # and specify the fully qualified class name to the JavaScript interface
 # class:
 
-#-keep class com.alfredposclient.global.JavaConnectJS
-#-keep class * implements com.alfredposclient.global.JavaConnectJS
-#-keepclassmembers class * implements com.alfredposclient.global.JavaConnectJS {
+#-keep class com.alfredposclient.com.alfredselfhelp.global.JavaConnectJS
+#-keep class * implements com.alfredposclient.com.alfredselfhelp.global.JavaConnectJS
+#-keepclassmembers class * implements com.alfredposclient.com.alfredselfhelp.global.JavaConnectJS {
 #   *;
 #}
 #-keepattributes *Annotation*

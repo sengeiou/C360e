@@ -33,12 +33,17 @@ import com.alfred.callnum.utils.FileDialog;
 import com.alfred.callnum.utils.TvPref;
 import com.alfred.callnum.utils.VideoResManager;
 import com.alfred.callnum.widget.PictureSwitch;
+import com.alfredbase.utils.LogUtil;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -97,6 +102,9 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
     RelativeLayout re_video_pic;
 
     Handler handler;
+    Map<String,Object> callMap=new HashMap<String,Object>();
+
+    private Boolean type=true;
 
     public static TwoFragment newInstance(String param1, String param2) {
         TwoFragment fragment = new TwoFragment();
@@ -180,18 +188,18 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 //                intent.setClass(getActivity(), MainActivity.class);
 //                 startActivity(intent);
 
-                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-
-
-//                LogFile.i(String.format("OnPrepared,duration=%d",
-//                        mp.getDuration()));
-                        mp.setVolume(0f, 0f);
-                        adjustVideoView();
-                    }
-                });
+//                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//
+//                    @Override
+//                    public void onPrepared(MediaPlayer mp) {
+//
+//
+////                LogFile.i(String.format("OnPrepared,duration=%d",
+////                        mp.getDuration()));
+//                        mp.setVolume(1f, 1f);
+//                        adjustVideoView();
+//                    }
+//                });
             }
         });
 
@@ -225,27 +233,60 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 
     }
 
-    public void addData(int position) {
+    public void addData(int position,String name) {
+        type = true;
         CallBean callBean = new CallBean();
         callBean.setId(0);
-        callBean.setName("Insert One");
-        mDatas.add(position, callBean);
-        mAdapter.notifyItemInserted(position);
-        //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+        callBean.setName(name);
+        if(callMap!=null) {
 
-        re_left.scrollToPosition(position);
-        re_right.scrollToPosition(position);
-
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-
-                mp.setVolume(0f, 0f);
-
-
+            Set<Map.Entry<String, Object>> set = callMap.entrySet();
+            // 遍历键值对对象的集合，得到每一个键值对对象
+            for (Map.Entry<String, Object> me : set) {
+                // 根据键值对对象获取键和值
+                String key = me.getKey();
+                LogUtil.e("--1111-",key+"-----"+callBean.getName());
+                if (key.equals(callBean.getName())) {
+//
+                    type = false;
+//
+                }
+//
             }
-        });
+//
+        }
+
+        callMap.put(callBean.getName(),callBean);
+        if(type){
+            mDatas.add(position, callBean);
+            mAdapter.notifyItemInserted(position);
+            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+
+            re_left.scrollToPosition(position);
+            re_right.scrollToPosition(position);
+        }else {
+
+            Iterator<CallBean> it = mDatas.iterator();
+            while (it.hasNext())
+            {
+                CallBean call = it.next();
+                if (call.getName().equals(callBean.getName()) )
+                {
+                    it.remove();
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+            mDatas.add(position, callBean);
+            mAdapter.notifyItemInserted(position);
+
+            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+
+            re_left.scrollToPosition(position);
+            re_right.scrollToPosition(position);
+
+
+        }
+
 
     }
 
@@ -649,7 +690,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 
 //                LogFile.i(String.format("OnPrepared,duration=%d",
 //                        mp.getDuration()));
-                mp.setVolume(0.1f, 0.1f);
+                mp.setVolume(1f, 1f);
 
                 adjustVideoView();
             }
@@ -744,8 +785,8 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
+     * to the com.alfredselfhelp.activity and potentially other fragments contained in that
+     * com.alfredselfhelp.activity.
      * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"

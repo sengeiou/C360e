@@ -31,7 +31,7 @@ public class SlidingActivityHelper {
 	 * Instantiates a new SlidingActivityHelper.
 	 * 
 	 * @param activity
-	 *            the associated activity
+	 *            the associated com.alfredselfhelp.activity
 	 */
 	public SlidingActivityHelper(Activity activity) {
 		mActivity = activity;
@@ -128,7 +128,7 @@ public class SlidingActivityHelper {
 	}
 
 	/**
-	 * Called to retrieve per-instance state from an activity before being
+	 * Called to retrieve per-instance state from an com.alfredselfhelp.activity before being
 	 * killed so that the state can be restored in onCreate(Bundle) or
 	 * onRestoreInstanceState(Bundle) (the Bundle populated by this method will
 	 * be passed to both).
@@ -157,8 +157,8 @@ public class SlidingActivityHelper {
 	}
 
 	/**
-	 * Set the activity content to an explicit view. This view is placed
-	 * directly into the activity's view hierarchy. It can itself be a complex
+	 * Set the com.alfredselfhelp.activity content to an explicit view. This view is placed
+	 * directly into the com.alfredselfhelp.activity's view hierarchy. It can itself be a complex
 	 * view hierarchy. When calling this method, the layout parameters of the
 	 * specified view are ignored. Both the width and the height of the view are
 	 * set by default to MATCH_PARENT. To use your own layout parameters, invoke
@@ -189,9 +189,9 @@ public class SlidingActivityHelper {
 	}
 
 	/**
-	 * Gets the SlidingMenu associated with this activity.
+	 * Gets the SlidingMenu associated with this com.alfredselfhelp.activity.
 	 * 
-	 * @return the SlidingMenu associated with this activity.
+	 * @return the SlidingMenu associated with this com.alfredselfhelp.activity.
 	 */
 	public SlidingMenu getSlidingMenu() {
 		return mSlidingMenu;

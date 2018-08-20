@@ -35,7 +35,7 @@ public class FileDialog extends ListActivity {
 	private String[]mFileFilter;
 
 	public  static final String     ROOT_DEFAULT       = "/mnt"; 
-	/** Called when the activity is first created. */
+	/** Called when the com.alfredselfhelp.activity is first created. */
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);

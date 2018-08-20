@@ -2493,7 +2493,7 @@ public class App extends BaseApplication {
         BaseActivity activity = getTopActivity();
         if ((!(activity instanceof NetWorkOrderActivity)) && activity != null
                 && (!activity.isFinishing())) {
-//            activity.runOnUiThread(new Runnable() {
+//            com.alfredselfhelp.activity.runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
 //                    netOrderDialogShow(appOrder);

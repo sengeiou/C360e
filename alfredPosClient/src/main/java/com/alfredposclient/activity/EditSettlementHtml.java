@@ -102,7 +102,7 @@ public class EditSettlementHtml extends BaseActivity {
 //				// intentCloseBill.addCategory(Intent.CATEGORY_LAUNCHER);
 //				// ComponentName cnCloseBill = new ComponentName(
 //				// "com.alfredprint",
-//				// "com.alfredprint.activity.PrintMainActivity");
+//				// "com.alfredprint.com.alfredselfhelp.activity.PrintMainActivity");
 //
 //				// intentCloseBill.putExtra("PrinterTitle",
 //				// ObjectFactory.getInstance().getPrinterTitle(App.instance.getRevenueCenter().getId(),

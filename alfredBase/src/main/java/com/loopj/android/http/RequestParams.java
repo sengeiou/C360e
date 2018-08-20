@@ -378,7 +378,7 @@ public class RequestParams {
     }
 
     /**
-     * Set global flag which determines whether to automatically close input
+     * Set com.alfredselfhelp.global flag which determines whether to automatically close input
      * streams on successful upload.
      *
      * @param flag boolean whether to automatically close input streams

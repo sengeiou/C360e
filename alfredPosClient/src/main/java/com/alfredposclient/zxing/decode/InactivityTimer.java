@@ -31,7 +31,7 @@ import com.alfredposclient.zxing.common.executor.AsyncTaskExecManager;
 
 
 /**
- * Finishes an activity after a period of inactivity if the device is on battery power.
+ * Finishes an com.alfredselfhelp.activity after a period of inactivity if the device is on battery power.
  */
 public final class InactivityTimer {
 
@@ -99,7 +99,7 @@ public final class InactivityTimer {
     protected Object doInBackground(Object... objects) {
       try {
         Thread.sleep(INACTIVITY_DELAY_MS);
-        Log.i(TAG, "Finishing activity due to inactivity");
+        Log.i(TAG, "Finishing com.alfredselfhelp.activity due to inactivity");
         activity.finish();
       } catch (InterruptedException e) {
         // continue without killing
