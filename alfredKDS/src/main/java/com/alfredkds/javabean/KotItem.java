@@ -1,4 +1,4 @@
-package com.alfredbase.javabean.model;
+package com.alfredkds.javabean;
 
 import java.io.Serializable;
 public class KotItem implements Serializable {
@@ -16,6 +16,7 @@ public class KotItem implements Serializable {
     private Integer summaryId;
     private Integer qty;
     private Integer itemDetailId;
+    private String numTag;
 
     public Integer getQty() {
         return qty;
@@ -122,6 +123,13 @@ public class KotItem implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getNumTag() {
+        return numTag;
+    }
+
+    public void setNumTag(String numTag) {
+        this.numTag = numTag;
+    }
 
     @Override
     public String toString() {
@@ -137,6 +145,9 @@ public class KotItem implements Serializable {
                 ", updateTime=" + updateTime +
                 ", orderNo=" + orderNo +
                 ", summaryId=" + summaryId +
+                ", qty=" + qty +
+                ", itemDetailId=" + itemDetailId +
+                ", numTag='" + numTag + '\'' +
                 '}';
     }
 }

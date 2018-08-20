@@ -1,7 +1,6 @@
 package com.alfredkds.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,19 +14,16 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.ButtonClickTimer;
-import com.alfredbase.utils.IntegerUtils;
 import com.alfredkds.R;
-import com.alfredbase.javabean.KotItem;
 import com.alfredkds.global.App;
+import com.alfredkds.javabean.KotItem;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.ViewHolder>{
@@ -102,7 +98,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 		if(itemViewType==1) {
 			final KotItem kotItem = kots.get(position);
 
-			holder.orderNo.setText(kotItem.getOrderNo() + "");
+			holder.orderNo.setText(kotItem.getNumTag() + kotItem.getOrderNo());
 			holder.mod.setText(kotItem.getItemModName());
 			holder.detail.setText(kotItem.getItemDetailName());
 			holder.table.setText(kotItem.getTableName());
@@ -158,7 +154,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 						//	int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kotItem.getOrderNo());
 						//message.arg1 = -1;
 					} else {
-						message.arg1 = kotItem.getOrderNo();
+						message.obj = kotItem.getNumTag() + kotItem.getOrderNo();
 						message.arg2 = kotItem.getItemDetailId();
 					}
 					message.what = App.HANDLER_KOT_CALL_NUM;
