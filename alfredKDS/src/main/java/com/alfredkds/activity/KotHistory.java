@@ -185,7 +185,7 @@ public class KotHistory extends BaseActivity{
 			holder.kotId.setText(kotSummary.getId()+"");
 			if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
 				holder.table.setVisibility(View.GONE);
-				holder.orderId.setText(IntegerUtils.fromat(kotSummary.getRevenueCenterIndex(), kotSummary.getOrderNoString()));
+				holder.orderId.setText(kotSummary.getNumTag() + IntegerUtils.fromat(kotSummary.getRevenueCenterIndex(), kotSummary.getOrderNoString()));
 			}else {
 				holder.orderId.setText(kotSummary.getOrderId()+"");
 				holder.table.setText(kotSummary.getTableName()+"");

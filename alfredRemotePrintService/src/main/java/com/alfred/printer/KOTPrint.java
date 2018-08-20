@@ -54,12 +54,12 @@ public class KOTPrint extends PrintJob{
 			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
 					.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
-					.append(kotsummary.getOrderNoString())
+					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
 					.append(reNext);
 		}else{
 			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
-					.append(kotsummary.getOrderNoString())
+					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
 					.append(reNext);
 		}
 		if(!TextUtils.isEmpty(kotsummary.getEmpName())){
@@ -96,7 +96,7 @@ public class KOTPrint extends PrintJob{
 		StringBuilder sbr = new StringBuilder();
 		int revenueIndex = kotSummary.getRevenueCenterIndex();
 		int isTakeAway = kotSummary.getIsTakeAway();
-		String orderNo = PrintService.instance.getResources().getString(R.string.order_no_)
+		String orderNo = PrintService.instance.getResources().getString(R.string.order_no_) + kotSummary.getNumTag()
 				+IntegerUtils.fromat(revenueIndex, orderId);
 
 		String tableName =PrintService.instance.getResources().getString(R.string.table_num)
