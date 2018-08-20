@@ -765,11 +765,12 @@ public class MainPageKiosk extends BaseActivity {
 //					KotSummarySQL.update(kotSummary);
 //				}
 
-                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                            context);
-                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-                    printerLoadingDialog.showByTime(3000);
                     if (isPrint) {
+
+                        PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                                context);
+                        printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+                        printerLoadingDialog.showByTime(3000);
 
                         PrinterDevice printer = App.instance.getCahierPrinter();
                         PrinterTitle title = ObjectFactory.getInstance()

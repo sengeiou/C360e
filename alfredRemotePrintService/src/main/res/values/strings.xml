@@ -75,6 +75,9 @@
     <string name="total_tax">Exclusive Tax</string>
     <string name="rounding">Rounding</string>
     <string name="nett_sales">NETT Sales</string>
+    <string name="gross_total">Gross Total Sales</string>
+
+    <string name="next_saels">Next Saels + SVG</string>
     <string name="media">MEDIA</string>
     <string name="cash">CASH</string>
     <string name="mc">MC</string>

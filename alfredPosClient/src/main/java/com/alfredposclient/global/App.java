@@ -1750,7 +1750,7 @@ public class App extends BaseApplication {
                                 List<Map<String, String>> taxes,
                                 List<PaymentSettlement> settlement, RoundAmount roundAmount) {
 
-        remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, true);
+        remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
     }
 
     public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
