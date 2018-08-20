@@ -72,7 +72,7 @@ public class HttpAnalysis {
 					}.getType());
 			if (kotSummaryList != null && kotItemDetails != null
 					&& kotItemModifiers != null) {
-				KotSummarySQL.deleteAllKotItem();
+
 			   KotSummarySQL.deleteAllKotSummary();
 				KotItemDetailSQL.deleteAllKotItemDetail();
 				KotItemModifierSQL.deleteAllKotItemModifier();
@@ -81,46 +81,11 @@ public class HttpAnalysis {
 
 					boolean flag = false;
 					KotSummary kotSummary = kotSummaryList.get(i);
-
-					KotItem item=new KotItem();
-
-					item.setOrderNo(kotSummary.getOrderNo());
-					item.setTableName(kotSummary.getTableName());
-					item.setSummaryId(kotSummary.getId());
-					item.setCallType(0);
-					item.setCreateTime(kotSummary.getCreateTime());
-					item.setUpdateTime(kotSummary.getUpdateTime());
-					item.setKotStatus(0);
+;
 
 					for (int j = 0; j < kotItemDetails.size(); j++) {
 						KotItemDetail kotItemDetail = kotItemDetails.get(j);
-						if(kotSummary.getId().intValue() == kotItemDetail.getKotSummaryId().intValue())
-						{
-							item.setItemDetailName(kotItemDetails.get(i).getItemName());
-							int  unFinishQty=kotItemDetails.get(i).getUnFinishQty();
-
-							for (int k = 0; k <unFinishQty ; k++) {
-								StringBuffer sBuffer = new StringBuffer();
-								kotItemDetail.setUnFinishQty(1);
-								item.setId(CommonSQL.getNextSeq(TableNames.KotItem));
-								item.setItemDetail(	gson.toJson(kotItemDetail));
-
-
-								for (int s = 0; s < kotItemModifiers.size(); s++) {
-									KotItemModifier kotItemModifier = kotItemModifiers.get(s) ;
-									if (kotItemModifier != null
-											&& kotItemDetail.getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
-										sBuffer.append("" + kotItemModifier.getModifierName() + ",");
-
-									}
-								}
-								item.setItemModName(sBuffer.toString());
-								KotSummarySQL.addKotItem(item);
-
-							}
-
-
-						}
+				//
 
 						//对未完成的item和完成了一部分但status未done的item做处理
 						if(kotSummary.getId().intValue() == kotItemDetail.getKotSummaryId().intValue()

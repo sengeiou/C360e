@@ -779,7 +779,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
                 @Override
                 public void call(PaymentSettlement paymentSettlement) {
-                    int paymentTypeId = paymentSettlement.getId()
+                    int paymentTypeId = paymentSettlement.getPaymentTypeId()
                             .intValue();
 //					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_ALIPAY){
 //						return;

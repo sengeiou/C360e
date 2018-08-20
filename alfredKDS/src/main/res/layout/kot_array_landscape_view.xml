@@ -96,7 +96,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:textColor="@color/black"
-    android:text="12sp"
+    android:text=""
     android:textSize="12sp"
     android:id="@+id/tv_kot_mod"
     />
@@ -109,16 +109,35 @@
           android:background="@color/black"
           >
       </View>
-          <TextView
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:id="@+id/tv_kot_item_status"
-              android:layout_gravity="center"
-              android:gravity="center"
-              android:layout_weight="1"
-              android:textColor="@color/black"
-              android:text="正在做"
-              />
+
+
+      <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:id="@+id/tv_kot_item_qty"
+          android:layout_gravity="center"
+          android:gravity="center"
+          android:layout_weight="0.4"
+          android:textColor="@color/black"
+          android:text="1"
+          />
+
+      <View
+          android:layout_width="1dp"
+          android:layout_height="match_parent"
+          android:background="@color/black"
+          >
+      </View>
+      <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:id="@+id/tv_kot_item_status"
+          android:layout_gravity="center"
+          android:gravity="center"
+          android:layout_weight="1"
+          android:textColor="@color/black"
+          android:text="正在做"
+          />
 
       <View
           android:layout_width="1dp"
@@ -127,13 +146,14 @@
           >
       </View>
 
+
           <TextView
               android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:id="@+id/tv_kot_item_table"
               android:layout_gravity="center"
               android:gravity="center"
-            android:layout_weight="1"
+              android:layout_weight="0.8"
               android:textColor="@color/black"
               android:text="桌号"
               />
@@ -161,27 +181,34 @@
               android:textColor="@color/black"
               android:layout_margin="5dp"
 
-
-
               />
-
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:layout_gravity="center"
+              android:layout_marginRight="5dp"
+              >
           <Button
                android:id="@+id/btn_kot_complete"
-               android:layout_width="80dp"
+               android:layout_width="0dp"
               android:layout_height="50dp"
+              android:layout_weight="1"
               android:layout_gravity="center_vertical"
               android:background="@color/color_kotview"
               android:text="complete"
               />
-<Button
+      <Button
     android:id="@+id/btn_kot_call"
-    android:layout_width="80dp"
+    android:layout_width="0dp"
     android:layout_height="50dp"
+          android:layout_weight="1"
     android:layout_marginLeft="10dp"
     android:layout_gravity="center_vertical"
     android:text="call"
     android:background="@color/color_kotview"
     />
+          </LinearLayout>
       </LinearLayout>
 
 

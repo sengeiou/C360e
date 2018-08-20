@@ -42,11 +42,14 @@ public class PrintManager {
 	    	jobManager = PrintManager.printJobManagers.get(ip);
 		    	if (jobManager == null) {
 
-					if (ip.contains(":")) {
+					String noLetter = "[^0-9a-zA-Z]";
+					ip = ip.replaceAll(noLetter,"_");
+//
+//					if (ip.contains(":")) {
 
 						Configuration printjobconfiguration = new Configuration.Builder(context)
 								.customLogger(new AlfredJobLogger("PRINTER_JOBS_"+ip))
-								.id("printer_jobs_"+ip.replace(':', '_'))
+								.id("printer_jobs_"+ip)
 								.minConsumerCount(1)     //always keep at least one consumer alive
 								.maxConsumerCount(1)     //up to 3 consumers at a time
 								.loadFactor(3)           //3 jobs per consumer
@@ -56,20 +59,20 @@ public class PrintManager {
 						jobManager = new JobManager(printjobconfiguration);
 						PrintManager.printJobManagers.put(ip.trim(),jobManager);
 						addPrinterIpsInStore(ip);
-					}else {
-						Configuration printjobconfiguration = new Configuration.Builder(context)
-								.customLogger(new AlfredJobLogger("PRINTER_JOBS_"+ip))
-								.id("printer_jobs_"+ip.replace('.', '_'))
-								.minConsumerCount(1)     //always keep at least one consumer alive
-								.maxConsumerCount(1)     //up to 3 consumers at a time
-								.loadFactor(3)           //3 jobs per consumer
-								.networkUtil(new JobNetworkUtil(context))
-								.consumerKeepAlive(120)   //wait 2 minute
-								.build();
-						jobManager = new JobManager(printjobconfiguration);
-						PrintManager.printJobManagers.put(ip.trim(),jobManager);
-						addPrinterIpsInStore(ip);
-					}
+//					}else {
+//						Configuration printjobconfiguration = new Configuration.Builder(context)
+//								.customLogger(new AlfredJobLogger("PRINTER_JOBS_"+ip))
+//								.id("printer_jobs_"+ip.replace('.', '_'))
+//								.minConsumerCount(1)     //always keep at least one consumer alive
+//								.maxConsumerCount(1)     //up to 3 consumers at a time
+//								.loadFactor(3)           //3 jobs per consumer
+//								.networkUtil(new JobNetworkUtil(context))
+//								.consumerKeepAlive(10)   //wait 2 minute
+//								.build();
+//						jobManager = new JobManager(printjobconfiguration);
+//						PrintManager.printJobManagers.put(ip.trim(),jobManager);
+//						addPrinterIpsInStore(ip);
+//					}
 
 		    	}
 	    }

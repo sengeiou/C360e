@@ -1207,8 +1207,13 @@ public class DataHelper {
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderDetailId INTEGER, orderId INTEGER, modifierCategoryId INTEGER, itemName TEXT,  modifierCategoryName TEXT, num INTEGER,minNum INTEGER)");
 
             db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  callType INTEGER default 0");
+
+            db.execSQL("ALTER TABLE "
                     + TableNames.Order
                     + " ADD COLUMN  numTag TEXT default ''");
+
 
         }
 
@@ -1217,10 +1222,6 @@ public class DataHelper {
             db.execSQL("ALTER TABLE "
                     + TableNames.Order
                     + " ADD COLUMN  subPosBeanId INTEGER default 0");
-
-            db.execSQL("CREATE TABLE "
-                    + TableNames.KotItem
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, itemDetailName TEXT, itemDetail TEXT, itemModName TEXT,  tableName TEXT, callType INTEGER,kotStatus INTEGER,createTime LONG,updateTime LONG,orderNo INTEGER,summaryId INTEGER)");
 
             /**
              * private String userName;

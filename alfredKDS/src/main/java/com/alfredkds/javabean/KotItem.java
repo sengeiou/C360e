@@ -1,7 +1,6 @@
-package com.alfredbase.javabean;
+package com.alfredbase.javabean.model;
 
 import java.io.Serializable;
-
 public class KotItem implements Serializable {
 
     private int id;
@@ -15,6 +14,24 @@ public class KotItem implements Serializable {
     private Long updateTime;
     private  Integer orderNo;
     private Integer summaryId;
+    private Integer qty;
+    private Integer itemDetailId;
+
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
+    }
+
+    public Integer getItemDetailId() {
+        return itemDetailId;
+    }
+
+    public void setItemDetailId(Integer itemDetailId) {
+        this.itemDetailId = itemDetailId;
+    }
 
     public Integer getSummaryId() {
         return summaryId;

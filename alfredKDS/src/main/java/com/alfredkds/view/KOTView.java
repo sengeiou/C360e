@@ -310,8 +310,6 @@ public class KOTView extends LinearLayout implements AnimationListener,
 				if(!ButtonClickTimer.canClick()){
 					return;
 				}
-
-
 				Message message = new Message();
 				if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
 					int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo());

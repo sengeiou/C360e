@@ -83,8 +83,10 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 		case ParamConst.SETTLEMENT_TYPE_PAYPAL:
 			return R.drawable.icon_diner;
 		case ParamConst.SETTLEMENT_TYPE_CASH:
+			return R.drawable.icon_settle_cash;
 		case ParamConst.SETTLEMENT_TYPE_STORED_CARD:
 			return R.drawable.icon_settle_cash;
+
 		case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
 			return R.drawable.icon_master;
 		case ParamConst.SETTLEMENT_TYPE_UNIPAY:
