@@ -229,8 +229,6 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 
     public void setViewId(int vid ,Handler mhandler) {
         this.vid = vid;
-
-
     }
 
     public void addData(int position,String name) {
@@ -249,13 +247,10 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
                 if (key.equals(callBean.getName())) {
 //
                     type = false;
-//
                 }
 //
             }
-//
         }
-
         callMap.put(callBean.getName(),callBean);
         if(type){
             mDatas.add(position, callBean);
