@@ -51,22 +51,24 @@ public class MainActivity extends BaseActivity {
 				case App.HANDLER_REFRESH_CALL:
 
                          queue.enQueue("A123");
-					timer.schedule(new MyTimertask(),1000);
 
-
-					if(oneFragment!=null){
-						oneFragment.addData(0,"");
-					}
-					if(twoFragment!=null){
-						twoFragment.addData(0,"");
-					}
+                         if(timer==null) {
+							 timer = new Timer();
+							 timer.schedule(new MyTimertask(), 1000);
+						 }
+//					if(oneFragment!=null){
+//						oneFragment.addData(0,"");
+//					}
+//					if(twoFragment!=null){
+//						twoFragment.addData(0,"");
+//					}
 					break;
 
 
 				case App.HANDLER_REFRESH_CALL_ON:
 
-					CallNumQueueUtil num = new CallNumQueueUtil("A123,", 1,0,3);
-					CallNumUtil.call(num);
+//					CallNumQueueUtil num = new CallNumQueueUtil("A123,", 1,0,3);
+//					CallNumUtil.call(num);
 
 					break;
 				default:
@@ -91,9 +93,12 @@ public class MainActivity extends BaseActivity {
 					LogUtil.e("qqqqqqqqq-",queue.QueuePeek().toString()+"-"+queue.QueueLength());
 
 					String name=queue.deQueue().toString();
-						CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1,0,1);
+						for (int j = 0; j < 3; j++) {
+							CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1,0,1);
 
-						CallNumUtil.call(num1);
+							CallNumUtil.call(num1);
+						}
+
 						if(oneFragment!=null) {
 							oneFragment.addData(0, name);
 						}
@@ -102,16 +107,16 @@ public class MainActivity extends BaseActivity {
 						}
 //
 					}else {
-                     queue.clear();
-						timer.cancel();
-
+                         queue.clear();
+						 timer.cancel();
+                      timer=null;
 					}
 
 				}
 			});
 
 
-			timer.schedule(new MyTimertask(), 1000);
+			timer.schedule(new MyTimertask(), 3000);
 
 		}
 
@@ -128,11 +133,11 @@ public class MainActivity extends BaseActivity {
 
 	//	timer11 = new Timer();
 	//	timer11.schedule(new MyTimertask(),1000);
-		for (int j = 0; j <5 ; j++) {
+		for (int j = 0; j <2 ; j++) {
 			queue.enQueue("A12"+j);
-			if(j==4){
-				queue.enQueue("A120");
-			}
+//			if(j==4){
+//				queue.enQueue("A120");
+//			}
 
 
 		}

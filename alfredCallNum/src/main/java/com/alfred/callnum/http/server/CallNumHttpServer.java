@@ -19,7 +19,7 @@ public class CallNumHttpServer extends AlfredHttpServer {
 	}
 	
 	@Override
-	public Response doGet(String uri, Method mothod, Map<String, String> params, String body) {
+	public Response doPost(String uri, Method mothod, Map<String, String> params, String body) {
 
     	Response resp;
     	

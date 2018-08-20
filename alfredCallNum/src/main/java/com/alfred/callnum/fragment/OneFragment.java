@@ -161,6 +161,7 @@ public class OneFragment extends Fragment {
             public void onItemClick(int id, int position) {
                 Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
 
+              mAdapter.notifyItemMoved(0,position);
                 handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_CALL_ON, null));
                 // mAdapter.notifyItemChanged(position);
 //                String content = "";

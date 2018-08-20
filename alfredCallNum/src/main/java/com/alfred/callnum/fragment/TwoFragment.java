@@ -188,18 +188,18 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 //                intent.setClass(getActivity(), MainActivity.class);
 //                 startActivity(intent);
 
-                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-
-
-//                LogFile.i(String.format("OnPrepared,duration=%d",
-//                        mp.getDuration()));
-                        mp.setVolume(0f, 0f);
-                        adjustVideoView();
-                    }
-                });
+//                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//
+//                    @Override
+//                    public void onPrepared(MediaPlayer mp) {
+//
+//
+////                LogFile.i(String.format("OnPrepared,duration=%d",
+////                        mp.getDuration()));
+//                        mp.setVolume(1f, 1f);
+//                        adjustVideoView();
+//                    }
+//                });
             }
         });
 
@@ -690,7 +690,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 
 //                LogFile.i(String.format("OnPrepared,duration=%d",
 //                        mp.getDuration()));
-                mp.setVolume(0.1f, 0.1f);
+                mp.setVolume(1f, 1f);
 
                 adjustVideoView();
             }

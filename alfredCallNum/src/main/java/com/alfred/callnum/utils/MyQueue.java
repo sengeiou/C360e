@@ -12,6 +12,7 @@ public class MyQueue {
     public void clear()//销毁队列
     {
         list.clear();
+        ob="";
     }
     public boolean QueueEmpty()//判断队列是否为空
     {
@@ -43,4 +44,6 @@ public class MyQueue {
     {
         return list.getFirst();
     }
+
+
 }
