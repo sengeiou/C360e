@@ -396,10 +396,7 @@ public class KitchenOrder extends BaseActivity {
 
 	private List<KotItem> getKotItem(List<Kot> kotlist) {
                 kotItems.clear();
-//           kotItems= KotSummarySQL.getAllKotItem();
 		for (int i = 0; i <kotlist.size() ; i++) {
-
-
 			List<KotItemDetail> detailList=kotlist.get(i).getKotItemDetails();
 			for (int j = 0; j <detailList.size() ; j++) {
 				if(detailList.get(j).getKotStatus()<3) {
@@ -409,7 +406,6 @@ public class KitchenOrder extends BaseActivity {
 					item.setTableName(kotlist.get(i).getKotSummary().getTableName());
 					item.setSummaryId(kotlist.get(i).getKotSummary().getId());
 					StringBuffer sBuffer = new StringBuffer();
-
 					item.setKotStatus(detailList.get(j).getKotStatus());
 					item.setItemDetailName(detailList.get(j).getItemName());
 					item.setUpdateTime(detailList.get(j).getUpdateTime());
@@ -431,7 +427,7 @@ public class KitchenOrder extends BaseActivity {
 			}
 
 		}
-  return  kotItems;
+          return  kotItems;
 
 	}
 

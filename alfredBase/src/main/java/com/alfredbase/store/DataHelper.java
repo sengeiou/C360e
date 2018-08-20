@@ -1216,9 +1216,6 @@ public class DataHelper {
 
         private void onUpgradeForOldVersion25(SQLiteDatabase db) {
 
-            db.execSQL("CREATE TABLE "
-                    + TableNames.KotItem
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, itemDetailName TEXT, itemDetail TEXT, itemModName TEXT,  tableName TEXT, callType INTEGER,kotStatus INTEGER,createTime LONG,updateTime LONG,orderNo INTEGER,summaryId INTEGER)");
 
 
 
