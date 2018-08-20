@@ -13,10 +13,16 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.SubPosBean;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
@@ -60,7 +66,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 	public static final int UPDATE_ALL_DATA_SUCCESS = 100;
 	public static final int UPDATE_ALL_DATA_FAILURE = -100;
 	public static final int GET_ORDER_SUCCESS = 101;
-
+	private boolean needSync = true;
 	@Override
 	protected void initView() {
 		super.initView();
@@ -101,6 +107,10 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 		
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version)+": " + App.instance.VERSION);
 		App.instance.showWelcomeToSecondScreen();
+		SubPosBean subPosBean = App.instance.getSubPosBean();
+		if(subPosBean != null && subPosBean.getSubPosStatus() == ParamConst.SUB_POS_STATUS_OPEN){
+			needSync = false;
+		}
 	}
 
 	public void initTitle(){
@@ -145,21 +155,18 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 			switch (msg.what){
 				case ResultCode.SUCCESS: {
 					dismissLoadingDialog();
-					int subPosStatus = (int) msg.obj;
-					if (App.instance.getSubPosStatus() == ParamConst.SUB_POS_STATUS_CLOSE) {
+					if (needSync) {
 						loadingDialog.setTitle("update all data");
 						loadingDialog.show();
 						SubPosSyncCentre.getInstance().updaetAllData(context, handler);
 					}else{
 						startMainPage();
 					}
-					App.instance.setSubPosStatus(subPosStatus);
 				}
 					break;
 				case UPDATE_ALL_DATA_SUCCESS:
 					dismissLoadingDialog();
 					startMainPage();
-					finish();
 					break;
 				case UPDATE_ALL_DATA_FAILURE:
 					dismissLoadingDialog();
@@ -173,15 +180,42 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 		}
 	};
 
+	@Override
+	public void dismissLoadingDialog() {
+		super.dismissLoadingDialog();
+		state = STATE_IN_ENTER_ID;
+		String title = getString(R.string.cashier_login_tips1);
+		((TextView) (login_view_2.findViewById(R.id.tv_login_tips))).setText(title);
+		state = STATE_IN_ENTER_ID;
+		if (keyBuf.length() > 0) {
+			keyBuf.deleteCharAt(keyBuf.length() - 1);
+		}
+		setPassword(0);
+	}
+
 	private void startMainPage(){
+		App.instance.bindSyncService();
 		long businessDate = App.instance.getBusinessDate();
-		if(OrderSQL.getUnfinishedOrderAtTable(TableInfoSQL.getKioskTable().getPosId(), businessDate) != null) {
+		TableInfo tableInfo = TableInfoSQL.getKioskTable();
+		PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
+		if (placeInfo == null) {
+			placeInfo = ObjectFactory.getInstance().addNewPlace(App.instance.getRevenueCenter().getRestaurantId().intValue(),
+					App.instance.getRevenueCenter().getId().intValue(), "kiosk");
+			placeInfo.setIsKiosk(1);
+			PlaceInfoSQL.addPlaceInfo(placeInfo);
+		}
+		if(tableInfo == null){
+			tableInfo = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480,800);
+			tableInfo.setIsKiosk(1);
+			tableInfo.setPosId(0);
+			TableInfoSQL.addTables(tableInfo);
+		}
+		if(OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), businessDate) != null) {
 			UIHelp.startMainPageKiosk(context);
 		}else{
 			loadingDialog.setTitle("loading");
 			loadingDialog.show();
 			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("userId", App.instance.getUser().getId());
 			SubPosSyncCentre.getInstance().getOrder(context, parameters, handler);
 		}
 
@@ -202,11 +236,12 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 		setPassword(key_len);
 		if (key_len == KEY_LENGTH) {
 			if (state == STATE_IN_ENTER_ID) {
-				String title = getString(R.string.cashier_login_tips1);
-				((TextView) (findViewById(R.id.tv_login_tips))).setText(title);
+				String title = getString(R.string.cashier_login_tips2);
+				((TextView) (login_view_2.findViewById(R.id.tv_login_tips))).setText(title);
 				state = STATE_IN_ENTER_PASSWORD;
 				employee_ID = keyBuf.toString();
 				keyBuf.delete(0, key_len);
+				key_len = keyBuf.length();
 				setPassword(key_len);
 			} else if (state == STATE_IN_ENTER_PASSWORD) {
 				password = keyBuf.toString();
@@ -215,6 +250,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 				Map<String, Object> parameters = new HashMap<>();
 				parameters.put("employeeId", employee_ID);
 				parameters.put("password", password);
+				parameters.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
 				loadingDialog.setTitle("Loading");
 				loadingDialog.show();
 				SubPosSyncCentre.getInstance().login(context, parameters, handler);

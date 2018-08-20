@@ -25,6 +25,7 @@ import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Payment;
+import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.model.AppVersion;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PushMessage;
@@ -170,13 +171,12 @@ public class Welcome extends BaseActivity {
 
 
 	private void startSubPosNextActivity(){
-		String str = Store.getString(
-				context, Store.SYNC_DATA_TAG);
 		App.instance.bindSyncService();
+		SubPosBean subPosBean = App.instance.getSubPosBean();
 		App.instance.connectRemotePrintService();
 		int time = Store.getInt(App.instance, Store.RELOGIN_TIME);
 		App.instance.setTime(time);
-		if (TextUtils.isEmpty(str)) {// 认为没有同步过服务器数据
+		if (subPosBean == null) {// 认为没有同步过服务器数据
 			UIHelp.startSelectRevenu(Welcome.this);
 			this.finish();
 		} else {
@@ -186,13 +186,13 @@ public class Welcome extends BaseActivity {
 					CoreData.getInstance().init(context);
 					App.instance.setLocalRestaurantConfig(CoreData.getInstance().getRestaurantConfigs());
 					App.instance.initKdsAndPrinters();
-					MainPosInfo mps = Store.getObject(context, Store.MAINPOSINFO, MainPosInfo.class);
-					checkAndUpdateMainPOS(mps);
+//					MainPosInfo mps = Store.getObject(context, Store.MAINPOSINFO, MainPosInfo.class);
+//					checkAndUpdateMainPOS(mps);
 					clearNoActivePaymentSettlement();
 					context.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							UIHelp.startLogin(context);
+							UIHelp.startSubPosLogin(context);
 							context.finish();
 						}
 					});

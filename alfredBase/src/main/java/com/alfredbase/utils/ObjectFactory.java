@@ -1,5 +1,6 @@
 package com.alfredbase.utils;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
@@ -18,6 +19,7 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
+import com.alfredbase.javabean.MultiOrderRelation;
 import com.alfredbase.javabean.NetsSettlement;
 import com.alfredbase.javabean.NonChargableSettlement;
 import com.alfredbase.javabean.Order;
@@ -34,6 +36,7 @@ import com.alfredbase.javabean.ReportDiscount;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.User;
@@ -61,6 +64,7 @@ import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.LocalDeviceSQL;
+import com.alfredbase.store.sql.MultiOrderRelationSQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.NonChargableSettlementSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
@@ -77,6 +81,7 @@ import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
+import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
@@ -86,7 +91,9 @@ import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ObjectFactory {
 	private static ObjectFactory instance;
@@ -102,55 +109,126 @@ public class ObjectFactory {
 
 	Object lock_order = new Object();
 
-	public Order getOrder(Integer orderOriginId, TableInfo tables,
+	public Order getOrder(Integer orderOriginId, int subPosBeanId, TableInfo tables,
 			RevenueCenter revenueCenter, User user,
 			SessionStatus sessionStatus, long businessDate, int orderNOTitle,
 			int orderStatus, Tax inclusiveTax){
-		return getOrder(orderOriginId, tables, revenueCenter, user, sessionStatus, businessDate, orderNOTitle, orderStatus, inclusiveTax, 0);
+		return getOrder(orderOriginId, subPosBeanId, tables, revenueCenter, user, sessionStatus, businessDate, orderNOTitle, orderStatus, inclusiveTax, 0);
 	}
 
-	public Order getSubPosOrder(Integer orderOriginId, TableInfo tables,
-						  RevenueCenter revenueCenter, User user,
-						  SessionStatus sessionStatus, long businessDate, int orderNOTitle,
-						  int orderStatus, Tax inclusiveTax){
+	public Order cpOrderInfo (SQLiteDatabase db, int subPosBeanId, Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
+							  List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
+							  List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements, List<RoundAmount> roundAmounts) throws Exception{
 
-		Order order = null;
 		synchronized (lock_order) {
-			order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate);
-			if (order == null) {
-
-				order = new Order();
-				order.setId(CommonSQL.getNextSeq(TableNames.Order));
-				order.setOrderOriginId(orderOriginId);
-				order.setUserId(user.getId());
-				order.setPersons(tables.getPacks());
-				order.setOrderStatus(orderStatus);
-				order.setDiscountRate(ParamConst.DOUBLE_ZERO);
-				order.setSessionStatus(sessionStatus.getSession_status());
-				order.setRestId(CoreData.getInstance().getRestaurant().getId());
-				order.setRevenueId(revenueCenter.getId());
-				order.setPlaceId(tables.getPlacesId());
-				order.setTableId(tables.getPosId());
-				long time = System.currentTimeMillis();
-				order.setCreateTime(time);
-				order.setUpdateTime(time);
-				order.setBusinessDate(businessDate);
-//					order.setOrderNo(order.getId());
-				order.setOrderNo(OrderHelper.calculateOrderNo(businessDate));//流水号
-				order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_NULL);
-				order.setAppOrderId(0);
-				order.setIsSubPos(1);
-				if(inclusiveTax != null){
-					order.setInclusiveTaxName(inclusiveTax.getTaxName());
-					order.setInclusiveTaxPercentage(inclusiveTax.getTaxPercentage());
-				}
-				OrderSQL.addOrder(order);
+			if (subOrder != null) {
+				int oldId = subOrder.getId().intValue();
+				subOrder.setId(CommonSQL.getNextSeq(TableNames.Order));
+				OrderSQL.update(db,subOrder);
+				MultiOrderRelation m = new MultiOrderRelation(subOrder.getId(), oldId, subPosBeanId, subOrder.getCreateTime());
+				MultiOrderRelationSQL.updateMultiOrderRelation(db, m);
 			}
 		}
-		return order;
+		Map<Integer, Integer> orderSplitMap = new HashMap<>();
+		for(OrderSplit orderSplit : orderSplits){
+			synchronized (lock_getOrderSplit){
+				int oldId = orderSplit.getId();
+				orderSplit.setId(CommonSQL.getNextSeq(TableNames.OrderSplit));
+				orderSplit.setOrderId(subOrder.getId());
+				OrderSplitSQL.update(db, orderSplit);
+				orderSplitMap.put(oldId, orderSplit.getId());
+			}
+		}
+
+		Map<Integer, Integer> paymentMap = new HashMap<>();
+		for(Payment payment : payments){
+			synchronized (lock_get_payment){
+				int oldId = payment.getId();
+				payment.setId(CommonSQL.getNextSeq(TableNames.Payment));
+				payment.setOrderId(subOrder.getId());
+				Integer orderSplitId = payment.getOrderSplitId();
+				if(orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
+					payment.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
+				}
+				PaymentSQL.addPayment(db, payment);
+				paymentMap.put(oldId, payment.getId());
+			}
+		}
+
+		for(RoundAmount roundAmount : roundAmounts){
+			synchronized (lock_getRoundAmount){
+				roundAmount.setId(CommonSQL.getNextSeq(TableNames.RoundAmount));
+				roundAmount.setOrderId(subOrder.getId());
+				Integer orderSplitId = roundAmount.getOrderSplitId();
+				if(orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())){
+					roundAmount.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
+				}
+				RoundAmountSQL.update(db, roundAmount);
+			}
+		}
+
+		for(OrderBill orderBill : orderBills){
+			synchronized (lock_get_order_bill){
+				orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
+				orderBill.setOrderId(subOrder.getId());
+				Integer orderSplitId = orderBill.getOrderSplitId();
+				if(orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())){
+					orderBill.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
+				}
+				OrderBillSQL.add(db, orderBill);
+			}
+		}
+
+		Map<Integer, Integer> orderDetailMap = new HashMap<>();
+		for(OrderDetail orderDetail : orderDetails) {
+			synchronized (lock_orderDetail) {
+				int oldId = orderDetail.getId();
+				orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+				orderDetail.setOrderId(subOrder.getId());
+				Integer orderSplitId = orderDetail.getOrderSplitId();
+				if(orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())){
+					orderDetail.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
+				}
+				OrderDetailSQL.updateOrderDetail(db, orderDetail);
+				orderDetailMap.put(oldId, orderDetail.getId());
+			}
+		}
+
+		for(OrderModifier orderModifier : orderModifiers) {
+			synchronized (lock_order_modifier) {
+				orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+				Integer orderDetailId = orderModifier.getOrderDetailId();
+				if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
+					orderModifier.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
+				}
+			}
+		}
+		for(OrderDetailTax orderDetailTax : orderDetailTaxs) {
+			synchronized (lock_get_order_detail_tax) {
+				orderDetailTax.setId(CommonSQL.getNextSeq(TableNames.OrderDetailTax));
+				Integer orderDetailId = orderDetailTax.getOrderDetailId();
+				if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
+					orderDetailTax.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
+				}
+				orderDetailTax.setOrderId(subOrder.getId());
+
+			}
+		}
+
+		for(PaymentSettlement paymentSettlement : paymentSettlements){
+			synchronized (lock_get_payment_settlement){
+				paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.PaymentSettlement));
+				Integer paymentId = paymentSettlement.getPaymentId();
+				if(paymentId != null && paymentMap.containsKey(paymentId.intValue())){
+					paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));
+				}
+				PaymentSettlementSQL.addPaymentSettlement(db, paymentSettlement);
+			}
+		}
+		return subOrder;
 	}
 
-	public Order getOrder(Integer orderOriginId, TableInfo tables,
+	public Order getOrder(Integer orderOriginId, int subPosBeanId, TableInfo tables,
 			RevenueCenter revenueCenter, User user,
 			SessionStatus sessionStatus, long businessDate, int orderNOTitle,
 			int orderStatus, Tax inclusiveTax, int appOrderId) {
@@ -184,13 +262,18 @@ public class ObjectFactory {
 						order.setInclusiveTaxName(inclusiveTax.getTaxName());
 						order.setInclusiveTaxPercentage(inclusiveTax.getTaxPercentage());
 					}
+					if(subPosBeanId > 0){
+						SubPosBean subPosBean = SubPosBeanSQL.getSubPosBeanById(subPosBeanId);
+						order.setNumTag(subPosBean.getNumTag());
+					}
+					order.setSubPosBeanId(subPosBeanId);
 					OrderSQL.addOrder(order);
 				}
 		}
 		return order;
 	}
 
-	public Order addOrderFromKioskDesktop(Integer orderOriginId, TableInfo tables,
+	public Order addOrderFromKioskDesktop(Integer orderOriginId, int subPosBeanId, TableInfo tables,
 						  RevenueCenter revenueCenter, User user,
 						  SessionStatus sessionStatus, long businessDate, Tax inclusiveTax) {
 
@@ -220,13 +303,18 @@ public class ObjectFactory {
 					order.setInclusiveTaxName(inclusiveTax.getTaxName());
 					order.setInclusiveTaxPercentage(inclusiveTax.getTaxPercentage());
 				}
+				if(subPosBeanId > 0){
+					SubPosBean subPosBean = SubPosBeanSQL.getSubPosBeanById(subPosBeanId);
+					order.setNumTag(subPosBean.getNumTag());
+				}
+				order.setSubPosBeanId(subPosBeanId);
 				OrderSQL.addOrder(order);
 			}
 		}
 		return order;
 	}
 
-	public Order getOrderFromAppOrder(AppOrder appOrder, User user,
+	public Order getOrderFromAppOrder(int subPosBeanId, AppOrder appOrder, User user,
 									  SessionStatus sessionStatus, RevenueCenter revenueCenter,
 									  TableInfo tables, long businessDate, Restaurant restaurant,
 									  Tax inclusiveTax, boolean isKiosk) {
@@ -272,6 +360,11 @@ public class ObjectFactory {
 						order.setInclusiveTaxPercentage(inclusiveTax.getTaxPercentage());
 					}
 					order.setDiscountAmount("0.00");
+					if(subPosBeanId > 0){
+						SubPosBean subPosBean = SubPosBeanSQL.getSubPosBeanById(subPosBeanId);
+						order.setNumTag(subPosBean.getNumTag());
+					}
+					order.setSubPosBeanId(subPosBeanId);
 					OrderHelper.setOrderInclusiveTaxPrice(order);
 					OrderSQL.update(order);
 				}
@@ -843,6 +936,7 @@ public class ObjectFactory {
 			orderModifier.setUpdateTime(time);
 			orderModifier.setPrinterId(printerId);
 			orderModifier.setModifierItemPrice(modifier.getPrice());
+
 		}
 		return orderModifier;
 	}
@@ -1552,6 +1646,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotSummary.setBusinessDate(businessDate);
 				kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
 				kotSummary.setOrderRemark(order.getOrderRemark());
+				kotSummary.setNumTag(order.getNumTag());
 			}
 			if(revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
 				kotSummary.setTableName(order.getTableName());
@@ -1590,6 +1685,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 				kotSummary.setIsTakeAway(order.getIsTakeAway());
 				kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
 				kotSummary.setOrderRemark(order.getOrderRemark());
+				kotSummary.setNumTag(order.getNumTag());
 				KotSummarySQL.update(kotSummary);
 			}
 		}

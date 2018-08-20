@@ -224,9 +224,8 @@ public class KitchenOrder extends BaseActivity {
 
 					break;
 				case App.HANDLER_KOT_CALL_NUM:
-					int i = msg.arg1;
+					String str = (String) msg.obj;
 					int id=msg.arg2;
-					String str = i + "";
 					if (!TextUtils.isEmpty(str)) {
 						loadingDialog.show();
 						Map<String, Object> parameters = new HashMap<String, Object>();
@@ -566,8 +565,8 @@ public class KitchenOrder extends BaseActivity {
 			orderId.setVisibility(View.VISIBLE);
 		}
 		kotId.setText(kot.getKotSummary().getId() + "");
-		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo() + "");
-		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
+		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo() + "");
+		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo() + ""));
 		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName() + "");
 		posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));

@@ -183,6 +183,56 @@ public class OrderDetailSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void updateOrderDetail(SQLiteDatabase db, OrderDetail orderDetail) {
+		if (orderDetail == null) {
+			return;
+		}
+		try {
+			String sql = "replace into "
+					+ TableNames.OrderDetail
+					+ "(id,orderId, orderOriginId, userId, itemId,itemName,itemNum, orderDetailStatus, orderDetailType,reason, printStatus, itemPrice,"
+					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
+					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
+					+ " fireStatus)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] { orderDetail.getId(),
+							orderDetail.getOrderId(),
+							orderDetail.getOrderOriginId(),
+							orderDetail.getUserId(), orderDetail.getItemId(),
+							orderDetail.getItemName(),
+							orderDetail.getItemNum(),
+							orderDetail.getOrderDetailStatus(),
+							orderDetail.getOrderDetailType(),
+							orderDetail.getReason(),
+							orderDetail.getPrintStatus(),
+							orderDetail.getItemPrice(),
+							orderDetail.getTaxPrice(),
+							orderDetail.getDiscountPrice(),
+							orderDetail.getModifierPrice(),
+							orderDetail.getRealPrice(),
+							orderDetail.getCreateTime(),
+							orderDetail.getUpdateTime(),
+							orderDetail.getDiscountRate(),
+							orderDetail.getDiscountType(),
+							orderDetail.getFromOrderDetailId(),
+							orderDetail.getIsFree(), orderDetail.getGroupId(),
+							orderDetail.getIsOpenItem(),
+							orderDetail.getSpecialInstractions(),
+							orderDetail.getOrderSplitId(),
+							orderDetail.getIsTakeAway(),
+							orderDetail.getWeight(),
+							orderDetail.getIsItemDiscount(),
+							orderDetail.getIsSet(),
+							orderDetail.getAppOrderDetailId(),
+							orderDetail.getMainCategoryId(),
+							orderDetail.getFireStatus()
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void updateOrderDetailStatusById(int orderDetailStatus,
 												   int id) {

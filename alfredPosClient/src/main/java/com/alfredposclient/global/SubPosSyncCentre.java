@@ -5,6 +5,9 @@ import android.os.Handler;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.http.APIName;
+import com.alfredbase.javabean.SubPosBean;
+import com.alfredbase.javabean.SyncMsg;
+import com.alfredbase.utils.CallBack;
 import com.alfredposclient.http.subpos.SubPosHttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
@@ -74,5 +77,13 @@ public class SubPosSyncCentre {
 	public void getOrder(Context context, Map<String, Object> parameters, final Handler handler) {
 		SubPosHttpAPI.getOrder(context, parameters, getAbsoluteUrl(APIName.SUBPOS_UPDATE_DATA), httpClient, handler);
 	}
+	public void cloudSyncUploadOrderInfo(Context context, SyncMsg syncMsg){
+		SubPosHttpAPI.cloudSyncUploadOrderInfo(context, syncMsg, getAbsoluteUrl(APIName.SUBPOS_COMMIT_ORDER), bigSyncHttpClient);
+
+	}
+	public void cloudSyncUploadReportInfo(Context context, SyncMsg syncMsg, SubPosBean subPosBean, CallBack callBack){
+		SubPosHttpAPI.cloudSyncUploadReportInfo(context, syncMsg, subPosBean, getAbsoluteUrl(APIName.SUBPOS_COMMIT_REPORT), bigSyncHttpClient, callBack);
+	}
+
 
 }

@@ -2,11 +2,13 @@ package com.alfredbase.store.sql;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
+import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,30 @@ public class UserOpenDrawerRecordSQL {
                             userOpenDrawerRecord.getLoginUserId()
 
                     });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void addUserOpenDrawerRecordList(SQLiteDatabase db, List<UserOpenDrawerRecord> userOpenDrawerRecords) {
+        if (userOpenDrawerRecords == null) {
+            return;
+        }
+        try {
+            String sql = "replace into "
+                    + TableNames.UserOpenDrawerRecord
+                    + "(restaurantId, revenueCenterId, sessionStatus, userId, userName, openTime, loginUserId)"
+                    + " values (?,?,?,?,?,?,?,?)";
+            SQLiteStatement sqLiteStatement = db.compileStatement(sql);
+            for(UserOpenDrawerRecord userOpenDrawerRecord : userOpenDrawerRecords){
+                SQLiteStatementHelper.bindLong(sqLiteStatement,1, userOpenDrawerRecord.getRestaurantId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 2, userOpenDrawerRecord.getRevenueCenterId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 3, userOpenDrawerRecord.getSessionStatus());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 4, userOpenDrawerRecord.getUserId());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 5, userOpenDrawerRecord.getUserName());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 6, userOpenDrawerRecord.getOpenTime());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 7, userOpenDrawerRecord.getLoginUserId());
+                sqLiteStatement.executeInsert();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

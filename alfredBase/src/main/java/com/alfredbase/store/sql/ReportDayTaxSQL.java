@@ -41,7 +41,34 @@ public class ReportDayTaxSQL {
 			e.printStackTrace();
 		}
 	}
-	
+	public static void addReportDayTax(SQLiteDatabase db, ReportDayTax reportDayTax) {
+		if (reportDayTax == null)
+			return;
+		try {
+			String sql = "replace into "
+					+ TableNames.ReportDayTax
+					+ "(id, daySalesId, restaurantId, restaurantName, revenueId, revenueName, businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+			db.execSQL(
+					sql,
+					new Object[] { reportDayTax.getId(),
+							reportDayTax.getDaySalesId(),
+							reportDayTax.getRestaurantId(),
+							reportDayTax.getRestaurantName(),
+							reportDayTax.getRevenueId(),
+							reportDayTax.getRevenueName(),
+							reportDayTax.getBusinessDate(),
+							reportDayTax.getTaxId(),
+							reportDayTax.getTaxName(),
+							reportDayTax.getTaxPercentage() == null ? "0.00" : reportDayTax.getTaxPercentage(),
+							reportDayTax.getTaxQty() == null ? 0 : reportDayTax.getTaxQty(),
+							reportDayTax.getTaxAmount() == null ? "0.00" : reportDayTax.getTaxAmount()
+							});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	//save Report data from cloud only
 	public static void saveReportDayTaxListFromCloud(List<ReportDayTax> reportDayTaxList) {
 		if (reportDayTaxList == null)

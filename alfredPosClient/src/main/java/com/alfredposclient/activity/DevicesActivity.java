@@ -559,7 +559,11 @@ public class DevicesActivity extends BaseActivity {
             device_code_img.setVisibility(View.GONE);
         }
         printerDBModelList = new ArrayList<PrinterDevice>(App.instance.getPrinterDevices().values());
-        printerDeptModelList = PrinterSQL.getAllPrinterByType(1);
+        if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+            printerDeptModelList = PrinterSQL.getAllPrinterByType(1);
+        }else{
+            printerDeptModelList = PrinterSQL.getCashierPrinter();
+        }
         if (printerDeptModelList.size() > 0) {
             deviceGroupAdapter = new DeviceGroupAdapter(this, printerDeptModelList);
             hv_printer_group.setAdapter(deviceGroupAdapter);
@@ -586,7 +590,11 @@ public class DevicesActivity extends BaseActivity {
         devices_ip_tv = (TextView) findViewById(R.id.devices_ip_tv);
 
         devices_revenueCenter_tv = (TextView) findViewById(R.id.devices_revenueCenter_tv);
-        devices_revenueCenter_tv.setText(App.instance.getMainPosInfo().getName());
+        if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+            devices_revenueCenter_tv.setText(App.instance.getMainPosInfo().getName());
+        }else{
+            devices_revenueCenter_tv.setText("");
+        }
 
         devices_printe_lyt = (LinearLayout) findViewById(R.id.devices_printe_lyt);
         selectedViewId = R.id.devices_printe_lyt;

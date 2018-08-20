@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
+import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.utils.AlertToDeviceSetting;
@@ -170,7 +172,28 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				// UIHelp.startOpenRestaruant(context);
 				// context.overridePendingTransition(R.anim.slide_top_in,
 				// R.anim.anim_null);
-				context.finish();
+				if(App.instance.getPosType() == 0) {
+					context.finish();
+				}else{
+					if(context instanceof MainPageKiosk){
+						DialogFactory.commonTwoBtnInputDialog(context,false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+								new OnClickListener() {
+									@Override
+									public void onClick(View view) {
+										((MainPageKiosk) context).sendXReportToMainPos("0.00");
+									}
+								},
+								new OnClickListener() {
+									@Override
+									public void onClick(View view) {
+										EditText editText = (EditText) view;
+										String actual = editText.getText().toString();
+										((MainPageKiosk) context).sendXReportToMainPos(actual);
+									}
+								});
+
+					}
+				}
 				break;
 			}
 			case R.id.ll_clock_select:

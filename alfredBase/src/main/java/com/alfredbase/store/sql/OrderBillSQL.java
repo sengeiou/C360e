@@ -1,6 +1,7 @@
 package com.alfredbase.store.sql;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
@@ -24,6 +25,28 @@ public class OrderBillSQL {
 					+ "(id, billNo, orderId, orderSplitId, type, restaurantId, revenueId, userId, createTime, updateTime)"
 					+ " values (?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] { orderBill.getId(), orderBill.getBillNo(),
+							orderBill.getOrderId(),
+							orderBill.getOrderSplitId(), orderBill.getType(),
+							orderBill.getRestaurantId(),
+							orderBill.getRevenueId(), orderBill.getUserId(),
+							orderBill.getCreateTime(),
+							orderBill.getUpdateTime() });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void add(SQLiteDatabase db, OrderBill orderBill) {
+		if (orderBill == null) {
+			return;
+		}
+		try {
+			String sql = "replace into "
+					+ TableNames.OrderBill
+					+ "(id, billNo, orderId, orderSplitId, type, restaurantId, revenueId, userId, createTime, updateTime)"
+					+ " values (?,?,?,?,?,?,?,?,?,?)";
+			db.execSQL(
 					sql,
 					new Object[] { orderBill.getId(), orderBill.getBillNo(),
 							orderBill.getOrderId(),

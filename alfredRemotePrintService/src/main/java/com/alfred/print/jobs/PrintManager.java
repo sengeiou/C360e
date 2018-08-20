@@ -8,7 +8,6 @@ import com.alfredbase.store.Store;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.config.Configuration;
-import com.birbit.android.jobqueue.network.NetworkUtilImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +64,7 @@ public class PrintManager {
 								.maxConsumerCount(1)     //up to 3 consumers at a time
 								.loadFactor(3)           //3 jobs per consumer
 								.networkUtil(new JobNetworkUtil(context))
-								.consumerKeepAlive(10)   //wait 2 minute
+								.consumerKeepAlive(120)   //wait 2 minute
 								.build();
 						jobManager = new JobManager(printjobconfiguration);
 						PrintManager.printJobManagers.put(ip.trim(),jobManager);

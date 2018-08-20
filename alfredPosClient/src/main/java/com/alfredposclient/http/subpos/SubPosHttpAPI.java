@@ -5,11 +5,17 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.SubPosBean;
+import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.SubPosBeanSQL;
+import com.alfredbase.store.sql.SyncMsgSQL;
+import com.alfredbase.utils.CallBack;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredposclient.activity.kioskactivity.subpos.SubPosLogin;
 import com.alfredposclient.global.App;
@@ -162,6 +168,7 @@ public class SubPosHttpAPI {
                              String url, AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
             parameters.put("appVersion", App.instance.VERSION);
+            parameters.put("userId", App.instance.getUser().getId());
         }
         try {
             httpClient.post(context, url,
@@ -183,6 +190,115 @@ public class SubPosHttpAPI {
                         @Override
                         public void onFailure(final int statusCode, final Header[] headers,
                                               final byte[] responseBody, final Throwable error) {
+                            errorAction(error);
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void uploadOrder(final Context context, Map<String, Object> parameters,
+                             String url, AsyncHttpClient httpClient, final Handler handler) {
+        if (parameters != null) {
+            parameters.put("appVersion", App.instance.VERSION);
+            parameters.put("userId", App.instance.getUser().getId());
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters) + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            String body = new String(responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                SubPosHttpAnalysis.uploadOrder(body);
+                                handler.sendEmptyMessage(SubPosLogin.GET_ORDER_SUCCESS);
+                            } else {
+                                elseResultCodeAction(resultCode, body);
+                            }
+                        }
+                        @Override
+                        public void onFailure(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody, final Throwable error) {
+                            errorAction(error);
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void cloudSyncUploadOrderInfo(final Context context, final SyncMsg syncMsg,
+                                                String url, AsyncHttpClient httpClient) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(syncMsg.getData());
+            jsonObject.put("appVersion", App.instance.VERSION);
+            jsonObject.put("userId", App.instance.getUser().getId());
+            httpClient.post(context, url,
+                    new StringEntity(jsonObject + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS
+                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
+                                syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);
+                                SyncMsgSQL.add(syncMsg);
+                            } else {
+                                syncMsg.setStatus(ParamConst.SYNC_MSG_MALDATA);
+                                SyncMsgSQL.add(syncMsg);
+                            }
+                        }
+                        @Override
+                        public void onFailure(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody, final Throwable error) {
+                            syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
+                            SyncMsgSQL.add(syncMsg);
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void cloudSyncUploadReportInfo(final Context context, final SyncMsg syncMsg, final SubPosBean subPosBean,
+                                                 String url, AsyncHttpClient httpClient, final CallBack callBack) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(syncMsg.getData());
+            jsonObject.put("appVersion", App.instance.VERSION);
+            jsonObject.put("userId", App.instance.getUser().getId());
+            httpClient.post(context, url,
+                    new StringEntity(jsonObject + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS
+                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
+                                syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);
+                                SyncMsgSQL.add(syncMsg);
+                                subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
+                                SubPosBeanSQL.updateSubPosBean(subPosBean);
+                                App.instance.setSubPosBean(subPosBean);
+                                callBack.onSuccess();
+                            }
+                        }
+                        @Override
+                        public void onFailure(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody, final Throwable error) {
+                            syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
+                            SyncMsgSQL.add(syncMsg);
+                            callBack.onError();
                             errorAction(error);
                             super.onFailure(statusCode, headers, responseBody, error);
                         }

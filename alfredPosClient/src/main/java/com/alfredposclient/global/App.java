@@ -46,8 +46,8 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.Payment;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterTitle;
@@ -62,6 +62,7 @@ import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
@@ -99,6 +100,7 @@ import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
+import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.BH;
@@ -121,6 +123,7 @@ import com.alfredposclient.javabean.SecondScreenBean;
 import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
+import com.alfredposclient.jobs.SubPosCloudSyncJobManager;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
@@ -228,6 +231,8 @@ public class App extends BaseApplication {
 
     // Sync sale data to cloud
     private CloudSyncJobManager syncJob = null;
+    private SubPosCloudSyncJobManager subPosSyncJob = null;
+    private SubPosBean subPosBean;
 
     // 全局变量用于表示正在结账的 Order
     public Order orderInPayment = null;
@@ -262,7 +267,6 @@ public class App extends BaseApplication {
     private RemotePrintServiceCallback mCallback = new RemotePrintServiceCallback();
 
     private int posType = 0; // 0--> main Pos， 1 -->sub Pos
-    private int subPosStatus = 0; // 0 已经关闭session， 1 未关闭session
     private String pairingIp;
     /*
      * Remote Print Service Connection
@@ -467,9 +471,11 @@ public class App extends BaseApplication {
                 e.printStackTrace();
             }
         }
-        xmppThread = new XmppThread();
-        xmppThread.start();
         posType = Store.getInt(instance, Store.POS_TYPE, 0);
+        if(posType == 0) {
+            xmppThread = new XmppThread();
+            xmppThread.start();
+        }
         wifiPolicyNever();
         update15to16();
     }
@@ -1153,7 +1159,9 @@ public class App extends BaseApplication {
             this.mainPosInfo.setIP(CommonUtil.getLocalIpAddress());
             this.setMainPosInfo(mainPosInfo);
             Store.saveObject(getBaseContext(), Store.MAINPOSINFO, mainPosInfo);
-            XMPP.getInstance().onNetWorkConnect();
+            if(posType == 0) {
+                XMPP.getInstance().onNetWorkConnect();
+            }
         }
     }
 
@@ -1627,7 +1635,7 @@ public class App extends BaseApplication {
             fakeKotSummary.setTableName(kotsummary.getTableName());
             fakeKotSummary.setUpdateTime(kotsummary.getUpdateTime());
             fakeKotSummary.setIsTakeAway(kotsummary.getIsTakeAway());
-
+            fakeKotSummary.setNumTag(kotsummary.getNumTag());
             String printstr = gson.toJson(printer);
             String kotsumStr = gson.toJson(fakeKotSummary);
             String kdlstr = gson.toJson(itemDetailsList);
@@ -2195,7 +2203,13 @@ public class App extends BaseApplication {
 //        this.bindService(PushService.startIntent(this.getApplicationContext()),
 //                this.pushConnection, Context.BIND_IMPORTANT);
 //        this.startService(PushService.startIntent(this.getApplicationContext()));
-        syncJob = new CloudSyncJobManager(this);
+        if(posType == 0) {
+            syncJob = new CloudSyncJobManager(this);
+        } else {
+            subPosSyncJob = new SubPosCloudSyncJobManager(this);
+            subPosBean = SubPosBeanSQL.getSelfSubPosBean();
+        }
+
     }
 //    public void bindPushWebSocketService(int restId) {
 //        this.bindService(RabbitMqPushService.startIntent(this.getApplicationContext(), restId),
@@ -2282,7 +2296,26 @@ public class App extends BaseApplication {
      * Cloud Sync manager: Sync Sales data to cloud
      */
     public CloudSyncJobManager getSyncJob() {
-        return syncJob;
+        if(posType == 0) {
+            return syncJob;
+        }else{
+            return null;
+        }
+    }
+    public SubPosCloudSyncJobManager getSubPosSyncJob() {
+        if(posType != 0) {
+            return subPosSyncJob;
+        }else{
+            return null;
+        }
+    }
+
+    public SubPosBean getSubPosBean() {
+        return subPosBean;
+    }
+
+    public void setSubPosBean(SubPosBean subPosBean) {
+        this.subPosBean = subPosBean;
     }
 
     public int height;
@@ -2535,7 +2568,7 @@ public class App extends BaseApplication {
 //            appOrder.setTableType(ParamConst.APP_ORDER_TABLE_STATUS_NOT_USE);
 //            AppOrderSQL.updateAppOrder(appOrder);
 
-            Order order = ObjectFactory.getInstance().getOrderFromAppOrder(appOrder, getUser(),
+            Order order = ObjectFactory.getInstance().getOrderFromAppOrder(App.instance.getSubPosBeanId(), appOrder, getUser(),
                     getSessionStatus(), getRevenueCenter(), tables, getBusinessDate(), CoreData.getInstance().getRestaurant(),
                     App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), App.instance.isRevenueKiosk());
 //            OrderHelper.setOrderInclusiveTaxPrice(order);
@@ -2674,11 +2707,14 @@ public class App extends BaseApplication {
                 appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARING);
                 appOrder.setOrderNo(order.getOrderNo());
                 AppOrderSQL.addAppOrder(appOrder);
-                getSyncJob().checkAppOrderStatus(
-                        App.instance.getRevenueCenter().getId().intValue(),
-                        appOrder.getId().intValue(),
-                        appOrder.getOrderStatus().intValue(), "",
-                        App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+                CloudSyncJobManager cloudSync = getSyncJob();
+                if (cloudSync != null){
+                    cloudSync.checkAppOrderStatus(
+                            App.instance.getRevenueCenter().getId().intValue(),
+                            appOrder.getId().intValue(),
+                            appOrder.getOrderStatus().intValue(), "",
+                            App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+                }
                 if (App.getTopActivity() instanceof NetWorkOrderActivity) {
                     App.getTopActivity().httpRequestAction(Activity.RESULT_OK, "");
                 }
@@ -2962,19 +2998,23 @@ public class App extends BaseApplication {
     }
 
     public String getPairingIp() {
+        if(TextUtils.isEmpty(pairingIp)){
+            pairingIp = Store.getString(instance, Store.MAIN_POS_IP);
+        }
         return pairingIp;
     }
 
     public void setPairingIp(String pairingIp) {
         this.pairingIp = pairingIp;
+        Store.putString(instance, Store.MAIN_POS_IP, pairingIp);
     }
 
-    public int getSubPosStatus() {
-        return subPosStatus;
+    public int getSubPosBeanId(){
+        if(subPosBean == null){
+            return 0;
+        }else{
+            return subPosBean.getId();
+        }
     }
 
-    public void setSubPosStatus(int subPosStatus) {
-        Store.putInt(this, Store.SUB_POS_STATUS, subPosStatus);
-        this.subPosStatus = subPosStatus;
-    }
 }

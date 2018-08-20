@@ -24,6 +24,7 @@ import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundRule;
 import com.alfredbase.javabean.SettlementRestaurant;
+import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
@@ -93,7 +94,7 @@ public class CoreData {
 	private List<KotNotification> kotNotifications;
 	private List<LocalDevice> localDevices;
 
-
+	private SubPosBean subPosBean;
 
 
 	private List<PaymentMethod> pamentMethodList;

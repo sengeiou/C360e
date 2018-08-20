@@ -90,8 +90,10 @@ public class APIName {
 	public static final String SUBPOS_UPDATE_DATA = "subPos/updateData";
 	public static final String SUBPOS_CHOOSEREVENUE = "subPos/chooseRevenue";
 	public static final String SUBPOS_SYNCDATA = "subPos/syncData";
-	public static final String SUBPOS_ADDORDER = "subPos/addOrder";
 	public static final String SUBPOS_SESSIONSTATUS = "subPos/sessionStatus";
+	public static final String SUBPOS_COMMIT_ORDER = "subPos/commitOrder";
+	public static final String SUBPOS_COMMIT_REPORT = "subPos/commitReport";
+
 
 
 

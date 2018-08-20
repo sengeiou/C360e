@@ -179,6 +179,46 @@ public class PrinterSQL {
 		}
 		return result;
 	}
+	public static ArrayList<Printer> getCashierPrinter() {
+		ArrayList<Printer> result = new ArrayList<>();
+		String sql = "select * from " + TableNames.Printer +" where type = 1 and isCashdrawer = 1";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			Printer printer = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				printer = new Printer();
+				printer.setId(cursor.getInt(0));
+				printer.setPrinterGroupName(cursor.getString(1));
+				printer.setPrinterName(cursor.getString(2));
+				printer.setPrinterLocation(cursor.getString(3));
+				printer.setPrinterType(cursor.getString(4));
+				printer.setqPrint(cursor.getString(5));
+				printer.setIsCashdrawer(cursor.getInt(6));
+				printer.setCompanyId(cursor.getInt(7));
+				printer.setRestaurantId(cursor.getInt(8));
+				printer.setType(cursor.getInt(9));
+				printer.setCreateTime(cursor.getLong(10));
+				printer.setUpdateTime(cursor.getLong(11));
+				printer.setIsLablePrinter(cursor.getInt(12));
+				result.add(printer);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
 
 	public static void deletePrinter(Printer printer) {
 		String sql = "delete from " + TableNames.Printer + " where id = ?";

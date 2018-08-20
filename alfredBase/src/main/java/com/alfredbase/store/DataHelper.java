@@ -1209,18 +1209,51 @@ public class DataHelper {
 
             db.execSQL("ALTER TABLE "
                     + TableNames.Order
-                    + " ADD COLUMN  isSubPos INTEGER default 0");
+                    + " ADD COLUMN  numTag TEXT default ''");
 
         }
 
         private void onUpgradeForOldVersion25(SQLiteDatabase db) {
 
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Order
+                    + " ADD COLUMN  subPosBeanId INTEGER default 0");
+
             db.execSQL("CREATE TABLE "
                     + TableNames.KotItem
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, itemDetailName TEXT, itemDetail TEXT, itemModName TEXT,  tableName TEXT, callType INTEGER,kotStatus INTEGER,createTime LONG,updateTime LONG,orderNo INTEGER,summaryId INTEGER)");
 
+            /**
+             * private String userName;
+             private String deviceId;
+             private String numTag;
+             */
+            db.execSQL("CREATE TABLE "
+                    + TableNames.SubPosBean
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT, deviceId TEXT, numTag TEXT, subPosStatus INTEGER)");
+            /**
+             * private int id;
+             private int mainOrderId;
+             private int subOrderId;
+             private int subPosBeanId;
+             */
+            db.execSQL("CREATE TABLE "
+                    + TableNames.MultiOrderRelation
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, mainOrderId INTEGER, subOrderId INTEGER, subPosBeanId INTEGER, subOrderCreateTime LONG)");
+            /**
+             *  private int id;
+             private int mainReportId;
+             private int subReportId;
+             private int subPosBeanId;
+             private long subReportCreateTime;
+             */
+            db.execSQL("CREATE TABLE "
+                    + TableNames.MultiReportRelation
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, mainReportId INTEGER, subReportId INTEGER, subPosBeanId INTEGER, subReportCreateTime LONG)");
 
-
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotSummary
+                    + " ADD COLUMN  numTag TEXT default ''");
         }
     }
 }

@@ -127,7 +127,121 @@ public class ReportDaySalesSQL {
 			e.printStackTrace();
 		}
 	}
-	
+	public static void addReportDaySales(SQLiteDatabase db, ReportDaySales reportDaySales) {
+		if (reportDaySales == null)
+			return;
+		try {
+			String sql = "replace into "
+					+ TableNames.ReportDaySales
+					+ "(id, restaurantId, restaurantName, revenueId, revenueName, businessDate, itemSales, itemSalesQty, discountPer, discountPerQty,"
+					+ " discount, discountQty, discountAmt, focItem, focItemQty, focBill, focBillQty, totalSales, cash, cashQty, nets, netsQty, visa,"
+					+ " visaQty, mc, mcQty, amex, amexQty, jbl, jblQty, unionPay, unionPayQty, diner, dinerQty, holdld, holdldQty, totalCard, totalCardQty,"
+					+ " totalCash, totalCashQty, billVoid, billVoidQty, itemVoid, itemVoidQty, nettSales, totalBills, openCount, firstReceipt, lastReceipt,"
+					+ " totalTax, orderQty, personQty, totalBalancePrice, cashInAmt, cashOutAmt, varianceAmt, inclusiveTaxAmt, alipay, alipayQty, thirdParty,"
+					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty,"
+					+ " refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, takeawayQty, createTime,"
+					+ " updateTime, deliveroo, deliverooQty, ubereats, ubereatsQty, foodpanda, foodpandaQty, voucher, voucherQty, totalHour)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			db.execSQL(
+					sql,
+					new Object[] { reportDaySales.getId(),
+							reportDaySales.getRestaurantId(),
+							reportDaySales.getRestaurantName(),
+							reportDaySales.getRevenueId(),
+							reportDaySales.getRevenueName(),
+							reportDaySales.getBusinessDate(),
+							reportDaySales.getItemSales() == null ? "0.00":reportDaySales.getItemSales(),
+							reportDaySales.getItemSalesQty() == null ? 0 : reportDaySales.getItemSalesQty(),
+							reportDaySales.getDiscountPer() == null ? "0.00" : reportDaySales.getDiscountPer(),
+							reportDaySales.getDiscountPerQty() == null ? 0 :reportDaySales.getDiscountPerQty(),
+							reportDaySales.getDiscount() == null ? 0 : reportDaySales.getDiscount(),
+							reportDaySales.getDiscountQty() == null ? 0 : reportDaySales.getDiscountQty(),
+							reportDaySales.getDiscountAmt() == null ? "0.00" : reportDaySales.getDiscountAmt(),
+							reportDaySales.getFocItem() == null ? "0.00" : reportDaySales.getFocItem(),
+							reportDaySales.getFocItemQty() == null ? 0 : reportDaySales.getFocItemQty(),
+							reportDaySales.getFocBill() == null ? "0.00" : reportDaySales.getFocBill(),
+							reportDaySales.getFocBillQty() == null ? 0 : reportDaySales.getFocBillQty(),
+							reportDaySales.getTotalSales() == null ? "0.00" : reportDaySales.getTotalSales(),
+							reportDaySales.getCash() == null ? "0.00" : reportDaySales.getCash(),
+							reportDaySales.getCashQty() == null ? 0 : reportDaySales.getCashQty(),
+							reportDaySales.getNets() == null ? "0.00" : reportDaySales.getNets(),
+							reportDaySales.getNetsQty() == null ? 0 : reportDaySales.getNetsQty(),
+							reportDaySales.getVisa() == null ? "0.00" : reportDaySales.getVisa(),
+							reportDaySales.getVisaQty() == null ? 0 : reportDaySales.getVisaQty(),
+							reportDaySales.getMc() == null ? "0.00" : reportDaySales.getMc(),
+							reportDaySales.getMcQty() == null ? 0 : reportDaySales.getMcQty(),
+							reportDaySales.getAmex() == null ? "0.00" : reportDaySales.getAmex(),
+							reportDaySales.getAmexQty() == null ? 0 : reportDaySales.getAmexQty(),
+							reportDaySales.getJbl() == null ? "0.00" : reportDaySales.getJbl(),
+							reportDaySales.getJblQty() == null ? 0 : reportDaySales.getJblQty(),
+							reportDaySales.getUnionPay() == null ? "0.00" : reportDaySales.getUnionPay(),
+							reportDaySales.getUnionPayQty() == null ? 0 : reportDaySales.getUnionPayQty(),
+							reportDaySales.getDiner() == null ? "0.00" : reportDaySales.getDiner(),
+							reportDaySales.getDinerQty() == null ? 0 : reportDaySales.getDinerQty(),
+							reportDaySales.getHoldld() == null ? "0.00" : reportDaySales.getHoldld(),
+							reportDaySales.getHoldldQty() == null ? 0 : reportDaySales.getHoldldQty(),
+							reportDaySales.getTotalCard() == null ? "0.00" : reportDaySales.getTotalCard(),
+							reportDaySales.getTotalCardQty() == null ? 0 : reportDaySales.getTotalCardQty(),
+							reportDaySales.getTotalCash() == null ? "0.00" : reportDaySales.getTotalCash(),
+							reportDaySales.getTotalCashQty() == null ? 0 : reportDaySales.getTotalCashQty(),
+							reportDaySales.getBillVoid() == null ? "0.00" : reportDaySales.getBillVoid(),
+							reportDaySales.getBillVoidQty() == null ? 0 : reportDaySales.getBillVoidQty(),
+							reportDaySales.getItemVoid() == null ? "0.00" : reportDaySales.getItemVoid(),
+							reportDaySales.getItemVoidQty() == null ? 0 : reportDaySales.getItemVoidQty(),
+							reportDaySales.getNettSales() == null ? "0.00" : reportDaySales.getNettSales(),
+							reportDaySales.getTotalBills() == null ? "0.00" : reportDaySales.getTotalBills(),
+							reportDaySales.getOpenCount() == null ? 0 : reportDaySales.getOpenCount(),
+							reportDaySales.getFirstReceipt(),
+							reportDaySales.getLastReceipt(),
+							reportDaySales.getTotalTax() == null ? "0.00" : reportDaySales.getTotalTax(),
+							reportDaySales.getOrderQty() == null ? 0 : reportDaySales.getOrderQty(),
+							reportDaySales.getPersonQty() == null ? 0 : reportDaySales.getPersonQty(),
+							reportDaySales.getTotalBalancePrice() == null ? 0 : reportDaySales.getTotalBalancePrice(),
+							reportDaySales.getCashInAmt() == null ? "0.00" : reportDaySales.getCashInAmt(),
+							reportDaySales.getCashOutAmt() == null ? "0.00" : reportDaySales.getCashOutAmt(),
+							reportDaySales.getVarianceAmt() == null ? "0.00" : reportDaySales.getVarianceAmt(),
+							reportDaySales.getInclusiveTaxAmt() == null ? "0.00" : reportDaySales.getInclusiveTaxAmt(),
+							reportDaySales.getAlipay() == null ? "0.00" : reportDaySales.getAlipay(),
+							reportDaySales.getAlipayQty() == null ? 0 : reportDaySales.getAlipayQty(),
+							reportDaySales.getThirdParty() == null ? "0.00" : reportDaySales.getThirdParty(),
+							reportDaySales.getThirdPartyQty() == null ? 0 : reportDaySales.getThirdPartyQty(),
+							reportDaySales.getWeixinpay() == null ? "0.00" : reportDaySales.getWeixinpay(),
+							reportDaySales.getWeixinpayQty() == null ? 0 : reportDaySales.getWeixinpayQty(),
+							reportDaySales.getPaypalpay() == null ? "0.00" : reportDaySales.getPaypalpay(),
+							reportDaySales.getPaypalpayQty() == null ? 0 : reportDaySales.getPaypalpayQty(),
+							reportDaySales.getStoredCard() == null ? "0.00" : reportDaySales.getStoredCard(),
+							reportDaySales.getStoredCardQty() == null ? 0 : reportDaySales.getStoredCardQty(),
+							reportDaySales.getTopUps() == null ? "0.00" : reportDaySales.getTopUps(),
+							reportDaySales.getTopUpsQty() == null ? 0 : reportDaySales.getTopUpsQty(),
+							reportDaySales.getBillRefund() == null ? "0.00" : reportDaySales.getBillRefund(),
+							reportDaySales.getBillRefundQty() == null ? 0 : reportDaySales.getBillRefundQty(),
+							reportDaySales.getRefundTax() == null ? "0.00" : reportDaySales.getRefundTax(),
+							reportDaySales.getStartDrawerAmount() == null ? "0.00" : reportDaySales.getStartDrawerAmount(),
+							reportDaySales.getExpectedAmount() == null ? "0.00" : reportDaySales.getExpectedAmount(),
+							reportDaySales.getWaiterAmount() == null ? "0.00" : reportDaySales.getWaiterAmount(),
+							reportDaySales.getDifference() == null ? "0.00" : reportDaySales.getDifference(),
+							reportDaySales.getCashTopUp() == null ? "0.00" : reportDaySales.getCashTopUp(),
+							reportDaySales.getTakeawaySales() == null ? "0.00" : reportDaySales.getTakeawaySales(),
+							reportDaySales.getTakeawayTax() == null ? "0.00" : reportDaySales.getTakeawayTax(),
+							reportDaySales.getTakeawayQty() == null ? 0 : reportDaySales.getTakeawayQty(),
+							reportDaySales.getCreateTime(),
+							reportDaySales.getUpdateTime(),
+							reportDaySales.getDeliveroo() == null ? "0.00" : reportDaySales.getDeliveroo(),
+							reportDaySales.getDeliverooQty() == null ? 0 : reportDaySales.getDeliverooQty(),
+							reportDaySales.getUbereats() == null ? "0.00" : reportDaySales.getUbereats(),
+							reportDaySales.getUbereatsQty() == null ? 0 : reportDaySales.getUbereatsQty(),
+							reportDaySales.getFoodpanda() == null ? "0.00" : reportDaySales.getFoodpanda(),
+							reportDaySales.getFoodpandaQty() == null ? 0 : reportDaySales.getFoodpandaQty(),
+							reportDaySales.getVoucher() == null ? "0.00" : reportDaySales.getVoucher(),
+							reportDaySales.getVoucherQty() == null ? 0 : reportDaySales.getVoucherQty(),
+							reportDaySales.getTotalHour() == null ? "1.000" : reportDaySales.getTotalHour()
+							});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 	/*ONLY use to save report downloaded from cloud*/
 	public static void addReportDaySalesFromCloud(ReportDaySales reportDaySales) {

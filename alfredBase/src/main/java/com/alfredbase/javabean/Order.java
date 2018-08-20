@@ -12,7 +12,7 @@ public class Order implements Serializable {
 	private Integer id;
 
 	/**
-	 * 订单来源(1pos、2服务员、3桌子自助、4手机app)
+	 * 订单来源(1pos、2服务员、3桌子自助、4手机app, 5SubPos)
 	 */
 	private Integer orderOriginId;
 
@@ -112,8 +112,10 @@ public class Order implements Serializable {
 	private String discountCategoryId;
 	// 在已经结账的订单上面做修改的时候 用到 临时用 不存数据库
 	private String oldTotal;
+	// 给SubPos使用的tag，A,B,C等字母
+	private String numTag = "";
 
-	private int isSubPos;
+	private int subPosBeanId = 0;// IF it is main Pos， subPosBeanId is  zero
 	
 	public Order() {
 	}
@@ -427,12 +429,20 @@ public class Order implements Serializable {
 		this.oldTotal = oldTotal;
 	}
 
-	public int getIsSubPos() {
-		return isSubPos;
+	public String getNumTag() {
+		return numTag;
 	}
 
-	public void setIsSubPos(int isSubPos) {
-		this.isSubPos = isSubPos;
+	public void setNumTag(String numTag) {
+		this.numTag = numTag;
+	}
+
+	public int getSubPosBeanId() {
+		return subPosBeanId;
+	}
+
+	public void setSubPosBeanId(int subPosBeanId) {
+		this.subPosBeanId = subPosBeanId;
 	}
 
 	@Override
@@ -468,9 +478,8 @@ public class Order implements Serializable {
 				", orderRemark='" + orderRemark + '\'' +
 				", discountCategoryId='" + discountCategoryId + '\'' +
 				", oldTotal='" + oldTotal + '\'' +
-				", isSubPos=" + isSubPos +
+				", numTag='" + numTag + '\'' +
+				", subPosBeanId=" + subPosBeanId +
 				'}';
 	}
-
-
 }

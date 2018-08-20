@@ -1,10 +1,5 @@
 package com.alfredbase.store.sql;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -23,6 +18,11 @@ import com.alfredbase.javabean.VoidSettlement;
 import com.alfredbase.javabean.WeixinSettlement;
 import com.alfredbase.utils.LogUtil;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UploadSQL {
 
@@ -45,7 +45,7 @@ public class UploadSQL {
 
 		List<OrderBill> orderBills = OrderBillSQL.getAllOrderBillByOrder(order);
 
-		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
+		List<RoundAmount> roundAmounts = RoundAmountSQL.getRoundAmountForSync(order);
 
 		/**
 		 * 支付部分
@@ -84,7 +84,7 @@ public class UploadSQL {
 		LogUtil.i("bohHoldSettlements", gson.toJson(bohHoldSettlements));
 		map.put("order", order);
 		map.put("orderBills", orderBills);
-		map.put("roundAmount", roundAmount);
+		map.put("roundAmounts", roundAmounts);
 		map.put("orderDetails", orderDetails);
 		map.put("orderModifiers", orderModifiers);
 		map.put("orderDetailTaxs", orderDetailTaxs);

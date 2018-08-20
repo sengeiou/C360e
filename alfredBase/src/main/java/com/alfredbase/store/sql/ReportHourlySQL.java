@@ -37,7 +37,7 @@ public class ReportHourlySQL {
 			e.printStackTrace();
 		}
 	}
-	//save Hourly Report from Cloud 
+	//save Hourly Report from Cloud
 	public static void addReportHourlyFromCloud(List<ReportHourly> reportHourlys){
 		if(reportHourlys == null){
 			return;
@@ -97,7 +97,31 @@ public class ReportHourlySQL {
 			db.endTransaction();
 		}
 	}
-	
+	public static void addReportHourly(SQLiteDatabase db, List<ReportHourly> reportHourlys){
+		if(reportHourlys == null){
+			return;
+		}
+		try {
+			String sql = "replace into "
+					+ TableNames.ReportHourly
+					+ "(restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice)"
+					+ " values (?,?,?,?,?,?,?)";
+			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
+			for (ReportHourly reportHourly: reportHourlys) {
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,reportHourly.getRestaurantId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 2,reportHourly.getRevenueId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 3,reportHourly.getRevenueName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 4,reportHourly.getBusinessDate());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 5,reportHourly.getHour());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 6,reportHourly.getAmountQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 7,reportHourly.getAmountPrice());
+				sqLiteStatement.executeInsert();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static ArrayList<ReportHourly> getAllReportHourlys(){
 		ArrayList<ReportHourly> reportHourlys = new ArrayList<ReportHourly>();
 		String sql = "select * from " + TableNames.ReportHourly;

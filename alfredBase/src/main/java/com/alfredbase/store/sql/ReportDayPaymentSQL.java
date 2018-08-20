@@ -99,6 +99,36 @@ public class ReportDayPaymentSQL {
             e.printStackTrace();
         }
     }
+    public static void addReportDayPayment(SQLiteDatabase db, ReportDayPayment reportDayPayment) {
+        if (reportDayPayment == null) {
+            return;
+        }
+        try {
+
+            String sql = "replace into "
+                    + TableNames.ReportDayPayment
+                    + "(id,daySalesId,restaurantId,restaurantName,revenueId,revenueName,businessDate,paymentTypeId,paymentName,paymentQty,paymentAmount, overPaymentAmount, createTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            db.execSQL(
+                    sql,new Object[]{
+                            reportDayPayment.getId(),
+                            reportDayPayment.getDaySalesId(),
+                            reportDayPayment.getRestaurantId(),
+                            reportDayPayment.getRestaurantName(),
+                            reportDayPayment.getRevenueId(),
+                            reportDayPayment.getRevenueName(),
+                            reportDayPayment.getBusinessDate(),
+                            reportDayPayment.getPaymentTypeId(),
+                            reportDayPayment.getPaymentName(),
+                            reportDayPayment.getPaymentQty(),
+                            reportDayPayment.getPaymentAmount(),
+                            reportDayPayment.getOverPaymentAmount(),
+                            reportDayPayment.getCreateTime()
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public static ArrayList<ReportDayPayment> getAllReportDayPayment() {
         ArrayList<ReportDayPayment> result = new ArrayList<ReportDayPayment>();
         String sql = "select * from " + TableNames.ReportDayPayment;

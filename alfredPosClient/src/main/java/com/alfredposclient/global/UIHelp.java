@@ -37,10 +37,17 @@ import com.alfredposclient.activity.kioskactivity.KioskHoldActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.activity.kioskactivity.subpos.ConnectMainPos;
 import com.alfredposclient.activity.kioskactivity.subpos.SelectRevenue;
+import com.alfredposclient.activity.kioskactivity.subpos.SubPosLogin;
 
 public class UIHelp {
 	public static void startLogin(BaseActivity context) {
 		Intent intent = new Intent(context, Login.class);
+		context.startActivity(intent);
+		context.overridePendingTransition(R.anim.centre_open,
+				R.anim.slide_bottom_out);
+	}
+	public static void startSubPosLogin(BaseActivity context) {
+		Intent intent = new Intent(context, SubPosLogin.class);
 		context.startActivity(intent);
 		context.overridePendingTransition(R.anim.centre_open,
 				R.anim.slide_bottom_out);

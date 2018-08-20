@@ -37,6 +37,28 @@ public class PaymentSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void addPayment(SQLiteDatabase db, Payment payment) {
+		if (payment == null)
+			return;
+		try {
+			String sql = "replace into "
+					+ TableNames.Payment
+					+ "(id, billNo, orderId, orderSplitId, businessDate, type, restaurantId, revenueId,  userId, paymentAmount, taxAmount, discountAmount, createTime, updateTime)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			db.execSQL(
+					sql,
+					new Object[] { payment.getId(), payment.getBillNo(),
+							payment.getOrderId(), payment.getOrderSplitId(),
+							payment.getBusinessDate(), payment.getType(),
+							payment.getRestaurantId(), payment.getRevenueId(),
+							payment.getUserId(), payment.getPaymentAmount(),
+							payment.getTaxAmount(),
+							payment.getDiscountAmount(),
+							payment.getCreateTime(), payment.getUpdateTime() });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static Payment getPayment(Integer paymentID) {
 		Payment payment = null;

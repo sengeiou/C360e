@@ -1,12 +1,5 @@
 package com.path.android.jobqueue;
 
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import android.content.Context;
 
 import com.path.android.jobqueue.cachedQueue.CachedJobQueue;
@@ -18,6 +11,13 @@ import com.path.android.jobqueue.network.NetworkEventProvider;
 import com.path.android.jobqueue.network.NetworkUtil;
 import com.path.android.jobqueue.nonPersistentQueue.NonPersistentPriorityQueue;
 import com.path.android.jobqueue.persistentQueue.sqlite.SqliteJobQueue;
+
+import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * a JobManager that supports;
@@ -79,6 +79,7 @@ public class JobManager implements NetworkEventProvider.Listener {
         running = true;
         runningJobGroups = new CopyOnWriteGroupSet();
         sessionId = System.nanoTime();
+
         this.persistentJobQueue = config.getQueueFactory().createPersistentQueue(context, sessionId, config.getId());
         this.nonPersistentJobQueue = config.getQueueFactory().createNonPersistent(context, sessionId, config.getId());
         persistentOnAddedLocks = new ConcurrentHashMap<Long, CountDownLatch>();

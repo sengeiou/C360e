@@ -2445,7 +2445,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             closeMoneyKeyboard();
 
         if (settlementNum.compareTo(BH.getBD(order.getTotal())) == 0) {
-
             if (viewTag == ParamConst.SETTLEMENT_TYPE_CASH) {
                 if (TextUtils.isEmpty(tv_change_num.getText().toString())) {
                     printBill(null);
@@ -2455,7 +2454,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             } else {
                 printBill(null);
             }
-
         }
 
     }

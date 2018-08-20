@@ -41,6 +41,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.jobs.CloudSyncJobManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -293,11 +294,14 @@ public class NetWorkOrderActivity extends BaseActivity {
 							R.string.receipt_printing));
 					printerLoadingDialog.showByTime(3000);
 					App.instance.printerAppOrder(appOrder);
-					App.instance.getSyncJob().checkAppOrderStatus(
-							App.instance.getRevenueCenter().getId().intValue(),
-							appOrder.getId().intValue(),
-							appOrder.getOrderStatus().intValue(), "",
-							App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+					CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+					if (cloudSync != null) {
+						cloudSync.checkAppOrderStatus(
+								App.instance.getRevenueCenter().getId().intValue(),
+								appOrder.getId().intValue(),
+								appOrder.getOrderStatus().intValue(), "",
+								App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+					}
 					handler.postDelayed(new Runnable() {
 
 						@Override

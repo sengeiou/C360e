@@ -139,6 +139,79 @@ public class ReportPluDayModifierSQL {
 			}
 		}
 	}
+	public static void addReportPluDayModifierList(SQLiteDatabase db,
+			List<ReportPluDayModifier> reportPluDayModifiers) {
+		if (reportPluDayModifiers != null && reportPluDayModifiers.size() > 0) {
+			try {
+				String sql = "replace into "
+						+ TableNames.ReportPluDayModifier
+						+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
+						+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, "
+						+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
+						+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice, realPrice, realCount)"
+						+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				SQLiteStatement sqLiteStatement = db.compileStatement(
+						sql);
+				for (ReportPluDayModifier reportPluDayModifier : reportPluDayModifiers) {
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
+							reportPluDayModifier.getReportNo());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
+							reportPluDayModifier.getRestaurantId());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 3,
+							reportPluDayModifier.getRestaurantName());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
+							reportPluDayModifier.getRevenueId());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 5,
+							reportPluDayModifier.getRevenueName());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 6,
+							reportPluDayModifier.getBusinessDate());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
+							reportPluDayModifier.getModifierCategoryId());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 8,
+							reportPluDayModifier.getModifierCategoryName());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
+							reportPluDayModifier.getModifierId());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 10,
+							reportPluDayModifier.getModifierName());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 11,
+							reportPluDayModifier.getModifierPrice() == null ? "0.00" : reportPluDayModifier.getModifierPrice());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 12,
+							reportPluDayModifier.getModifierCount() == null ? 0 : reportPluDayModifier.getModifierCount());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 13,
+							reportPluDayModifier.getBillVoidPrice() == null ? "0.00" : reportPluDayModifier.getBillVoidPrice());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 14,
+							reportPluDayModifier.getBillVoidCount() == null ? 0 : reportPluDayModifier.getBillVoidCount());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 15,
+							reportPluDayModifier.getVoidModifierPrice() == null ? "0.00" : reportPluDayModifier.getVoidModifierPrice());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 16,
+							reportPluDayModifier.getVoidModifierCount() == null ? 0 : reportPluDayModifier.getVoidModifierCount());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 17,
+							reportPluDayModifier.getBohModifierPrice() == null ? "0.00" : reportPluDayModifier.getBohModifierPrice());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 18,
+							reportPluDayModifier.getBohModifierCount() == null ? 0 : reportPluDayModifier.getBohModifierCount());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 19,
+							reportPluDayModifier.getFocModifierPrice() == null ? "0.00" : reportPluDayModifier.getFocModifierPrice());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 20,
+							reportPluDayModifier.getFocModifierCount() == null ? 0 : reportPluDayModifier.getFocModifierCount());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 21,
+							reportPluDayModifier.getBillFocPrice() == null ? "0.00" : reportPluDayModifier.getBillFocPrice());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 22,
+							reportPluDayModifier.getBillFocCount() == null ? 0 : reportPluDayModifier.getBillFocCount());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 23,
+							reportPluDayModifier.getComboItemId());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 24,
+							reportPluDayModifier.getModifierItemPrice() == null ? "0.00" : reportPluDayModifier.getModifierItemPrice());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 25,
+							reportPluDayModifier.getRealPrice() == null ? "0.00" : reportPluDayModifier.getRealPrice());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
+							reportPluDayModifier.getRealCount() == null ? 0 : reportPluDayModifier.getRealCount());
+					sqLiteStatement.executeInsert();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public static ReportPluDayModifier getReportPluDayModifier(
 			Integer reportPluDayModifierID) {

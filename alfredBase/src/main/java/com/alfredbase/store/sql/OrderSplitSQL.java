@@ -105,7 +105,45 @@ public class OrderSplitSQL {
 			e.printStackTrace();
 		}
 	}
-	
+	public static void update(SQLiteDatabase db, OrderSplit orderSplit){
+		if (orderSplit == null) {
+			return;
+		}
+		try {
+			String sql = "replace into "
+					+ TableNames.OrderSplit
+					+ "(id,orderId,orderOriginId,userId,persons,orderStatus,subTotal,"
+					+ "taxAmount,discountAmount,total,sessionStatus,restId, "
+					+ "revenueId,tableId,createTime,updateTime, sysCreateTime, sysUpdateTime, groupId,"
+					+ "inclusiveTaxName, inclusiveTaxPrice, inclusiveTaxPercentage, splitByPax)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			db.execSQL(
+					sql,
+					new Object[] { orderSplit.getId(), orderSplit.getOrderId(),
+							orderSplit.getOrderOriginId(),
+							orderSplit.getUserId(), orderSplit.getPersons(),
+							orderSplit.getOrderStatus(),
+							orderSplit.getSubTotal(),
+							orderSplit.getTaxAmount(),
+							orderSplit.getDiscountAmount(),
+							orderSplit.getTotal(),
+							orderSplit.getSessionStatus(),
+							orderSplit.getRestId(), orderSplit.getRevenueId(),
+							orderSplit.getTableId(),
+							orderSplit.getCreateTime(),
+							orderSplit.getUpdateTime(),
+							orderSplit.getSysCreateTime(),
+							orderSplit.getSysUpdateTime(),
+							orderSplit.getGroupId(),
+							orderSplit.getInclusiveTaxName(),
+							orderSplit.getInclusiveTaxPrice(),
+							orderSplit.getInclusiveTaxPercentage(),
+							orderSplit.getSplitByPax()});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static OrderSplit get(Integer id) {
 		OrderSplit orderSplit = null;
 		String sql = "select * from " + TableNames.OrderSplit + " where id = ?";

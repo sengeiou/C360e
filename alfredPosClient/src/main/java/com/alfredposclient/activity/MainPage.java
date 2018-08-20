@@ -114,7 +114,6 @@ import com.alfredposclient.view.MainPageSearchView;
 import com.alfredposclient.view.SelectOrderSplitDialog;
 import com.alfredposclient.view.SettingView;
 import com.alfredposclient.view.TopMenuView;
-import com.alfredposclient.view.dialog.MediaDialog;
 import com.alfredposclient.xmpp.XMPP;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -125,7 +124,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -493,7 +491,7 @@ public class MainPage extends BaseActivity {
 
     private void initOrder(TableInfo tables) {
         currentOrder = ObjectFactory.getInstance().getOrder(
-                ParamConst.ORDER_ORIGIN_POS, tables,
+                ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
                 App.instance.getRevenueCenter(), App.instance.getUser(),
                 App.instance.getSessionStatus(),
                 App.instance.getBusinessDate(),
@@ -2341,7 +2339,7 @@ public class MainPage extends BaseActivity {
             @Override
             public void run() {
                 Order order = ObjectFactory.getInstance().getOrder(
-                        ParamConst.ORDER_ORIGIN_POS, tables,
+                        ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
                         App.instance.getRevenueCenter(), App.instance.getUser(),
                         App.instance.getSessionStatus(),
                         App.instance.getBusinessDate(),

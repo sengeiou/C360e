@@ -26,24 +26,39 @@ import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.MultiOrderRelation;
+import com.alfredbase.javabean.MultiReportRelation;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentMethod;
+import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.ReportDayPayment;
+import com.alfredbase.javabean.ReportDaySales;
+import com.alfredbase.javabean.ReportDayTax;
+import com.alfredbase.javabean.ReportHourly;
+import com.alfredbase.javabean.ReportPluDayComboModifier;
+import com.alfredbase.javabean.ReportPluDayItem;
+import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.SettlementRestaurant;
+import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.KotNotification;
@@ -56,7 +71,6 @@ import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
-import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
@@ -70,8 +84,9 @@ import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
-import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.ModifierSQL;
+import com.alfredbase.store.sql.MultiOrderRelationSQL;
+import com.alfredbase.store.sql.MultiReportRelationSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
@@ -85,6 +100,8 @@ import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.SettlementRestaurantSQL;
+import com.alfredbase.store.sql.SubPosBeanSQL;
+import com.alfredbase.store.sql.SubPosCommitSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
@@ -104,6 +121,7 @@ import com.alfredposclient.activity.kioskactivity.KioskHoldActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.moonearly.utils.service.TcpUdpFactory;
@@ -343,7 +361,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						tableInfo.setPacks(persons);
 //						Order order = ObjectFactory.getInstance().getOrder
 						Order order = ObjectFactory.getInstance().getOrder(
-								ParamConst.ORDER_ORIGIN_TABLE, tableInfo,
+								ParamConst.ORDER_ORIGIN_TABLE, App.instance.getSubPosBeanId(), tableInfo,
 								App.instance.getRevenueCenter(),
 								user,
 								App.instance.getSessionStatus(),
@@ -397,7 +415,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					try {
 						Gson gson = new Gson();
 						Order order = ObjectFactory.getInstance().addOrderFromKioskDesktop(
-								ParamConst.ORDER_ORIGIN_TABLE,
+								ParamConst.ORDER_ORIGIN_TABLE, App.instance.getSubPosBeanId(),
 								TableInfoSQL.getKioskTable(),
 								App.instance.getRevenueCenter(),
 								user,
@@ -704,9 +722,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				result.put("resultCode", ResultCode.USER_NO_PERMIT);
 				return this.getJsonResponse(new Gson().toJson(result));
 			}
-			if(apiName.equals(APIName.SUBPOS_ADDORDER)){
-				return getSubPosOrder(body, user);
+			if(apiName.equals(APIName.SUBPOS_COMMIT_ORDER)){
+				return commitOrder(body);
+			}else if(apiName.equals(APIName.SUBPOS_COMMIT_REPORT)){
+				return commitReport(body);
 			}
+
 
 			return getForbiddenResponse("Not Support yet");
 		}else{
@@ -724,27 +745,35 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		Response resp = null;
 		try {
 			JSONObject jsonObject = new JSONObject(params);
-			String employee_ID = jsonObject.optString("employee_ID");
+			String employeeId = jsonObject.optString("employeeId");
 			String password = jsonObject.optString("password");
 			String deviceId = jsonObject.optString("deviceId");
-			User user = CoreData.getInstance().getUser(employee_ID, password);
-			Map<String, Object> result = new HashMap<String, Object>();
+			User user = CoreData.getInstance().getUser(employeeId, password);
+			Map<String, Object> result = new HashMap<>();
 			if (user != null) {
 				if(user.getType() != ParamConst.USER_TYPE_MANAGER && user.getType() != ParamConst.USER_TYPE_POS){
 					result.put(RESULT_CODE, ResultCode.USER_NO_PERMIT);
 					return this.getJsonResponse(new Gson().toJson(result));
 				}
 				result.put("resultCode", ResultCode.SUCCESS);
-				result.put("subPosStatus", ParamConst.SUB_POS_STATUS_OPEN);
 				result.put("user", user);
-				Map<String, User> subPosMap = Store.getObject(App.instance, Store.SUB_POS_INFO,
-						new TypeToken<Map<String, User>>() {
-						}.getType());
-				if(subPosMap == null){
-					subPosMap = new HashMap<>();
+				SubPosBean subPosBean = SubPosBeanSQL.getSubPosBeanByDeviceId(deviceId);
+				if(subPosBean == null){
+					subPosBean = new SubPosBean();
+					subPosBean.setId(CommonSQL.getNextSeq(TableNames.SubPosBean));
+					subPosBean.setDeviceId(deviceId);
+					subPosBean.setUserName(user.getFirstName() + user.getLastName());
+					subPosBean.setNumTag(""+ (char) (subPosBean.getId() + 64));
+					subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_OPEN);
+					SubPosBeanSQL.updateSubPosBean(subPosBean);
+				}else{
+					subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_OPEN);
+					subPosBean.setUserName(user.getFirstName() + user.getLastName());
+					SubPosBeanSQL.updateSubPosBean(subPosBean);
 				}
-				subPosMap.put(deviceId, user);
-				Store.saveObject(App.instance, Store.SUB_POS_INFO, subPosMap);
+				SessionStatus sessionStatus = App.instance.getSessionStatus();
+				result.put("sessionStatus", sessionStatus);
+				result.put("subPosBean", subPosBean);
 				resp = this.getJsonResponse(gson.toJson(result));
 			} else {
 				result.put("resultCode", ResultCode.USER_NO_PERMIT);
@@ -780,7 +809,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			List<RestaurantConfig> restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
 			List<PrinterGroup> printerGroups = PrinterGroupSQL.getAllPrinterGroup();
 			List<UserRestaurant> userRestaurants = UserRestaurantSQL.getAll();
-			List<LocalDevice> localDevices = LocalDeviceSQL.getAllLocalDevice();
+//			List<LocalDevice> localDevices = LocalDeviceSQL.getAllLocalDevice();
 			List<PaymentMethod> paymentMethods = PaymentMethodSQL.getAllPaymentMethod();
 			List<SettlementRestaurant> settlementRestaurants = SettlementRestaurantSQL.getAllSettlementRestaurant();
 			Map<String, Object> map = new HashMap<>();
@@ -803,7 +832,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			map.put("restaurantConfigs", restaurantConfigs);
 			map.put("printerGroups", printerGroups);
 			map.put("userRestaurants", userRestaurants);
-			map.put("localDevices", localDevices);
+//			map.put("localDevices", localDevices);
 			map.put("paymentMethods", paymentMethods);
 			map.put("settlementRestaurants", settlementRestaurants);
 			map.put("resultCode", ResultCode.SUCCESS);
@@ -814,19 +843,239 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		}
 		return resp;
 	}
-	private Response getSubPosOrder(String params, User user){
+	private Response commitOrder(String params){
 		Response resp = null;
 		try {
 			Map<String, Object> map = new HashMap<>();
-			TableInfo tableInfo = TableInfoSQL.getKioskTable();
-			Order order = ObjectFactory.getInstance().getSubPosOrder(ParamConst.ORDER_ORIGIN_SUB_POS, tableInfo,
-					App.instance.getRevenueCenter(), user, App.instance.getSessionStatus(), App.instance.getBusinessDate(),
-					App.instance.getIndexOfRevenueCenter(), ParamConst.ORDER_STATUS_OPEN_IN_POS,
-					App.instance.getLocalRestaurantConfig().getIncludedTax().getTax());
-			map.put(RESULT_CODE, ResultCode.SUCCESS);
-			map.put("order", order);
+			JSONObject jsonObject = new JSONObject(params);
+			Order order = gson.fromJson(jsonObject.getString("order"), Order.class);
+			int subPosBeanId = jsonObject.optInt("subPosBeanId");
+			MultiOrderRelation multiOrderRelation = MultiOrderRelationSQL.getMultiOrderRelationBySubOrderId(subPosBeanId, order.getId().intValue(), order.getCreateTime());
+			if(multiOrderRelation != null){
+				map.put("resultCode", ResultCode.RECEIVE_MSG_EXIST);
+				return this.getJsonResponse(gson.toJson(map));
+			}
+
+			List<OrderDetail> orderDetails = gson.fromJson(jsonObject.getString("orderDetails"),
+					new TypeToken<List<OrderDetail>>(){}.getType());
+			List<OrderModifier> orderModifiers = gson.fromJson(jsonObject.getString("orderModifiers"),
+					new TypeToken<List<OrderModifier>>(){}.getType());
+			List<Payment> payments = gson.fromJson(jsonObject.getString("payments"),
+					new TypeToken<List<Payment>>(){}.getType());
+			List<PaymentSettlement> paymentSettlements = gson.fromJson(jsonObject.getString("paymentSettlements"),
+					new TypeToken<List<PaymentSettlement>>(){}.getType());
+			List<OrderDetailTax> orderDetailTaxs = gson.fromJson(jsonObject.getString("orderDetailTaxs"),
+					new TypeToken<List<OrderDetailTax>>(){}.getType());
+			List<OrderSplit> orderSplits = gson.fromJson(jsonObject.getString("orderSplits"),
+					new TypeToken<List<OrderSplit>>(){}.getType());
+			List<OrderBill> orderBills = gson.fromJson(jsonObject.getString("orderBills"),
+					new TypeToken<List<OrderBill>>(){}.getType());
+			List<RoundAmount> roundAmounts = gson.fromJson(jsonObject.getString("roundAmounts"),
+					new TypeToken<List<RoundAmount>>(){}.getType());
+			boolean isSuccessful = SubPosCommitSQL.commitOrder(subPosBeanId, order, orderSplits, orderBills, payments, orderDetails,
+					orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts);
+			map.put("resultCode", ResultCode.SUCCESS);
+			if(isSuccessful) {
+				final int orderId = order.getId().intValue();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						Order placeOrder = OrderSQL.getOrder(orderId);
+						List<OrderSplit> placeOrderSplit = OrderSplitSQL.getUnFinishedOrderSplits(orderId);
+						KotSummary kotSummary = ObjectFactory.getInstance()
+								.getKotSummary(
+										TableInfoSQL.getTableById(
+												placeOrder.getTableId()).getName(), placeOrder,
+										App.instance.getRevenueCenter(),
+										App.instance.getBusinessDate());
+						if (placeOrderSplit != null && placeOrderSplit.size() > 0) {
+							for (OrderSplit orderSplit : placeOrderSplit) {
+								if (kotSummary != null) {
+									ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+									List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(orderSplit);
+									List<Integer> orderDetailIds = new ArrayList<Integer>();
+									ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+									for (OrderDetail orderDetail : placedOrderDetails) {
+										orderDetailIds.add(orderDetail.getId());
+										KotItemDetail kotItemDetail = ObjectFactory
+												.getInstance()
+												.getKotItemDetail(
+														placeOrder,
+														orderDetail,
+														CoreData.getInstance()
+																.getItemDetailById(
+																		orderDetail
+																				.getItemId()),
+														kotSummary,
+														App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+										kotItemDetail.setItemNum(orderDetail
+												.getItemNum());
+//										if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
+//											kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+//											kotItemDetail
+//													.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+//										}
+										KotItemDetailSQL.update(kotItemDetail);
+										kotItemDetails.add(kotItemDetail);
+										orderDetailIds.add(orderDetail.getId());
+										ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+												.getOrderModifiers(placeOrder, orderDetail);
+										for (OrderModifier orderModifier : orderModifiers) {
+											if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
+												KotItemModifier kotItemModifier = ObjectFactory
+														.getInstance()
+														.getKotItemModifier(
+																kotItemDetail,
+																orderModifier,
+																CoreData.getInstance()
+																		.getModifier(
+																				orderModifier
+																						.getModifierId()));
+												KotItemModifierSQL.update(kotItemModifier);
+												kotItemModifiers.add(kotItemModifier);
+											}
+										}
+									}
+//									for (KotItemDetail kot : kotItemDetails) {
+//										ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
+//												.getKotItemModifiersByKotItemDetail(kot.getId());
+//										if (kotItemModifierObj != null)
+//											kotItemModifiers.addAll(kotItemModifierObj);
+//									}
+									Map<String, Object> orderMap = new HashMap<String, Object>();
+									orderMap.put("orderId", orderSplit.getOrderId());
+									orderMap.put("orderDetailIds", orderDetailIds);
+									App.instance.getKdsJobManager().tearDownKot(
+											kotSummary, kotItemDetails,
+											kotItemModifiers, ParamConst.JOB_NEW_KOT,
+											orderMap);
+								}
+							}
+						} else {
+							if (kotSummary != null) {
+								ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+								ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
+								List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetails(placeOrder.getId());
+								List<Integer> orderDetailIds = new ArrayList<Integer>();
+								for (OrderDetail orderDetail : placedOrderDetails) {
+									orderDetailIds.add(orderDetail.getId());
+									KotItemDetail kotItemDetail = ObjectFactory
+											.getInstance()
+											.getKotItemDetail(
+													placeOrder,
+													orderDetail,
+													CoreData.getInstance()
+															.getItemDetailById(
+																	orderDetail
+																			.getItemId()),
+													kotSummary,
+													App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+									kotItemDetail.setItemNum(orderDetail
+											.getItemNum());
+//										if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
+//											kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+//											kotItemDetail
+//													.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+//										}
+									KotItemDetailSQL.update(kotItemDetail);
+									kotItemDetails.add(kotItemDetail);
+									orderDetailIds.add(orderDetail.getId());
+									ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+											.getOrderModifiers(placeOrder, orderDetail);
+									for (OrderModifier orderModifier : orderModifiers) {
+										if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
+											KotItemModifier kotItemModifier = ObjectFactory
+													.getInstance()
+													.getKotItemModifier(
+															kotItemDetail,
+															orderModifier,
+															CoreData.getInstance()
+																	.getModifier(
+																			orderModifier
+																					.getModifierId()));
+											KotItemModifierSQL.update(kotItemModifier);
+											kotItemModifiers.add(kotItemModifier);
+										}
+									}
+								}
+//								for (KotItemDetail kot : kotItemDetails) {
+//									ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
+//											.getKotItemModifiersByKotItemDetail(kot.getId());
+//									if (kotItemModifierObj != null)
+//										kotItemModifiers.addAll(kotItemModifierObj);
+//								}
+//								TableInfo tableInfo = TableInfoSQL.getTableById(placeOrder.getTableId().intValue());
+//								PrinterTitle title = ObjectFactory.getInstance()
+//										.getPrinterTitle(
+//												App.instance.getRevenueCenter(),
+//												placeOrder,
+//												App.instance.getUser().getFirstName()
+//														+ App.instance.getUser().getLastName(),
+//												tableInfo.getName(), 1);
+
+								Map<String, Object> orderMap = new HashMap<String, Object>();
+
+								orderMap.put("orderId", placeOrder.getId());
+								orderMap.put("orderDetailIds", orderDetailIds);
+//								orderMap.put("paidOrder", placeOrder);
+//								orderMap.put("title", title);
+//								orderMap.put("placedOrderDetails", placedOrderDetails);
+								App.instance.getKdsJobManager().tearDownKot(
+										kotSummary, kotItemDetails,
+										kotItemModifiers, ParamConst.JOB_NEW_KOT,
+										orderMap);
+							}
+						}
+					}
+
+				}).start();
+			}
 			resp = this.getJsonResponse(gson.toJson(map));
 		} catch (Exception e){
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
+		}
+		return resp;
+	}
+
+
+	private Response commitReport(String params){
+		Response resp = null;
+		try {
+			Map<String, Object> map = new HashMap<>();
+			JSONObject jsonObject = new JSONObject(params);
+			ReportDaySales reportDaySales = gson.fromJson(jsonObject.getString("reportDaySales"), ReportDaySales.class);
+			int subPosBeanId = jsonObject.optInt("subPosBeanId");
+			MultiReportRelation multiReportRelation = MultiReportRelationSQL.getMultiReportRelationBySubReportId(subPosBeanId, reportDaySales.getId(), reportDaySales.getCreateTime());
+			if(multiReportRelation == null){
+				map.put("resultCode", ResultCode.RECEIVE_MSG_EXIST);
+				return this.getJsonResponse(gson.toJson(map));
+			}
+			List<ReportDayTax> reportDayTaxs = gson.fromJson(jsonObject.getString("reportDayTaxs"),
+					new TypeToken<List<ReportDayTax>>(){}.getType());
+			List<ReportDayPayment> reportDayPayments = gson.fromJson(jsonObject.getString("reportDayPayments"),
+					new TypeToken<List<ReportDayPayment>>(){}.getType());
+			List<ReportPluDayItem> reportPluDayItems = gson.fromJson(jsonObject.getString("reportPluDayItems"),
+					new TypeToken<List<ReportPluDayItem>>(){}.getType());
+			List<ReportPluDayModifier> reportPluDayModifiers = gson.fromJson(jsonObject.getString("reportPluDayModifiers"),
+					new TypeToken<List<ReportPluDayModifier>>(){}.getType());
+			List<ReportHourly> reportHourlys = gson.fromJson(jsonObject.getString("reportHourlys"),
+					new TypeToken<List<ReportHourly>>(){}.getType());
+			List<ReportPluDayComboModifier> reportPluDayComboModifiers = gson.fromJson(jsonObject.getString("reportPluDayComboModifiers"),
+					new TypeToken<List<ReportPluDayComboModifier>>(){}.getType());
+			List<UserOpenDrawerRecord> userOpenDrawerRecords = gson.fromJson(jsonObject.getString("userOpenDrawerRecords"),
+					new TypeToken<List<UserOpenDrawerRecord>>(){}.getType());
+
+			SubPosCommitSQL.commitReport(subPosBeanId, reportDaySales, reportDayTaxs, reportDayPayments, reportPluDayItems,
+					reportPluDayModifiers, reportHourlys, reportPluDayComboModifiers, userOpenDrawerRecords);
+			SubPosBean subPosBean = SubPosBeanSQL.getSubPosBeanById(subPosBeanId);
+			if(subPosBean != null){
+				subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
+				SubPosBeanSQL.updateSubPosBean(subPosBean);
+			}
+			map.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(gson.toJson(map));
+		}catch (Exception e){
 			e.printStackTrace();
 			resp = this.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
 		}
@@ -1401,7 +1650,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			
 //				CoreData.getInstance().setTableList(TablesSQL.getAllTables());
 				Order order = ObjectFactory.getInstance().getOrder(
-						ParamConst.ORDER_ORIGIN_WAITER, tables,
+						ParamConst.ORDER_ORIGIN_WAITER, App.instance.getSubPosBeanId(), tables,
 						App.instance.getRevenueCenter(),
 						App.instance.getUserByKey(userKey),
 						App.instance.getSessionStatus(),
@@ -1436,7 +1685,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 //				TablesSQL.updateTables(tables);
 				TableInfoSQL.updateTables(tables);
 				Order order = ObjectFactory.getInstance().getOrder(
-						ParamConst.ORDER_ORIGIN_WAITER, tables,
+						ParamConst.ORDER_ORIGIN_WAITER, App.instance.getSubPosBeanId(), tables,
 						App.instance.getRevenueCenter(),
 						App.instance.getUserByKey(userKey),
 						App.instance.getSessionStatus(),
@@ -1930,9 +2179,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					@Override
 					public void run() {
 						if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-							String orderNo = kotSummary.getOrderNo().toString();
+							String orderNo = kotSummary.getNumTag() + kotSummary.getOrderNo().toString();
 							if(App.instance.isRevenueKiosk()){
-								orderNo = IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
+								orderNo = kotSummary.getNumTag() + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
 							}
 							SyncCentre.getInstance().callAppNo(App.instance, orderNo);
 
@@ -1961,11 +2210,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								AppOrder appOrder = AppOrderSQL.getAppOrderById(order.getAppOrderId().intValue());
 								appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARED);
 								AppOrderSQL.updateAppOrder(appOrder);
-								App.instance.getSyncJob().checkAppOrderStatus(
-										App.instance.getRevenueCenter().getId().intValue(),
-										appOrder.getId().intValue(),
-										appOrder.getOrderStatus().intValue(), "",
-										App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+								CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+								if (cloudSync != null) {
+									cloudSync.checkAppOrderStatus(
+											App.instance.getRevenueCenter().getId().intValue(),
+											appOrder.getId().intValue(),
+											appOrder.getOrderStatus().intValue(), "",
+											App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+								}
 								if(App.getTopActivity() instanceof NetWorkOrderActivity){
 									App.getTopActivity().httpRequestAction(Activity.RESULT_OK, "");
 								}
@@ -1986,6 +2238,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 		return resp;
 	}
+
 
 //not used
 //	private Response handlerKOTComplete(String params) {

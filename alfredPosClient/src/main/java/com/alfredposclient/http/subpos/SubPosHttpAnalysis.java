@@ -1,7 +1,10 @@
 package com.alfredposclient.http.subpos;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Base64;
 
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.HappyHour;
 import com.alfredbase.javabean.HappyHourWeek;
@@ -10,9 +13,9 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
-import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
@@ -20,14 +23,19 @@ import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.SettingData;
 import com.alfredbase.javabean.SettlementRestaurant;
+import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.TableNames;
+import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
@@ -35,8 +43,8 @@ import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.ItemHappyHourSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.ItemModifierSQL;
-import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.ModifierSQL;
+import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
@@ -45,20 +53,25 @@ import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
+import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.store.sql.SettlementRestaurantSQL;
+import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
+import com.alfredbase.utils.BitmapUtil;
 import com.alfredposclient.activity.kioskactivity.subpos.SubPosLogin;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +81,6 @@ public class SubPosHttpAnalysis {
 		Gson gson = new Gson();
 		try {
 			JSONObject object = new JSONObject(responseBody);
-			int subPosStatus = object.optInt("subPosStatus");
 			User user = gson.fromJson(object.getString("user"), User.class);
 			App.instance.setUser(user);
 			Long businessDate = object.optLong("businessDate");
@@ -79,7 +91,13 @@ public class SubPosHttpAnalysis {
 			Store.putLong(App.instance, Store.LAST_BUSINESSDATE, businessDate);
 			App.instance.setBusinessDate(businessDate);
 			App.instance.setLastBusinessDate(businessDate);
-			handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, subPosStatus));
+
+			SubPosBean subPosBean = gson.fromJson(object.getString("subPosBean"), SubPosBean.class);
+			if(subPosBean != null) {
+				SubPosBeanSQL.updateSubPosBean(subPosBean);
+			}
+			App.instance.setSubPosBean(subPosBean);
+			handler.sendEmptyMessage(ResultCode.SUCCESS);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -95,24 +113,72 @@ public class SubPosHttpAnalysis {
 				UserSQL.deleteAllUser();
 				UserSQL.addUsers(users);
 			}
-			Restaurant restaurant = gson.fromJson(object.getString("restaurant"),
+			final Restaurant restaurant = gson.fromJson(object.getString("restaurant"),
 					Restaurant.class);
 			if(restaurant != null){
 				RestaurantSQL.deleteAllRestaurant();
 				RestaurantSQL.addRestaurant(restaurant);
+				if (restaurant.getLogoUrl() != null) {
+					new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							ImageLoader imageLoader = ImageLoader.getInstance();
+							// encode bitmap by base64
+							Bitmap bmp = null;
+							try {
+								bmp = imageLoader.loadImageSync(restaurant
+										.getLogoUrl());
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							if (bmp != null) {
+								Bitmap rzbmp = BitmapUtil.getResizedBitmap(bmp,
+										200, 200);
+								ByteArrayOutputStream baos = new ByteArrayOutputStream();
+								rzbmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+								byte[] imgByte = baos.toByteArray();
+								String imgString = Base64.encodeToString(imgByte,
+										Base64.DEFAULT);
+								SettingData settingData = new SettingData();
+								settingData.setId(CommonSQL
+										.getNextSeq(TableNames.SettingData));
+								settingData.setLogoUrl(restaurant.getLogoUrl());
+								settingData.setLogoString(imgString);
+								SettingDataSQL.add(settingData);
+							}
+						}
+					}).start();
+
+				}
+				CoreData.getInstance().setRestaurant(restaurant);
 			}
 			RevenueCenter revenueCenter = gson.fromJson(object.getString("revenueCenter"),
 					RevenueCenter.class);
 			if(revenueCenter != null){
 				RevenueCenterSQL.deleteAllRevenueCenter();
 				RevenueCenterSQL.addRevenueCenter(revenueCenter);
+				List<RevenueCenter> revenueCenters = new ArrayList<>();
+				revenueCenters.add(revenueCenter);
+				CoreData.getInstance().setRevenueCenters(revenueCenters);
+				App.instance.setRevenueCenter(revenueCenter);
+				Store.saveObject(App.instance, Store.CURRENT_REVENUE_CENTER,
+						revenueCenter);
+				MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
+				if (mainPosInfo != null) {
+					mainPosInfo.setIsKiosk(revenueCenter.getIsKiosk());
+					App.instance.setMainPosInfo(mainPosInfo);
+					Store.saveObject(App.instance, Store.MAINPOSINFO, mainPosInfo);
+				}
 			}
+
 			List<ItemMainCategory> itemMainCategories = gson.fromJson(object.getString("itemMainCategories"),
 					new TypeToken<ArrayList<ItemMainCategory>>() {
 					}.getType());
 			if(itemMainCategories != null && itemMainCategories.size() > 0){
 				ItemMainCategorySQL.deleteAllItemMainCategory();
 				ItemMainCategorySQL.addItemMainCategory(itemMainCategories);
+				CoreData.getInstance().setItemMainCategories(itemMainCategories);
 			}
 			List<ItemCategory> itemCategories = gson.fromJson(object.getString("itemCategories"),
 					new TypeToken<ArrayList<ItemCategory>>() {
@@ -120,6 +186,7 @@ public class SubPosHttpAnalysis {
 			if(itemCategories != null && itemCategories.size() > 0){
 				ItemCategorySQL.deleteAllItemCategory();
 				ItemCategorySQL.addItemCategoryList(itemCategories);
+				CoreData.getInstance().setItemCategories(itemCategories);
 			}
 			List<ItemDetail> itemDetails = gson.fromJson(object.getString("itemDetails"),
 					new TypeToken<ArrayList<ItemDetail>>() {
@@ -127,6 +194,7 @@ public class SubPosHttpAnalysis {
 			if(itemDetails != null && itemDetails.size() > 0){
 				ItemDetailSQL.deleteAllItemDetail();
 				ItemDetailSQL.addItemDetailList(itemDetails);
+				CoreData.getInstance().setItemDetails(itemDetails);
 			}
 			List<Modifier> modifiers= gson.fromJson(object.getString("modifiers"),
 					new TypeToken<ArrayList<Modifier>>() {
@@ -134,6 +202,7 @@ public class SubPosHttpAnalysis {
 			if(modifiers != null && modifiers.size() > 0){
 				ModifierSQL.deleteAllModifier();
 				ModifierSQL.addModifierList(modifiers);
+				CoreData.getInstance().setModifierList(modifiers);
 			}
 			List<Printer> printers = gson.fromJson(object.getString("printers"),
 					new TypeToken<ArrayList<Printer>>() {
@@ -141,6 +210,7 @@ public class SubPosHttpAnalysis {
 			if(printers != null && printers.size() > 0 ){
 				PrinterSQL.deleteAllPrinter();
 				PrinterSQL.addPrinters(printers);
+				CoreData.getInstance().setPrinters(printers);
 			}
 			List<TableInfo> tableInfos = gson.fromJson(object.getString("tableInfos"),
 					new TypeToken<ArrayList<TableInfo>>() {
@@ -162,6 +232,7 @@ public class SubPosHttpAnalysis {
 			if(itemModifiers != null && itemModifiers.size() > 0){
 				ItemModifierSQL.deleteAllItemModifier();
 				ItemModifierSQL.addItemModifierList(itemModifiers);
+				CoreData.getInstance().setItemModifiers(itemModifiers);
 			}
 			List<TaxCategory> taxCategories = gson.fromJson(object.getString("taxCategories"),
 					new TypeToken<ArrayList<TaxCategory>>() {
@@ -169,6 +240,7 @@ public class SubPosHttpAnalysis {
 			if(taxCategories != null && taxCategories.size() > 0){
 				TaxCategorySQL.deleteAllTaxCategory();
 				TaxCategorySQL.addTaxCategorys(taxCategories);
+				CoreData.getInstance().setTaxCategories(taxCategories);
 			}
 			List<Tax> taxes = gson.fromJson(object.getString("taxes"),
 					new TypeToken<ArrayList<Tax>>() {
@@ -176,6 +248,7 @@ public class SubPosHttpAnalysis {
 			if(taxes != null && taxes.size() > 0){
 				TaxSQL.deleteAllTax();
 				TaxSQL.addTaxs(taxes);
+				CoreData.getInstance().setTaxs(taxes);
 			}
 			List<ItemHappyHour> itemHappyHours = gson.fromJson(object.getString("itemHappyHours"),
 					new TypeToken<ArrayList<ItemHappyHour>>() {
@@ -183,6 +256,7 @@ public class SubPosHttpAnalysis {
 			if(itemHappyHours != null && itemHappyHours.size() > 0){
 				ItemHappyHourSQL.deleteAllItemHappyHour();
 				ItemHappyHourSQL.addItemHappyHourList(itemHappyHours);
+				CoreData.getInstance().setItemHappyHours(itemHappyHours);
 			}
 			List<HappyHourWeek> happyHourWeeks = gson.fromJson(object.getString("happyHourWeeks"),
 					new TypeToken<ArrayList<HappyHourWeek>>() {
@@ -190,6 +264,7 @@ public class SubPosHttpAnalysis {
 			if(happyHourWeeks != null && happyHourWeeks.size() > 0){
 				HappyHourWeekSQL.deleteAllHappyHourWeek();
 				HappyHourWeekSQL.addHappyHourWeekList(happyHourWeeks);
+				CoreData.getInstance().setHappyHourWeeks(happyHourWeeks);
 			}
 			List<HappyHour> happyHours = gson.fromJson(object.getString("happyHours"),
 					new TypeToken<ArrayList<HappyHour>>() {
@@ -197,6 +272,7 @@ public class SubPosHttpAnalysis {
 			if(happyHours != null && happyHours.size() > 0){
 				HappyHourSQL.deleteAllHappyHour();
 				HappyHourSQL.addHappyHourList(happyHours);
+				CoreData.getInstance().setHappyHours(happyHours);
 			}
 			List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("restaurantConfigs"),
 					new TypeToken<ArrayList<RestaurantConfig>>() {
@@ -204,6 +280,7 @@ public class SubPosHttpAnalysis {
 			if(restaurantConfigs != null && restaurantConfigs.size() > 0){
 				RestaurantConfigSQL.deleteAllRestaurantConfig();
 				RestaurantConfigSQL.addRestaurantConfigs(restaurantConfigs);
+				CoreData.getInstance().setRestaurantConfigs(restaurantConfigs);
 			}
 			List<PrinterGroup> printerGroups = gson.fromJson(object.getString("printerGroups"),
 					new TypeToken<ArrayList<PrinterGroup>>() {
@@ -211,6 +288,7 @@ public class SubPosHttpAnalysis {
 			if(printerGroups != null && printerGroups.size() > 0){
 				PrinterGroupSQL.deletePrinter();
 				PrinterGroupSQL.addPrinterGroups(printerGroups);
+				CoreData.getInstance().setPrinterGroups(printerGroups);
 			}
 			List<UserRestaurant> userRestaurants = gson.fromJson(object.getString("userRestaurants"),
 					new TypeToken<ArrayList<UserRestaurant>>() {
@@ -218,20 +296,22 @@ public class SubPosHttpAnalysis {
 			if(userRestaurants != null && userRestaurants.size() > 0){
 				UserRestaurantSQL.deleteAllUserRestaurant();
 				UserRestaurantSQL.addUsers(userRestaurants);
+				CoreData.getInstance().setUserRestaurant(userRestaurants);
 			}
-			List<LocalDevice> localDevices = gson.fromJson(object.getString("localDevices"),
-					new TypeToken<ArrayList<LocalDevice>>() {
-					}.getType());
-			if(localDevices != null && localDevices.size() > 0){
-				LocalDeviceSQL.deleteAllLocalDevice();
-				LocalDeviceSQL.addLocalDeviceList(localDevices);
-			}
+//			List<LocalDevice> localDevices = gson.fromJson(object.getString("localDevices"),
+//					new TypeToken<ArrayList<LocalDevice>>() {
+//					}.getType());
+//			if(localDevices != null && localDevices.size() > 0){
+//				LocalDeviceSQL.deleteAllLocalDevice();
+//				LocalDeviceSQL.addLocalDeviceList(localDevices);
+//			}
 			List<PaymentMethod> paymentMethods = gson.fromJson(object.getString("paymentMethods"),
 					new TypeToken<ArrayList<PaymentMethod>>() {
 					}.getType());
 			if(paymentMethods != null && paymentMethods.size() > 0){
 				PaymentMethodSQL.deleteAllPaymentMethod();
 				PaymentMethodSQL.addPaymentMethod(paymentMethods);
+				CoreData.getInstance().setPamentMethodList(paymentMethods);
 			}
 			List<SettlementRestaurant> settlementRestaurants = gson.fromJson(object.getString("settlementRestaurants"),
 					new TypeToken<ArrayList<SettlementRestaurant>>() {
@@ -239,6 +319,7 @@ public class SubPosHttpAnalysis {
 			if(settlementRestaurants != null && settlementRestaurants.size() > 0){
 				SettlementRestaurantSQL.deleteAllSettlementRestaurant();
 				SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurants);
+				CoreData.getInstance().setSettlementRestaurant(settlementRestaurants);
 			}
 			handler.sendEmptyMessage(SubPosLogin.UPDATE_ALL_DATA_SUCCESS);
 			return;
@@ -252,6 +333,22 @@ public class SubPosHttpAnalysis {
 		try {
 			JSONObject object = new JSONObject(responseBody);
 			Order order = gson.fromJson(object.getString("order"), Order.class);
+			OrderSQL.update(order);
+			return order;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public static Order uploadOrder(String responseBody) {
+		Gson gson = new Gson();
+		try {
+			JSONObject object = new JSONObject(responseBody);
+			Order order = gson.fromJson(object.getString("order"), Order.class);
+            List<OrderBill> orderBills = gson.fromJson(object.getString("orderBills"), new TypeToken<List<OrderBill>>(){}.getType());
+            for(OrderBill o : orderBills){
+                OrderBillSQL.add(o);
+            }
 			OrderSQL.update(order);
 			return order;
 		} catch (JSONException e) {

@@ -61,6 +61,11 @@
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme" />
         <activity
+            android:name=".activity.kioskactivity.subpos.SubPosLogin"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme" />
+        <activity
             android:name=".activity.OpenRestaruant"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"

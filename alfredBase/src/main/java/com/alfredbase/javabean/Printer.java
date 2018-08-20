@@ -20,7 +20,7 @@ public class Printer implements Serializable{
     private String printerType; //no used
 
     private String qPrint;
-
+    /* 0为非收银打印，1为收银打印*/
     private Integer isCashdrawer;
 
     private Integer companyId;

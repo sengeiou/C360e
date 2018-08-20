@@ -130,8 +130,8 @@ public class KotSummarySQL {
 			String sql = "replace into "
 					+ TableNames.KotSummary
 					+ "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
-					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, numTag)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[]{kotSummary.getId(),
@@ -148,7 +148,8 @@ public class KotSummarySQL {
 							kotSummary.getOrderNo(),
 							kotSummary.getRevenueCenterIndex(),
 							kotSummary.getOrderRemark(),
-							kotSummary.getEmpName()
+							kotSummary.getEmpName(),
+							kotSummary.getNumTag()
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -165,8 +166,8 @@ public class KotSummarySQL {
 			String sql = "replace into "
 					+ TableNames.KotSummary
 					+ "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
-					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, numTag)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (KotSummary kotSummary : kotSummarys) {
@@ -200,6 +201,8 @@ public class KotSummarySQL {
 							kotSummary.getOrderRemark());
 					SQLiteStatementHelper.bindString(sqLiteStatement,15,
 							kotSummary.getEmpName());
+					SQLiteStatementHelper.bindString(sqLiteStatement,16,
+							kotSummary.getNumTag());
 					sqLiteStatement.executeInsert();
 				}
 				db.setTransactionSuccessful();
@@ -240,6 +243,7 @@ public class KotSummarySQL {
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
 				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -283,6 +287,7 @@ public class KotSummarySQL {
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
 				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -326,6 +331,7 @@ public class KotSummarySQL {
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
 				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -369,6 +375,7 @@ public class KotSummarySQL {
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
 				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -405,6 +412,7 @@ public class KotSummarySQL {
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
 				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -447,6 +455,7 @@ public class KotSummarySQL {
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
 				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
 				result.add(kotSummary);
 			}
 		} catch (Exception e) {
@@ -483,6 +492,7 @@ public class KotSummarySQL {
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
 				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -518,6 +528,7 @@ public class KotSummarySQL {
 				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
 				kotSummary.setOrderRemark(cursor.getString(13));
 				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

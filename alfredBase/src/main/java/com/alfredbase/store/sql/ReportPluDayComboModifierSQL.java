@@ -117,6 +117,55 @@ public class ReportPluDayComboModifierSQL {
 			db.endTransaction();
 		}
 	}
+	public static void addReportPluDayModifierList(SQLiteDatabase db,
+												   List<ReportPluDayComboModifier> reportPluDayComboModifiers) {
+		if (reportPluDayComboModifiers == null)
+			return;
+		try {
+			String sql = "replace into "
+					+ TableNames.ReportPluDayComboModifier
+					+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
+					+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, "
+					+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
+					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
+			for (ReportPluDayComboModifier reportPluDayComboModifier : reportPluDayComboModifiers) {
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportPluDayComboModifier.getReportNo());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 2, reportPluDayComboModifier.getRestaurantId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 3, reportPluDayComboModifier.getRestaurantName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 4, reportPluDayComboModifier.getRevenueId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 5, reportPluDayComboModifier.getRevenueName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 6, reportPluDayComboModifier.getBusinessDate());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 7, reportPluDayComboModifier.getModifierCategoryId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 8, reportPluDayComboModifier.getModifierCategoryName());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 9, reportPluDayComboModifier.getModifierId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 10, reportPluDayComboModifier.getModifierName());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 11, reportPluDayComboModifier.getModifierPrice() == null ? "0.00":reportPluDayComboModifier.getModifierPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 12, reportPluDayComboModifier.getModifierCount() == null ? 0 : reportPluDayComboModifier.getModifierCount());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 13, reportPluDayComboModifier.getBillVoidPrice() == null ? "0.00" : reportPluDayComboModifier.getBillVoidPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 14, reportPluDayComboModifier.getBillVoidCount() == null ? 0 : reportPluDayComboModifier.getBillVoidCount());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 15, reportPluDayComboModifier.getVoidModifierPrice() == null ? "0.00" : reportPluDayComboModifier.getVoidModifierPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 16, reportPluDayComboModifier.getVoidModifierCount() == null ? 0 : reportPluDayComboModifier.getVoidModifierCount());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 17, reportPluDayComboModifier.getBohModifierPrice() == null ? "0.00" : reportPluDayComboModifier.getBohModifierPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 18, reportPluDayComboModifier.getBohModifierCount() == null ? 0 : reportPluDayComboModifier.getBohModifierCount());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 19, reportPluDayComboModifier.getFocModifierPrice() == null ? "0.00" : reportPluDayComboModifier.getFocModifierPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 20, reportPluDayComboModifier.getFocModifierCount() == null ? 0 : reportPluDayComboModifier.getFocModifierCount());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 21, reportPluDayComboModifier.getBillFocPrice() == null ? "0.00" : reportPluDayComboModifier.getBillFocPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 22, reportPluDayComboModifier.getBillFocCount() == null ? 0 : reportPluDayComboModifier.getBillFocCount());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 23, reportPluDayComboModifier.getComboItemId());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 24, reportPluDayComboModifier.getItemId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 25, reportPluDayComboModifier.getItemName());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 26, reportPluDayComboModifier.getModifierItemPrice() == null ? "0.00" : reportPluDayComboModifier.getModifierItemPrice());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 27, reportPluDayComboModifier.getRealPrice() == null ? "0.00" : reportPluDayComboModifier.getRealPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 28, reportPluDayComboModifier.getRealCount() == null ? 0 : reportPluDayComboModifier.getRealCount());
+				sqLiteStatement.executeInsert();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 		//ONLY USE to save PLU DAY ITEMs download from cloud
 	public static void addReportPluDayModifierFromCloud(List<ReportPluDayComboModifier> reportPluDayComboModifiers) {

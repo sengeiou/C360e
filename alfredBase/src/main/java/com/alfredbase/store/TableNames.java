@@ -78,6 +78,9 @@ public class TableNames {
 	public static final String UserOpenDrawerRecord = "UserOpenDrawerRecord_";
 	public static final String ReportSessionSales = "ReportSessionSales_";
 
+	public static final String SubPosBean = "SubPosBean_";
+	public static final String MultiOrderRelation = "MultiOrderRelation_";
+	public static final String MultiReportRelation = "MultiReportRelation_";
 
 
 	public static final String StoreValue = "StoreValue_";

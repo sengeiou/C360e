@@ -45,6 +45,33 @@ public class RoundAmountSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void update(SQLiteDatabase db, RoundAmount roundAmount) {
+		if (roundAmount == null) {
+			return;
+		}
+		try {
+			String sql = "replace into "
+					+ TableNames.RoundAmount
+					+ "(id, orderId, billNo, roundBeforePrice, roundAlfterPrice, roundBalancePrice,restId,revenueId,tableId,businessDate ,createTime,updateTime, orderSplitId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			db.execSQL(
+					sql,
+					new Object[] { roundAmount.getId(),
+							roundAmount.getOrderId(), roundAmount.getBillNo(),
+							roundAmount.getRoundBeforePrice(),
+							roundAmount.getRoundAlfterPrice(),
+							roundAmount.getRoundBalancePrice(),
+							roundAmount.getRestId(),
+							roundAmount.getRevenueId(),
+							roundAmount.getTableId(),
+							roundAmount.getBusinessDate(),
+							roundAmount.getCreateTime(),
+							roundAmount.getUpdateTime(),
+							roundAmount.getOrderSplitId()});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void addRoundAmountList(List<RoundAmount> roundAmounts) {
 		if (roundAmounts == null) {
@@ -176,7 +203,48 @@ public class RoundAmountSQL {
 		}
 		return roundAmount;
 	}
-	
+	public static List<RoundAmount> getRoundAmountForSync(Order order) {
+		List<RoundAmount> result = new ArrayList<>();
+		String sql = "select * from " + TableNames.RoundAmount
+				+ " where orderId = ?";
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql,
+					new String[] { order.getId() + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			RoundAmount roundAmount = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				roundAmount = new RoundAmount();
+				roundAmount.setId(cursor.getInt(0));
+				roundAmount.setOrderId(cursor.getInt(1));
+				roundAmount.setBillNo(cursor.getInt(2));
+				roundAmount.setRoundBeforePrice(cursor.getString(3));
+				roundAmount.setRoundAlfterPrice(cursor.getString(4));
+				roundAmount.setRoundBalancePrice(cursor.getDouble(5));
+				roundAmount.setRestId(cursor.getInt(6));
+				roundAmount.setRevenueId(cursor.getInt(7));
+				roundAmount.setTableId(cursor.getInt(8));
+				roundAmount.setBusinessDate(cursor.getLong(9));
+				roundAmount.setCreateTime(cursor.getLong(10));
+				roundAmount.setUpdateTime(cursor.getLong(11));
+				roundAmount.setOrderSplitId(cursor.getInt(12));
+				result.add(roundAmount);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static RoundAmount getRoundAmount(OrderSplit orderSplit) {
 		RoundAmount roundAmount = null;
 		String sql = "select * from " + TableNames.RoundAmount

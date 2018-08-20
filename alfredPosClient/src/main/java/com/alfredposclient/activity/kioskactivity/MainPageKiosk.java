@@ -21,11 +21,14 @@ import android.widget.LinearLayout.LayoutParams;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.ParamHelper;
 import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
@@ -41,9 +44,19 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.ReportDayPayment;
+import com.alfredbase.javabean.ReportDaySales;
+import com.alfredbase.javabean.ReportDayTax;
+import com.alfredbase.javabean.ReportHourly;
+import com.alfredbase.javabean.ReportPluDayComboModifier;
+import com.alfredbase.javabean.ReportPluDayItem;
+import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.javabean.SubPosBean;
+import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
@@ -52,6 +65,9 @@ import com.alfredbase.javabean.temporaryforapp.TempModifierDetail;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.javabean.temporaryforapp.TempOrderDetail;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.GeneralSQL;
+import com.alfredbase.store.sql.ItemCategorySQL;
+import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -66,10 +82,12 @@ import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.CallBack;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
@@ -78,16 +96,20 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
+import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
+import com.alfredposclient.global.ReportObjectFactory;
+import com.alfredposclient.global.SubPosSyncCentre;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.TablesStatusInfo;
 import com.alfredposclient.jobs.CloudSyncJobManager;
+import com.alfredposclient.jobs.SubPosCloudSyncJobManager;
 import com.alfredposclient.popupwindow.CloseOrderSplitWindow;
 import com.alfredposclient.popupwindow.CloseOrderWindow;
 import com.alfredposclient.popupwindow.DiscountWindow;
@@ -325,7 +347,7 @@ public class MainPageKiosk extends BaseActivity {
         setData();
         observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
         observable1 = RxBus.getInstance().register("open_drawer");
-        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+        observable.observeOn(AndroidSchedulers.mainThread()).onBackpressureBuffer(10).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer object) {
 //				showStoredCard();
@@ -407,7 +429,7 @@ public class MainPageKiosk extends BaseActivity {
 
     private void initOrder(TableInfo tables) {
         currentOrder = ObjectFactory.getInstance().getOrder(
-                ParamConst.ORDER_ORIGIN_POS, tables,
+                ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
                 App.instance.getRevenueCenter(), App.instance.getUser(),
                 App.instance.getSessionStatus(),
                 App.instance.getBusinessDate(),
@@ -823,57 +845,57 @@ public class MainPageKiosk extends BaseActivity {
                             App.instance.kickOutCashDrawer(printer);
                         }
                     }
+                    if(App.instance.getPosType() == 0) {
 
-                    //Sent to Kitchen after close bill in kiosk mode
-                    String kotCommitStatus = ParamConst.JOB_NEW_KOT;
-                    List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetails(paidOrder.getId());
-                    List<Integer> orderDetailIds = new ArrayList<Integer>();
-                    ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
-                    ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
-                    for (OrderDetail orderDetail : placedOrderDetails) {
-                        orderDetailIds.add(orderDetail.getId());
-                    }
-
-                    KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrder.getId());
-                    if (kotSummary != null) {
-                        ArrayList<KotItemDetail> kotItemDetails =
-                                KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummary.getId(), paidOrder.getId());
-
-                        kotorderModifiers = OrderModifierSQL.getAllOrderModifierByOrderAndNormal(paidOrder);
-                        for (KotItemDetail kot : kotItemDetails) {
-                            ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
-                                    .getKotItemModifiersByKotItemDetail(kot.getId());
-                            if (kotItemModifierObj != null)
-                                kotItemModifiers.addAll(kotItemModifierObj);
+                        //Sent to Kitchen after close bill in kiosk mode
+                        String kotCommitStatus = ParamConst.JOB_NEW_KOT;
+                        List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetails(paidOrder.getId());
+                        List<Integer> orderDetailIds = new ArrayList<Integer>();
+                        ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
+                        ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+                        for (OrderDetail orderDetail : placedOrderDetails) {
+                            orderDetailIds.add(orderDetail.getId());
                         }
+
+                        KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrder.getId());
+                        if (kotSummary != null) {
+                            ArrayList<KotItemDetail> kotItemDetails =
+                                    KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummary.getId(), paidOrder.getId());
+
+                            kotorderModifiers = OrderModifierSQL.getAllOrderModifierByOrderAndNormal(paidOrder);
+                            for (KotItemDetail kot : kotItemDetails) {
+                                ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
+                                        .getKotItemModifiersByKotItemDetail(kot.getId());
+                                if (kotItemModifierObj != null)
+                                    kotItemModifiers.addAll(kotItemModifierObj);
+                            }
 
 
 //					List<OrderDetail> placedOrderDetails
 //							= OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
 
-                        PrinterTitle title = ObjectFactory.getInstance()
-                                .getPrinterTitle(
-                                        App.instance.getRevenueCenter(),
-                                        paidOrder,
-                                        App.instance.getUser().getFirstName()
-                                                + App.instance.getUser().getLastName(),
-                                        currentTable.getName(), 1);
+                            PrinterTitle title = ObjectFactory.getInstance()
+                                    .getPrinterTitle(
+                                            App.instance.getRevenueCenter(),
+                                            paidOrder,
+                                            App.instance.getUser().getFirstName()
+                                                    + App.instance.getUser().getLastName(),
+                                            currentTable.getName(), 1);
 
-                        Map<String, Object> orderMap = new HashMap<String, Object>();
+                            Map<String, Object> orderMap = new HashMap<String, Object>();
 
-                        orderMap.put("orderId", paidOrder.getId());
-                        orderMap.put("orderDetailIds", orderDetailIds);
-                        orderMap.put("paidOrder", paidOrder);
-                        orderMap.put("title", title);
-                        orderMap.put("placedOrderDetails", placedOrderDetails);
-                        App.instance.getKdsJobManager().tearDownKot(
-                                kotSummary, kotItemDetails,
-                                kotItemModifiers, kotCommitStatus,
-                                orderMap);
+                            orderMap.put("orderId", paidOrder.getId());
+                            orderMap.put("orderDetailIds", orderDetailIds);
+                            orderMap.put("paidOrder", paidOrder);
+                            orderMap.put("title", title);
+                            orderMap.put("placedOrderDetails", placedOrderDetails);
+                            App.instance.getKdsJobManager().tearDownKot(
+                                    kotSummary, kotItemDetails,
+                                    kotItemModifiers, kotCommitStatus,
+                                    orderMap);
+                        }
+                        //end KOT print
                     }
-                    //end KOT print
-
-
                     // remove get bill notification
                     removeNotificationTables();
                     topMenuView.setGetBillNum(App.instance
@@ -885,12 +907,22 @@ public class MainPageKiosk extends BaseActivity {
 
                         @Override
                         public void run() {
-                            CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-                            if (cloudSync != null) {
+                            if(App.instance.getPosType() == 0) {
+                                CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                                if (cloudSync != null) {
 
-                                cloudSync.syncOrderInfoForLog(paidOrder.getId(),
-                                        App.instance.getRevenueCenter().getId(),
-                                        App.instance.getBusinessDate(), 1);
+                                    cloudSync.syncOrderInfoForLog(paidOrder.getId(),
+                                            App.instance.getRevenueCenter().getId(),
+                                            App.instance.getBusinessDate(), 1);
+                                }
+                            }else{
+                                SubPosCloudSyncJobManager subPosCloudSyncJobManager = App.instance.getSubPosSyncJob();
+                                if(subPosCloudSyncJobManager != null){
+                                    subPosCloudSyncJobManager.syncOrderInfo(paidOrder.getId(),
+                                            App.instance.getRevenueCenter().getId(),
+                                            App.instance.getBusinessDate());
+                                }
+                                handler.sendEmptyMessage(VIEW_EVENT_SET_DATA);
                             }
                         }
                     }).start();
@@ -1004,37 +1036,39 @@ public class MainPageKiosk extends BaseActivity {
 ////					App.instance.remoteBillPrint(printer, title, temporaryOrder,
 ////							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 //				}
-                    //Sent to Kitchen after close bill in kiosk mode
-                    String kotCommitStatus = ParamConst.JOB_NEW_KOT;
-                    List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(paidOrderSplit);
-                    List<Integer> orderDetailIds = new ArrayList<Integer>();
-                    ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
-                    ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+                    if(App.instance.getPosType() == 0) {
+                        //Sent to Kitchen after close bill in kiosk mode
+                        String kotCommitStatus = ParamConst.JOB_NEW_KOT;
+                        List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(paidOrderSplit);
+                        List<Integer> orderDetailIds = new ArrayList<Integer>();
+                        ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
+                        ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
 
-                    KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrderSplit.getOrderId());
-                    if (kotSummary != null) {
-                        ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
-                        for (OrderDetail orderDetail : placedOrderDetails) {
-                            orderDetailIds.add(orderDetail.getId());
-                            KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(orderDetail.getId());
-                            kotItemDetails.add(kotItemDetail);
-                        }
+                        KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrderSplit.getOrderId());
+                        if (kotSummary != null) {
+                            ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+                            for (OrderDetail orderDetail : placedOrderDetails) {
+                                orderDetailIds.add(orderDetail.getId());
+                                KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(orderDetail.getId());
+                                kotItemDetails.add(kotItemDetail);
+                            }
 
 
 //					kotorderModifiers = OrderModifierSQL.getAllOrderModifierByOrderAndNormal(paidOrder);
-                        for (KotItemDetail kot : kotItemDetails) {
-                            ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
-                                    .getKotItemModifiersByKotItemDetail(kot.getId());
-                            if (kotItemModifierObj != null)
-                                kotItemModifiers.addAll(kotItemModifierObj);
+                            for (KotItemDetail kot : kotItemDetails) {
+                                ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
+                                        .getKotItemModifiersByKotItemDetail(kot.getId());
+                                if (kotItemModifierObj != null)
+                                    kotItemModifiers.addAll(kotItemModifierObj);
+                            }
+                            Map<String, Object> orderMap = new HashMap<String, Object>();
+                            orderMap.put("orderId", paidOrderSplit.getOrderId());
+                            orderMap.put("orderDetailIds", orderDetailIds);
+                            App.instance.getKdsJobManager().tearDownKot(
+                                    kotSummary, kotItemDetails,
+                                    kotItemModifiers, kotCommitStatus,
+                                    orderMap);
                         }
-                        Map<String, Object> orderMap = new HashMap<String, Object>();
-                        orderMap.put("orderId", paidOrderSplit.getOrderId());
-                        orderMap.put("orderDetailIds", orderDetailIds);
-                        App.instance.getKdsJobManager().tearDownKot(
-                                kotSummary, kotItemDetails,
-                                kotItemModifiers, kotCommitStatus,
-                                orderMap);
                     }
                     // remove get bill notification
                     removeNotificationTables();
@@ -1047,12 +1081,22 @@ public class MainPageKiosk extends BaseActivity {
 
                         @Override
                         public void run() {
-                            CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-                            if (cloudSync != null) {
+                            if(App.instance.getPosType() == 0) {
+                                CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                                if (cloudSync != null) {
 
-                                cloudSync.syncOrderInfoForLog(currentOrder.getId(),
-                                        App.instance.getRevenueCenter().getId(),
-                                        App.instance.getBusinessDate(), 1);
+                                    cloudSync.syncOrderInfoForLog(currentOrder.getId(),
+                                            App.instance.getRevenueCenter().getId(),
+                                            App.instance.getBusinessDate(), 1);
+                                }
+                            }else{
+                                SubPosCloudSyncJobManager subPosCloudSyncJobManager = App.instance.getSubPosSyncJob();
+                                if(subPosCloudSyncJobManager != null){
+                                    subPosCloudSyncJobManager.syncOrderInfo(currentOrder.getId(),
+                                            App.instance.getRevenueCenter().getId(),
+                                            App.instance.getBusinessDate());
+                                }
+                                handler.sendEmptyMessage(VIEW_EVENT_SET_DATA);
                             }
                         }
                     }).start();
@@ -2019,7 +2063,7 @@ public class MainPageKiosk extends BaseActivity {
             public void run() {
                 OrderSQL.deleteOrder(currentOrder);
                 Order order = ObjectFactory.getInstance().getOrder(
-                        ParamConst.ORDER_ORIGIN_POS, tables,
+                        ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
                         App.instance.getRevenueCenter(), App.instance.getUser(),
                         App.instance.getSessionStatus(),
                         App.instance.getBusinessDate(),
@@ -2125,6 +2169,136 @@ public class MainPageKiosk extends BaseActivity {
         }
     }
 
+
+    // 只在副Pos中调用
+    public void sendXReportToMainPos(final String actualAmount){
+        printerLoadingDialog.setTitle("Printing X Report");
+        printerLoadingDialog.show();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                SessionStatus sessionStatus = App.instance.getSessionStatus();
+                long businessDate = App.instance.getBusinessDate();
+                Store.remove(context, Store.SESSION_STATUS);
+                App.instance.setSessionStatus(null);
+                GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus, App.instance.getBusinessDate());
+                Map<String, Object> map = new HashMap<String, Object>();
+                // day sales report
+                ReportDaySales reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(businessDate, sessionStatus, actualAmount);
+
+                if (reportDaySales == null) {
+                    return;
+                }
+                String reportType = CommonUtil.getReportType(context, sessionStatus.getSession_status());
+                String bizDate = TimeUtil.getPrintingDate(businessDate);
+                ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
+                        .getAllItemCategory();
+                ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
+                        .getAllItemMainCategory();
+                List<Modifier> modifiers = ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue());
+                PrinterTitle title = ObjectFactory.getInstance()
+                        .getPrinterTitleForReport(
+                                App.instance.getRevenueCenter().getId(),
+                                "X"
+                                        + ParamHelper.getPrintOrderBillNo(
+                                        App.instance.getIndexOfRevenueCenter(),
+                                        reportDaySales.getId()),
+                                App.instance.getUser().getFirstName()
+                                        + App.instance.getUser().getLastName(), null, bizDate);
+
+                PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
+
+                // Open Cash drawer
+                App.instance.kickOutCashDrawer(cashierPrinter);
+                // tax report
+                ArrayList<ReportDayTax> reportDayTaxs = ReportObjectFactory.getInstance().loadXReportDayTax(reportDaySales, businessDate,
+                        sessionStatus);
+                //paymentReport
+                List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadXReportDayPayment(reportDaySales, businessDate, sessionStatus);
+                // sales report
+                App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
+                        title, reportDaySales, reportDayTaxs, reportDayPayments, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
+                // plu item reprot
+                ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory.getInstance().loadXReportPluDayItem(businessDate, sessionStatus);
+                Map<String, Object> modifierInfoMap = ReportObjectFactory.getInstance().loadXReportPluDayModifierInfo(businessDate, sessionStatus);
+                ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) modifierInfoMap.get("reportPluDayModifiers");
+                if (App.instance.getSystemSettings().isPrintPluItem())
+                    // detail analysis
+                    App.instance.remotePrintDetailAnalysisReport(reportType,
+                            cashierPrinter, title, null, reportPluDayItems,
+                            reportPluDayModifiers, null, itemMainCategorys, itemCategorys);
+                if (reportPluDayModifiers != null && reportPluDayModifiers.size() > 0) {
+                    if (App.instance.getSystemSettings().isPrintPluModifier())
+                        //modifier report
+                        App.instance.remotePrintModifierDetailAnalysisReport(reportType,
+                                cashierPrinter, title, reportPluDayModifiers, modifiers);
+                }
+                ArrayList<ReportHourly> reportHourlys = ReportObjectFactory.getInstance().loadXReportHourlys(businessDate, sessionStatus);
+                if (App.instance.getSystemSettings().isPrintPluCategory())
+                    App.instance.remotePrintSummaryAnalysisReport(reportType,
+                            cashierPrinter, title, reportPluDayItems,
+                            reportPluDayModifiers, itemMainCategorys, itemCategorys);
+                if (App.instance.getSystemSettings().isPrintHourlyPayment())
+                    // hourly sales
+                    App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
+                            reportHourlys);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                            printerLoadingDialog.dismiss();
+                        }
+                        loadingDialog.setTitle("send data to main pos");
+                        loadingDialog.show();
+                    }
+                });
+                ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) modifierInfoMap.get("reportPluDayComboModifiers");
+                List<UserOpenDrawerRecord> userOpenDrawerRecords = UserOpenDrawerRecordSQL.getAllUserOpenDrawerRecord(sessionStatus.getSession_status(), businessDate);
+                map.put("reportDaySales", reportDaySales);
+                map.put("reportDayTaxs", reportDayTaxs);
+                map.put("reportDayPayments", reportDayPayments);
+                map.put("reportPluDayItems", reportPluDayItems);
+                map.put("reportPluDayModifiers", reportPluDayModifiers);
+                map.put("reportHourlys", reportHourlys);
+                map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
+                map.put("sessionStatus", sessionStatus);
+                map.put("userOpenDrawerRecords", userOpenDrawerRecords);
+                //sync X-Report to cloud
+                SubPosCloudSyncJobManager subPosCloudSyncJobManager = App.instance.getSubPosSyncJob();
+                if (subPosCloudSyncJobManager != null) {
+                    SyncMsg syncMsg = subPosCloudSyncJobManager.getSyncXReport(map,
+                            App.instance.getRevenueCenter().getId(),
+                            businessDate);
+                    SubPosBean subPosBean = App.instance.getSubPosBean();
+                    SubPosSyncCentre.getInstance().cloudSyncUploadReportInfo(context, syncMsg, subPosBean, new CallBack() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dismissLoadingDialog();
+                                    Store.remove(context, Store.SESSION_STATUS);
+                                    App.instance.setSessionStatus(null);
+                                    MainPageKiosk.this.finish();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+
+                    });
+
+                }
+
+
+            }
+        }).start();
+    }
 
     /**
      * 到新加坡做测试

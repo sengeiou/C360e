@@ -168,7 +168,7 @@ public class SelectRevenue extends BaseActivity {
             switch (msg.what){
                 case ResultCode.SUCCESS:
                     dismissLoadingDialog();
-                    UIHelp.startLogin(SelectRevenue.this);
+                    UIHelp.startSubPosLogin(SelectRevenue.this);
                     break;
                 case ResultCode.CONNECTION_FAILED:
                     dismissLoadingDialog();

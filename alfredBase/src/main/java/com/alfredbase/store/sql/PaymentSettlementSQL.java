@@ -12,6 +12,7 @@ import com.alfredbase.store.TableNames;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PaymentSettlementSQL {
@@ -24,6 +25,34 @@ public class PaymentSettlementSQL {
 					+ "(id, billNo, paymentId, paymentTypeId, paidAmount, totalAmount, restaurantId, revenueId, userId, createTime, updateTime, cashChange, isActive, partChange)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] { paymentSettlement.getId(),
+							paymentSettlement.getBillNo(),
+							paymentSettlement.getPaymentId(),
+							paymentSettlement.getPaymentTypeId(),
+							paymentSettlement.getPaidAmount(),
+							paymentSettlement.getTotalAmount(),
+							paymentSettlement.getRestaurantId(),
+							paymentSettlement.getRevenueId(),
+							paymentSettlement.getUserId(),
+							paymentSettlement.getCreateTime(),
+							paymentSettlement.getUpdateTime(),
+							paymentSettlement.getCashChange(),
+							paymentSettlement.getIsActive(),
+							paymentSettlement.getPartChange()});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void addPaymentSettlement(SQLiteDatabase db ,PaymentSettlement paymentSettlement) {
+		if (paymentSettlement == null)
+			return;
+		try {
+			String sql = "replace into "
+					+ TableNames.PaymentSettlement
+					+ "(id, billNo, paymentId, paymentTypeId, paidAmount, totalAmount, restaurantId, revenueId, userId, createTime, updateTime, cashChange, isActive, partChange)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			db.execSQL(
 					sql,
 					new Object[] { paymentSettlement.getId(),
 							paymentSettlement.getBillNo(),
@@ -284,6 +313,53 @@ public class PaymentSettlementSQL {
 	public static ArrayList<PaymentSettlement> getAllPaymentSettlementByPayment(
 			Payment payment) {
 		return getAllPaymentSettlementByPaymentId(payment.getId());
+	}
+
+	public static List<PaymentSettlement> getAllPaymentSettlementByOrderId(int orderId){
+		ArrayList<PaymentSettlement> result = new ArrayList<PaymentSettlement>();
+		String sql = "select ps.* from "
+				+ TableNames.PaymentSettlement
+				+ " ps, "
+				+ TableNames.Payment
+				+ " p where ps.paymentId = p.id and p.orderId = ? and ps.isActive = "
+				+ ParamConst.PAYMENT_SETT_IS_ACTIVE + " group by ps.id";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] { orderId + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			PaymentSettlement paymentSettlement = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				paymentSettlement = new PaymentSettlement();
+				paymentSettlement.setId(cursor.getInt(0));
+				paymentSettlement.setBillNo(cursor.getInt(1));
+				paymentSettlement.setPaymentId(cursor.getInt(2));
+				paymentSettlement.setPaymentTypeId(cursor.getInt(3));
+				paymentSettlement.setPaidAmount(cursor.getString(4));
+				paymentSettlement.setTotalAmount(cursor.getString(5));
+				paymentSettlement.setRestaurantId(cursor.getInt(6));
+				paymentSettlement.setRevenueId(cursor.getInt(7));
+				paymentSettlement.setUserId(cursor.getInt(8));
+				paymentSettlement.setCreateTime(cursor.getLong(9));
+				paymentSettlement.setUpdateTime(cursor.getLong(10));
+				paymentSettlement.setCashChange(cursor.getString(11));
+				paymentSettlement.setIsActive(cursor.getInt(12));
+				paymentSettlement.setPartChange(cursor.getString(13));
+				result.add(paymentSettlement);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
 	}
 
 	public static ArrayList<PaymentSettlement> getAllPaymentSettlementByPaymentId(

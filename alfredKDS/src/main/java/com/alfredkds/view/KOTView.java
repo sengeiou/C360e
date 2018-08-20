@@ -228,11 +228,11 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemModifiers.clear();
 		this.kotItemModifiers.addAll(kot.getKotItemModifiers());
 		kotId.setText(kot.getKotSummary().getId() + "");
-		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getOrderNo();
+		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo();
 		if(!TextUtils.isEmpty(kot.getKotSummary().getEmpName())){
 			orderNoStr = orderNoStr + "(Emp:" + kot.getKotSummary().getEmpName() + ")";
 		}
-		String kioskOrderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
+		String kioskOrderNoStr = context.getResources().getString(R.string.order_id_) + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo() + "");
 		if(kot.getKotSummary() != null && kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.TAKE_AWAY){
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
@@ -315,10 +315,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
 				Message message = new Message();
 				if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
 					int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo());
-					message.arg1 = orderNoStr;
+					message.obj = kot.getKotSummary().getNumTag() + orderNoStr;
 					message.arg2=-1;
 				}else {
-					message.arg1 = kot.getKotSummary().getOrderNo();
+					message.obj = kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo();
 					message.arg2=-1;
 				}
 				message.what = App.HANDLER_KOT_CALL_NUM;

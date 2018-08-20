@@ -136,8 +136,7 @@ public class Store {
 
 
 	//subPos
-	public static final String SUB_POS_STATUS = "SUB_POS_STATUS";
-	public static final String SUB_POS_INFO = "SUB_POS_INFO";
+	public static final String MAIN_POS_IP = "MAIN_POS_IP";
 
 
 	private Store() {
