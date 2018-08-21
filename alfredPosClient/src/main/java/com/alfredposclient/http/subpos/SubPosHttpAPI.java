@@ -290,6 +290,8 @@ public class SubPosHttpAPI {
                                 subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
                                 SubPosBeanSQL.updateSubPosBean(subPosBean);
                                 App.instance.setSubPosBean(subPosBean);
+                                Store.remove(App.instance, Store.SESSION_STATUS);
+                                App.instance.setSessionStatus(null);
                                 callBack.onSuccess();
                             }
                         }

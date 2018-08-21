@@ -98,7 +98,7 @@ public class APIName {
 
 
 	// CallNum
-	public static final String CALLNUM_ASSIGNREVENUE = "callNum/assignRevenue";
+	public static final String CALLNUM_ASSIGNREVENUE = "desktop/callNumassignRevenue";
 
 	/**
 	 * 以kds作为服务器

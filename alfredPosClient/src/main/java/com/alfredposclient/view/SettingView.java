@@ -81,6 +81,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		findViewById(R.id.ll_monthly_sale_report).setOnClickListener(this);
 		findViewById(R.id.ll_monthly_plu_report).setOnClickListener(this);
 		findViewById(R.id.ll_printer_qr_code).setOnClickListener(this);
+		findViewById(R.id.ll_sub_pos).setOnClickListener(this);
 		findViewById(R.id.ll_sunmi).setOnClickListener(this);
 		findViewById(R.id.linear_sunmi).setOnClickListener(this);
 		SUNMIVisible();
@@ -91,8 +92,11 @@ public class SettingView extends LinearLayout implements OnClickListener {
         }
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.ll_printer_qr_code).setVisibility(View.VISIBLE);
+			findViewById(R.id.ll_sub_pos).setVisibility(View.VISIBLE);
+
 		}else{
 			findViewById(R.id.ll_printer_qr_code).setVisibility(View.GONE);
+			findViewById(R.id.ll_sub_pos).setVisibility(View.GONE);
 		}
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
 		initTextTypeFace();
@@ -255,6 +259,9 @@ public class SettingView extends LinearLayout implements OnClickListener {
 					break;
 				case R.id.linear_sunmi:
 					UIHelp.startSunmiActivity(context);
+					break;
+				case R.id.ll_sub_pos:
+					UIHelp.startSubPosManagePage(context);
 					break;
 			default:
 				break;

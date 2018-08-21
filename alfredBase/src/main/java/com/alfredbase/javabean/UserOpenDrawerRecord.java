@@ -13,7 +13,7 @@ public class UserOpenDrawerRecord {
     private String userName;
     private Long  openTime;
     private Integer loginUserId;
-
+    private int daySalesId;
 
     public Integer getId() {
         return id;
@@ -79,6 +79,14 @@ public class UserOpenDrawerRecord {
         this.loginUserId = loginUserId;
     }
 
+    public int getDaySalesId() {
+        return daySalesId;
+    }
+
+    public void setDaySalesId(int daySalesId) {
+        this.daySalesId = daySalesId;
+    }
+
     @Override
     public String toString() {
         return "UserOpenDrawerRecord{" +
@@ -90,6 +98,7 @@ public class UserOpenDrawerRecord {
                 ", userName='" + userName + '\'' +
                 ", openTime=" + openTime +
                 ", loginUserId=" + loginUserId +
+                ", daySalesId=" + daySalesId +
                 '}';
     }
 }

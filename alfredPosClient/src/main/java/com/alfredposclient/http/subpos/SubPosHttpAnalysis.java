@@ -84,9 +84,6 @@ public class SubPosHttpAnalysis {
 			User user = gson.fromJson(object.getString("user"), User.class);
 			App.instance.setUser(user);
 			Long businessDate = object.optLong("businessDate");
-			SessionStatus sessionStatus = gson.fromJson(object.getString("sessionStatus"), SessionStatus.class);
-			Store.saveObject(App.instance, Store.SESSION_STATUS, sessionStatus);
-			App.instance.setSessionStatus(sessionStatus);
 			Store.putLong(App.instance, Store.BUSINESS_DATE, businessDate);
 			Store.putLong(App.instance, Store.LAST_BUSINESSDATE, businessDate);
 			App.instance.setBusinessDate(businessDate);
@@ -321,6 +318,10 @@ public class SubPosHttpAnalysis {
 				SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurants);
 				CoreData.getInstance().setSettlementRestaurant(settlementRestaurants);
 			}
+			SessionStatus sessionStatus = gson.fromJson(object.getString("sessionStatus"), SessionStatus.class);
+			sessionStatus.setTime(System.currentTimeMillis());
+			Store.saveObject(App.instance, Store.SESSION_STATUS, sessionStatus);
+			App.instance.setSessionStatus(sessionStatus);
 			handler.sendEmptyMessage(SubPosLogin.UPDATE_ALL_DATA_SUCCESS);
 			return;
 		} catch (JSONException e) {

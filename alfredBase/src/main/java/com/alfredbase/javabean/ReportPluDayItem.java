@@ -61,7 +61,10 @@ public class ReportPluDayItem implements Serializable, Comparable<ReportPluDayIt
     
     private String billFocPrice;
 
-	private Integer isOpenItem;
+	private int isOpenItem;
+
+	private int daySalesId;
+
 	public Integer getId() {
 		return id;
 	}
@@ -270,25 +273,54 @@ public class ReportPluDayItem implements Serializable, Comparable<ReportPluDayIt
 		this.billFocPrice = billFocPrice;
 	}
 
+	public int getIsOpenItem() {
+		return isOpenItem;
+	}
+
+	public void setIsOpenItem(int isOpenItem) {
+		this.isOpenItem = isOpenItem;
+	}
+
+	public int getDaySalesId() {
+		return daySalesId;
+	}
+
+	public void setDaySalesId(int daySalesId) {
+		this.daySalesId = daySalesId;
+	}
+
 	@Override
 	public String toString() {
-		return "ReportPluDayItem [id=" + id + ", reportNo=" + reportNo
-				+ ", restaurantId=" + restaurantId + ", restaurantName="
-				+ restaurantName + ", revenueId=" + revenueId
-				+ ", revenueName=" + revenueName + ", businessDate="
-				+ businessDate + ", itemMainCategoryId=" + itemMainCategoryId
-				+ ", itemMainCategoryName=" + itemMainCategoryName
-				+ ", itemCategoryId=" + itemCategoryId + ", itemCategoryName="
-				+ itemCategoryName + ", itemDetailId=" + itemDetailId
-				+ ", itemName=" + itemName + ", itemPrice=" + itemPrice
-				+ ", itemCount=" + itemCount + ", itemAmount=" + itemAmount
-				+ ", itemVoidQty=" + itemVoidQty + ", itemVoidPrice="
-				+ itemVoidPrice + ", itemHoldQty=" + itemHoldQty
-				+ ", itemHoldPrice=" + itemHoldPrice + ", itemFocQty="
-				+ itemFocQty + ", itemFocPrice=" + itemFocPrice
-				+ ", billVoidQty=" + billVoidQty + ", billVoidPrice="
-				+ billVoidPrice + ", billFocQty=" + billFocQty
-				+ ", billFocPrice=" + billFocPrice + "]";
+		return "ReportPluDayItem{" +
+				"id=" + id +
+				", reportNo=" + reportNo +
+				", restaurantId=" + restaurantId +
+				", restaurantName='" + restaurantName + '\'' +
+				", revenueId=" + revenueId +
+				", revenueName='" + revenueName + '\'' +
+				", businessDate=" + businessDate +
+				", itemMainCategoryId=" + itemMainCategoryId +
+				", itemMainCategoryName='" + itemMainCategoryName + '\'' +
+				", itemCategoryId=" + itemCategoryId +
+				", itemCategoryName='" + itemCategoryName + '\'' +
+				", itemDetailId=" + itemDetailId +
+				", itemName='" + itemName + '\'' +
+				", itemPrice='" + itemPrice + '\'' +
+				", itemCount=" + itemCount +
+				", itemAmount='" + itemAmount + '\'' +
+				", itemVoidQty=" + itemVoidQty +
+				", itemVoidPrice='" + itemVoidPrice + '\'' +
+				", itemHoldQty=" + itemHoldQty +
+				", itemHoldPrice='" + itemHoldPrice + '\'' +
+				", itemFocQty=" + itemFocQty +
+				", itemFocPrice='" + itemFocPrice + '\'' +
+				", billVoidQty=" + billVoidQty +
+				", billVoidPrice='" + billVoidPrice + '\'' +
+				", billFocQty=" + billFocQty +
+				", billFocPrice='" + billFocPrice + '\'' +
+				", isOpenItem=" + isOpenItem +
+				", daySalesId=" + daySalesId +
+				'}';
 	}
 
 

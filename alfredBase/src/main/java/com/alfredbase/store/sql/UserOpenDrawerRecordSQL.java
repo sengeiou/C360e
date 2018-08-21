@@ -25,8 +25,8 @@ public class UserOpenDrawerRecordSQL {
         try {
             String sql = "replace into "
                     + TableNames.UserOpenDrawerRecord
-                    + "(id, restaurantId, revenueCenterId, sessionStatus, userId, userName, openTime, loginUserId)"
-                    + " values (?,?,?,?,?,?,?,?)";
+                    + "(id, restaurantId, revenueCenterId, sessionStatus, userId, userName, openTime, loginUserId, daySalesId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[] {
@@ -37,22 +37,22 @@ public class UserOpenDrawerRecordSQL {
                             userOpenDrawerRecord.getUserId(),
                             userOpenDrawerRecord.getUserName(),
                             userOpenDrawerRecord.getOpenTime(),
-                            userOpenDrawerRecord.getLoginUserId()
-
+                            userOpenDrawerRecord.getLoginUserId(),
+                            userOpenDrawerRecord.getDaySalesId()
                     });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static void addUserOpenDrawerRecordList(SQLiteDatabase db, List<UserOpenDrawerRecord> userOpenDrawerRecords) {
+    public static void addUserOpenDrawerRecordList(int daySalesId, SQLiteDatabase db, List<UserOpenDrawerRecord> userOpenDrawerRecords) {
         if (userOpenDrawerRecords == null) {
             return;
         }
         try {
             String sql = "replace into "
                     + TableNames.UserOpenDrawerRecord
-                    + "(restaurantId, revenueCenterId, sessionStatus, userId, userName, openTime, loginUserId)"
-                    + " values (?,?,?,?,?,?,?,?)";
+                    + "(restaurantId, revenueCenterId, sessionStatus, userId, userName, openTime, loginUserId, daySalesId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(sql);
             for(UserOpenDrawerRecord userOpenDrawerRecord : userOpenDrawerRecords){
                 SQLiteStatementHelper.bindLong(sqLiteStatement,1, userOpenDrawerRecord.getRestaurantId());
@@ -62,6 +62,7 @@ public class UserOpenDrawerRecordSQL {
                 SQLiteStatementHelper.bindString(sqLiteStatement, 5, userOpenDrawerRecord.getUserName());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 6, userOpenDrawerRecord.getOpenTime());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 7, userOpenDrawerRecord.getLoginUserId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 8, daySalesId);
                 sqLiteStatement.executeInsert();
             }
         } catch (Exception e) {
@@ -93,6 +94,43 @@ public class UserOpenDrawerRecordSQL {
                 userOpenDrawerRecord.setUserName(cursor.getString(5));
                 userOpenDrawerRecord.setOpenTime(cursor.getLong(6));
                 userOpenDrawerRecord.setLoginUserId(cursor.getInt(7));
+                userOpenDrawerRecord.setDaySalesId(cursor.getInt(8));
+                result.add(userOpenDrawerRecord);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+    public static List<UserOpenDrawerRecord> getAllUserOpenDrawerRecordByDaySalesId(int daySalesId) {
+        List<UserOpenDrawerRecord> result = new ArrayList<UserOpenDrawerRecord>();
+        String sql = "select * from " + TableNames.UserOpenDrawerRecord + " where daySalesId = ? ";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[] {daySalesId +""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            UserOpenDrawerRecord userOpenDrawerRecord = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                userOpenDrawerRecord = new UserOpenDrawerRecord();
+                userOpenDrawerRecord.setId(cursor.getInt(0));
+                userOpenDrawerRecord.setRestaurantId(cursor.getInt(1));
+                userOpenDrawerRecord.setRevenueCenterId(cursor.getInt(2));
+                userOpenDrawerRecord.setSessionStatus(cursor.getInt(3));
+                userOpenDrawerRecord.setUserId(cursor.getInt(4));
+                userOpenDrawerRecord.setUserName(cursor.getString(5));
+                userOpenDrawerRecord.setOpenTime(cursor.getLong(6));
+                userOpenDrawerRecord.setLoginUserId(cursor.getInt(7));
+                userOpenDrawerRecord.setDaySalesId(cursor.getInt(8));
                 result.add(userOpenDrawerRecord);
             }
         } catch (Exception e) {

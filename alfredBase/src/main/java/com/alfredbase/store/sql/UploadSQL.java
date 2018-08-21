@@ -16,6 +16,15 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.VoidSettlement;
 import com.alfredbase.javabean.WeixinSettlement;
+import com.alfredbase.store.sql.cpsql.CPOrderBillSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderDetailTaxSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderModifierSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderSplitSQL;
+import com.alfredbase.store.sql.cpsql.CPPaymentSQL;
+import com.alfredbase.store.sql.cpsql.CPPaymentSettlementSQL;
+import com.alfredbase.store.sql.cpsql.CPRoundAmountSQL;
 import com.alfredbase.utils.LogUtil;
 import com.google.gson.Gson;
 
@@ -100,7 +109,81 @@ public class UploadSQL {
 		map.put("weixinSettlements", weixinSettlements);
 		return map;
 	}
-	
+	public static Map<String, Object> getSubPosOrderInfo(Integer orderId) {
+		Order order = CPOrderSQL.getOrder(orderId);
+		if (order == null)
+			return null;
+		/**
+		 * 订单部分
+		 */
+		List<OrderDetail> orderDetails = CPOrderDetailSQL.getAllOrderDetailsByOrder(order);
+
+		List<OrderModifier> orderModifiers = CPOrderModifierSQL
+				.getAllOrderModifier(order);
+
+		List<OrderDetailTax> orderDetailTaxs = CPOrderDetailTaxSQL
+				.getAllOrderDetailTax(order);
+
+		List<OrderSplit> orderSplits = CPOrderSplitSQL.getOrderSplits(order);
+
+		List<OrderBill> orderBills = CPOrderBillSQL.getAllOrderBillByOrder(order);
+
+		List<RoundAmount> roundAmounts = CPRoundAmountSQL.getRoundAmountForSync(order);
+
+		/**
+		 * 支付部分
+		 */
+		List<Payment> payments = CPPaymentSQL.getPaymentByOrderIdForSyncData(orderId);
+		ArrayList<PaymentSettlement> paymentSettlements = new ArrayList<PaymentSettlement>();
+		ArrayList<CardsSettlement> cardsSettlements = new ArrayList<CardsSettlement>();
+		ArrayList<NetsSettlement> netsSettlements = new ArrayList<NetsSettlement>();
+		ArrayList<NonChargableSettlement> nonChargableSettlements = new ArrayList<NonChargableSettlement>();
+		ArrayList<BohHoldSettlement> bohHoldSettlements = new ArrayList<BohHoldSettlement>();
+		ArrayList<VoidSettlement> voidSettlements = new ArrayList<VoidSettlement>();
+		List<AlipaySettlement> alipaySettlements = new ArrayList<AlipaySettlement>();
+		List<WeixinSettlement> weixinSettlements = new ArrayList<WeixinSettlement>();
+		for (Payment payment : payments) {
+			if (payment != null) {
+				paymentSettlements.addAll(CPPaymentSettlementSQL
+						.getPaymentSettlementsBypaymentId(payment.getId().intValue()));
+//				cardsSettlements.addAll(CardsSettlementSQL
+//						.getCardsSettlementsByPamentId(payment.getId().intValue()));
+//				netsSettlements.addAll(NetsSettlementSQL
+//						.getNetsSettlementsByPamentId(payment.getId().intValue()));
+//				nonChargableSettlements.addAll(NonChargableSettlementSQL
+//						.getNonChargableSettlementsByPaymentId(payment.getId().intValue()));
+//				bohHoldSettlements.addAll(BohHoldSettlementSQL
+//						.getBohHoldSettlementsByPamentId(payment.getId().intValue()));
+//				voidSettlements.addAll(VoidSettlementSQL
+//						.getVoidSettlementsByPamentId(payment.getId().intValue()));
+//				alipaySettlements.addAll(AlipaySettlementSQL
+//						.getAlipaySettlementByPamentId(payment.getId().intValue()));
+//				weixinSettlements.addAll(WeixinSettlementSQL
+//						.getWeixinSettlementByPamentId(payment.getId().intValue()));
+			}
+		}
+		Gson gson = new Gson();
+		Map<String, Object> map = new HashMap<String, Object>();
+		LogUtil.i("bohHoldSettlements", gson.toJson(bohHoldSettlements));
+		map.put("order", order);
+		map.put("orderBills", orderBills);
+		map.put("roundAmounts", roundAmounts);
+		map.put("orderDetails", orderDetails);
+		map.put("orderModifiers", orderModifiers);
+		map.put("orderDetailTaxs", orderDetailTaxs);
+		map.put("orderSplits", orderSplits);
+		map.put("payments", payments);
+		map.put("paymentSettlements", paymentSettlements);
+		map.put("cardsSettlements", cardsSettlements);
+		map.put("netsSettlements", netsSettlements);
+		map.put("nonChargableSettlements", nonChargableSettlements);
+		map.put("bohHoldSettlements", bohHoldSettlements);
+		map.put("voidSettlements", voidSettlements);
+		map.put("alipaySettlements", alipaySettlements);
+		map.put("weixinSettlements", weixinSettlements);
+		return map;
+	}
+
 //	public static Map<String,Object> getAllReportInfo(long businessDate){
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		ReportDaySales reportDaySales = null;ReportDaySalesSQL.getReportDaySalesByTime(businessDate);

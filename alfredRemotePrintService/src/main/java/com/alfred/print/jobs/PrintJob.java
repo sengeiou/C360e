@@ -149,6 +149,7 @@ public class PrintJob extends Job  {
 
     @Override
     public void onAdded() {
+        LogUtil.e(this.getClass().getSimpleName(),"onRun------------------------------------");
         Log.d(TAG, "onAdded:" + this.printerIp);
         PrintQueueMsg content = PrintQueueMsgSQL.getUnsentMsgById(this.msgUUID, this.created);
         if (content != null) {
@@ -164,8 +165,9 @@ public class PrintJob extends Job  {
         boolean isPrintLink = false;
         boolean printed = false;
         boolean pingSuccess;
-        Log.d(TAG, "onRun:" + this.printerIp);
-        Log.i(TAG, "onRun:this uuid is " + this.msgUUID + ", then this object is" + this);
+        Log.e(TAG, "onRun:" + this.printerIp);
+        Log.e(TAG, "onRun:this uuid is " + this.msgUUID + ", then this object is" + this);
+        LogUtil.e(this.getClass().getSimpleName(),"onRun------------------------------------");
         Gson gson = new Gson();
         PrintQueueMsg content = PrintQueueMsgSQL.getQueuedMsgById(this.msgUUID, this.created);
         if (content == null) {
@@ -313,11 +315,13 @@ public class PrintJob extends Job  {
                 PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_SUCCESS, this.msgUUID, this.created);
             }
             if (!isPrintLink) {
+                LogUtil.e("PrintJob","Printer unLink run next time");
                 throw new RuntimeException("Printer unLink run next time");
             }
         }
 
         if (!printed) {
+            LogUtil.e("PrintJob","Print Error");
             throw new RuntimeException("Print Error");
         }
     }

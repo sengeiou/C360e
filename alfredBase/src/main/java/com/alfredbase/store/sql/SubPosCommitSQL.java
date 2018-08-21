@@ -59,7 +59,7 @@ public class SubPosCommitSQL {
             int oldReportDaySalesId = reportDaySales.getId();
             reportDaySales.setId(CommonSQL.getNextSeq(TableNames.ReportDaySales));
             ReportDaySalesSQL.addReportDaySales(db, reportDaySales);
-            MultiReportRelation m = new MultiReportRelation(reportDaySales.getId(), oldReportDaySalesId, subPosBeanId, reportDaySales.getCreateTime());
+            MultiReportRelation m = new MultiReportRelation(reportDaySales.getId(), oldReportDaySalesId, subPosBeanId, reportDaySales.getCreateTime(), 0);
             MultiReportRelationSQL.updateMultiReportRelation(db, m);
             for(ReportDayTax reportDayTax : reportDayTaxs){
                 reportDayTax.setId(CommonSQL.getNextSeq(TableNames.ReportDayTax));
@@ -72,19 +72,19 @@ public class SubPosCommitSQL {
                 ReportDayPaymentSQL.addReportDayPayment(db, reportDayPayment);
             }
             if(reportPluDayItems != null && reportPluDayItems.size() > 0){
-                ReportPluDayItemSQL.addReportPluDayItems(db, reportPluDayItems);
+                ReportPluDayItemSQL.addReportPluDayItems(reportDaySales.getId().intValue(), db, reportPluDayItems);
             }
             if(reportPluDayModifiers != null && reportDayPayments.size() > 0){
-                ReportPluDayModifierSQL.addReportPluDayModifierList(db, reportPluDayModifiers);
+                ReportPluDayModifierSQL.addReportPluDayModifierList(reportDaySales.getId().intValue(), db, reportPluDayModifiers);
             }
             if(reportHourlys != null && reportHourlys.size() > 0){
-                ReportHourlySQL.addReportHourly(db, reportHourlys);
+                ReportHourlySQL.addReportHourly(reportDaySales.getId().intValue(), db, reportHourlys);
             }
             if(reportPluDayComboModifiers != null && reportPluDayComboModifiers.size() > 0) {
-                ReportPluDayComboModifierSQL.addReportPluDayModifierList(db, reportPluDayComboModifiers);
+                ReportPluDayComboModifierSQL.addReportPluDayModifierList(reportDaySales.getId().intValue(), db, reportPluDayComboModifiers);
             }
             if(userOpenDrawerRecords != null && userOpenDrawerRecords.size() > 0){
-                UserOpenDrawerRecordSQL.addUserOpenDrawerRecordList(db, userOpenDrawerRecords);
+                UserOpenDrawerRecordSQL.addUserOpenDrawerRecordList(reportDaySales.getId().intValue(), db, userOpenDrawerRecords);
             }
             db.setTransactionSuccessful();
             isSuccessful = true;

@@ -38,6 +38,7 @@ import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.activity.kioskactivity.subpos.ConnectMainPos;
 import com.alfredposclient.activity.kioskactivity.subpos.SelectRevenue;
 import com.alfredposclient.activity.kioskactivity.subpos.SubPosLogin;
+import com.alfredposclient.activity.kioskactivity.subpos.SubPosManagePage;
 
 public class UIHelp {
 	public static void startLogin(BaseActivity context) {
@@ -244,6 +245,10 @@ public class UIHelp {
 
 	public static void startConnectMainPOS(BaseActivity context){
 		Intent intent = new Intent(context, ConnectMainPos.class);
+		context.startActivity(intent);
+	}
+	public static void startSubPosManagePage(BaseActivity context){
+		Intent intent = new Intent(context, SubPosManagePage.class);
 		context.startActivity(intent);
 	}
 }

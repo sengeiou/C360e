@@ -1249,11 +1249,102 @@ public class DataHelper {
              */
             db.execSQL("CREATE TABLE "
                     + TableNames.MultiReportRelation
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, mainReportId INTEGER, subReportId INTEGER, subPosBeanId INTEGER, subReportCreateTime LONG)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, mainReportId INTEGER, subReportId INTEGER, subPosBeanId INTEGER, subReportCreateTime LONG, syncStatus INTEGER)");
 
             db.execSQL("ALTER TABLE "
                     + TableNames.KotSummary
                     + " ADD COLUMN  numTag TEXT default ''");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.ReportPluDayItem
+                    + " ADD COLUMN  isOpenItem INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.ReportPluDayItem
+                    + " ADD COLUMN  daySalesId INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.ReportPluDayModifier
+                    + " ADD COLUMN  daySalesId INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.ReportHourly
+                    + " ADD COLUMN  daySalesId INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.ReportPluDayComboModifier
+                    + " ADD COLUMN  daySalesId INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.UserOpenDrawerRecord
+                    + " ADD COLUMN  daySalesId INTEGER default 0");
+/*
+	+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
+					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
+					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId)"
+ */
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPOrder
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderOriginId INTEGER, userId INTEGER, persons INTEGER, "
+                    + "orderStatus INTEGER, subTotal TEXT, taxAmount TEXT, discountAmount TEXT, total TEXT, sessionStatus INTEGER, "
+                    + "restId INTEGER, revenueId INTEGER, placeId INTEGER, tableId INTEGER, createTime LONG, updateTime LONG,"
+                    + "orderNo INTEGER,businessDate LONG,discount_rate TEXT,discount_type INTEGER, discountPrice TEXT, inclusiveTaxName TEXT, "
+                    + "inclusiveTaxPrice TEXT, inclusiveTaxPercentage TEXT, appOrderId INTEGER default 0,isTakeAway INTEGER default 0,tableName TEXT default '', "
+                    + "orderRemark TEXT, numTag TEXT default '', subPosBeanId INTEGER default 0)");
+/*
++ "(id,orderId,orderOriginId,userId,persons,orderStatus,subTotal,"
+					+ "taxAmount,discountAmount,total,sessionStatus,restId, "
+					+ "revenueId,tableId,createTime,updateTime, sysCreateTime, sysUpdateTime, groupId,"
+					+ "inclusiveTaxName, inclusiveTaxPrice, inclusiveTaxPercentage, splitByPax)"
+ */
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPOrderSplit
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,orderId INTEGER,orderOriginId INTEGER,userId INTEGER,persons INTEGER,"
+                    + "orderStatus INTEGER,subTotal TEXT, taxAmount TEXT, discountAmount TEXT ,total TEXT,sessionStatus INTEGER,restId INTEGER, "
+                    + "revenueId INTEGER,tableId INTEGER,createTime LONG,updateTime LONG, sysCreateTime LONG, sysUpdateTime LONG, groupId INTEGER,"
+                    + "inclusiveTaxName TEXT, inclusiveTaxPrice TEXT, inclusiveTaxPercentage TEXT, splitByPax INTEGER)");
+
+            /*
+            + "(id,orderId, orderOriginId, userId, itemId,itemName,itemNum, orderDetailStatus, orderDetailType,reason, printStatus, itemPrice,"
+					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
+					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
+					+ " fireStatus)"
+             */
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPOrderDetail
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,orderId INTEGER, orderOriginId INTEGER, userId INTEGER, itemId INTEGER,itemName TEXT,itemNum INTEGER, "
+                    + "orderDetailStatus INTEGER, orderDetailType INTEGER, reason TEXT, printStatus INTEGER, itemPrice TEXT, taxPrice TEXT, discountPrice TEXT,"
+                    + "modifierPrice TEXT, realPrice TEXT, createTime LONG, updateTime LONG,discountRate TEXT,discountType INTEGER,fromOrderDetailId INTEGER,isFree INTEGER,"
+                    + " groupId INTEGER,isOpenItem INTEGER, specialInstractions TEXT, orderSplitId INTEGER, isTakeAway INTEGER, weight TEXT, isItemDiscount INTEGER, isSet INTEGER,"
+                    + " appOrderDetailId INTEGER, mainCategoryId INTEGER,fireStatus INTEGER)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPOrderModifier
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,orderId INTEGER, orderDetailId INTEGER, orderOriginId INTEGER, userId INTEGER, itemId INTEGER,"
+                    + " modifierId INTEGER, modifierNum INTEGER, status INTEGER, modifierPrice TEXT, createTime LONG, updateTime LONG, printerId INTEGER, modifierItemPrice TEXT)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPPayment
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, billNo INTEGER, orderId INTEGER, orderSplitId INTEGER, businessDate LONG, "
+                    + "type INTEGER, restaurantId INTEGER, revenueId INTEGER,  userId INTEGER, paymentAmount TEXT, taxAmount TEXT, "
+                    + "discountAmount TEXT, createTime LONG, updateTime LONG)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPPaymentSettlement
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, billNo INTEGER, paymentId INTEGER, paymentTypeId INTEGER, paidAmount TEXT, "
+                    + "totalAmount TEXT, restaurantId INTEGER, revenueId INTEGER, userId INTEGER, createTime LONG, updateTime LONG, cashChange TEXT, isActive INTEGER, partChange TEXT)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPOrderDetailTax
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, orderDetailId INTEGER, taxId INTEGER, taxName TEXT, "
+                    + "taxPercentage TEXT, taxPrice TEXT, taxType INTEGER, createTime LONG, updateTime LONG, indexId INTEGER, "
+                    + "orderSplitId INTEGER, isActive INTEGER)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPOrderBill
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, billNo INTEGER, orderId INTEGER, orderSplitId INTEGER, type INTEGER, restaurantId INTEGER, revenueId INTEGER, userId INTEGER, createTime LONG, updateTime LONG)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.CPRoundAmount
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, billNo INTEGER, roundBeforePrice TEXT, roundAlfterPrice TEXT, "
+                    + "roundBalancePrice TEXT,restId INTEGER,revenueId INTEGER,tableId INTEGER,businessDate LONG,createTime LONG,updateTime LONG, "
+                    + "orderSplitId INTEGER)");
+
         }
     }
 }

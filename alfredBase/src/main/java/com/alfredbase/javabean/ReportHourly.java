@@ -16,23 +16,24 @@ public class ReportHourly implements Serializable{
 	private int hour;
 	private Integer amountQty;
 	private String amountPrice;
-	//Nett sales after discount & SVC, before GST
-	private String Gto;
-	private String gst;
-	private String Discount;
-	private String svc;
-	private Integer pax;
-	/**
-	 * 一下不包含gst
-	 * Exclude GST only
-	 */
-	private String cash;
-	private String nets;
-	private String visa;
-	private String masterCard;
-	private String amex;
-	private String voucher;
-	private String others;
+	private int daySalesId;
+//	//Nett sales after discount & SVC, before GST
+//	private String Gto;
+//	private String gst;
+//	private String Discount;
+//	private String svc;
+//	private Integer pax;
+//	/**
+//	 * 一下不包含gst
+//	 * Exclude GST only
+//	 */
+//	private String cash;
+//	private String nets;
+//	private String visa;
+//	private String masterCard;
+//	private String amex;
+//	private String voucher;
+//	private String others;
 //	private String
 	public Integer getId() {
 		return id;
@@ -81,5 +82,28 @@ public class ReportHourly implements Serializable{
 	}
 	public void setAmountPrice(String amountPrice) {
 		this.amountPrice = amountPrice;
+	}
+
+	public int getDaySalesId() {
+		return daySalesId;
+	}
+
+	public void setDaySalesId(int daySalesId) {
+		this.daySalesId = daySalesId;
+	}
+
+	@Override
+	public String toString() {
+		return "ReportHourly{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", revenueId=" + revenueId +
+				", revenueName='" + revenueName + '\'' +
+				", businessDate=" + businessDate +
+				", hour=" + hour +
+				", amountQty=" + amountQty +
+				", amountPrice='" + amountPrice + '\'' +
+				", daySalesId=" + daySalesId +
+				'}';
 	}
 }

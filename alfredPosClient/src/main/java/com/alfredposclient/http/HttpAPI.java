@@ -67,6 +67,10 @@ public class HttpAPI {
      */
     public static final int ORDER_DATA = 10;
     /**
+     * 订单数据
+     */
+    public static final int SUBPOS_ORDER_DATA = 12;
+    /**
      * 支付数据
      */
     public static final int REPORT_DATA = 20;

@@ -86,6 +86,15 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.store.sql.WeixinSettlementSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderBillSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderDetailTaxSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderModifierSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderSplitSQL;
+import com.alfredbase.store.sql.cpsql.CPPaymentSQL;
+import com.alfredbase.store.sql.cpsql.CPPaymentSettlementSQL;
+import com.alfredbase.store.sql.cpsql.CPRoundAmountSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 
 import java.math.BigDecimal;
@@ -115,114 +124,100 @@ public class ObjectFactory {
 			int orderStatus, Tax inclusiveTax){
 		return getOrder(orderOriginId, subPosBeanId, tables, revenueCenter, user, sessionStatus, businessDate, orderNOTitle, orderStatus, inclusiveTax, 0);
 	}
-
+	Object lock_cpOrderInfo = new Object();
 	public Order cpOrderInfo (SQLiteDatabase db, int subPosBeanId, Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
 							  List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
 							  List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements, List<RoundAmount> roundAmounts) throws Exception{
 
-		synchronized (lock_order) {
+		synchronized (lock_cpOrderInfo) {
 			if (subOrder != null) {
 				int oldId = subOrder.getId().intValue();
-				subOrder.setId(CommonSQL.getNextSeq(TableNames.Order));
-				OrderSQL.update(db,subOrder);
+				subOrder.setId(CommonSQL.getNextSeq(TableNames.CPOrder));
+				CPOrderSQL.update(db, subOrder);
 				MultiOrderRelation m = new MultiOrderRelation(subOrder.getId(), oldId, subPosBeanId, subOrder.getCreateTime());
 				MultiOrderRelationSQL.updateMultiOrderRelation(db, m);
 			}
-		}
-		Map<Integer, Integer> orderSplitMap = new HashMap<>();
-		for(OrderSplit orderSplit : orderSplits){
-			synchronized (lock_getOrderSplit){
+
+			Map<Integer, Integer> orderSplitMap = new HashMap<>();
+			for (OrderSplit orderSplit : orderSplits) {
 				int oldId = orderSplit.getId();
-				orderSplit.setId(CommonSQL.getNextSeq(TableNames.OrderSplit));
+				orderSplit.setId(CommonSQL.getNextSeq(TableNames.CPOrderSplit));
 				orderSplit.setOrderId(subOrder.getId());
-				OrderSplitSQL.update(db, orderSplit);
+				CPOrderSplitSQL.update(db, orderSplit);
 				orderSplitMap.put(oldId, orderSplit.getId());
 			}
-		}
 
-		Map<Integer, Integer> paymentMap = new HashMap<>();
-		for(Payment payment : payments){
-			synchronized (lock_get_payment){
+			Map<Integer, Integer> paymentMap = new HashMap<>();
+			for (Payment payment : payments) {
 				int oldId = payment.getId();
-				payment.setId(CommonSQL.getNextSeq(TableNames.Payment));
+				payment.setId(CommonSQL.getNextSeq(TableNames.CPPayment));
 				payment.setOrderId(subOrder.getId());
 				Integer orderSplitId = payment.getOrderSplitId();
-				if(orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
+				if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
 					payment.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
 				}
-				PaymentSQL.addPayment(db, payment);
+				CPPaymentSQL.addPayment(db, payment);
 				paymentMap.put(oldId, payment.getId());
 			}
-		}
 
-		for(RoundAmount roundAmount : roundAmounts){
-			synchronized (lock_getRoundAmount){
-				roundAmount.setId(CommonSQL.getNextSeq(TableNames.RoundAmount));
+			for (RoundAmount roundAmount : roundAmounts) {
+				roundAmount.setId(CommonSQL.getNextSeq(TableNames.CPRoundAmount));
 				roundAmount.setOrderId(subOrder.getId());
 				Integer orderSplitId = roundAmount.getOrderSplitId();
-				if(orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())){
+				if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
 					roundAmount.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
 				}
-				RoundAmountSQL.update(db, roundAmount);
+				CPRoundAmountSQL.update(db, roundAmount);
 			}
-		}
 
-		for(OrderBill orderBill : orderBills){
-			synchronized (lock_get_order_bill){
-				orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
+			for (OrderBill orderBill : orderBills) {
+				orderBill.setId(CommonSQL.getNextSeq(TableNames.CPOrderBill));
 				orderBill.setOrderId(subOrder.getId());
 				Integer orderSplitId = orderBill.getOrderSplitId();
-				if(orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())){
+				if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
 					orderBill.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
 				}
-				OrderBillSQL.add(db, orderBill);
+				CPOrderBillSQL.add(db, orderBill);
 			}
-		}
 
-		Map<Integer, Integer> orderDetailMap = new HashMap<>();
-		for(OrderDetail orderDetail : orderDetails) {
-			synchronized (lock_orderDetail) {
+			Map<Integer, Integer> orderDetailMap = new HashMap<>();
+			for (OrderDetail orderDetail : orderDetails) {
 				int oldId = orderDetail.getId();
-				orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+				orderDetail.setId(CommonSQL.getNextSeq(TableNames.CPOrderDetail));
 				orderDetail.setOrderId(subOrder.getId());
 				Integer orderSplitId = orderDetail.getOrderSplitId();
-				if(orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())){
+				if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
 					orderDetail.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
 				}
-				OrderDetailSQL.updateOrderDetail(db, orderDetail);
+				CPOrderDetailSQL.updateOrderDetail(db, orderDetail);
 				orderDetailMap.put(oldId, orderDetail.getId());
 			}
-		}
 
-		for(OrderModifier orderModifier : orderModifiers) {
-			synchronized (lock_order_modifier) {
-				orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+			for (OrderModifier orderModifier : orderModifiers) {
+				orderModifier.setId(CommonSQL.getNextSeq(TableNames.CPOrderModifier));
 				Integer orderDetailId = orderModifier.getOrderDetailId();
 				if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
 					orderModifier.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
 				}
+				CPOrderModifierSQL.updateOrderModifier(db,orderModifier);
 			}
-		}
-		for(OrderDetailTax orderDetailTax : orderDetailTaxs) {
-			synchronized (lock_get_order_detail_tax) {
-				orderDetailTax.setId(CommonSQL.getNextSeq(TableNames.OrderDetailTax));
+			for (OrderDetailTax orderDetailTax : orderDetailTaxs) {
+				orderDetailTax.setId(CommonSQL.getNextSeq(TableNames.CPOrderDetailTax));
 				Integer orderDetailId = orderDetailTax.getOrderDetailId();
 				if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
 					orderDetailTax.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
 				}
 				orderDetailTax.setOrderId(subOrder.getId());
-
+				CPOrderDetailTaxSQL.updateOrderDetailTax(db, orderDetailTax);
 			}
-		}
 
-		for(PaymentSettlement paymentSettlement : paymentSettlements){
-			synchronized (lock_get_payment_settlement){
-				paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.PaymentSettlement));
+			for (PaymentSettlement paymentSettlement : paymentSettlements) {
+				paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.CPPaymentSettlement));
 				Integer paymentId = paymentSettlement.getPaymentId();
-				if(paymentId != null && paymentMap.containsKey(paymentId.intValue())){
+				if (paymentId != null && paymentMap.containsKey(paymentId.intValue())) {
 					paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));
 				}
-				PaymentSettlementSQL.addPaymentSettlement(db, paymentSettlement);
+				CPPaymentSettlementSQL.addPaymentSettlement(db, paymentSettlement);
 			}
 		}
 		return subOrder;

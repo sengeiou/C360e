@@ -60,7 +60,7 @@ public class ReportPluDayModifier implements Serializable{
 
 	private String realPrice;
 	private Integer realCount;
-
+	private int daySalesId;
 
 	public Integer getId() {
 		return id;
@@ -231,6 +231,14 @@ public class ReportPluDayModifier implements Serializable{
 		this.realCount = realCount;
 	}
 
+	public int getDaySalesId() {
+		return daySalesId;
+	}
+
+	public void setDaySalesId(int daySalesId) {
+		this.daySalesId = daySalesId;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportPluDayModifier{" +
@@ -261,6 +269,7 @@ public class ReportPluDayModifier implements Serializable{
 				", modifierItemPrice='" + modifierItemPrice + '\'' +
 				", realPrice='" + realPrice + '\'' +
 				", realCount=" + realCount +
+				", daySalesId=" + daySalesId +
 				'}';
 	}
 

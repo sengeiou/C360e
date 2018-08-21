@@ -73,7 +73,8 @@ public class SyncMsgJob extends Job {
                     return;
 
                 if (this.msgType == HttpAPI.ORDER_DATA
-                        || this.msgType == HttpAPI.LOG_DATA) {
+                        || this.msgType == HttpAPI.LOG_DATA
+                        || this.msgType == HttpAPI.SUBPOS_ORDER_DATA) {
                     //sync order data
                     SyncCentre.getInstance().cloudSyncUploadOrderInfo(context, content, null);
                 }

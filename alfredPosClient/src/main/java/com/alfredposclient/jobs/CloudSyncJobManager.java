@@ -149,6 +149,42 @@ public class CloudSyncJobManager {
     	}
     }
 
+	//Sync Sub Pos Order Info
+	public void syncSubPosOrderInfo(Integer orderId, int revenueCenterId, Long bizDate) {
+		SyncMsgJob syncOrderJob = null;
+
+		if (SyncMsgSQL.getSubPosSyncMsgByOrderIdBizDate(orderId, bizDate) == null)  {
+			Map<String, Object> orderInfo = UploadSQL.getSubPosOrderInfo(orderId);
+			List<OrderBill> orderBills = (List<OrderBill>) orderInfo.get("orderBills");
+			int billNo =0;
+			if(orderBills != null && orderBills.size() > 0){
+				for(OrderBill orderBill : orderBills){
+					if(orderBill.getBillNo() != null && orderBill.getBillNo().intValue() > billNo){
+						billNo = orderBill.getBillNo().intValue();
+					}
+				}
+			}
+			if (orderInfo != null) {
+				Gson gson = new Gson();
+				SyncMsg syncMsg = new SyncMsg();
+				String uuid = getDataUUID(revenueCenterId);
+				syncMsg.setId(uuid);
+				syncMsg.setOrderId(orderId);
+				syncMsg.setMsgType(HttpAPI.SUBPOS_ORDER_DATA);
+				syncMsg.setData(gson.toJson(orderInfo));
+				syncMsg.setCreateTime(System.currentTimeMillis());
+				syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
+				syncMsg.setRevenueId(revenueCenterId);
+				syncMsg.setBusinessDate(bizDate);
+				syncMsg.setBillNo(billNo);
+				SyncMsgSQL.add(syncMsg);
+				syncOrderJob = new SyncMsgJob(revenueCenterId, HttpAPI.SUBPOS_ORDER_DATA, uuid,
+						orderId, bizDate, syncMsg.getCreateTime());
+				this.syncJobManager.addJobInBackground(syncOrderJob);
+			}
+		}
+	}
+
  // Sync Order Info Log
     public void syncOrderInfoForLog(Integer orderId, int revenueCenterId, Long bizDate, int currCount) {
 		SyncMsgJob syncOrderJob = null;

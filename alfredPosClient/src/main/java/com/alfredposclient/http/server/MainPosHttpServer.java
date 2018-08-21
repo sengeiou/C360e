@@ -71,6 +71,7 @@ import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
@@ -173,6 +174,18 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		if (TextUtils.isEmpty(apiName)) {
 			return this.getForbiddenResponse("");
 		} else {
+			if(apiName.equals(APIName.CALLNUM_ASSIGNREVENUE)){
+				try{
+					String ip = jsonObject.getString("ip");
+					Store.putString(App.instance,Store.CALL_APP_IP, ip);
+					result.put(RESULT_CODE, ResultCode.SUCCESS);
+				}catch (Exception e){
+					result.put("resultCode", ResultCode.JSON_DATA_ERROR);
+				}
+				return this.getJsonResponse(new Gson().toJson(result));
+
+			}
+
 			int deviceType = jsonObject.optInt("deviceType");
 			if (deviceType != 5) {
 				result.put("resultCode", ResultCode.JSON_DATA_ERROR);
@@ -693,6 +706,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				return this.getForbiddenResponse("");
 			}
 			Map<String, Object> result = new HashMap<String, Object>();
+
 			if(!App.instance.isRevenueKiosk()){
 				result.put(RESULT_CODE, ResultCode.IS_NOT_KIOSK);
 				return this.getJsonResponse(gson.toJson(result));
@@ -771,8 +785,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					subPosBean.setUserName(user.getFirstName() + user.getLastName());
 					SubPosBeanSQL.updateSubPosBean(subPosBean);
 				}
-				SessionStatus sessionStatus = App.instance.getSessionStatus();
-				result.put("sessionStatus", sessionStatus);
 				result.put("subPosBean", subPosBean);
 				resp = this.getJsonResponse(gson.toJson(result));
 			} else {
@@ -813,6 +825,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			List<PaymentMethod> paymentMethods = PaymentMethodSQL.getAllPaymentMethod();
 			List<SettlementRestaurant> settlementRestaurants = SettlementRestaurantSQL.getAllSettlementRestaurant();
 			Map<String, Object> map = new HashMap<>();
+			SessionStatus sessionStatus = App.instance.getSessionStatus();
+			map.put("sessionStatus", sessionStatus);
 			map.put("users", users);
 			map.put("restaurant", restaurant);
 			map.put("revenueCenter", revenueCenter);
@@ -1047,7 +1061,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			ReportDaySales reportDaySales = gson.fromJson(jsonObject.getString("reportDaySales"), ReportDaySales.class);
 			int subPosBeanId = jsonObject.optInt("subPosBeanId");
 			MultiReportRelation multiReportRelation = MultiReportRelationSQL.getMultiReportRelationBySubReportId(subPosBeanId, reportDaySales.getId(), reportDaySales.getCreateTime());
-			if(multiReportRelation == null){
+			if(multiReportRelation != null){
 				map.put("resultCode", ResultCode.RECEIVE_MSG_EXIST);
 				return this.getJsonResponse(gson.toJson(map));
 			}

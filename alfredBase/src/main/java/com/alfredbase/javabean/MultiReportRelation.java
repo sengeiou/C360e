@@ -6,15 +6,17 @@ public class MultiReportRelation {
     private int subReportId;
     private int subPosBeanId;
     private long subReportCreateTime;
+    private int syncStatus = 0; // 0未发送，1已发送
 
     public MultiReportRelation() {
     }
 
-    public MultiReportRelation(int mainReportId, int subReportId, int subPosBeanId, long subReportCreateTime) {
+    public MultiReportRelation(int mainReportId, int subReportId, int subPosBeanId, long subReportCreateTime, int syncStatus) {
         this.mainReportId = mainReportId;
         this.subReportId = subReportId;
         this.subPosBeanId = subPosBeanId;
         this.subReportCreateTime = subReportCreateTime;
+        this.syncStatus = syncStatus;
     }
 
     public int getId() {
@@ -57,6 +59,14 @@ public class MultiReportRelation {
         this.subReportCreateTime = subReportCreateTime;
     }
 
+    public int getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(int syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
     @Override
     public String toString() {
         return "MultiReportRelation{" +
@@ -65,6 +75,7 @@ public class MultiReportRelation {
                 ", subReportId=" + subReportId +
                 ", subPosBeanId=" + subPosBeanId +
                 ", subReportCreateTime=" + subReportCreateTime +
+                ", syncStatus=" + syncStatus +
                 '}';
     }
 }

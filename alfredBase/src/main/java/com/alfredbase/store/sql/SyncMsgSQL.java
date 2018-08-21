@@ -214,7 +214,46 @@ public class SyncMsgSQL {
 		SyncMsg syncMsg = null;
 		// 这边的11指的是同步到后台的log数据的类型  同pos里面 HttpApi的常量 LOG_DATA
 		String sql = "select * from " + TableNames.SyncMsg
-				+ " where orderId = ? and businessDate = ? and msg_type <> 11";
+				+ " where orderId = ? and businessDate = ? and msg_type = 10";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] { orderId + "", businessDate + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return syncMsg;
+			}
+			if (cursor.moveToFirst()) {
+				syncMsg = new SyncMsg();
+				syncMsg.setId(cursor.getString(0));
+				syncMsg.setOrderId(cursor.getInt(1));
+				syncMsg.setMsgType(cursor.getInt(2));
+				syncMsg.setData(cursor.getString(3));
+				syncMsg.setStatus(cursor.getInt(4));
+				syncMsg.setCreateTime(cursor.getLong(5));
+				syncMsg.setRevenueId(cursor.getInt(6));
+				syncMsg.setBusinessDate(cursor.getLong(7));
+				syncMsg.setCurrCount(cursor.getInt(8));
+				syncMsg.setAppOrderId(cursor.getInt(9));
+				syncMsg.setOrderStatus(cursor.getInt(10));
+				syncMsg.setOrderNum(cursor.getInt(11));
+				syncMsg.setBillNo(cursor.getInt(12));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return syncMsg;
+	}
+	public static SyncMsg getSubPosSyncMsgByOrderIdBizDate(int orderId, long businessDate) {
+		SyncMsg syncMsg = null;
+		// 这边的11指的是同步到后台的log数据的类型  同pos里面 HttpApi的常量 LOG_DATA
+		String sql = "select * from " + TableNames.SyncMsg
+				+ " where orderId = ? and businessDate = ? and msg_type = 12";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {

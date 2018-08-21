@@ -18,6 +18,8 @@ import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
@@ -160,6 +162,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 						loadingDialog.show();
 						SubPosSyncCentre.getInstance().updaetAllData(context, handler);
 					}else{
+						App.instance.setSessionStatus(Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
 						startMainPage();
 					}
 				}

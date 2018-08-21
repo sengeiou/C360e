@@ -171,6 +171,48 @@ public class ReportDayPaymentSQL {
         }
         return result;
     }
+    public static ArrayList<ReportDayPayment> getAllReportDayPaymentByDaySalesId(int daySalesId) {
+        ArrayList<ReportDayPayment> result = new ArrayList<>();
+        String sql = "select * from " + TableNames.ReportDayPayment + " where daySalesId = ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[] {daySalesId+""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            ReportDayPayment reportDayPayment = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                reportDayPayment = new ReportDayPayment();
+                reportDayPayment.setId(cursor.getInt(0));
+
+                reportDayPayment.setDaySalesId(cursor.getInt(1));
+                reportDayPayment.setRestaurantId(cursor.getInt(2));
+                reportDayPayment.setRestaurantName(cursor.getString(3));
+                reportDayPayment.setRevenueId(cursor.getInt(4));
+                reportDayPayment.setRevenueName(cursor.getString(5));
+
+                reportDayPayment.setBusinessDate(cursor.getLong(6));
+                reportDayPayment.setPaymentTypeId(cursor.getLong(7));
+                reportDayPayment.setPaymentName(cursor.getString(8));
+                reportDayPayment.setPaymentQty(cursor.getInt(9));
+                reportDayPayment.setPaymentAmount(cursor.getString(10));
+                reportDayPayment.setOverPaymentAmount(cursor.getString(11));
+                reportDayPayment.setCreateTime(cursor.getLong(13));
+                result.add(reportDayPayment);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
 
 
     public static List<ReportDayPayment> getReportDayPaymentsForZReport(long businessDate){

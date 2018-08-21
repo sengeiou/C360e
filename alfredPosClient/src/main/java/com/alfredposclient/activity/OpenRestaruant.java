@@ -39,6 +39,7 @@ import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.MultiReportRelation;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PlaceInfo;
@@ -52,6 +53,7 @@ import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.SessionStatus;
@@ -64,12 +66,22 @@ import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotNotificationSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.ModifierSQL;
+import com.alfredbase.store.sql.MultiReportRelationSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.ReportDayPaymentSQL;
+import com.alfredbase.store.sql.ReportDaySalesSQL;
+import com.alfredbase.store.sql.ReportDayTaxSQL;
+import com.alfredbase.store.sql.ReportHourlySQL;
+import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
+import com.alfredbase.store.sql.ReportPluDayItemSQL;
+import com.alfredbase.store.sql.ReportPluDayModifierSQL;
 import com.alfredbase.store.sql.ReportSessionSalesSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BH;
@@ -837,6 +849,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				LogUtil.e("测试", "11");
 				List<Order> orders = OrderSQL.getFinishedOrdersBySession(
 						sessionStatus, bizDate);
+				List<Order> subPosOrders = CPOrderSQL.getFinishedOrdersBySession(
+						sessionStatus, bizDate);
 				LogUtil.e("测试", "22");
 				if (!orders.isEmpty()) {
 					for (Order order : orders) {
@@ -848,36 +862,79 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							
 						}
 					}
-				}else{
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							dismissPrinterLoadingDialog();
-							Store.remove(context, Store.SESSION_STATUS);
-							App.instance.setSessionStatus(null);
+					GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
+					final Map<String, Object> xReportInfo
+							= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
+					//sync X-Report to cloud
+					if (cloudSync!=null) {
+						cloudSync.syncXReport(xReportInfo,
+								App.instance.getRevenueCenter().getId(),
+								bizDate,
+								sessionStatus);
+						cloudSync.syncOpenOrCloseSessionAndRestaurant(App.instance
+										.getRevenueCenter().getId(), bizDate,
+								sessionStatus, CloudSyncJobManager.CLOSE_SESSION);
+						LogUtil.e("测试", "44");
+					}
+					if(App.instance.getSystemSettings().isPrintWhenCloseSession())
+						sendXPrintData(xReportInfo, bizDate,
+								CommonUtil.getReportType(context, sessionStatus.getSession_status()),
+								sessionStatus);
+				}
+
+				if(subPosOrders != null && subPosOrders.size() > 0){
+					for (Order order : subPosOrders) {
+						// sync order to cloud
+						if (cloudSync!=null) {
+							cloudSync.syncOrderInfo(order.getId(),
+									App.instance.getRevenueCenter().getId(),
+									bizDate);
+
 						}
-					});
-					return;
+					}
 				}
-				LogUtil.e("测试", "33");
-				GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
-				final Map<String, Object> xReportInfo
-						= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
-				//sync X-Report to cloud
-				if (cloudSync!=null) {
-					cloudSync.syncXReport(xReportInfo,
-											App.instance.getRevenueCenter().getId(),
-											bizDate,
-											sessionStatus);
-					cloudSync.syncOpenOrCloseSessionAndRestaurant(App.instance
-							.getRevenueCenter().getId(), bizDate,
-							sessionStatus, CloudSyncJobManager.CLOSE_SESSION);
-					LogUtil.e("测试", "44");
+
+				List<MultiReportRelation> multiReportRelations = MultiReportRelationSQL.getAllMultiReportRelationBySession(sessionStatus);
+				if(multiReportRelations != null && multiReportRelations.size() > 0){
+					for(MultiReportRelation multiReportRelation : multiReportRelations) {
+						int daySalesId = multiReportRelation.getMainReportId();
+						if(daySalesId <= 0){
+							continue;
+						}
+						Map<String, Object> map = new HashMap<String, Object>();
+						// day sales report
+						ReportDaySales reportDaySales = ReportDaySalesSQL.getReportDaySales(daySalesId);
+						// open Drawer
+						List<UserOpenDrawerRecord> userOpenDrawerRecords = UserOpenDrawerRecordSQL.getAllUserOpenDrawerRecordByDaySalesId(daySalesId);
+						// tax report
+						ArrayList<ReportDayTax> reportDayTaxs = ReportDayTaxSQL.getAllReportDayTaxByDaySalesId(daySalesId);
+						List<ReportDayPayment> reportDayPayments = ReportDayPaymentSQL.getAllReportDayPaymentByDaySalesId(daySalesId);
+						// plu item reprot
+						ArrayList<ReportPluDayItem> reportPluDayItems = ReportPluDayItemSQL.getAllReportPluDayItemByDaySalesId(daySalesId);
+
+						// plu modifier report
+						ArrayList<ReportPluDayModifier> reportPluDayModifiers = ReportPluDayModifierSQL.getAllReportPluDayModifierByDaySalesId(daySalesId);
+						// plu combo report
+						ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = ReportPluDayComboModifierSQL.getAllReportPluDayComboModifierByDaySalesId(daySalesId);
+						// plu hourly payment report
+						ArrayList<ReportHourly> reportHourlys = ReportHourlySQL.getAllReportHourlysByDaySalesId(daySalesId);
+						map.put("reportDaySales", reportDaySales);
+						map.put("reportDayTaxs", reportDayTaxs);
+						map.put("reportDayPayments", reportDayPayments);
+						map.put("reportPluDayItems", reportPluDayItems);
+						map.put("reportPluDayModifiers", reportPluDayModifiers);
+						map.put("reportHourlys", reportHourlys);
+						map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
+						map.put("sessionStatus", sessionStatus);
+						map.put("userOpenDrawerRecords", userOpenDrawerRecords);
+						cloudSync.syncXReport(map,
+								App.instance.getRevenueCenter().getId(),
+								bizDate,
+								sessionStatus);
+						multiReportRelation.setSyncStatus(1);
+						MultiReportRelationSQL.updateMultiReportRelation(multiReportRelation);
+					}
 				}
-				if(App.instance.getSystemSettings().isPrintWhenCloseSession())
-				sendXPrintData(xReportInfo, bizDate,
-									CommonUtil.getReportType(context, sessionStatus.getSession_status()),
-									sessionStatus);
 
 				runOnUiThread(new Runnable() {
 					@Override

@@ -22,8 +22,8 @@ public class ReportHourlySQL {
 			
 			String sql = "replace into " 
 					+ TableNames.ReportHourly 
-					+ "(id, restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice)"
-					+ " values (?,?,?,?,?,?,?,?)";
+					+ "(id, restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice, daySalesId)"
+					+ " values (?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(sql, new Object[]{
 					reportHourly.getId(),
 					reportHourly.getRestaurantId(),
@@ -32,7 +32,9 @@ public class ReportHourlySQL {
 					reportHourly.getBusinessDate(),
 					reportHourly.getHour(),
 					reportHourly.getAmountQty(),
-					reportHourly.getAmountPrice()});
+					reportHourly.getAmountPrice(),
+					reportHourly.getDaySalesId()
+			});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -47,8 +49,8 @@ public class ReportHourlySQL {
 			db.beginTransaction();
 			String sql = "replace into " 
 					+ TableNames.ReportHourly 
-					+ "(restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice)"
-					+ " values (?,?,?,?,?,?,?)";
+					+ "(restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice, daySalesId)"
+					+ " values (?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportHourly reportHourly: reportHourlys) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,reportHourly.getRestaurantId());
@@ -58,6 +60,7 @@ public class ReportHourlySQL {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 5,reportHourly.getHour());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 6,reportHourly.getAmountQty());
 				SQLiteStatementHelper.bindString(sqLiteStatement, 7,reportHourly.getAmountPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 8, reportHourly.getDaySalesId());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -77,8 +80,8 @@ public class ReportHourlySQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.ReportHourly
-					+ "(restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice)"
-					+ " values (?,?,?,?,?,?,?)";
+					+ "(restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice, daySalesId)"
+					+ " values (?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportHourly reportHourly: reportHourlys) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,reportHourly.getRestaurantId());
@@ -88,6 +91,7 @@ public class ReportHourlySQL {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 5,reportHourly.getHour());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 6,reportHourly.getAmountQty());
 				SQLiteStatementHelper.bindString(sqLiteStatement, 7,reportHourly.getAmountPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 8, reportHourly.getDaySalesId());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -97,15 +101,15 @@ public class ReportHourlySQL {
 			db.endTransaction();
 		}
 	}
-	public static void addReportHourly(SQLiteDatabase db, List<ReportHourly> reportHourlys){
+	public static void addReportHourly(int daySalesId, SQLiteDatabase db, List<ReportHourly> reportHourlys){
 		if(reportHourlys == null){
 			return;
 		}
 		try {
 			String sql = "replace into "
 					+ TableNames.ReportHourly
-					+ "(restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice)"
-					+ " values (?,?,?,?,?,?,?)";
+					+ "(restaurantId, revenueId, revenueName, businessDate, hour,amountQty, amountPrice, daySalesId)"
+					+ " values (?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportHourly reportHourly: reportHourlys) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1,reportHourly.getRestaurantId());
@@ -115,6 +119,7 @@ public class ReportHourlySQL {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 5,reportHourly.getHour());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 6,reportHourly.getAmountQty());
 				SQLiteStatementHelper.bindString(sqLiteStatement, 7,reportHourly.getAmountPrice());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 8, daySalesId);
 				sqLiteStatement.executeInsert();
 			}
 		} catch (Exception e) {
@@ -144,6 +149,7 @@ public class ReportHourlySQL {
 				reportHourly.setHour(cursor.getInt(5));
 				reportHourly.setAmountQty(cursor.getInt(6));
 				reportHourly.setAmountPrice(cursor.getString(7));
+				reportHourly.setDaySalesId(cursor.getInt(8));
 				reportHourlys.add(reportHourly);
 			}
 		} catch (Exception e) {
@@ -155,7 +161,41 @@ public class ReportHourlySQL {
 		}
 		return reportHourlys;
 	}
-	
+	public static ArrayList<ReportHourly> getAllReportHourlysByDaySalesId(int daySalesId){
+		ArrayList<ReportHourly> reportHourlys = new ArrayList<>();
+		String sql = "select * from " + TableNames.ReportHourly + " where daySalesId= ?";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[]{daySalesId+""});
+			int count = cursor.getCount();
+			if(count < 1){
+				return reportHourlys;
+			}
+			ReportHourly reportHourly = null;
+			for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()){
+				reportHourly = new ReportHourly();
+				reportHourly.setId(cursor.getInt(0));
+				reportHourly.setRestaurantId(cursor.getInt(1));
+				reportHourly.setRevenueId(cursor.getInt(2));
+				reportHourly.setRevenueName(cursor.getString(3));
+				reportHourly.setBusinessDate(cursor.getLong(4));
+				reportHourly.setHour(cursor.getInt(5));
+				reportHourly.setAmountQty(cursor.getInt(6));
+				reportHourly.setAmountPrice(cursor.getString(7));
+				reportHourly.setDaySalesId(cursor.getInt(8));
+				reportHourlys.add(reportHourly);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(cursor != null && !cursor.isClosed()){
+				cursor.close();
+			}
+		}
+		return reportHourlys;
+	}
+
 	public static ArrayList<ReportHourly> getReportHourlysByTime(long businessDate){
 		ArrayList<ReportHourly> reportHourlys = new ArrayList<ReportHourly>();
 		String sql = "select * from " + TableNames.ReportHourly + " where businessDate = ?";
@@ -178,6 +218,7 @@ public class ReportHourlySQL {
 				reportHourly.setHour(cursor.getInt(5));
 				reportHourly.setAmountQty(cursor.getInt(6));
 				reportHourly.setAmountPrice(BH.getBD(cursor.getString(7)).toString());
+				reportHourly.setDaySalesId(cursor.getInt(8));
 				reportHourlys.add(reportHourly);
 			}
 		} catch (Exception e) {

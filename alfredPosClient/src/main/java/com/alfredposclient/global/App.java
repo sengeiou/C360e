@@ -1952,9 +1952,12 @@ public class App extends BaseApplication {
     }
 
     public void closeDiscovery() {
+        if(mRemoteService == null){
+            return;
+        }
         try {
             mRemoteService.closeDiscovery();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -1,0 +1,127 @@
+package com.alfredposclient.activity.kioskactivity.subpos;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.alfredbase.BaseActivity;
+import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.SubPosBean;
+import com.alfredbase.store.sql.SubPosBeanSQL;
+import com.alfredposclient.R;
+
+import java.util.List;
+
+public class SubPosManagePage extends BaseActivity {
+    private ListView lv_subpos;
+    private TextView tv_title_name;
+    private List<SubPosBean>  subPosBeans;
+
+    @Override
+    protected void initView() {
+        super.initView();
+        setContentView(R.layout.sub_pos_manage_page);
+        lv_subpos = (ListView) findViewById(R.id.lv_subpos);
+        tv_title_name = (TextView) findViewById(R.id.tv_title_name);
+        tv_title_name.setText("Sub Pos Manage");
+        subPosBeans = SubPosBeanSQL.getAllSubPosBean();
+        findViewById(R.id.ll_print).setVisibility(View.GONE);
+        findViewById(R.id.btn_back).setOnClickListener(this);
+        SubPosItemAdapter subPosItemAdapter = new SubPosItemAdapter();
+        lv_subpos.setAdapter(subPosItemAdapter);
+
+    }
+
+    @Override
+    protected void handlerClickEvent(View v) {
+        super.handlerClickEvent(v);
+        switch (v.getId()){
+            case R.id.btn_back:
+                this.finish();
+                break;
+        }
+    }
+
+    class SubPosItemAdapter extends BaseAdapter {
+        private LayoutInflater inflater;
+        SubPosItemAdapter(){
+            inflater = LayoutInflater.from(context);
+        }
+        @Override
+        public int getCount() {
+            return subPosBeans.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return subPosBeans.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.subpos_item, null);
+                holder = new ViewHolder();
+                holder.tv_pos_id = (TextView) convertView.findViewById(R.id.tv_pos_id);
+                holder.tv_userName = (TextView) convertView.findViewById(R.id.tv_userName);
+                holder.tv_device_id = (TextView) convertView.findViewById(R.id.tv_device_id);
+                holder.tv_status = (TextView) convertView.findViewById(R.id.tv_status);
+                holder.tv_tag = (TextView) convertView.findViewById(R.id.tv_tag);
+                holder.btn_check = (Button) convertView.findViewById(R.id.btn_check);
+                convertView.setTag(holder);
+            }else{
+                holder = (ViewHolder) convertView.getTag();
+            }
+            SubPosBean subPosBean = subPosBeans.get(position);
+            holder.tv_pos_id.setText(subPosBean.getId());
+            holder.tv_userName.setText(subPosBean.getUserName());
+            holder.tv_device_id.setText(subPosBean.getDeviceId());
+            String status = "Close";
+            boolean showCheck = false;
+            if(subPosBean.getSubPosStatus() == ParamConst.SUB_POS_STATUS_OPEN){
+                status = "Open";
+                showCheck = true;
+            }
+            holder.tv_status.setText(status);
+            holder.tv_tag.setText(subPosBean.getNumTag());
+            if(showCheck){
+                holder.btn_check.setVisibility(View.VISIBLE);
+            }else{
+                holder.btn_check.setVisibility(View.INVISIBLE);
+            }
+            holder.btn_check.setTag(subPosBean);
+            holder.btn_check.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SubPosBean s = (SubPosBean) v.getTag();
+                    s.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
+                    SubPosBeanSQL.updateSubPosBean(s);
+                    notifyDataSetChanged();
+                }
+            });
+
+            return convertView;
+        }
+
+        class ViewHolder {
+            public TextView tv_pos_id;
+            public TextView tv_userName;
+            public TextView tv_device_id;
+            public TextView tv_status;
+            public TextView tv_tag;
+            public Button btn_check;
+        }
+    }
+
+
+}
