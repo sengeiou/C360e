@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.alfred.callnum.R;
 import com.alfred.callnum.adapter.CallBean;
@@ -47,13 +48,15 @@ public class MainActivity extends BaseActivity {
     Timer timer = new Timer();
     MyQueue queue = new MyQueue();
     private int callNumber = 3;
-    private int callTime = 2500;
+    private int callTime = 2800;
+    private ImageView  bg;
 
     public Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case App.HANDLER_REFRESH_CALL:
                     CallBean callBean= (CallBean) msg.obj;
+                    bg.setVisibility(View.GONE);
 //                    msg.obj
 //                    CallBean callBean = new CallBean();
 //                    callBean.setId(0);
@@ -155,6 +158,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
         viewId = intent.getIntExtra("viewId", 0);
+        bg=(ImageView)findViewById(R.id.img_call_bg);
         createFragment();
 
         CallNumUtil.initVideo(context);

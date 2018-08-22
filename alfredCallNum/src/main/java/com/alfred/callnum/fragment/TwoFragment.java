@@ -116,10 +116,10 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
     Map<String, Object> callMap = new HashMap<String, Object>();
     private AnimationSet textAnimationSet;
     private Boolean type = true;
-    private TextView call_big;
+    private TextView call_big,line,lines;
     ScaleAnimation scaleAnimation;
 
-    private ImageView bg;
+
 
     public static TwoFragment newInstance(String param1, String param2) {
         TwoFragment fragment = new TwoFragment();
@@ -171,7 +171,8 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
         re_video_pic = (RelativeLayout) getActivity().findViewById(R.id.re_video_pic);
 
         call_big = (TextView) getActivity().findViewById(R.id.tv_call_big);
-        bg = (ImageView) getActivity().findViewById(R.id.img_call_bg);
+        line=(TextView) getActivity().findViewById(R.id.tv_line);
+lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
         re_video_pic.setOnTouchListener(this);
         li_select.setVisibility(View.GONE);
         btn_video.setOnClickListener(this);
@@ -272,9 +273,11 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
     public void addData(int position, CallBean call) {
 
-        bg.setVisibility(View.GONE);
+
+
         if (vid == 1) {
 
+            lines.setVisibility(View.VISIBLE);
             if (mDataLeft != null) {
                 for (int i = 0; i < mDataLeft.size(); i++) {
 
@@ -284,7 +287,6 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                     } else {
                         App.instance.setCall(call);
                     }
-
                 }
             }
 //            it = mDataLeft.iterator();
@@ -306,9 +308,11 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
             re_left.scrollToPosition(position);
 
         } else {
+            line.setVisibility(View.VISIBLE);
+            lines.setVisibility(View.VISIBLE);
             int v = call.getCallTag() % 2;
             switch (v) {
-                case 1:
+                case 0:
                     int size = mDataLeft.size();
                     for (int i = size - 1; i >= 0; i--) {
 
@@ -325,7 +329,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                     re_left.scrollToPosition(position);
                     break;
 
-                case 0:
+                case 1:
                     int rsize = mDatasRight.size();
                     for (int i = rsize - 1; i >= 0; i--) {
 
