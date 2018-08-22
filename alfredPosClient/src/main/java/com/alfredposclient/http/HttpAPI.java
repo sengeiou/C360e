@@ -1906,10 +1906,10 @@ public class HttpAPI {
 
             if(TextUtils.isEmpty(tag)) {
                 //     byte t = (byte) tag.charAt(0);
-                requestParams.put("callTag", 1);
+                requestParams.put("callTag", 0);
             }else {
                 byte t = (byte) tag.charAt(0);
-                requestParams.put("callTag",1);
+                requestParams.put("callTag",t%64);
             }
 
 

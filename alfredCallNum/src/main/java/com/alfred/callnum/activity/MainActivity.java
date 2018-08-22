@@ -162,11 +162,11 @@ public class MainActivity extends BaseActivity {
 
         //	timer11 = new Timer();
         //	timer11.schedule(new MyTimertask(),1000);
-//        for (int j = 0; j < 1; j++) {
+//        for (int j = 0; j < 4; j++) {
 //            CallBean call = new CallBean();
-//            call.setName("A12" + j);
-//            call.setType(j + 1);
-//            call.setId(0);
+//            call.setCallNumber("A12" + j);
+//            call.setCallTag(j + 1);
+//
 //
 //            queue.enQueue(call);
 //            //   queue.enQueue("A12" + j);

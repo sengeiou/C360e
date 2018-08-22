@@ -134,7 +134,7 @@ public class OneFragment extends Fragment {
         re_two = (RecyclerView) getActivity().findViewById(R.id.review_two);
         re_three = (RecyclerView) getActivity().findViewById(R.id.review_three);
         re_four = (RecyclerView) getActivity().findViewById(R.id.review_four);
-        bg = (ImageView) getActivity().findViewById(R.id.img_call_bgs);
+     //   bg = (ImageView) getActivity().findViewById(R.id.img_call_bgs);
 
 
 //            re_three.setVisibility(View.VISIBLE);
@@ -192,7 +192,7 @@ public class OneFragment extends Fragment {
     }
 
     public void addData(int position, CallBean call) {
-        bg.setVisibility(View.GONE);
+       // bg.setVisibility(View.GONE);
 //        if(callMap!=null) {
 //
 //            Set<Map.Entry<String, Object>> set = callMap.entrySet();
