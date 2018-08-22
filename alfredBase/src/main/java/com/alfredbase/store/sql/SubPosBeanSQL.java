@@ -3,6 +3,7 @@ package com.alfredbase.store.sql;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
@@ -42,6 +43,38 @@ private int id;
     public static List<SubPosBean> getAllSubPosBean() {
         List<SubPosBean> result = new ArrayList<>();
         String sql = "select * from " + TableNames.SubPosBean;
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[] {});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            SubPosBean subPosBean = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                subPosBean = new SubPosBean();
+                subPosBean.setId(cursor.getInt(0));
+                subPosBean.setUserName(cursor.getString(1));
+                subPosBean.setDeviceId(cursor.getString(2));
+                subPosBean.setNumTag(cursor.getString(3));
+                subPosBean.setSubPosStatus(cursor.getInt(4));
+                result.add(subPosBean);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+    public static List<SubPosBean> getAllOpenSubPosBean() {
+        List<SubPosBean> result = new ArrayList<>();
+        String sql = "select * from " + TableNames.SubPosBean + " where subPosStatus = " + ParamConst.SUB_POS_STATUS_OPEN;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {

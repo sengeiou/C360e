@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- com.alfredselfhelp.global -->
-    <string name="app_name">Self Help Kiosk</string>
+    <string name="app_name">Calling Num</string>
     <string name="action_settings">设置</string>
     <string name="hello_world">Hello world!</string>
     <string name="version">版本:</string>

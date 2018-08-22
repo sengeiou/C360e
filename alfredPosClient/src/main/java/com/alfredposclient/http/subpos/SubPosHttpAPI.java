@@ -275,6 +275,7 @@ public class SubPosHttpAPI {
             JSONObject jsonObject = new JSONObject(syncMsg.getData());
             jsonObject.put("appVersion", App.instance.VERSION);
             jsonObject.put("userId", App.instance.getUser().getId());
+            jsonObject.put("subPosBeanId", subPosBean.getId());
             httpClient.post(context, url,
                     new StringEntity(jsonObject + EOF,
                             "UTF-8"), CONTENT_TYPE,

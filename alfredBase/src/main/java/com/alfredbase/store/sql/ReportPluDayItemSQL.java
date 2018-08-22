@@ -186,7 +186,7 @@ public class ReportPluDayItemSQL {
 					+ "itemDetailId, itemName, itemPrice, itemCount, itemAmount, itemVoidQty, "
 					+ "itemVoidPrice, itemHoldQty, itemHoldPrice, itemFocQty, itemFocPrice,"
 					+ " billVoidQty, billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportPluDayItem reportPluDayItem : reportPluDayItems) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportPluDayItem.getReportNo());

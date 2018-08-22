@@ -12,7 +12,7 @@
         android:id="@+id/tv_pos_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"
+        android:layout_weight="1"
         android:textColor="@color/black"
         android:textSize="20dp" />
 
@@ -20,7 +20,7 @@
         android:id="@+id/tv_userName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
+        android:layout_weight="1"
         android:textColor="@color/black"
         android:textSize="20dp" />
     
@@ -28,21 +28,21 @@
         android:id="@+id/tv_device_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.6"
+        android:layout_weight="1"
         android:textColor="@color/black"
         android:textSize="20dp" />
     <TextView
         android:id="@+id/tv_status"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.6"
+        android:layout_weight="1"
         android:textColor="@color/black"
         android:textSize="20dp" />
     <TextView
         android:id="@+id/tv_tag"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.7"
+        android:layout_weight="1"
         android:textColor="@color/black"
         android:singleLine="true"
         android:textSize="20dp" />
@@ -53,7 +53,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
-        android:text="Edit settlement"
+        android:text="Close"
         android:textSize="10dp"
         android:gravity="center"/>
 

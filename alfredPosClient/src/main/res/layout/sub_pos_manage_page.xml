@@ -51,7 +51,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
+                    android:layout_weight="1"
                     android:text="Sub Pos Id"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
@@ -59,7 +59,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
+                    android:layout_weight="1"
                     android:text="User Name"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
@@ -67,14 +67,14 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
+                    android:layout_weight="1"
                     android:text="Device Id"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
+                    android:layout_weight="1"
                     android:text="Status"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
@@ -82,7 +82,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.7"
+                    android:layout_weight="1"
                     android:text="Tag"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
@@ -92,7 +92,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
+                    android:layout_weight="1"
                     android:text="Close"
                     android:textSize="14dp"
                     android:gravity="center"

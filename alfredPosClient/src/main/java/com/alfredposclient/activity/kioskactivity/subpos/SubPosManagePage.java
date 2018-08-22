@@ -12,6 +12,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.store.sql.SubPosBeanSQL;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredposclient.R;
 
 import java.util.List;
@@ -83,7 +84,7 @@ public class SubPosManagePage extends BaseActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
             SubPosBean subPosBean = subPosBeans.get(position);
-            holder.tv_pos_id.setText(subPosBean.getId());
+            holder.tv_pos_id.setText(subPosBean.getId()+"");
             holder.tv_userName.setText(subPosBean.getUserName());
             holder.tv_device_id.setText(subPosBean.getDeviceId());
             String status = "Close";
@@ -93,6 +94,7 @@ public class SubPosManagePage extends BaseActivity {
                 showCheck = true;
             }
             holder.tv_status.setText(status);
+            holder.btn_check.setText(status);
             holder.tv_tag.setText(subPosBean.getNumTag());
             if(showCheck){
                 holder.btn_check.setVisibility(View.VISIBLE);
@@ -102,11 +104,20 @@ public class SubPosManagePage extends BaseActivity {
             holder.btn_check.setTag(subPosBean);
             holder.btn_check.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    SubPosBean s = (SubPosBean) v.getTag();
-                    s.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
-                    SubPosBeanSQL.updateSubPosBean(s);
-                    notifyDataSetChanged();
+                public void onClick(final View view) {
+                    DialogFactory.commonTwoBtnDialog(context, "Warning", "Are you sure about closing the Sub Pos",
+                            context.getString(R.string.cancel), context.getString(R.string.ok),
+                            null,
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    SubPosBean s = (SubPosBean) view.getTag();
+                                    s.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
+                                    SubPosBeanSQL.updateSubPosBean(s);
+                                    notifyDataSetChanged();
+                                }
+                            });
+
                 }
             });
 

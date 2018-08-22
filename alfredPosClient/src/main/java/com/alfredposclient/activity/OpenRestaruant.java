@@ -51,6 +51,7 @@ import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
+import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserOpenDrawerRecord;
@@ -79,6 +80,7 @@ import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
 import com.alfredbase.store.sql.ReportPluDayItemSQL;
 import com.alfredbase.store.sql.ReportPluDayModifierSQL;
 import com.alfredbase.store.sql.ReportSessionSalesSQL;
+import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.store.sql.cpsql.CPOrderSQL;
@@ -166,6 +168,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private DrawerLayout mDrawerLayout;
 	private SettingView mSettingView;
 	private static final int CAN_CLOSE = 100;
+	private static final int CAN_NOT_CLOSE_SUB = 99;
 	private static final int CAN_NOT_CLOSE = 101;
 	private static final int OPEN_RESTAURANT = 102;
 	private static final int PRINTER_UNLINK = 103;
@@ -1025,7 +1028,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							dismissPrinterLoadingDialog();
 							return;
 						}
-						boolean canClose = true;
+						int canClose = CAN_CLOSE;
 						if(App.instance.getCahierPrinter() == null){
 							handler.sendMessage(handler.obtainMessage(PRINTER_UNLINK, v));
 							return;
@@ -1037,11 +1040,18 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 									List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
 											.getOrderDetails(order.getId());
 									if (!orderDetailsUnIncludeVoid.isEmpty()){
-										canClose = false;
+										canClose = CAN_NOT_CLOSE;
+										break;
 									} else {
 //										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
 										OrderSQL.deleteOrder(order);
 									}
+								}
+							}
+							if(canClose == CAN_CLOSE) {
+								List<SubPosBean> subPosBeans = SubPosBeanSQL.getAllOpenSubPosBean();
+								if (subPosBeans != null && subPosBeans.size() > 0){
+									canClose = CAN_NOT_CLOSE_SUB;
 								}
 							}
 						} else {
@@ -1070,7 +1080,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //											TablesSQL.updateTables(table);
 											TableInfoSQL.updateTables(table);
 										} else {
-											canClose = false;
+											canClose = CAN_NOT_CLOSE;
 										}
 									}
 								} else {
@@ -1080,12 +1090,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 								}
 							}
 						}
-						if (canClose) {
-							handler.sendMessage(handler.obtainMessage(CAN_CLOSE, v));
-						} else {
-							handler.sendMessage(handler.obtainMessage(
-									CAN_NOT_CLOSE, v));
-						}
+							handler.sendMessage(handler.obtainMessage(canClose, v));
 					}
 				}).start();
 			}
@@ -1779,6 +1784,29 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							UIHelp.startMainPageKiosk(context);
 						} else {
 							UIHelp.startMainPage(context);
+						}
+					}});
+				rl_closerestbg.setVisibility(View.GONE);
+			}
+				break;
+			case CAN_NOT_CLOSE_SUB:{
+				final View view = (View) msg.obj;
+				view.post(new Runnable() {
+
+					@Override
+					public void run() {
+						dismissPrinterLoadingDialog();
+						openAction(view);
+					}
+				});
+
+				DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.warning),
+						"There are some sub Pos not closed yet.", new OnClickListener(){
+
+					@Override
+					public void onClick(View arg0) {
+						if (App.instance.isRevenueKiosk()) {
+							UIHelp.startSubPosManagePage(context);
 						}
 					}});
 				rl_closerestbg.setVisibility(View.GONE);
