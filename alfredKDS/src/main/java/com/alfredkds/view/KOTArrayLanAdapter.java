@@ -18,6 +18,7 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.javabean.KotItem;
@@ -97,8 +98,8 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 		int itemViewType = KOTArrayLanAdapter.this.getItemViewType(position);
 		if(itemViewType==1) {
 			final KotItem kotItem = kots.get(position);
-
-			holder.orderNo.setText(kotItem.getNumTag() + kotItem.getOrderNo());
+			String orderNoStr =kotItem.getNumTag()+IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
+			holder.orderNo.setText(orderNoStr);
 			holder.mod.setText(kotItem.getItemModName());
 			holder.detail.setText(kotItem.getItemDetailName());
 			holder.table.setText(kotItem.getTableName());
@@ -151,6 +152,8 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 					mainPosInfo = App.instance.getCurrentConnectedMainPos();
 					Message message = new Message();
 					if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+						message.obj = kotItem.getNumTag()+IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
+						message.arg2 = kotItem.getItemDetailId();
 						//	int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kotItem.getOrderNo());
 						//message.arg1 = -1;
 					} else {

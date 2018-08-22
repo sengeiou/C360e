@@ -1003,11 +1003,27 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
-                                    android:hint="Please Key In Number Calling Device IP"
-                                    android:padding="12dp"
                                     android:paddingLeft="10dp"
+
+                                    android:text="Number Calling Setting"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
+
+                                <TextView
+                                    android:id="@+id/tv_callnum_style"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+
+                                    android:layout_marginLeft="30dp"
+                                    android:layout_toRightOf="@id/tv_callnum"
+                                    android:text="style"
+                                    android:textColor="@color/black"
+
+                                    android:textSize="20dp"
+
+
+                                    />
 
                                 <ImageView
                                     android:layout_width="wrap_content"

@@ -1,5 +1,7 @@
 package com.alfredposclient.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -10,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -87,7 +90,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	MyToggleButton mt_print_lable;
 	MyToggleButton mt_print_bill,mt_credit_card_rounding;
 	private int textsize,textcolor;
-	private TextView tv_lable_upOrdown;
+	private TextView tv_lable_upOrdown,tv_callnum_style;
 
 	@Override
 	protected void initView() {
@@ -141,6 +144,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_of_pax=(MyToggleButton)findViewById(R.id.mt_of_pax);
 		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
 		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
+		tv_callnum_style=(TextView)findViewById(R.id.tv_callnum_style);
 
 
 		if (syncMap.isEmpty()) {
@@ -352,11 +356,15 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		}else{
 			mt_of_pax.setChecked(false);
 		}
-		if(TextUtils.isEmpty(App.instance.getCallAppIp())){
-			tv_callnum.setText(null);
-		}else{
-			tv_callnum.setText(App.instance.getCallAppIp());
+
+		if(settings.getCallStyle()>0){
+			tv_callnum_style.setText(settings.getCallStyle()+" style");
 		}
+	//	if(TextUtils.isEmpty(App.instance.getCallAppIp())){
+//			tv_callnum.setText(null);
+//		}else{
+//			tv_callnum.setText(App.instance.getCallAppIp());
+//		}
 		changePasswordDialog = new ChangePasswordDialog(context, handler);
 	}
 
@@ -479,7 +487,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			optionsPickerBuilder.show();
 			break;
 		case R.id.ll_set_callnum:
-			selectPrintWindow.show("");
+
+			dialogChoice();
+		//	selectPrintWindow.show("");
 			break;
 		case R.id.ll_set_color:
 			colorPickerDialog = new ColorPickerDialog(SystemSetting.this, Store.getInt(SystemSetting.this, Store.COLOR_PICKER, Color.WHITE), getString(R.string.color_select), new ColorPickerDialog.OnColorChangedListener() {
@@ -555,9 +565,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 				break;
 
 			case JavaConnectJS.ACTION_ASSIGN_PRINTER_DEVICE:
-				String ip = (String)msg.obj;
-				App.instance.setCallAppIp(ip);
-				tv_callnum.setText(ip);
+//				String ip = (String)msg.obj;
+//				App.instance.setCallAppIp(ip);
+//				tv_callnum.setText(ip);
 				break;
 			default:
 				break;
@@ -620,8 +630,10 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_set_lock_time));
 
 		textTypeFace.setTrajanProRegular(tv_lable_upOrdown);
+		textTypeFace.setTrajanProRegular(tv_callnum_style);
+		textTypeFace.setTrajanProRegular(tv_callnum);
 
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
+	//	textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_credit_card_rounding));
 
 
@@ -881,4 +893,51 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 //
 //
 //	}
+
+
+	private void dialogChoice() {
+		final String items[] = {"1", "2", "4"};
+		AlertDialog.Builder builder = new AlertDialog.Builder(this,3);
+
+		int postion;
+		if(settings.getCallStyle()==1)
+		{
+			postion=0;
+		}else if(settings.getCallStyle()==2){
+			postion=1;
+		}else {
+			postion=2;
+		}
+		builder.setSingleChoiceItems(items, postion,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+						settings.setCallStyle(Integer.valueOf(items[which]).intValue());
+			         	tv_callnum_style.setText(settings.getCallStyle()+" style");
+			          	dialog.dismiss();
+
+//						Toast.makeText(SystemSetting.this, items[which],
+//								Toast.LENGTH_SHORT).show();
+					}
+				});
+		builder.setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				//Toast.makeText(SystemSetting.this, "取消", Toast.LENGTH_SHORT)
+//						.show();
+			}
+		});
+//		builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				settings.setCallStyle(Integer.valueOf(items[which]).intValue());
+//				tv_callnum_style.setText(settings.getCallStyle()+" style");
+//				dialog.dismiss();
+//
+//			}
+//		});
+		builder.create().show();
+	}
 }

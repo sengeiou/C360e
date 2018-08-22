@@ -238,7 +238,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}
 		orderId.setText(orderNoStr);
-		//tv_kiosk_order_id.setText(kioskOrderNoStr);
+		tv_kiosk_order_id.setText(kioskOrderNoStr);
 		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
 	//	posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
 

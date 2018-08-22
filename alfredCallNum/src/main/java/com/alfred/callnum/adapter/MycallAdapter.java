@@ -3,6 +3,12 @@ package com.alfred.callnum.adapter;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,16 +19,19 @@ import java.util.List;
 
 
 public class MycallAdapter extends RvAdapter<CallBean> {
-    public  List<CallBean> callList=new ArrayList<CallBean>();
+    public List<CallBean> callList = new ArrayList<CallBean>();
+    ScaleAnimation scaleAnimation;
+    private Context mContext;
 
     public MycallAdapter(Context context, List<CallBean> list, RvListener listener) {
 
 
         super(context, list, listener);
-        this.callList=list;
+        this.callList = list;
+        this.mContext = context;
     }
 
-//    public void addData(int position) {
+    //    public void addData(int position) {
 //        CallBean callBean=new CallBean();
 //        callBean.setId(0);
 //        callBean.setName("Insert One");
@@ -38,9 +47,9 @@ public class MycallAdapter extends RvAdapter<CallBean> {
     @Override
     public int getItemViewType(int position) {
 
-        if(position==0){
-             return 0;
-        }else {
+        if (position == 0) {
+            return 0;
+        } else {
             return 1;
         }
 
@@ -49,6 +58,10 @@ public class MycallAdapter extends RvAdapter<CallBean> {
     @Override
     protected RvHolder getHolder(View view, int viewType) {
         return new MyCallHolder(view, viewType, listener);
+    }
+
+    public void setAnimation() {
+        scaleAnimation.cancel();
     }
 
     public class MyCallHolder extends RvHolder<CallBean> {
@@ -77,16 +90,42 @@ public class MycallAdapter extends RvAdapter<CallBean> {
 
             switch (itemViewType) {
                 case 0:
-                    tvName.setText(callBean.getName());
+                    tvName.setText(callBean.getCallNumber());
+                    scaleAnimation = (ScaleAnimation) AnimationUtils.loadAnimation(mContext, R.anim.scale);
+                    tvName.startAnimation(scaleAnimation);
                     //    tvTitle.setText(sortBean.getName());
                     break;
                 case 1:
                     //   tvCity.setText(sortBean.getName());
-                    tvSmallName.setText(callBean.getName());
+                    tvSmallName.setText(callBean.getCallNumber());
                     break;
             }
         }
 
 
     }
+
+//    public void textAnimation(TextView textScore) {
+//        textScore.setVisibility(View.VISIBLE);
+//        TranslateAnimation tAnimation = new TranslateAnimation(0f, 0f, 0f, 0f); //位移动画效果
+//        AlphaAnimation aAnimation = new AlphaAnimation(1, 1); //透明度动画效果
+//
+//        ScaleAnimation animation = new ScaleAnimation(
+//                0.5f, 2.0f, 0.5f, 2.0f,
+//                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+//        );
+//        animation.setRepeatCount(3);
+//        //   ScaleAnimation sAnimation = new ScaleAnimation(0f, 1.0f, 0f, 1.0f, 0f, 0f);  //缩放动画效果
+//
+//        textAnimationSet = new AnimationSet(true);
+//        //   textAnimationSet.addAnimation(tAnimation);
+//        textAnimationSet.addAnimation(aAnimation);
+//        textAnimationSet.addAnimation(animation);
+//        textAnimationSet.setFillBefore(false);
+//        textAnimationSet.setFillAfter(false);
+//        textAnimationSet.setFillEnabled(true);
+//        textAnimationSet.setDuration(2500);
+//
+//        textScore.setAnimation(textAnimationSet);
+//    }
 }
