@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
-import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -151,15 +150,8 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 					}
 					mainPosInfo = App.instance.getCurrentConnectedMainPos();
 					Message message = new Message();
-					if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-						message.obj = kotItem.getNumTag()+IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
-						message.arg2 = kotItem.getItemDetailId();
-						//	int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kotItem.getOrderNo());
-						//message.arg1 = -1;
-					} else {
-						message.obj = kotItem.getNumTag() + kotItem.getOrderNo();
-						message.arg2 = kotItem.getItemDetailId();
-					}
+					message.obj = kotItem;
+					message.arg2 = kotItem.getItemDetailId();
 					message.what = App.HANDLER_KOT_CALL_NUM;
 					handler.sendMessage(message);
 				}

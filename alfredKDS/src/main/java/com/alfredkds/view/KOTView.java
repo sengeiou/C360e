@@ -311,15 +311,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
 					return;
 				}
 				Message message = new Message();
-				if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-					int orderNoStr = IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo());
-					message.obj = kot.getKotSummary().getNumTag() + orderNoStr;
-					message.arg2=-1;
-				}else {
-					message.obj = kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo();
-					message.arg2=-1;
-				}
-				message.what = App.HANDLER_KOT_CALL_NUM;
+				message.obj = kot;
+				message.arg2=-1;
+				message.what = App.HANDLER_KOT_CALL_NUM_OLD;
 				handler.sendMessage(message);
 			}
 		});

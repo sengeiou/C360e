@@ -223,17 +223,38 @@ public class KitchenOrder extends BaseActivity {
 					}
 
 					break;
-				case App.HANDLER_KOT_CALL_NUM:
-					String str = (String) msg.obj;
+				case App.HANDLER_KOT_CALL_NUM: {
+					KotItem kotItem = (KotItem) msg.obj;
+					String str = kotItem.getNumTag() + IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
+					String numTag = kotItem.getNumTag();
 					int id=msg.arg2;
 					if (!TextUtils.isEmpty(str)) {
 						loadingDialog.show();
 						Map<String, Object> parameters = new HashMap<String, Object>();
 						parameters.put("callnumber", str);
-						SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler,id);
-					}else {
+						parameters.put("numTag", numTag);
+						SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
+					} else {
 						UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
 					}
+				}
+					break;
+				case App.HANDLER_KOT_CALL_NUM_OLD: {
+					Kot kot = (Kot) msg.obj;
+					KotSummary k = kot.getKotSummary();
+					String str = k.getNumTag() + IntegerUtils.fromat(k.getRevenueCenterIndex(), k.getOrderNo() + "");
+					String numTag = k.getNumTag();
+					int id=msg.arg2;
+					if (!TextUtils.isEmpty(str)) {
+						loadingDialog.show();
+						Map<String, Object> parameters = new HashMap<String, Object>();
+						parameters.put("callnumber", str);
+						parameters.put("numTag", numTag);
+						SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
+					} else {
+						UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
+					}
+				}
 					break;
 				case App.HANDLER_KOT_COMPLETE_ALL:
 					Bundle bundle = msg.getData();

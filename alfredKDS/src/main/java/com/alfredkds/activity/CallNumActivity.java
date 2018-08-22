@@ -49,6 +49,7 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
                 loadingDialog.show();
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("callnumber", str);
+                parameters.put("numTag", "");
                 SyncCentre.getInstance().callSpecifyNum(CallNumActivity.this, App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
             }else {
                 UIHelp.showToast(CallNumActivity.this, "The order number can not be empty");

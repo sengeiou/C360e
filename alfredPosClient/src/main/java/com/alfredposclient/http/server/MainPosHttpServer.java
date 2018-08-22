@@ -2649,13 +2649,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		try {
 			JSONObject jsonObject = new JSONObject(params);
 			final String str = jsonObject.getString("callnumber");
+			final String tag = jsonObject.getString("numTag");
 
 			String ip=App.instance.getCallAppIp();
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-						SyncCentre.getInstance().callAppNo(App.getTopActivity(),"", str);
+						SyncCentre.getInstance().callAppNo(App.getTopActivity(),tag, str);
 					}
 				}
 			}).start();

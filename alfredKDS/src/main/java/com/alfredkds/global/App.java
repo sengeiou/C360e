@@ -52,6 +52,7 @@ public class App extends BaseApplication {
 	public static final int HANDLER_KOT_ITEM_CALL = 19;
 
 	public static final int HANDLER_KOT_CALL_NUM = 101;
+	public static final int HANDLER_KOT_CALL_NUM_OLD = 100;
 	public static final int HANDLER_KOT_COMPLETE_ALL = 102;
 	public static final int HANDLER_KOT_COMPLETE = 103;
 	

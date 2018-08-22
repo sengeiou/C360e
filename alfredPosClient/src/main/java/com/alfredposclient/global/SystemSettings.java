@@ -591,7 +591,7 @@ public class SystemSettings {
     }
 
     public void setCallStyle(Integer style) {
-        Store.putInt(this.context, Store.OF_PAX,
+        Store.putInt(this.context, Store.CALL_STYLE,
                 style.intValue());
         this.callStyle = style.intValue();
 
