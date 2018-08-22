@@ -1276,7 +1276,7 @@ public class DataHelper {
 	+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId)"
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId)"
  */
             db.execSQL("CREATE TABLE "
                     + TableNames.CPOrder
@@ -1285,7 +1285,7 @@ public class DataHelper {
                     + "restId INTEGER, revenueId INTEGER, placeId INTEGER, tableId INTEGER, createTime LONG, updateTime LONG,"
                     + "orderNo INTEGER,businessDate LONG,discount_rate TEXT,discount_type INTEGER, discountPrice TEXT, inclusiveTaxName TEXT, "
                     + "inclusiveTaxPrice TEXT, inclusiveTaxPercentage TEXT, appOrderId INTEGER default 0,isTakeAway INTEGER default 0,tableName TEXT default '', "
-                    + "orderRemark TEXT, numTag TEXT default '', subPosBeanId INTEGER default 0)");
+                    + "orderRemark TEXT, discountCategoryId INTEGR, numTag TEXT default '', subPosBeanId INTEGER default 0)");
 /*
 + "(id,orderId,orderOriginId,userId,persons,orderStatus,subTotal,"
 					+ "taxAmount,discountAmount,total,sessionStatus,restId, "

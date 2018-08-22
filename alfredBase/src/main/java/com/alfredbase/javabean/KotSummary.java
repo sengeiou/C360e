@@ -35,6 +35,8 @@ public class KotSummary implements Serializable{
 	private String empName; // 提交菜品的用户名
 
 	private String numTag="";
+
+	private int isSubPos;
 	
 	public Integer getId() {
 		return id;
@@ -170,6 +172,14 @@ public class KotSummary implements Serializable{
 
 	public void setNumTag(String numTag) {
 		this.numTag = numTag;
+	}
+
+	public int getIsSubPos() {
+		return isSubPos;
+	}
+
+	public void setIsSubPos(int isSubPos) {
+		this.isSubPos = isSubPos;
 	}
 
 	@Override

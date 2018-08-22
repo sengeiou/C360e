@@ -288,13 +288,56 @@ public class KotSummarySQL {
 		}
 		return result;
 	}
-	
-	public static KotSummary getKotSummary(int orderId) {
+	public static ArrayList<KotSummary> getUndoneKotSummaryByBusinessDateForSubKiosk(long businessDate) {
+		ArrayList<KotSummary> result = new ArrayList<KotSummary>();
+		String sql = "select * from " + TableNames.KotSummary + " where status = " + ParamConst.KOTS_STATUS_UNDONE + " and orderId in ( select id from " + TableNames.CPOrder + " where businessDate = ? )";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {businessDate+""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			KotSummary kotSummary = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				kotSummary = new KotSummary();
+				kotSummary.setId(cursor.getInt(0));
+				kotSummary.setOrderId(cursor.getInt(1));
+				kotSummary.setRevenueCenterId(cursor.getInt(2));
+				kotSummary.setTableId(cursor.getInt(3));
+				kotSummary.setTableName(cursor.getString(4));
+				kotSummary.setRevenueCenterName(cursor.getString(5));
+				kotSummary.setStatus(cursor.getInt(6));
+				kotSummary.setCreateTime(cursor.getLong(7));
+				kotSummary.setUpdateTime(cursor.getLong(8));
+				kotSummary.setBusinessDate(cursor.getLong(9));
+				kotSummary.setIsTakeAway(cursor.getInt(10));
+				kotSummary.setOrderNo(cursor.getInt(11));
+				kotSummary.setRevenueCenterIndex(cursor.getInt(12));
+				kotSummary.setOrderRemark(cursor.getString(13));
+				kotSummary.setEmpName(cursor.getString(14));
+				kotSummary.setNumTag(cursor.getString(15));
+				result.add(kotSummary);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
+	public static KotSummary getKotSummary(int orderId, String numTag) {
 		KotSummary kotSummary = null;
-		String sql = "select * from " + TableNames.KotSummary + " where orderId = ?";
+		String sql = "select * from " + TableNames.KotSummary + " where orderId = ? and numTag = ?";
 		Cursor cursor = null;
 		try {
-			cursor = SQLExe.getDB().rawQuery(sql, new String[] {orderId + ""});
+			cursor = SQLExe.getDB().rawQuery(sql, new String[] {orderId + "", numTag});
 			if (cursor.moveToFirst()) {
 				kotSummary = new KotSummary();
 				kotSummary.setId(cursor.getInt(0));
@@ -325,13 +368,13 @@ public class KotSummarySQL {
 		return kotSummary;
 	}
 
-	public static ArrayList<KotSummary> getKotSummaryForTransfer(int orderId) {
+	public static ArrayList<KotSummary> getKotSummaryForTransfer(int orderId, String numTag) {
 		ArrayList<KotSummary> result = new ArrayList<KotSummary>();
-		String sql = "select * from " + TableNames.KotSummary + " where orderId = ?";
+		String sql = "select * from " + TableNames.KotSummary + " where orderId = ? and numTag = ?";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
-			cursor = db.rawQuery(sql, new String[] {orderId+""});
+			cursor = db.rawQuery(sql, new String[] {orderId+"", numTag});
 			int count = cursor.getCount();
 			if (count < 1) {
 				return result;
@@ -453,9 +496,9 @@ public class KotSummarySQL {
 	
 	public static void deleteKotSummaryByOrder(Order order) {
 		String sql = "delete from " + TableNames.KotSummary
-				+ " where orderId = ?";
+				+ " where orderId = ? and numTag = ?";
 		try {
-			SQLExe.getDB().execSQL(sql, new Object[] { order.getId() });
+			SQLExe.getDB().execSQL(sql, new Object[] { order.getId(), order.getNumTag() });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

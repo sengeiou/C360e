@@ -858,7 +858,7 @@ public class MainPageKiosk extends BaseActivity {
                             orderDetailIds.add(orderDetail.getId());
                         }
 
-                        KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrder.getId());
+                        KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrder.getId(), paidOrder.getNumTag());
                         if (kotSummary != null) {
                             ArrayList<KotItemDetail> kotItemDetails =
                                     KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummary.getId(), paidOrder.getId());
@@ -1045,7 +1045,7 @@ public class MainPageKiosk extends BaseActivity {
                         ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
                         ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
 
-                        KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrderSplit.getOrderId());
+                        KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrderSplit.getOrderId(), "");
                         if (kotSummary != null) {
                             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                             for (OrderDetail orderDetail : placedOrderDetails) {
@@ -1236,7 +1236,7 @@ public class MainPageKiosk extends BaseActivity {
                                                 .getPosId());
                                         OrderSQL.update(currentOrder);
                                         KotSummary fromKotSummary = KotSummarySQL
-                                                .getKotSummary(currentOrder.getId());
+                                                .getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                                         fromKotSummary.setTableName(currentTable
                                                 .getName());
                                         Map<String, Object> parameters = new HashMap<String, Object>();
@@ -1266,7 +1266,7 @@ public class MainPageKiosk extends BaseActivity {
                                             && orderBill.getBillNo() != null) {
                                         initOrder(currentTable);
                                         KotSummary toKotSummary = KotSummarySQL
-                                                .getKotSummary(currentOrder.getId());
+                                                .getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                                         if (toKotSummary == null) {
                                             toKotSummary = ObjectFactory
                                                     .getInstance()
@@ -1280,7 +1280,7 @@ public class MainPageKiosk extends BaseActivity {
                                             KotSummarySQL.update(toKotSummary);
                                         }
                                         KotSummary fromKotSummary = KotSummarySQL
-                                                .getKotSummary(oldOrder.getId());
+                                                .getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
                                         Map<String, Object> parameters = new HashMap<String, Object>();
                                         parameters.put("action",
                                                 ParamConst.JOB_MERGER_KOT);
@@ -1442,7 +1442,7 @@ public class MainPageKiosk extends BaseActivity {
                                                     .getId());
                                     kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
                                     KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-                                            .getOrderId());
+                                            .getOrderId(), "");
                                     KotItemDetailSQL.update(kotItemDetail);
                                     ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                                     kotItemDetails.add(kotItemDetail);
@@ -1664,7 +1664,7 @@ public class MainPageKiosk extends BaseActivity {
                         kotItemDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
                         kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
                         KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-                                .getOrderId());
+                                .getOrderId(), "");
                         kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
                         KotSummarySQL.update(kotSummary);
                         KotItemDetailSQL.update(kotItemDetail);

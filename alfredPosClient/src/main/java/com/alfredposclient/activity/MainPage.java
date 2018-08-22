@@ -784,7 +784,7 @@ public class MainPage extends BaseActivity {
                     final Order paidOrder = OrderSQL.getOrder(Integer.valueOf(paymentMap.get("orderId")));
                     List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
                             .getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
-                    KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId());
+                    KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                     if (kotSummary != null) {
                         kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
                         KotSummarySQL.update(kotSummary);
@@ -1177,7 +1177,7 @@ public class MainPage extends BaseActivity {
                                         currentOrder.setTableId(currentTable
                                                 .getPosId());
                                         OrderSQL.update(currentOrder);
-                                        List<KotSummary> kotSummaryList = KotSummarySQL.getKotSummaryForTransfer(currentOrder.getId());
+                                        List<KotSummary> kotSummaryList = KotSummarySQL.getKotSummaryForTransfer(currentOrder.getId(), currentOrder.getNumTag());
                                         if (kotSummaryList != null) {
                                             for (KotSummary fromKotSummary : kotSummaryList) {
                                                 fromKotSummary.setTableName(currentTable
@@ -1212,7 +1212,7 @@ public class MainPage extends BaseActivity {
                                             && orderBill.getBillNo() != null) {
                                         initOrder(currentTable);
                                         KotSummary toKotSummary = KotSummarySQL
-                                                .getKotSummary(currentOrder.getId());
+                                                .getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                                         if (toKotSummary == null) {
                                             toKotSummary = ObjectFactory
                                                     .getInstance()
@@ -1226,7 +1226,7 @@ public class MainPage extends BaseActivity {
                                             KotSummarySQL.update(toKotSummary);
                                         }
                                         KotSummary fromKotSummary = KotSummarySQL
-                                                .getKotSummary(oldOrder.getId());
+                                                .getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
                                         Map<String, Object> parameters = new HashMap<String, Object>();
                                         parameters.put("action",
                                                 ParamConst.JOB_MERGER_KOT);
@@ -1299,7 +1299,7 @@ public class MainPage extends BaseActivity {
 
                                 if (transfItemOrderDetail.getOrderDetailStatus().intValue() > ParamConst.ORDERDETAIL_STATUS_ADDED) {
                                     KotSummary toKotSummary = KotSummarySQL
-                                            .getKotSummary(currentOrder.getId());
+                                            .getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                                     if (toKotSummary == null) {
                                         toKotSummary = ObjectFactory
                                                 .getInstance()
@@ -1313,7 +1313,7 @@ public class MainPage extends BaseActivity {
                                         KotSummarySQL.update(toKotSummary);
                                     }
                                     KotSummary fromKotSummary = KotSummarySQL
-                                            .getKotSummary(oldOrder.getId());
+                                            .getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
                                     KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(transfItemOrderDetail.getTransferFromDetailId());
                                     if (idNull) {
                                         kotItemDetail = ObjectFactory.getInstance().cpKotItemDetail(kotItemDetail, transfItemOrderDetail);
@@ -1504,7 +1504,7 @@ public class MainPage extends BaseActivity {
                                                     .getId());
                                     kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
                                     KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-                                            .getOrderId());
+                                            .getOrderId(), "");
                                     KotItemDetailSQL.update(kotItemDetail);
                                     ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                                     kotItemDetails.add(kotItemDetail);
@@ -1802,7 +1802,7 @@ public class MainPage extends BaseActivity {
                         kotItemDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
                         kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
                         KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-                                .getOrderId());
+                                .getOrderId(), "");
                         kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
                         KotSummarySQL.update(kotSummary);
                         KotItemDetailSQL.update(kotItemDetail);

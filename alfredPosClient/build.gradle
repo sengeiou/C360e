@@ -35,7 +35,6 @@ android {
         main {
             res.srcDirs =
                 [
-
                     'src/main/res/layout/subpos',
                     'src/main/res/layout/subpos/layout',
                     'src/main/res/layout',
@@ -43,7 +42,6 @@ android {
                 ]
         }
     }
-
 
     //配置keystore签名
 //    signingConfigs {

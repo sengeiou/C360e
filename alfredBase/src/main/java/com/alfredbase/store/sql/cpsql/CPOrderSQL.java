@@ -109,7 +109,7 @@ public class CPOrderSQL {
 
 	public static Order getOrder(Integer orderID) {
 		Order order = null;
-		String sql = "select * from " + TableNames.Order + " where id = ?";
+		String sql = "select * from " + TableNames.CPOrder + " where id = ?";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB()

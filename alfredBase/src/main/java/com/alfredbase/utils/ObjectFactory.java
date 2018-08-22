@@ -1627,7 +1627,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 
 		KotSummary kotSummary = null;
 		synchronized(lock_getKotSummary) {
-			kotSummary =  KotSummarySQL.getKotSummary(order.getId());
+			kotSummary =  KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
 			long time = System.currentTimeMillis();
 			if (kotSummary == null) {
 				kotSummary = new KotSummary();

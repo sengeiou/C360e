@@ -1210,6 +1210,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private void printBill(final String change) {
         final int paidOrderId = order.getId();
         final int tabelId = order.getTableId();
+        final String numTag = order.getNumTag();
         new Thread(new Runnable() {
 
             @Override
@@ -1217,7 +1218,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                 //DONE all KOT SUMMARY and ITEM DETAILS
                 KotSummary kotSummary = KotSummarySQL
-                        .getKotSummary(paidOrderId);
+                        .getKotSummary(paidOrderId, numTag);
                 PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
                 if (!App.instance.isRevenueKiosk() && kotSummary != null) {
                     List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);

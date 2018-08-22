@@ -108,6 +108,10 @@ import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderModifierSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderSplitSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
@@ -786,6 +790,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					SubPosBeanSQL.updateSubPosBean(subPosBean);
 				}
 				result.put("subPosBean", subPosBean);
+				result.put("businessDate", App.instance.getBusinessDate());
 				resp = this.getJsonResponse(gson.toJson(result));
 			} else {
 				result.put("resultCode", ResultCode.USER_NO_PERMIT);
@@ -894,8 +899,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						Order placeOrder = OrderSQL.getOrder(orderId);
-						List<OrderSplit> placeOrderSplit = OrderSplitSQL.getUnFinishedOrderSplits(orderId);
+						Order placeOrder = CPOrderSQL.getOrder(orderId);
+						List<OrderSplit> placeOrderSplit = CPOrderSplitSQL.getUnFinishedOrderSplits(orderId);
 						KotSummary kotSummary = ObjectFactory.getInstance()
 								.getKotSummary(
 										TableInfoSQL.getTableById(
@@ -906,7 +911,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							for (OrderSplit orderSplit : placeOrderSplit) {
 								if (kotSummary != null) {
 									ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
-									List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(orderSplit);
+									List<OrderDetail> placedOrderDetails = CPOrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(orderSplit);
 									List<Integer> orderDetailIds = new ArrayList<Integer>();
 									ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 									for (OrderDetail orderDetail : placedOrderDetails) {
@@ -932,7 +937,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 										KotItemDetailSQL.update(kotItemDetail);
 										kotItemDetails.add(kotItemDetail);
 										orderDetailIds.add(orderDetail.getId());
-										ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+										ArrayList<OrderModifier> orderModifiers = CPOrderModifierSQL
 												.getOrderModifiers(placeOrder, orderDetail);
 										for (OrderModifier orderModifier : orderModifiers) {
 											if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
@@ -959,7 +964,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 									Map<String, Object> orderMap = new HashMap<String, Object>();
 									orderMap.put("orderId", orderSplit.getOrderId());
 									orderMap.put("orderDetailIds", orderDetailIds);
-									App.instance.getKdsJobManager().tearDownKot(
+									App.instance.getKdsJobManager().tearDownKotForSub(
 											kotSummary, kotItemDetails,
 											kotItemModifiers, ParamConst.JOB_NEW_KOT,
 											orderMap);
@@ -969,7 +974,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							if (kotSummary != null) {
 								ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
 								ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
-								List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetails(placeOrder.getId());
+								List<OrderDetail> placedOrderDetails = CPOrderDetailSQL.getOrderDetails(placeOrder.getId());
 								List<Integer> orderDetailIds = new ArrayList<Integer>();
 								for (OrderDetail orderDetail : placedOrderDetails) {
 									orderDetailIds.add(orderDetail.getId());
@@ -994,7 +999,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 									KotItemDetailSQL.update(kotItemDetail);
 									kotItemDetails.add(kotItemDetail);
 									orderDetailIds.add(orderDetail.getId());
-									ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+									ArrayList<OrderModifier> orderModifiers = CPOrderModifierSQL
 											.getOrderModifiers(placeOrder, orderDetail);
 									for (OrderModifier orderModifier : orderModifiers) {
 										if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
@@ -1034,7 +1039,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 //								orderMap.put("paidOrder", placeOrder);
 //								orderMap.put("title", title);
 //								orderMap.put("placedOrderDetails", placedOrderDetails);
-								App.instance.getKdsJobManager().tearDownKot(
+								App.instance.getKdsJobManager().tearDownKotForSub(
 										kotSummary, kotItemDetails,
 										kotItemModifiers, ParamConst.JOB_NEW_KOT,
 										orderMap);
@@ -1406,6 +1411,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						if(App.instance.isRevenueKiosk()){
 							kotSummaryList = KotSummarySQL.getUndoneKotSummaryByBusinessDateForKiosk(App.instance
 									.getBusinessDate());
+							List<KotSummary> k = KotSummarySQL.getUndoneKotSummaryByBusinessDateForSubKiosk(App.instance
+									.getBusinessDate());
+							if(k != null && k.size() > 0){
+								kotSummaryList.addAll(k);
+							}
 						}else{
 							kotSummaryList = KotSummarySQL
 									.getUndoneKotSummaryByBusinessDateAndOrderUnfinish(App.instance
@@ -2655,7 +2665,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								.getId());
 				kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
 				KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-						.getOrderId());
+						.getOrderId(), "");
 				KotItemDetailSQL.update(kotItemDetail);
 				ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 				kotItemDetails.add(kotItemDetail);

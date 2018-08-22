@@ -17,6 +17,7 @@ import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -155,6 +156,123 @@ public class KotJobManager {
 									}
 								}
 								OrderDetailSQL.addOrderDetailList(orderDetails);
+								LogUtil.e("成功时间", "时间");
+								context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED,
+										orderMap.get("orderId"));
+							}
+						} else {
+							context.kotPrintStatus(MainPage.KOT_PRINT_FAILED,
+									orderMap.get("orderId"));
+						}
+					}
+				}
+			}
+
+		}
+	}
+	public void tearDownKotForSub(KotSummary kotSummary,
+			ArrayList<KotItemDetail> kot, ArrayList<KotItemModifier> modifiers,
+			String method, Map<String, Object> orderMap) {
+		LogUtil.d("开始时间","时间");
+		ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
+		// map printergroudId to Kot: Group ID --> Details
+		Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<Integer, ArrayList<KotItemDetail>>();
+		// map printerGroudId to Modifiers
+		Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<Integer, ArrayList<KotItemModifier>>();
+		BaseActivity context = App.getTopActivity();
+		for (KotItemDetail items : kot) {
+			Integer pgid = items.getPrinterGroupId();
+			if(pgid.intValue() == 0){
+				context.kotPrintStatus(MainPage.KOT_ITEM_PRINT_NULL,
+						items.getItemName());
+				return;
+			}
+			int kotItemDetailId = items.getId().intValue();
+
+			// Get all Group ids that KOT blongs to
+			if (!printerGrougIds.contains(pgid))
+				printerGrougIds.add(pgid);
+
+			// kot
+			if (kots.containsKey(pgid)) {
+				ArrayList<KotItemDetail> tmp = kots.get(pgid);
+				tmp.add(items);
+			} else {
+				ArrayList<KotItemDetail> tmp = new ArrayList<KotItemDetail>();
+				tmp.add(items);
+				kots.put(pgid, tmp);
+			}
+
+			// modifier
+			if (mods.containsKey(pgid)) {
+				ArrayList<KotItemModifier> tmp = mods.get(pgid);
+				for (KotItemModifier mof : modifiers) {
+					if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+						tmp.add(mof);
+					}
+				}
+			} else {
+				ArrayList<KotItemModifier> tmp = new ArrayList<KotItemModifier>();
+				for (KotItemModifier mof : modifiers) {
+					if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+						tmp.add(mof);
+					}
+				}
+				mods.put(items.getPrinterGroupId(), tmp);
+			}
+		}
+
+		if(printerGrougIds !=null && printerGrougIds.size() > 0 && kotSummary !=null){
+			kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
+			KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId().intValue());
+		}
+
+
+
+		// add job to send it to KDS
+		for (Integer prgid : printerGrougIds) {
+			ArrayList<Printer> printers = CoreData.getInstance()
+					.getPrintersInGroup(prgid.intValue());
+			for (Printer prnt : printers) {
+				// KDS device
+				KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
+				// physical printer
+				PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
+						.getId());
+				if(kds1 == null && prntd == null){
+					context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
+					return;
+				}
+				if (kds1 != null) {
+					KotJob kotjob = new KotJob(kds1, kotSummary,
+							kots.get(prgid), mods.get(prgid), method, orderMap);
+					kotJobManager.addJob(kotjob);
+				}
+				if(prntd != null){
+					prntd.setGroupId(prgid.intValue());
+
+					boolean printed = false;
+
+					if((!prntd.getIP().contains(":") && !prntd.getIP().contains(",") )|| prntd.getIsLablePrinter() != 1){
+						printed = App.instance.remoteKotPrint(prntd,
+								kotSummary, kots.get(prgid), mods.get(prgid), false);
+
+						if (printed) {
+							List<Integer> orderDetailIds = (List<Integer>) orderMap
+									.get("orderDetailIds");
+							if (orderDetailIds != null && orderDetailIds.size() != 0) {
+								ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+								synchronized (orderDetails) {
+									for (int i = 0; i < orderDetailIds.size(); i++) {
+										OrderDetail orderDetail = CPOrderDetailSQL
+												.getOrderDetail(orderDetailIds
+														.get(i));
+										orderDetail
+												.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
+										orderDetails.add(orderDetail);
+									}
+								}
+								CPOrderDetailSQL.addOrderDetailList(orderDetails);
 								LogUtil.e("成功时间", "时间");
 								context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED,
 										orderMap.get("orderId"));
@@ -386,7 +504,7 @@ public class KotJobManager {
 			}
 			context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE,
 					order);
-			printKotSummary = KotSummarySQL.getKotSummary(fromKotSummary.getOrderId());
+			printKotSummary = KotSummarySQL.getKotSummary(fromKotSummary.getOrderId(), fromKotSummary.getNumTag());
 		}
 		boolean printed = false;
 		if(App.instance.getSystemSettings().isTransferPrint()) {
