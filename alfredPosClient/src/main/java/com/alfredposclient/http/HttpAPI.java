@@ -2,6 +2,7 @@ package com.alfredposclient.http;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alfredbase.ParamConst;
@@ -799,15 +800,15 @@ public class HttpAPI {
      * Sync order and XZReport data from POS to Cloud
      */
 
-  //  reportDaySales,reportDayTaxs,
-  //	ReportDaySales reportDaySales;
+    //  reportDaySales,reportDayTaxs,
+    //	ReportDaySales reportDaySales;
 //	List<ReportDayTax> reportDayTaxs;
     public static void sendEmailSync(Context context, final ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs, List<ReportDayPayment> reportDayPayments,
-                                        String url, SyncHttpClient httpClient) {
+                                     String url, SyncHttpClient httpClient) {
         // try {
         StringEntity entity = null;
         try {
-            entity = HttpAssembling.getSendemailParam(reportDaySales,reportDayTaxs, reportDayPayments);
+            entity = HttpAssembling.getSendemailParam(reportDaySales, reportDayTaxs, reportDayPayments);
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -819,7 +820,7 @@ public class HttpAPI {
                         public void onSuccess(int statusCode, Header[] headers,
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            LogUtil.d("HttpAPI--", statusCode+"");
+                            LogUtil.d("HttpAPI--", statusCode + "");
 //                            if (resultCode == ResultCode.SUCCESS
 //                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
 //                                syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);
@@ -841,7 +842,7 @@ public class HttpAPI {
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
 
-                            LogUtil.d("HttpAPI--onFailure", statusCode+"");
+                            LogUtil.d("HttpAPI--onFailure", statusCode + "");
                             // no need change status here. JOB will get the
                             // exception to rerun job
                             // syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
@@ -875,7 +876,7 @@ public class HttpAPI {
                         public void onSuccess(final int statusCode, final Header[] headers,
                                               final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            LogUtil.d("mediaSync--", statusCode+"----"+resultCode);
+                            LogUtil.d("mediaSync--", statusCode + "----" + resultCode);
 
 
                             if (resultCode == 1) {
@@ -890,7 +891,7 @@ public class HttpAPI {
                                             App.instance.setPushMsgMap(map);
                                         }
                                         Log.e("TAG", "-------------------progress");
-                                        HttpAnalysis.getOther(statusCode,headers,responseBody);
+                                        HttpAnalysis.getOther(statusCode, headers, responseBody);
                                         if (mode == SyncCentre.MODE_FIRST_SYNC) {
                                             handler.sendMessage(handler
                                                     .obtainMessage(
@@ -913,15 +914,13 @@ public class HttpAPI {
                             }
 
 
-
-
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
 
-                            LogUtil.d("HttpAPI--onFailure", statusCode+"");
+                            LogUtil.d("HttpAPI--onFailure", statusCode + "");
                             if (mode == SyncCentre.MODE_PUSH_SYNC) {
                                 handler.sendMessage(handler.obtainMessage(
                                         ResultCode.CONNECTION_FAILED, error));
@@ -938,7 +937,8 @@ public class HttpAPI {
         }
 
     }
-        /*
+
+    /*
      * Sync order and XZReport data from POS to Cloud
      */
     public static void cloudSync(Context context, final SyncMsg syncMsg,
@@ -1307,6 +1307,7 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+
     public static void appOrderRefund(Context context, String url,
                                       AsyncHttpClient httpClient, final int appOrderId, final Handler handler) {
         try {
@@ -1324,13 +1325,13 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
-                                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
+                                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
                                 handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.CANCEL_APPORDER_SUCCESS, resultCode));
                                 return;
-                            }else if(resultCode == ResultCode.APP_REFUND_FAILD){
+                            } else if (resultCode == ResultCode.APP_REFUND_FAILD) {
                                 try {
                                     JSONObject jsonObject = new JSONObject(new String(responseBody));
-                                    String content = jsonObject.getString(resultCode+"");
+                                    String content = jsonObject.getString(resultCode + "");
                                     handler.sendMessage(handler.obtainMessage(ResultCode.APP_REFUND_FAILD, content));
                                     return;
                                 } catch (JSONException e) {
@@ -1392,8 +1393,9 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+
     public static void updateTableStatusForApp(Context context, String url,
-                                      AsyncHttpClient httpClient, int tableId, final Handler handler) {
+                                               AsyncHttpClient httpClient, int tableId, final Handler handler) {
         try {
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("tableId", tableId);
@@ -1483,7 +1485,7 @@ public class HttpAPI {
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.RECEVING_APP_ORDER_SUCCESS, appOrderId));
                             } else {
-                                if(resultCode == ResultCode.APP_ORDER_REFUND){
+                                if (resultCode == ResultCode.APP_ORDER_REFUND) {
                                     AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
                                 }
                                 handler.sendMessage(handler.obtainMessage(
@@ -1643,8 +1645,8 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 int payTypeId = -1;
-                                if(parameters.containsKey("payTypeId")){
-                                    payTypeId = (Integer)parameters.get("payTypeId");
+                                if (parameters.containsKey("payTypeId")) {
+                                    payTypeId = (Integer) parameters.get("payTypeId");
                                 }
                                 HttpAnalysis.updateStoredCardValue(responseBody, payTypeId);
                                 handler.sendEmptyMessage(StoredCardActivity.PAID_STOREDCARD_SUCCEED);
@@ -1735,8 +1737,9 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+
     public static void queryStoredCardBalance(Context context, String url, AsyncHttpClient httpClient,
-                                             Map<String, Object> parameters, final Handler handler) {
+                                              Map<String, Object> parameters, final Handler handler) {
         try {
             httpClient.post(context, url,
                     HttpAssembling.encapsulateBaseInfo(parameters),
@@ -1752,7 +1755,7 @@ public class HttpAPI {
                                 try {
                                     JSONObject object = new JSONObject(new String(responseBody));
                                     balance = BH.getBD(object.getDouble("balance")).toString();
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                                 handler.sendMessage(handler.obtainMessage(StoredCardActivity.QUERYBALANCE_STOREDCARD_SUCCEED, balance));
@@ -1775,6 +1778,7 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+
     public static void getAppVersion(final Context context, String url, AsyncHttpClient httpClient,
                                      Map<String, Object> parameters, final int applicationTypes) {
         try {
@@ -1793,7 +1797,7 @@ public class HttpAPI {
                                     Gson gson = new Gson();
                                     JSONObject jsonObject = new JSONObject(new String(responseBody));
                                     VersionUpdate versionUpdate = gson.fromJson(jsonObject.toString(), VersionUpdate.class);
-                                    switch (applicationTypes){
+                                    switch (applicationTypes) {
                                         case 0:
                                             Store.saveObject(context, Store.POS_SYSTEM_UPDATE_INFO, versionUpdate);
                                             break;
@@ -1804,14 +1808,14 @@ public class HttpAPI {
                                             Store.saveObject(context, Store.KDS_SYSTEM_UPDATE_INFO, versionUpdate);
                                             break;
                                     }
-                                    if(applicationTypes == 0){
+                                    if (applicationTypes == 0) {
 
                                     }
 
                                 } else {
 
                                 }
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
@@ -1832,18 +1836,18 @@ public class HttpAPI {
 
 
     public static void getClockInUserTimeSheet(final Context context, String url,
-                                               AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler){
+                                               AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler) {
         try {
-            httpClient.post(context, url,HttpAssembling.getPlaceParam(parameters),
+            httpClient.post(context, url, HttpAssembling.getPlaceParam(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            if(resultCode == ResultCode.SUCCESS) {
+                            if (resultCode == ResultCode.SUCCESS) {
                                 List<UserTimeSheet> userTimeSheetList = HttpAnalysis.getClockInUserTimeSheet(responseBody);
                                 handler.sendMessage(handler.obtainMessage(ClockInOROut.GET_LIST_SUCCESS, userTimeSheetList));
-                            }else {
+                            } else {
                                 handler.sendMessage(handler.obtainMessage(ClockInOROut.HTTP_FAIL, resultCode));
                             }
                         }
@@ -1856,22 +1860,23 @@ public class HttpAPI {
                                         ResultCode.CONNECTION_FAILED, error));
                         }
                     });
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     public static void clockInOut(final Context context, String url,
-                                               AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler){
+                                  AsyncHttpClient httpClient, final Map<String, Object> parameters, final Handler handler) {
         try {
-            httpClient.post(context, url,HttpAssembling.getPlaceParam(parameters),
+            httpClient.post(context, url, HttpAssembling.getPlaceParam(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            if(resultCode == ResultCode.SUCCESS) {
+                            if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendEmptyMessage(ClockInOROut.CLOCK_SUCCESS);
-                            }else if(resultCode == ResultCode.USER_LOGIN_EXIST){
+                            } else if (resultCode == ResultCode.USER_LOGIN_EXIST) {
                                 handler.sendMessage(handler.obtainMessage(resultCode, parameters.get("type")));
                             } else {
                                 handler.sendMessage(handler.obtainMessage(ClockInOROut.HTTP_FAIL, resultCode));
@@ -1886,18 +1891,30 @@ public class HttpAPI {
                                         ResultCode.CONNECTION_FAILED, error));
                         }
                     });
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
     public static void callAppNo(final Context context, String url,
-                                 AsyncHttpClient httpClient, String num) {
+                                 AsyncHttpClient httpClient, String tag, String num) {
         try {
-            RequestParams requestParams = new RequestParams();
-            requestParams.put("callnumber", IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), num));
-            httpClient.get(context, url, requestParams, new AsyncHttpResponseHandler() {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("callNumber",  num);
+            requestParams.put("callType", App.instance.getSystemSettings().getCallStyle());
+
+            if(TextUtils.isEmpty(tag)) {
+                //     byte t = (byte) tag.charAt(0);
+                requestParams.put("callTag", 1);
+            }else {
+                byte t = (byte) tag.charAt(0);
+                requestParams.put("callTag",1);
+            }
+
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             System.out.print("192.168.20.102========onSuccess");
@@ -1950,7 +1967,7 @@ public class HttpAPI {
     }
 
     public static void downloadApk(String url,
-                                   AsyncHttpClient httpClient){
+                                   AsyncHttpClient httpClient) {
         httpClient.get(url, new BinaryHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] binaryData) {

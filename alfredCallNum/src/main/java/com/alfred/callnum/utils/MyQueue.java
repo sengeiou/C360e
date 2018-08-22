@@ -2,6 +2,9 @@ package com.alfred.callnum.utils;
 
 import android.text.TextUtils;
 
+import com.alfred.callnum.adapter.CallBean;
+import com.alfredbase.javabean.model.KDSDevice;
+
 import java.util.LinkedList;
 
 
@@ -20,10 +23,12 @@ public class MyQueue {
     }
     public void enQueue(Object o)//进队
     {
-       if(!TextUtils.isEmpty(o.toString())&&!o.toString().equals(ob.toString()))
+
+        CallBean callBean = (CallBean) o;
+       if(!TextUtils.isEmpty(o.toString())&&!callBean.getCallNumber().toString().equals(ob.toString()))
        {
             list.addLast(o);
-            ob=o.toString();
+            ob=callBean.getCallNumber().toString();
        }
 
 

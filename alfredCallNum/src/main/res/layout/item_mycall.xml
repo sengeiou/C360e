@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="90dp"
     android:id="@+id/root"
 
     android:gravity="center"
@@ -17,7 +17,8 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text=""
-        android:textSize="20dp"
+        android:textSize="35sp"
+        android:textStyle="bold"
         android:textColor="@android:color/white"
         />
 

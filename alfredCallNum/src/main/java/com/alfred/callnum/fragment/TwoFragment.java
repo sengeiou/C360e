@@ -17,10 +17,18 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -44,6 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,7 +62,7 @@ import java.util.Set;
  * Use the {@link TwoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TwoFragment extends Fragment implements View.OnClickListener,View.OnTouchListener {
+public class TwoFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -67,8 +76,10 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 
     private int vid;
     private RecyclerView re_left, re_right;
-    private List<CallBean> mDatas = new ArrayList<>();
-    MycallAdapter mAdapter;
+    private List<CallBean> mDataLeft;
+    private List<CallBean> mDatasRight;
+    MycallAdapter mAdapterLeft;
+    MycallAdapter mAdapterRight;
     private Button btn_video, btn_picture, btn_empty;
     private VideoView videoView;
     private boolean toPlayVideo = true;
@@ -83,7 +94,8 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
     boolean mbUpdateVideo = false;
     private final static int LOGIN_STATUS_READY = 5;
     private int mVideoDefaultCurPos = 0;// in milisec
-    private Boolean isOpen= true;
+    private Boolean isOpen = true;
+    private Boolean isVol = true;
 
     Handler mPeriodEventHdr = new Handler();
     String mstrPlayFile = null;
@@ -100,11 +112,14 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
     private int counter = 0;
     private LinearLayout li_select;
     RelativeLayout re_video_pic;
-
     Handler handler;
-    Map<String,Object> callMap=new HashMap<String,Object>();
+    Map<String, Object> callMap = new HashMap<String, Object>();
+    private AnimationSet textAnimationSet;
+    private Boolean type = true;
+    private TextView call_big;
+    ScaleAnimation scaleAnimation;
 
-    private Boolean type=true;
+    private ImageView bg;
 
     public static TwoFragment newInstance(String param1, String param2) {
         TwoFragment fragment = new TwoFragment();
@@ -114,6 +129,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,11 +151,13 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initView();
+
         mPeriodEventHdr.postDelayed(mUpdateUiRunnable, 3000);
     }
 
     private void initView() {
-
+        mDataLeft = new ArrayList<>();
+        mDatasRight = new ArrayList<>();
         re_left = (RecyclerView) getActivity().findViewById(R.id.review_left);
         re_right = (RecyclerView) getActivity().findViewById(R.id.review_right);
         btn_video = (Button) getActivity().findViewById(R.id.btn_video);
@@ -149,8 +167,11 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
         picSwitch = (PictureSwitch) getActivity().findViewById(R.id.slImages);
         picSwitch.setInAnimation(getActivity(), android.R.anim.fade_in);
         picSwitch.setOutAnimation(getActivity(), android.R.anim.fade_out);
-        li_select=(LinearLayout)getActivity().findViewById(R.id.li_select) ;
-        re_video_pic=(RelativeLayout)getActivity().findViewById(R.id.re_video_pic) ;
+        li_select = (LinearLayout) getActivity().findViewById(R.id.li_select);
+        re_video_pic = (RelativeLayout) getActivity().findViewById(R.id.re_video_pic);
+
+        call_big = (TextView) getActivity().findViewById(R.id.tv_call_big);
+        bg = (ImageView) getActivity().findViewById(R.id.img_call_bg);
         re_video_pic.setOnTouchListener(this);
         li_select.setVisibility(View.GONE);
         btn_video.setOnClickListener(this);
@@ -158,7 +179,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
         btn_empty.setOnClickListener(this);
         mVideoResManager = new VideoResManager(getActivity());
 
-        if (vid == 3) {
+        if (vid == 1) {
 
             re_right.setVisibility(View.GONE);
             re_left.setVisibility(View.VISIBLE);
@@ -169,51 +190,68 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity()); //设置布局管理器
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity()); //设置布局管理器
 
-        if(vid==3){
-            re_left.setLayoutManager(layoutManager1);
-        }else {
-            re_left.setLayoutManager(layoutManager1); //设置为垂直布局，这也是默认的
-            re_right.setLayoutManager(layoutManager2);
-        }
+
+        re_left.setLayoutManager(layoutManager1); //设置为垂直布局，这也是默认的
+        re_right.setLayoutManager(layoutManager2);
+
 //
 
-        layoutManager1.setOrientation(OrientationHelper.VERTICAL);
+        //  layoutManager1.setOrientation(OrientationHelper.VERTICAL);
 
-        mAdapter = new MycallAdapter(getActivity(), mDatas, new RvListener() {
+        mAdapterLeft = new MycallAdapter(getActivity(), mDataLeft, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
-                // mAdapter.notifyItemChanged(position);
-//                String content = "";
-//                Intent intent=new Intent();
-//                intent.setClass(getActivity(), MainActivity.class);
-//                 startActivity(intent);
 
-//                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//
-//                    @Override
-//                    public void onPrepared(MediaPlayer mp) {
-//
-//
-////                LogFile.i(String.format("OnPrepared,duration=%d",
-////                        mp.getDuration()));
-//                        mp.setVolume(1f, 1f);
-//                        adjustVideoView();
-//                    }
-//                });
+
             }
         });
 
-        if(vid==3){
-            re_left.setAdapter(mAdapter);
-        }else {
-            re_left.setAdapter(mAdapter);
-            re_right.setAdapter(mAdapter);
+        mAdapterRight = new MycallAdapter(getActivity(), mDatasRight, new RvListener() {
+            @Override
+            public void onItemClick(int id, int position) {
+
+
+            }
+        });
+
+        if (vid == 1) {
+            re_left.setAdapter(mAdapterLeft);
+        } else {
+            re_left.setAdapter(mAdapterLeft);
+            re_right.setAdapter(mAdapterRight);
         }
 
-        initData();
+        //  initData();
     }
 
+
     private void initData() {
+        List<CallBean> callList = App.instance.getCallList();
+
+        if (callList != null) {
+            if (vid == 1) {
+                mDataLeft = callList;
+                mAdapterLeft.notifyDataSetChanged();
+
+            } else {
+
+
+                for (int i = 0; i < callList.size(); i++) {
+
+                    int tag = callList.get(i).getCallTag();
+                    CallBean call = callList.get(i);
+                    if (tag % 2 == 1) {
+                        mDataLeft.add(call);
+                    } else {
+                        mDatasRight.add(call);
+                    }
+                }
+                mAdapterLeft.notifyDataSetChanged();
+                mAdapterRight.notifyDataSetChanged();
+
+            }
+
+
 //
 //        for (int i = 0; i < 20; i++) {
 //
@@ -225,78 +263,139 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 
 //        Collections.reverse(mDatas);
 //        mAdapter.notifyDataSetChanged();
+        }
     }
 
-    public void setViewId(int vid ,Handler mhandler) {
+    public void setViewId(int vid, Handler mhandler) {
         this.vid = vid;
     }
 
-    public void addData(int position,String name) {
-        type = true;
-        CallBean callBean = new CallBean();
-        callBean.setId(0);
-        callBean.setName(name);
-        if(callMap!=null) {
+    public void addData(int position, CallBean call) {
 
-            Set<Map.Entry<String, Object>> set = callMap.entrySet();
-            // 遍历键值对对象的集合，得到每一个键值对对象
-            for (Map.Entry<String, Object> me : set) {
-                // 根据键值对对象获取键和值
-                String key = me.getKey();
-                LogUtil.e("--1111-",key+"-----"+callBean.getName());
-                if (key.equals(callBean.getName())) {
-//
-                    type = false;
-                }
-//
-            }
-        }
-        callMap.put(callBean.getName(),callBean);
-        if(type){
-            mDatas.add(position, callBean);
-            mAdapter.notifyItemInserted(position);
-            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+        bg.setVisibility(View.GONE);
+        if (vid == 1) {
 
-            re_left.scrollToPosition(position);
-            re_right.scrollToPosition(position);
-        }else {
+            if (mDataLeft != null) {
+                for (int i = 0; i < mDataLeft.size(); i++) {
 
-            Iterator<CallBean> it = mDatas.iterator();
-            while (it.hasNext())
-            {
-                CallBean call = it.next();
-                if (call.getName().equals(callBean.getName()) )
-                {
-                    it.remove();
+                    if (mDataLeft.get(i).getCallNumber().equals(call.getCallNumber())) {
+                        mDataLeft.remove(i);
+                        mAdapterLeft.notifyDataSetChanged();
+                    } else {
+                        App.instance.setCall(call);
+                    }
+
                 }
             }
-            mAdapter.notifyDataSetChanged();
-            mDatas.add(position, callBean);
-            mAdapter.notifyItemInserted(position);
-
-            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
-
+//            it = mDataLeft.iterator();
+//
+//
+//            while (it.hasNext()) {
+//                CallBean calls = it.next();
+//                if (calls.getCallNumber().equals(call.getCallNumber())) {
+//                    it.remove();
+//
+//                    mAdapterLeft.notifyDataSetChanged();
+//                } else {
+//                    App.instance.setCall(call);
+//                }
+//            }
+            App.instance.setCall(call);
+            mDataLeft.add(position, call);
+            mAdapterLeft.notifyItemInserted(position);
             re_left.scrollToPosition(position);
-            re_right.scrollToPosition(position);
 
+        } else {
+            int v = call.getCallTag() % 2;
+            switch (v) {
+                case 1:
+                    int size = mDataLeft.size();
+                    for (int i = size - 1; i >= 0; i--) {
 
+                        if (mDataLeft.get(i).getCallNumber().equals(call.getCallNumber())) {
+                            mDataLeft.remove(i);
+                            mAdapterLeft.notifyDataSetChanged();
+                        } else {
+                            App.instance.setCall(call);
+                        }
+
+                    }
+                    mDataLeft.add(position, call);
+                    mAdapterLeft.notifyItemInserted(position);
+                    re_left.scrollToPosition(position);
+                    break;
+
+                case 0:
+                    int rsize = mDatasRight.size();
+                    for (int i = rsize - 1; i >= 0; i--) {
+
+                        if (mDatasRight.get(i).getCallNumber().equals(call.getCallNumber())) {
+                            mDatasRight.remove(i);
+                            mAdapterLeft.notifyDataSetChanged();
+                        } else {
+                            App.instance.setCall(call);
+                        }
+
+                    }
+                    mDatasRight.add(position, call);
+                    mAdapterRight.notifyItemInserted(position);
+                    re_right.scrollToPosition(position);
+                    break;
+
+            }
         }
 
+//        type = true;
+//        CallBean callBean = new CallBean();
+//        callBean.setId(0);
+//        callBean.setName(name);
+//        if (callMap != null) {
+//
+//            Set<Map.Entry<String, Object>> set = callMap.entrySet();
+//            // 遍历键值对对象的集合，得到每一个键值对对象
+//            for (Map.Entry<String, Object> me : set) {
+//                // 根据键值对对象获取键和值
+//                String key = me.getKey();
+//                LogUtil.e("--1111-", key + "-----" + callBean.getName());
+//                if (key.equals(callBean.getName())) {
+////
+//                    type = false;
+//                }
+////
+//            }
+//        }
+//        callMap.put(callBean.getName(), callBean);
+//        if (type) {
+//            mDatas.add(position, callBean);
+//            mAdapter.notifyItemInserted(position);
+//            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+//
+//            re_left.scrollToPosition(position);
+//            re_right.scrollToPosition(position);
+//        } else {
+//
+//            Iterator<CallBean> it = mDatas.iterator();
+//            while (it.hasNext()) {
+//                CallBean call = it.next();
+//                if (call.getName().equals(callBean.getName())) {
+//                    it.remove();
+//                }
+//            }
+//            mAdapter.notifyDataSetChanged();
+//            mDatas.add(position, callBean);
+//            mAdapter.notifyItemInserted(position);
+//
+//            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+//
+//            re_left.scrollToPosition(position);
+//            re_right.scrollToPosition(position);
+//
+//
+//        }
+//
 
     }
 
-
-    private void setVolume(float volume,Object object) {
-        try {
-            Class<?> forName = Class.forName("android.widget.VideoView");
-            Field field = forName.getDeclaredField("mMediaPlayer");
-            field.setAccessible(true);
-            MediaPlayer mMediaPlayer = (MediaPlayer) field.get(object);
-            mMediaPlayer.setVolume(volume, volume);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -414,7 +513,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
                 startActivityForResult(intent, 2);
                 break;
 
-            case  R.id.btn_empty:
+            case R.id.btn_empty:
 
                 if (videoView.isPlaying()) {
                     videoView.stopPlayback();
@@ -430,6 +529,12 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
                 picSwitch.setVisibility(View.GONE);
                 mVideoResManager.UpdateVideo();
                 updateView();
+                mDatasRight.clear();
+                mDataLeft.clear();
+                mAdapterLeft.notifyDataSetChanged();
+                mAdapterRight.notifyDataSetChanged();
+                call_big.setVisibility(View.GONE);
+
 
                 break;
         }
@@ -456,6 +561,8 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
                     mVideoResManager.clear();
                     updateView();
                     this.playSlideImage();
+                    call_big.setVisibility(View.GONE);
+
                 } else {
                     Toast.makeText(getActivity(), "未选择图像文件", Toast.LENGTH_SHORT).show();
                 }
@@ -471,6 +578,8 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
                     videoView.setVisibility(View.VISIBLE);
                     //mtvVideoPath.setText(selFile);
                     updateVideoView();// 重新开始，可以打断广告视频
+                    call_big.setVisibility(View.GONE);
+
                 } else {
                     Toast.makeText(getActivity(), "未选择视频文件", Toast.LENGTH_SHORT).show();
                 }
@@ -531,9 +640,9 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
             videoView.setVisibility(View.VISIBLE);
             mbUpdateVideo = true;
         } else if (hasPics && (queueing_view_mode == 0 || App.instance.getPlayIMGEn())) {
-              picSwitch.setVisibility(View.VISIBLE);
+            picSwitch.setVisibility(View.VISIBLE);
         } else if (isGameOpenNow) {
-               picSwitch.setVisibility(View.VISIBLE);
+            picSwitch.setVisibility(View.VISIBLE);
         } else {
             //    mimLogo.setVisibility(View.VISIBLE);
         }
@@ -545,12 +654,11 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
 //        main_scan_barcode_edt.setFocusable(true);
 //        main_scan_barcode_edt.requestFocus();
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        // 得到InputMethodManager的实例
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus()
-                    .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
+//        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        // 得到InputMethodManager的实例
+//        if (imm != null) {
+//            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+//        }
     }
 
 
@@ -683,9 +791,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
                 mnVideoWidth = mp.getVideoWidth();
                 mnVideoHeight = mp.getVideoHeight();
 
-//                LogFile.i(String.format("OnPrepared,duration=%d",
-//                        mp.getDuration()));
-                mp.setVolume(1f, 1f);
+                //    mp.setVolume(6f, 6f);
 
                 adjustVideoView();
             }
@@ -745,24 +851,22 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-        switch (event.getAction())
-        {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-           //    Toast.makeText(getActivity(), "down事件", Toast.LENGTH_SHORT).show();
+                //    Toast.makeText(getActivity(), "down事件", Toast.LENGTH_SHORT).show();
 
-                if(isOpen)
-                {
-                    isOpen=false;
+                if (isOpen) {
+                    isOpen = false;
                     li_select.setVisibility(View.VISIBLE);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            isOpen=true;
+                            isOpen = true;
                             li_select.setVisibility(View.GONE);
                         }
-                    },8000);
+                    }, 5000);
 
-                }else {
+                } else {
 //                    isOpen=true;
 //                    li_select.setVisibility(View.VISIBLE);
                 }
@@ -776,6 +880,60 @@ public class TwoFragment extends Fragment implements View.OnClickListener,View.O
         return true;
     }
 
+    public void getVideoPause(String name) {
+        //暂停播放
+        if (videoView.getVisibility() == View.VISIBLE) {
+            videoView.pause();
+        }
+        if (videoView.getVisibility() == View.GONE && picSwitch.getVisibility() == View.GONE) {
+            call_big.setText(name);
+            call_big.setVisibility(View.VISIBLE);
+            scaleAnimation = (ScaleAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
+            call_big.startAnimation(scaleAnimation);
+            //  startScaleAnimation(call_big);
+        } else {
+            call_big.setVisibility(View.GONE);
+        }
+    }
+
+    public void getVideoAgain() {
+        //继续播放
+        if (videoView.getVisibility() == View.VISIBLE) {
+            videoView.start();
+        }
+        call_big.setVisibility(View.GONE);
+        //    scaleAnimation.cancel();
+        //  mAdapterLeft.setAnimation();
+
+    }
+
+    @Override
+    public void onResume() {
+
+        updateView();
+        startPlay(false);
+        //   initData();
+        super.onResume();
+    }
+
+
+    public void onDestroy() {
+        //    App.instance.setSave();
+        if (picSwitch.isPlaying()) {
+            picSwitch.stopPlay();
+        }
+        if (videoView != null && videoView.isPlaying()) {
+            videoView.stopPlayback();
+        }
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // App.instance.setSave();
+    }
 
     /**
      * This interface must be implemented by activities that contain this

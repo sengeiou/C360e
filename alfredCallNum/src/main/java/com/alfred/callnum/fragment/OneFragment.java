@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.SweepGradient;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,13 +59,22 @@ public class OneFragment extends Fragment {
 
     private RecyclerView re_one, re_two, re_three, re_four;
     private List<CallBean> mDatas = new ArrayList<>();
-    MycallAdapter mAdapter;
+    private List<CallBean> mDatas1 = new ArrayList<>();
+    private List<CallBean> mDatas2 = new ArrayList<>();
+    private List<CallBean> mDatas3 = new ArrayList<>();
+    private List<CallBean> mDatas4 = new ArrayList<>();
+    MycallAdapter mAdapter1;
+    MycallAdapter mAdapter2;
+    MycallAdapter mAdapter3;
+    MycallAdapter mAdapter4;
     private int vid;
     Handler handler;
 
-    Map<String,Object> callMap=new HashMap<String,Object>();
+    Map<String, Object> callMap = new HashMap<String, Object>();
 
-    private Boolean type=true;
+    private Boolean type = true;
+
+    private ImageView bg;
 
     @SuppressLint("ValidFragment")
     public OneFragment() {
@@ -110,14 +122,237 @@ public class OneFragment extends Fragment {
         initView();
     }
 
-    public void setViewId(int vid,Handler mhandler) {
+    public void setViewId(int vid, Handler mhandler) {
         this.vid = vid;
         this.handler = mhandler;
 
     }
 
-    private void initData() {
 
+    private void initView() {
+        re_one = (RecyclerView) getActivity().findViewById(R.id.review_one);
+        re_two = (RecyclerView) getActivity().findViewById(R.id.review_two);
+        re_three = (RecyclerView) getActivity().findViewById(R.id.review_three);
+        re_four = (RecyclerView) getActivity().findViewById(R.id.review_four);
+        bg = (ImageView) getActivity().findViewById(R.id.img_call_bgs);
+
+
+//            re_three.setVisibility(View.VISIBLE);
+//            re_four.setVisibility(View.VISIBLE);
+
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity()); //设置布局管理器
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity()); //设置布局管理器
+        LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity()); //设置布局管理器
+        LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity()); //设置布局管理器
+        re_one.setLayoutManager(layoutManager1); //设置为垂直布局，这也是默认的
+        re_two.setLayoutManager(layoutManager2);
+        re_three.setLayoutManager(layoutManager3);
+        re_four.setLayoutManager(layoutManager4);
+
+
+        mAdapter1 = new MycallAdapter(getActivity(), mDatas1, new RvListener() {
+            @Override
+            public void onItemClick(int id, int position) {
+
+            }
+        });
+
+
+        mAdapter2 = new MycallAdapter(getActivity(), mDatas2, new RvListener() {
+            @Override
+            public void onItemClick(int id, int position) {
+
+            }
+        });
+
+
+        mAdapter3 = new MycallAdapter(getActivity(), mDatas3, new RvListener() {
+            @Override
+            public void onItemClick(int id, int position) {
+
+            }
+        });
+
+
+        mAdapter4 = new MycallAdapter(getActivity(), mDatas4, new RvListener() {
+            @Override
+            public void onItemClick(int id, int position) {
+
+            }
+        });
+
+
+        re_one.setAdapter(mAdapter1);
+        re_two.setAdapter(mAdapter2);
+        re_three.setAdapter(mAdapter3);
+        re_four.setAdapter(mAdapter4);
+      //  initData();
+//        //
+
+    }
+
+    public void addData(int position, CallBean call) {
+        bg.setVisibility(View.GONE);
+//        if(callMap!=null) {
+//
+//            Set<Map.Entry<String, Object>> set = callMap.entrySet();
+//            // 遍历键值对对象的集合，得到每一个键值对对象
+//            for (Map.Entry<String, Object> me : set) {
+//                // 根据键值对对象获取键和值
+//                String key = me.getKey();
+//                LogUtil.e("--1111-",key+"-----"+call.getName());
+//                if (key.equals(call.getName())) {
+////
+//                   type = true;
+////
+//              }
+////
+//            }
+////
+//        }
+//
+//        callMap.put(call.getName(),call);
+
+        Iterator<CallBean> it;
+        int v = call.getCallTag() % 4;
+        switch (v) {
+            case 1:
+                it = mDatas1.iterator();
+                while (it.hasNext()) {
+                    CallBean calls = it.next();
+                    if (calls.getCallNumber().equals(call.getCallNumber())) {
+                        it.remove();
+
+                        mAdapter1.notifyDataSetChanged();
+                    } else {
+                        App.instance.setCall(call);
+                    }
+                }
+                mDatas1.add(position, call);
+                mAdapter1.notifyItemInserted(position);
+                re_one.scrollToPosition(position);
+                break;
+            case 2:
+                it = mDatas2.iterator();
+                while (it.hasNext()) {
+                    CallBean calls = it.next();
+                    if (calls.getCallNumber().equals(call.getCallNumber())) {
+                        it.remove();
+                        mAdapter2.notifyDataSetChanged();
+                    } else {
+                        App.instance.setCall(call);
+                    }
+                }
+                mDatas2.add(position, call);
+                mAdapter2.notifyItemInserted(position);
+                re_two.scrollToPosition(position);
+
+                break;
+
+            case 3:
+                it = mDatas3.iterator();
+                while (it.hasNext()) {
+                    CallBean calls = it.next();
+                    if (calls.getCallNumber().equals(call.getCallNumber())) {
+                        it.remove();
+                        mAdapter3.notifyDataSetChanged();
+                    } else {
+                        App.instance.setCall(call);
+                    }
+                }
+                mDatas3.add(position, call);
+                mAdapter3.notifyItemInserted(position);
+                re_three.scrollToPosition(position);
+                break;
+            case 0:
+                it = mDatas4.iterator();
+                while (it.hasNext()) {
+                    CallBean calls = it.next();
+                    if (calls.getCallNumber().equals(call.getCallNumber())) {
+                        it.remove();
+                        mAdapter4.notifyDataSetChanged();
+                    } else {
+                        App.instance.setCall(call);
+                    }
+                }
+                mDatas4.add(position, call);
+                mAdapter4.notifyItemInserted(position);
+                re_four.scrollToPosition(position);
+                break;
+
+        }
+
+
+        //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+
+
+//        }else {
+//
+//            Iterator<CallBean> it = mDatas1.iterator();
+//            while (it.hasNext())
+//            {
+//                CallBean calls = it.next();
+//                if (calls.getName().equals(call.getName()) )
+//                {
+//                    it.remove();
+//                }
+//            }
+//            mAdapter1.notifyDataSetChanged();
+//            mDatas1.add(position, call);
+//            mAdapter1.notifyItemInserted(position);
+//
+//            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
+//
+//            re_one.scrollToPosition(position);
+//            re_two.scrollToPosition(position);
+//            re_three.scrollToPosition(position);
+//            re_four.scrollToPosition(position);
+//
+//        }
+
+
+    }
+
+
+    @Override
+    public void onResume() {
+
+        //   initData();
+        super.onResume();
+    }
+
+
+    private void initData() {
+        List<CallBean> callList = App.instance.getCallList();
+
+
+        for (int i = 0; i < callList.size(); i++) {
+
+
+            CallBean call = callList.get(i);
+            int v = call.getCallTag() % 4;
+            switch (v) {
+                case 1:
+
+                    mDatas1.add(call);
+
+                    break;
+                case 2:
+                    mDatas2.add(call);
+                    break;
+
+                case 3:
+                    mDatas3.add(call);
+                    break;
+                case 0:
+                    mDatas4.add(call);
+
+                    break;
+
+            }
+
+
+//
 //        for (int i = 0; i < 20; i++) {
 //
 //            CallBean call = new CallBean();
@@ -125,126 +360,26 @@ public class OneFragment extends Fragment {
 //            call.setName("name " + i);
 //            mDatas.add(call);
 //        }
-//
+
 //        Collections.reverse(mDatas);
 //        mAdapter.notifyDataSetChanged();
+        }
+        mAdapter1.notifyDataSetChanged();
+        mAdapter2.notifyDataSetChanged();
+        mAdapter3.notifyDataSetChanged();
+        mAdapter4.notifyDataSetChanged();
     }
 
-    private void initView() {
-        re_one = (RecyclerView) getActivity().findViewById(R.id.review_one);
-        re_two = (RecyclerView) getActivity().findViewById(R.id.review_two);
-        re_three = (RecyclerView) getActivity().findViewById(R.id.review_three);
-        re_four = (RecyclerView) getActivity().findViewById(R.id.review_four);
-        if (vid == 1) {
-
-            re_three.setVisibility(View.VISIBLE);
-            re_four.setVisibility(View.VISIBLE);
-        } else {
-            re_three.setVisibility(View.GONE);
-            re_four.setVisibility(View.GONE);
-        }
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity()); //设置布局管理器
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity()); //设置布局管理器
-        LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity()); //设置布局管理器
-        LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity()); //设置布局管理器
-        re_one.setLayoutManager(layoutManager1); //设置为垂直布局，这也是默认的
-        re_two.setLayoutManager(layoutManager2);
-        if (vid == 1) {
-            re_three.setLayoutManager(layoutManager3);
-            re_four.setLayoutManager(layoutManager4);
-        }
-
-        layoutManager1.setOrientation(OrientationHelper.VERTICAL);
-
-        mAdapter = new MycallAdapter(getActivity(), mDatas, new RvListener() {
-            @Override
-            public void onItemClick(int id, int position) {
-                Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
-
-              mAdapter.notifyItemMoved(0,position);
-                handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_CALL_ON, null));
-                // mAdapter.notifyItemChanged(position);
-//                String content = "";
-//                Intent intent=new Intent();
-//                intent.setClass(getActivity(), MainActivity.class);
-//                 startActivity(intent);
-            }
-        });
-
-        re_one.setAdapter(mAdapter);
-        re_two.setAdapter(mAdapter);
-        if (vid == 1) {
-            re_three.setAdapter(mAdapter);
-            re_four.setAdapter(mAdapter);
-        }
-        initData();
-//        //
-
-    }
-
-    public void addData(int position,String name) {
-        type = true;
-        CallBean callBean = new CallBean();
-        callBean.setId(0);
-        callBean.setName(name);
-        if(callMap!=null) {
-
-            Set<Map.Entry<String, Object>> set = callMap.entrySet();
-            // 遍历键值对对象的集合，得到每一个键值对对象
-            for (Map.Entry<String, Object> me : set) {
-                // 根据键值对对象获取键和值
-                String key = me.getKey();
-                LogUtil.e("--1111-",key+"-----"+callBean.getName());
-                if (key.equals(callBean.getName())) {
-//
-                   type = false;
-//
-              }
-//
-            }
-//
-        }
-
-        callMap.put(callBean.getName(),callBean);
-        if(type){
-            mDatas.add(position, callBean);
-            mAdapter.notifyItemInserted(position);
-            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
-
-            re_one.scrollToPosition(position);
-            re_two.scrollToPosition(position);
-            re_three.scrollToPosition(position);
-            re_four.scrollToPosition(position);
-        }else {
-
-            Iterator<CallBean> it = mDatas.iterator();
-            while (it.hasNext())
-            {
-                CallBean call = it.next();
-                if (call.getName().equals(callBean.getName()) )
-                {
-                    it.remove();
-                }
-            }
-            mAdapter.notifyDataSetChanged();
-            mDatas.add(position, callBean);
-            mAdapter.notifyItemInserted(position);
-
-            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
-
-            re_one.scrollToPosition(position);
-            re_two.scrollToPosition(position);
-            re_three.scrollToPosition(position);
-            re_four.scrollToPosition(position);
-
-        }
-
+    @Override
+    public void onPause() {
+        super.onPause();
 
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        //    App.instance.setSave();
         mListener = null;
     }
 

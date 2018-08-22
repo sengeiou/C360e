@@ -183,6 +183,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					String ip = jsonObject.getString("ip");
 					Store.putString(App.instance,Store.CALL_APP_IP, ip);
 					result.put(RESULT_CODE, ResultCode.SUCCESS);
+					result.put("calltype",App.instance.getSystemSettings().getCallStyle());
+
 				}catch (Exception e){
 					result.put("resultCode", ResultCode.JSON_DATA_ERROR);
 				}
@@ -2207,7 +2209,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 							if(App.instance.isRevenueKiosk()){
 								orderNo = kotSummary.getNumTag() + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
 							}
-							SyncCentre.getInstance().callAppNo(App.instance, orderNo);
+							SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getNumTag(), orderNo);
 
 						}
 						int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId());
@@ -2617,11 +2619,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
 		try {
 			JSONObject jsonObject = new JSONObject(params);
 			final String str = jsonObject.getString("callnumber");
+
+			String ip=App.instance.getCallAppIp();
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-						SyncCentre.getInstance().callAppNo(App.getTopActivity(), str);
+						SyncCentre.getInstance().callAppNo(App.getTopActivity(),"", str);
 					}
 				}
 			}).start();

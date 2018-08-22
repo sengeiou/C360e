@@ -82,10 +82,12 @@ public class SelectRevenue extends BaseActivity {
             switch (msg.what){
                 case ResultCode.SUCCESS:
                     dismissLoadingDialog();
+
                     UIHelp.startMainActivity(context, App.instance.getMainPageType());
                     finish();
                     break;
                 case ResultCode.CONNECTION_FAILED:
+                    App.instance.setPosIp("");
                     dismissLoadingDialog();
                     break;
             }
@@ -115,7 +117,7 @@ public class SelectRevenue extends BaseActivity {
             case R.id.iv_refresh:
                 loadingDialog.setTitle("Search Revenue ...");
                 loadingDialog.showByTime(5000);
-                App.instance.searchRevenueIp();
+                App.instance.setPosIp("");
                 break;
             default:
                 break;

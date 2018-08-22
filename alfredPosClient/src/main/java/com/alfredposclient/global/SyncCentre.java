@@ -475,9 +475,9 @@ public class SyncCentre {
 	 * @param context
 	 * @param num
      */
-	public void callAppNo(final Context context, String num) {
-		String url ="http://" + App.instance.getCallAppIp() + ":8080/";
-		HttpAPI.callAppNo(context, url, syncHttpClient, num);
+	public void callAppNo(final Context context,String tag, String num) {
+		String url ="http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/"+APIName.CALL_POS_NUM;
+		HttpAPI.callAppNo(context, url, syncHttpClient,tag, num);
 
 	}
 

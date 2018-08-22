@@ -1,11 +1,41 @@
 package com.alfred.callnum.adapter;
 
-public class CallBean {
+import java.io.Serializable;
+
+public class CallBean implements Serializable {
+
+    private  String  callNumber;
+    private  int  callType;
+    private  int  callTag;
+
+    public String getCallNumber() {
+        return callNumber;
+    }
+
+    public void setCallNumber(String callNumber) {
+        this.callNumber = callNumber;
+    }
+
+    public int getCallType() {
+        return callType;
+    }
+
+    public void setCallType(int callType) {
+        this.callType = callType;
+    }
+
+    public int getCallTag() {
+        return callTag;
+    }
+
+    public void setCallTag(int callTag) {
+        this.callTag = callTag;
+    }
 
     private int id;
     private String name;
+    private  int type;
 
-    private  String type;
 
     public int getId() {
         return id;
@@ -23,19 +53,22 @@ public class CallBean {
         this.name = name;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
     @Override
     public String toString() {
         return "CallBean{" +
-                "id=" + id +
+                "callNumber='" + callNumber + '\'' +
+                ", callType=" + callType +
+                ", callTag=" + callTag +
+                ", id=" + id +
                 ", name='" + name + '\'' +
-                ", type='" + type + '\'' +
+                ", type=" + type +
                 '}';
     }
 }

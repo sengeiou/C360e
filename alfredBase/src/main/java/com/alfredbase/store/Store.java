@@ -138,6 +138,11 @@ public class Store {
 	//subPos
 	public static final String MAIN_POS_IP = "MAIN_POS_IP";
 
+	public static final String CALL_STYLE = "CALL_STYLE";
+	public static final String CALL_NUMBER_TYPE="CALL_NUMBER_TYPE";
+
+	public static final String CALL_IP="CALL_IP";
+
 
 	private Store() {
 	};

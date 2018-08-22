@@ -1,6 +1,7 @@
 package com.alfred.callnum.activity;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.alfred.callnum.R;
+import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.fragment.OneFragment;
 import com.alfred.callnum.fragment.TwoFragment;
 import com.alfred.callnum.global.App;
@@ -27,6 +29,7 @@ import com.alfredbase.utils.BarcodeUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,112 +40,144 @@ import java.util.TimerTask;
 import static u.aly.dn.i;
 
 public class MainActivity extends BaseActivity {
-	OneFragment oneFragment;
-	TwoFragment twoFragment;
-	int viewId;
-	Timer timer11;
-   Timer	timer = new Timer();
-	MyQueue queue = new MyQueue();
+    OneFragment oneFragment;
+    TwoFragment twoFragment;
+    int viewId;
+    Timer timer11;
+    Timer timer = new Timer();
+    MyQueue queue = new MyQueue();
+    private int callNumber = 3;
+    private int callTime = 2500;
+
+    public Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case App.HANDLER_REFRESH_CALL:
+                    CallBean callBean= (CallBean) msg.obj;
+//                    msg.obj
+//                    CallBean callBean = new CallBean();
+//                    callBean.setId(0);
+                //    LogUtil.e("HANDLER_REFRESH_CALL",callBean.getCallNumber());
+//                     callBean.setType(2);
+//                    callBean.setName("A121");
+
+                    if(callBean.getCallType()!=App.instance.getMainPageType()){
+                        App.instance.setMainPageType(callBean.getCallType());
+                          viewId=callBean.getCallType();
+                        reFragment(callBean.getCallType());
+
+                    }
 
 
-	public Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case App.HANDLER_REFRESH_CALL:
+                    queue.enQueue(callBean);
 
-                         queue.enQueue("A123");
+                    if (timer == null) {
+                        timer = new Timer();
+                        timer.schedule(new MyTimertask(), 1000);
+                    }
 
-                         if(timer==null) {
-							 timer = new Timer();
-							 timer.schedule(new MyTimertask(), 1000);
-						 }
-//					if(oneFragment!=null){
-//						oneFragment.addData(0,"");
-//					}
-//					if(twoFragment!=null){
-//						twoFragment.addData(0,"");
-//					}
-					break;
+                    break;
 
 
-				case App.HANDLER_REFRESH_CALL_ON:
+                default:
+                    break;
+            }
+        }
 
-//					CallNumQueueUtil num = new CallNumQueueUtil("A123,", 1,0,3);
-//					CallNumUtil.call(num);
-
-					break;
-				default:
-					break;
-			}
-		}
-
-		;
-	};
+        ;
+    };
 
 
+    class MyTimertask extends TimerTask {
 
-	class MyTimertask extends TimerTask {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-		@Override
-		public void run() {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
+                    if (queue.QueueLength() > 0) {
 
-					if(queue.QueueLength()>0){
-					LogUtil.e("qqqqqqqqq-",queue.QueuePeek().toString()+"-"+queue.QueueLength());
+                        CallBean callBean = (CallBean) queue.deQueue();
+                        String name = callBean.getCallNumber().toString();
+                        if (oneFragment != null) {
+                            oneFragment.addData(0, callBean);
+                        }
+                        if (twoFragment != null&&viewId!=4) {
+                            twoFragment.addData(0, callBean);
+                            twoFragment.getVideoPause(name);
+                        }
+                        for (int j = 0; j < callNumber; j++) {
+                            CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
 
-					String name=queue.deQueue().toString();
-						for (int j = 0; j < 3; j++) {
-							CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1,0,1);
+                            CallNumUtil.call(num1);
+                        }
+                    } else {
+                        cancel();
+                        queue.clear();
+                        if (timer != null) {
+                            timer.cancel();
+                            timer = null;
+                        }
+                        if (twoFragment != null&&viewId!=4) {
+                            twoFragment.getVideoAgain();
+                        }
+                    }
 
-							CallNumUtil.call(num1);
-						}
+                }
+            });
 
-						if(oneFragment!=null) {
-							oneFragment.addData(0, name);
-						}
-						if(twoFragment!=null){
-							twoFragment.addData(0, name);
-						}
+
+            timer.schedule(new MyTimertask(), callNumber * 2500);
+
+        }
+
+    }
+
+
+    /**
+     * @param volume 音量大小
+     * @param object VideoView实例
+     */
+    public void setVolume(float volume, Object object) {
+        try {
+            Class<?> forName = Class.forName("android.widget.VideoView");
+            Field field = forName.getDeclaredField("mMediaPlayer");
+            field.setAccessible(true);
+            MediaPlayer mMediaPlayer = (MediaPlayer) field.get(object);
+            mMediaPlayer.setVolume(volume, volume);
+        } catch (Exception e) {
+        }
+    }
+
+    protected void initView() {
+        super.initView();
+        setContentView(R.layout.activity_main);
+        Intent intent = getIntent();
+        viewId = intent.getIntExtra("viewId", 0);
+        createFragment();
+
+        CallNumUtil.initVideo(context);
+        CallNumUtil.init(context, handler);
+
+        //	timer11 = new Timer();
+        //	timer11.schedule(new MyTimertask(),1000);
+//        for (int j = 0; j < 1; j++) {
+//            CallBean call = new CallBean();
+//            call.setName("A12" + j);
+//            call.setType(j + 1);
+//            call.setId(0);
 //
-					}else {
-                         queue.clear();
-						 timer.cancel();
-                      timer=null;
-					}
-
-				}
-			});
-
-
-			timer.schedule(new MyTimertask(), 3000);
-
-		}
-
-	}
-	protected void initView() {
-		super.initView();
-		setContentView(R.layout.activity_main);
-		Intent intent = getIntent();
-		viewId = intent.getIntExtra("viewId",0);
-		createFragment();
-
-		CallNumUtil.initVideo(context);
-		CallNumUtil.init(context, handler);
-
-	//	timer11 = new Timer();
-	//	timer11.schedule(new MyTimertask(),1000);
-		for (int j = 0; j <2 ; j++) {
-			queue.enQueue("A12"+j);
-//			if(j==4){
-//				queue.enQueue("A120");
-//			}
-
-
-		}
-		timer.schedule(new MyTimertask(),1000);
-	}
+//            queue.enQueue(call);
+//            //   queue.enQueue("A12" + j);
+////			if(j==4){
+////				queue.enQueue("A120");
+////			}
+//
+//
+//        }
+        timer.schedule(new MyTimertask(), 1000);
+    }
 
 //
 //	class MyTimertask extends TimerTask {
@@ -167,28 +202,62 @@ public class MainActivity extends BaseActivity {
 //
 //	}
 
-	@Override
-	public void httpRequestAction(int action, Object obj) {
+    @Override
+    public void httpRequestAction(int action, Object obj) {
 
-		handler.sendMessage(handler.obtainMessage(action, null));
-	}
+        handler.sendMessage(handler.obtainMessage(action, obj));
+    }
 
-	public void createFragment() {
-		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-		if(viewId==1||viewId==2) {
-			oneFragment = new OneFragment();
-			oneFragment.setViewId(viewId,handler);
-			fragmentTransaction.add(R.id.one_fragment, oneFragment);
-		}else {
-			twoFragment = new TwoFragment();
-			twoFragment.setViewId(viewId,handler);
-			fragmentTransaction.add(R.id.one_fragment, twoFragment);
-		}
 
-		fragmentTransaction.commit();
-	}
-	@Override
-	protected void handlerClickEvent(View v) {
-		super.handlerClickEvent(v);
-	}
+
+
+    public void reFragment(int viewId) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (viewId == 4) {
+            oneFragment = new OneFragment();
+            oneFragment.setViewId(viewId, handler);
+            fragmentTransaction.replace(R.id.one_fragment, oneFragment);
+        } else {
+            twoFragment = new TwoFragment();
+            twoFragment.setViewId(viewId, handler);
+            fragmentTransaction.replace(R.id.one_fragment, twoFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    public void createFragment() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (viewId == 4) {
+            oneFragment = new OneFragment();
+            oneFragment.setViewId(viewId, handler);
+            fragmentTransaction.add(R.id.one_fragment, oneFragment);
+        } else {
+            twoFragment = new TwoFragment();
+            twoFragment.setViewId(viewId, handler);
+            fragmentTransaction.add(R.id.one_fragment, twoFragment);
+        }
+
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void handlerClickEvent(View v) {
+        super.handlerClickEvent(v);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+       // App.instance.setSave();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+     //   App.instance.setSave();
+        super.onDestroy();
+
+    }
 }

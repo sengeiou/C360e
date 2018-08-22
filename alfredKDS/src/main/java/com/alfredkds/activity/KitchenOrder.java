@@ -407,6 +407,7 @@ public class KitchenOrder extends BaseActivity {
 					item.setTableName(kotSummary.getTableName());
 					item.setSummaryId(kotSummary.getId());
                     item.setNumTag(kotSummary.getNumTag());
+                    item.setRevenueCenterIndex(kotSummary.getRevenueCenterIndex());
                     StringBuffer sBuffer = new StringBuffer();
                     item.setKotStatus(kotItemDetail.getKotStatus());
                     item.setItemDetailName(kotItemDetail.getItemName());

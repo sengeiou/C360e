@@ -17,6 +17,15 @@ public class KotItem implements Serializable {
     private Integer qty;
     private Integer itemDetailId;
     private String numTag;
+    private Integer revenueCenterIndex;
+
+    public Integer getRevenueCenterIndex() {
+        return revenueCenterIndex;
+    }
+
+    public void setRevenueCenterIndex(Integer revenueCenterIndex) {
+        this.revenueCenterIndex = revenueCenterIndex;
+    }
 
     public Integer getQty() {
         return qty;

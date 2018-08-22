@@ -11,6 +11,7 @@ import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
 
@@ -289,5 +290,24 @@ public class HttpAssembling {
 		return entity;
 	}
 
+
+//
+//	public static StringEntity getCallParam(Map<String, Object> map)
+//			throws UnsupportedEncodingException {
+//		Gson gson = new Gson();
+//
+//		map.put("callnumber", tag + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), num));
+//		StringEntity entity = new StringEntity(new Gson().toJson(requestParams),"UTF-8");
+//		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+//		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+//				.getRestaurantKey());
+//		map.put("version", App.instance.VERSION );
+//		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+//		if(App.instance.isSUNMIShow()){
+//			map.put("snCode", Build.SERIAL);
+//		}
+//		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
+//		return entity;
+//	}
 	
 }
