@@ -1800,15 +1800,16 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					}
 				});
 
-				DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.warning),
-						"There are some sub Pos not closed yet.", new OnClickListener(){
-
-					@Override
-					public void onClick(View arg0) {
-						if (App.instance.isRevenueKiosk()) {
-							UIHelp.startSubPosManagePage(context);
-						}
-					}});
+				DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.warning),
+						"There are some sub Pos not closed yet.", getString(R.string.ok), "To close", null,
+						new OnClickListener() {
+							@Override
+							public void onClick(View arg0) {
+								if (App.instance.isRevenueKiosk()) {
+									UIHelp.startSubPosManagePage(context);
+								}
+							}
+						});
 				rl_closerestbg.setVisibility(View.GONE);
 			}
 				break;

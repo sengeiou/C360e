@@ -1297,7 +1297,7 @@ public class DataHelper {
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT,orderId INTEGER,orderOriginId INTEGER,userId INTEGER,persons INTEGER,"
                     + "orderStatus INTEGER,subTotal TEXT, taxAmount TEXT, discountAmount TEXT ,total TEXT,sessionStatus INTEGER,restId INTEGER, "
                     + "revenueId INTEGER,tableId INTEGER,createTime LONG,updateTime LONG, sysCreateTime LONG, sysUpdateTime LONG, groupId INTEGER,"
-                    + "inclusiveTaxName TEXT, inclusiveTaxPrice TEXT, inclusiveTaxPercentage TEXT, splitByPax INTEGER)");
+                    + "inclusiveTaxName TEXT, inclusiveTaxPrice TEXT, inclusiveTaxPercentage TEXT, splitByPax INTEGER, oldOrderSplitId INTEGER default 0)");
 
             /*
             + "(id,orderId, orderOriginId, userId, itemId,itemName,itemNum, orderDetailStatus, orderDetailType,reason, printStatus, itemPrice,"

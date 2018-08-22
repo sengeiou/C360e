@@ -434,6 +434,14 @@ public class CPPaymentSQL {
 			e.printStackTrace();
 		}
 	}
-	
+	public static void deletePayment(SQLiteDatabase db, int orderId) {
+		String sql = "delete from " + TableNames.CPPayment + " where orderId = ?";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] { orderId });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 }

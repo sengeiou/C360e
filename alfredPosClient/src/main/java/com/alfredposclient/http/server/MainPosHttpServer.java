@@ -742,6 +742,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			}
 			if(apiName.equals(APIName.SUBPOS_COMMIT_ORDER)){
 				return commitOrder(body);
+			}else if(apiName.equals(APIName.SUBPOS_COMMIT_ORDERLOG)){
+				return commitOrderLog(body);
 			}else if(apiName.equals(APIName.SUBPOS_COMMIT_REPORT)){
 				return commitReport(body);
 			}
@@ -1049,6 +1051,34 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 				}).start();
 			}
+			resp = this.getJsonResponse(gson.toJson(map));
+		} catch (Exception e){
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
+		}
+		return resp;
+	}
+	private Response commitOrderLog(String params){
+		Response resp = null;
+		try {
+			Map<String, Object> map = new HashMap<>();
+			JSONObject jsonObject = new JSONObject(params);
+			Order order = gson.fromJson(jsonObject.getString("order"), Order.class);
+			int subPosBeanId = jsonObject.optInt("subPosBeanId");
+			MultiOrderRelation multiOrderRelation = MultiOrderRelationSQL.getMultiOrderRelationBySubOrderId(subPosBeanId, order.getId().intValue(), order.getCreateTime());
+			if(multiOrderRelation == null){
+				map.put("resultCode", ResultCode.RECEIVE_MSG_NO_EXIST);
+				return this.getJsonResponse(gson.toJson(map));
+			}
+			List<Payment> payments = gson.fromJson(jsonObject.getString("payments"),
+					new TypeToken<List<Payment>>(){}.getType());
+			List<PaymentSettlement> paymentSettlements = gson.fromJson(jsonObject.getString("paymentSettlements"),
+					new TypeToken<List<PaymentSettlement>>(){}.getType());
+			List<RoundAmount> roundAmounts = gson.fromJson(jsonObject.getString("roundAmounts"),
+					new TypeToken<List<RoundAmount>>(){}.getType());
+			List<OrderSplit> orderSplits = CPOrderSplitSQL.getOrderSplits(multiOrderRelation.getMainOrderId());
+			SubPosCommitSQL.commitOrderLog(order, orderSplits, payments, paymentSettlements, roundAmounts);
+			map.put("resultCode", ResultCode.SUCCESS);
 			resp = this.getJsonResponse(gson.toJson(map));
 		} catch (Exception e){
 			e.printStackTrace();

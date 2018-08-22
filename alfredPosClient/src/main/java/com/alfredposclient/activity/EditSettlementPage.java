@@ -67,9 +67,9 @@ import com.alfredposclient.adapter.EditSettlementAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
-import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
+import com.alfredposclient.jobs.SubPosCloudSyncJobManager;
 import com.alfredposclient.popupwindow.CloseOrderSplitWindow;
 import com.alfredposclient.popupwindow.CloseOrderWindow;
 
@@ -225,23 +225,38 @@ public class EditSettlementPage extends BaseActivity {
                                        .getAllPaymentSettlementByPaymentId(Integer.valueOf(map.get("paymentId"))), roundAmount);
                   //  }
 
-                    /**
-                     * 给后台发送log 信息
-                     */
-                    new Thread(new Runnable() {
+                    boolean isEdit = false;
+                    if(!TextUtils.isEmpty(map.get("isEdit"))){
+                        isEdit = Boolean.parseBoolean(map.get("isEdit"));
+                    }
+                    if(isEdit) {
+                        /**
+                         * 给后台发送log 信息
+                         */
+                        new Thread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-                            if (cloudSync != null) {
-                                int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(currentOrder.getId());
-                                cloudSync.syncOrderInfoForLog(currentOrder.getId(),
-                                        App.instance.getRevenueCenter().getId(),
-                                        App.instance.getBusinessDate(), currCount + 1);
+                            @Override
+                            public void run() {
+                                if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+                                    CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                                    if (cloudSync != null) {
+                                        int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(currentOrder.getId());
+                                        cloudSync.syncOrderInfoForLog(currentOrder.getId(),
+                                                App.instance.getRevenueCenter().getId(),
+                                                App.instance.getBusinessDate(), currCount + 1);
 
+                                    }
+                                } else {
+                                    SubPosCloudSyncJobManager subPosCloudSyncJobManager = App.instance.getSubPosSyncJob();
+                                    if (subPosCloudSyncJobManager != null) {
+                                        subPosCloudSyncJobManager.syncOrderInfoWhenEditPayment(currentOrder.getId(),
+                                                App.instance.getRevenueCenter().getId(),
+                                                App.instance.getBusinessDate());
+                                    }
+                                }
                             }
-                        }
-                    }).start();
+                        }).start();
+                    }
                     break;
                 }
                 case MainPage.VIEW_EVENT_CLOSE_SPLIT_BILL: {
@@ -297,23 +312,38 @@ public class EditSettlementPage extends BaseActivity {
                                 orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 
                     }
-                    /**
-                     * 给后台发送log 信息
-                     */
-                    new Thread(new Runnable() {
+                    boolean isEdit = false;
+                    if(!TextUtils.isEmpty(paymentMap.get("isEdit"))){
+                        isEdit = Boolean.parseBoolean(paymentMap.get("isEdit"));
+                    }
 
-                        @Override
-                        public void run() {
-                            CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-                            if (cloudSync != null) {
-                                int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(orderSplit.getOrderId());
-                                cloudSync.syncOrderInfoForLog(orderSplit.getOrderId(),
-                                        App.instance.getRevenueCenter().getId(),
-                                        App.instance.getBusinessDate(), currCount + 1);
+                    if(isEdit) {
+                        /**
+                         * 给后台发送log 信息
+                         */
+                        new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+                                    CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                                    if (cloudSync != null) {
+                                        int currCount = SyncMsgSQL.getSyncMsgCurrCountByOrderId(orderSplit.getOrderId());
+                                        cloudSync.syncOrderInfoForLog(orderSplit.getOrderId(),
+                                                App.instance.getRevenueCenter().getId(),
+                                                App.instance.getBusinessDate(), currCount + 1);
+                                    }
+                                } else {
+                                    SubPosCloudSyncJobManager subPosCloudSyncJobManager = App.instance.getSubPosSyncJob();
+                                    if (subPosCloudSyncJobManager != null) {
+                                        subPosCloudSyncJobManager.syncOrderInfoWhenEditPayment(orderSplit.getOrderId(),
+                                                App.instance.getRevenueCenter().getId(),
+                                                App.instance.getBusinessDate());
+                                    }
+                                }
                             }
-                        }
-                    }).start();
-
+                        }).start();
+                    }
                 }
 
                 break;

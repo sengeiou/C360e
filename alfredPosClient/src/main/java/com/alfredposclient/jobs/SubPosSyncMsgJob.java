@@ -63,23 +63,18 @@ public class SubPosSyncMsgJob extends Job {
     	//LogUtil.d(TAG, payload);
     	BaseActivity context = App.getTopActivity();
     	try {
-            if(this.msgType == HttpAPI.NETWORK_ORDER_STATUS_UPDATE){
-                SyncMsg syncMsg = SyncMsgSQL.getSyncMsgByAppOrderId(appOrderId, orderStatus);
-//                SubPosSyncCentre.getInstance().updateAppOrderStatus(context, syncMsg);
-                LogUtil.d(TAG, "updateAppOrderStatus start");
-            }else {
+            if(this.msgType != HttpAPI.NETWORK_ORDER_STATUS_UPDATE){
                 SyncMsg content = SyncMsgSQL.getSyncMsgById(this.msgUUID, this.revenueId, this.created);
                 if (content == null)
                     return;
 
-                if (this.msgType == HttpAPI.ORDER_DATA
-                        || this.msgType == HttpAPI.LOG_DATA) {
+                if (this.msgType == HttpAPI.ORDER_DATA) {
                     //sync order data
                     SubPosSyncCentre.getInstance().cloudSyncUploadOrderInfo(context, content);
                 }
-                if (this.msgType == HttpAPI.REPORT_DATA||
-                        this.msgType == HttpAPI.OPEN_CLOSE_SESSION_RESTAURANT) {
-//                    SubPosSyncCentre.getInstance().cloudSyncUploadReportInfo(context, content);
+                if(this.msgType == HttpAPI.LOG_DATA){
+                    SubPosSyncCentre.getInstance().cloudSyncUploadOrderInfoLog(context, content);
+
                 }
                 LogUtil.d(TAG, "Cloud MSG SYNC JOB Successful");
             }

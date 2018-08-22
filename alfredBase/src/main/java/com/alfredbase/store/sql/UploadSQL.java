@@ -88,9 +88,7 @@ public class UploadSQL {
 						.getWeixinSettlementByPamentId(payment.getId().intValue()));
 			}
 		}
-		Gson gson = new Gson();
 		Map<String, Object> map = new HashMap<String, Object>();
-		LogUtil.i("bohHoldSettlements", gson.toJson(bohHoldSettlements));
 		map.put("order", order);
 		map.put("orderBills", orderBills);
 		map.put("roundAmounts", roundAmounts);
@@ -107,6 +105,32 @@ public class UploadSQL {
 		map.put("voidSettlements", voidSettlements);
 		map.put("alipaySettlements", alipaySettlements);
 		map.put("weixinSettlements", weixinSettlements);
+		return map;
+	}
+	public static Map<String, Object> getOrderInfoWhenSubPosEditSettlement(Integer orderId) {
+		Order order = OrderSQL.getOrder(orderId);
+		if (order == null)
+			return null;
+		/**
+		 * 订单部分
+		 */
+		List<RoundAmount> roundAmounts = RoundAmountSQL.getRoundAmountForSync(order);
+		/**
+		 * 支付部分
+		 */
+		List<Payment> payments = PaymentSQL.getPaymentByOrderIdForSyncData(orderId);
+		ArrayList<PaymentSettlement> paymentSettlements = new ArrayList<PaymentSettlement>();
+		for (Payment payment : payments) {
+			if (payment != null) {
+				paymentSettlements.addAll(PaymentSettlementSQL
+						.getPaymentSettlementsBypaymentId(payment.getId().intValue()));
+			}
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("order", order);
+		map.put("roundAmounts", roundAmounts);
+		map.put("payments", payments);
+		map.put("paymentSettlements", paymentSettlements);
 		return map;
 	}
 	public static Map<String, Object> getSubPosOrderInfo(Integer orderId) {

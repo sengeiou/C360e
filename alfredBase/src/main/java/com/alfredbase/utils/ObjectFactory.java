@@ -143,7 +143,7 @@ public class ObjectFactory {
 				int oldId = orderSplit.getId();
 				orderSplit.setId(CommonSQL.getNextSeq(TableNames.CPOrderSplit));
 				orderSplit.setOrderId(subOrder.getId());
-				CPOrderSplitSQL.update(db, orderSplit);
+				CPOrderSplitSQL.update(db, orderSplit, oldId);
 				orderSplitMap.put(oldId, orderSplit.getId());
 			}
 
@@ -218,6 +218,53 @@ public class ObjectFactory {
 					paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));
 				}
 				CPPaymentSettlementSQL.addPaymentSettlement(db, paymentSettlement);
+			}
+		}
+		return subOrder;
+	}
+	public Order cpOrderInfoLog (SQLiteDatabase db, Order subOrder, List<OrderSplit> orderSplits, List<Payment> payments,
+								 List<PaymentSettlement> paymentSettlements, List<RoundAmount> roundAmounts) throws Exception{
+
+		synchronized (lock_cpOrderInfo) {
+			if (subOrder != null) {
+				CPPaymentSettlementSQL.deletePaymentSettlementByOrderId(db, subOrder.getId().intValue());
+				CPPaymentSQL.deletePayment(db, subOrder.getId().intValue());
+				CPRoundAmountSQL.deleteRoundAmount(db, subOrder);
+				Map<Integer, Integer> orderSplitMap = new HashMap<>();
+				for(OrderSplit orderSplit : orderSplits){
+					orderSplitMap.put(orderSplit.getOldOrderSplitId(), orderSplit.getId());
+				}
+				Map<Integer, Integer> paymentMap = new HashMap<>();
+				for (Payment payment : payments) {
+					int oldId = payment.getId();
+					payment.setId(CommonSQL.getNextSeq(TableNames.CPPayment));
+					payment.setOrderId(subOrder.getId());
+					Integer orderSplitId = payment.getOrderSplitId();
+					if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
+						payment.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
+					}
+					CPPaymentSQL.addPayment(db, payment);
+					paymentMap.put(oldId, payment.getId());
+				}
+
+				for (RoundAmount roundAmount : roundAmounts) {
+					roundAmount.setId(CommonSQL.getNextSeq(TableNames.CPRoundAmount));
+					roundAmount.setOrderId(subOrder.getId());
+					Integer orderSplitId = roundAmount.getOrderSplitId();
+					if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
+						roundAmount.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
+					}
+					CPRoundAmountSQL.update(db, roundAmount);
+				}
+
+				for (PaymentSettlement paymentSettlement : paymentSettlements) {
+					paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.CPPaymentSettlement));
+					Integer paymentId = paymentSettlement.getPaymentId();
+					if (paymentId != null && paymentMap.containsKey(paymentId.intValue())) {
+						paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));
+					}
+					CPPaymentSettlementSQL.addPaymentSettlement(db, paymentSettlement);
+				}
 			}
 		}
 		return subOrder;

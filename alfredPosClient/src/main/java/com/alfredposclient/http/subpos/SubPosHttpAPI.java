@@ -268,6 +268,42 @@ public class SubPosHttpAPI {
             e.printStackTrace();
         }
     }
+    public static void cloudSyncUploadOrderInfoLog(final Context context, final SyncMsg syncMsg,
+                                                String url, AsyncHttpClient httpClient) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(syncMsg.getData());
+            jsonObject.put("appVersion", App.instance.VERSION);
+            jsonObject.put("userId", App.instance.getUser().getId());
+            httpClient.post(context, url,
+                    new StringEntity(jsonObject + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS
+                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
+                                syncMsg.setStatus(ParamConst.SYNC_MSG_SUCCESS);
+                                SyncMsgSQL.add(syncMsg);
+                            } else {
+                                syncMsg.setStatus(ParamConst.SYNC_MSG_MALDATA);
+                                SyncMsgSQL.add(syncMsg);
+                            }
+                        }
+                        @Override
+                        public void onFailure(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody, final Throwable error) {
+                            syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
+                            SyncMsgSQL.add(syncMsg);
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public static void cloudSyncUploadReportInfo(final Context context, final SyncMsg syncMsg, final SubPosBean subPosBean,
                                                  String url, AsyncHttpClient httpClient, final CallBack callBack) {
 

@@ -459,5 +459,13 @@ public class CPRoundAmountSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void deleteRoundAmount(SQLiteDatabase db, Order order) {
+		String sql = "delete from " + TableNames.CPRoundAmount + " where orderId = ?";
+		try {
+			db.execSQL(sql, new Object[] { order.getId() });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

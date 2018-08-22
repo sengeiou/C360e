@@ -1133,7 +1133,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         super.onAnimationEnd(animation);
                         if (BH.getBD(0).compareTo(BH.getBD(order.getTotal())) == 0
                                 && !(parent instanceof EditSettlementPage)) {
-                            printBill(null);
+                            printBill(true, null);
                         }
                     }
                 });
@@ -1207,7 +1207,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
 
-    private void printBill(final String change) {
+    private void printBill(final boolean isEdit, final String change) {
         final int paidOrderId = order.getId();
         final int tabelId = order.getTableId();
         final String numTag = order.getNumTag();
@@ -1235,6 +1235,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put("orderId", String.valueOf(paidOrderId));
                 map.put("paymentId", String.valueOf(payment.getId().intValue()));
+                map.put("isEdit", isEdit+"");
                 String changeNum = "";
                 if (!TextUtils.isEmpty(change)) {
                     try {
@@ -1309,14 +1310,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                     OrderSQL.update(order);
                     initBillSummary();
-                    printBill(null);
+                    printBill(true,null);
 
                 }
                 break;
                 case R.id.btn_print_receipt: {
 //				v.setVisibility(View.GONE);
                     // closeWindowAction();
-                    printBill(null);
+                    printBill(false,null);
 
                 }
 
@@ -2173,7 +2174,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     @Override
                     public void run() {
                         if (isShowing())
-                            printBill(null);
+                            printBill(true,null);
                     }
                 }, 100);
             }
@@ -2448,12 +2449,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         if (settlementNum.compareTo(BH.getBD(order.getTotal())) == 0) {
             if (viewTag == ParamConst.SETTLEMENT_TYPE_CASH) {
                 if (TextUtils.isEmpty(tv_change_num.getText().toString())) {
-                    printBill(null);
+                    printBill(true,null);
                 } else {
-                    printBill(tv_change_num.getText().toString());
+                    printBill(true, tv_change_num.getText().toString());
                 }
             } else {
-                printBill(null);
+                printBill(true, null);
             }
         }
 

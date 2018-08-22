@@ -97,6 +97,11 @@ public class ResultCode {
 	 * 同步的数据已经存在
 	 */
 	public static final int RECEIVE_MSG_EXIST = -2009;
+	/**
+	 * 副Pos 到主Pos 更新支付的时候使用
+	 * 同步的数据已经不存在
+	 */
+	public static final int RECEIVE_MSG_NO_EXIST = -2000;
 
 	/**
 	 * 用户储值卡没有绑定该餐厅

@@ -92,7 +92,9 @@ public class SettingView extends LinearLayout implements OnClickListener {
         }
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.ll_printer_qr_code).setVisibility(View.VISIBLE);
-			findViewById(R.id.ll_sub_pos).setVisibility(View.VISIBLE);
+			if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+				findViewById(R.id.ll_sub_pos).setVisibility(View.VISIBLE);
+			}
 
 		}else{
 			findViewById(R.id.ll_printer_qr_code).setVisibility(View.GONE);

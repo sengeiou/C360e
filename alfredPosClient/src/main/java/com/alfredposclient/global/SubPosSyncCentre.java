@@ -81,6 +81,10 @@ public class SubPosSyncCentre {
 		SubPosHttpAPI.cloudSyncUploadOrderInfo(context, syncMsg, getAbsoluteUrl(APIName.SUBPOS_COMMIT_ORDER), bigSyncHttpClient);
 
 	}
+	public void cloudSyncUploadOrderInfoLog(Context context, SyncMsg syncMsg){
+		SubPosHttpAPI.cloudSyncUploadOrderInfoLog(context, syncMsg, getAbsoluteUrl(APIName.SUBPOS_COMMIT_ORDERLOG), bigSyncHttpClient);
+
+	}
 	public void cloudSyncUploadReportInfo(Context context, SyncMsg syncMsg, SubPosBean subPosBean, CallBack callBack){
 		SubPosHttpAPI.cloudSyncUploadReportInfo(context, syncMsg, subPosBean, getAbsoluteUrl(APIName.SUBPOS_COMMIT_REPORT), bigSyncHttpClient, callBack);
 	}

@@ -1455,6 +1455,15 @@ public class CPPaymentSettlementSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void deletePaymentSettlementByOrderId(SQLiteDatabase db, int orderId) {
+		String sql = "delete from " + TableNames.CPPaymentSettlement
+				+ " where paymentId in (select id from " + TableNames.CPPayment + " where orderId = ?)";
+		try {
+			db.execSQL(sql, new Object[] { orderId });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void updatePaymentAmount( String paymentAmount, String cashChange,  int paymentId){
 

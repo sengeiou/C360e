@@ -94,7 +94,7 @@ public class SubPosManagePage extends BaseActivity {
                 showCheck = true;
             }
             holder.tv_status.setText(status);
-            holder.btn_check.setText(status);
+            holder.btn_check.setText("Close");
             holder.tv_tag.setText(subPosBean.getNumTag());
             if(showCheck){
                 holder.btn_check.setVisibility(View.VISIBLE);

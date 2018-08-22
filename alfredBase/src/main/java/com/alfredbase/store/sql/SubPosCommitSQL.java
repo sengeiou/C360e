@@ -47,6 +47,24 @@ public class SubPosCommitSQL {
         }
         return isSuccessful;
     }
+    public static boolean commitOrderLog(Order subOrder, List<OrderSplit> orderSplits,  List<Payment> payments,
+                                         List<PaymentSettlement> paymentSettlements, List<RoundAmount> roundAmounts){
+        boolean isSuccessful;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            db.beginTransaction();
+            ObjectFactory.getInstance().cpOrderInfoLog(db, subOrder, orderSplits, payments, paymentSettlements, roundAmounts);
+
+            db.setTransactionSuccessful();
+            isSuccessful = true;
+        }catch (Exception e){
+            isSuccessful = false;
+            e.printStackTrace();
+        }finally {
+            db.endTransaction();
+        }
+        return isSuccessful;
+    }
 
     public static boolean commitReport(int subPosBeanId, ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs,
                                        List<ReportDayPayment> reportDayPayments, List<ReportPluDayItem> reportPluDayItems,

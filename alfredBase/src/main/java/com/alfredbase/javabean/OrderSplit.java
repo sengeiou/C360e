@@ -70,6 +70,9 @@ public class OrderSplit {
 
 	private int splitByPax;
 
+	// 只在副机传送数据到主机的时候使用，注意只存到 CPOrderSplit表中，默认的 OrderSplit表中 不存
+	private int oldOrderSplitId = 0;
+
 	public OrderSplit() {
 	}
 
@@ -291,6 +294,14 @@ public class OrderSplit {
 		this.splitByPax = splitByPax;
 	}
 
+	public int getOldOrderSplitId() {
+		return oldOrderSplitId;
+	}
+
+	public void setOldOrderSplitId(int oldOrderSplitId) {
+		this.oldOrderSplitId = oldOrderSplitId;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderSplit{" +
@@ -318,6 +329,7 @@ public class OrderSplit {
 				", inclusiveTaxPercentage='" + inclusiveTaxPercentage + '\'' +
 				", oldTotal='" + oldTotal + '\'' +
 				", splitByPax=" + splitByPax +
+				", oldOrderSplitId=" + oldOrderSplitId +
 				'}';
 	}
 }

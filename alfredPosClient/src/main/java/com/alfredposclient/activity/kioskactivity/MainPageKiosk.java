@@ -908,7 +908,7 @@ public class MainPageKiosk extends BaseActivity {
 
                         @Override
                         public void run() {
-                            if(App.instance.getPosType() == 0) {
+                            if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
                                 CloudSyncJobManager cloudSync = App.instance.getSyncJob();
                                 if (cloudSync != null) {
 
@@ -986,6 +986,9 @@ public class MainPageKiosk extends BaseActivity {
                     temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
                     temporaryOrder.setTotal(paidOrderSplit.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+                    if(App.instance.getPosType() == ParamConst.POS_TYPE_SUB && App.instance.getSubPosBean() != null) {
+                        temporaryOrder.setNumTag(App.instance.getSubPosBean().getNumTag());
+                    }
 
                     ModifierCheckSql.deleteAllModifierCheck();
                     List<PrinterDevice> printerList = App.instance.getPrinterLable();
@@ -1075,33 +1078,37 @@ public class MainPageKiosk extends BaseActivity {
                     removeNotificationTables();
                     topMenuView.setGetBillNum(App.instance
                             .getGetTingBillNotifications().size());
-                    /**
-                     * 给后台发送log 信息
-                     */
-                    new Thread(new Runnable() {
+                    final Order checkOrder = OrderSQL.getOrder(paidOrderSplit.getOrderId());
+                    if(checkOrder.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+                        /**
+                         * 给后台发送log 信息
+                         */
+                        new Thread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            if(App.instance.getPosType() == 0) {
-                                CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-                                if (cloudSync != null) {
+                            @Override
+                            public void run() {
+                                if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+                                    CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                                    if (cloudSync != null) {
 
-                                    cloudSync.syncOrderInfoForLog(currentOrder.getId(),
-                                            App.instance.getRevenueCenter().getId(),
-                                            App.instance.getBusinessDate(), 1);
+                                        cloudSync.syncOrderInfoForLog(checkOrder.getId(),
+                                                App.instance.getRevenueCenter().getId(),
+                                                App.instance.getBusinessDate(), 1);
+                                    }
+                                } else {
+                                    SubPosCloudSyncJobManager subPosCloudSyncJobManager = App.instance.getSubPosSyncJob();
+                                    if (subPosCloudSyncJobManager != null) {
+                                        subPosCloudSyncJobManager.syncOrderInfo(checkOrder.getId(),
+                                                App.instance.getRevenueCenter().getId(),
+                                                App.instance.getBusinessDate());
+                                    }
+                                    handler.sendEmptyMessage(VIEW_EVENT_SET_DATA);
                                 }
-                            }else{
-                                SubPosCloudSyncJobManager subPosCloudSyncJobManager = App.instance.getSubPosSyncJob();
-                                if(subPosCloudSyncJobManager != null){
-                                    subPosCloudSyncJobManager.syncOrderInfo(currentOrder.getId(),
-                                            App.instance.getRevenueCenter().getId(),
-                                            App.instance.getBusinessDate());
-                                }
-                                handler.sendEmptyMessage(VIEW_EVENT_SET_DATA);
                             }
-                        }
-                    }).start();
-
+                        }).start();
+                    }else{
+                        handler.sendEmptyMessage(VIEW_EVENT_SET_DATA);
+                    }
                 }
                 break;
                 case VIEW_EVENT_SHOW_DISCOUNT_WINDOW: {
