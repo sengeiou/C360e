@@ -511,15 +511,15 @@ public class KotItemDetailSQL {
 		return result;
 	}
 
-	public static KotItemDetail getMainKotItemDetailByOrderDetailId(
+	public static KotItemDetail getMainKotItemDetailByOrderDetailId(int kotSummaryId,
 			int orderDetailId) {
 		KotItemDetail kotItemDetail = null;
 		String sql = "select * from " + TableNames.KotItemDetail
-				+ " where orderDetailId = ? and categoryId = ?";
+				+ " where kotSummaryId = ? and orderDetailId = ? and categoryId = ?";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql,
-					new String[] { orderDetailId + "", ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN + "" });
+					new String[] {kotSummaryId+"", orderDetailId + "", ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN + "" });
 			if (cursor.moveToFirst()) {
 				kotItemDetail = new KotItemDetail();
 				kotItemDetail.setId(cursor.getInt(0));

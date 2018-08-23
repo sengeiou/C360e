@@ -204,7 +204,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 						for (int i = 0; i < kotItemDetails.size(); i++) {
 //					KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(
 //							kotItemDetails.get(i).getOrderDetailId(),kotItemDetails.get(i).getCategoryId());
-							KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotItemDetails.get(i).getOrderDetailId());
+							KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), kotItemDetails.get(i).getOrderDetailId());
 							if (kotItemDetail != null) {
 								if (kotItemDetails.get(i).getKotStatus()<ParamConst.KOT_STATUS_DONE) {
 									kotItemDetails.get(i).setKotStatus(ParamConst.KOT_STATUS_UPDATE);

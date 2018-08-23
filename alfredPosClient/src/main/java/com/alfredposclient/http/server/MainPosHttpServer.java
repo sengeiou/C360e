@@ -968,6 +968,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 									Map<String, Object> orderMap = new HashMap<String, Object>();
 									orderMap.put("orderId", orderSplit.getOrderId());
 									orderMap.put("orderDetailIds", orderDetailIds);
+									orderMap.put("orderPosType", ParamConst.POS_TYPE_SUB);
 									App.instance.getKdsJobManager().tearDownKotForSub(
 											kotSummary, kotItemDetails,
 											kotItemModifiers, ParamConst.JOB_NEW_KOT,
@@ -1040,6 +1041,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 								orderMap.put("orderId", placeOrder.getId());
 								orderMap.put("orderDetailIds", orderDetailIds);
+								orderMap.put("orderPosType", ParamConst.POS_TYPE_SUB);
 //								orderMap.put("paidOrder", placeOrder);
 //								orderMap.put("title", title);
 //								orderMap.put("placedOrderDetails", placedOrderDetails);
@@ -2425,7 +2427,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			}
 			
 			KotItemDetail localMainKotItemDetail = KotItemDetailSQL
-					.getMainKotItemDetailByOrderDetailId(kotItemDetail
+					.getMainKotItemDetailByOrderDetailId(kotItemDetail.getKotSummaryId(), kotItemDetail
 							.getOrderDetailId());
 			localMainKotItemDetail.setUnFinishQty(localMainKotItemDetail
 					.getUnFinishQty().intValue()
@@ -2695,12 +2697,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						orderDetail,
 						ParamConst.ORDERDETAIL_TYPE_VOID);
 				String kotCommitStatus = ParamConst.JOB_VOID_KOT;
-				KotItemDetail kotItemDetail = KotItemDetailSQL
-						.getMainKotItemDetailByOrderDetailId(orderDetail
-								.getId());
-				kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
 				KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
 						.getOrderId(), "");
+				KotItemDetail kotItemDetail = KotItemDetailSQL
+						.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), orderDetail
+								.getId());
+				kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
+
 				KotItemDetailSQL.update(kotItemDetail);
 				ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 				kotItemDetails.add(kotItemDetail);
@@ -2710,7 +2713,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 								orderDetail);
 				if (freeOrderDetail != null) {
 					KotItemDetail freeKotItemDetail = KotItemDetailSQL
-							.getMainKotItemDetailByOrderDetailId(freeOrderDetail
+							.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), freeOrderDetail
 									.getId());
 					freeKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
 					KotItemDetailSQL.update(freeKotItemDetail);

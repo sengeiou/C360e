@@ -62,7 +62,6 @@ public class DataHelper {
                 //1.0.28
                 onUpgradeForOldVersion23(db);
                 onUpgradeForOldVersion24(db);
-                onUpgradeForOldVersion25(db);
                 db.setTransactionSuccessful();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -422,6 +421,7 @@ public class DataHelper {
                         onUpgradeForOldVersion23(db);
                         onUpgradeForOldVersion24(db);
                         break;
+                    //1.0.29
                     case 24:
                         onUpgradeForOldVersion24(db);
 
@@ -1214,10 +1214,6 @@ public class DataHelper {
                     + TableNames.Order
                     + " ADD COLUMN  numTag TEXT default ''");
 
-
-        }
-
-        private void onUpgradeForOldVersion25(SQLiteDatabase db) {
 
             db.execSQL("ALTER TABLE "
                     + TableNames.Order

@@ -1743,7 +1743,7 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		KotItemDetail kotItemDetail = null;
 		synchronized(lock_getKotItemDetail) {
 			kotItemDetail = KotItemDetailSQL
-					.getMainKotItemDetailByOrderDetailId(orderDetail.getId());
+					.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), orderDetail.getId());
 			if (kotItemDetail == null) {
 				long time = System.currentTimeMillis();
 				kotItemDetail = new KotItemDetail();

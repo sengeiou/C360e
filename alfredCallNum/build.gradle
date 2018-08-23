@@ -34,11 +34,18 @@ android {
 //        }
 //    }
 
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
 //    as3.0以上
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             // each 改为 all
-            def fileName = "selfHelp.apk"
+            def fileName = "callingNum.apk"
             def outFile = output.outputFile
             if (outFile != null && outFile.name.endsWith('.apk')) {
                 outputFileName = fileName

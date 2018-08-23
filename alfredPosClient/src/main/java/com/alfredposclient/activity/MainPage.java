@@ -1314,7 +1314,7 @@ public class MainPage extends BaseActivity {
                                     }
                                     KotSummary fromKotSummary = KotSummarySQL
                                             .getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
-                                    KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(transfItemOrderDetail.getTransferFromDetailId());
+                                    KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(fromKotSummary.getId(),transfItemOrderDetail.getTransferFromDetailId());
                                     if (idNull) {
                                         kotItemDetail = ObjectFactory.getInstance().cpKotItemDetail(kotItemDetail, transfItemOrderDetail);
                                     }
@@ -1499,12 +1499,13 @@ public class MainPage extends BaseActivity {
                                             ParamConst.ORDERDETAIL_TYPE_VOID);
                                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                                     String kotCommitStatus = ParamConst.JOB_VOID_KOT;
-                                    KotItemDetail kotItemDetail = KotItemDetailSQL
-                                            .getMainKotItemDetailByOrderDetailId(orderDetail
-                                                    .getId());
-                                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
                                     KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
                                             .getOrderId(), "");
+                                    KotItemDetail kotItemDetail = KotItemDetailSQL
+                                            .getMainKotItemDetailByOrderDetailId(kotSummary.getId(), orderDetail
+                                                    .getId());
+                                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
+
                                     KotItemDetailSQL.update(kotItemDetail);
                                     ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                                     kotItemDetails.add(kotItemDetail);
@@ -1515,7 +1516,7 @@ public class MainPage extends BaseActivity {
                                     // OrderDetailSQL.deleteOrderDetail(freeOrderDetail);
                                     if (freeOrderDetail != null) {
                                         KotItemDetail freeKotItemDetail = KotItemDetailSQL
-                                                .getMainKotItemDetailByOrderDetailId(freeOrderDetail
+                                                .getMainKotItemDetailByOrderDetailId(kotSummary.getId(), freeOrderDetail
                                                         .getId());
                                         freeKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
                                         KotItemDetailSQL.update(freeKotItemDetail);
@@ -1796,13 +1797,14 @@ public class MainPage extends BaseActivity {
                         handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                     } else {
                         String kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+                        KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
+                                .getOrderId(), "");
                         KotItemDetail kotItemDetail = KotItemDetailSQL
-                                .getMainKotItemDetailByOrderDetailId(orderDetail
+                                .getMainKotItemDetailByOrderDetailId(kotSummary.getId(), orderDetail
                                         .getId());
                         kotItemDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
                         kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
-                        KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
-                                .getOrderId(), "");
+
                         kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
                         KotSummarySQL.update(kotSummary);
                         KotItemDetailSQL.update(kotItemDetail);

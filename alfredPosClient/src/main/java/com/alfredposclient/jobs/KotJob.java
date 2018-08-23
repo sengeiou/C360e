@@ -17,6 +17,7 @@ import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
@@ -137,22 +138,41 @@ public class KotJob extends Job {
 	    		if(orderDetailIds.size() != 0){
 	    			ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 					ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
-					for (int i = 0; i < orderDetailIds.size(); i++) {
-						OrderDetail orderDetail = OrderDetailSQL
-								.getOrderDetail(orderDetailIds.get(i));
-						orderDetail
-								.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
-						KotItemDetail kotItemDetail = KotItemDetailSQL
-								.getMainKotItemDetailByOrderDetailId(orderDetailIds
-										.get(i));
+                    if(kotMap.containsKey("orderPosType") && (Integer)kotMap.get("orderPosType") == ParamConst.POS_TYPE_SUB){
+                        for (int i = 0; i < orderDetailIds.size(); i++) {
+                            OrderDetail orderDetail = CPOrderDetailSQL
+                                    .getOrderDetail(orderDetailIds.get(i));
+                            orderDetail
+                                    .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
+                            KotItemDetail kotItemDetail = KotItemDetailSQL
+                                    .getMainKotItemDetailByOrderDetailId(kotsmy.getId(), orderDetailIds
+                                            .get(i));
 //						kotItemDetail
 //								.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
-						orderDetails.add(orderDetail);
-						kotItemDetails.add(kotItemDetail);
-					}
-					OrderDetailSQL.addOrderDetailList(orderDetails);
-					KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
-			    	context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
+                            orderDetails.add(orderDetail);
+                            kotItemDetails.add(kotItemDetail);
+                        }
+                        CPOrderDetailSQL.addOrderDetailList(orderDetails);
+                        KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                        context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
+                    }else {
+                        for (int i = 0; i < orderDetailIds.size(); i++) {
+                            OrderDetail orderDetail = OrderDetailSQL
+                                    .getOrderDetail(orderDetailIds.get(i));
+                            orderDetail
+                                    .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
+                            KotItemDetail kotItemDetail = KotItemDetailSQL
+                                    .getMainKotItemDetailByOrderDetailId(kotsmy.getId(), orderDetailIds
+                                            .get(i));
+//						kotItemDetail
+//								.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
+                            orderDetails.add(orderDetail);
+                            kotItemDetails.add(kotItemDetail);
+                        }
+                        OrderDetailSQL.addOrderDetailList(orderDetails);
+                        KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                        context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
+                    }
 	    		}
 	    	}else if(APIName.TRANSFER_KOT.equals(apiName)){
 	    		SyncCentre.getInstance().syncTransferTable(kds, context, data, null);

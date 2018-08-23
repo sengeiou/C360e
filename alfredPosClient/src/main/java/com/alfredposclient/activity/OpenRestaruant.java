@@ -889,7 +889,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					for (Order order : subPosOrders) {
 						// sync order to cloud
 						if (cloudSync!=null) {
-							cloudSync.syncOrderInfo(order.getId(),
+							cloudSync.syncSubPosOrderInfo(order.getId(),
 									App.instance.getRevenueCenter().getId(),
 									bizDate);
 
