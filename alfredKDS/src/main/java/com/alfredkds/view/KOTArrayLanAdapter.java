@@ -26,214 +26,206 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.ViewHolder>{
+public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.ViewHolder> {
 
-	private Context mContext;
-	private List<KotItem> kots = new ArrayList<KotItem>();
-	private boolean addFirstItem = false;
-	private Handler handler;
-	private LayoutInflater inflater;
-	private MainPosInfo mainPosInfo;
+    private Context mContext;
+    private List<KotItem> kots = new ArrayList<KotItem>();
+    private boolean addFirstItem = false;
+    private Handler handler;
+    private LayoutInflater inflater;
+    private MainPosInfo mainPosInfo;
 
 //	private Map<Integer, Long> times = new HashMap<Integer, Long>();
 
-	public KOTArrayLanAdapter(Context mContext, Handler handler) {
-		super();
+    public KOTArrayLanAdapter(Context mContext, Handler handler) {
+        super();
 //		times.clear();
-		this.mContext = mContext;
-		this.handler = handler;
-		inflater=LayoutInflater. from(mContext);
-	}
+        this.mContext = mContext;
+        this.handler = handler;
+        inflater = LayoutInflater.from(mContext);
+    }
 
-	public void setAddFirstItem(boolean addFirstItem) {
-		this.addFirstItem = addFirstItem;
-	}
-
-
-
-	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View convertView = null;
-		ViewHolder viewHolder = null;
+    public void setAddFirstItem(boolean addFirstItem) {
+        this.addFirstItem = addFirstItem;
+    }
 
 
-
-	//	View convertView = View.inflate(mContext,R.layout.kot_array_view, null);
-
-
-		//convertView = inflater.inflate(R.layout. kot_array_view,parent, false);
-		if(viewType==0){
-			convertView = inflater.inflate(R.layout. kot_array_landscape_title,parent, false);
-			//convertView= LayoutInflater.from(parent.getContext()).inflate(R.layout.kot_array_landscape_view, parent, false);
-			// convertView = View.inflate(mContext,R.layout.kot_array_landscape_view, null);
-			viewHolder= new ViewHolder(convertView);
-
-		}else {
-			convertView = inflater.inflate(R.layout. kot_array_landscape_view,parent, false);
-
-			viewHolder= new ViewHolder(convertView);
-
-			viewHolder.table=(TextView)convertView.findViewById(R.id.tv_kot_item_table);
-
-			viewHolder.detail=(TextView)convertView.findViewById(R.id.tv_kot_detail);
-			viewHolder.mod=(TextView)convertView.findViewById(R.id.tv_kot_mod);
-
-			viewHolder.status=(TextView)convertView.findViewById(R.id.tv_kot_item_status);
-			viewHolder.orderNo=(TextView)convertView.findViewById(R.id.tv_kot_item_orderno);
-			viewHolder.tv_lan_progress=(Chronometer)convertView.findViewById(R.id.tv_lan_progress);
-			viewHolder.btn_complete=(Button) convertView.findViewById(R.id.btn_kot_complete);
-			viewHolder.btn_call=(Button)convertView.findViewById(R.id.btn_kot_call);
-			viewHolder.qty=(TextView)convertView.findViewById(R.id.tv_kot_item_qty);
-
-		}
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View convertView = null;
+        ViewHolder viewHolder = null;
 
 
-		return viewHolder;
-	}
+        //	View convertView = View.inflate(mContext,R.layout.kot_array_view, null);
 
-	@Override
-	public void onBindViewHolder(ViewHolder holder, int position) {
 
-		int itemViewType = KOTArrayLanAdapter.this.getItemViewType(position);
-		if(itemViewType==1) {
-			final KotItem kotItem = kots.get(position);
-			String orderNoStr =kotItem.getNumTag()+IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
-			holder.orderNo.setText(orderNoStr);
-			holder.mod.setText(kotItem.getItemModName());
-			holder.detail.setText(kotItem.getItemDetailName());
-			holder.table.setText(kotItem.getTableName());
+        //convertView = inflater.inflate(R.layout. kot_array_view,parent, false);
+        if (viewType == 0) {
+            convertView = inflater.inflate(R.layout.kot_array_landscape_title, parent, false);
+            //convertView= LayoutInflater.from(parent.getContext()).inflate(R.layout.kot_array_landscape_view, parent, false);
+            // convertView = View.inflate(mContext,R.layout.kot_array_landscape_view, null);
+            viewHolder = new ViewHolder(convertView);
 
-			//0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
+        } else {
+            convertView = inflater.inflate(R.layout.kot_array_landscape_view, parent, false);
 
-			if(kotItem.getKotStatus()==1)
-			{
-				holder.status.setText("正在做");
-			}else if(kotItem.getKotStatus()==0){
-				holder.status.setText("未发送");
-			}
-			else if(kotItem.getKotStatus()==2){
-				holder.status.setText("更新");
-			}
-			else if(kotItem.getKotStatus()==3){
-				holder.status.setText("已完成");
-			}
-			else if(kotItem.getKotStatus()==4){
-				holder.status.setText("已退单");
-			}
-			else if(kotItem.getKotStatus()==-1){
-				holder.status.setText("已删除");
-			}
-			long createTime = kotItem.getUpdateTime();
+            viewHolder = new ViewHolder(convertView);
 
-			holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - System.currentTimeMillis() + createTime);
+            viewHolder.table = (TextView) convertView.findViewById(R.id.tv_kot_item_table);
+
+            viewHolder.detail = (TextView) convertView.findViewById(R.id.tv_kot_detail);
+            viewHolder.mod = (TextView) convertView.findViewById(R.id.tv_kot_mod);
+
+            viewHolder.status = (TextView) convertView.findViewById(R.id.tv_kot_item_status);
+            viewHolder.orderNo = (TextView) convertView.findViewById(R.id.tv_kot_item_orderno);
+            viewHolder.tv_lan_progress = (Chronometer) convertView.findViewById(R.id.tv_lan_progress);
+            viewHolder.btn_complete = (Button) convertView.findViewById(R.id.btn_kot_complete);
+            viewHolder.btn_call = (Button) convertView.findViewById(R.id.btn_kot_call);
+            viewHolder.qty = (TextView) convertView.findViewById(R.id.tv_kot_item_qty);
+
+        }
+
+
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+
+        int itemViewType = KOTArrayLanAdapter.this.getItemViewType(position);
+        if (itemViewType == 1) {
+            final KotItem kotItem = kots.get(position);
+            String orderNoStr = kotItem.getNumTag() + IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
+            holder.orderNo.setText(orderNoStr);
+            holder.mod.setText(kotItem.getItemModName());
+            holder.detail.setText(kotItem.getItemDetailName());
+            holder.table.setText(kotItem.getTableName());
+
+            //0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
+
+            if (kotItem.getKotStatus() == 1) {
+                holder.status.setText("progress");
+            } else if (kotItem.getKotStatus() == 0) {
+                holder.status.setText("progress");
+            } else if (kotItem.getKotStatus() == 2) {
+                //holder.status.setText("更新");
+            } else if (kotItem.getKotStatus() == 3) {
+                //	holder.status.setText("已完成");
+            } else if (kotItem.getKotStatus() == 4) {
+                //	holder.status.setText("已退单");
+            } else if (kotItem.getKotStatus() == -1) {
+                //	holder.status.setText("已删除");
+            }
+            long createTime = kotItem.getUpdateTime();
+
+            holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - System.currentTimeMillis() + createTime);
 //
-			holder.qty.setText(kotItem.getQty()+"");
-			holder.tv_lan_progress.start();
-			if (kotItem.getCallType() == 1) {
-			//	holder.btn_call.setClickable(false);
-					holder.btn_call.setText("call again");
+            holder.qty.setText(kotItem.getQty() + "");
+            holder.tv_lan_progress.start();
+            if (kotItem.getCallType() == 1) {
+                //	holder.btn_call.setClickable(false);
+                holder.btn_call.setText("call again");
 
-			} else {
-				holder.btn_call.setText("call");
-			//	holder.btn_call.setClickable(true);
-				// holder.btn_call.setText("void");
+            } else {
+                holder.btn_call.setText("call");
+                //	holder.btn_call.setClickable(true);
+                // holder.btn_call.setText("void");
 
-			}
-
-
-			holder.btn_call.setBackgroundColor(mContext.getResources().getColor(R.color.color_kotview));
-			holder.btn_call.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (!ButtonClickTimer.canClick()) {
-						return;
-					}
-					mainPosInfo = App.instance.getCurrentConnectedMainPos();
-					Message message = new Message();
-					message.obj = kotItem;
-					message.arg2 = kotItem.getItemDetailId();
-					message.what = App.HANDLER_KOT_CALL_NUM;
-					handler.sendMessage(message);
-				}
-			});
-
-			holder.btn_complete.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
+            }
 
 
-					if (!ButtonClickTimer.canClick()) {
-						return;
-					}
+            holder.btn_call.setBackgroundColor(mContext.getResources().getColor(R.color.color_kotview));
+            holder.btn_call.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!ButtonClickTimer.canClick()) {
+                        return;
+                    }
+                    mainPosInfo = App.instance.getCurrentConnectedMainPos();
+                    Message message = new Message();
+                    message.obj = kotItem;
+                    message.arg2 = kotItem.getItemDetailId();
+                    message.what = App.HANDLER_KOT_CALL_NUM;
+                    handler.sendMessage(message);
+                }
+            });
 
-					Gson gson = new Gson();
-					KotItemDetail kotItemDetail = gson.fromJson(kotItem.getItemDetail(), KotItemDetail.class);
-					Message message = new Message();
-					Bundle bundle = new Bundle();
-					bundle.putSerializable("kotSummary", KotSummarySQL.getKotSummaryById(kotItem.getSummaryId()));
-
-					bundle.putInt("kotItemDetailId", kotItem.getItemDetailId());
-					bundle.putInt("id", 1);
-					message.setData(bundle);
-					message.what = App.HANDLER_KOT_COMPLETE;
-					handler.sendMessage(message);
-				}
-			});
-		}
-
-	}
-
-
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-
-	@Override
-	public int getItemCount() {
-		return kots.size();
-	}
-
-	@Override
-	public int getItemViewType(int position) {
-		if(position==0) {
-			return 0;
-		}else {
-			return 1;
-		}
-	}
+            holder.btn_complete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
 
-	
-	class ViewHolder extends  RecyclerView.ViewHolder{
+                    if (!ButtonClickTimer.canClick()) {
+                        return;
+                    }
 
-		   Chronometer  tv_lan_progress;
-           TextView name,status,table,orderNo,detail,mod,qty;
-           Button btn_complete,btn_call;
-           Button complete,call;
-		public ViewHolder(View itemView) {
-			super(itemView);
-		}
-	}
+                    Gson gson = new Gson();
+                    KotItemDetail kotItemDetail = gson.fromJson(kotItem.getItemDetail(), KotItemDetail.class);
+                    Message message = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("kotSummary", KotSummarySQL.getKotSummaryById(kotItem.getSummaryId()));
 
-	/**
-	 * @return the kots
-	 */
-	public List<KotItem> getKots() {
-		return kots;
-	}
+                    bundle.putInt("kotItemDetailId", kotItem.getItemDetailId());
+                    bundle.putInt("id", 1);
+                    message.setData(bundle);
+                    message.what = App.HANDLER_KOT_COMPLETE;
+                    handler.sendMessage(message);
+                }
+            });
+        }
 
-	/**
-	 * @param
-	 *
-	 */
-	public void setKots(List<KotItem> kotlist) {
-		kots.clear();
-		if(kotlist.size()>0) {
-			this.kots.add(null);
-		}
-		this.kots.addAll(kotlist);
-	//	this.kots = kots;
-	}
+    }
+
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemCount() {
+        return kots.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        Chronometer tv_lan_progress;
+        TextView name, status, table, orderNo, detail, mod, qty;
+        Button btn_complete, btn_call;
+        Button complete, call;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    /**
+     * @return the kots
+     */
+    public List<KotItem> getKots() {
+        return kots;
+    }
+
+    /**
+     * @param
+     */
+    public void setKots(List<KotItem> kotlist) {
+        kots.clear();
+        if (kotlist.size() > 0) {
+            this.kots.add(null);
+        }
+        this.kots.addAll(kotlist);
+        //	this.kots = kots;
+    }
 
 }

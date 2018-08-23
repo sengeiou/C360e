@@ -15,6 +15,7 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.activity.ConnectPOS;
 import com.alfredselfhelp.activity.EmployeeID;
 import com.alfredselfhelp.activity.Login;
+import com.alfredselfhelp.activity.MenuActivity;
 import com.alfredselfhelp.activity.SelectRevenue;
 
 public class UIHelp {
@@ -32,6 +33,15 @@ public class UIHelp {
 
     public static void startEmployeeID(BaseActivity context) {
         Intent intent = new Intent(context, EmployeeID.class);
+        context.startActivity(intent);
+        // context.overridePendingTransition(R.anim.slide_bottom_in,
+        // R.anim.slide_top_out);
+    }
+
+
+
+    public static void startMenu(BaseActivity context) {
+        Intent intent = new Intent(context, MenuActivity.class);
         context.startActivity(intent);
         // context.overridePendingTransition(R.anim.slide_bottom_in,
         // R.anim.slide_top_out);

@@ -1,6 +1,7 @@
 package com.alfredkds.activity;
 
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -190,7 +191,8 @@ public class KitchenOrder extends BaseActivity {
 				case App.HANDLER_KOTSUMMARY_IS_UNREAL:
 					loadingDialog.dismiss();
 					UIHelp.showToast(context, context.getResources().getString(R.string.order_discarded));
-					List<Kot> kots = App.instance.getInitKots();
+					//kots = App.instance.getRefreshKots();
+					List<Kot> kots = App.instance.getRefreshKots();
 					adapter.setKots(kots);
 					adapter.notifyDataSetChanged();
 					if (kots.isEmpty()) {
@@ -214,7 +216,8 @@ public class KitchenOrder extends BaseActivity {
 
 				case App.HANDLER_KOT_ITEM_CALL:
 					if(loadingDialog!=null) {
-						kots = App.instance.getInitKots();
+						kots = App.instance.getRefreshKots();
+						//kots = App.instance.getInitKots();
 						loadingDialog.dismiss();
 						madapter.setKots(getKotItem(kots));
 						madapter.notifyDataSetChanged();
@@ -393,6 +396,18 @@ public class KitchenOrder extends BaseActivity {
 
 	@Override
 	protected void onResume() {
+		if(App.instance.getSystemSettings().isKdsLan()){
+			//设置为横屏
+			if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			}
+		}else {
+			if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			}
+		}
+
+
 		doubleBackToExitPressedOnce = false;
 
 		initKOTList();
@@ -481,14 +496,16 @@ public class KitchenOrder extends BaseActivity {
 			madapter = new KOTArrayLanAdapter(context, handler);
 		//	Kot k=new Kot();
 			//kots.add(k);
-			kots = App.instance.getInitKots();
+			kots = App.instance.getRefreshKots();
+			//kots = App.instance.getInitKots();
 			madapter.setKots(getKotItem(kots));
 			ll_orders.setAdapter(madapter);
 			tv_order_qyt.setText(kotItems.size()+"");
 		}else {
 
 			adapter = new KOTArrayAdapter(context, handler);
-			kots = App.instance.getInitKots();
+			kots = App.instance.getRefreshKots();
+		//	kots = App.instance.getInitKots();
 			adapter.setKots(kots);
 			ll_orders.setAdapter(adapter);
 			tv_order_qyt.setText(kots.size()+"");

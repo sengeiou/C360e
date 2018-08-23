@@ -69,7 +69,7 @@
         <activity
             android:name=".activity.KitchenOrder"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="landscape"
+            android:launchMode="singleTask"
             android:theme="@style/MainActivityTheme" />
         <activity
             android:name=".activity.SelectKitchen"

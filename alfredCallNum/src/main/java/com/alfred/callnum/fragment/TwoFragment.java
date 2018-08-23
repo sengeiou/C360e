@@ -285,7 +285,7 @@ lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
                         mDataLeft.remove(i);
                         mAdapterLeft.notifyDataSetChanged();
                     } else {
-                        App.instance.setCall(call);
+                      //  App.instance.setCall(call);
                     }
                 }
             }
@@ -302,7 +302,7 @@ lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
 //                    App.instance.setCall(call);
 //                }
 //            }
-            App.instance.setCall(call);
+          //  App.instance.setCall(call);
             mDataLeft.add(position, call);
             mAdapterLeft.notifyItemInserted(position);
             re_left.scrollToPosition(position);
