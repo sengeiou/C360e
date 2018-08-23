@@ -74,7 +74,8 @@ public class OneFragment extends Fragment {
 
     private Boolean type = true;
 
-    private ImageView bg;
+    private TextView line1,line2,line3;
+
 
     @SuppressLint("ValidFragment")
     public OneFragment() {
@@ -134,6 +135,9 @@ public class OneFragment extends Fragment {
         re_two = (RecyclerView) getActivity().findViewById(R.id.review_two);
         re_three = (RecyclerView) getActivity().findViewById(R.id.review_three);
         re_four = (RecyclerView) getActivity().findViewById(R.id.review_four);
+        line1=(TextView)getActivity().findViewById(R.id.tv_line1) ;
+        line2=(TextView)getActivity().findViewById(R.id.tv_line2) ;
+        line3=(TextView)getActivity().findViewById(R.id.tv_line3) ;
      //   bg = (ImageView) getActivity().findViewById(R.id.img_call_bgs);
 
 
@@ -192,6 +196,9 @@ public class OneFragment extends Fragment {
     }
 
     public void addData(int position, CallBean call) {
+        line1.setVisibility(View.VISIBLE);
+        line2.setVisibility(View.VISIBLE);
+        line3.setVisibility(View.VISIBLE);
        // bg.setVisibility(View.GONE);
 //        if(callMap!=null) {
 //
@@ -216,7 +223,7 @@ public class OneFragment extends Fragment {
         Iterator<CallBean> it;
         int v = call.getCallTag() % 4;
         switch (v) {
-            case 1:
+            case 0:
                 it = mDatas1.iterator();
                 while (it.hasNext()) {
                     CallBean calls = it.next();
@@ -232,7 +239,7 @@ public class OneFragment extends Fragment {
                 mAdapter1.notifyItemInserted(position);
                 re_one.scrollToPosition(position);
                 break;
-            case 2:
+            case 1:
                 it = mDatas2.iterator();
                 while (it.hasNext()) {
                     CallBean calls = it.next();
@@ -249,7 +256,7 @@ public class OneFragment extends Fragment {
 
                 break;
 
-            case 3:
+            case 2:
                 it = mDatas3.iterator();
                 while (it.hasNext()) {
                     CallBean calls = it.next();
@@ -264,7 +271,7 @@ public class OneFragment extends Fragment {
                 mAdapter3.notifyItemInserted(position);
                 re_three.scrollToPosition(position);
                 break;
-            case 0:
+            case 3:
                 it = mDatas4.iterator();
                 while (it.hasNext()) {
                     CallBean calls = it.next();

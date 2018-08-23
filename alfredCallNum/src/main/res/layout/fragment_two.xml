@@ -3,19 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context=".fragment.TwoFragment">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <ImageView
-        android:id="@+id/img_call_bg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/call_num_back_icon"
-        android:layout_centerInParent="true"
 
-        />
+    tools:context=".fragment.TwoFragment">
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+    <!--<ImageView-->
+        <!--android:id="@+id/img_call_bg"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/call_num_back_icon"-->
+        <!--android:layout_centerInParent="true"-->
+
+        <!--/>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,18 +76,30 @@
                     android:layout_weight="2"
 
                     android:orientation="horizontal">
-
+                    <TextView
+                        android:layout_width="1dp"
+                        android:id="@+id/tv_lines"
+                        android:layout_height="match_parent"
+                        android:background="@color/deep_gray"
+                        android:visibility="gone"
+                        />
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/review_left"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
 
                         ></android.support.v7.widget.RecyclerView>
-
+<TextView
+    android:layout_width="1dp"
+    android:id="@+id/tv_line"
+    android:layout_height="match_parent"
+    android:background="@color/deep_gray"
+    android:visibility="gone"
+    />
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/review_right"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"></android.support.v7.widget.RecyclerView>
 
@@ -128,5 +140,5 @@
         </RelativeLayout>
 
     </LinearLayout>
-    </RelativeLayout>
+   <!--// </RelativeLayout>-->
 </FrameLayout>
