@@ -13,6 +13,7 @@ import com.alfred.callnum.global.App;
 import com.alfred.callnum.http.SyncCentre;
 import com.alfred.callnum.utils.UIHelp;
 import com.alfredbase.BaseActivity;
+import com.alfredbase.LoadingDialog;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
@@ -204,6 +205,9 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
                 Matcher matcher = pattern.matcher(getInputedIP());
                 if (matcher.matches()) {
                     App.instance.setPosIp(getInputedIP());
+                    if(loadingDialog == null){
+                        loadingDialog = new LoadingDialog(context);
+                    }
                     loadingDialog.setTitle("loading");
                     loadingDialog.show();
                     SyncCentre.getInstance().assignRevenue(context, App.instance.getPosIp(), handler);
