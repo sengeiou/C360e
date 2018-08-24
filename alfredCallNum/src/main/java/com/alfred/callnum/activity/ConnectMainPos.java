@@ -1,5 +1,7 @@
 package com.alfred.callnum.activity;
 
+import android.os.Handler;
+import android.os.Message;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,8 +10,10 @@ import android.widget.TextView;
 
 import com.alfred.callnum.R;
 import com.alfred.callnum.global.App;
+import com.alfred.callnum.http.SyncCentre;
 import com.alfred.callnum.utils.UIHelp;
 import com.alfredbase.BaseActivity;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 
@@ -171,6 +175,25 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
 
     }
 
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case ResultCode.SUCCESS:
+                    dismissLoadingDialog();
+
+                    UIHelp.startMainActivity(context, App.instance.getMainPageType());
+                    finish();
+                    break;
+                case ResultCode.CONNECTION_FAILED:
+                    App.instance.setPosIp("");
+                    dismissLoadingDialog();
+                    break;
+            }
+        }
+    };
+
     @Override
     public void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
@@ -181,8 +204,12 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
                 Matcher matcher = pattern.matcher(getInputedIP());
                 if (matcher.matches()) {
                     App.instance.setPosIp(getInputedIP());
-                    UIHelp.startMainActivity(this, App.instance.getMainPageType());
-                    finish();
+                    loadingDialog.setTitle("loading");
+                    loadingDialog.show();
+                    SyncCentre.getInstance().assignRevenue(context, App.instance.getPosIp(), handler);
+//                    App.instance.setPosIp(getInputedIP());
+//                    UIHelp.startMainActivity(this, App.instance.getMainPageType());
+//                    finish();
                 } else {
                     UIHelp.showToast(context, context.getResources().getString(R.string.check_ip));
                 }

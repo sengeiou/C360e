@@ -8,6 +8,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
+import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
@@ -2107,6 +2108,7 @@ public class OrderDetailSQL {
 		OrderDetailTaxSQL.deleteOrderDetailTax(orderDetail);
 
 		Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+		KotSummary kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
 		OrderSQL.updateOrder(order);
 		if(orderDetail.getGroupId().intValue() > 0){
 			OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
@@ -2114,7 +2116,7 @@ public class OrderDetailSQL {
 				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
 			}
 		}
-		KotItemDetailSQL.deleteKotItemDetail(orderDetail);
+		KotItemDetailSQL.deleteKotItemDetail(kotSummary.getId(),orderDetail);
 	}
 
 	public static void setOrderDetailToVoidOrFree(OrderDetail orderDetail,

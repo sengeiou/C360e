@@ -2,12 +2,9 @@ package com.alfred.callnum.activity;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -20,25 +17,10 @@ import com.alfred.callnum.utils.CallNumQueueUtil;
 import com.alfred.callnum.utils.CallNumUtil;
 import com.alfred.callnum.utils.MyQueue;
 import com.alfredbase.BaseActivity;
-import com.alfredbase.MyBaseActivity;
-import com.alfredbase.ParamConst;
-import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.KotItemDetail;
-import com.alfredbase.javabean.KotSummary;
-import com.alfredbase.store.sql.KotItemDetailSQL;
-import com.alfredbase.utils.BarcodeUtil;
-import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.LogUtil;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static u.aly.dn.i;
 
 public class MainActivity extends BaseActivity {
     OneFragment oneFragment;
@@ -98,41 +80,39 @@ public class MainActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    int lon = 1000;
+                    try {
+                        if (queue.QueueLength() > 0) {
 
-                    if (queue.QueueLength() > 0) {
+                            CallBean callBean = (CallBean) queue.deQueue();
+                            String name = callBean.getCallNumber().toString();
+                            if (oneFragment != null) {
+                                oneFragment.addData(0, callBean);
+                            }
+                            if (twoFragment != null && viewId != 4) {
+                                twoFragment.addData(0, callBean);
+                                twoFragment.getVideoPause(name);
+                            }
+                            for (int j = 0; j < callNumber; j++) {
+                                CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
 
-                        CallBean callBean = (CallBean) queue.deQueue();
-                        String name = callBean.getCallNumber().toString();
-                        if (oneFragment != null) {
-                            oneFragment.addData(0, callBean);
+                                CallNumUtil.call(num1);
+                            }
+                            lon = callNumber * 2500;
+                        } else {
+                            if (twoFragment != null && viewId != 4) {
+                                twoFragment.getVideoAgain();
+                            }
+                            lon = 1000;
                         }
-                        if (twoFragment != null&&viewId!=4) {
-                            twoFragment.addData(0, callBean);
-                            twoFragment.getVideoPause(name);
-                        }
-                        for (int j = 0; j < callNumber; j++) {
-                            CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
-
-                            CallNumUtil.call(num1);
-                        }
-                    } else {
-                        cancel();
-                        queue.clear();
-                        if (timer != null) {
-                            timer.cancel();
-                            timer = null;
-                        }
-                        if (twoFragment != null&&viewId!=4) {
-                            twoFragment.getVideoAgain();
-                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }finally {
+                        timer.schedule(new MyTimertask(), lon);
                     }
 
                 }
             });
-
-
-            timer.schedule(new MyTimertask(), callNumber * 2500);
-
         }
 
     }
@@ -260,7 +240,13 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-     //   App.instance.setSave();
+        try{
+            if(timer != null){
+                timer.cancel();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         super.onDestroy();
 
     }

@@ -952,7 +952,10 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 									@Override
 									public void onClick(View arg0) {
 										OrderDetailSQL.deleteOrderDetail(tag);
-										KotItemDetailSQL.deleteKotItemDetail(tag);
+										KotSummary kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
+										if(kotSummary != null) {
+											KotItemDetailSQL.deleteKotItemDetail(kotSummary.getId(), tag);
+										}
 										OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
 										ModifierCheckSql.deleteModifierCheck(tag.getId());
 										if(!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && ! IntegerUtils.isEmptyOrZero(tag.getGroupId())){

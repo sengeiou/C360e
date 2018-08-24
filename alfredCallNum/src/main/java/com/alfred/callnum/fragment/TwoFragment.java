@@ -1,31 +1,23 @@
 package com.alfred.callnum.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -41,18 +33,11 @@ import com.alfred.callnum.utils.FileDialog;
 import com.alfred.callnum.utils.TvPref;
 import com.alfred.callnum.utils.VideoResManager;
 import com.alfred.callnum.widget.PictureSwitch;
-import com.alfredbase.utils.LogUtil;
 
-import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -172,7 +157,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
         call_big = (TextView) getActivity().findViewById(R.id.tv_call_big);
         line=(TextView) getActivity().findViewById(R.id.tv_line);
-lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
+        lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
         re_video_pic.setOnTouchListener(this);
         li_select.setVisibility(View.GONE);
         btn_video.setOnClickListener(this);
@@ -289,20 +274,6 @@ lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
                     }
                 }
             }
-//            it = mDataLeft.iterator();
-//
-//
-//            while (it.hasNext()) {
-//                CallBean calls = it.next();
-//                if (calls.getCallNumber().equals(call.getCallNumber())) {
-//                    it.remove();
-//
-//                    mAdapterLeft.notifyDataSetChanged();
-//                } else {
-//                    App.instance.setCall(call);
-//                }
-//            }
-          //  App.instance.setCall(call);
             mDataLeft.add(position, call);
             mAdapterLeft.notifyItemInserted(position);
             re_left.scrollToPosition(position);
@@ -349,53 +320,6 @@ lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
             }
         }
 
-//        type = true;
-//        CallBean callBean = new CallBean();
-//        callBean.setId(0);
-//        callBean.setName(name);
-//        if (callMap != null) {
-//
-//            Set<Map.Entry<String, Object>> set = callMap.entrySet();
-//            // 遍历键值对对象的集合，得到每一个键值对对象
-//            for (Map.Entry<String, Object> me : set) {
-//                // 根据键值对对象获取键和值
-//                String key = me.getKey();
-//                LogUtil.e("--1111-", key + "-----" + callBean.getName());
-//                if (key.equals(callBean.getName())) {
-////
-//                    type = false;
-//                }
-////
-//            }
-//        }
-//        callMap.put(callBean.getName(), callBean);
-//        if (type) {
-//            mDatas.add(position, callBean);
-//            mAdapter.notifyItemInserted(position);
-//            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
-//
-//            re_left.scrollToPosition(position);
-//            re_right.scrollToPosition(position);
-//        } else {
-//
-//            Iterator<CallBean> it = mDatas.iterator();
-//            while (it.hasNext()) {
-//                CallBean call = it.next();
-//                if (call.getName().equals(callBean.getName())) {
-//                    it.remove();
-//                }
-//            }
-//            mAdapter.notifyDataSetChanged();
-//            mDatas.add(position, callBean);
-//            mAdapter.notifyItemInserted(position);
-//
-//            //  mAdapter.notifyItemRangeChanged(position,mDatas.size()-position);
-//
-//            re_left.scrollToPosition(position);
-//            re_right.scrollToPosition(position);
-//
-//
-//        }
 //
 
     }
@@ -422,26 +346,6 @@ lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
             if (mbUpdateVideo) {
                 adjustVideoView();
             }
-//            if (mbCalling) {
-//                flashingCall();// 叫号闪烁提醒
-//            }
-//            mUiCounter++;
-//
-//            if (mLoginStatus > LOGIN_STATUS_CHK_IP
-//                    && (mUiCounter % CHECK_VER_PERIOD) == 20) {
-//                // checkAppVer();
-//            }
-
-            // if (mstvShopAd.playState == 0) {
-            // if (mShopAdHideCounter == 0) {
-            // mShopAdHideCounter = SHOP_AD_HIDE_TIME;
-            // } else {
-            // mShopAdHideCounter--;
-            // if (mShopAdHideCounter == 0) {
-            // mstvShopAd.startScroll(); //广告字幕滚动条
-            // }
-            // }
-            // }
             switch (mVideoState) {
                 case VIDEO_STATE_PLAYING:
 //                    if ((mUiCounter % ADVIDEO_SHOW_PERIOD) == 0) {

@@ -1285,8 +1285,10 @@ public class App extends BaseApplication {
     }
 
     public void setCallAppIp(String callAppIp) {
-        this.callAppIp = callAppIp;
-        Store.putString(this, Store.CALL_APP_IP, callAppIp);
+        if(!TextUtils.isEmpty(callAppIp)) {
+            this.callAppIp = callAppIp;
+            Store.putString(this, Store.CALL_APP_IP, callAppIp);
+        }
     }
 
     /* Get all users currently connected to POS */

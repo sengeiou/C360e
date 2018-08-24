@@ -16,7 +16,6 @@ import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
-import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
@@ -2093,36 +2092,36 @@ public class CPOrderDetailSQL {
 		return orderDetail;
 	}
 
-	public static void deleteOrderDetail(OrderDetail orderDetail) {
-		if (orderDetail == null)
-			return;
-		String sql = "delete from " + TableNames.CPOrderDetail + " where id = ?";
-		try {
-			SQLExe.getDB().execSQL(sql, new Object[] { orderDetail.getId() });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		// 删除免费的菜
-		sql = "delete from " + TableNames.CPOrderDetail
-				+ " where fromOrderDetailId = ?";
-		try {
-			SQLExe.getDB().execSQL(sql, new Object[] { orderDetail.getId() });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		OrderDetailTaxSQL.deleteOrderDetailTax(orderDetail);
-
-		Order order = OrderSQL.getOrder(orderDetail.getOrderId());
-		OrderSQL.updateOrder(order);
-		if(orderDetail.getGroupId().intValue() > 0){
-			OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
-			if(orderSplit != null){
-				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
-			}
-		}
-		KotItemDetailSQL.deleteKotItemDetail(orderDetail);
-	}
+//	public static void deleteOrderDetail(OrderDetail orderDetail) {
+//		if (orderDetail == null)
+//			return;
+//		String sql = "delete from " + TableNames.CPOrderDetail + " where id = ?";
+//		try {
+//			SQLExe.getDB().execSQL(sql, new Object[] { orderDetail.getId() });
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		// 删除免费的菜
+//		sql = "delete from " + TableNames.CPOrderDetail
+//				+ " where fromOrderDetailId = ?";
+//		try {
+//			SQLExe.getDB().execSQL(sql, new Object[] { orderDetail.getId() });
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		OrderDetailTaxSQL.deleteOrderDetailTax(orderDetail);
+//
+//		Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+//		OrderSQL.updateOrder(order);
+//		if(orderDetail.getGroupId().intValue() > 0){
+//			OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
+//			if(orderSplit != null){
+//				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
+//			}
+//		}
+//		KotItemDetailSQL.deleteKotItemDetail(orderDetail);
+//	}
 
 	public static void setOrderDetailToVoidOrFree(OrderDetail orderDetail,
 												  int type) {

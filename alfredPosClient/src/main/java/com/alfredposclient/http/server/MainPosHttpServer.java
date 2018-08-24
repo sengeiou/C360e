@@ -71,7 +71,6 @@ import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
-import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
@@ -181,7 +180,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			if(apiName.equals(APIName.CALLNUM_ASSIGNREVENUE)){
 				try{
 					String ip = jsonObject.getString("ip");
-					Store.putString(App.instance,Store.CALL_APP_IP, ip);
+					App.instance.setCallAppIp(ip);
 					result.put(RESULT_CODE, ResultCode.SUCCESS);
 					result.put("calltype",App.instance.getSystemSettings().getCallStyle());
 
@@ -2200,13 +2199,17 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			
 			for (int i = 0; i < filteredKotItemDetails.size(); i++) {
 				KotItemDetail kotItemDetail = filteredKotItemDetails.get(i);
+				if(TextUtils.isEmpty(localKotSummary.getNumTag())){
+					OrderDetailSQL.updateOrderDetailStatusById(
+							ParamConst.ORDERDETAIL_STATUS_PREPARED,
+							kotItemDetail.getOrderDetailId());
+				}else{
+					CPOrderDetailSQL.updateOrderDetailStatusById(
+							ParamConst.ORDERDETAIL_STATUS_PREPARED,
+							kotItemDetail.getOrderDetailId());
+				}
 
-				// Bob v1.0.4: if orderdetail is done, no need add notification
-				OrderDetailSQL.updateOrderDetailStatusById(
-						ParamConst.ORDERDETAIL_STATUS_PREPARED,
-						kotItemDetail.getOrderDetailId());
-
-				KotItemDetail lastSubKotItemDetail = KotItemDetailSQL.getLastKotItemDetailByOrderDetailId(kotItemDetail.getOrderDetailId());
+				KotItemDetail lastSubKotItemDetail = KotItemDetailSQL.getLastKotItemDetailByOrderDetailId(localKotSummary.getId(), kotItemDetail.getOrderDetailId());
 				if(lastSubKotItemDetail != null && lastSubKotItemDetail.getUnFinishQty() != (kotItemDetail.getUnFinishQty() + kotItemDetail.getFinishQty())){
 					result.put("resultCode", ResultCode.KOT_COMPLETE_USER_FAILED);
 					resp = this.getJsonResponse(new Gson().toJson(result));
@@ -2437,7 +2440,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 			LogUtil.e(TAG, "cancelComplete3");
 			List<KotItemDetail> localSubKotItemDetails = KotItemDetailSQL
-					.getOtherSubKotItemDetailsByOrderDetailId(kotItemDetail);
+					.getOtherSubKotItemDetailsByOrderDetailId(localMainKotItemDetail.getKotSummaryId(),kotItemDetail);
 			for (KotItemDetail localSubKotItemDetail : localSubKotItemDetails) {
 				localSubKotItemDetail.setUnFinishQty(localSubKotItemDetail
 						.getUnFinishQty().intValue()

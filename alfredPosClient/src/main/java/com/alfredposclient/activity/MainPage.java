@@ -546,6 +546,7 @@ public class MainPage extends BaseActivity {
         Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate());
         List<OrderDetail> orderDetails = OrderDetailSQL
                 .getUnFreeOrderDetails(oldOrder);
+        KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(),oldOrder.getNumTag());
         if (!orderDetails.isEmpty()) {
             for (OrderDetail orderDetail : orderDetails) {
                 OrderDetail newOrderDetail = ObjectFactory.getInstance()
@@ -553,7 +554,7 @@ public class MainPage extends BaseActivity {
                 OrderDetailSQL.addOrderDetailETC(newOrderDetail);
                 List<OrderModifier> orderModifiers = OrderModifierSQL
                         .getOrderModifiers(orderDetail);
-                KotItemDetailSQL.updateKotItemDetailId(newOrderDetail.getId().intValue(), orderDetail.getId().intValue());
+                KotItemDetailSQL.updateKotItemDetailId(newOrderDetail.getId().intValue(), orderDetail.getId().intValue(), kotSummary.getId().intValue());
                 if (orderModifiers.isEmpty()) {
                     continue;
                 }

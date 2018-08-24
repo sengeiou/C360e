@@ -64,7 +64,7 @@
                         android:gravity="center"
                         android:text=""
                         android:textColor="@color/white"
-                        android:textSize="140dp"
+                        android:textSize="210dp"
                         android:textStyle="bold"
                         android:visibility="gone" />
 

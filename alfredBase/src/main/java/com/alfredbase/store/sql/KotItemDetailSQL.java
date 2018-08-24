@@ -279,10 +279,10 @@ public class KotItemDetailSQL {
 	
 	public static KotItemDetail getSubKotItemDetailByMainKotItemDeail(KotItemDetail mainKotItemDetail) {
 		KotItemDetail kotItemDetail = null;
-		String sql = "select * from " + TableNames.KotItemDetail + " where orderDetailId = ? and unFinishQty = ? and categoryId = ?";
+		String sql = "select * from " + TableNames.KotItemDetail + " where kotSummaryId=? and orderDetailId = ? and unFinishQty = ? and categoryId = ?";
 		Cursor cursor = null;
 		try {
-			cursor = SQLExe.getDB().rawQuery(sql,new String[] { mainKotItemDetail.getOrderDetailId() + "", mainKotItemDetail.getUnFinishQty() + "", ParamConst.KOTITEMDETAIL_CATEGORYID_SUB + "" });
+			cursor = SQLExe.getDB().rawQuery(sql,new String[] {mainKotItemDetail.getKotSummaryId()+"", mainKotItemDetail.getOrderDetailId() + "", mainKotItemDetail.getUnFinishQty() + "", ParamConst.KOTITEMDETAIL_CATEGORYID_SUB + "" });
 			if (cursor.moveToFirst()) {
 				kotItemDetail = new KotItemDetail();
 				kotItemDetail.setId(cursor.getInt(0));
@@ -318,12 +318,12 @@ public class KotItemDetailSQL {
 		return kotItemDetail;
 	}
 	
-	public static KotItemDetail getLastKotItemDetailByOrderDetailId(int orderDetailId) {
+	public static KotItemDetail getLastKotItemDetailByOrderDetailId(int kotSummaryId,int orderDetailId) {
 		KotItemDetail kotItemDetail = null;
-		String sql = "select * from " + TableNames.KotItemDetail + " where orderDetailId = ? and categoryId = ? order by id desc";
+		String sql = "select * from " + TableNames.KotItemDetail + " where kotSummaryId = ? and orderDetailId = ? and categoryId = ? order by id desc";
 		Cursor cursor = null;
 		try {
-			cursor = SQLExe.getDB().rawQuery(sql,new String[] {String.valueOf(orderDetailId), ParamConst.KOTITEMDETAIL_CATEGORYID_SUB + ""});
+			cursor = SQLExe.getDB().rawQuery(sql,new String[] {kotSummaryId + "", String.valueOf(orderDetailId), ParamConst.KOTITEMDETAIL_CATEGORYID_SUB + ""});
 			if (cursor.moveToFirst()) {
 				kotItemDetail = new KotItemDetail();
 				kotItemDetail.setId(cursor.getInt(0));
@@ -556,14 +556,14 @@ public class KotItemDetailSQL {
 	}
 	
 	
-	public static List<KotItemDetail> getOtherSubKotItemDetailsByOrderDetailId(KotItemDetail oldKotItemDetail) {
+	public static List<KotItemDetail> getOtherSubKotItemDetailsByOrderDetailId(int kotSummaryId, KotItemDetail oldKotItemDetail) {
 		List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
 		String sql = "select * from " + TableNames.KotItemDetail
-				+ " where orderDetailId = ? and id > ?";
+				+ " where kotSummaryId = ? and orderDetailId = ? and id > ?";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql,
-					new String[] { oldKotItemDetail.getOrderDetailId().intValue() + "", oldKotItemDetail.getId().intValue() + ""});
+					new String[] {kotSummaryId+"", oldKotItemDetail.getOrderDetailId().intValue() + "", oldKotItemDetail.getId().intValue() + ""});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 				KotItemDetail kotItemDetail = new KotItemDetail();
 				kotItemDetail.setId(cursor.getInt(0));
@@ -811,11 +811,11 @@ public class KotItemDetailSQL {
 		}
 	}
 
-	public static void deleteKotItemDetail(OrderDetail orderDetail) {
+	public static void deleteKotItemDetail(int kotSummaryId, OrderDetail orderDetail) {
 		String sql = "delete from " + TableNames.KotItemDetail
-				+ " where orderDetailId = ?";
+				+ " where kotSummaryId= ? and orderDetailId = ?";
 		try {
-			SQLExe.getDB().execSQL(sql, new Object[] { orderDetail.getId() });
+			SQLExe.getDB().execSQL(sql, new Object[] { kotSummaryId, orderDetail.getId() });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -827,10 +827,10 @@ public class KotItemDetailSQL {
 		}
 	}
 
-	public static void updateKotItemDetailId(int newOrderDetailId, int oldOrderDetailId){
-		String sql = "update " + TableNames.KotItemDetail + " set orderDetailId = ? where orderDetailId = ?";
+	public static void updateKotItemDetailId(int newOrderDetailId, int oldOrderDetailId, int kotSummaryId){
+		String sql = "update " + TableNames.KotItemDetail + " set orderDetailId = ? where orderDetailId = ? and kotSummaryId=?";
 		try {
-			SQLExe.getDB().execSQL(sql, new Object[] {newOrderDetailId, oldOrderDetailId});
+			SQLExe.getDB().execSQL(sql, new Object[] {newOrderDetailId, oldOrderDetailId, kotSummaryId});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
