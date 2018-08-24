@@ -128,9 +128,7 @@ public class ResultCode {
 	public static final int USER_NO_PERMIT = -3001;
 
 
-
-	public static final int APP_ORDER_REFUND = -1007;
-
+    public static final int APP_ORDER_REFUND = -1007;
 
 	/**
 	 * 会员卡二维码为空
@@ -156,7 +154,6 @@ public class ResultCode {
 	 * 用户暂无绑定会员卡信息
 	 */
 	public static final int CUSTOMER_NO_CARD = -4005;
-
 	/**
 	 * 用户二维码失效
 	 */

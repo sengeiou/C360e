@@ -35,10 +35,10 @@ public class WelcomeActivity extends FragmentActivity implements View.OnClickLis
         three.setOnClickListener(this);
         four.setOnClickListener(this);
         // createFragment();\
-String s="A";
-char[] ch=s.toCharArray();
-byte num= (byte) s.charAt(0);
-LogUtil.e("wwww",ch[0]+"--"+num);
+//String s="A";
+//char[] ch=s.toCharArray();
+//byte num= (byte) s.charAt(0);
+//LogUtil.e("wwww",ch[0]+"--"+num);
 
 
         if(!TextUtils.isEmpty(App.instance.getPosIp())){

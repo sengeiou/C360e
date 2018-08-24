@@ -111,19 +111,27 @@ public class Welcome extends BaseActivity {
 		CoreData.getInstance().init(context);
 		MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
 		User user = Store.getObject(context, Store.WAITER_USER, User.class);
-		if (mainPosInfo == null) {
+
+		if(!TextUtils.isEmpty(App.instance.getPosIp())){
 			UIHelp.startSelectRevenue(context);
-//			UIHelp.startConnectPOS(context);
 			finish();
-		} else if (user == null) {
-			App.instance.setPairingIp(mainPosInfo.getIP());
-			UIHelp.startEmployeeID(context);
-			finish();
-		} else{
-			App.instance.setPairingIp(mainPosInfo.getIP());
-			UIHelp.startLogin(context);
+		}else {
+			UIHelp.startMain(context);
 			finish();
 		}
+//		if (mainPosInfo == null) {
+//			UIHelp.startSelectRevenue(context);
+////			UIHelp.startConnectPOS(context);
+//			finish();
+//		} else if (user == null) {
+//			App.instance.setPairingIp(mainPosInfo.getIP());
+//			UIHelp.startEmployeeID(context);
+//			finish();
+//		} else{
+//			App.instance.setPairingIp(mainPosInfo.getIP());
+//			UIHelp.startLogin(context);
+//			finish();
+//		}
 	}
 	
 	private boolean checkVersion() {

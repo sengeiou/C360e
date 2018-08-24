@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfred.callnum.R;
+import com.alfred.callnum.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,8 +92,7 @@ public class MycallAdapter extends RvAdapter<CallBean> {
             switch (itemViewType) {
                 case 0:
                     tvName.setText(callBean.getCallNumber());
-                    scaleAnimation = (ScaleAnimation) AnimationUtils.loadAnimation(mContext, R.anim.scale);
-                    tvName.startAnimation(scaleAnimation);
+                    ((MainActivity)mContext).sAnimation(tvName);
                     //    tvTitle.setText(sortBean.getName());
                     break;
                 case 1:

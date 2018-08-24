@@ -104,7 +104,7 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 				}).start();
 				syncDataCount = 0;
 				SyncData();
-				getPlaces();
+			//	getPlaces();
 //				finish();
 			}
 				break;
@@ -148,7 +148,14 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 //				}
 			//	break;
 				case SYNC_DATA_TAG:
-					if(syncDataCount == 5){
+					if(syncDataCount == 4){
+						BaseApplication.postHandler.postDelayed(new Runnable() {
+//						@Override
+						public void run() {
+							App.instance.setPosIp(App.instance.getPairingIp());
+					          UIHelp.startMain(context);
+						}
+					}, 2 * 1000);
 					//	handler.sendEmptyMessage(TablesPage.HANDLER_GET_PLACE_INFO);
 					}else{
 						syncDataCount++;

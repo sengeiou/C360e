@@ -20,6 +20,7 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.UIHelp;
 import com.moonearly.model.UdpMsg;
+import com.moonearly.utils.service.UdpServiceCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,12 +92,7 @@ public class SelectRevenue extends BaseActivity {
 				}
 			}
 		});
-//		App.instance.startUDPService(App.UDP_INDEX_WAITER, "Waiter", new UdpServiceCallBack() {
-//			@Override
-//			public void callBack(UdpMsg udpMsg) {
-//				RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
-//			}
-//		});
+
 		App.instance.searchRevenueIp();
 
 	}

@@ -10,11 +10,11 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true" />
 
-    <com.alfredwaiter.view.ViewfinderView
-        android:id="@+id/viewfinderView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent" />
+    <!--<com.alfredwaiter.view.ViewfinderView-->
+        <!--android:id="@+id/viewfinderView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@android:color/transparent" />-->
 
     <TextView
         android:id="@+id/tv_scan_qr_remind"

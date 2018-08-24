@@ -44,7 +44,7 @@ public class SyncCentre {
 	public void employeeId(Context context, String ip, Map<String, Object> parameters,
 			Handler handler){
 		HttpAPI.employeeId(context, parameters,
-				getAbsolutePOSUrlByIp(ip, APIName.EMPLOYEE_ID), httpClient, handler);
+				getAbsolutePOSUrlByIp(ip, APIName.KPM_EMPLOYEE_ID), httpClient, handler);
 	}
 
 	public void login(Context context, Map<String, Object> parameters,

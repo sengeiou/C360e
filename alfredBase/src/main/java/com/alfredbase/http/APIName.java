@@ -11,6 +11,8 @@ public class APIName {
 	public static final String TAX_GETTAX = "tax/getTax";
 	public static final String HAPPYHOUR_GETHAPPYHOUR = "happyHour/getHappyHour";
 	public static final String RESTAURANT_GETPLACEINFO = "restaurant/getPlaceInfo";
+
+
 	public static final String BOH_GETBOHHOLDUNPAID = "boh/getBohHoldUnpaid";
 	public static final String BOH_UPDATEBOHHOLDPAID = "boh/updateBohHoldPaid";
 	public static final String LOGIN_LOGOUT = "login/logout";
@@ -100,6 +102,13 @@ public class APIName {
 
 	// CallNum
 	public static final String CALLNUM_ASSIGNREVENUE = "desktop/callNumassignRevenue";
+
+
+	//kpm
+	public static final String KPM_EMPLOYEE_ID = "kpm_employee_id";
+
+	public static final String kpm_RESTAURANT_GETPLACEINFO = "restaurant/getPlaceInfo";
+
 
 	/**
 	 * 以kds作为服务器

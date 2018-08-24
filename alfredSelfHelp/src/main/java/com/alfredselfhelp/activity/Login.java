@@ -91,7 +91,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case HANDLER_LOGIN: {
-			//	UIHelp.startTables(context);
+				UIHelp.startMain(context);
 
 				loadingDialog.dismiss();
 				finish();

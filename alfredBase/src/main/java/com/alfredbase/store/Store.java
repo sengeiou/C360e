@@ -143,6 +143,9 @@ public class Store {
 
 	public static final String CALL_IP="CALL_IP";
 
+//kpm
+public static final String KPM_IP="KPM_IP";
+
 
 	private Store() {
 	};

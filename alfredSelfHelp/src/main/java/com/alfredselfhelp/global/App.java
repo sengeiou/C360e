@@ -1,5 +1,7 @@
 package com.alfredselfhelp.global;
 
+import android.text.TextUtils;
+
 import com.alfredbase.BaseApplication;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.User;
@@ -30,6 +32,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        VERSION = getAppVersionName();
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
 
     }
@@ -44,6 +47,8 @@ public class App extends BaseApplication {
     public void setPairingIp(String pairingIp) {
         this.pairingIp = pairingIp;
     }
+
+
     public MainPosInfo getMainPosInfo() {
         if(mainPosInfo == null){
             mainPosInfo = Store.getObject(this.getApplicationContext(), Store.MAINPOSINFO, MainPosInfo.class);
@@ -97,11 +102,17 @@ public class App extends BaseApplication {
 
 
     public String getPosIp() {
-        return posIp;
+
+        pairingIp = Store.getString(App.instance,Store.KPM_IP);
+
+        return pairingIp;
     }
 
     public void setPosIp(String posIp) {
-        this.posIp = posIp;
+
+
+           Store.putString(App.instance, Store.KPM_IP, posIp);
+
     }
 
     public int getMainPageType() {

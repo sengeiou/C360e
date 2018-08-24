@@ -82,9 +82,9 @@ public class ConnectPOS extends BaseActivity implements Callback,
 		viewPager = (ViewPager) findViewById(R.id.viewPager);
 		tv_app_version = (TextView) findViewById(R.id.tv_app_version);
 		tv_app_version.setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
-		QRConnectView = getLayoutInflater().inflate(R.layout.qr_connect_view,
-				null);
-		views.add(QRConnectView);
+//		QRConnectView = getLayoutInflater().inflate(R.layout.qr_connect_view,
+//				null);
+	//	views.add(QRConnectView);
 		IPConnectView = getLayoutInflater().inflate(R.layout.ip_connect_view,
 				null);
 		ipkeyboard = (Numerickeyboard) IPConnectView
@@ -138,7 +138,7 @@ public class ConnectPOS extends BaseActivity implements Callback,
 //		viewPager.setAdapter(new ViewPagerAdapter(views));
 //		viewPager.setCurrentItem(0);
 //		//startQR();
-		initTextTypeFace(QRConnectView, IPConnectView);
+	//	initTextTypeFace(QRConnectView, IPConnectView);
 		
 	}
 

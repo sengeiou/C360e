@@ -1165,6 +1165,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			return handlerKitGetPrinters(body);
 		} else if (apiName.equals(APIName.EMPLOYEE_ID)) { // waiter请求配对
 			return hanlderWaiterGetRevenues(body);
+		} else if (apiName.equals(APIName.KPM_EMPLOYEE_ID)) { // kpm请求配对
+			return hanlderKpmGetRevenues(body);
 		}
 		if (apiName.equals(APIName.HAPPYHOUR_GETHAPPYHOUR)) {// 欢乐时间
 			return handlerHappyHourInfo();
@@ -1294,6 +1296,53 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				resp = this.getJsonResponse(new Gson().toJson(result));
 				return resp;
 			}
+			if (user != null) {
+				RevenueCenter revenueCenter = App.instance.getRevenueCenter();
+				Boolean isPermitted = CoreData.getInstance()
+						.checkUserWaiterAccessInRevcenter(user.getId(),
+								revenueCenter.getRestaurantId(),
+								revenueCenter.getId());
+				if (isPermitted) {
+					List<RevenueCenter> revenueCenters = CoreData.getInstance()
+							.getRevenueCenters();
+					List<Integer> revenueCenterIds = UserRestaurantSQL
+							.getRevenueIdByUserId(user.getId());
+					result.put("revenueCenters", revenueCenters);
+					result.put("revenueCenterIds", revenueCenterIds);
+					result.put("user", user);
+					result.put("revenue", revenueCenter);
+					result.put("resultCode", ResultCode.SUCCESS);
+				} else {
+					result.put("resultCode", ResultCode.USER_NO_PERMIT);
+					result.put("printers", null);
+				}
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			} else {
+				result.put("resultCode", ResultCode.USER_NO_PERMIT);
+				resp = this.getJsonResponse(new Gson().toJson(result));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+		}
+		return resp;
+	}
+
+
+
+	private Response hanlderKpmGetRevenues(String params) {
+		Response resp;
+		Map<String, Object> result = new HashMap<String, Object>();
+		Gson gson = new Gson();
+		try {
+			JSONObject jsonObject = new JSONObject(params);
+			int employeeId = jsonObject.optInt("employee_ID");
+			User user = CoreData.getInstance().getUserByEmpId(employeeId);
+//			if (App.instance.isRevenueKiosk()) {
+//				result.put("resultCode", ResultCode.USER_NO_PERMIT);
+//				resp = this.getJsonResponse(new Gson().toJson(result));
+//				return resp;
+//			}
 			if (user != null) {
 				RevenueCenter revenueCenter = App.instance.getRevenueCenter();
 				Boolean isPermitted = CoreData.getInstance()

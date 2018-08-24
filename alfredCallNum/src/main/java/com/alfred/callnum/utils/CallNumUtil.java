@@ -15,6 +15,8 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 import com.alfred.callnum.R;
+import com.alfred.callnum.activity.MainActivity;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -971,8 +973,12 @@ public class CallNumUtil {
 		}
 		audioTrack.write(silence, 0, silence.length);
 
+
 		audioTrack.stop();
-		
+
+		if (mMsgHandler != null) {
+			mMsgHandler.obtainMessage(MainActivity.TYPE_AGAIN_CALL).sendToTarget();// 通知视频暂停
+		}
 		if (call_count <= MAX_NUM && !g_bStoping)// 连叫号码少的情况下重播
 		{
 			for (int i = 0; i < call_count; i++) {
@@ -981,6 +987,8 @@ public class CallNumUtil {
 				}
 			}
 		}
+
+
 	}
 
 	static void initAudioTrack() {

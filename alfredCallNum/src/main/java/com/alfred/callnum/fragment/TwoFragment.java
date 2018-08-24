@@ -1,5 +1,8 @@
 package com.alfred.callnum.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.alfred.callnum.R;
+import com.alfred.callnum.activity.MainActivity;
 import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.adapter.MycallAdapter;
 import com.alfred.callnum.adapter.RvListener;
@@ -33,6 +37,7 @@ import com.alfred.callnum.utils.FileDialog;
 import com.alfred.callnum.utils.TvPref;
 import com.alfred.callnum.utils.VideoResManager;
 import com.alfred.callnum.widget.PictureSwitch;
+import com.alfredbase.utils.AnimatorListenerImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,6 +109,8 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
     private TextView call_big,line,lines;
     ScaleAnimation scaleAnimation;
 
+    private Handler handlers;
+
 
 
     public static TwoFragment newInstance(String param1, String param2) {
@@ -157,7 +164,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
         call_big = (TextView) getActivity().findViewById(R.id.tv_call_big);
         line=(TextView) getActivity().findViewById(R.id.tv_line);
-        lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
+lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
         re_video_pic.setOnTouchListener(this);
         li_select.setVisibility(View.GONE);
         btn_video.setOnClickListener(this);
@@ -254,6 +261,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
     public void setViewId(int vid, Handler mhandler) {
         this.vid = vid;
+        this.handlers=mhandler;
     }
 
     public void addData(int position, CallBean call) {
@@ -796,20 +804,26 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
         if (videoView.getVisibility() == View.GONE && picSwitch.getVisibility() == View.GONE) {
             call_big.setText(name);
             call_big.setVisibility(View.VISIBLE);
-            scaleAnimation = (ScaleAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
-            call_big.startAnimation(scaleAnimation);
+//            scaleAnimation = (ScaleAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
+//            call_big.startAnimation(scaleAnimation);
             //  startScaleAnimation(call_big);
+
+            ((MainActivity)getActivity()).sAnimation(call_big);
         } else {
             call_big.setVisibility(View.GONE);
         }
     }
 
+
+
     public void getVideoAgain() {
         //继续播放
         if (videoView.getVisibility() == View.VISIBLE) {
             videoView.start();
+            call_big.setVisibility(View.GONE);
         }
-        call_big.setVisibility(View.GONE);
+
+
         //    scaleAnimation.cancel();
         //  mAdapterLeft.setAnimation();
 

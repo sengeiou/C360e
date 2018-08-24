@@ -564,6 +564,8 @@ public class KitchenOrder extends BaseActivity {
 						SyncCentre.getInstance().kotComplete(KitchenOrder.this,
 								App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
 						loadingDialog.show();
+
+
 					}
 				});
 			}

@@ -21,6 +21,7 @@ import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.utils.UIHelp;
 import com.moonearly.model.UdpMsg;
+import com.moonearly.utils.service.UdpServiceCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,12 +93,12 @@ public class SelectRevenue extends BaseActivity {
 				}
 			}
 		});
-//		App.instance.startUDPService(App.UDP_INDEX_WAITER, "Waiter", new UdpServiceCallBack() {
-//			@Override
-//			public void callBack(UdpMsg udpMsg) {
-//				RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
-//			}
-//		});
+		App.instance.startUDPService(App.UDP_INDEX_SELF_HELP, "Selfhelp", new UdpServiceCallBack() {
+			@Override
+			public void callBack(UdpMsg udpMsg) {
+				RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
+			}
+		});
 		App.instance.searchRevenueIp();
 
 	}

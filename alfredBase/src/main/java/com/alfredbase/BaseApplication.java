@@ -60,6 +60,7 @@ public class BaseApplication extends Application {
 	public static int UDP_INDEX_EMENU = 100;
 	public static int UDP_INDEX_CALLNUM = 400;
 	public static int UDP_INDEX_SUB_POS = 200;
+	public static int UDP_INDEX_SELF_HELP = 300;
 	private Handler reLoginHandler = new Handler();
 	public static Handler postHandler = new Handler();
 

@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="65dp"
+    android:layout_height="70dp"
     android:id="@+id/root"
 
     android:gravity="center"
@@ -15,8 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="wwwwww"
-        android:textSize="23dp"
+        android:text=""
+        android:textSize="30sp"
         android:textColor="@color/white"
         />
 
