@@ -144,7 +144,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
         super.onActivityCreated(savedInstanceState);
         initView();
 
-        mPeriodEventHdr.postDelayed(mUpdateUiRunnable, 3000);
+     //   mPeriodEventHdr.postDelayed(mUpdateUiRunnable, 3000);
     }
 
     private void initView() {
@@ -164,13 +164,13 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
         call_big = (TextView) getActivity().findViewById(R.id.tv_call_big);
         line=(TextView) getActivity().findViewById(R.id.tv_line);
-lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
+        lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
         re_video_pic.setOnTouchListener(this);
         li_select.setVisibility(View.GONE);
         btn_video.setOnClickListener(this);
         btn_picture.setOnClickListener(this);
         btn_empty.setOnClickListener(this);
-        mVideoResManager = new VideoResManager(getActivity());
+       mVideoResManager = new VideoResManager(getActivity());
 
         if (vid == 1) {
 
@@ -808,7 +808,7 @@ lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
 //            call_big.startAnimation(scaleAnimation);
             //  startScaleAnimation(call_big);
 
-            ((MainActivity)getActivity()).sAnimation(call_big);
+           ((MainActivity)getActivity()).sAnimation(call_big);
         } else {
             call_big.setVisibility(View.GONE);
         }
@@ -832,9 +832,15 @@ lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
     @Override
     public void onResume() {
 
-        updateView();
-        startPlay(false);
-        //   initData();
+
+        if(videoView.getVisibility() == View.GONE && picSwitch.getVisibility() == View.GONE){
+
+        }else {
+            updateView();
+            startPlay(false);
+        }
+
+
         super.onResume();
     }
 
