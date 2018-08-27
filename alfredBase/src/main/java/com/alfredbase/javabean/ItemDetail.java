@@ -27,7 +27,7 @@ public class ItemDetail implements Serializable ,Parcelable{
 	private Integer revenueId;
 
 	private String itemName = "";
-
+     // 说明
 	private String itemDesc = "";
 
 	private String itemCode = "";

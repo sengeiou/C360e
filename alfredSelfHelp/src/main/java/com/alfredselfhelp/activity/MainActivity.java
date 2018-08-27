@@ -74,6 +74,7 @@ public class MainActivity extends BaseActivity {
         btn_empty.setOnClickListener(this);
         btn_picture.setOnClickListener(this);
         btn_video.setOnClickListener(this);
+        mVideoResManager = new VideoResManager(context);
     }
 
 
@@ -256,15 +257,19 @@ public class MainActivity extends BaseActivity {
                     videoView.setVisibility(View.VISIBLE);
                     //mtvVideoPath.setText(selFile);
                     updateVideoView();// 重新开始，可以打断广告视频
-                    call_big.setVisibility(View.GONE);
+
 
                 } else {
-                    Toast.makeText(getActivity(), "未选择视频文件", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "未选择视频文件", Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
-
+    void updateVideoView() {
+        mVideoResManager.UpdateVideo();
+        updateView();
+        startPlay(false);
+    }
     private void updateView() {
         String picpath = TvPref.readImageFilePath();
         Log.e("updateView", picpath);
@@ -499,6 +504,18 @@ public class MainActivity extends BaseActivity {
             mlp.bottomMargin = margin_top;
             videoView.setLayoutParams(mlp);
         }
+
+    }
+
+    public void onDestroy() {
+        //    App.instance.setSave();
+        if (picSwitch.isPlaying()) {
+            picSwitch.stopPlay();
+        }
+        if (videoView != null && videoView.isPlaying()) {
+            videoView.stopPlayback();
+        }
+        super.onDestroy();
 
     }
 

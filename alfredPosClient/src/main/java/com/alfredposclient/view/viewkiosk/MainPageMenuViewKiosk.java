@@ -539,6 +539,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                         .findViewById(R.id.tv_main_category);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         WIDTH / 3, ScreenSizeUtil.dip2px(parent, 80));
+
                 tv_main_category.setLayoutParams(params);
             }
         }

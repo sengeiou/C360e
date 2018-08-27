@@ -1167,8 +1167,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			return hanlderWaiterGetRevenues(body);
 		} else if (apiName.equals(APIName.KPM_EMPLOYEE_ID)) { // kpm请求配对
 			return hanlderKpmGetRevenues(body);
-		}
-		if (apiName.equals(APIName.HAPPYHOUR_GETHAPPYHOUR)) {// 欢乐时间
+		}else if (apiName.equals(APIName.HAPPYHOUR_GETHAPPYHOUR)) {// 欢乐时间
 			return handlerHappyHourInfo();
 		} else if (apiName.equals(APIName.ITEM_GETITEM)) {// 菜的信息
 			return handlerItemInfo(body);

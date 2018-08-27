@@ -46,6 +46,7 @@ public class Welcome extends BaseActivity {
 		rootView = LayoutInflater.from(context).inflate(
 				R.layout.activity_welcome, null);
 		setContentView(rootView);
+		ScreenSizeUtil.initScreenScale(context);
 		loadingDialog = new LoadingDialog(this);
 		loadingDialog.setTitle(this.getResources().getString(R.string.downloading));
 		downManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
@@ -112,7 +113,7 @@ public class Welcome extends BaseActivity {
 		MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
 		User user = Store.getObject(context, Store.WAITER_USER, User.class);
 
-		if(!TextUtils.isEmpty(App.instance.getPosIp())){
+		if(TextUtils.isEmpty(App.instance.getPosIp())){
 			UIHelp.startSelectRevenue(context);
 			finish();
 		}else {

@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         android:cacheColorHint="@null"
         android:text="111"
+
         android:textColor="@color/black"
         android:gravity="center"
         />

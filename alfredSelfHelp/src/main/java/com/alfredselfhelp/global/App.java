@@ -9,6 +9,7 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
+import com.alfredselfhelp.utils.TvPref;
 
 
 public class App extends BaseApplication {
@@ -34,6 +35,10 @@ public class App extends BaseApplication {
         instance = this;
         VERSION = getAppVersionName();
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+
+        TvPref.init();
+
+        mbPlayIMG = TvPref.readPlayIMGEn();
 
     }
 

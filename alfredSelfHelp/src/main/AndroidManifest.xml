@@ -37,6 +37,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".utils.FileDialog"
+            android:screenOrientation="sensor"
+            android:windowSoftInputMode="stateHidden" ></activity>
+        <activity
             android:name=".activity.ConnectPOS"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
