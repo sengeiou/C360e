@@ -105,9 +105,9 @@ public class MainActivity extends BaseActivity {
                                     twoFragment.getVideoPause(name);
                                 }
 //                                for (int j = 0; j < callNumber; j++) {
-                                    CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
-
-                                    CallNumUtil.call(num1);
+//                                CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
+//
+//                                CallNumUtil.call(num1);
 //                                }
 
                                 animaEnd = false;
@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity {
                                 //   lon=1000;
                             } else {
                                 if (twoFragment != null && viewId != 4) {
-                                    twoFragment.getVideoAgain();
+                                   twoFragment.getVideoAgain();
                                 }
                                 lon = 1000;
                                 timer.schedule(new MyTimertask(), lon);
@@ -147,15 +147,16 @@ public class MainActivity extends BaseActivity {
 
         CallNumUtil.initVideo(context);
         CallNumUtil.init(context, handler);
-
+CallBean c=new CallBean();
+c.setCallNumber("111111");
+queue.enQueue(c);
 
         timer.schedule(new MyTimertask(), 1000);
     }
 
 
-
     public void sAnimation(View view) {
-        if(view == null){
+        if (view == null) {
             return;
         }
         ObjectAnimator oanim1X = ObjectAnimator.ofFloat(

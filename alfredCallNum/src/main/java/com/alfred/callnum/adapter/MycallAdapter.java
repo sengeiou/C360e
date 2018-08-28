@@ -92,8 +92,8 @@ public class MycallAdapter extends RvAdapter<CallBean> {
             switch (itemViewType) {
                 case 0:
                     tvName.setText(callBean.getCallNumber());
-                    ((MainActivity)mContext).sAnimation(tvName);
-                    //    tvTitle.setText(sortBean.getName());
+                   ((MainActivity)mContext).sAnimation(tvName);
+
                     break;
                 case 1:
                     //   tvCity.setText(sortBean.getName());
