@@ -720,6 +720,34 @@
                                     </RelativeLayout>
                                 </LinearLayout>
 
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingBottom="10dp"
+                                    android:paddingRight="10dp"
+                                    android:paddingTop="10dp"
+                                    >
+
+                                    <TextView
+                                        android:id="@+id/tv_cards_rounding"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentLeft="true"
+                                        android:layout_centerVertical="true"
+                                        android:text="@string/rounding"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/text_size_m_smail" />
+
+                                    <TextView
+                                        android:id="@+id/tv_cards_rounding_num"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_centerVertical="true"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/text_size_m_smail" />
+                                </RelativeLayout>
+
                                 <com.alfredbase.view.DashedLine
                                     android:layout_width="match_parent"
                                     android:layout_height="8dp" />
