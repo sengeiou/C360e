@@ -138,7 +138,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private TextView tv_discount_num;
     private TextView tv_taxes_num;
     private TextView tv_total_bill_num;
-    private TextView tv_rounding_num;
+    private TextView tv_rounding_num,tv_cards_rounding_num;
     //	private TextView tv_grand_total_bill_num;
     private TextView tv_amount_due_num;
 
@@ -246,6 +246,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         tv_taxes_num = (TextView) contentView.findViewById(R.id.tv_taxes_num);
         tv_total_bill_num = (TextView) contentView.findViewById(R.id.tv_total_bill_num);
         tv_rounding_num = (TextView) contentView.findViewById(R.id.tv_rounding_num);
+        tv_cards_rounding_num=(TextView)contentView.findViewById(R.id.tv_cards_rounding_num) ;
 //		tv_grand_total_bill_num = (TextView) contentView.findViewById(R.id.tv_grand_total_bill_num);
 //		tv_settled_num = (TextView) contentView.findViewById(R.id.tv_settled_num);
 
@@ -430,7 +431,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_rounding));
         textTypeFace.setTrajanProRegular((TextView) view
+                .findViewById(R.id.tv_cards_rounding));
+
+        textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_rounding_num));
+        textTypeFace.setTrajanProRegular((TextView) view
+                .findViewById(R.id.tv_cards_rounding_num));
 //		textTypeFace.setTrajanProRegular((TextView) view
 //				.findViewById(R.id.tv_grand_total_bill));
 //		textTypeFace.setTrajanProRegular((TextView) view
@@ -759,16 +765,34 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         case ParamConst.SETTLEMENT_TYPE_AMEX:
                         case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
                         case ParamConst.SETTLEMENT_TYPE_JCB:
-                            CardsSettlement cardsSettlement = CardsSettlementSQL
-                                    .getCardsSettlementByPament(payment.getId(),
-                                            paymentSettlement.getId());
-                            subPaymentSettlement = cardsSettlement;
-                            if (parent instanceof EditSettlementPage) {
-                                cardsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
-                                CardsSettlementSQL.addCardsSettlement(cardsSettlement);
-                            } else {
-                                CardsSettlementSQL.deleteCardsSettlement(cardsSettlement);
+
+                            if (App.instance.getSystemSettings().isCardRounding()) {
+                                RoundAmount roundAmounts = RoundAmountSQL.getRoundAmount(order);
+                                if (roundAmounts != null && BH.getBD(roundAmounts.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
+                                    order.setTotal(BH.sub(BH.getBD(order.getTotal()), BH.getBD(roundAmounts.getRoundBalancePrice()), true).toString());
+                                    OrderSQL.update(order);
+                                    if (parent instanceof EditSettlementPage) {
+                                        roundAmounts.setRoundBalancePrice(0.00);
+                                        RoundAmountSQL.update(roundAmounts);
+                                    } else {
+                                        RoundAmountSQL.deleteRoundAmount(roundAmounts);
+                                    }
+                                    remainTotal = BH.getBD(order.getTotal());
+                                }
+
+                            }else {
+                                CardsSettlement cardsSettlement = CardsSettlementSQL
+                                        .getCardsSettlementByPament(payment.getId(),
+                                                paymentSettlement.getId());
+                                subPaymentSettlement = cardsSettlement;
+                                if (parent instanceof EditSettlementPage) {
+                                    cardsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
+                                    CardsSettlementSQL.addCardsSettlement(cardsSettlement);
+                                } else {
+                                    CardsSettlementSQL.deleteCardsSettlement(cardsSettlement);
+                                }
                             }
+
                             break;
                         case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD:
                             BohHoldSettlement bohHoldSettlement = BohHoldSettlementSQL
@@ -982,8 +1006,25 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         tv_cards_cvv_num.setText("");
 
         tv_cards_expiration_date_num.setText("");
-        tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
-        tv_cards_amount_paid_num.setText(BH.getBD(remainTotal).toString());
+
+        if (!App.instance.getSystemSettings().isCardRounding()) {
+
+            tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+            tv_cards_amount_paid_num.setText(BH.getBD(remainTotal).toString());
+            tv_cards_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+        }else {
+            BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+            show.append((BH.mul(remainTotalAfterRound, BH.getBDNoFormat("100"), true).setScale(0, BigDecimal.ROUND_HALF_UP)).toString());
+            tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
+            BigDecimal rounding = BH.sub(remainTotalAfterRound, remainTotal, true);
+            String symbol = "";
+            if (rounding.compareTo(BH.getBD("0.00")) == -1) {
+                symbol = "-";
+            }
+            tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.abs(rounding, true).toString());
+            tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
+            tv_cards_amount_paid_num.setText( BH.getBD(remainTotalAfterRound).toString());
+        }
         selectView = tv_card_no_num;
         tv_cards_amount_paid_num.setBackgroundColor(parent.getResources().getColor(
                 R.color.white));
@@ -2103,6 +2144,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(tv_cards_amount_paid_num.getText().toString()));
                 }
 
+
+            //    BigDecimal rounding = BH.sub(paidBD, remainTotal, true);
                 if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                     PaymentSettlement paymentSettlement = ObjectFactory
                             .getInstance().getPaymentSettlementForCard(
@@ -2110,12 +2153,31 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                     paymentTypeId,
                                     paidBD.toString());
                     if (paidBD.compareTo(remainTotal) > -1) {
-                        order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
-                        OrderSQL.update(order);
+
+                        if (!App.instance.getSystemSettings().isCardRounding()) {
+                            order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                            OrderSQL.update(order);
+                        } else {
+                            RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
+                            order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                            OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
+                            OrderSQL.update(order);
+                        }
+
+
                     } else {
                         settlementNum = BH.getBD(PaymentSettlementSQL
                                 .getPaymentSettlementsSumBypaymentId(payment.getId()));
-                        remainTotal = BH.sub(remainTotal, settlementNum, false);
+
+                        if (!App.instance.getSystemSettings().isCardRounding())  {
+                            remainTotal = BH.sub(remainTotal, settlementNum, false);
+                        }else {
+
+
+                            remainTotal = BH.sub(paidBD, settlementNum, false);
+                        }
+
+
                     }
                     PaymentSQL.addPayment(payment);
                     PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
