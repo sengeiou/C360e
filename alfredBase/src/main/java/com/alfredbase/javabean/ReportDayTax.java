@@ -21,7 +21,20 @@ public class ReportDayTax implements Serializable{
 	private String taxPercentage;
 	private Integer taxQty;
 	private String taxAmount;
-	
+
+	/**
+	 * 税收类型(0消费税，1服务税)
+	 */
+	private Integer taxType;
+
+	public Integer getTaxType() {
+		return taxType;
+	}
+
+	public void setTaxType(Integer taxType) {
+		this.taxType = taxType;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -94,15 +107,23 @@ public class ReportDayTax implements Serializable{
 	public void setTaxAmount(String taxAmount) {
 		this.taxAmount = taxAmount;
 	}
+
 	@Override
 	public String toString() {
-		return "ReportDayTax [id=" + id + ", daySalesId=" + daySalesId
-				+ ", restaurantId=" + restaurantId + ", restaurantName="
-				+ restaurantName + ", revenueId=" + revenueId
-				+ ", revenueName=" + revenueName + ", businessDate="
-				+ businessDate + ", taxId=" + taxId + ", taxName=" + taxName
-				+ ", taxPercentage=" + taxPercentage + ", taxQty=" + taxQty
-				+ ", taxAmount=" + taxAmount + "]";
+		return "ReportDayTax{" +
+				"id=" + id +
+				", daySalesId=" + daySalesId +
+				", restaurantId=" + restaurantId +
+				", restaurantName='" + restaurantName + '\'' +
+				", revenueId=" + revenueId +
+				", revenueName='" + revenueName + '\'' +
+				", businessDate=" + businessDate +
+				", taxId=" + taxId +
+				", taxName='" + taxName + '\'' +
+				", taxPercentage='" + taxPercentage + '\'' +
+				", taxQty=" + taxQty +
+				", taxAmount='" + taxAmount + '\'' +
+				", taxType=" + taxType +
+				'}';
 	}
-	
 }

@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
@@ -113,6 +114,41 @@ public class TaxSQL {
 		}
 		return result;
 	}
+
+	public static Tax getTaxId(Integer taxId) {
+		Tax tax = null;
+		String sql = "select * from " + TableNames.Tax
+				+ " where id = ?";
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql,
+					new String[] { taxId + "" });
+			if (cursor.moveToFirst()) {
+				tax = new Tax();
+				tax.setId(cursor.getInt(0));
+				tax.setCompanyId(cursor.getInt(1));
+				tax.setRestaurantId(cursor.getInt(2));
+				tax.setTaxName(cursor.getString(3));
+				tax.setTaxPercentage(cursor.getString(4));
+				tax.setTaxType(cursor.getInt(5));
+				tax.setStatus(cursor.getInt(6));
+				tax.setCreateTime(cursor.getLong(7));
+				tax.setUpdateTime(cursor.getLong(8));
+				return tax;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return tax;
+	}
+
+
+
 
 	public static void deleteTax(Tax tax) {
 		String sql = "delete from " + TableNames.Tax + " where id = ?";

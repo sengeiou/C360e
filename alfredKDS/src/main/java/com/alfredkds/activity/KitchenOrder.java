@@ -59,329 +59,333 @@ import java.util.List;
 import java.util.Map;
 
 public class KitchenOrder extends BaseActivity {
-	public static final int HANDLER_TRANSFER_KOT = 3;
-	public static final int HANDLER_MERGER_KOT = 4;
+    public static final int HANDLER_TRANSFER_KOT = 3;
+    public static final int HANDLER_MERGER_KOT = 4;
 
-	private RecyclerView ll_orders;    //水平列表
-	public KOTArrayAdapter adapter;
-	public KOTArrayLanAdapter madapter;
-	private List<Kot> kots = new ArrayList<Kot>();
+    private RecyclerView ll_orders;    //水平列表
+    public KOTArrayAdapter adapter;
+    public KOTArrayLanAdapter madapter;
+    private List<Kot> kots = new ArrayList<Kot>();
 
-	private TopBarView topBarView;    //页面顶部view
+    private TopBarView topBarView;    //页面顶部view
 
-	private IntentFilter filter;
-	private KotSummary kotSummary;
-	private TextTypeFace textTypeFace;
-	private FinishQtyWindow finishQtyPop;
-	private MainPosInfo mainPosInfo;
-	private boolean doubleBackToExitPressedOnce = false;
-	private TextView tv_order_qyt;
-	private List<KotItem> kotItems= new ArrayList<KotItem>();
-	@Override
-	protected void initView() {
-		super.initView();
-		setContentView(R.layout.activity_kitchen_order);
-		loadingDialog = new LoadingDialog(context);
-		loadingDialog.setTitle(context.getResources().getString(R.string.loading));
-		mainPosInfo = App.instance.getCurrentConnectedMainPos();
-		App.instance.setRing();
+    private IntentFilter filter;
+    private KotSummary kotSummary;
+    private TextTypeFace textTypeFace;
+    private FinishQtyWindow finishQtyPop;
+    private MainPosInfo mainPosInfo;
+    private boolean doubleBackToExitPressedOnce = false;
+    private TextView tv_order_qyt;
+    private List<KotItem> kotItems = new ArrayList<KotItem>();
+
+    private LinearLayout li_title;
+
+    @Override
+    protected void initView() {
+        super.initView();
+        setContentView(R.layout.activity_kitchen_order);
+        loadingDialog = new LoadingDialog(context);
+        loadingDialog.setTitle(context.getResources().getString(R.string.loading));
+        mainPosInfo = App.instance.getCurrentConnectedMainPos();
+        App.instance.setRing();
 //		filter = new IntentFilter();
 //		filter.addAction(Intent.ACTION_TIME_TICK);
 //		registerReceiver(receiver, filter);
 
-		//ll_progress_list = (LinearLayout) findViewById(R.id.ll_progress_list);
-		//initProgressList();
-		ll_orders = (RecyclerView) findViewById(R.id.ll_orders);
-		tv_order_qyt = (TextView) findViewById(R.id.tv_order_qyt);
+        //ll_progress_list = (LinearLayout) findViewById(R.id.ll_progress_list);
+        //initProgressList();
+        ll_orders = (RecyclerView) findViewById(R.id.ll_orders);
+        tv_order_qyt = (TextView) findViewById(R.id.tv_order_qyt);
+        li_title = (LinearLayout) findViewById(R.id.li_lan_title);
 
 
+        finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
 
-		finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
+        initTopBarView();
+        initTextTypeFace();
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
 
-		initTopBarView();
-		initTextTypeFace();
-		client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-	}
-	public Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case App.HANDLER_NEW_KOT:
-					kots = App.instance.getRefreshKots();
-					if(App.instance.getSystemSettings().isKdsLan()){
-						madapter.setKots(getKotItem(kots));
-						madapter.setAddFirstItem(true);
-						madapter.notifyDataSetChanged();
+    public Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case App.HANDLER_NEW_KOT:
+                    kots = App.instance.getRefreshKots();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.setAddFirstItem(true);
+                        madapter.notifyDataSetChanged();
 
-						tv_order_qyt.setText(kotItems.size()+"");
-					}else {
-						adapter.setKots(kots);
-						adapter.setAddFirstItem(true);
-						adapter.notifyDataSetChanged();
+                        tv_order_qyt.setText(kotItems.size() + "");
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.setAddFirstItem(true);
+                        adapter.notifyDataSetChanged();
 
-						tv_order_qyt.setText(kots.size()+"");
-					}
+                        tv_order_qyt.setText(kots.size() + "");
+                    }
 
-					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-						popItemAdapter.setKot(App.instance.getKot(kotSummary));
-						popItemAdapter.notifyDataSetChanged();
-					}
-					break;
-				case App.HANDLER_UPDATE_KOT:
-					kots = App.instance.getRefreshKots();
-					if(App.instance.getSystemSettings().isKdsLan()){
-						madapter.setKots(getKotItem(kots));
-						madapter.notifyDataSetChanged();
-						tv_order_qyt.setText(kotItems.size()+"");
-					}else {
-						adapter.setKots(kots);
-						adapter.notifyDataSetChanged();
-						tv_order_qyt.setText(kots.size()+"");
-					}
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        popItemAdapter.setKot(App.instance.getKot(kotSummary));
+                        popItemAdapter.notifyDataSetChanged();
+                    }
+                    break;
+                case App.HANDLER_UPDATE_KOT:
+                    kots = App.instance.getRefreshKots();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.notifyDataSetChanged();
+                        tv_order_qyt.setText(kotItems.size() + "");
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.notifyDataSetChanged();
+                        tv_order_qyt.setText(kots.size() + "");
+                    }
 
-					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-						popItemAdapter.setKot(App.instance.getKot(kotSummary));
-						popItemAdapter.notifyDataSetChanged();
-					}
-					break;
-				case App.HANDLER_DELETE_KOT:
-					refresh();
-					break;
-				case App.HANDLER_RECONNECT_POS:
-					loadingDialog.dismiss();
-					DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
-							getString(R.string.cancel), getString(R.string.ok), null,
-							new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									UIHelp.startConnectPOS(context);
-									finish();
-								}
-							});
-					break;
-				case App.HANDLER_SEND_FAILURE:
-					loadingDialog.dismiss();
-					adapter.notifyDataSetChanged();
-					refresh();
-					break;
-				case App.HANDLER_RETURN_ERROR:
-					UIHelp.showToast(context, ResultCode.getErrorResultStrByCode(context, (Integer) msg.obj, null));
-					refresh();
-					break;
-				case App.HANDLER_SEND_FAILURE_SHOW:
-					UIHelp.showToast(context, context.getResources().getString(R.string.send_failed));
-					break;
-				case App.HANDLER_REFRESH_KOT:
-					dismissLoadingDialog();
-					refresh();
-					break;
-				case HANDLER_TRANSFER_KOT:
-					refresh();
-					break;
-				case HANDLER_MERGER_KOT:
-					refresh();
-					break;
-				case ResultCode.CONNECTION_FAILED:
-					loadingDialog.dismiss();
-					UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
-							context.getResources().getString(R.string.revenue_center)));
-					break;
-				case App.HANDLER_VERIFY_MAINPOS:
-					UIHelp.showToast(context, context.getResources().getString(R.string.other_pos_data));
-					break;
-				case App.HANDLER_KOTSUMMARY_IS_UNREAL:
-					loadingDialog.dismiss();
-					UIHelp.showToast(context, context.getResources().getString(R.string.order_discarded));
-					//kots = App.instance.getRefreshKots();
-					List<Kot> kots = App.instance.getRefreshKots();
-					adapter.setKots(kots);
-					adapter.notifyDataSetChanged();
-					if (kots.isEmpty()) {
-						itemPopupWindow.dismiss();
-					}
-					if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-						itemPopupWindow.dismiss();
-					}
-					break;
-				case App.HANDLER_KOT_COMPLETE_USER_FAILED:
-					App.instance.reload(context, handler);
-					break;
-				case Login.HANDLER_LOGIN:
-					refresh();
-					break;
-				case ResultCode.SUCCESS:
-					loadingDialog.dismiss();
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        popItemAdapter.setKot(App.instance.getKot(kotSummary));
+                        popItemAdapter.notifyDataSetChanged();
+                    }
+                    break;
+                case App.HANDLER_DELETE_KOT:
+                    refresh();
+                    break;
+                case App.HANDLER_RECONNECT_POS:
+                    loadingDialog.dismiss();
+                    DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
+                            getString(R.string.cancel), getString(R.string.ok), null,
+                            new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    UIHelp.startConnectPOS(context);
+                                    finish();
+                                }
+                            });
+                    break;
+                case App.HANDLER_SEND_FAILURE:
+                    loadingDialog.dismiss();
+                    adapter.notifyDataSetChanged();
+                    refresh();
+                    break;
+                case App.HANDLER_RETURN_ERROR:
+                    UIHelp.showToast(context, ResultCode.getErrorResultStrByCode(context, (Integer) msg.obj, null));
+                    refresh();
+                    break;
+                case App.HANDLER_SEND_FAILURE_SHOW:
+                    UIHelp.showToast(context, context.getResources().getString(R.string.send_failed));
+                    break;
+                case App.HANDLER_REFRESH_KOT:
+                    dismissLoadingDialog();
+                    refresh();
+                    break;
+                case HANDLER_TRANSFER_KOT:
+                    refresh();
+                    break;
+                case HANDLER_MERGER_KOT:
+                    refresh();
+                    break;
+                case ResultCode.CONNECTION_FAILED:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
+                            context.getResources().getString(R.string.revenue_center)));
+                    break;
+                case App.HANDLER_VERIFY_MAINPOS:
+                    UIHelp.showToast(context, context.getResources().getString(R.string.other_pos_data));
+                    break;
+                case App.HANDLER_KOTSUMMARY_IS_UNREAL:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, context.getResources().getString(R.string.order_discarded));
+                    //kots = App.instance.getRefreshKots();
+                    List<Kot> kots = App.instance.getRefreshKots();
+                    adapter.setKots(kots);
+                    adapter.notifyDataSetChanged();
+                    if (kots.isEmpty()) {
+                        itemPopupWindow.dismiss();
+                    }
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        itemPopupWindow.dismiss();
+                    }
+                    break;
+                case App.HANDLER_KOT_COMPLETE_USER_FAILED:
+                    App.instance.reload(context, handler);
+                    break;
+                case Login.HANDLER_LOGIN:
+                    refresh();
+                    break;
+                case ResultCode.SUCCESS:
+                    loadingDialog.dismiss();
 
 
-					break;
+                    break;
 
-				case App.HANDLER_KOT_ITEM_CALL:
-					if(loadingDialog!=null) {
-						kots = App.instance.getRefreshKots();
-						//kots = App.instance.getInitKots();
-						loadingDialog.dismiss();
-						madapter.setKots(getKotItem(kots));
-						madapter.notifyDataSetChanged();
-						tv_order_qyt.setText(kotItems.size()+"");
+                case App.HANDLER_KOT_ITEM_CALL:
+                    if (loadingDialog != null) {
+                        kots = App.instance.getRefreshKots();
+                        //kots = App.instance.getInitKots();
+                        loadingDialog.dismiss();
+                        madapter.setKots(getKotItem(kots));
+                        madapter.notifyDataSetChanged();
+                        tv_order_qyt.setText(kotItems.size() + "");
 
-					}
+                    }
 
-					break;
-				case App.HANDLER_KOT_CALL_NUM: {
-					KotItem kotItem = (KotItem) msg.obj;
-					String str = kotItem.getNumTag() + IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
-					String numTag = kotItem.getNumTag();
-					int id=msg.arg2;
-					if (!TextUtils.isEmpty(str)) {
-						loadingDialog.show();
-						Map<String, Object> parameters = new HashMap<String, Object>();
-						parameters.put("callnumber", str);
-						parameters.put("numTag", numTag);
-						SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
-					} else {
-						UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
-					}
-				}
-					break;
-				case App.HANDLER_KOT_CALL_NUM_OLD: {
-					Kot kot = (Kot) msg.obj;
-					KotSummary k = kot.getKotSummary();
-					String str = k.getNumTag() + IntegerUtils.fromat(k.getRevenueCenterIndex(), k.getOrderNo() + "");
-					String numTag = k.getNumTag();
-					int id=msg.arg2;
-					if (!TextUtils.isEmpty(str)) {
-						loadingDialog.show();
-						Map<String, Object> parameters = new HashMap<String, Object>();
-						parameters.put("callnumber", str);
-						parameters.put("numTag", numTag);
-						SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
-					} else {
-						UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
-					}
-				}
-					break;
-				case App.HANDLER_KOT_COMPLETE_ALL:
-					Bundle bundle = msg.getData();
-					final KotSummary kotSummary = (KotSummary) bundle.getSerializable("kotSummary");
-					String title = getResources().getString(R.string.warning);
-					String content = getResources().getString(R.string.complete_all_item);
-					String left = getResources().getString(R.string.no);
-					String right = getResources().getString(R.string.yes);
-					DialogFactory.commonTwoBtnDialog(KitchenOrder.this, title, content, left, right, null, new OnClickListener() {
-						@Override
-						public void onClick(View view) {
-							List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
-							for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary).getKotItemDetails()) {
-								kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
-								kotItemDetail.setUnFinishQty(0);
-								kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-								KotItemDetailSQL.update(kotItemDetail);
-								itemDetails.add(kotItemDetail);
-							}
-							Map<String, Object> parameters = new HashMap<String, Object>();
-							parameters.put("kotSummary", kotSummary);
-							parameters.put("kotItemDetails", itemDetails);
-							parameters.put("type", 1);
-							SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-									App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
-							loadingDialog.show();
-						}
-					});
-					break;
+                    break;
+                case App.HANDLER_KOT_CALL_NUM: {
+                    KotItem kotItem = (KotItem) msg.obj;
+                    String str = kotItem.getNumTag() + IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
+                    String numTag = kotItem.getNumTag();
+                    int id = msg.arg2;
+                    if (!TextUtils.isEmpty(str)) {
+                        loadingDialog.show();
+                        Map<String, Object> parameters = new HashMap<String, Object>();
+                        parameters.put("callnumber", str);
+                        parameters.put("numTag", numTag);
+                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
+                    } else {
+                        UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
+                    }
+                }
+                break;
+                case App.HANDLER_KOT_CALL_NUM_OLD: {
+                    Kot kot = (Kot) msg.obj;
+                    KotSummary k = kot.getKotSummary();
+                    String str = k.getNumTag() + IntegerUtils.fromat(k.getRevenueCenterIndex(), k.getOrderNo() + "");
+                    String numTag = k.getNumTag();
+                    int id = msg.arg2;
+                    if (!TextUtils.isEmpty(str)) {
+                        loadingDialog.show();
+                        Map<String, Object> parameters = new HashMap<String, Object>();
+                        parameters.put("callnumber", str);
+                        parameters.put("numTag", numTag);
+                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
+                    } else {
+                        UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
+                    }
+                }
+                break;
+                case App.HANDLER_KOT_COMPLETE_ALL:
+                    Bundle bundle = msg.getData();
+                    final KotSummary kotSummary = (KotSummary) bundle.getSerializable("kotSummary");
+                    String title = getResources().getString(R.string.warning);
+                    String content = getResources().getString(R.string.complete_all_item);
+                    String left = getResources().getString(R.string.no);
+                    String right = getResources().getString(R.string.yes);
+                    DialogFactory.commonTwoBtnDialog(KitchenOrder.this, title, content, left, right, null, new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+                            for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary).getKotItemDetails()) {
+                                kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
+                                kotItemDetail.setUnFinishQty(0);
+                                kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+                                KotItemDetailSQL.update(kotItemDetail);
+                                itemDetails.add(kotItemDetail);
+                            }
+                            Map<String, Object> parameters = new HashMap<String, Object>();
+                            parameters.put("kotSummary", kotSummary);
+                            parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("type", 1);
+                            SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                            loadingDialog.show();
+                        }
+                    });
+                    break;
 
-				case App.HANDLER_KOT_COMPLETE:
-					Bundle bundle1 = msg.getData();
-					final KotSummary kotSummary1 = (KotSummary) bundle1.getSerializable("kotSummary");
-					final int  kotItemDetailId = bundle1.getInt("kotItemDetailId");
+                case App.HANDLER_KOT_COMPLETE:
+                    Bundle bundle1 = msg.getData();
+                    final KotSummary kotSummary1 = (KotSummary) bundle1.getSerializable("kotSummary");
+                    final int kotItemDetailId = bundle1.getInt("kotItemDetailId");
 
-					final int kotItemId=bundle1.getInt("id");
-					String title1 = getResources().getString(R.string.warning);
-					String content1 = "Confirm  completed?";
-					String left1 = getResources().getString(R.string.no);
-					String right1 = getResources().getString(R.string.yes);
-					DialogFactory.commonTwoBtnDialog(KitchenOrder.this, title1, content1, left1, right1, null, new OnClickListener() {
-						@Override
-						public void onClick(View view) {
-							List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
-							for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary1).getKotItemDetails()) {
+                    final int kotItemId = bundle1.getInt("id");
+                    String title1 = getResources().getString(R.string.warning);
+                    String content1 = "Confirm  completed?";
+                    String left1 = getResources().getString(R.string.no);
+                    String right1 = getResources().getString(R.string.yes);
+                    DialogFactory.commonTwoBtnDialog(KitchenOrder.this, title1, content1, left1, right1, null, new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+                            for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary1).getKotItemDetails()) {
 
-								if(kotItemDetail.getId()==kotItemDetailId) {
-									kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
-									kotItemDetail.setUnFinishQty(0);
-									kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+                                if (kotItemDetail.getId() == kotItemDetailId) {
+                                    kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
+                                    kotItemDetail.setUnFinishQty(0);
+                                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
 //									kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+1);
 //									kotItemDetail.setUnFinishQty(kotItemDetail.getUnFinishQty()-1);
 //									if(kotItemDetail.getUnFinishQty()==0) {
 //										kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
 //									}
 
-								KotItemDetailSQL.update(kotItemDetail);
-								itemDetails.add(kotItemDetail);
-								}
-							}
-							Map<String, Object> parameters = new HashMap<String, Object>();
-							parameters.put("kotSummary", kotSummary1);
-							parameters.put("kotItemDetails", itemDetails);
-							parameters.put("type", 1);
-							SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-									App.instance.getCurrentConnectedMainPos(), parameters, handler,1);
-							loadingDialog.show();
-						}
-					});
-				default:
-					break;
-			}
-		}
+                                    KotItemDetailSQL.update(kotItemDetail);
+                                    itemDetails.add(kotItemDetail);
+                                }
+                            }
+                            Map<String, Object> parameters = new HashMap<String, Object>();
+                            parameters.put("kotSummary", kotSummary1);
+                            parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("type", 1);
+                            SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, 1);
+                            loadingDialog.show();
+                        }
+                    });
+                default:
+                    break;
+            }
+        }
 
-		;
-	};
+        ;
+    };
 
-	/**
-	 * ATTENTION: This was auto-generated to implement the App Indexing API.
-	 * See https://g.co/AppIndexing/AndroidStudio for more information.
-	 */
-	private GoogleApiClient client;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
-	public void refresh() {
-		if (loadingDialog.isShowing()) {
-			loadingDialog.dismiss();
-		}
-		List<Kot> kots = App.instance.getRefreshKots();
-		adapter.setKots(kots);
-		adapter.notifyDataSetChanged();
-		tv_order_qyt.setText(kots.size()+"");
-		if (kots.isEmpty()) {
+    public void refresh() {
+        if (loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
+        List<Kot> kots = App.instance.getRefreshKots();
+        adapter.setKots(kots);
+        adapter.notifyDataSetChanged();
+        tv_order_qyt.setText(kots.size() + "");
+        if (kots.isEmpty()) {
 //			itemPopupWindow.dismiss();
-			if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-				itemPopupWindow.dismiss();
-			}
-		}
-		if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-			Kot kot = App.instance.getKot(kotSummary);
-			popItemAdapter.setKot(App.instance.getKot(kotSummary));
-			popItemAdapter.notifyDataSetChanged();
-			ArrayList<KotItemDetail> list = new ArrayList<KotItemDetail>();
-			if (list != null && list.size() != 0){
-				list.clear();
-			}
-			for (int i = 0; i < kot.getKotItemDetails().size(); i++){
-				KotItemDetail kotItemDetail = kot.getKotItemDetails().get(i);
-				if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE){
-					list.add(kotItemDetail);
-				}
-			}
+            if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                itemPopupWindow.dismiss();
+            }
+        }
+        if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+            Kot kot = App.instance.getKot(kotSummary);
+            popItemAdapter.setKot(App.instance.getKot(kotSummary));
+            popItemAdapter.notifyDataSetChanged();
+            ArrayList<KotItemDetail> list = new ArrayList<KotItemDetail>();
+            if (list != null && list.size() != 0) {
+                list.clear();
+            }
+            for (int i = 0; i < kot.getKotItemDetails().size(); i++) {
+                KotItemDetail kotItemDetail = kot.getKotItemDetails().get(i);
+                if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE) {
+                    list.add(kotItemDetail);
+                }
+            }
 
-			if (list.size() == kot.getKotItemDetails().size()){
-				if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-					itemPopupWindow.dismiss();
-				}
-			}
-		}
-	}
+            if (list.size() == kot.getKotItemDetails().size()) {
+                if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                    itemPopupWindow.dismiss();
+                }
+            }
+        }
+    }
 
-	@Override
-	public void httpRequestAction(int action, Object obj) {
-		handler.sendMessage(handler.obtainMessage(action, null));
-	}
+    @Override
+    public void httpRequestAction(int action, Object obj) {
+        handler.sendMessage(handler.obtainMessage(action, null));
+    }
 
 //	private BroadcastReceiver receiver = new BroadcastReceiver() {
 //
@@ -392,25 +396,25 @@ public class KitchenOrder extends BaseActivity {
 //	}
 
 
+    @Override
+    protected void onResume() {
+        if (App.instance.getSystemSettings().isKdsLan()) {
+            li_title.setVisibility(View.VISIBLE);
+            //设置为横屏
+            if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+        } else {
+            li_title.setVisibility(View.GONE);
+            if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
+        }
 
 
-	@Override
-	protected void onResume() {
-		if(App.instance.getSystemSettings().isKdsLan()){
-			//设置为横屏
-			if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			}
-		}else {
-			if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			}
-		}
+        doubleBackToExitPressedOnce = false;
 
-
-		doubleBackToExitPressedOnce = false;
-
-		initKOTList();
+        initKOTList();
 //		if(App.instance.getSystemSettings().isKdsLan()){
 //			kots=App.instance.getRefreshKots();
 //			kots.clear();
@@ -421,27 +425,27 @@ public class KitchenOrder extends BaseActivity {
 //
 //		}
 
-		if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-			popItemAdapter.setKot(App.instance.getKot(kotSummary));
-			popItemAdapter.notifyDataSetChanged();
-		}
-		super.onStart();
-	}
+        if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+            popItemAdapter.setKot(App.instance.getKot(kotSummary));
+            popItemAdapter.notifyDataSetChanged();
+        }
+        super.onStart();
+    }
 
-	private List<KotItem> getKotItem(List<Kot> kotlist) {
-                kotItems.clear();
-		for (int i = 0; i <kotlist.size() ; i++) {
-			List<KotItemDetail> detailList=kotlist.get(i).getKotItemDetails();
-			for (int j = 0; j <detailList.size() ; j++) {
-				if(detailList.get(j).getKotStatus()<3) {
-					int unFinishQty = detailList.get(j).getUnFinishQty();
-					KotItem item = new KotItem();
-					Kot kot = kotlist.get(i);
-					KotSummary kotSummary = kot.getKotSummary();
-					KotItemDetail kotItemDetail = detailList.get(j);
-					item.setOrderNo(kotSummary.getOrderNo());
-					item.setTableName(kotSummary.getTableName());
-					item.setSummaryId(kotSummary.getId());
+    private List<KotItem> getKotItem(List<Kot> kotlist) {
+        kotItems.clear();
+        for (int i = 0; i < kotlist.size(); i++) {
+            List<KotItemDetail> detailList = kotlist.get(i).getKotItemDetails();
+            for (int j = 0; j < detailList.size(); j++) {
+                if (detailList.get(j).getKotStatus() < 3) {
+                    int unFinishQty = detailList.get(j).getUnFinishQty();
+                    KotItem item = new KotItem();
+                    Kot kot = kotlist.get(i);
+                    KotSummary kotSummary = kot.getKotSummary();
+                    KotItemDetail kotItemDetail = detailList.get(j);
+                    item.setOrderNo(kotSummary.getOrderNo());
+                    item.setTableName(kotSummary.getTableName());
+                    item.setSummaryId(kotSummary.getId());
                     item.setNumTag(kotSummary.getNumTag());
                     item.setRevenueCenterIndex(kotSummary.getRevenueCenterIndex());
                     StringBuffer sBuffer = new StringBuffer();
@@ -451,180 +455,180 @@ public class KitchenOrder extends BaseActivity {
                     item.setCallType(kotItemDetail.getCallType());
                     item.setQty(unFinishQty);
                     item.setItemDetailId(kotItemDetail.getId());
-					List<KotItemModifier> itemModifierlist = kotlist.get(i).getKotItemModifiers();
-					for (int s = 0; s < itemModifierlist.size(); s++) {
-						KotItemModifier kotItemModifier = itemModifierlist.get(j);
-						if (kotItemModifier != null
-								&& detailList.get(j).getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
-							sBuffer.append("" + kotItemModifier.getModifierName() + ";");
+                    List<KotItemModifier> itemModifierlist = kotlist.get(i).getKotItemModifiers();
+                    for (int s = 0; s < itemModifierlist.size(); s++) {
+                        KotItemModifier kotItemModifier = itemModifierlist.get(s);
+                        if (kotItemModifier != null
+                                && detailList.get(j).getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+                            sBuffer.append("" + kotItemModifier.getModifierName() + ";");
 
-						}
-					}
-					item.setItemModName(sBuffer.toString());
-					kotItems.add(item);
-				}
-			}
+                        }
+                    }
+                    item.setItemModName(sBuffer.toString());
+                    kotItems.add(item);
+                }
+            }
 
-		}
-          return  kotItems;
+        }
+        return kotItems;
 
-	}
+    }
 
-	private void initTopBarView() {
-		topBarView = (TopBarView) findViewById(R.id.tv_title);
-	}
+    private void initTopBarView() {
+        topBarView = (TopBarView) findViewById(R.id.tv_title);
+    }
 
-	@Override
-	protected void onDestroy() {
+    @Override
+    protected void onDestroy() {
 //		unregisterReceiver(receiver);
-		super.onDestroy();
-	}
+        super.onDestroy();
+    }
 
-	private void initKOTList() {
+    private void initKOTList() {
 
-		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-		if(App.instance.getSystemSettings().isKdsLan()){
-			linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		}else {
-			linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-		}
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        if (App.instance.getSystemSettings().isKdsLan()) {
+            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        } else {
+            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        }
 
-		ll_orders.setLayoutManager(linearLayoutManager);
-		// Assign adapter to the HorizontalListView
-		if(App.instance.getSystemSettings().isKdsLan()){
+        ll_orders.setLayoutManager(linearLayoutManager);
+        // Assign adapter to the HorizontalListView
+        if (App.instance.getSystemSettings().isKdsLan()) {
 
-			madapter = new KOTArrayLanAdapter(context, handler);
-		//	Kot k=new Kot();
-			//kots.add(k);
-			kots = App.instance.getRefreshKots();
-			//kots = App.instance.getInitKots();
-			madapter.setKots(getKotItem(kots));
-			ll_orders.setAdapter(madapter);
-			tv_order_qyt.setText(kotItems.size()+"");
-		}else {
+            madapter = new KOTArrayLanAdapter(context, handler);
+            //	Kot k=new Kot();
+            //kots.add(k);
+            kots = App.instance.getRefreshKots();
+            //kots = App.instance.getInitKots();
+            madapter.setKots(getKotItem(kots));
+            ll_orders.setAdapter(madapter);
+            tv_order_qyt.setText(kotItems.size() + "");
+        } else {
 
-			adapter = new KOTArrayAdapter(context, handler);
-			kots = App.instance.getRefreshKots();
-		//	kots = App.instance.getInitKots();
-			adapter.setKots(kots);
-			ll_orders.setAdapter(adapter);
-			tv_order_qyt.setText(kots.size()+"");
-		}
+            adapter = new KOTArrayAdapter(context, handler);
+            kots = App.instance.getRefreshKots();
+            //	kots = App.instance.getInitKots();
+            adapter.setKots(kots);
+            ll_orders.setAdapter(adapter);
+            tv_order_qyt.setText(kots.size() + "");
+        }
 
-	}
+    }
 
 
-	@Override
-	public void handlerClickEvent(View v) {
-		super.handlerClickEvent(v);
-		switch (v.getId()) {
-			case R.id.iv_complete:
-				if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-					kots = App.instance.getRefreshKots();
+    @Override
+    public void handlerClickEvent(View v) {
+        super.handlerClickEvent(v);
+        switch (v.getId()) {
+            case R.id.iv_complete:
+                if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                    kots = App.instance.getRefreshKots();
 
-					if(App.instance.getSystemSettings().isKdsLan()){
-						madapter.setKots(getKotItem(kots));
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
 
-						madapter.notifyDataSetChanged();
-					}else {
-						adapter.setKots(kots);
-						adapter.notifyDataSetChanged();
-					}
+                        madapter.notifyDataSetChanged();
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.notifyDataSetChanged();
+                    }
 
-					itemPopupWindow.dismiss();
+                    itemPopupWindow.dismiss();
 //				refresh();
-				}
-				break;
-			case R.id.iv_back:
-				if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-					adapter.notifyDataSetChanged();
-					itemPopupWindow.dismiss();
-				}
-				break;
-			case R.id.ll_bottom: {
-				String title = getResources().getString(R.string.warning);
-				String content = getResources().getString(R.string.complete_all_item);
-				String left = getResources().getString(R.string.no);
-				String right = getResources().getString(R.string.yes);
-				DialogFactory.commonTwoBtnDialog(this, title, content, left, right, null, new OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
-						for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary).getKotItemDetails()) {
-							kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
-							kotItemDetail.setUnFinishQty(0);
-							kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-							KotItemDetailSQL.update(kotItemDetail);
-							itemDetails.add(kotItemDetail);
-						}
-						Map<String, Object> parameters = new HashMap<String, Object>();
-						parameters.put("kotSummary", kotSummary);
-						parameters.put("kotItemDetails", itemDetails);
-						parameters.put("type", 1);
-						SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-								App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
-						loadingDialog.show();
+                }
+                break;
+            case R.id.iv_back:
+                if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                    adapter.notifyDataSetChanged();
+                    itemPopupWindow.dismiss();
+                }
+                break;
+            case R.id.ll_bottom: {
+                String title = getResources().getString(R.string.warning);
+                String content = getResources().getString(R.string.complete_all_item);
+                String left = getResources().getString(R.string.no);
+                String right = getResources().getString(R.string.yes);
+                DialogFactory.commonTwoBtnDialog(this, title, content, left, right, null, new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+                        for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary).getKotItemDetails()) {
+                            kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
+                            kotItemDetail.setUnFinishQty(0);
+                            kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+                            KotItemDetailSQL.update(kotItemDetail);
+                            itemDetails.add(kotItemDetail);
+                        }
+                        Map<String, Object> parameters = new HashMap<String, Object>();
+                        parameters.put("kotSummary", kotSummary);
+                        parameters.put("kotItemDetails", itemDetails);
+                        parameters.put("type", 1);
+                        SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+                                App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                        loadingDialog.show();
 
 
-					}
-				});
-			}
-			break;
-			default:
-				break;
-		}
-	}
+                    }
+                });
+            }
+            break;
+            default:
+                break;
+        }
+    }
 
-	private PopupWindow itemPopupWindow;
-	private PopItemListView popItemListView;
-	private PopItemAdapter popItemAdapter;
+    private PopupWindow itemPopupWindow;
+    private PopItemListView popItemListView;
+    private PopItemAdapter popItemAdapter;
 
-	public void showOrderItem(final KotSummary kotSummary) {
-		Kot kot = App.instance.getKot(kotSummary);
-		this.kotSummary = kotSummary;
-		View view = getLayoutInflater().inflate(R.layout.kitche_order_item_popupwindow, null);
-		ImageView iv_back = (ImageView) view.findViewById(R.id.iv_back);
-		ImageView iv_complete = (ImageView) view.findViewById(R.id.iv_complete);
-		iv_back.setOnClickListener(this);
-		iv_complete.setOnClickListener(this);
-		ViewTouchUtil.expandViewTouchDelegate(iv_back);
-		ViewTouchUtil.expandViewTouchDelegate(iv_complete);
-		view.findViewById(R.id.ll_bottom).setOnClickListener(this);
-		//kotTop
-		TextView kotId = (TextView) view.findViewById(R.id.tv_kot_id);
-		TextView orderId = (TextView) view.findViewById(R.id.tv_order_id);
-		TextView table = (TextView) view.findViewById(R.id.tv_table);
-		TextView posName = (TextView) view.findViewById(R.id.tv_pos);
-		TextView date = (TextView) view.findViewById(R.id.tv_date);
-		TextView time = (TextView) view.findViewById(R.id.tv_time);
+    public void showOrderItem(final KotSummary kotSummary) {
+        Kot kot = App.instance.getKot(kotSummary);
+        this.kotSummary = kotSummary;
+        View view = getLayoutInflater().inflate(R.layout.kitche_order_item_popupwindow, null);
+        ImageView iv_back = (ImageView) view.findViewById(R.id.iv_back);
+        ImageView iv_complete = (ImageView) view.findViewById(R.id.iv_complete);
+        iv_back.setOnClickListener(this);
+        iv_complete.setOnClickListener(this);
+        ViewTouchUtil.expandViewTouchDelegate(iv_back);
+        ViewTouchUtil.expandViewTouchDelegate(iv_complete);
+        view.findViewById(R.id.ll_bottom).setOnClickListener(this);
+        //kotTop
+        TextView kotId = (TextView) view.findViewById(R.id.tv_kot_id);
+        TextView orderId = (TextView) view.findViewById(R.id.tv_order_id);
+        TextView table = (TextView) view.findViewById(R.id.tv_table);
+        TextView posName = (TextView) view.findViewById(R.id.tv_pos);
+        TextView date = (TextView) view.findViewById(R.id.tv_date);
+        TextView time = (TextView) view.findViewById(R.id.tv_time);
 
-		LinearLayout kitchen_ll_orderRemark = (LinearLayout) view.findViewById(R.id.kitchen_ll_orderRemark);
-		TextView kitchen_tv_orderremark = (TextView) view.findViewById(R.id.kitchen_tv_orderremark);
-		kitchen_tv_orderremark.setMovementMethod(ScrollingMovementMethod.getInstance());
+        LinearLayout kitchen_ll_orderRemark = (LinearLayout) view.findViewById(R.id.kitchen_ll_orderRemark);
+        TextView kitchen_tv_orderremark = (TextView) view.findViewById(R.id.kitchen_tv_orderremark);
+        kitchen_tv_orderremark.setMovementMethod(ScrollingMovementMethod.getInstance());
 
-		TextView tv_kiosk_order_id = (TextView) view.findViewById(R.id.tv_kiosk_order_id);
-		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-			tv_kiosk_order_id.setVisibility(View.VISIBLE);
-			orderId.setVisibility(View.GONE);
-		} else {
-			tv_kiosk_order_id.setVisibility(View.GONE);
-			orderId.setVisibility(View.VISIBLE);
-		}
-		kotId.setText(kot.getKotSummary().getId() + "");
-		orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo() + "");
-		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) +kot.getKotSummary().getNumTag() + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(),  kot.getKotSummary().getOrderNo() + ""));
-		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName() + "");
-		posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
-		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
-		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
+        TextView tv_kiosk_order_id = (TextView) view.findViewById(R.id.tv_kiosk_order_id);
+        if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+            tv_kiosk_order_id.setVisibility(View.VISIBLE);
+            orderId.setVisibility(View.GONE);
+        } else {
+            tv_kiosk_order_id.setVisibility(View.GONE);
+            orderId.setVisibility(View.VISIBLE);
+        }
+        kotId.setText(kot.getKotSummary().getId() + "");
+        orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo() + "");
+        tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
+        table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName() + "");
+        posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
+        date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
+        time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
 
-		String remark = kot.getKotSummary().getOrderRemark();
-		if (TextUtils.isEmpty(remark)){
-			kitchen_ll_orderRemark.setVisibility(View.GONE);
-		}else {
-			kitchen_ll_orderRemark.setVisibility(View.VISIBLE);
-			kitchen_tv_orderremark.setText("Remark:" + " " + remark);
-		}
+        String remark = kot.getKotSummary().getOrderRemark();
+        if (TextUtils.isEmpty(remark)) {
+            kitchen_ll_orderRemark.setVisibility(View.GONE);
+        } else {
+            kitchen_ll_orderRemark.setVisibility(View.VISIBLE);
+            kitchen_tv_orderremark.setText("Remark:" + " " + remark);
+        }
 
 //		textTypeFace.setTrajanProBlod(kotId);
 //		textTypeFace.setTrajanProRegular(orderId);
@@ -636,123 +640,123 @@ public class KitchenOrder extends BaseActivity {
 //		textTypeFace.setTrajanProRegular(kitchen_tv_orderremark);
 //		textTypeFace.setTrajanProRegular(kitchen_tv_remark);
 
-		popItemListView = (PopItemListView) view.findViewById(R.id.lv_kot);
-		popItemAdapter = new PopItemAdapter(context);
-		popItemAdapter.setKot(kot);
-		popItemListView.setAdapter(popItemAdapter);
-		popItemListView.setRemoveListener(new RemoveListener() {
-			@Override
-			public void removeItem(RemoveDirection direction, int position) {
-				PopItemAdapter currentPopItems = (PopItemAdapter) popItemListView.getAdapter();
-				Kot popKot = currentPopItems.getKot();
+        popItemListView = (PopItemListView) view.findViewById(R.id.lv_kot);
+        popItemAdapter = new PopItemAdapter(context);
+        popItemAdapter.setKot(kot);
+        popItemListView.setAdapter(popItemAdapter);
+        popItemListView.setRemoveListener(new RemoveListener() {
+            @Override
+            public void removeItem(RemoveDirection direction, int position) {
+                PopItemAdapter currentPopItems = (PopItemAdapter) popItemListView.getAdapter();
+                Kot popKot = currentPopItems.getKot();
 				/*
 				kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
 				kotItemDetail.setUnFinishQty(0);
 				kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
 				KotItemDetailSQL.update(kotItemDetail);
 				 */
-				switch (direction) {
-					case LEFT:
-						if (position >= popKot.getKotItemDetails().size()) {
+                switch (direction) {
+                    case LEFT:
+                        if (position >= popKot.getKotItemDetails().size()) {
 //						return;
-						}
-						if (popKot.getKotItemDetails().get(position).getKotStatus() < ParamConst.KOT_STATUS_DONE
-								&& popKot.getKotItemDetails().get(position).getCategoryId() == ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN) {
-							KotItemDetail kotItemDetail = popKot.getKotItemDetails().get(position);
-							if (kotItemDetail.getUnFinishQty() > 1) {
-								finishQtyPop.show(kotItemDetail.getUnFinishQty() + "", kotSummary, kotItemDetail, loadingDialog);
-								return;
-							}
-							loadingDialog.show();
-							kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-							kotItemDetail.setUnFinishQty(0);
-							kotItemDetail.setFinishQty(1);
-							KotItemDetailSQL.update(kotItemDetail);
-							List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
-							itemDetails.add(kotItemDetail);
-							Map<String, Object> parameters = new HashMap<String, Object>();
-							parameters.put("kotSummary", popKot.getKotSummary());
-							parameters.put("kotItemDetails", itemDetails);
-							SyncCentre.getInstance().kotComplete(context,
-									App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
-						}
+                        }
+                        if (popKot.getKotItemDetails().get(position).getKotStatus() < ParamConst.KOT_STATUS_DONE
+                                && popKot.getKotItemDetails().get(position).getCategoryId() == ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN) {
+                            KotItemDetail kotItemDetail = popKot.getKotItemDetails().get(position);
+                            if (kotItemDetail.getUnFinishQty() > 1) {
+                                finishQtyPop.show(kotItemDetail.getUnFinishQty() + "", kotSummary, kotItemDetail, loadingDialog);
+                                return;
+                            }
+                            loadingDialog.show();
+                            kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+                            kotItemDetail.setUnFinishQty(0);
+                            kotItemDetail.setFinishQty(1);
+                            KotItemDetailSQL.update(kotItemDetail);
+                            List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+                            itemDetails.add(kotItemDetail);
+                            Map<String, Object> parameters = new HashMap<String, Object>();
+                            parameters.put("kotSummary", popKot.getKotSummary());
+                            parameters.put("kotItemDetails", itemDetails);
+                            SyncCentre.getInstance().kotComplete(context,
+                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                        }
 
-						break;
-					default:
-						break;
-				}
-			}
-		});
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
 
 //		TextTypeFace.setTypeface(context, (TextView) view.findViewById(R.id.tv_order_item_name));
-		itemPopupWindow = new PopupWindow(view,
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				(int) (ScreenSizeUtil.height - ScreenSizeUtil
-						.getStatusBarHeight(context)));
-		itemPopupWindow.setFocusable(true);
-		if (itemPopupWindow != null && !itemPopupWindow.isShowing())
-			itemPopupWindow.showAtLocation(findViewById(R.id.ll_orders),
-					Gravity.TOP | Gravity.LEFT, 0,
-					ScreenSizeUtil.getStatusBarHeight(context));
-	}
+        itemPopupWindow = new PopupWindow(view,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (ScreenSizeUtil.height - ScreenSizeUtil
+                        .getStatusBarHeight(context)));
+        itemPopupWindow.setFocusable(true);
+        if (itemPopupWindow != null && !itemPopupWindow.isShowing())
+            itemPopupWindow.showAtLocation(findViewById(R.id.ll_orders),
+                    Gravity.TOP | Gravity.LEFT, 0,
+                    ScreenSizeUtil.getStatusBarHeight(context));
+    }
 
-	private void initTextTypeFace() {
-		textTypeFace = TextTypeFace.getInstance();
-	}
+    private void initTextTypeFace() {
+        textTypeFace = TextTypeFace.getInstance();
+    }
 
-	@Override
-	public void onBackPressed() {
-		if (doubleBackToExitPressedOnce) {
-			super.onBackPressed();
-			return;
-		}
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
 
-		this.doubleBackToExitPressedOnce = true;
-		UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
+        this.doubleBackToExitPressedOnce = true;
+        UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-		BaseApplication.postHandler.postDelayed(new Runnable() {
+        BaseApplication.postHandler.postDelayed(new Runnable() {
 
-			@Override
-			public void run() {
-				doubleBackToExitPressedOnce = false;
-			}
-		}, 2000);
-	}
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+    }
 
 
-	/**
-	 * ATTENTION: This was auto-generated to implement the App Indexing API.
-	 * See https://g.co/AppIndexing/AndroidStudio for more information.
-	 */
-	public Action getIndexApiAction() {
-		Thing object = new Thing.Builder()
-				.setName("KitchenOrder Page") // TODO: Define a title for the content shown.
-				// TODO: Make sure this auto-generated URL is correct.
-				.setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-				.build();
-		return new Action.Builder(Action.TYPE_VIEW)
-				.setObject(object)
-				.setActionStatus(Action.STATUS_TYPE_COMPLETED)
-				.build();
-	}
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("KitchenOrder Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
 
-	@Override
-	public void onStart() {
-		super.onStart();
+    @Override
+    public void onStart() {
+        super.onStart();
 
-		// ATTENTION: This was auto-generated to implement the App Indexing API.
-		// See https://g.co/AppIndexing/AndroidStudio for more information.
-		client.connect();
-		AppIndex.AppIndexApi.start(client, getIndexApiAction());
-	}
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
 
-	@Override
-	public void onStop() {
-		super.onStop();
+    @Override
+    public void onStop() {
+        super.onStop();
 
-		// ATTENTION: This was auto-generated to implement the App Indexing API.
-		// See https://g.co/AppIndexing/AndroidStudio for more information.
-		AppIndex.AppIndexApi.end(client, getIndexApiAction());
-		client.disconnect();
-	}
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
 }

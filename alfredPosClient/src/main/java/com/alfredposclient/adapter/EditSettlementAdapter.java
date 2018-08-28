@@ -201,7 +201,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 			temporaryOrder.setOrderNo(order.getOrderNo());
 			RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit, orderBill);
 			Payment payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId().intValue());
-			List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getPaymentSettlementsBypaymentId(payment.getId().intValue());
+			List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getAllPaymentSettlementByPaymentId(payment.getId().intValue());
 			App.instance.remoteBillPrint(printer, title, temporaryOrder,
 					orderItems, orderModifiers, taxMap, paymentSettlements,
 					roundAmount, false);
@@ -218,7 +218,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 					order, App.instance.getRevenueCenter());
 			RoundAmount roundAmount = RoundAmountSQL
 					.getRoundAmountByOrderAndBill(order, orderBill);
-			List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getPaymentSettlementsBypaymentId(editSettlementInfo.getPaymentId());
+			List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getAllPaymentSettlementByPaymentId(editSettlementInfo.getPaymentId());
 			App.instance.remoteBillPrint(
 					printer,
 					ObjectFactory.getInstance().getPrinterTitle(

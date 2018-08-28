@@ -2072,6 +2072,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             case ParamConst.SETTLEMENT_TYPE_NOT_PART:
                 //固定金额
             case ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM: {
+
+                if (paymentMethod.getIsTax() == 0) {
+                    //不计税
+                    deleteVoidOrEntTax();
+                }
                 BigDecimal paidBD = BH.getBD(paymentMethod.getPartAcount());
                 if (viewTag == ParamConst.SETTLEMENT_TYPE_NOT_PART) {
                     paidBD = BH.getBD(tv_part_total_amount_num.getText().toString());
@@ -2108,7 +2113,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             break;
             case ParamConst.SETTLEMENT_TYPE_PART: {
                 PaymentSettlement paymentSettlement = null;
-                if (paymentMethod.getIsPart() == 0) {
+                if (paymentMethod.getIsTax() == 0) {
                     //不计税
                     deleteVoidOrEntTax();
                 }
