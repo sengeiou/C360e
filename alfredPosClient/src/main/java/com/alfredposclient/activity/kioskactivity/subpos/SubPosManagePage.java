@@ -1,5 +1,7 @@
 package com.alfredposclient.activity.kioskactivity.subpos;
 
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,18 +12,21 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.VerifyDialog;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredposclient.R;
 
 import java.util.List;
+import java.util.Map;
 
 public class SubPosManagePage extends BaseActivity {
     private ListView lv_subpos;
     private TextView tv_title_name;
     private List<SubPosBean>  subPosBeans;
-
+    private VerifyDialog dialog;
+    private SubPosItemAdapter subPosItemAdapter;
     @Override
     protected void initView() {
         super.initView();
@@ -32,9 +37,9 @@ public class SubPosManagePage extends BaseActivity {
         subPosBeans = SubPosBeanSQL.getAllSubPosBean();
         findViewById(R.id.ll_print).setVisibility(View.GONE);
         findViewById(R.id.btn_back).setOnClickListener(this);
-        SubPosItemAdapter subPosItemAdapter = new SubPosItemAdapter();
+        subPosItemAdapter = new SubPosItemAdapter();
         lv_subpos.setAdapter(subPosItemAdapter);
-
+        dialog = new VerifyDialog(context, handler);
     }
 
     @Override
@@ -46,6 +51,35 @@ public class SubPosManagePage extends BaseActivity {
                 break;
         }
     }
+
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case VerifyDialog.DIALOG_RESPONSE:
+                    Map<String, Object> map = (Map<String, Object>) msg.obj;
+                    final SubPosBean subPosBean = (SubPosBean) map.get("object");
+                    if(subPosBean == null){
+                        return;
+                    }
+                    DialogFactory.commonTwoBtnDialog(context, "Warning", "Are you sure about closing the Sub Pos",
+                            context.getString(R.string.cancel), context.getString(R.string.ok),
+                            null,
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    SubPosBean s = subPosBean;
+                                    s.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
+                                    SubPosBeanSQL.updateSubPosBean(s);
+                                    subPosItemAdapter.notifyDataSetChanged();
+                                }
+                            });
+                    break;
+            }
+        }
+    };
 
     class SubPosItemAdapter extends BaseAdapter {
         private LayoutInflater inflater;
@@ -94,7 +128,7 @@ public class SubPosManagePage extends BaseActivity {
                 showCheck = true;
             }
             holder.tv_status.setText(status);
-            holder.btn_check.setText("Close");
+            holder.btn_check.setText("Unassign");
             holder.tv_tag.setText(subPosBean.getNumTag());
             if(showCheck){
                 holder.btn_check.setVisibility(View.VISIBLE);
@@ -105,19 +139,7 @@ public class SubPosManagePage extends BaseActivity {
             holder.btn_check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    DialogFactory.commonTwoBtnDialog(context, "Warning", "Are you sure about closing the Sub Pos",
-                            context.getString(R.string.cancel), context.getString(R.string.ok),
-                            null,
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    SubPosBean s = (SubPosBean) view.getTag();
-                                    s.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
-                                    SubPosBeanSQL.updateSubPosBean(s);
-                                    notifyDataSetChanged();
-                                }
-                            });
-
+                    dialog.show("verify",view.getTag());
                 }
             });
 
