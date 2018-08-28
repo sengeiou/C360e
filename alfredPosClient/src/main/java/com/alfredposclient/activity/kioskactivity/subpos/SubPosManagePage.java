@@ -64,7 +64,7 @@ public class SubPosManagePage extends BaseActivity {
                     if(subPosBean == null){
                         return;
                     }
-                    DialogFactory.commonTwoBtnDialog(context, "Warning", "Are you sure about closing the Sub Pos",
+                    DialogFactory.commonTwoBtnDialog(context, "Warning", "Sub Pos UNABLE to close if Unassigned",
                             context.getString(R.string.cancel), context.getString(R.string.ok),
                             null,
                             new View.OnClickListener() {

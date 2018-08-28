@@ -1971,7 +1971,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 //					.getRoundAmount(order, orderBill, App.instance.getLocalRestaurantConfig().getRoundType());
 //			RoundAmountSQL.update(roundAmount);
 			String kotCommitStatus;
-			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForPlace(
+			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForSubPosCommmitPlace(
 					TableInfoSQL.getTableById(order.getTableId()).getName(),
 					order, App.instance.getRevenueCenter(), App.instance.getBusinessDate());
 			User user = UserSQL.getUserById(order.getUserId());
@@ -2289,10 +2289,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					@Override
 					public void run() {
 						if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-							String orderNo = kotSummary.getNumTag() + kotSummary.getOrderNo().toString();
-							if(App.instance.isRevenueKiosk()){
-								orderNo = kotSummary.getNumTag() + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
-							}
+							String orderNo = kotSummary.getNumTag() + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
 							SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getNumTag(), orderNo);
 
 						}

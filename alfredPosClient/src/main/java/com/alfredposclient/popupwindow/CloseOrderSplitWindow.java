@@ -1418,6 +1418,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
                 } else {
                     if (splitPax) {
+
                         handler.sendEmptyMessageDelayed(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW, 2500);
                     } else {
                         handler.sendEmptyMessageDelayed(MainPage.VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW, 2500);
