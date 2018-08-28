@@ -163,7 +163,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				break;
 			}
 			case R.id.ll_xz_report: {
-				UIHelp.startXZReportHtml(context);
+				UIHelp.startXZReportActivty(context);
 				break;
 			}
 			case R.id.ll_entplu: {

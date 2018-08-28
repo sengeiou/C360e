@@ -62,9 +62,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -3421,60 +3419,60 @@ public class ReportObjectFactory {
 		return totalDetailInfos;
 	}
 	
-	public Map<String, Object> loadDaySalesXZReport(long bizDateNow, SessionStatus sessionStatus) {
-		long oldtime = bizDateNow;
-
-		Calendar c = Calendar.getInstance();
-		Date dt = new Date(bizDateNow);
-		c.setTime(dt); 
-		c.add(Calendar.DATE, -29); // Adding 5 days
-		oldtime = c.getTime().getTime();
-		
-		Map<String, Object> ret = new HashMap<String, Object>();
-		ret.put("bizDateNow", bizDateNow);
-		
-		//get all ZReports stored locally
-		Map<Long, Object> reportSummary = (Map<Long, Object>) ReportDaySalesSQL.getReportDaySalesBetweenTime(bizDateNow, oldtime);
-		
-		//xReport Current session
-		ReportDaySales xReportObj = null;
-		if (sessionStatus!=null) {
-			xReportObj = this.loadXReportDaySales(bizDateNow, sessionStatus, "0.00");
-		}
-        if (reportSummary.isEmpty()) {
-        	Map<String, Object> summyObj = new HashMap<String, Object>();
-        	if (xReportObj!=null) {
-        	   Map<Integer, Object> sessionsale = new HashMap<Integer, Object>();
-        	   sessionsale.put(sessionStatus.getSession_status(), xReportObj.getNettSales());
-        	   summyObj.put("x", sessionsale);
-        	}else
-        	  summyObj.put("x", null);
-        	summyObj.put("z", null);
-        	reportSummary.put(bizDateNow, summyObj);
-        }else{
-        	Map<String, Object> summyObj = (Map<String, Object>) reportSummary.get(bizDateNow);
-        	if (summyObj!=null) {
-        	//no x/zreport data for today
-	        	if (summyObj.get("z")==null) {
-	         	  Map<Integer, Object> sessionsale = new HashMap<Integer, Object>();
-	         	  sessionsale.put(sessionStatus.getSession_status(), xReportObj.getNettSales());	
-	        	  summyObj.put("x", sessionsale);     
-	        	}
-	        	reportSummary.put(bizDateNow, summyObj);
-        	}else {
-        		Map<String, Object> newSummyObj = new HashMap<String, Object>(); 
-            	if (xReportObj!=null) {
-             	   Map<Integer, Object> sessionsale = new HashMap<Integer, Object>();
-             	   sessionsale.put(sessionStatus.getSession_status(), xReportObj.getNettSales());
-             	   newSummyObj.put("x", sessionsale);
-             	}else
-             		newSummyObj.put("x", null);
-             	newSummyObj.put("z", null);
-             	reportSummary.put(bizDateNow, newSummyObj);
-        	}
-        	
-        }
-		ret.put("result",reportSummary);
-		return ret;
-	}
+//	public Map<String, Object> loadDaySalesXZReport(long bizDateNow, SessionStatus sessionStatus) {
+//		long oldtime = bizDateNow;
+//
+//		Calendar c = Calendar.getInstance();
+//		Date dt = new Date(bizDateNow);
+//		c.setTime(dt);
+//		c.add(Calendar.DATE, -29); // Adding 5 days
+//		oldtime = c.getTime().getTime();
+//
+//		Map<String, Object> ret = new HashMap<String, Object>();
+//		ret.put("bizDateNow", bizDateNow);
+//
+//		//get all ZReports stored locally
+//		Map<Long, Object> reportSummary = (Map<Long, Object>) ReportDaySalesSQL.getReportDaySalesBetweenTime(bizDateNow, oldtime);
+//
+//		//xReport Current session
+//		ReportDaySales xReportObj = null;
+//		if (sessionStatus!=null) {
+//			xReportObj = this.loadXReportDaySales(bizDateNow, sessionStatus, "0.00");
+//		}
+//        if (reportSummary.isEmpty()) {
+//        	Map<String, Object> summyObj = new HashMap<String, Object>();
+//        	if (xReportObj!=null) {
+//        	   Map<Integer, Object> sessionsale = new HashMap<Integer, Object>();
+//        	   sessionsale.put(sessionStatus.getSession_status(), xReportObj.getNettSales());
+//        	   summyObj.put("x", sessionsale);
+//        	}else
+//        	  summyObj.put("x", null);
+//        	summyObj.put("z", null);
+//        	reportSummary.put(bizDateNow, summyObj);
+//        }else{
+//        	Map<String, Object> summyObj = (Map<String, Object>) reportSummary.get(bizDateNow);
+//        	if (summyObj!=null) {
+//        	//no x/zreport data for today
+//	        	if (summyObj.get("z")==null) {
+//	         	  Map<Integer, Object> sessionsale = new HashMap<Integer, Object>();
+//	         	  sessionsale.put(sessionStatus.getSession_status(), xReportObj.getNettSales());
+//	        	  summyObj.put("x", sessionsale);
+//	        	}
+//	        	reportSummary.put(bizDateNow, summyObj);
+//        	}else {
+//        		Map<String, Object> newSummyObj = new HashMap<String, Object>();
+//            	if (xReportObj!=null) {
+//             	   Map<Integer, Object> sessionsale = new HashMap<Integer, Object>();
+//             	   sessionsale.put(sessionStatus.getSession_status(), xReportObj.getNettSales());
+//             	   newSummyObj.put("x", sessionsale);
+//             	}else
+//             		newSummyObj.put("x", null);
+//             	newSummyObj.put("z", null);
+//             	reportSummary.put(bizDateNow, newSummyObj);
+//        	}
+//
+//        }
+//		ret.put("result",reportSummary);
+//		return ret;
+//	}
 }

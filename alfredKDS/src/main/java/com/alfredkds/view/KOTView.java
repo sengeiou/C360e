@@ -181,8 +181,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			} else if (kotItemDetail.getFireStatus() == 1) {
 				convertView.setBackgroundResource(R.color.viewfinder_laser);
 			} else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
-				convertView.setBackgroundResource(R.color.white);
-				holder.tv_text.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+				convertView.setBackgroundResource(R.color.split_group10);
+				holder.tv_text.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
 			} else {
 				if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
 					convertView.setBackgroundResource(R.color.bg_update_item);

@@ -868,6 +868,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
 					final Map<String, Object> xReportInfo
 							= ReportObjectFactory.getInstance().getXReportInfo(bizDate, sessionStatus, actual);
+					if(App.instance.getSystemSettings().isPrintWhenCloseSession())
+						sendXPrintData(xReportInfo, bizDate,
+								CommonUtil.getReportType(context, sessionStatus.getSession_status()),
+								sessionStatus);
 					//sync X-Report to cloud
 					if (cloudSync!=null) {
 						cloudSync.syncXReport(xReportInfo,
@@ -879,10 +883,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 								sessionStatus, CloudSyncJobManager.CLOSE_SESSION);
 						LogUtil.e("测试", "44");
 					}
-					if(App.instance.getSystemSettings().isPrintWhenCloseSession())
-						sendXPrintData(xReportInfo, bizDate,
-								CommonUtil.getReportType(context, sessionStatus.getSession_status()),
-								sessionStatus);
+
 				}
 
 				if(subPosOrders != null && subPosOrders.size() > 0){
@@ -1741,26 +1742,32 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		}
 	}
 
+	private boolean isShowingActualDialog = false;
 	private Handler handler = new Handler() {
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
 			case CAN_CLOSE: {
-				final View msgView = (View)msg.obj;
-				DialogFactory.commonTwoBtnInputDialog(context,false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
-						new OnClickListener() {
-							@Override
-							public void onClick(View view) {
-								close(msgView, "0.00");
-							}
-						},
-						new OnClickListener() {
-							@Override
-							public void onClick(View view) {
-								EditText editText = (EditText) view;
-								String actual = editText.getText().toString();
-								close(msgView, actual);
-							}
-						});
+				if(!isShowingActualDialog) {
+					isShowingActualDialog = true;
+					final View msgView = (View) msg.obj;
+					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									close(msgView, "0.00");
+									isShowingActualDialog = false;
+								}
+							},
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									EditText editText = (EditText) view;
+									String actual = editText.getText().toString();
+									close(msgView, actual);
+									isShowingActualDialog = false;
+								}
+							});
+				}
 			}
 				break;
 			case CAN_NOT_CLOSE:{
