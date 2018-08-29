@@ -346,6 +346,44 @@ public class SubPosHttpAPI {
             e.printStackTrace();
         }
     }
+    public static void closeSession(final Context context,final SubPosBean subPosBean,
+                                                 String url, AsyncHttpClient httpClient, final CallBack callBack) {
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("appVersion", App.instance.VERSION);
+            jsonObject.put("userId", App.instance.getUser().getId());
+            jsonObject.put("subPosBeanId", subPosBean.getId());
+            httpClient.post(context, url,
+                    new StringEntity(jsonObject + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS
+                                    || resultCode == ResultCode.RECEIVE_MSG_EXIST) {
+                                subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
+                                SubPosBeanSQL.updateSubPosBean(subPosBean);
+                                App.instance.setSubPosBean(subPosBean);
+                                Store.remove(App.instance, Store.SESSION_STATUS);
+                                App.instance.setSessionStatus(null);
+                                callBack.onSuccess();
+                            }
+                        }
+                        @Override
+                        public void onFailure(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody, final Throwable error) {
+                            callBack.onError();
+                            errorAction(error);
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // 返回码不需要特殊处理的提醒
     private static  void elseResultCodeAction(final int resultCode, final String responseBody){

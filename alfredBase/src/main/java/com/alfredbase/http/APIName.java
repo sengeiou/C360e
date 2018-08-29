@@ -96,6 +96,7 @@ public class APIName {
 	public static final String SUBPOS_COMMIT_ORDER = "subPos/commitOrder";
 	public static final String SUBPOS_COMMIT_ORDERLOG = "subPos/commitOrderLog";
 	public static final String SUBPOS_COMMIT_REPORT = "subPos/commitReport";
+	public static final String SUBPOS_CLOSE_SESSION = "subPos/closeSession";
 
 
 

@@ -69,6 +69,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		findViewById(R.id.ll_stored_card).setOnClickListener(this);
 		findViewById(R.id.ll_dashboard).setOnClickListener(this);
 		findViewById(R.id.ll_close).setOnClickListener(this);
+		findViewById(R.id.ll_close_subpos).setOnClickListener(this);
 		findViewById(R.id.ll_xz_report).setOnClickListener(this);
 		findViewById(R.id.ll_entplu).setOnClickListener(this);
 		findViewById(R.id.ll_voidplu).setOnClickListener(this);
@@ -94,11 +95,16 @@ public class SettingView extends LinearLayout implements OnClickListener {
 			findViewById(R.id.ll_printer_qr_code).setVisibility(View.VISIBLE);
 			if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
 				findViewById(R.id.ll_sub_pos).setVisibility(View.VISIBLE);
-			}
+				findViewById(R.id.ll_close_subpos).setVisibility(View.GONE);
 
+			}else{
+				findViewById(R.id.ll_sub_pos).setVisibility(View.GONE);
+				findViewById(R.id.ll_close_subpos).setVisibility(View.VISIBLE);
+			}
 		}else{
 			findViewById(R.id.ll_printer_qr_code).setVisibility(View.GONE);
 			findViewById(R.id.ll_sub_pos).setVisibility(View.GONE);
+			findViewById(R.id.ll_close_subpos).setVisibility(View.GONE);
 		}
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
 		initTextTypeFace();
@@ -178,27 +184,27 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				// UIHelp.startOpenRestaruant(context);
 				// context.overridePendingTransition(R.anim.slide_top_in,
 				// R.anim.anim_null);
-				if(App.instance.getPosType() == 0) {
-					context.finish();
-				}else{
-					if(context instanceof MainPageKiosk){
-						DialogFactory.commonTwoBtnInputDialog(context,false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
-								new OnClickListener() {
-									@Override
-									public void onClick(View view) {
-										((MainPageKiosk) context).sendXReportToMainPos("0.00");
-									}
-								},
-								new OnClickListener() {
-									@Override
-									public void onClick(View view) {
-										EditText editText = (EditText) view;
-										String actual = editText.getText().toString();
-										((MainPageKiosk) context).sendXReportToMainPos(actual);
-									}
-								});
+				context.finish();
+				break;
+			}
+			case R.id.ll_close_subpos: {
+				if (context instanceof MainPageKiosk) {
+					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									((MainPageKiosk) context).sendXReportToMainPos("0.00");
+								}
+							},
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									EditText editText = (EditText) view;
+									String actual = editText.getText().toString();
+									((MainPageKiosk) context).sendXReportToMainPos(actual);
+								}
+							});
 
-					}
 				}
 				break;
 			}

@@ -6,23 +6,12 @@ import android.os.Handler;
 import com.alfred.callnum.global.App;
 import com.alfred.callnum.utils.UIHelp;
 import com.alfredbase.APPConfig;
-import com.alfredbase.ParamConst;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.KotItemDetail;
-import com.alfredbase.javabean.KotItemModifier;
-import com.alfredbase.javabean.KotSummary;
-import com.alfredbase.javabean.model.MainPosInfo;
-import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.KotItemDetailSQL;
-import com.alfredbase.store.sql.KotItemModifierSQL;
-import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.CommonUtil;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 
 import org.apache.http.Header;
@@ -31,9 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /* Wrapper of all HTTP Requests (KDS -> Main POS) */
@@ -120,12 +107,13 @@ public class SyncCentre {
     public static String revenue(int statusCode, Header[] headers,
                                  byte[] responseBody, Context context) {
         try {
-            Gson gson = new Gson();
             JSONObject object = new JSONObject(new String(responseBody));
-
+            String header = object.optString("header");
+            String footer = object.optString("footer");
+            Store.putString(context, Store.CALL_NUM_HEADER, header);
+            Store.putString(context, Store.CALL_NUM_FOOTER, footer);
             int callType = object.optInt("calltype");
             App.instance.setMainPageType(callType);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

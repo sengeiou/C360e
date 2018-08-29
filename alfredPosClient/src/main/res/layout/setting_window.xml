@@ -48,6 +48,37 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/ll_close_subpos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical" >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/iv_close_subpos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/setting_close_selector" />
+
+                    <TextView
+                        android:id="@+id/tv_close_subpos"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:paddingTop="4dp"
+                        android:text="Close Sub Pos"
+                        android:textColor="@color/text_brownness_selector"
+                        android:textSize="@dimen/text_size_s_small" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -82,7 +113,7 @@
 	                            android:layout_height="wrap_content"
 	                            android:layout_gravity="center_horizontal"
 	                            android:src="@drawable/reprint_bill_selector" />
-	
+
 	                        <TextView
 	                            android:id="@+id/tv_reprint_bill"
 	                            android:layout_width="match_parent"
@@ -92,7 +123,7 @@
 	                            android:text="@string/bill_manage"
 	                            android:textColor="@color/text_brownness_selector"
 	                            android:textSize="@dimen/text_size_s_small" />
-                   </LinearLayout> 
+                   </LinearLayout>
 
                     <View
                         android:layout_width="1dp"
@@ -104,7 +135,7 @@
                         android:id="@+id/ll_edit_settlement"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
+                        android:layout_weight="1"
                         android:padding="10dp"
                         android:visibility="gone"
                         android:orientation="vertical">
@@ -142,7 +173,7 @@
                         android:id="@+id/ll_boh_settlement"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
+                        android:layout_weight="1"
                         android:padding="10dp"
                         android:orientation="vertical">
 
@@ -752,7 +783,7 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:paddingTop="4dp"
-                            android:text="Sub Pos"
+                            android:text="Sub Pos Management"
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>

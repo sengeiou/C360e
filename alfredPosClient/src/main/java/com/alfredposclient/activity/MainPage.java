@@ -2038,6 +2038,9 @@ public class MainPage extends BaseActivity {
         if (selectOrderSplitDialog != null && selectOrderSplitDialog.isShowing()) {
             selectOrderSplitDialog.dismiss();
         }
+        if(closeOrderSplitWindow != null && closeOrderSplitWindow.isShowing()){
+            closeOrderSplitWindow.onBackPressed();
+        }
 //		if (isShowTables
 //				&& !isTableFirstShow
 //				&& currentOrder != null

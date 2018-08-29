@@ -3337,4 +3337,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         UIHelp.showToast(parent,parent.getResources().getString(R.string.close_payment_reminder));
 
     }
+
+    public void onBackPressed(){
+        if(splitPax){
+            handler.sendEmptyMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW);
+        }
+    }
 }

@@ -71,6 +71,7 @@ import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
@@ -122,6 +123,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.kioskactivity.KioskHoldActivity;
+import com.alfredposclient.activity.kioskactivity.subpos.SubPosManagePage;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
@@ -181,8 +183,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				try{
 					String ip = jsonObject.getString("ip");
 					App.instance.setCallAppIp(ip);
+					String header = Store.getString(App.instance, Store.CALL_NUM_HEADER);
+					String footer = Store.getString(App.instance, Store.CALL_NUM_FOOTER);
 					result.put(RESULT_CODE, ResultCode.SUCCESS);
 					result.put("calltype",App.instance.getSystemSettings().getCallStyle());
+					result.put("header", TextUtils.isEmpty(header) ? "" : header);
+					result.put("footer", TextUtils.isEmpty(footer) ? "" : footer);
 
 				}catch (Exception e){
 					result.put("resultCode", ResultCode.JSON_DATA_ERROR);
@@ -747,6 +753,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 				return commitOrderLog(body);
 			}else if(apiName.equals(APIName.SUBPOS_COMMIT_REPORT)){
 				return commitReport(body);
+			}else if(apiName.equals(APIName.SUBPOS_CLOSE_SESSION)){
+				return sunPosCloseSession(body);
 			}
 
 
@@ -798,6 +806,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			} else {
 				result.put("resultCode", ResultCode.USER_NO_PERMIT);
 				resp = this.getJsonResponse(gson.toJson(result));
+			}
+			if(App.getTopActivity() instanceof SubPosManagePage){
+				App.getTopActivity().httpRequestAction(ResultCode.SUCCESS,null);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1127,6 +1138,31 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			}
 			map.put("resultCode", ResultCode.SUCCESS);
 			resp = this.getJsonResponse(gson.toJson(map));
+			if(App.getTopActivity() instanceof SubPosManagePage){
+				App.getTopActivity().httpRequestAction(ResultCode.SUCCESS,null);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			resp = this.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
+		}
+		return resp;
+	}
+	private Response sunPosCloseSession(String params){
+		Response resp = null;
+		try {
+			Map<String, Object> map = new HashMap<>();
+			JSONObject jsonObject = new JSONObject(params);
+			int subPosBeanId = jsonObject.optInt("subPosBeanId");
+			SubPosBean subPosBean = SubPosBeanSQL.getSubPosBeanById(subPosBeanId);
+			if(subPosBean != null){
+				subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_CLOSE);
+				SubPosBeanSQL.updateSubPosBean(subPosBean);
+			}
+			map.put("resultCode", ResultCode.SUCCESS);
+			resp = this.getJsonResponse(gson.toJson(map));
+			if(App.getTopActivity() instanceof SubPosManagePage){
+				App.getTopActivity().httpRequestAction(ResultCode.SUCCESS,null);
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 			resp = this.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));

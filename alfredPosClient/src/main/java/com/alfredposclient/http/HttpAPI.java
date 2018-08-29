@@ -25,7 +25,6 @@ import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.BH;
-import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
@@ -45,7 +44,6 @@ import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.BinaryHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
@@ -1903,7 +1901,10 @@ public class HttpAPI {
             Map<String, Object> requestParams = new HashMap<>();
             requestParams.put("callNumber",  num);
             requestParams.put("callType", App.instance.getSystemSettings().getCallStyle());
-
+            if(Store.getBoolean(App.instance, Store.CALL_NUM_UPDATE, false)){
+                requestParams.put("header", Store.getString(App.instance, Store.CALL_NUM_HEADER));
+                requestParams.put("footer", Store.getString(App.instance, Store.CALL_NUM_FOOTER));
+            }
             if(TextUtils.isEmpty(tag)) {
                 //     byte t = (byte) tag.charAt(0);
                 requestParams.put("callTag", 0);
@@ -1918,6 +1919,7 @@ public class HttpAPI {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             System.out.print("192.168.20.102========onSuccess");
+                            Store.putBoolean(App.instance, Store.CALL_NUM_UPDATE, false);
                         }
 
                         @Override

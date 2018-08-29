@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.utils.DialogFactory;
@@ -52,6 +53,22 @@ public class SubPosManagePage extends BaseActivity {
         }
     }
 
+    @Override
+    public void httpRequestAction(int action, Object obj) {
+        super.httpRequestAction(action, obj);
+        if(action == ResultCode.SUCCESS&& subPosBeans != null){
+            subPosBeans.clear();
+            subPosBeans.addAll(SubPosBeanSQL.getAllSubPosBean());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(subPosItemAdapter != null){
+                        subPosItemAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
+        }
+    }
 
     private Handler handler = new Handler(){
         @Override

@@ -20,7 +20,6 @@ import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.CommonUtil;
@@ -109,9 +108,16 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 		
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version)+": " + App.instance.VERSION);
 		App.instance.showWelcomeToSecondScreen();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 		SubPosBean subPosBean = App.instance.getSubPosBean();
 		if(subPosBean != null && subPosBean.getSubPosStatus() == ParamConst.SUB_POS_STATUS_OPEN){
 			needSync = false;
+		}else{
+			needSync = true;
 		}
 	}
 
@@ -156,8 +162,8 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 			super.handleMessage(msg);
 			switch (msg.what){
 				case ResultCode.SUCCESS: {
-					dismissLoadingDialog();
 					if (needSync) {
+						dismissLoadingDialog();
 						loadingDialog.setTitle("update all data");
 						loadingDialog.show();
 						SubPosSyncCentre.getInstance().updaetAllData(context, handler);
@@ -168,16 +174,16 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 				}
 					break;
 				case UPDATE_ALL_DATA_SUCCESS:
-					dismissLoadingDialog();
+//					dismissLoadingDialog();
 					startMainPage();
 					break;
 				case UPDATE_ALL_DATA_FAILURE:
 					dismissLoadingDialog();
 					break;
-				case GET_ORDER_SUCCESS:
-					dismissLoadingDialog();
-					UIHelp.startMainPageKiosk(context);
-					break;
+//				case GET_ORDER_SUCCESS:
+//					dismissLoadingDialog();
+//					UIHelp.startMainPageKiosk(context);
+//					break;
 
 			}
 		}
@@ -198,7 +204,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 
 	private void startMainPage(){
 		App.instance.bindSyncService();
-		long businessDate = App.instance.getBusinessDate();
+//		long businessDate = App.instance.getBusinessDate();
 		TableInfo tableInfo = TableInfoSQL.getKioskTable();
 		PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
 		if (placeInfo == null) {
@@ -213,14 +219,16 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 			tableInfo.setPosId(0);
 			TableInfoSQL.addTables(tableInfo);
 		}
-		if(OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), businessDate) != null) {
-			UIHelp.startMainPageKiosk(context);
-		}else{
-			loadingDialog.setTitle("loading");
-			loadingDialog.show();
-			Map<String, Object> parameters = new HashMap<>();
-			SubPosSyncCentre.getInstance().getOrder(context, parameters, handler);
-		}
+		UIHelp.startMainPageKiosk(context);
+		dismissLoadingDialog();
+//		if(OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), businessDate) != null) {
+//			UIHelp.startMainPageKiosk(context);
+//		}else{
+//			loadingDialog.setTitle("loading");
+//			loadingDialog.show();
+//			Map<String, Object> parameters = new HashMap<>();
+//			SubPosSyncCentre.getInstance().getOrder(context, parameters, handler);
+//		}
 
 	}
 

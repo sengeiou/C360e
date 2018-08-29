@@ -2190,16 +2190,42 @@ public class MainPageKiosk extends BaseActivity {
             public void run() {
                 SessionStatus sessionStatus = App.instance.getSessionStatus();
                 long businessDate = App.instance.getBusinessDate();
-                Store.remove(context, Store.SESSION_STATUS);
-                App.instance.setSessionStatus(null);
+//                Store.remove(context, Store.SESSION_STATUS);
+//                App.instance.setSessionStatus(null);
                 GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus, App.instance.getBusinessDate());
                 Map<String, Object> map = new HashMap<String, Object>();
                 // day sales report
-                ReportDaySales reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(businessDate, sessionStatus, actualAmount);
+                List<Order> orders = OrderSQL.getFinishedOrdersBySession(
+                        sessionStatus, businessDate);
+                if (orders.isEmpty()) {
+                    SubPosBean subPosBean = App.instance.getSubPosBean();
+                    SubPosSyncCentre.getInstance().closeSession(context, subPosBean, new CallBack() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                                        printerLoadingDialog.dismiss();
+                                    }
+                                    dismissLoadingDialog();
+                                    Store.remove(context, Store.SESSION_STATUS);
+                                    App.instance.setSessionStatus(null);
+                                    MainPageKiosk.this.finish();
+                                }
+                            });
+                        }
 
-                if (reportDaySales == null) {
+                        @Override
+                        public void onError() {
+                            if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                                printerLoadingDialog.dismiss();
+                            }
+                        }
+                    });
                     return;
                 }
+                ReportDaySales reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(businessDate, sessionStatus, actualAmount);
                 String reportType = CommonUtil.getReportType(context, sessionStatus.getSession_status());
                 String bizDate = TimeUtil.getPrintingDate(businessDate);
                 ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
@@ -2298,7 +2324,9 @@ public class MainPageKiosk extends BaseActivity {
 
                         @Override
                         public void onError() {
-
+                            if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                                printerLoadingDialog.dismiss();
+                            }
                         }
 
                     });
