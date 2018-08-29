@@ -1912,8 +1912,6 @@ public class HttpAPI {
                 byte t = (byte) tag.charAt(0);
                 requestParams.put("callTag",t%64);
             }
-
-
             StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
             httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE, new AsyncHttpResponseHandler() {
                         @Override
@@ -1927,42 +1925,26 @@ public class HttpAPI {
                             System.out.print("192.168.20.102========onFailure:" + error.getMessage());
                         }
                     }
-//					new AsyncHttpResponseHandlerEx(){
-//				@Override
-//				public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//					System.out.print("192.168.20.102========onSuccess");
-//					super.onSuccess(statusCode, headers, responseBody);
-//				}
-//
-//				@Override
-//				public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//					System.out.print("192.168.20.102========onFailure:" + error.getMessage());
-//					super.onFailure(statusCode, headers, responseBody, error);
-////					UIHelp.showShortToast();
-//				}
-//			}
             );
-//			httpClient.get(context, url,
-//					entity,
-//					HttpAssembling.CONTENT_TYPE,
-//					new AsyncHttpResponseHandlerEx() {
-//						@Override
-//						public void onSuccess(final int statusCode,
-//											  final Header[] headers,
-//											  final byte[] responseBody) {
-//							super.onSuccess(statusCode, headers, responseBody);
-//							if(resultCode == ResultCode.SUCCESS){
-//							}else{
-//							}
-//						}
-//
-//						@Override
-//						public void onFailure(int statusCode, Header[] headers,
-//											  byte[] responseBody, Throwable error) {
-//							super.onFailure(statusCode, headers, responseBody,
-//									error);
-//						}
-//					});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void posCloseSession(final Context context, String url,
+                                 AsyncHttpClient httpClient) {
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        }
+                    }
+            );
         } catch (Exception e) {
             e.printStackTrace();
         }

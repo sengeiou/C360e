@@ -64,7 +64,12 @@ public class CallNumHttpServer extends AlfredHttpServer {
 				}
 
 				return getJsonResponse(new Gson().toJson(map));
-			}
+			}else if(apiName.equals(APIName.POS_CLOSE_SESSION)){
+                App.getTopActivity().httpRequestAction(App.instance.HANDLER_CLEAN_CALL, null);
+			    Map<String, Object> map = new HashMap<>();
+                map.put("resultCode", ResultCode.SUCCESS);
+                return getJsonResponse(new Gson().toJson(map));
+            }
 
 			else{
 				resp = getNotFoundResponse();

@@ -848,6 +848,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					});
 					return;
 				}
+				SyncCentre.getInstance().posCloseSession(App.instance);
 				//sync finished Order info in current session to cloud
 				LogUtil.e("测试", "11");
 				List<Order> orders = OrderSQL.getFinishedOrdersBySession(

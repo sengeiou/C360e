@@ -69,7 +69,9 @@ public class MainActivity extends BaseActivity {
 
                     timer.schedule(new MyTimertask(), 1000);
                     break;
-
+                case App.HANDLER_CLEAN_CALL:
+                    // TODO 这边清除叫号的内容
+                    break;
                 default:
                     break;
             }
