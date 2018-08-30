@@ -20,6 +20,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
@@ -30,6 +31,7 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -42,10 +44,12 @@ import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
+import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
@@ -61,6 +65,7 @@ import com.alfredposclient.push.SendEmailThread;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -302,8 +307,61 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 
 //				SendEmailThread thread=new SendEmailThread();
 //				thread.start();
-				ModifierCheckSql.deleteAllModifierCheck();
-               cashPay();
+			//	ModifierCheckSql.deleteAllModifierCheck(order.getId());
+
+
+
+				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
+
+				Map<Integer,String> categorMap=new HashMap<Integer,String>();
+				Map<String, Map<Integer,String>> checkMap = new HashMap<String, Map<Integer,String>>();
+				for (int i = 0; i < allModifierCheck.size(); i++) {
+					ModifierCheck modifierCheck;
+					modifierCheck=allModifierCheck.get(i);
+					if(modifierCheck.getNum()>0) {
+						//  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
+						if(checkMap.containsKey(modifierCheck.getItemName())){
+//                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
+//                                 {
+//                                    categorMap=checkMap.get(modifierCheck.getItemName());
+//                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
+//                                     checkMap.put(modifierCheck.getItemName(),categorMap);
+							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+parent.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+parent.getResources().getString(R.string.items));
+							checkMap.put(modifierCheck.getItemName(),categorMap);
+
+						}else {
+							categorMap=new HashMap<Integer,String>();
+							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+parent.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+parent.getResources().getString(R.string.items));
+							checkMap.put(modifierCheck.getItemName(),categorMap);
+						}
+					}
+				}
+				if(checkMap.size()==0) {
+					cashPay();
+				}else {
+					StringBuffer checkbuf=new StringBuffer();
+					Iterator iter = checkMap.entrySet().iterator();
+					while (iter.hasNext()) {
+						Map.Entry entry = (Map.Entry) iter.next();
+						String key = (String) entry.getKey();
+						checkbuf.append(" "+key+":");
+						Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
+						Iterator iter2 = val.entrySet().iterator();
+						while (iter2.hasNext()) {
+							Map.Entry entry2 = (Map.Entry) iter2.next();
+							String val2 = (String) entry2.getValue();
+							checkbuf.append(val2+" ");
+//                      String val = (String) entry.getValue();
+//                      checkbuf.append("不能少于"+val+"种 .");
+						}
+					}
+
+					UIHelp.showToast(parent,checkbuf.toString());
+				}
+
+
+
+
 				break;
 			default:
 				break;

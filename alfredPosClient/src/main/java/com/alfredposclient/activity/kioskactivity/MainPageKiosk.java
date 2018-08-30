@@ -587,7 +587,7 @@ public class MainPageKiosk extends BaseActivity {
                 // Open settlement window
                 case VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW:
 
-                    List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck();
+                    List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(currentOrder.getId());
 
                     Map<Integer,String> categorMap=new HashMap<Integer,String>();
                     Map<String, Map<Integer,String>> checkMap = new HashMap<String, Map<Integer,String>>();
@@ -602,12 +602,12 @@ public class MainPageKiosk extends BaseActivity {
 //                                    categorMap=checkMap.get(modifierCheck.getItemName());
 //                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
 //                                     checkMap.put(modifierCheck.getItemName(),categorMap);
-                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+modifierCheck.getMinNum()+context.getResources().getString(R.string.items));
+                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
                                      checkMap.put(modifierCheck.getItemName(),categorMap);
 
                              }else {
                                  categorMap=new HashMap<Integer,String>();
-                                 categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+modifierCheck.getMinNum()+context.getResources().getString(R.string.items));
+                                 categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
                                  checkMap.put(modifierCheck.getItemName(),categorMap);
                              }
                              }
@@ -730,7 +730,7 @@ public class MainPageKiosk extends BaseActivity {
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(currentOrder);
                             App.instance.remoteBillPrint(printer, title, currentOrder,
                                     orderItems, orderModifiers, taxMap, null, roundAmount);
-                            ModifierCheckSql.deleteAllModifierCheck();
+                            ModifierCheckSql.deleteAllModifierCheck(currentOrder.getId());
                         }
                     } else {
                         UIHelp.showToast(context, context.getResources().getString(R.string.no_items));
@@ -804,7 +804,7 @@ public class MainPageKiosk extends BaseActivity {
                                 .getInstance().getItemModifierList(paidOrder, OrderDetailSQL.getOrderDetails(paidOrder
                                         .getId()));
                         List<PrinterDevice> printerList = App.instance.getPrinterLable();
-                        ModifierCheckSql.deleteAllModifierCheck();
+                        ModifierCheckSql.deleteAllModifierCheck(paidOrder.getId());
                         if (printerList.size() > 0) {
                             for (int i = 0; i < printerList.size(); i++) {
                                 PrinterDevice printers = printerList.get(i);
@@ -990,7 +990,7 @@ public class MainPageKiosk extends BaseActivity {
                         temporaryOrder.setNumTag(App.instance.getSubPosBean().getNumTag());
                     }
 
-                    ModifierCheckSql.deleteAllModifierCheck();
+                    ModifierCheckSql.deleteAllModifierCheck(paidOrderSplit.getOrderId());
                     List<PrinterDevice> printerList = App.instance.getPrinterLable();
                     if (printerList.size() > 0) {
                         for (int i = 0; i < printerList.size(); i++) {

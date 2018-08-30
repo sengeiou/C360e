@@ -27,6 +27,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
+import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
@@ -34,6 +35,7 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -302,6 +304,13 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                             (Integer) map.get("count"));
                     refreshTotal();
                     refreshList();
+
+                    boolean isadd= (boolean) map.get("isAdd");
+                    if(isadd){
+                        isShow((ItemDetail) map.get("itemDetail"));
+                    }
+
+
                     break;
                 }
                 case VIEW_EVENT_MODIFIER_COUNT: {
@@ -411,6 +420,33 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 
         ;
     };
+
+    private void isShow(ItemDetail itemDetail) {
+
+        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+                currentOrder, itemDetail, currentGroupId,
+                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
+        List<ItemModifier> itemModifiers = CoreData.getInstance()
+                .getItemModifiers(itemDetail);
+//        List<ItemModifier> itemModifiers = CoreData.getInstance()
+//                .getItemModifiers(
+//                        CoreData.getInstance().getItemDetailById(
+//                                itemDetail.getId()));
+        if (!itemModifiers.isEmpty()) {
+            for (ItemModifier itemModifier : itemModifiers) {
+                Modifier modifier = CoreData.getInstance().getModifier(
+                        itemModifier);
+
+                if(modifier.getMinNumber()>0){
+                    List<Integer> modifierIds = OrderModifierSQL.getOrderModifierIdsByOrderDetailId(orderDetail.getId());
+
+                    modifierWindow.show(itemDetail, modifierIds, currentOrder);
+                    return;
+                }
+            }
+        }
+
+    }
 
     protected void onResume() {
         super.onResume();
@@ -695,7 +731,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             case R.id.tv_more_detail: {
                 OrderDetail orderDetail = (OrderDetail) v.getTag();
                 ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId().intValue());
-                modifierWindow.show(itemDetail);
+                List<Integer> modifierIds = OrderModifierSQL.getOrderModifierIdsByOrderDetailId(orderDetail.getId());
+                modifierWindow.show(itemDetail, modifierIds, currentOrder);
             }
             break;
             default:

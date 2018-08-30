@@ -61,6 +61,7 @@ public class OrderDetailSQL {
 		Order order = OrderSQL.getOrder(orderDetail.getOrderId());
 		calculate(order, orderDetail);
 		updateOrderDetail(orderDetail);
+		OrderHelper.addDefaultModifiers(order, orderDetail);
 		updateFreeOrderDetailForWaiter(order, orderDetail);
 		OrderSQL.updateOrder(order);
 	}

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -84,13 +85,14 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private LinearLayout ll_max_order_no;
 	private TextView tv_max_order_no,tv_print_lable;
 
-	private LinearLayout ll_print_lable,ll_print_bill,ll_print_lable_direction;
+	private LinearLayout ll_print_lable,ll_print_bill,ll_print_lable_direction,ll_callnum_header,ll_callnum_footer;
 	private View v_print_lable;
 	private int maxOrderNo;
 	MyToggleButton mt_print_lable;
 	MyToggleButton mt_print_bill,mt_credit_card_rounding;
 	private int textsize,textcolor;
-	private TextView tv_lable_upOrdown,tv_callnum_style;
+	private TextView tv_lable_upOrdown,tv_callnum_style,tv_callnum_header,tv_callnum_footer;
+
 
 	@Override
 	protected void initView() {
@@ -161,6 +163,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_print_lable_direction =(MyToggleButton) findViewById(R.id.mt_print_lable_direction);
 		mt_print_bill=(MyToggleButton)findViewById(R.id.mt_print_bill) ;
 		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
+		ll_callnum_header=(LinearLayout)findViewById(R.id.ll_callnum_header);
+		ll_callnum_footer=(LinearLayout)findViewById(R.id.ll_callnum_footer);
+		tv_callnum_header=(TextView)findViewById(R.id.tv_callnum_header);
+		tv_callnum_footer=(TextView)findViewById(R.id.tv_callnum_footer);
+		ll_callnum_header.setOnClickListener(this);
+
+		ll_callnum_footer.setOnClickListener(this);
 		mt_credit_card_rounding.setOnStateChangeListeren(this);
 		mt_print_lable_direction.setOnStateChangeListeren(this);
 		mt_print_lable.setOnStateChangeListeren(this);
@@ -222,6 +231,15 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	}
 
 	private void initViewData() {
+
+		String header = Store.getString(App.instance, Store.CALL_NUM_HEADER);
+		String footer = Store.getString(App.instance, Store.CALL_NUM_FOOTER);
+		if(!TextUtils.isEmpty(header)){
+			tv_callnum_header.setText(header);
+		}
+		if(!TextUtils.isEmpty(footer)){
+			tv_callnum_footer.setText(footer);
+		}
 		if (App.instance.isKotPrint()) {
 			mt_kot_print.setChecked(true);
 		}else {
@@ -491,6 +509,14 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			dialogChoice();
 		//	selectPrintWindow.show("");
 			break;
+
+			case R.id.ll_callnum_footer:
+               input(2);
+				break;
+			case R.id.ll_callnum_header:
+				input(1);
+
+				break;
 		case R.id.ll_set_color:
 			colorPickerDialog = new ColorPickerDialog(SystemSetting.this, Store.getInt(SystemSetting.this, Store.COLOR_PICKER, Color.WHITE), getString(R.string.color_select), new ColorPickerDialog.OnColorChangedListener() {
 				@Override
@@ -513,6 +539,38 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		default:
 			break;
 		}
+	}
+
+	private void input(final int type) {
+
+		final EditText inputServer = new EditText(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(inputServer)
+				.setNegativeButton("Cancel", null);
+		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				String  input=inputServer.getText().toString();
+				if(type==1){
+
+					Store.putString(context, Store.CALL_NUM_HEADER, input);
+
+					tv_callnum_header.setText(input);
+					Store.putBoolean(context,Store.CALL_NUM_UPDATE,true);
+
+				}else {
+					Store.putString(context, Store.CALL_NUM_FOOTER, input);
+
+					tv_callnum_footer.setText(input);
+					Store.putBoolean(context,Store.CALL_NUM_UPDATE,true);
+
+				}
+
+
+			}
+		});
+		builder.show();
+
 	}
 
 	private Handler handler = new Handler() {
@@ -632,6 +690,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		textTypeFace.setTrajanProRegular(tv_lable_upOrdown);
 		textTypeFace.setTrajanProRegular(tv_callnum_style);
 		textTypeFace.setTrajanProRegular(tv_callnum);
+		textTypeFace.setTrajanProRegular(tv_callnum_header);
+		textTypeFace.setTrajanProRegular(tv_callnum_footer);
 
 	//	textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_credit_card_rounding));

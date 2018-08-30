@@ -91,7 +91,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
             tv_type_min.setVisibility(GONE);
         }
 
-        tv_type_min.setText(context.getResources().getString(R.string.At_least)+modifier_type.getMinNumber()+context.getResources().getString(R.string.items));
+        tv_type_min.setText(context.getResources().getString(R.string.At_least)+" "+modifier_type.getMinNumber()+" "+context.getResources().getString(R.string.items));
         List<Modifier> modifiers = CoreData.getInstance().getModifiers(
                 modifier_type);
         int childCount = modifiers.size();
@@ -218,7 +218,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 
                             } else {
 
-                                UIHelp.showShortToast(parent, "数量不能超过" + max + "份");
+                                UIHelp.showShortToast(parent, context.getString(R.string.at_only)+" " + max +" "+ context.getString(R.string.items));
                             }
 
 
@@ -228,11 +228,11 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                         if (min > 0) {
                             int checkNim = 0;
                             checkNim = min - num;
-                            ModifierCheckSql.update(checkNim, tag.getCategoryId(), orderModifier.getOrderDetailId());
+                            ModifierCheckSql.update(checkNim, tag.getCategoryId(), orderModifier.getOrderDetailId(),order.getId());
                         }
 
                         //	LogUtil.e("ModifierView", "==å®½===" +num);
-                        List<ModifierCheck> mc = ModifierCheckSql.getAllModifierCheck();
+                        List<ModifierCheck> mc = ModifierCheckSql.getAllModifierCheck(order.getId());
                         LogUtil.e("ModifierView", mc.size() + "==å®½===" + num);
                         setParams(order, orderDetail, itemModifier, mHandler, height);// 回调，刷新数据
 //						refreshView((TextView)v, orderModifier);

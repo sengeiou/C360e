@@ -94,4 +94,7 @@
     <string name="enter">确认</string>      
     <string name="search_item">搜索菜单</string>
     <string name="check">下单</string>
+    <string name="At_least">至少  </string>
+    <string name="at_only">最多选  </string>
+    <string name="items">  项</string>
 </resources>

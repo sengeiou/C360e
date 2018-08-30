@@ -957,7 +957,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 											KotItemDetailSQL.deleteKotItemDetail(kotSummary.getId(), tag);
 										}
 										OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
-										ModifierCheckSql.deleteModifierCheck(tag.getId());
+										ModifierCheckSql.deleteModifierCheck(tag.getId(),tag.getOrderId());
 										if(!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && ! IntegerUtils.isEmptyOrZero(tag.getGroupId())){
 											int count = OrderDetailSQL.getOrderDetailCountByGroupId(tag.getGroupId().intValue(), order.getId().intValue());
 											if(count == 0){

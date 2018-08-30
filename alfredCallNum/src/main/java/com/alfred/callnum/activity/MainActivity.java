@@ -6,17 +6,21 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.alfred.callnum.R;
 import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.fragment.OneFragment;
 import com.alfred.callnum.fragment.TwoFragment;
 import com.alfred.callnum.global.App;
+import com.alfred.callnum.utils.CallNumQueueUtil;
 import com.alfred.callnum.utils.CallNumUtil;
 import com.alfred.callnum.utils.MyQueue;
 import com.alfredbase.BaseActivity;
+import com.alfredbase.store.Store;
 import com.alfredbase.utils.AnimatorListenerImpl;
 
 import java.util.Timer;
@@ -35,6 +39,8 @@ public class MainActivity extends BaseActivity {
     public static final int TYPE_AGAIN_CALL = 100;
     public static final int TYPE_ANIMA_END = 101;
     private Boolean animaEnd = true;
+    String header,footer;
+    private TextView tv_call_header,tv_call_footer;
 
     public Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -49,6 +55,16 @@ public class MainActivity extends BaseActivity {
 //                     callBean.setType(2);
 //                    callBean.setName("A121");
 
+                    if(callBean.isUpdate()){
+                        header = Store.getString(App.instance, Store.CALL_NUM_HEADER);
+                        footer = Store.getString(App.instance, Store.CALL_NUM_FOOTER);
+                        if(!TextUtils.isEmpty(header)){
+                            tv_call_header.setText(header);
+                        }
+                        if(!TextUtils.isEmpty(footer)){
+                            tv_call_footer.setText(footer);
+                        }
+                    }
                     if (callBean.getCallType() != App.instance.getMainPageType()) {
                         App.instance.setMainPageType(callBean.getCallType());
                         viewId = callBean.getCallType();
@@ -64,12 +80,22 @@ public class MainActivity extends BaseActivity {
                         timer.schedule(new MyTimertask(), 1000);
                     }
 
+
+
                     break;
                 case TYPE_AGAIN_CALL:
 
                     timer.schedule(new MyTimertask(), 1000);
                     break;
                 case App.HANDLER_CLEAN_CALL:
+
+                    if (oneFragment != null) {
+                        oneFragment.dataClear();
+                    }
+                    if (twoFragment != null && viewId != 4) {
+
+                        twoFragment.dataClear();
+                    }
                     // TODO 这边清除叫号的内容
                     break;
                 default:
@@ -102,11 +128,12 @@ public class MainActivity extends BaseActivity {
                                 if (twoFragment != null && viewId != 4) {
                                     twoFragment.addData(0, callBean);
                                     twoFragment.getVideoPause(name);
+
                                 }
 //                                for (int j = 0; j < callNumber; j++) {
-//                                CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
-//
-//                                CallNumUtil.call(num1);
+                                CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
+
+                                CallNumUtil.call(num1);
 //                                }
 
                                 animaEnd = false;
@@ -142,13 +169,25 @@ public class MainActivity extends BaseActivity {
         Intent intent = getIntent();
         viewId = intent.getIntExtra("viewId", 0);
         bg = (ImageView) findViewById(R.id.img_call_bg);
+        tv_call_footer=(TextView)findViewById(R.id.tv_call_footer) ;
+        tv_call_header=(TextView)findViewById(R.id.tv_call_header) ;
+         header = Store.getString(App.instance, Store.CALL_NUM_HEADER);
+         footer = Store.getString(App.instance, Store.CALL_NUM_FOOTER);
+        if(!TextUtils.isEmpty(header)){
+            tv_call_header.setText(header);
+        }
+        if(!TextUtils.isEmpty(footer)){
+            tv_call_footer.setText(footer);
+        }
+
+
         createFragment();
 
         CallNumUtil.initVideo(context);
         CallNumUtil.init(context, handler);
-        CallBean c=new CallBean();
-        c.setCallNumber("111111");
-        queue.enQueue(c);
+//        CallBean c=new CallBean();
+//        c.setCallNumber("111111");
+//        queue.enQueue(c);
         timer.schedule(new MyTimertask(), 1000);
     }
 

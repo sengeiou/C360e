@@ -9,6 +9,34 @@ public class ModifierCPVariance {
     private int modifierId;
     private String modifierName;
     private String tag;
+    private  int max;
+    private int min;
+    private int categoryId;
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public int getMax() {
+        return max;
+    }
+
+    public void setMax(int max) {
+        this.max = max;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public void setMin(int min) {
+        this.min = min;
+    }
+
     public boolean isTitle() {
         return isTitle;
     }
