@@ -33,7 +33,6 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
@@ -43,10 +42,8 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
-import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
 import com.alfredwaiter.R;
@@ -429,8 +426,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 				}
 			}
 			if(checkMap.size()==0) {
-				//commitOrderToPOS();
-				UIHelp.showToast(context,"成功");
+				commitOrderToPOS();
+//				UIHelp.showToast(context,"成功");
 			}else {
 				StringBuffer checkbuf=new StringBuffer();
 				Iterator iter = checkMap.entrySet().iterator();
