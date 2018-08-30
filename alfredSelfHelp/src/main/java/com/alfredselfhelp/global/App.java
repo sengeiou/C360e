@@ -9,7 +9,19 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.LogUtil;
 import com.alfredselfhelp.utils.TvPref;
+import com.nordicid.nurapi.NurApi;
+import com.nordicid.nurapi.NurApiListener;
+import com.nordicid.nurapi.NurEventClientInfo;
+import com.nordicid.nurapi.NurEventDeviceInfo;
+import com.nordicid.nurapi.NurEventFrequencyHop;
+import com.nordicid.nurapi.NurEventIOChange;
+import com.nordicid.nurapi.NurEventInventory;
+import com.nordicid.nurapi.NurEventNxpAlarm;
+import com.nordicid.nurapi.NurEventProgrammingProgress;
+import com.nordicid.nurapi.NurEventTraceTag;
+import com.nordicid.nurapi.NurEventTriggeredRead;
 
 
 public class App extends BaseApplication {
@@ -26,6 +38,8 @@ public class App extends BaseApplication {
     private WaiterDevice waiterdev;
     private User user;
     private RevenueCenter revenueCenter;
+    // RFID API
+    private NurApi nurApi;
 
 
     private static final String DATABASE_NAME = "com.alfredselfhelp";
@@ -37,7 +51,90 @@ public class App extends BaseApplication {
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
 
         TvPref.init();
+        nurApi = new NurApi();
+        nurApi.setListener(new NurApiListener() {
+            @Override
+            public void logEvent(int i, String s) {
 
+            }
+
+            @Override
+            public void connectedEvent() {
+                LogUtil.d(TAG, "NurApi connected");
+                // TODO enableItems(true);
+            }
+
+            @Override
+            public void disconnectedEvent() {
+                LogUtil.d(TAG, "NurApi disconnected");
+                // TODO enableItems(false);
+            }
+
+            @Override
+            public void bootEvent(String s) {
+
+            }
+
+            @Override
+            public void inventoryStreamEvent(NurEventInventory nurEventInventory) {
+
+            }
+
+            @Override
+            public void IOChangeEvent(NurEventIOChange nurEventIOChange) {
+
+            }
+
+            @Override
+            public void traceTagEvent(NurEventTraceTag nurEventTraceTag) {
+
+            }
+
+            @Override
+            public void triggeredReadEvent(NurEventTriggeredRead nurEventTriggeredRead) {
+
+            }
+
+            @Override
+            public void frequencyHopEvent(NurEventFrequencyHop nurEventFrequencyHop) {
+
+            }
+
+            @Override
+            public void debugMessageEvent(String s) {
+
+            }
+
+            @Override
+            public void inventoryExtendedStreamEvent(NurEventInventory nurEventInventory) {
+
+            }
+
+            @Override
+            public void programmingProgressEvent(NurEventProgrammingProgress nurEventProgrammingProgress) {
+
+            }
+
+            @Override
+            public void deviceSearchEvent(NurEventDeviceInfo nurEventDeviceInfo) {
+
+            }
+
+            @Override
+            public void clientConnectedEvent(NurEventClientInfo nurEventClientInfo) {
+
+            }
+
+            @Override
+            public void clientDisconnectedEvent(NurEventClientInfo nurEventClientInfo) {
+
+            }
+
+            @Override
+            public void nxpEasAlarmEvent(NurEventNxpAlarm nurEventNxpAlarm) {
+
+            }
+        });
         mbPlayIMG = TvPref.readPlayIMGEn();
 
     }
