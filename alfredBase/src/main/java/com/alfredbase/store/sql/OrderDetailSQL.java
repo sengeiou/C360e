@@ -2116,7 +2116,9 @@ public class OrderDetailSQL {
 				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
 			}
 		}
-		KotItemDetailSQL.deleteKotItemDetail(kotSummary.getId(),orderDetail);
+		if(kotSummary != null) {
+			KotItemDetailSQL.deleteKotItemDetail(kotSummary.getId(), orderDetail);
+		}
 	}
 
 	public static void setOrderDetailToVoidOrFree(OrderDetail orderDetail,

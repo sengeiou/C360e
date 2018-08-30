@@ -653,7 +653,7 @@ public class KotItemDetailSQL {
 	public static int getKotItemDetailCountBySummaryId(
 			int kotSummaryId) {
 		int result = 0;
-		String sql = "select * from " + TableNames.KotItemDetail
+		String sql = "select id from " + TableNames.KotItemDetail
 				+ " where kotSummaryId = ? and unFinishQty > 0 and kotStatus < 3 and categoryId = 0";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
@@ -673,7 +673,29 @@ public class KotItemDetailSQL {
 		}
 		return result;
 	}
-	
+	public static int getAllUnDoneKotItemDetailCount() {
+		int result = 0;
+		String sql = "select id from " + TableNames.KotItemDetail
+				+ " where unFinishQty > 0 and kotStatus < 3 and categoryId = 0";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			result = cursor.getCount();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static ArrayList<KotItemDetail> getKotItemDetailBySummaryIdandOrderId(
 			int kotSummaryId, int orderId) {
 		ArrayList<KotItemDetail> result = new ArrayList<KotItemDetail>();
@@ -728,7 +750,7 @@ public class KotItemDetailSQL {
 			String dishName) {
 		ArrayList<KotItemDetail> result = new ArrayList<KotItemDetail>();
 		String sql = "select * from " + TableNames.KotItemDetail
-				+ " where itemName = ? and categoryId = 0";
+				+ " where itemName = ? and categoryId = 0 and kotStatus < " + ParamConst.KOT_STATUS_DONE;
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {

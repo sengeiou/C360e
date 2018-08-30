@@ -480,6 +480,11 @@ public class SyncCentre {
 		HttpAPI.callAppNo(context, url, syncHttpClient,tag, num);
 
 	}
+	public void posCloseSession(final Context context) {
+		String url ="http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/"+APIName.POS_CLOSE_SESSION;
+		HttpAPI.posCloseSession(context, url, syncHttpClient);
+
+	}
 
 	//3rd party services
 	public String requestAlipayUrl(final Map<String, Object> parameters) {

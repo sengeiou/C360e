@@ -260,8 +260,8 @@
     <string name="table_dining">The table has been occupied</string>
     <string name="name_of_the_place">Name of the Place</string>
 
-    <string name="At_least">At least </string>
-    <string name="items"> item</string>
+    <string name="At_least">choose ONLY </string>
+    <string name="items"> modifier</string>
 
 
     <!-- html -->

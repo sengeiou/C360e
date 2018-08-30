@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="10dp"
-        android:text="Somehow the screen"
+        android:text="List View"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_m" />
 

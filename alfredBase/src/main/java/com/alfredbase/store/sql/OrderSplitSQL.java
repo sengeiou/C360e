@@ -627,4 +627,12 @@ public class OrderSplitSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void deleteOrderSplitPaxByOrderId(int orderId){
+		String sql = "delete from " + TableNames.OrderSplit + " where orderId = ? and splitByPax > " + ParamConst.SPLIT_BY_PAX_FALSE;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {orderId});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

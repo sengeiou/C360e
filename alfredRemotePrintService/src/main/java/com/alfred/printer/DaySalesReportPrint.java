@@ -276,7 +276,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
             BigDecimal taxSvg = BH.getBD("0.00");
             for (int i = 0; i < reportDayTaxs.size(); i++) {
                 //服务税
-                if (!reportDayTaxs.get(i).getTaxPercentage().equals(0.07)) {
+                if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
                     ReportDayTax reportDayTax = reportDayTaxs.get(i);
 
                     taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);

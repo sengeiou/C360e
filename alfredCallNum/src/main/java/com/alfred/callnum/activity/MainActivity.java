@@ -3,7 +3,6 @@ package com.alfred.callnum.activity;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
@@ -15,13 +14,11 @@ import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.fragment.OneFragment;
 import com.alfred.callnum.fragment.TwoFragment;
 import com.alfred.callnum.global.App;
-import com.alfred.callnum.utils.CallNumQueueUtil;
 import com.alfred.callnum.utils.CallNumUtil;
 import com.alfred.callnum.utils.MyQueue;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.utils.AnimatorListenerImpl;
 
-import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -72,7 +69,9 @@ public class MainActivity extends BaseActivity {
 
                     timer.schedule(new MyTimertask(), 1000);
                     break;
-
+                case App.HANDLER_CLEAN_CALL:
+                    // TODO 这边清除叫号的内容
+                    break;
                 default:
                     break;
             }
@@ -147,10 +146,9 @@ public class MainActivity extends BaseActivity {
 
         CallNumUtil.initVideo(context);
         CallNumUtil.init(context, handler);
-CallBean c=new CallBean();
-c.setCallNumber("111111");
-queue.enQueue(c);
-
+        CallBean c=new CallBean();
+        c.setCallNumber("111111");
+        queue.enQueue(c);
         timer.schedule(new MyTimertask(), 1000);
     }
 

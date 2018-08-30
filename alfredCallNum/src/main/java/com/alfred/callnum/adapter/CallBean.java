@@ -7,6 +7,16 @@ public class CallBean implements Serializable {
     private  String  callNumber;
     private  int  callType;
     private  int  callTag;
+    private  boolean isUpdate = false;
+
+    public CallBean(String callNumber, int callType, int callTag) {
+        this.callNumber = callNumber;
+        this.callType = callType;
+        this.callTag = callTag;
+    }
+
+    public CallBean() {
+    }
 
     public String getCallNumber() {
         return callNumber;
@@ -32,43 +42,21 @@ public class CallBean implements Serializable {
         this.callTag = callTag;
     }
 
-    private int id;
-    private String name;
-    private  int type;
-
-
-    public int getId() {
-        return id;
+    public boolean isUpdate() {
+        return isUpdate;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUpdate(boolean update) {
+        isUpdate = update;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
     @Override
     public String toString() {
         return "CallBean{" +
                 "callNumber='" + callNumber + '\'' +
                 ", callType=" + callType +
                 ", callTag=" + callTag +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", type=" + type +
+                ", isUpdate=" + isUpdate +
                 '}';
     }
 }

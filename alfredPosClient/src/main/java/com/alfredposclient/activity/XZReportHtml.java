@@ -208,19 +208,19 @@ public class XZReportHtml extends BaseActivity {
 			}
 				break;
 			case JavaConnectJS.ACTION_LOAD_ALL_XZ_REPORT: {
-				String str = (String) msg.obj;
-				long businessDate = (Long) Store.getLong(XZReportHtml.this,
-						Store.BUSINESS_DATE);
-				if (businessDate < 0) {
-					businessDate = TimeUtil.getNewBusinessDate();
-				}
-				Map<String, Object> data = ReportObjectFactory.getInstance()
-						.loadDaySalesXZReport(businessDate,
-								App.instance.getSessionStatus());
-				String jsonDate = new Gson().toJson(data);
-				web.loadUrl(ParamConst.JS_CONNECT_ANDROID + "('"
-						+ JSONUtil.getJSCallBackName(str) + "','" + jsonDate
-						+ "')");
+//				String str = (String) msg.obj;
+//				long businessDate = (Long) Store.getLong(XZReportHtml.this,
+//						Store.BUSINESS_DATE);
+//				if (businessDate < 0) {
+//					businessDate = TimeUtil.getNewBusinessDate();
+//				}
+//				Map<String, Object> data = ReportObjectFactory.getInstance()
+//						.loadDaySalesXZReport(businessDate,
+//								App.instance.getSessionStatus());
+//				String jsonDate = new Gson().toJson(data);
+//				web.loadUrl(ParamConst.JS_CONNECT_ANDROID + "('"
+//						+ JSONUtil.getJSCallBackName(str) + "','" + jsonDate
+//						+ "')");
 				}
 				break;
 			case JavaConnectJS.ACTION_DOWNLOAD_Z_REPORT: {

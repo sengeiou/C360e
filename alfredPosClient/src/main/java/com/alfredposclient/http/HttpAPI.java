@@ -25,7 +25,6 @@ import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.BH;
-import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
@@ -45,7 +44,6 @@ import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.BinaryHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
@@ -1903,7 +1901,10 @@ public class HttpAPI {
             Map<String, Object> requestParams = new HashMap<>();
             requestParams.put("callNumber",  num);
             requestParams.put("callType", App.instance.getSystemSettings().getCallStyle());
-
+            if(Store.getBoolean(App.instance, Store.CALL_NUM_UPDATE, false)){
+                requestParams.put("header", Store.getString(App.instance, Store.CALL_NUM_HEADER));
+                requestParams.put("footer", Store.getString(App.instance, Store.CALL_NUM_FOOTER));
+            }
             if(TextUtils.isEmpty(tag)) {
                 //     byte t = (byte) tag.charAt(0);
                 requestParams.put("callTag", 0);
@@ -1911,13 +1912,12 @@ public class HttpAPI {
                 byte t = (byte) tag.charAt(0);
                 requestParams.put("callTag",t%64);
             }
-
-
             StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
             httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             System.out.print("192.168.20.102========onSuccess");
+                            Store.putBoolean(App.instance, Store.CALL_NUM_UPDATE, false);
                         }
 
                         @Override
@@ -1925,42 +1925,26 @@ public class HttpAPI {
                             System.out.print("192.168.20.102========onFailure:" + error.getMessage());
                         }
                     }
-//					new AsyncHttpResponseHandlerEx(){
-//				@Override
-//				public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//					System.out.print("192.168.20.102========onSuccess");
-//					super.onSuccess(statusCode, headers, responseBody);
-//				}
-//
-//				@Override
-//				public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//					System.out.print("192.168.20.102========onFailure:" + error.getMessage());
-//					super.onFailure(statusCode, headers, responseBody, error);
-////					UIHelp.showShortToast();
-//				}
-//			}
             );
-//			httpClient.get(context, url,
-//					entity,
-//					HttpAssembling.CONTENT_TYPE,
-//					new AsyncHttpResponseHandlerEx() {
-//						@Override
-//						public void onSuccess(final int statusCode,
-//											  final Header[] headers,
-//											  final byte[] responseBody) {
-//							super.onSuccess(statusCode, headers, responseBody);
-//							if(resultCode == ResultCode.SUCCESS){
-//							}else{
-//							}
-//						}
-//
-//						@Override
-//						public void onFailure(int statusCode, Header[] headers,
-//											  byte[] responseBody, Throwable error) {
-//							super.onFailure(statusCode, headers, responseBody,
-//									error);
-//						}
-//					});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void posCloseSession(final Context context, String url,
+                                 AsyncHttpClient httpClient) {
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        }
+                    }
+            );
         } catch (Exception e) {
             e.printStackTrace();
         }

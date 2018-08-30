@@ -137,14 +137,17 @@ public class Store {
 
 	//subPos
 	public static final String MAIN_POS_IP = "MAIN_POS_IP";
-
+	// call num
 	public static final String CALL_STYLE = "CALL_STYLE";
 	public static final String CALL_NUMBER_TYPE="CALL_NUMBER_TYPE";
+	public static final String CALL_NUM_HEADER = "CALL_NUM_HEADER";
+	public static final String CALL_NUM_FOOTER = "CALL_NUM_FOOTER";
+	public static final String CALL_NUM_UPDATE = "CALL_NUM_UPDATE";
 
 	public static final String CALL_IP="CALL_IP";
 
-//kpm
-public static final String KPM_IP="KPM_IP";
+	//kpm
+	public static final String KPM_IP="KPM_IP";
 
 
 	private Store() {

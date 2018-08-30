@@ -9,8 +9,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.http.APIName;
 import com.alfredbase.http.AlfredHttpServer;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.utils.LogUtil;
+import com.alfredbase.store.Store;
 import com.google.gson.Gson;
 
 import org.apache.http.Header;
@@ -40,19 +39,37 @@ public class CallNumHttpServer extends AlfredHttpServer {
 					叫号内容{"type" : 1, "callnumber":"A1235"}
 				 */
 			//	call(body);
-				Gson gson=new Gson();
-
-				CallBean callBean = gson.fromJson(body, CallBean.class);
-			//	LogUtil.e("CallNumHttpServer",callBean.getCallNumber());
-
-				App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_CALL, callBean);
-				/**
-				 * 返回成功
-				 */
 				Map<String, Object> map = new HashMap<>();
-				map.put("resultCode", ResultCode.SUCCESS);
+				try {
+					JSONObject jsonObject = new JSONObject(body);
+					String callNumber = jsonObject.optString("callNumber");
+					int callType = jsonObject.optInt("callType");
+					int callTag = jsonObject.optInt("callTag");
+					CallBean callBean = new CallBean(callNumber, callType, callTag);
+					if(jsonObject.has("header")){
+						Store.putString(App.instance, Store.CALL_NUM_HEADER, jsonObject.optString("header"));
+						callBean.setUpdate(true);
+					}
+					if(jsonObject.has("footer")){
+						Store.putString(App.instance, Store.CALL_NUM_FOOTER, jsonObject.optString("footer"));
+						callBean.setUpdate(true);
+					}
+					App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_CALL, callBean);
+					/**
+					 * 返回成功
+					 */
+					map.put("resultCode", ResultCode.SUCCESS);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
 				return getJsonResponse(new Gson().toJson(map));
-			}
+			}else if(apiName.equals(APIName.POS_CLOSE_SESSION)){
+                App.getTopActivity().httpRequestAction(App.instance.HANDLER_CLEAN_CALL, null);
+			    Map<String, Object> map = new HashMap<>();
+                map.put("resultCode", ResultCode.SUCCESS);
+                return getJsonResponse(new Gson().toJson(map));
+            }
 
 			else{
 				resp = getNotFoundResponse();

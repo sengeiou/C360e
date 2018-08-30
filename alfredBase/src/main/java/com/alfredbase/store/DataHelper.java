@@ -1194,6 +1194,11 @@ public class DataHelper {
         }
 
         private void onUpgradeForOldVersion24(SQLiteDatabase db) {
+
+
+            db.execSQL("ALTER TABLE "
+                    + TableNames.ReportDayTax
+                    + " ADD COLUMN  taxType INTEGER default 0");
             db.execSQL("ALTER TABLE "
                     + TableNames.Modifier
                     + " ADD COLUMN  minNumber INTEGER default 0");

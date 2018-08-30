@@ -983,9 +983,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax());
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
-                        String paymentType = "";
+                       // String paymentType = "";
                         String cardNo = null;
                         for (PrintReceiptInfo printReceiptInfo : settlement) {
+                            String paymentType = "";
                             LinkedHashMap<String, String> stmt = new LinkedHashMap<String, String>();
                             switch (printReceiptInfo.getPaymentTypeId()) {
                                 case ParamConst.SETTLEMENT_TYPE_CASH:

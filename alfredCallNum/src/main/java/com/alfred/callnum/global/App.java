@@ -12,12 +12,7 @@ import com.alfredbase.store.Store;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +25,7 @@ public class App extends BaseApplication {
     private int mainPageType = 1;
 
     public static final int HANDLER_REFRESH_CALL = 1;
+    public static final int HANDLER_CLEAN_CALL = 3;
     public static final int HANDLER_REFRESH_CALL_ON = 2;
 
     public static final String CALL_NUMBER_TYPE = "CALL_NUMBER_TYPE";

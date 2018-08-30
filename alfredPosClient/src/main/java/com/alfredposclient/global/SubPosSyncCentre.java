@@ -88,6 +88,9 @@ public class SubPosSyncCentre {
 	public void cloudSyncUploadReportInfo(Context context, SyncMsg syncMsg, SubPosBean subPosBean, CallBack callBack){
 		SubPosHttpAPI.cloudSyncUploadReportInfo(context, syncMsg, subPosBean, getAbsoluteUrl(APIName.SUBPOS_COMMIT_REPORT), bigSyncHttpClient, callBack);
 	}
+	public void closeSession(Context context, SubPosBean subPosBean, CallBack callBack){
+		SubPosHttpAPI.closeSession(context, subPosBean, getAbsoluteUrl(APIName.SUBPOS_CLOSE_SESSION), bigSyncHttpClient, callBack);
+	}
 
 
 }

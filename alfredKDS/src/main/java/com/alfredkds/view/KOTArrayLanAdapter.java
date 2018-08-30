@@ -60,13 +60,13 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 
 
         //convertView = inflater.inflate(R.layout. kot_array_view,parent, false);
-        if (viewType == 0) {
-            convertView = inflater.inflate(R.layout.kot_array_landscape_title, parent, false);
-            //convertView= LayoutInflater.from(parent.getContext()).inflate(R.layout.kot_array_landscape_view, parent, false);
-            // convertView = View.inflate(mContext,R.layout.kot_array_landscape_view, null);
-            viewHolder = new ViewHolder(convertView);
-
-        } else {
+//        if (viewType == 0) {
+//            convertView = inflater.inflate(R.layout.kot_array_landscape_title, parent, false);
+//            //convertView= LayoutInflater.from(parent.getContext()).inflate(R.layout.kot_array_landscape_view, parent, false);
+//            // convertView = View.inflate(mContext,R.layout.kot_array_landscape_view, null);
+//            viewHolder = new ViewHolder(convertView);
+//
+//        } else {
             convertView = inflater.inflate(R.layout.kot_array_landscape_view, parent, false);
 
             viewHolder = new ViewHolder(convertView);
@@ -83,7 +83,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
             viewHolder.btn_call = (Button) convertView.findViewById(R.id.btn_kot_call);
             viewHolder.qty = (TextView) convertView.findViewById(R.id.tv_kot_item_qty);
 
-        }
+    //    }
 
 
         return viewHolder;
@@ -91,9 +91,9 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
-        int itemViewType = KOTArrayLanAdapter.this.getItemViewType(position);
-        if (itemViewType == 1) {
+//
+//        int itemViewType = KOTArrayLanAdapter.this.getItemViewType(position);
+//        if (itemViewType == 1) {
             final KotItem kotItem = kots.get(position);
             String orderNoStr = kotItem.getNumTag() + IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
             holder.orderNo.setText(orderNoStr);
@@ -172,7 +172,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
                     handler.sendMessage(message);
                 }
             });
-        }
+      //  }
 
     }
 
@@ -189,11 +189,11 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
+     //   if (position == 0) {
             return 0;
-        } else {
-            return 1;
-        }
+//        } else {
+//            return 1;
+//        }
     }
 
 
@@ -221,9 +221,9 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
      */
     public void setKots(List<KotItem> kotlist) {
         kots.clear();
-        if (kotlist.size() > 0) {
-            this.kots.add(null);
-        }
+//        if (kotlist.size() > 0) {
+//            this.kots.add(null);
+//        }
         this.kots.addAll(kotlist);
         //	this.kots = kots;
     }

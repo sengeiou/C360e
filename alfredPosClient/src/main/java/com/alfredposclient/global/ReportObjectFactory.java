@@ -20,6 +20,7 @@ import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.UserOpenDrawerRecord;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.javabeanforhtml.DashboardTotalDetailInfo;
@@ -52,6 +53,7 @@ import com.alfredbase.store.sql.ReportPluDayItemSQL;
 import com.alfredbase.store.sql.ReportPluDayModifierSQL;
 import com.alfredbase.store.sql.ReportSessionSalesSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
+import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
 import com.alfredbase.store.sql.UserTimeSheetSQL;
 import com.alfredbase.utils.BH;
@@ -2530,6 +2532,8 @@ public class ReportObjectFactory {
 				reportDayTax.setTaxPercentage(taxPercentages.get(i));
 				reportDayTax.setTaxQty(taxCounts.get(i));
 				reportDayTax.setTaxAmount(BH.getBD(taxPriceSum.get(i)).toString());
+				Tax tax= TaxSQL.getTaxId(taxIds.get(i));
+				reportDayTax.setTaxType(tax.getTaxType());
 				reportDayTaxs.add(reportDayTax);
 			}
 		}

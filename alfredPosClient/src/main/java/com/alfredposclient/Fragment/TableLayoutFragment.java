@@ -42,6 +42,7 @@ import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BitmapUtil;
@@ -419,6 +420,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 }else{
                     if(ButtonClickTimer.canClick(v)){
                         if(mainPage instanceof MainPage) {
+                            Order order = OrderSQL.getUnfinishedOrderAtTable(newTable.getPosId(), App.instance.getBusinessDate());
+                            if(order != null && order.getId() != null){
+                                OrderSplitSQL.deleteOrderSplitPaxByOrderId(order.getId().intValue());
+                            }
                             ((MainPage) mainPage).tableAction(newTable);
                         } else {
                             if(newTable.getStatus().intValue() == ParamConst.TABLE_STATUS_IDLE) {

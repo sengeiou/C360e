@@ -898,7 +898,10 @@ public class MainPage extends BaseActivity {
                     break;
                 }
                 case VIEW_EVENT_CLOSE_SPLIT_BILL: {
-
+                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                            context);
+                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+                    printerLoadingDialog.showByTime(3000);
                     HashMap<String, String> paymentMap = (HashMap<String, String>) msg.obj;
                     OrderSplit paidOrderSplit = OrderSplitSQL.get(Integer.valueOf(paymentMap.get("orderSplitId")));
                     List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
@@ -912,12 +915,6 @@ public class MainPage extends BaseActivity {
                     OrderBill orderBill = ObjectFactory.getInstance().getOrderBillByOrderSplit(paidOrderSplit, App.instance.getRevenueCenter());
                     String changeNum;
                     changeNum = paymentMap.get("changeNum");
-
-                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                            context);
-                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-                    printerLoadingDialog.showByTime(3000);
-
                     if (!TextUtils.isEmpty(changeNum)) {
                         if (!(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + "0.00").equals(changeNum))
                             DialogFactory.changeDialogOrder(context, changeNum, new OnClickListener() {
@@ -1894,6 +1891,10 @@ public class MainPage extends BaseActivity {
                 }
                 break;
                 case ACTION_PRINT_PAX_SPLIT_BY_PAX: {
+                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                            context);
+                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+                    printerLoadingDialog.showByTime(3000);
                     HashMap<String, String> paymentMap = (HashMap<String, String>) msg.obj;
                     OrderSplit paidOrderSplit = OrderSplitSQL.get(Integer.valueOf(paymentMap.get("orderSplitId")));
                     List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL
@@ -2036,6 +2037,10 @@ public class MainPage extends BaseActivity {
 //		}
         if (selectOrderSplitDialog != null && selectOrderSplitDialog.isShowing()) {
             selectOrderSplitDialog.dismiss();
+        }
+        if(closeOrderSplitWindow != null && closeOrderSplitWindow.isShowing()){
+            closeOrderSplitWindow.onBackPressed();
+            return;
         }
 //		if (isShowTables
 //				&& !isTableFirstShow
@@ -2563,4 +2568,5 @@ public class MainPage extends BaseActivity {
 //			}, 500);
         }
     }
+
 }

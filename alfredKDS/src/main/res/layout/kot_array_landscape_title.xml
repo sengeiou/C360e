@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/li_lan_title"
+    android:visibility="gone"
     android:orientation="vertical" >
 
     <View
@@ -19,22 +21,6 @@
 >
 
 
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-
-        <!--android:background="@android:color/black"-->
-        <!--android:text="111"-->
-        <!--android:textSize="20sp" />-->
-
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-
-        <!--android:background="@android:color/holo_green_light"-->
-        <!--android:text="222"-->
-        <!--android:textSize="20sp" />-->
-    >
       <TextView
 
           android:layout_width="120dp"

@@ -115,7 +115,7 @@ public class UIHelp {
 //				R.anim.centre_close_70);
 	}
 
-	public static void startXZReportHtml(BaseActivity context) {
+	public static void startXZReportActivty(BaseActivity context) {
 		Intent intent = new Intent(context, XZReportActivity.class);
 		context.startActivity(intent);
 //		context.overridePendingTransition(R.anim.slide_bottom_in,
