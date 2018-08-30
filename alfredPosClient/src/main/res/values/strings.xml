@@ -260,9 +260,9 @@
     <string name="table_dining">The table has been occupied</string>
     <string name="name_of_the_place">Name of the Place</string>
 
-    <string name="At_least">choose ONLY </string>
+    <string name="At_least">choose LEAST  </string>
     <string name="items"> modifier</string>
-
+    <string name="at_only">choose ONLY  </string>
 
     <!-- html -->
     <string name="no_sales_print">No sales data to print</string>

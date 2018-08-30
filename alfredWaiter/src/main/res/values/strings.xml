@@ -94,4 +94,8 @@
     <string name="cancel">Cancel</string>
     <string name="search_item">Search menu item</string>
     <string name="check">Check</string>
+
+    <string name="At_least">choose LEAST  </string>
+    <string name="items"> modifier</string>
+    <string name="at_only">choose ONLY  </string>
 </resources>

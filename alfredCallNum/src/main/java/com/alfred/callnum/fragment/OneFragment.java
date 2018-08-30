@@ -195,6 +195,18 @@ public class OneFragment extends Fragment {
 
     }
 
+
+    public void dataClear() {
+        mDatas1.clear();
+        mDatas2.clear();
+        mDatas3.clear();
+        mDatas4.clear();
+        mAdapter1.notifyDataSetChanged();
+        mAdapter2.notifyDataSetChanged();
+        mAdapter3.notifyDataSetChanged();
+        mAdapter4.notifyDataSetChanged();
+    }
+
     public void addData(int position, CallBean call) {
         line1.setVisibility(View.VISIBLE);
         line2.setVisibility(View.VISIBLE);

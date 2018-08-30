@@ -694,7 +694,38 @@ public class OrderModifierSQL {
 		}
 		return result;
 	}
-	
+
+	public static List<Integer> getOrderModifierIdsByOrderDetailId(int orderDetailId) {
+		ArrayList<Integer> result = new ArrayList<>();
+		String sql = "select modifierId from " + TableNames.OrderModifier
+				+ " where orderDetailId = ? and status = " + ParamConst.ORDER_MODIFIER_STATUS_NORMAL;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db
+					.rawQuery(
+							sql,
+							new String[] {orderDetailId + "" });
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			OrderModifier orderModifier = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				result.add(cursor.getInt(0));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static ArrayList<OrderModifier> getOrderModifiers(OrderDetail orderDetail) {
 		ArrayList<OrderModifier> result = new ArrayList<OrderModifier>();
 		String sql = "select * from " + TableNames.OrderModifier

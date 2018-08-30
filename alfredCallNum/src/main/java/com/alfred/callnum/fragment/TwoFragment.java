@@ -452,9 +452,19 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                 call_big.setVisibility(View.GONE);
 
 
+
+
                 break;
         }
 
+    }
+
+    public void dataClear() {
+     call_big.setVisibility(View.GONE);
+        mDatasRight.clear();
+        mDataLeft.clear();
+        mAdapterLeft.notifyDataSetChanged();
+        mAdapterRight.notifyDataSetChanged();
     }
 
 

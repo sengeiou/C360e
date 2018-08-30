@@ -444,13 +444,25 @@ public class KitchenOrder extends BaseActivity {
                     KotSummary kotSummary = kot.getKotSummary();
                     KotItemDetail kotItemDetail = detailList.get(j);
                     item.setOrderNo(kotSummary.getOrderNo());
-                    item.setTableName(kotSummary.getTableName());
+                    if(TextUtils.isEmpty(kotSummary.getTableName())){
+                        item.setTableName("");
+                    }else {
+                        item.setTableName(kotSummary.getTableName());
+                    }
+
                     item.setSummaryId(kotSummary.getId());
                     item.setNumTag(kotSummary.getNumTag());
                     item.setRevenueCenterIndex(kotSummary.getRevenueCenterIndex());
                     StringBuffer sBuffer = new StringBuffer();
+                    sBuffer.append("");
                     item.setKotStatus(kotItemDetail.getKotStatus());
-                    item.setItemDetailName(kotItemDetail.getItemName());
+
+                    if(TextUtils.isEmpty(kotItemDetail.getItemName())){
+                        item.setItemDetailName("");
+                    }else {
+                        item.setItemDetailName(kotItemDetail.getItemName());
+                    }
+
                     item.setUpdateTime(kotItemDetail.getUpdateTime());
                     item.setCallType(kotItemDetail.getCallType());
                     item.setQty(unFinishQty);

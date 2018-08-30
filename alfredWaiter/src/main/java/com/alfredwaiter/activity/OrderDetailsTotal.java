@@ -27,11 +27,13 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
@@ -40,8 +42,11 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
+import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
 import com.alfredwaiter.R;
@@ -59,6 +64,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -396,7 +402,59 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 		case R.id.tv_place_order:
 			// VibrationUtil.init(context);
 			// VibrationUtil.playVibratorTwice();
-			commitOrderToPOS();
+
+			List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(currentOrder.getId());
+
+			Map<Integer,String> categorMap=new HashMap<Integer,String>();
+			Map<String, Map<Integer,String>> checkMap = new HashMap<String, Map<Integer,String>>();
+			for (int i = 0; i < allModifierCheck.size(); i++) {
+				ModifierCheck modifierCheck;
+				modifierCheck=allModifierCheck.get(i);
+				if(modifierCheck.getNum()>0) {
+					//  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
+					if(checkMap.containsKey(modifierCheck.getItemName())){
+//                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
+//                                 {
+//                                    categorMap=checkMap.get(modifierCheck.getItemName());
+//                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
+//                                     checkMap.put(modifierCheck.getItemName(),categorMap);
+						categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" ");
+						checkMap.put(modifierCheck.getItemName(),categorMap);
+
+					}else {
+						categorMap=new HashMap<Integer,String>();
+						categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" ");
+						checkMap.put(modifierCheck.getItemName(),categorMap);
+					}
+				}
+			}
+			if(checkMap.size()==0) {
+				//commitOrderToPOS();
+				UIHelp.showToast(context,"成功");
+			}else {
+				StringBuffer checkbuf=new StringBuffer();
+				Iterator iter = checkMap.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					String key = (String) entry.getKey();
+					checkbuf.append(" "+key+":");
+					Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
+					Iterator iter2 = val.entrySet().iterator();
+					while (iter2.hasNext()) {
+						Map.Entry entry2 = (Map.Entry) iter2.next();
+						String val2 = (String) entry2.getValue();
+						checkbuf.append(val2+" ");
+//                      String val = (String) entry.getValue();
+//                      checkbuf.append("不能少于"+val+"种 .");
+					}
+				}
+
+				UIHelp.showToast(context,checkbuf.toString());
+			}
+
+
+
+		//	commitOrderToPOS();
 			break;
 		case R.id.btn_get_bill: {
 			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -682,7 +740,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 							modifierIds.add(orderModifier.getModifierId().intValue());
 						}
 						selectedOrderDetail = orderDetail;
-						modifierWindow.show(itemDetail, modifierIds, orderDetail.getSpecialInstractions() == null ? "" : orderDetail.getSpecialInstractions());
+						modifierWindow.show(itemDetail, modifierIds, currentOrder, orderDetail.getSpecialInstractions() == null ? "" : orderDetail.getSpecialInstractions());
 					}
 				}
 			});

@@ -18,3 +18,7 @@ file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosCli
 sha1=0fb6dde2bbb48e32d1ff9a951d49a4e81883ebab
 appId=900043720
 
+file=/Users/Alex/Work/Code/JobForAlfred/Android/newStudio/AlfredPos/alfredPosClient/build/outputs/mapping/release/mapping.txt
+sha1=5a9674cec757d8381f674c0af0cc32adf505150c
+appId=900043720
+

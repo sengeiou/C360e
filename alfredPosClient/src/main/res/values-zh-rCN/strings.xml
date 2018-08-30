@@ -251,8 +251,9 @@
     <string name="online_order">网络订单</string>
     <string name="the_most_selections">最多可选%d个</string>
     <string name="name_of_the_place">输入名称</string>
-    <string name="At_least">至少 </string>
-    <string name="items"> 项</string>
+    <string name="At_least">至少  </string>
+    <string name="at_only">最多选  </string>
+    <string name="items">  项</string>
     
     <!-- html -->
     <string name="no_sales_print">没有需要打印的销售数据</string>

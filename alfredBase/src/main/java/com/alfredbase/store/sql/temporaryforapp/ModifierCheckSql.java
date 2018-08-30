@@ -42,25 +42,71 @@ public class ModifierCheckSql {
     }
 
 
-    public static void update(int number,int modifierCategoryId,int detailId) {
+    public static void update(int number,int modifierCategoryId,int detailId,int orderId) {
 
         try {
-            String sql = "update " + TableNames.ModifierCheck + " set num = ?  where modifierCategoryId = ? and orderDetailId = ? " ;
+            String sql = "update " + TableNames.ModifierCheck + " set num = ?  where modifierCategoryId = ? and orderDetailId = ? and orderId = ? " ;
             SQLExe.getDB().execSQL(
                     sql,
-                    new Object[] {number,modifierCategoryId,detailId});
+                    new Object[] {number,modifierCategoryId,detailId,orderId});
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static ArrayList<ModifierCheck> getAllModifierCheck() {
+
+
+//    String sql = "delete from " + TableNames.Tax + " where id = ?";
+//        try {
+//        SQLExe.getDB().execSQL(sql, new Object[] { tax.getId() });
+//    } catch (Exception e) {
+//        e.printStackTrace();
+////    }
+
+
+    public static ArrayList<ModifierCheck> getDetaIdModifierCheck(int detailId) {
         ArrayList<ModifierCheck> result = new ArrayList<ModifierCheck>();
-        String sql = "select * from " + TableNames.ModifierCheck + " order by itemName ";
+        String sql = "select * from " + TableNames.ModifierCheck +" where orderDetailId = ?"+ " order by itemName ";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[] {});
+            cursor = db.rawQuery(sql, new String[] { detailId+ ""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+
+            ModifierCheck modifierCheck = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                modifierCheck = new ModifierCheck();
+                modifierCheck.setId(cursor.getInt(0));
+                modifierCheck.setOrderDetailId(cursor.getInt(1));
+                modifierCheck.setOrderId(cursor.getInt(2));
+                modifierCheck.setModifierCategoryId(cursor.getInt(3));
+                modifierCheck.setItemName(cursor.getString(4));
+                modifierCheck.setModifierCategoryName(cursor.getString(5));
+                modifierCheck.setNum(cursor.getInt(6));
+                modifierCheck.setMinNum(cursor.getInt(7));
+                result.add(modifierCheck);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+    public static ArrayList<ModifierCheck> getAllModifierCheck(int orderId) {
+        ArrayList<ModifierCheck> result = new ArrayList<ModifierCheck>();
+        String sql = "select * from " + TableNames.ModifierCheck +" where orderId = ?"+ " order by itemName ";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[] { orderId+ ""});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -92,10 +138,10 @@ public class ModifierCheckSql {
     }
 
 
-    public static void deleteModifierCheck(int orderDetailId) {
-        String sql = "delete from " + TableNames.ModifierCheck + " where orderDetailId = ?";
+    public static void deleteModifierCheck(int orderDetailId,int orderId) {
+        String sql = "delete from " + TableNames.ModifierCheck + " where orderDetailId = ? and orderId = ? ";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] { orderDetailId });
+            SQLExe.getDB().execSQL(sql, new Object[] { orderDetailId , orderId});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,8 +149,9 @@ public class ModifierCheckSql {
 
 
 
-    public static void deleteAllModifierCheck() {
-        String sql = "delete from " + TableNames.ModifierCheck;
+    public static void deleteAllModifierCheck(int orderId) {
+
+        String sql = "delete from " + TableNames.ModifierCheck + " where orderId = ? ";
         try {
             SQLExe.getDB().execSQL(sql, new Object[] {});
         } catch (Exception e) {
