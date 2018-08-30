@@ -119,6 +119,15 @@
                 android:text="@string/taxes"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_m" />
+
+			<TextView
+				android:id="@+id/tv_grand_total"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="right"
+				android:text="@string/grand_total"
+				android:textColor="@color/black"
+				android:textSize="@dimen/text_size_m" />
         </LinearLayout>
 			<TextView
 				android:id="@+id/tv_place_order"

@@ -44,6 +44,7 @@ public class SetItemCountWindow implements OnClickListener, KeyBoardClickListene
 	private Handler handler;
 	private boolean flag = false;
 	private ItemDetail itemDetail;
+	private  int oldCount;
 
 	public SetItemCountWindow(BaseActivity parent, View parentView, Handler handler) {
 		this.parent = parent;
@@ -76,6 +77,7 @@ public class SetItemCountWindow implements OnClickListener, KeyBoardClickListene
 
 	public void show(int count,ItemDetail itemDetail) {
 		init();
+		this.oldCount=count;
 		this.itemDetail = itemDetail;
 		tv_num.setText(count+"");
 		flag = false;
@@ -124,6 +126,13 @@ public class SetItemCountWindow implements OnClickListener, KeyBoardClickListene
 						Map<String, Object> result = new HashMap<String, Object>();
 						result.put("itemDetail", itemDetail);
 						result.put("count", Integer.parseInt(tv_num.getText().toString()));
+						int newCount=Integer.parseInt(tv_num.getText().toString());
+						if(newCount>oldCount) {
+							result.put("isAdd", true);
+						}else {
+							result.put("isAdd", false);
+						}
+
 						handler.sendMessage(handler.obtainMessage(
 								MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, result));
 					}
