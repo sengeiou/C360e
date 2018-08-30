@@ -61,6 +61,7 @@ public class Summary extends BaseActivity {
 	private FinishQtyWindow finishQtyPop;
 	private MainPosInfo mainPosInfo;
 	private TextView tv_table_name;
+	private TextView tv_item_qyt;
 	
 	@Override
 	protected void initView() {
@@ -73,6 +74,7 @@ public class Summary extends BaseActivity {
 		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
 			tv_table_name.setVisibility(View.GONE);
 		}
+		tv_item_qyt = (TextView) findViewById(R.id.tv_item_qyt);
 		finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
 		initDishNames();
 		initKotDetailsListView();
@@ -96,7 +98,15 @@ public class Summary extends BaseActivity {
 			}
 		});
 	}
-	
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		int unDoneNum = KotItemDetailSQL.getAllUnDoneKotItemDetailCount();
+		tv_item_qyt.setText(unDoneNum + "");
+	}
+
 	private void initKotDetailsListView(){
 		kotDetailsListView = (ListView) this.findViewById(R.id.lv_kot_details);
 		kotdetailsAdapter = new KotDetailsAdapter(context);

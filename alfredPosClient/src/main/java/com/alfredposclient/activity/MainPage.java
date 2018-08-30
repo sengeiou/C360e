@@ -2040,6 +2040,7 @@ public class MainPage extends BaseActivity {
         }
         if(closeOrderSplitWindow != null && closeOrderSplitWindow.isShowing()){
             closeOrderSplitWindow.onBackPressed();
+            return;
         }
 //		if (isShowTables
 //				&& !isTableFirstShow
@@ -2567,4 +2568,5 @@ public class MainPage extends BaseActivity {
 //			}, 500);
         }
     }
+
 }

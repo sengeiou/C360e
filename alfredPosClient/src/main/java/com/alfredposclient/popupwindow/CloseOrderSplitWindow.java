@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
@@ -215,9 +216,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         contentView = LayoutInflater.from(parent).inflate(
                 R.layout.popup_close_bill, null);
 
-        popupWindow = new PopupWindow(parentView,
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT);
+
 //		rl_pay_panel = (RelativeLayout) contentView
 //				.findViewById(R.id.rl_pay_panel);
 
@@ -374,11 +373,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             contentView.findViewById(R.id.media_keyboard_1).setVisibility(View.VISIBLE);
             contentView.findViewById(R.id.media_keyboard_2).setVisibility(View.GONE);
         }
-
-        popupWindow.setContentView(contentView);
+        popupWindow = new PopupWindow(contentView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,true);
         popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
-        popupWindow.setFocusable(true);
+//        popupWindow.setFocusable(true);
+//        ColorDrawable dw = new ColorDrawable(0x00ffffff);
+//        popupWindow.setBackgroundDrawable(dw);
         initTextTypeFace(contentView);
         ListView lv_list = (ListView) contentView.findViewById(R.id.lv_list);
         orderDetailAdapter = new OrderDetailAdapter(parent, orderDetails, new OrderDetailAdapter.VoidItemCallBack() {
@@ -1245,6 +1247,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         }
 //		popupWindow
 //				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, ScreenSizeUtil.getStatusBarHeight(parent));
+        if(splitPax){
+            popupWindow.setOutsideTouchable(false);
+            popupWindow.setFocusable(false);
+        }else{
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setFocusable(true);
+        }
         popupWindow
                 .showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, 0);
 //		popupWindow.setAnimationStyle(0);
@@ -1339,6 +1348,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         App.instance.orderInPayment = order;
         isMenuClose = false;
     }
+
 
     public void dismiss() {
         if (popupWindow != null && popupWindow.isShowing()) {
@@ -1549,7 +1559,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 break;
                 case R.id.btn_close_bill: {
                     // if (!(parent instanceof EditSettlementHtml)) {
-                    closeWindowAction();
+//                    closeWindowAction();
+                    onBackPressed();
                     if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
                         Map<String, List<Map<String, Object>>> newAndOldPaymentSettlement = new HashMap<String, List<Map<String, Object>>>();
                         newAndOldPaymentSettlement.put("oldPaymentMapList", oldPaymentMapList);
@@ -3339,6 +3350,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
     }
 
     public void onBackPressed(){
+        closeWindowAction();
         if(splitPax){
             handler.sendEmptyMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW);
         }
