@@ -204,9 +204,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private void initView() {
         contentView = LayoutInflater.from(parent).inflate(
                 R.layout.popup_close_bill, null);
-        popupWindow = new PopupWindow(parentView,
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT);
 //		rl_pay_panel = (RelativeLayout) contentView
 //				.findViewById(R.id.rl_pay_panel);
 //		web_alipay = (AlipayWebView) contentView.findViewById(R.id.web_alipay);
@@ -351,11 +348,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             contentView.findViewById(R.id.media_keyboard_2).setVisibility(View.GONE);
         }
 
-        popupWindow.setContentView(contentView);
+        popupWindow = new PopupWindow(contentView,
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT, true);
         popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        popupWindow.setOutsideTouchable(false);
+        popupWindow.setFocusable(false);
 //		popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
 //		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        popupWindow.setFocusable(true);
 //		popupWindow.setBackgroundDrawable(new BitmapDrawable());
         initTextTypeFace(contentView);
         ListView lv_list = (ListView) contentView.findViewById(R.id.lv_list);
@@ -1364,20 +1364,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                 break;
                 case R.id.btn_close_bill: {
-                    // if (!(parent instanceof EditSettlementHtml)) {
-//				if(ll_subtotal_layout.getVisibility() == View.VISIBLE){
-//					closeMoneyKeyboard();
-//				}
-                    closeWindowAction();
-                    if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
-                        Map<String, List<Map<String, Object>>> newAndOldPaymentSettlement = new HashMap<String, List<Map<String, Object>>>();
-                        newAndOldPaymentSettlement.put("oldPaymentMapList", oldPaymentMapList);
-                        newAndOldPaymentSettlement.put("newPaymentMapList", newPaymentMapList);
-                        handler.sendMessage(handler.obtainMessage(
-                                EditSettlementPage.EDIT_SETTLEMENT_CLOSE_BILL,
-                                newAndOldPaymentSettlement));
-                    }
-                    // }
+                    backLikeClose();
                     break;
                 }
 
@@ -3013,5 +3000,16 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
     }
 
+    public void backLikeClose(){
+        closeWindowAction();
+        if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
+            Map<String, List<Map<String, Object>>> newAndOldPaymentSettlement = new HashMap<String, List<Map<String, Object>>>();
+            newAndOldPaymentSettlement.put("oldPaymentMapList", oldPaymentMapList);
+            newAndOldPaymentSettlement.put("newPaymentMapList", newPaymentMapList);
+            handler.sendMessage(handler.obtainMessage(
+                    EditSettlementPage.EDIT_SETTLEMENT_CLOSE_BILL,
+                    newAndOldPaymentSettlement));
+        }
+    }
 
 }

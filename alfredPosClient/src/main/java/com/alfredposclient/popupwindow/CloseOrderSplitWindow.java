@@ -378,6 +378,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 ViewGroup.LayoutParams.MATCH_PARENT,true);
         popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+        popupWindow.setOutsideTouchable(false);
+        popupWindow.setFocusable(false);
 //        popupWindow.setFocusable(true);
 //        ColorDrawable dw = new ColorDrawable(0x00ffffff);
 //        popupWindow.setBackgroundDrawable(dw);
@@ -1247,13 +1249,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         }
 //		popupWindow
 //				.showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, ScreenSizeUtil.getStatusBarHeight(parent));
-        if(splitPax){
-            popupWindow.setOutsideTouchable(false);
-            popupWindow.setFocusable(false);
-        }else{
-            popupWindow.setOutsideTouchable(true);
-            popupWindow.setFocusable(true);
-        }
         popupWindow
                 .showAtLocation(parentView, Gravity.LEFT | Gravity.TOP, 0, 0);
 //		popupWindow.setAnimationStyle(0);
@@ -1560,15 +1555,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 case R.id.btn_close_bill: {
                     // if (!(parent instanceof EditSettlementHtml)) {
 //                    closeWindowAction();
-                    onBackPressed();
-                    if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
-                        Map<String, List<Map<String, Object>>> newAndOldPaymentSettlement = new HashMap<String, List<Map<String, Object>>>();
-                        newAndOldPaymentSettlement.put("oldPaymentMapList", oldPaymentMapList);
-                        newAndOldPaymentSettlement.put("newPaymentMapList", newPaymentMapList);
-                        handler.sendMessage(handler.obtainMessage(
-                                EditSettlementPage.EDIT_SETTLEMENT_CLOSE_BILL,
-                                newAndOldPaymentSettlement));
-                    }
+                    backLikeClose();
                     // }
                     break;
                 }
@@ -3349,10 +3336,23 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
     }
 
-    public void onBackPressed(){
+    public void backLikeClose(){
         closeWindowAction();
         if(splitPax){
             handler.sendEmptyMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW);
+        }
+        if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
+            Map<String, List<Map<String, Object>>> newAndOldPaymentSettlement = new HashMap<String, List<Map<String, Object>>>();
+            newAndOldPaymentSettlement.put("oldPaymentMapList", oldPaymentMapList);
+            newAndOldPaymentSettlement.put("newPaymentMapList", newPaymentMapList);
+            handler.sendMessage(handler.obtainMessage(
+                    EditSettlementPage.EDIT_SETTLEMENT_CLOSE_BILL,
+                    newAndOldPaymentSettlement));
+        }
+        if(!(parent instanceof EditSettlementPage)){
+            if(splitPax){
+                handler.sendEmptyMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW);
+            }
         }
     }
 }
