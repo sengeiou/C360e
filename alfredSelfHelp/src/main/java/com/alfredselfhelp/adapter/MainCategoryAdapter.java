@@ -25,7 +25,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
     public MainCategoryAdapter(Context context, List<ItemMainCategory> itemMainCategories, RvListener listener) {
         super(context, itemMainCategories, listener);
         this.mContext=context;
-        WIDTH= (int) (ScreenSizeUtil.width-ScreenSizeUtil.dip2px((Activity) context, 130));
+        WIDTH= (int) (ScreenSizeUtil.width-ScreenSizeUtil.dip2px((Activity) context, 80));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
             textTypeFace.setTrajanProRegular(tv_text);
 
             if (position == checkedPosition) {
-                tv_text.setBackgroundResource(R.drawable.style_login_btn);
+                tv_text.setBackgroundResource(R.drawable.main_btn_b);
 
             } else {
                 tv_text.setBackgroundResource(R.drawable.main_btn_g);
