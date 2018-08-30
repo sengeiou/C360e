@@ -420,6 +420,7 @@ public class HttpAnalysis {
 			OrderModifierSQL.addOrderModifierList(orderModifiers);
 			OrderDetailTaxSQL.deleteOrderDetailTax(order);
 			OrderDetailTaxSQL.addOrderDetailTaxList(orderDetailTaxs);
+			OrderSQL.update(order);
 			handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS,
 					orderDetails));
 		} catch (Exception e) {
