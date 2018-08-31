@@ -1928,6 +1928,10 @@ public class ReportObjectFactory {
 	public ReportDaySales loadXReportDaySales(long businessDate,
 			SessionStatus sessionStatus, String actualAmount) {
 		ReportDaySales reportDaySales = null;
+		List<Order> orderList = OrderSQL.getAllOrderByTime(businessDate, sessionStatus);
+		if (orderList.isEmpty()) {
+			return null;
+		}
 		reportDaySales = new ReportDaySales();
 		ReportSessionSales reportSessionSales = new ReportSessionSales();
 		Map<String, Object> taxPriceSumMap = OrderDetailTaxSQL.getTaxDetail(
@@ -1953,7 +1957,6 @@ public class ReportObjectFactory {
 		BigDecimal totalCard = BH.getBD(ParamConst.DOUBLE_ZERO);
 		int totalCardQty = 0;
 
-		List<Order> orderList = new ArrayList<Order>();
 		List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
 
 		Map<String, String> focBillMap = PaymentSettlementSQL
@@ -2129,13 +2132,9 @@ public class ReportObjectFactory {
 				.get("sumAmount")).toString();
 		String voucherQty = voucherMap.get("count");
 
-		orderList = OrderSQL.getAllOrderByTime(businessDate, sessionStatus);
 		int orderQty = 0;
 		int billNoQty = 0;
 		int personQty = 0;
-		if (orderList.isEmpty()) {
-			return null;
-		}
 		BigDecimal inclusiveTaxAmt = BH.getBD(ParamConst.DOUBLE_ZERO);
 		BigDecimal takeawaySales = BH.getBD(ParamConst.DOUBLE_ZERO);
 		BigDecimal takeawayTax = BH.getBD(ParamConst.DOUBLE_ZERO);

@@ -1,5 +1,6 @@
 package com.alfredposclient.activity.kioskactivity.subpos;
 
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
@@ -23,6 +24,7 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
@@ -180,10 +182,17 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 				case UPDATE_ALL_DATA_FAILURE:
 					dismissLoadingDialog();
 					break;
-//				case GET_ORDER_SUCCESS:
-//					dismissLoadingDialog();
-//					UIHelp.startMainPageKiosk(context);
-//					break;
+				case ResultCode.SESSION_HAS_CHANGE:
+					dismissLoadingDialog();
+					DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), "Session has changed !", new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							loadingDialog.setTitle("update all data");
+							loadingDialog.show();
+							SubPosSyncCentre.getInstance().updaetAllData(context, handler);
+						}
+					});
+					break;
 
 			}
 		}
@@ -261,7 +270,14 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 				Map<String, Object> parameters = new HashMap<>();
 				parameters.put("employeeId", employee_ID);
 				parameters.put("password", password);
-				parameters.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+				if(App.instance.isSUNMIShow()){
+					parameters.put("deviceId", Build.SERIAL);
+				}else {
+					parameters.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+				}
+				if(App.instance.getSessionStatus() != null){
+					parameters.put("sessionStatusTime", App.instance.getSessionStatus().getTime());
+				}
 				loadingDialog.setTitle("Loading");
 				loadingDialog.show();
 				SubPosSyncCentre.getInstance().login(context, parameters, handler);

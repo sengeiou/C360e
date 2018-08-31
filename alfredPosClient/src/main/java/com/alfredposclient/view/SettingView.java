@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -189,22 +188,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 			}
 			case R.id.ll_close_subpos: {
 				if (context instanceof MainPageKiosk) {
-					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
-							new OnClickListener() {
-								@Override
-								public void onClick(View view) {
-									((MainPageKiosk) context).sendXReportToMainPos("0.00");
-								}
-							},
-							new OnClickListener() {
-								@Override
-								public void onClick(View view) {
-									EditText editText = (EditText) view;
-									String actual = editText.getText().toString();
-									((MainPageKiosk) context).sendXReportToMainPos(actual);
-								}
-							});
-
+					((MainPageKiosk) context).tryToCloseSession();
 				}
 				break;
 			}

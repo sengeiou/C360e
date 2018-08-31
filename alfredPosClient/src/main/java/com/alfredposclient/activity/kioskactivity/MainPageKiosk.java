@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -2179,9 +2180,40 @@ public class MainPageKiosk extends BaseActivity {
         }
     }
 
+    public void tryToCloseSession(){
+        boolean canClose;
+        List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+                .getOrderDetails(currentOrder.getId());
+        if (!orderDetailsUnIncludeVoid.isEmpty()){
+            canClose = false;
+        } else {
+            canClose = true;
+        }
+        if(canClose) {
+            DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sendXReportToMainPos("0.00");
+                        }
+                    },
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            EditText editText = (EditText) view;
+                            String actual = editText.getText().toString();
+                            sendXReportToMainPos(actual);
+                        }
+                    });
+        }else{
+            DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.warning),
+                    context.getResources().getString(R.string.bill_not_closed), null);
+        }
+    }
+
 
     // 只在副Pos中调用
-    public void sendXReportToMainPos(final String actualAmount){
+    private void sendXReportToMainPos(final String actualAmount){
         printerLoadingDialog.setTitle("Printing X Report");
         printerLoadingDialog.show();
         new Thread(new Runnable() {
@@ -2190,14 +2222,11 @@ public class MainPageKiosk extends BaseActivity {
             public void run() {
                 SessionStatus sessionStatus = App.instance.getSessionStatus();
                 long businessDate = App.instance.getBusinessDate();
-//                Store.remove(context, Store.SESSION_STATUS);
-//                App.instance.setSessionStatus(null);
                 GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus, App.instance.getBusinessDate());
                 Map<String, Object> map = new HashMap<String, Object>();
                 // day sales report
-                List<Order> orders = OrderSQL.getFinishedOrdersBySession(
-                        sessionStatus, businessDate);
-                if (orders.isEmpty()) {
+                ReportDaySales reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(businessDate, sessionStatus, actualAmount);
+                if (reportDaySales == null) {
                     SubPosBean subPosBean = App.instance.getSubPosBean();
                     SubPosSyncCentre.getInstance().closeSession(context, subPosBean, new CallBack() {
                         @Override
@@ -2211,6 +2240,9 @@ public class MainPageKiosk extends BaseActivity {
                                     dismissLoadingDialog();
                                     Store.remove(context, Store.SESSION_STATUS);
                                     App.instance.setSessionStatus(null);
+                                    if(orderDetails.isEmpty()){
+                                        OrderSQL.deleteOrder(currentOrder);
+                                    }
                                     MainPageKiosk.this.finish();
                                 }
                             });
@@ -2225,7 +2257,6 @@ public class MainPageKiosk extends BaseActivity {
                     });
                     return;
                 }
-                ReportDaySales reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(businessDate, sessionStatus, actualAmount);
                 String reportType = CommonUtil.getReportType(context, sessionStatus.getSession_status());
                 String bizDate = TimeUtil.getPrintingDate(businessDate);
                 ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
@@ -2317,6 +2348,9 @@ public class MainPageKiosk extends BaseActivity {
                                     dismissLoadingDialog();
                                     Store.remove(context, Store.SESSION_STATUS);
                                     App.instance.setSessionStatus(null);
+                                    if(orderDetails.isEmpty()){
+                                        OrderSQL.deleteOrder(currentOrder);
+                                    }
                                     MainPageKiosk.this.finish();
                                 }
                             });

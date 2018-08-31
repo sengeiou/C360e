@@ -137,7 +137,7 @@ public class SubPosSyncCentreCP {
 			@Override
 			public void onSuccess(String body) {
 				if (resultCode == ResultCode.SUCCESS) {
-					SubPosHttpAnalysis.login(body,handler);
+					SubPosHttpAnalysis.login(resultCode, body,handler);
 				} else {
 					elseResultCodeAction(resultCode, body);
 				}

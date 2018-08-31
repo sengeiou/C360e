@@ -777,6 +777,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			String employeeId = jsonObject.optString("employeeId");
 			String password = jsonObject.optString("password");
 			String deviceId = jsonObject.optString("deviceId");
+			long sessionStatusTime = 0l;
+			if(jsonObject.has("sessionStatusTime")){
+				 sessionStatusTime = jsonObject.optLong("sessionStatusTime");
+			}
 			User user = CoreData.getInstance().getUser(employeeId, password);
 			Map<String, Object> result = new HashMap<>();
 			if (user != null) {
@@ -784,7 +788,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					result.put(RESULT_CODE, ResultCode.USER_NO_PERMIT);
 					return this.getJsonResponse(new Gson().toJson(result));
 				}
-				result.put("resultCode", ResultCode.SUCCESS);
 				result.put("user", user);
 				SubPosBean subPosBean = SubPosBeanSQL.getSubPosBeanByDeviceId(deviceId);
 				if(subPosBean == null){
@@ -794,14 +797,21 @@ public class MainPosHttpServer extends AlfredHttpServer {
 					subPosBean.setUserName(user.getFirstName() + user.getLastName());
 					subPosBean.setNumTag(""+ (char) (subPosBean.getId() + 64));
 					subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_OPEN);
+					subPosBean.setSessionStatusTime(App.instance.getSessionStatus().getTime());
 					SubPosBeanSQL.updateSubPosBean(subPosBean);
 				}else{
 					subPosBean.setSubPosStatus(ParamConst.SUB_POS_STATUS_OPEN);
 					subPosBean.setUserName(user.getFirstName() + user.getLastName());
+					subPosBean.setSessionStatusTime(App.instance.getSessionStatus().getTime());
 					SubPosBeanSQL.updateSubPosBean(subPosBean);
 				}
 				result.put("subPosBean", subPosBean);
 				result.put("businessDate", App.instance.getBusinessDate());
+				if(sessionStatusTime != 0l && sessionStatusTime != App.instance.getSessionStatus().getTime()) {
+					result.put("resultCode", ResultCode.SESSION_HAS_CHANGE);
+				}else{
+					result.put("resultCode", ResultCode.SUCCESS);
+				}
 				resp = this.getJsonResponse(gson.toJson(result));
 			} else {
 				result.put("resultCode", ResultCode.USER_NO_PERMIT);

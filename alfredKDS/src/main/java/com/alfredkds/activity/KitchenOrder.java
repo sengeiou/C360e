@@ -429,55 +429,59 @@ public class KitchenOrder extends BaseActivity {
             popItemAdapter.setKot(App.instance.getKot(kotSummary));
             popItemAdapter.notifyDataSetChanged();
         }
-        super.onStart();
+        super.onResume();
     }
 
     private List<KotItem> getKotItem(List<Kot> kotlist) {
         kotItems.clear();
         for (int i = 0; i < kotlist.size(); i++) {
-            List<KotItemDetail> detailList = kotlist.get(i).getKotItemDetails();
-            for (int j = 0; j < detailList.size(); j++) {
-                if (detailList.get(j).getKotStatus() < 3) {
-                    int unFinishQty = detailList.get(j).getUnFinishQty();
-                    KotItem item = new KotItem();
-                    Kot kot = kotlist.get(i);
-                    KotSummary kotSummary = kot.getKotSummary();
+            Kot kot = kotlist.get(i);
+            List<KotItemDetail> detailList = kot.getKotItemDetails();
+            if(detailList != null && detailList.size() > 0) {
+                for (int j = 0; j < detailList.size(); j++) {
                     KotItemDetail kotItemDetail = detailList.get(j);
-                    item.setOrderNo(kotSummary.getOrderNo());
-                    if(TextUtils.isEmpty(kotSummary.getTableName())){
-                        item.setTableName("");
-                    }else {
-                        item.setTableName(kotSummary.getTableName());
-                    }
+                    if (kotItemDetail.getKotStatus() < ParamConst.KOT_STATUS_DONE) {
+                        int unFinishQty = kotItemDetail.getUnFinishQty();
+                        KotItem item = new KotItem();
 
-                    item.setSummaryId(kotSummary.getId());
-                    item.setNumTag(kotSummary.getNumTag());
-                    item.setRevenueCenterIndex(kotSummary.getRevenueCenterIndex());
-                    StringBuffer sBuffer = new StringBuffer();
-                    sBuffer.append("");
-                    item.setKotStatus(kotItemDetail.getKotStatus());
-
-                    if(TextUtils.isEmpty(kotItemDetail.getItemName())){
-                        item.setItemDetailName("");
-                    }else {
-                        item.setItemDetailName(kotItemDetail.getItemName());
-                    }
-
-                    item.setUpdateTime(kotItemDetail.getUpdateTime());
-                    item.setCallType(kotItemDetail.getCallType());
-                    item.setQty(unFinishQty);
-                    item.setItemDetailId(kotItemDetail.getId());
-                    List<KotItemModifier> itemModifierlist = kotlist.get(i).getKotItemModifiers();
-                    for (int s = 0; s < itemModifierlist.size(); s++) {
-                        KotItemModifier kotItemModifier = itemModifierlist.get(s);
-                        if (kotItemModifier != null
-                                && detailList.get(j).getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
-                            sBuffer.append("" + kotItemModifier.getModifierName() + ";");
-
+                        KotSummary kotSummary = kot.getKotSummary();
+                        item.setOrderNo(kotSummary.getOrderNo());
+                        if (TextUtils.isEmpty(kotSummary.getTableName())) {
+                            item.setTableName("");
+                        } else {
+                            item.setTableName(kotSummary.getTableName());
                         }
+
+                        item.setSummaryId(kotSummary.getId());
+                        item.setNumTag(kotSummary.getNumTag());
+                        item.setRevenueCenterIndex(kotSummary.getRevenueCenterIndex());
+                        StringBuffer sBuffer = new StringBuffer();
+                        sBuffer.append("");
+                        item.setKotStatus(kotItemDetail.getKotStatus());
+                        if (TextUtils.isEmpty(kotItemDetail.getItemName())) {
+                            item.setItemDetailName("");
+                        } else {
+                            item.setItemDetailName(kotItemDetail.getItemName());
+                        }
+
+                        item.setUpdateTime(kotItemDetail.getUpdateTime());
+                        item.setCallType(kotItemDetail.getCallType());
+                        item.setQty(unFinishQty);
+                        item.setItemDetailId(kotItemDetail.getId());
+                        List<KotItemModifier> itemModifierlist = kot.getKotItemModifiers();
+                        if (itemModifierlist != null && itemModifierlist.size() > 0) {
+                            for (int s = 0; s < itemModifierlist.size(); s++) {
+                                KotItemModifier kotItemModifier = itemModifierlist.get(s);
+                                if (kotItemModifier != null
+                                        && kotItemDetail.getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+                                    sBuffer.append(kotItemModifier.getModifierName() + ";");
+
+                                }
+                            }
+                        }
+                        item.setItemModName(sBuffer.toString());
+                        kotItems.add(item);
                     }
-                    item.setItemModName(sBuffer.toString());
-                    kotItems.add(item);
                 }
             }
 

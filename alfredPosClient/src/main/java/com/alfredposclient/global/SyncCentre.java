@@ -481,8 +481,10 @@ public class SyncCentre {
 
 	}
 	public void posCloseSession(final Context context) {
-		String url ="http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/"+APIName.POS_CLOSE_SESSION;
-		HttpAPI.posCloseSession(context, url, syncHttpClient);
+		if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
+			String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_CLOSE_SESSION;
+			HttpAPI.posCloseSession(context, url, syncHttpClient);
+		}
 
 	}
 

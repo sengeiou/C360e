@@ -199,6 +199,7 @@ public class ObjectFactory {
 				if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
 					orderModifier.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
 				}
+				orderModifier.setOrderId(subOrder.getId());
 				CPOrderModifierSQL.updateOrderModifier(db,orderModifier);
 			}
 			for (OrderDetailTax orderDetailTax : orderDetailTaxs) {

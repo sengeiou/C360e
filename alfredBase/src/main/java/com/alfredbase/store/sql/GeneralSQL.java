@@ -281,6 +281,112 @@ public class GeneralSQL {
 		}
 
 	}
+
+
+	/**
+	 * 只能SubPos调用 注意
+	 */
+	public static void deleteAllDataInSubPos() {
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		// 删除KotSummary等的信息
+		String deleteKotItemModifier = "delete from " + TableNames.KotItemModifier;
+		String deleteKotItemDetail = "delete  from " + TableNames.KotItemDetail;
+		String deleteKotSummary = "delete from " + TableNames.KotSummary;
+
+		// 删除Report的信息
+		String deleteReportPluDayComboModifier = "delete from "
+				+ TableNames.ReportPluDayComboModifier;
+		String deleteReportPluDayModifier = "delete from "
+				+ TableNames.ReportPluDayModifier;
+		String deleteReportPluDayItem = "delete from "
+				+ TableNames.ReportPluDayItem;
+		String deleteReportHourly = "delete from " + TableNames.ReportHourly;
+		String deleteReportDiscount = "delete from "
+				+ TableNames.ReportDiscount;
+		String deleteReportDayTax = "delete from " + TableNames.ReportDayTax;
+		String deleteReportDaySales = "delete from "
+				+ TableNames.ReportDaySales;
+		String deleteUserTimeSheet = "delete  from " + TableNames.UserTimeSheet;
+
+		// 删除Payment类信息
+		String deleteVoidSettlement = "delete from "
+				+ TableNames.VoidSettlement;
+		String deleteBohHoldSettlement = "delete from "
+				+ TableNames.BohHoldSettlement;
+		String deleteNonChargableSettlement = "delete from "
+				+ TableNames.NonChargableSettlement;
+		String deleteNetsSettlement = "delete from "
+				+ TableNames.NetsSettlement;
+		String deleteCardsSettlement = "delete from "
+				+ TableNames.CardsSettlement;
+		String deletePaymentSettlement = "delete from "
+				+ TableNames.PaymentSettlement;
+		String deletePayment = "delete from " + TableNames.Payment;
+
+		// 删除Order等的信息
+		String deleteOrderDetailTax = "delete from "
+				+ TableNames.OrderDetailTax;
+		String deleteOrderSplits = "delete from " + TableNames.OrderSplit;
+		String deleteRoundAmount = "delete from " + TableNames.RoundAmount;
+		String deleteOrderBill = "delete from " + TableNames.OrderBill;
+		String deleteOrderModifier = "delete from " + TableNames.OrderModifier;
+		String deleteOrderDetail = "delete from " + TableNames.OrderDetail;
+		String deleteOrder = "delete from " + TableNames.Order;
+
+		String deleteMsg = "delete from " + TableNames.SyncMsg;
+
+		try {
+			db.beginTransaction();
+			// 删除KotSummary等的信息
+			db.execSQL(deleteKotItemModifier, new Object[] {  });
+			db.execSQL(deleteKotItemDetail, new Object[] { });
+			db.execSQL(deleteKotSummary, new Object[] { });
+
+			// 删除Report的信息
+			db.execSQL(deleteReportPluDayComboModifier, new Object[] { });
+			db.execSQL(deleteReportPluDayModifier, new Object[] { });
+			db.execSQL(deleteReportPluDayItem, new Object[] {  });
+			db.execSQL(deleteReportHourly, new Object[] { });
+			db.execSQL(deleteReportDiscount, new Object[] { });
+			db.execSQL(deleteReportDayTax, new Object[] { });
+			db.execSQL(deleteReportDaySales, new Object[] { });
+			db.execSQL(deleteUserTimeSheet, new Object[] {});
+
+			// 删除Payment类信息
+			db.execSQL(deleteVoidSettlement, new Object[] { });
+			db.execSQL(deleteBohHoldSettlement, new Object[] { });
+			db.execSQL(deleteNonChargableSettlement, new Object[] { });
+			db.execSQL(deleteNetsSettlement, new Object[] { });
+			db.execSQL(deleteCardsSettlement, new Object[] { });
+			db.execSQL(deletePaymentSettlement, new Object[] {});
+			db.execSQL(deletePayment, new Object[] {});
+
+			// 删除Order等的信息
+			db.execSQL(deleteOrderDetailTax, new Object[] { });
+			db.execSQL(deleteOrderSplits, new Object[] {});
+			db.execSQL(deleteRoundAmount, new Object[] { });
+			db.execSQL(deleteOrderBill, new Object[] {});
+			db.execSQL(deleteOrderModifier, new Object[] { });
+			db.execSQL(deleteOrderDetail, new Object[] { });
+			db.execSQL(deleteOrder, new Object[] { });
+
+			// 删除同步成功的数据
+			db.execSQL(deleteMsg, new Object[] {});
+
+
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+			db.endTransaction();
+		}
+
+	}
 	
 	public static void deleteReportDataByBusinessDate(long businessDate) {
 		// 删除Report的信息

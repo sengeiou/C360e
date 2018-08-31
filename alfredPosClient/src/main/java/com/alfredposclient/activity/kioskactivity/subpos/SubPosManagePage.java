@@ -77,7 +77,7 @@ public class SubPosManagePage extends BaseActivity {
             switch (msg.what){
                 case VerifyDialog.DIALOG_RESPONSE:
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
-                    final SubPosBean subPosBean = (SubPosBean) map.get("object");
+                    final SubPosBean subPosBean = (SubPosBean) map.get("Object");
                     if(subPosBean == null){
                         return;
                     }

@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,9 +42,7 @@ import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
 import com.alfredkds.javabean.Kot;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -253,12 +252,15 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
 		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
 
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		long currentTime = System.currentTimeMillis();
+//		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+//		long currentTime = System.currentTimeMillis();
 		long createTime = kot.getKotSummary().getUpdateTime();
-		final String str = sdf.format(new Date(currentTime - createTime));
-
-		tv_progress.setBase(SystemClock.elapsedRealtime() - System.currentTimeMillis() + createTime);
+//		final String str = sdf.format(new Date(currentTime - createTime));
+        if(App.instance.isSUNMIShow() && Build.SERIAL.toUpperCase().startsWith("D1")){
+            tv_progress.setBase(System.currentTimeMillis() - createTime);
+        }else {
+            tv_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
+        }
 //		int hour = (int) ((System.currentTimeMillis() - createTime) / 1000 / 60/60);
 //		tv_progress.setFormat("0"+String.valueOf(hour)+":%s");
 //		tv_progress.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {

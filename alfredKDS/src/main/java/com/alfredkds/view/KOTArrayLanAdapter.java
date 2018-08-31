@@ -1,6 +1,7 @@
 package com.alfredkds.view;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -117,9 +118,11 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
                 //	holder.status.setText("已删除");
             }
             long createTime = kotItem.getUpdateTime();
-
-            holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - System.currentTimeMillis() + createTime);
-//
+            if(App.instance.isSUNMIShow() && Build.SERIAL.toUpperCase().startsWith("D1")){
+                holder.tv_lan_progress.setBase(System.currentTimeMillis() - createTime);
+            }else {
+                holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
+            }
             holder.qty.setText(kotItem.getQty() + "");
             holder.tv_lan_progress.start();
             if (kotItem.getCallType() == 1) {

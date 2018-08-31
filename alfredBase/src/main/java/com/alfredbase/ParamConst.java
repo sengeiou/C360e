@@ -17,7 +17,7 @@ public class ParamConst {
 	public static final int ITEM_DISCOUNT = 1;
 	public static final int ITEM_NO_DISCOUNT = 0;
 
-	// 订单状态(1打开 从订单生成到打印凭条、10 waiter发送到pos机、11待支付(包括支付部分 未支付完成) 、12已支付、13挂单,14快餐未下单
+	// 订单状态(1打开 从订单生成到打印凭条、10 waiter发送到pos机、11待支付(包括支付部分 未支付完成) 、12已支付、13挂单,14EMenu快餐未下单
 	// 赊账、20拆单、21拆单结算中、30已完成)
 	public static final int ORDER_STATUS_OPEN_IN_WAITER = 1;
 	public static final int ORDER_STATUS_OPEN_IN_POS = 10;
