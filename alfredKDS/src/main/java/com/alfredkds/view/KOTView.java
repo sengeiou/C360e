@@ -5,7 +5,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Paint;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -256,11 +255,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 //		long currentTime = System.currentTimeMillis();
 		long createTime = kot.getKotSummary().getUpdateTime();
 //		final String str = sdf.format(new Date(currentTime - createTime));
-        if(App.instance.isSUNMIShow() && Build.SERIAL.toUpperCase().startsWith("D1")){
-            tv_progress.setBase(System.currentTimeMillis() - createTime);
-        }else {
-            tv_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
-        }
+		tv_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
 //		int hour = (int) ((System.currentTimeMillis() - createTime) / 1000 / 60/60);
 //		tv_progress.setFormat("0"+String.valueOf(hour)+":%s");
 //		tv_progress.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {

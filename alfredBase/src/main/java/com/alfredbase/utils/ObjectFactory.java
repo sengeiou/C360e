@@ -637,6 +637,7 @@ public class ObjectFactory {
 		orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 		orderDetail.setAppOrderDetailId(0);
 		orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
+		OrderDetailSQL.updateOrderDetail(orderDetail);
 		return orderDetail;
 	}
 

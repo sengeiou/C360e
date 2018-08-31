@@ -482,8 +482,8 @@ public class KitchenOrder extends BaseActivity {
 
                                 }
                             }
+                            item.setItemModName(sBuffer.toString());
                         }
-                        item.setItemModName(sBuffer.toString());
                         kotItems.add(item);
                     }
                 }
