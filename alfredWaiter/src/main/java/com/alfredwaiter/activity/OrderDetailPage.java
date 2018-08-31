@@ -179,7 +179,7 @@ public class OrderDetailPage extends BaseActivity {
 				orderDetail = ObjectFactory.getInstance().createOrderDetailForWaiter(
 						order, itemDetail, currentGroupId, App.instance.getUser());
 				orderDetail.setItemNum(count);
-				OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+				OrderDetailSQL.addOrderDetailETCForWaiter(orderDetail);
 			} else {
 				orderDetail.setItemNum(count);
 				OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);

@@ -1,10 +1,7 @@
 package com.alfredwaiter.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,22 +29,19 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
-import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
-import com.alfredwaiter.adapter.MainCategoryAdapter;
 import com.alfredwaiter.adapter.ItemDetailAdapter;
 import com.alfredwaiter.adapter.ItemHeaderDetailDecoration;
+import com.alfredwaiter.adapter.MainCategoryAdapter;
 import com.alfredwaiter.adapter.OrderAdapter;
 import com.alfredwaiter.adapter.RvListener;
 import com.alfredwaiter.global.App;
@@ -56,7 +50,6 @@ import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.javabean.ItemCategoryAndDetails;
 import com.alfredwaiter.javabean.ModifierCPVariance;
 import com.alfredwaiter.javabean.ModifierVariance;
-import com.alfredwaiter.listener.RvItemClickListener;
 import com.alfredwaiter.popupwindow.SearchMenuItemWindow;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
 import com.alfredwaiter.popupwindow.WaiterModifierCPWindow;
@@ -492,7 +485,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                         .createOrderDetailForWaiter(currentOrder, itemDetail,
                                 currentGroupId, App.instance.getUser());
                 orderDetail.setItemNum(count);
-                OrderDetailSQL.addOrderDetailETCForWaiter(orderDetail);
+                OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
             } else {
                 orderDetail.setItemNum(count);
                 orderDetail.setUpdateTime(System.currentTimeMillis());

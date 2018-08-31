@@ -554,7 +554,9 @@ public class MainPage extends BaseActivity {
                 OrderDetailSQL.addOrderDetailETC(newOrderDetail);
                 List<OrderModifier> orderModifiers = OrderModifierSQL
                         .getOrderModifiers(orderDetail);
-                KotItemDetailSQL.updateKotItemDetailId(newOrderDetail.getId().intValue(), orderDetail.getId().intValue(), kotSummary.getId().intValue());
+                if(kotSummary != null) {
+                    KotItemDetailSQL.updateKotItemDetailId(newOrderDetail.getId().intValue(), orderDetail.getId().intValue(), kotSummary.getId().intValue());
+                }
                 if (orderModifiers.isEmpty()) {
                     continue;
                 }
@@ -1499,6 +1501,7 @@ public class MainPage extends BaseActivity {
                                     String kotCommitStatus = ParamConst.JOB_VOID_KOT;
                                     KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
                                             .getOrderId(), "");
+
                                     KotItemDetail kotItemDetail = KotItemDetailSQL
                                             .getMainKotItemDetailByOrderDetailId(kotSummary.getId(), orderDetail
                                                     .getId());
@@ -2057,6 +2060,14 @@ public class MainPage extends BaseActivity {
             return;
         }
         if (!isShowTables) {
+            activityRequestCode = 0;
+            tableShowAction = SHOW_TABLES;
+            if (currentOrder != null) {
+                if (orderDetails != null && orderDetails.size() <= 0) {
+                    KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
+                }
+            }
+            mainPageMenuView.closeModifiers();
             showTables();
             return;
         }

@@ -53,6 +53,21 @@ public class OrderDetailSQL {
 		updateFreeOrderDetail(order, orderDetail);
 		OrderSQL.updateOrder(order);
 	}
+	public static void addOrderDetailETCFromWaiter(OrderDetail orderDetail) {
+		if (orderDetail == null) {
+			return;
+		}
+		Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+		if(order == null)
+			return;
+		if(order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED){
+			return;
+		}
+		calculate(order, orderDetail);
+		add(orderDetail);
+		updateFreeOrderDetail(order, orderDetail);
+		OrderSQL.updateOrder(order);
+	}
 
 	public static void addOrderDetailETCForWaiter(OrderDetail orderDetail) {
 		if (orderDetail == null) {

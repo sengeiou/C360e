@@ -1970,7 +1970,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 						orderDetail
 								.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
 						orderDetail.setId(orderDetailId);
-						OrderDetailSQL.addOrderDetailETC(orderDetail);
+						OrderDetailSQL.addOrderDetailETCFromWaiter(orderDetail);
 						if(orderDetail.getGroupId().intValue() > 0){
 							OrderSplit orderSplit = ObjectFactory.getInstance().getOrderSplit(order, orderDetail.getGroupId(),App.instance.getLocalRestaurantConfig()
 									.getIncludedTax().getTax());
@@ -2017,7 +2017,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 //					.getRoundAmount(order, orderBill, App.instance.getLocalRestaurantConfig().getRoundType());
 //			RoundAmountSQL.update(roundAmount);
 			String kotCommitStatus;
-			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForSubPosCommmitPlace(
+			KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForPlace(
 					TableInfoSQL.getTableById(order.getTableId()).getName(),
 					order, App.instance.getRevenueCenter(), App.instance.getBusinessDate());
 			User user = UserSQL.getUserById(order.getUserId());

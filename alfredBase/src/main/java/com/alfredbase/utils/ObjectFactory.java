@@ -637,7 +637,6 @@ public class ObjectFactory {
 		orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 		orderDetail.setAppOrderDetailId(0);
 		orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
-		OrderDetailSQL.updateOrderDetail(orderDetail);
 		return orderDetail;
 	}
 
@@ -1711,36 +1710,6 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		KotSummary kotSummary = null;
 		synchronized(lock_getKotSummary) {
 			kotSummary =  KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
-			long time = System.currentTimeMillis();
-			if (kotSummary == null) {
-				kotSummary = new KotSummary();
-				kotSummary.setId(CommonSQL.getNextSeq(TableNames.KotSummary));
-				kotSummary.setOrderId(order.getId());
-				kotSummary.setOrderNo(order.getOrderNo());//流水号
-				kotSummary.setRevenueCenterId(revenueCenter.getId());
-				kotSummary.setRevenueCenterName(revenueCenter.getRevName());
-				if(revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
-					kotSummary.setTableName(order.getTableName());
-				}else{
-					kotSummary.setTableName(tableName);
-				}
-				kotSummary.setCreateTime(time);
-				kotSummary.setUpdateTime(time);
-				kotSummary.setBusinessDate(businessDate);
-				kotSummary.setIsTakeAway(order.getIsTakeAway());
-				kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
-				kotSummary.setOrderRemark(order.getOrderRemark());
-				kotSummary.setNumTag(order.getNumTag());
-				KotSummarySQL.update(kotSummary);
-			}
-		}
-		return kotSummary;
-	}
-	public KotSummary getKotSummaryForSubPosCommmitPlace(String tableName, Order order,
-									RevenueCenter revenueCenter, long businessDate) {
-
-		KotSummary kotSummary = null;
-		synchronized(lock_getKotSummary) {
 			long time = System.currentTimeMillis();
 			if (kotSummary == null) {
 				kotSummary = new KotSummary();
