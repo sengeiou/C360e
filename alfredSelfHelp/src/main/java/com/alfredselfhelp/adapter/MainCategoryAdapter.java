@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
 
-    private int checkedPosition;
+    private int checkedPosition=-1;
     private TextTypeFace textTypeFace = TextTypeFace.getInstance();
     private Context mContext;
     int WIDTH;
@@ -25,7 +25,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
     public MainCategoryAdapter(Context context, List<ItemMainCategory> itemMainCategories, RvListener listener) {
         super(context, itemMainCategories, listener);
         this.mContext=context;
-        WIDTH= (int) (ScreenSizeUtil.width-ScreenSizeUtil.dip2px((Activity) context, 80));
+        WIDTH= (int) (ScreenSizeUtil.width-ScreenSizeUtil.dip2px((Activity) context, 120));
     }
 
     @Override
@@ -50,6 +50,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                    WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, 100));
            params.setMargins(5,5,5,5);
+
            tv_text.setLayoutParams(params);
 
         }
