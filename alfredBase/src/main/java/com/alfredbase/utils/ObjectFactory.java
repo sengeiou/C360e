@@ -637,11 +637,8 @@ public class ObjectFactory {
 		orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 		orderDetail.setAppOrderDetailId(0);
 		orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
-		OrderDetailSQL.updateOrderDetail(orderDetail);
 		return orderDetail;
 	}
-
-
 	Object lock_table = new Object();
 
 	public TableInfo addNewTable(String imageName, int restaurantId, int revenueId, int placeId, int width, int height){

@@ -127,7 +127,7 @@ public class WaiterModifierCPWindow {
 
 //                if (checkMap.size() == 0) {
 
-                ModifierCheckSql.deleteModifierCheck(itemDetail.getId(),order.getId());
+                ModifierCheckSql.deleteModifierCheck(orderDetail.getId(),order.getId());
                 Map<String, Object> map = new HashMap<String, Object>();
                 for (ModifierCPVariance modifierVariance : modifierVariances) {
                     if (modifierIds.size() > 0 && !modifierVariance.isTitle()) {

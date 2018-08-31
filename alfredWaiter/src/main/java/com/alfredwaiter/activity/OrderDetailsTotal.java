@@ -351,6 +351,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             oldOrderDetails = OrderDetailSQL.getOrderDetailsUnZero(
                     currentOrder, groupId);
         }
+
         orderDetails.addAll(newOrderDetails);
         orderDetails.addAll(oldOrderDetails);
         adapter.notifyDataSetChanged();
@@ -732,7 +733,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 
                                         final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
                                                 orderDetail.getItemId());
-                                        ModifierCheckSql.deleteModifierCheck(itemDetail.getId(),orderDetail.getOrderId());
+                                        ModifierCheckSql.deleteModifierCheck(orderDetail.getId(),currentOrder.getId());
                                     }
                                     refreshList();
                                 }
