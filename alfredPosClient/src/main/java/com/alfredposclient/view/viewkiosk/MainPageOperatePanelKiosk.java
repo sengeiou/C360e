@@ -318,14 +318,19 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				for (int i = 0; i < allModifierCheck.size(); i++) {
 					ModifierCheck modifierCheck;
 					modifierCheck=allModifierCheck.get(i);
-					if(modifierCheck.getNum()>0) {
+
+					boolean needCheck = false;
+					if (orderDetails != null && orderDetails.size() > 0) {
+						for (OrderDetail orderDetail : orderDetails) {
+							if (orderDetail.getId().intValue() == modifierCheck.getOrderDetailId()) {
+								needCheck = true;
+							}
+						}
+					}
+					if(modifierCheck.getNum()>0&&needCheck) {
 						//  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
 						if(checkMap.containsKey(modifierCheck.getItemName())){
-//                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
-//                                 {
-//                                    categorMap=checkMap.get(modifierCheck.getItemName());
-//                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
-//                                     checkMap.put(modifierCheck.getItemName(),categorMap);
+//
 							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+parent.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+parent.getResources().getString(R.string.items));
 							checkMap.put(modifierCheck.getItemName(),categorMap);
 

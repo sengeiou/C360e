@@ -415,7 +415,15 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 for (int i = 0; i < allModifierCheck.size(); i++) {
                     ModifierCheck modifierCheck;
                     modifierCheck = allModifierCheck.get(i);
-                    if (modifierCheck.getNum() > 0) {
+                    boolean needCheck = false;
+                    if (orderDetails != null && orderDetails.size() > 0) {
+                        for (OrderDetail orderDetail : orderDetails) {
+                                if (orderDetail.getId().intValue() == modifierCheck.getOrderDetailId()) {
+                                needCheck = true;
+                            }
+                        }
+                    }
+                    if (modifierCheck.getNum() > 0&&needCheck) {
                         //  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
                         if (checkMap.containsKey(modifierCheck.getItemName())) {
 //                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
@@ -755,7 +763,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                             modifierIds.add(orderModifier.getModifierId().intValue());
                         }
                         selectedOrderDetail = orderDetail;
-                        modifierWindow.show(itemDetail, modifierIds, currentOrder, orderDetail.getSpecialInstractions() == null ? "" : orderDetail.getSpecialInstractions());
+                        modifierWindow.show(itemDetail, modifierIds, currentOrder, orderDetail.getSpecialInstractions() == null ? "" : orderDetail.getSpecialInstractions(),orderDetail);
                     }
                 }
             });

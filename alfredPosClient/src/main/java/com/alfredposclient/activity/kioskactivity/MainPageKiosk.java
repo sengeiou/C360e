@@ -588,26 +588,6 @@ public class MainPageKiosk extends BaseActivity {
                 // Open settlement window
                 case VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW:
 
-                    List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(currentOrder.getId());
-
-                    Map<Integer,String> categorMap=new HashMap<Integer,String>();
-                    Map<String, Map<Integer,String>> checkMap = new HashMap<String, Map<Integer,String>>();
-                        for (int i = 0; i < allModifierCheck.size(); i++) {
-                            ModifierCheck modifierCheck;
-                            modifierCheck=allModifierCheck.get(i);
-                         if(modifierCheck.getNum()>0) {
-                             if(checkMap.containsKey(modifierCheck.getItemName())){
-                                 categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
-                                 checkMap.put(modifierCheck.getItemName(),categorMap);
-
-                             }else {
-                                 categorMap=new HashMap<Integer,String>();
-                                 categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
-                                 checkMap.put(modifierCheck.getItemName(),categorMap);
-                             }
-                             }
-                        }
-              if(checkMap.size()==0) {
                   if (IntegerUtils.isEmptyOrZero(currentOrder.getAppOrderId())) {
                       currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
                       OrderSQL.update(currentOrder);
@@ -622,26 +602,6 @@ public class MainPageKiosk extends BaseActivity {
                           showCloseBillWindow();
                       }
                   }
-              }else {
-                        StringBuffer checkbuf=new StringBuffer();
-                  Iterator iter = checkMap.entrySet().iterator();
-                  while (iter.hasNext()) {
-                      Map.Entry entry = (Map.Entry) iter.next();
-                      String key = (String) entry.getKey();
-                      checkbuf.append(" "+key+":");
-                     Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
-                      Iterator iter2 = val.entrySet().iterator();
-                      while (iter2.hasNext()) {
-                          Map.Entry entry2 = (Map.Entry) iter2.next();
-                          String val2 = (String) entry2.getValue();
-                          checkbuf.append(val2+" ");
-//                      String val = (String) entry.getValue();
-//                      checkbuf.append("不能少于"+val+"种 .");
-                      }
-                  }
-
-                  UIHelp.showToast(context,checkbuf.toString());
-              }
 
 
                     break;
