@@ -64,6 +64,17 @@ public class OrderDetailSQL {
 		updateFreeOrderDetailForWaiter(order, orderDetail);
 		OrderSQL.updateOrder(order);
 	}
+	public static void addOrderDetailETCForWaiterFirstAdd(OrderDetail orderDetail) {
+		if (orderDetail == null) {
+			return;
+		}
+		Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+		calculate(order, orderDetail);
+		updateOrderDetail(orderDetail);
+		OrderHelper.addDefaultModifiers(order, orderDetail);
+		updateFreeOrderDetailForWaiter(order, orderDetail);
+		OrderSQL.updateOrder(order);
+	}
 
 	/**
 	 * 修改OrderDetail的Discount信息时调用

@@ -20,7 +20,6 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.ObjectFactory;
-import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
@@ -180,8 +179,7 @@ public class OrderDetailPage extends BaseActivity {
 				orderDetail = ObjectFactory.getInstance().createOrderDetailForWaiter(
 						order, itemDetail, currentGroupId, App.instance.getUser());
 				orderDetail.setItemNum(count);
-				OrderHelper.addDefaultModifiers(order, orderDetail);
-				OrderDetailSQL.addOrderDetailETCForWaiter(orderDetail);
+				OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
 			} else {
 				orderDetail.setItemNum(count);
 				OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
