@@ -440,7 +440,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 if(modifier.getMinNumber()>0){
                     List<Integer> modifierIds = OrderModifierSQL.getOrderModifierIdsByOrderDetailId(orderDetail.getId());
 
-                    modifierWindow.show(itemDetail, modifierIds, currentOrder);
+                    modifierWindow.show(itemDetail, modifierIds, currentOrder,orderDetail);
                     return;
                 }
             }
@@ -732,7 +732,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 OrderDetail orderDetail = (OrderDetail) v.getTag();
                 ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId().intValue());
                 List<Integer> modifierIds = OrderModifierSQL.getOrderModifierIdsByOrderDetailId(orderDetail.getId());
-                modifierWindow.show(itemDetail, modifierIds, currentOrder);
+                modifierWindow.show(itemDetail, modifierIds, currentOrder ,orderDetail);
             }
             break;
             default:
