@@ -133,7 +133,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     protected void initView() {
         super.initView();
         setContentView(R.layout.activity_main_page);
-     initTextTypeFace();
+         initTextTypeFace();
         initTitle();
         searchPopUp = new SearchMenuItemWindow(context, handler, findViewById(R.id.rl_root));
 //		modifierWindow = new ModifierWindow(context, handler, findViewById(R.id.rl_root));

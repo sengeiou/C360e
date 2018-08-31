@@ -639,8 +639,6 @@ public class ObjectFactory {
 		orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 		return orderDetail;
 	}
-
-
 	Object lock_table = new Object();
 
 	public TableInfo addNewTable(String imageName, int restaurantId, int revenueId, int placeId, int width, int height){
