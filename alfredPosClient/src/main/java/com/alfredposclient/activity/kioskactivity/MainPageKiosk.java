@@ -596,15 +596,9 @@ public class MainPageKiosk extends BaseActivity {
                             ModifierCheck modifierCheck;
                             modifierCheck=allModifierCheck.get(i);
                          if(modifierCheck.getNum()>0) {
-                               //  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
                              if(checkMap.containsKey(modifierCheck.getItemName())){
-//                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
-//                                 {
-//                                    categorMap=checkMap.get(modifierCheck.getItemName());
-//                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
-//                                     checkMap.put(modifierCheck.getItemName(),categorMap);
-                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
-                                     checkMap.put(modifierCheck.getItemName(),categorMap);
+                                 categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
+                                 checkMap.put(modifierCheck.getItemName(),categorMap);
 
                              }else {
                                  categorMap=new HashMap<Integer,String>();
@@ -2220,6 +2214,20 @@ public class MainPageKiosk extends BaseActivity {
 
             @Override
             public void run() {
+                PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
+                if(cashierPrinter == null){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                                printerLoadingDialog.dismiss();
+                            }
+                            UIHelp.showToast(
+                                    context, context.getResources().getString(R.string.setting_printer));
+                        }
+                    });
+                    return;
+                }
                 SessionStatus sessionStatus = App.instance.getSessionStatus();
                 long businessDate = App.instance.getBusinessDate();
                 GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus, App.instance.getBusinessDate());
@@ -2273,8 +2281,6 @@ public class MainPageKiosk extends BaseActivity {
                                         reportDaySales.getId()),
                                 App.instance.getUser().getFirstName()
                                         + App.instance.getUser().getLastName(), null, bizDate);
-
-                PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
                 // Open Cash drawer
                 App.instance.kickOutCashDrawer(cashierPrinter);

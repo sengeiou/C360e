@@ -461,7 +461,11 @@ public class KitchenOrder extends BaseActivity {
                         if (TextUtils.isEmpty(kotItemDetail.getItemName())) {
                             item.setItemDetailName("");
                         } else {
-                            item.setItemDetailName(kotItemDetail.getItemName());
+                            String itemName = kotItemDetail.getItemName();
+                            if(kotSummary.getIsTakeAway() == ParamConst.TAKE_AWAY || kotItemDetail.getIsTakeAway() == ParamConst.TAKE_AWAY){
+                                itemName = itemName + "(Take Away)";
+                            }
+                            item.setItemDetailName(itemName);
                         }
 
                         item.setUpdateTime(kotItemDetail.getUpdateTime());
