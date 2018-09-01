@@ -1,11 +1,14 @@
 package com.alfredbase.javabean;
 
-public class SubPosBean {
+import java.io.Serializable;
+
+public class SubPosBean implements Serializable {
     private Integer id;
     private String userName;
     private String deviceId;
     private String numTag;
     private int subPosStatus;
+    private long sessionStatusTime;
 
     public int getId() {
         return id;
@@ -48,6 +51,14 @@ public class SubPosBean {
         this.subPosStatus = subPosStatus;
     }
 
+    public long getSessionStatusTime() {
+        return sessionStatusTime;
+    }
+
+    public void setSessionStatusTime(long sessionStatusTime) {
+        this.sessionStatusTime = sessionStatusTime;
+    }
+
     @Override
     public String toString() {
         return "SubPosBean{" +
@@ -56,6 +67,7 @@ public class SubPosBean {
                 ", deviceId='" + deviceId + '\'' +
                 ", numTag='" + numTag + '\'' +
                 ", subPosStatus=" + subPosStatus +
+                ", sessionStatusTime=" + sessionStatusTime +
                 '}';
     }
 

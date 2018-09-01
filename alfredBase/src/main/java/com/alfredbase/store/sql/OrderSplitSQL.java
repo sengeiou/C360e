@@ -8,6 +8,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.Payment;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.OrderHelper;
@@ -627,12 +628,21 @@ public class OrderSplitSQL {
 			e.printStackTrace();
 		}
 	}
-	public static void deleteOrderSplitPaxByOrderId(int orderId){
-		String sql = "delete from " + TableNames.OrderSplit + " where orderId = ? and splitByPax > " + ParamConst.SPLIT_BY_PAX_FALSE;
-		try {
-			SQLExe.getDB().execSQL(sql, new Object[] {orderId});
-		} catch (Exception e) {
-			e.printStackTrace();
+	public static void deleteOrderSplitPaxByOrderId(Order order){
+		List<OrderSplit> orderSplits = getOrderSplits(order);
+		for(OrderSplit orderSplit : orderSplits){
+			OrderBillSQL.getOrderBillByOrderSplit(orderSplit);
+			Payment payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId());
+			if(payment != null) {
+				PaymentSettlementSQL.deleteAllSettlement(payment);
+				PaymentSQL.deletePayment(payment);
+			}
+			String sql = "delete from " + TableNames.OrderSplit + " where id = ? and splitByPax > " + ParamConst.SPLIT_BY_PAX_FALSE;
+			try {
+				SQLExe.getDB().execSQL(sql, new Object[] {orderSplit.getId()});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

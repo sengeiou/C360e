@@ -117,9 +117,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
                 //	holder.status.setText("已删除");
             }
             long createTime = kotItem.getUpdateTime();
-
-            holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - System.currentTimeMillis() + createTime);
-//
+            holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
             holder.qty.setText(kotItem.getQty() + "");
             holder.tv_lan_progress.start();
             if (kotItem.getCallType() == 1) {

@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -587,32 +588,6 @@ public class MainPageKiosk extends BaseActivity {
                 // Open settlement window
                 case VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW:
 
-                    List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(currentOrder.getId());
-
-                    Map<Integer,String> categorMap=new HashMap<Integer,String>();
-                    Map<String, Map<Integer,String>> checkMap = new HashMap<String, Map<Integer,String>>();
-                        for (int i = 0; i < allModifierCheck.size(); i++) {
-                            ModifierCheck modifierCheck;
-                            modifierCheck=allModifierCheck.get(i);
-                         if(modifierCheck.getNum()>0) {
-                               //  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
-                             if(checkMap.containsKey(modifierCheck.getItemName())){
-//                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
-//                                 {
-//                                    categorMap=checkMap.get(modifierCheck.getItemName());
-//                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
-//                                     checkMap.put(modifierCheck.getItemName(),categorMap);
-                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
-                                     checkMap.put(modifierCheck.getItemName(),categorMap);
-
-                             }else {
-                                 categorMap=new HashMap<Integer,String>();
-                                 categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
-                                 checkMap.put(modifierCheck.getItemName(),categorMap);
-                             }
-                             }
-                        }
-              if(checkMap.size()==0) {
                   if (IntegerUtils.isEmptyOrZero(currentOrder.getAppOrderId())) {
                       currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
                       OrderSQL.update(currentOrder);
@@ -627,26 +602,6 @@ public class MainPageKiosk extends BaseActivity {
                           showCloseBillWindow();
                       }
                   }
-              }else {
-                        StringBuffer checkbuf=new StringBuffer();
-                  Iterator iter = checkMap.entrySet().iterator();
-                  while (iter.hasNext()) {
-                      Map.Entry entry = (Map.Entry) iter.next();
-                      String key = (String) entry.getKey();
-                      checkbuf.append(" "+key+":");
-                     Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
-                      Iterator iter2 = val.entrySet().iterator();
-                      while (iter2.hasNext()) {
-                          Map.Entry entry2 = (Map.Entry) iter2.next();
-                          String val2 = (String) entry2.getValue();
-                          checkbuf.append(val2+" ");
-//                      String val = (String) entry.getValue();
-//                      checkbuf.append("不能少于"+val+"种 .");
-                      }
-                  }
-
-                  UIHelp.showToast(context,checkbuf.toString());
-              }
 
 
                     break;
@@ -2179,25 +2134,67 @@ public class MainPageKiosk extends BaseActivity {
         }
     }
 
+    public void tryToCloseSession(){
+        boolean canClose;
+        List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+                .getOrderDetails(currentOrder.getId());
+        if (!orderDetailsUnIncludeVoid.isEmpty()){
+            canClose = false;
+        } else {
+            canClose = true;
+        }
+        if(canClose) {
+            DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sendXReportToMainPos("0.00");
+                        }
+                    },
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            EditText editText = (EditText) view;
+                            String actual = editText.getText().toString();
+                            sendXReportToMainPos(actual);
+                        }
+                    });
+        }else{
+            DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.warning),
+                    context.getResources().getString(R.string.bill_not_closed), null);
+        }
+    }
+
 
     // 只在副Pos中调用
-    public void sendXReportToMainPos(final String actualAmount){
+    private void sendXReportToMainPos(final String actualAmount){
         printerLoadingDialog.setTitle("Printing X Report");
         printerLoadingDialog.show();
         new Thread(new Runnable() {
 
             @Override
             public void run() {
+                PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
+                if(cashierPrinter == null){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                                printerLoadingDialog.dismiss();
+                            }
+                            UIHelp.showToast(
+                                    context, context.getResources().getString(R.string.setting_printer));
+                        }
+                    });
+                    return;
+                }
                 SessionStatus sessionStatus = App.instance.getSessionStatus();
                 long businessDate = App.instance.getBusinessDate();
-//                Store.remove(context, Store.SESSION_STATUS);
-//                App.instance.setSessionStatus(null);
                 GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus, App.instance.getBusinessDate());
                 Map<String, Object> map = new HashMap<String, Object>();
                 // day sales report
-                List<Order> orders = OrderSQL.getFinishedOrdersBySession(
-                        sessionStatus, businessDate);
-                if (orders.isEmpty()) {
+                ReportDaySales reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(businessDate, sessionStatus, actualAmount);
+                if (reportDaySales == null) {
                     SubPosBean subPosBean = App.instance.getSubPosBean();
                     SubPosSyncCentre.getInstance().closeSession(context, subPosBean, new CallBack() {
                         @Override
@@ -2211,6 +2208,9 @@ public class MainPageKiosk extends BaseActivity {
                                     dismissLoadingDialog();
                                     Store.remove(context, Store.SESSION_STATUS);
                                     App.instance.setSessionStatus(null);
+                                    if(orderDetails.isEmpty()){
+                                        OrderSQL.deleteOrder(currentOrder);
+                                    }
                                     MainPageKiosk.this.finish();
                                 }
                             });
@@ -2225,7 +2225,6 @@ public class MainPageKiosk extends BaseActivity {
                     });
                     return;
                 }
-                ReportDaySales reportDaySales = ReportObjectFactory.getInstance().loadXReportDaySales(businessDate, sessionStatus, actualAmount);
                 String reportType = CommonUtil.getReportType(context, sessionStatus.getSession_status());
                 String bizDate = TimeUtil.getPrintingDate(businessDate);
                 ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
@@ -2242,8 +2241,6 @@ public class MainPageKiosk extends BaseActivity {
                                         reportDaySales.getId()),
                                 App.instance.getUser().getFirstName()
                                         + App.instance.getUser().getLastName(), null, bizDate);
-
-                PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
                 // Open Cash drawer
                 App.instance.kickOutCashDrawer(cashierPrinter);
@@ -2317,6 +2314,9 @@ public class MainPageKiosk extends BaseActivity {
                                     dismissLoadingDialog();
                                     Store.remove(context, Store.SESSION_STATUS);
                                     App.instance.setSessionStatus(null);
+                                    if(orderDetails.isEmpty()){
+                                        OrderSQL.deleteOrder(currentOrder);
+                                    }
                                     MainPageKiosk.this.finish();
                                 }
                             });

@@ -36,6 +36,7 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
@@ -77,7 +78,7 @@ import java.util.List;
 
 public class SubPosHttpAnalysis {
 	public static final String TAG = SubPosHttpAnalysis.class.getSimpleName();
-	public static void login(String responseBody, Handler handler) {
+	public static void login(int resultCode, String responseBody, Handler handler) {
 		Gson gson = new Gson();
 		try {
 			JSONObject object = new JSONObject(responseBody);
@@ -93,8 +94,11 @@ public class SubPosHttpAnalysis {
 			if(subPosBean != null) {
 				SubPosBeanSQL.updateSubPosBean(subPosBean);
 			}
+			if(resultCode == ResultCode.SESSION_HAS_CHANGE){
+				GeneralSQL.deleteAllDataInSubPos();
+			}
 			App.instance.setSubPosBean(subPosBean);
-			handler.sendEmptyMessage(ResultCode.SUCCESS);
+			handler.sendEmptyMessage(resultCode);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -109,6 +113,7 @@ public class SubPosHttpAnalysis {
 			if(users != null && users.size() > 0){
 				UserSQL.deleteAllUser();
 				UserSQL.addUsers(users);
+				CoreData.getInstance().setUsers(users);
 			}
 			final Restaurant restaurant = gson.fromJson(object.getString("restaurant"),
 					Restaurant.class);
@@ -278,6 +283,7 @@ public class SubPosHttpAnalysis {
 				RestaurantConfigSQL.deleteAllRestaurantConfig();
 				RestaurantConfigSQL.addRestaurantConfigs(restaurantConfigs);
 				CoreData.getInstance().setRestaurantConfigs(restaurantConfigs);
+                App.instance.setLocalRestaurantConfig(restaurantConfigs);
 			}
 			List<PrinterGroup> printerGroups = gson.fromJson(object.getString("printerGroups"),
 					new TypeToken<ArrayList<PrinterGroup>>() {

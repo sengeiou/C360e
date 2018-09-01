@@ -745,6 +745,18 @@ public class EditSettlementPage extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if(closeOrderWindow != null && closeOrderWindow.isShowing()){
+            closeOrderWindow.backLikeClose();
+            return;
+        }else if(closeOrderSplitWindow != null && closeOrderSplitWindow.isShowing()){
+            closeOrderSplitWindow.backLikeClose();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MainPage.CHECK_REQUEST_CODE){
             if(resultCode == RESULT_OK){

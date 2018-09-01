@@ -199,6 +199,7 @@ public class ObjectFactory {
 				if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
 					orderModifier.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
 				}
+				orderModifier.setOrderId(subOrder.getId());
 				CPOrderModifierSQL.updateOrderModifier(db,orderModifier);
 			}
 			for (OrderDetailTax orderDetailTax : orderDetailTaxs) {
@@ -638,8 +639,6 @@ public class ObjectFactory {
 		orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 		return orderDetail;
 	}
-
-
 	Object lock_table = new Object();
 
 	public TableInfo addNewTable(String imageName, int restaurantId, int revenueId, int placeId, int width, int height){
@@ -1709,36 +1708,6 @@ public OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit, RevenueCenter r
 		KotSummary kotSummary = null;
 		synchronized(lock_getKotSummary) {
 			kotSummary =  KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
-			long time = System.currentTimeMillis();
-			if (kotSummary == null) {
-				kotSummary = new KotSummary();
-				kotSummary.setId(CommonSQL.getNextSeq(TableNames.KotSummary));
-				kotSummary.setOrderId(order.getId());
-				kotSummary.setOrderNo(order.getOrderNo());//流水号
-				kotSummary.setRevenueCenterId(revenueCenter.getId());
-				kotSummary.setRevenueCenterName(revenueCenter.getRevName());
-				if(revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK){
-					kotSummary.setTableName(order.getTableName());
-				}else{
-					kotSummary.setTableName(tableName);
-				}
-				kotSummary.setCreateTime(time);
-				kotSummary.setUpdateTime(time);
-				kotSummary.setBusinessDate(businessDate);
-				kotSummary.setIsTakeAway(order.getIsTakeAway());
-				kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
-				kotSummary.setOrderRemark(order.getOrderRemark());
-				kotSummary.setNumTag(order.getNumTag());
-				KotSummarySQL.update(kotSummary);
-			}
-		}
-		return kotSummary;
-	}
-	public KotSummary getKotSummaryForSubPosCommmitPlace(String tableName, Order order,
-									RevenueCenter revenueCenter, long businessDate) {
-
-		KotSummary kotSummary = null;
-		synchronized(lock_getKotSummary) {
 			long time = System.currentTimeMillis();
 			if (kotSummary == null) {
 				kotSummary = new KotSummary();

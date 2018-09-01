@@ -134,7 +134,7 @@ public class SelectOrderSplitDialog extends Dialog {
 	@Override
 	public void onBackPressed() {
 		if(canDelete){
-			OrderSplitSQL.deleteOrderSplitByOrderId(order.getId().intValue());
+			OrderSplitSQL.deleteOrderSplitPaxByOrderId(order);
 			DialogFactory.showOneButtonCompelDialog(context, "Warning", "The splits will been deleted", new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {

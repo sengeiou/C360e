@@ -34,7 +34,6 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -48,7 +47,6 @@ import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
-import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ColorUtils;
@@ -138,7 +136,6 @@ public class MainPageOrderView extends LinearLayout {
 					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
 					return;
 				}
-			//	ModifierCheckSql.deleteAllModifierCheck();
 				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
 
 				Map<Integer,String> categorMap=new HashMap<Integer,String>();
@@ -146,50 +143,46 @@ public class MainPageOrderView extends LinearLayout {
 				for (int i = 0; i < allModifierCheck.size(); i++) {
 					ModifierCheck modifierCheck;
 					modifierCheck=allModifierCheck.get(i);
-					if(modifierCheck.getNum()>0) {
-						//  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
+					boolean needCheck = false;
+					if(orderDetails != null && orderDetails.size() > 0){
+						for(OrderDetail orderDetail : orderDetails){
+							if(orderDetail.getId().intValue() == modifierCheck.getOrderDetailId()){
+								needCheck = true;
+							}
+						}
+					}
+					if(modifierCheck.getNum()>0 && needCheck) {
 						if(checkMap.containsKey(modifierCheck.getItemName())){
-//                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
-//                                 {
-//                                    categorMap=checkMap.get(modifierCheck.getItemName());
-//                                     categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
-//                                     checkMap.put(modifierCheck.getItemName(),categorMap);
 							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
-
-						//	categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
 							checkMap.put(modifierCheck.getItemName(),categorMap);
 
 						}else {
 							categorMap=new HashMap<Integer,String>();
 							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
-
-							//categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" 不能少于"+modifierCheck.getMinNum()+"种");
 							checkMap.put(modifierCheck.getItemName(),categorMap);
 						}
 					}
 				}
 
 
-			if(checkMap.size()>0){
-					StringBuffer checkbuf=new StringBuffer();
-					Iterator iter = checkMap.entrySet().iterator();
-					while (iter.hasNext()) {
-						Map.Entry entry = (Map.Entry) iter.next();
-						String key = (String) entry.getKey();
-						checkbuf.append(" "+key+":");
-						Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
-						Iterator iter2 = val.entrySet().iterator();
-						while (iter2.hasNext()) {
-							Map.Entry entry2 = (Map.Entry) iter2.next();
-							String val2 = (String) entry2.getValue();
-							checkbuf.append(val2+" ");
-//                      String val = (String) entry.getValue();
-//                      checkbuf.append("不能少于"+val+"种 .");
-						}
+			if(checkMap.size()>0) {
+				StringBuffer checkbuf = new StringBuffer();
+				Iterator iter = checkMap.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					String key = (String) entry.getKey();
+					checkbuf.append(" " + key + ":");
+					Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
+					Iterator iter2 = val.entrySet().iterator();
+					while (iter2.hasNext()) {
+						Map.Entry entry2 = (Map.Entry) iter2.next();
+						String val2 = (String) entry2.getValue();
+						checkbuf.append(val2 + " ");
 					}
+				}
 
-					UIHelp.showToast((BaseActivity) context,checkbuf.toString());
-				}else {
+				UIHelp.showToast((BaseActivity) context, checkbuf.toString());
+			}else {
 
 				//DON'T use reference 
 				Order placedOrder = OrderSQL.getOrder(order.getId());

@@ -26,13 +26,14 @@ private int id;
         try {
             String sql = "replace into "
                     + TableNames.SubPosBean
-                    + "(id, userName, deviceId, numTag, subPosStatus)"
-                    + " values (?,?,?,?,?)";
+                    + "(id, userName, deviceId, numTag, subPosStatus, sessionStatusTime)"
+                    + " values (?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[] { subPosBean.getId(),
                             subPosBean.getUserName(), subPosBean.getDeviceId(),
-                            subPosBean.getNumTag(), subPosBean.getSubPosStatus()
+                            subPosBean.getNumTag(), subPosBean.getSubPosStatus(),
+                            subPosBean.getSessionStatusTime()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,6 +61,7 @@ private int id;
                 subPosBean.setDeviceId(cursor.getString(2));
                 subPosBean.setNumTag(cursor.getString(3));
                 subPosBean.setSubPosStatus(cursor.getInt(4));
+                subPosBean.setSessionStatusTime(cursor.getLong(5));
                 result.add(subPosBean);
             }
         } catch (Exception e) {
@@ -92,6 +94,7 @@ private int id;
                 subPosBean.setDeviceId(cursor.getString(2));
                 subPosBean.setNumTag(cursor.getString(3));
                 subPosBean.setSubPosStatus(cursor.getInt(4));
+                subPosBean.setSessionStatusTime(cursor.getLong(5));
                 result.add(subPosBean);
             }
         } catch (Exception e) {
@@ -122,6 +125,7 @@ private int id;
                 subPosBean.setDeviceId(cursor.getString(2));
                 subPosBean.setNumTag(cursor.getString(3));
                 subPosBean.setSubPosStatus(cursor.getInt(4));
+                subPosBean.setSessionStatusTime(cursor.getLong(5));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,6 +155,7 @@ private int id;
                 subPosBean.setDeviceId(cursor.getString(2));
                 subPosBean.setNumTag(cursor.getString(3));
                 subPosBean.setSubPosStatus(cursor.getInt(4));
+                subPosBean.setSessionStatusTime(cursor.getLong(5));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -181,6 +186,7 @@ private int id;
                 subPosBean.setDeviceId(cursor.getString(2));
                 subPosBean.setNumTag(cursor.getString(3));
                 subPosBean.setSubPosStatus(cursor.getInt(4));
+                subPosBean.setSessionStatusTime(cursor.getLong(5));
             }
         } catch (Exception e) {
             e.printStackTrace();

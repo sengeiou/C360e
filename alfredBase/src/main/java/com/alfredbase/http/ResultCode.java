@@ -203,6 +203,8 @@ public class ResultCode {
 
 	public static final int IS_NOT_KIOSK = -989;
 
+	public static final int SESSION_HAS_CHANGE = -988;
+
 	/**
 	 * waiter提交的拆单在POS机上已经结账的返回
 	 */

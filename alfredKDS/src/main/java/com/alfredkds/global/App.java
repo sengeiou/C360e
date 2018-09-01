@@ -1,5 +1,6 @@
 package com.alfredkds.global;
 
+import android.os.Build;
 import android.os.Handler;
 
 import com.alfredbase.BaseActivity;
@@ -255,7 +256,7 @@ public class App extends BaseApplication {
 		List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
 		for (int i = 0; i < kotSummaries.size(); i++) {
 			kot = new Kot();
-			kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummaries.get(i).getId(),
+			kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(kotSummaries.get(i).getId(),
 																					 kotSummaries.get(i).getOrderId());
 			for (int j = 0; j < kotItemDetails.size(); j++) {
 				if(kotSummaries.get(i).getStatus() == ParamConst.KOTS_STATUS_UNDONE) {
@@ -448,5 +449,19 @@ public class App extends BaseApplication {
 		} else {
 			UIHelp.showToast(context, context.getResources().getString(R.string.reconn_pos));
 		}
+	}
+
+	/**
+	 * 判断是否使用的是商米设备  商米副屏设置是否展示
+	 */
+	public boolean isSUNMIShow() {
+		String brand = Build.BRAND;
+		String model = Build.MODEL;
+		String manufacturer = Build.MANUFACTURER;
+		LogUtil.d(TAG, brand + "**************" + model);
+		if ("SUNMI".equals(brand.toUpperCase())) {
+			return true;
+		}
+		return false;
 	}
 }

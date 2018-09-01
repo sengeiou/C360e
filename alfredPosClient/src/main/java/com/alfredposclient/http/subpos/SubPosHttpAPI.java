@@ -79,8 +79,9 @@ public class SubPosHttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             String body = new String(responseBody);
-                            if (resultCode == ResultCode.SUCCESS) {
-                                SubPosHttpAnalysis.login(body, handler);
+                            if (resultCode == ResultCode.SUCCESS
+                                    || resultCode == ResultCode.SESSION_HAS_CHANGE) {
+                                SubPosHttpAnalysis.login(resultCode, body, handler);
                             } else {
                                 elseResultCodeAction(resultCode, body);
                             }

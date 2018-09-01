@@ -1231,7 +1231,7 @@ public class DataHelper {
              */
             db.execSQL("CREATE TABLE "
                     + TableNames.SubPosBean
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT, deviceId TEXT, numTag TEXT, subPosStatus INTEGER)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT, deviceId TEXT, numTag TEXT, subPosStatus INTEGER, sessionStatusTime LONG)");
             /**
              * private int id;
              private int mainOrderId;

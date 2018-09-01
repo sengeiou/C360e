@@ -20,6 +20,7 @@ import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
@@ -67,6 +68,8 @@ public class WaiterModifierCPWindow {
     private List<Modifier> modifierTitels = new ArrayList<Modifier>();
     Map<Integer, Integer> seletMap;
     private Order order = new Order();
+
+    OrderDetail orderDetail=new OrderDetail();
 
     public WaiterModifierCPWindow(BaseActivity context, Handler handler, View parentView) {
         this.context = context;
@@ -124,7 +127,7 @@ public class WaiterModifierCPWindow {
 
 //                if (checkMap.size() == 0) {
 
-                ModifierCheckSql.deleteModifierCheck(itemDetail.getId(),order.getId());
+                ModifierCheckSql.deleteModifierCheck(orderDetail.getId(),order.getId());
                 Map<String, Object> map = new HashMap<String, Object>();
                 for (ModifierCPVariance modifierVariance : modifierVariances) {
                     if (modifierIds.size() > 0 && !modifierVariance.isTitle()) {
@@ -175,7 +178,7 @@ public class WaiterModifierCPWindow {
                 ModifierCheck modifierCheck = null;
                 modifierCheck = new ModifierCheck();
                 modifierCheck.setId(CommonSQL.getNextSeq(TableNames.ModifierCheck));
-                modifierCheck.setOrderDetailId(itemDetail.getId());
+                modifierCheck.setOrderDetailId(orderDetail.getId());
                 modifierCheck.setOrderId(order.getId());
                 modifierCheck.setModifierCategoryId(modifierTitle.getId());
                 modifierCheck.setItemName(itemDetail.getItemName());
@@ -189,13 +192,14 @@ public class WaiterModifierCPWindow {
     }
     }
 
-    public void show(ItemDetail itemDetail, List<Integer> modifierIds, Order corder) {
-        show(itemDetail, modifierIds, corder, "");
+    public void show(ItemDetail itemDetail, List<Integer> modifierIds, Order corder, OrderDetail orderDetail) {
+        show(itemDetail, modifierIds, corder, "",orderDetail);
     }
 
-    public void show(final ItemDetail itemDetail, List<Integer> modifierIdList, Order order, String description) {
+    public void show(final ItemDetail itemDetail, List<Integer> modifierIdList, Order order, String description,OrderDetail orderDetail) {
         if (itemDetail == null)
             return;
+        this.orderDetail=orderDetail;
         this.order = order;
         this.itemDetail = itemDetail;
         if (!popupWindow.isShowing()) {

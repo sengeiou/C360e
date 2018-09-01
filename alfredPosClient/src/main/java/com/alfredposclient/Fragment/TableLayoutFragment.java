@@ -422,7 +422,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         if(mainPage instanceof MainPage) {
                             Order order = OrderSQL.getUnfinishedOrderAtTable(newTable.getPosId(), App.instance.getBusinessDate());
                             if(order != null && order.getId() != null){
-                                OrderSplitSQL.deleteOrderSplitPaxByOrderId(order.getId().intValue());
+                                OrderSplitSQL.deleteOrderSplitPaxByOrderId(order);
                             }
                             ((MainPage) mainPage).tableAction(newTable);
                         } else {
