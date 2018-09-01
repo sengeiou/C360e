@@ -6,40 +6,86 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activity.MenuActivity">
-    <android.support.v7.widget.RecyclerView
 
-        android:id="@+id/re_main_category"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:layout_marginTop="120dp"
-        ></android.support.v7.widget.RecyclerView>
+        android:orientation="horizontal">
+
+        <LinearLayout
+
+            android:id="@+id/ll_grab"
+            android:layout_width="230dp"
+            android:layout_height="100sp"
+            android:background="@drawable/main_btn_b"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Grab &amp; Go"
+                android:textColor="@color/white"
+                android:textSize="21sp"
+                android:visibility="visible"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:text="Place on Sensor"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+
+                />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/re_main_category"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"></android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
 
     <LinearLayout
-        android:layout_marginTop="70dp"
+
+        android:id="@+id/ll_video"
         android:layout_width="match_parent"
         android:layout_height="600dp"
+        android:layout_marginTop="70dp"
         android:background="@color/white"
-        >
+        android:visibility="gone">
 
-<ImageView
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="40dp"
-    android:layout_marginRight="40dp"
-    android:src="@drawable/video_bg"
-    />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:src="@drawable/video_bg"
+
+            />
 
     </LinearLayout>
 
 
     <LinearLayout
+        android:id="@+id/ll_menu_details"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="600dp"
+        android:layout_marginTop="70dp"
         android:orientation="horizontal"
-        >
+        android:visibility="gone">
+
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/re_menu_classify"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
@@ -47,6 +93,7 @@
         </android.support.v7.widget.RecyclerView>
 
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/re_menu_details"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
@@ -54,5 +101,38 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_view_card"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="280dp"
+        android:layout_marginRight="280dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/btn_view_card"
+        android:gravity="center">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Cart"
+            android:textColor="@color/white" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/view_card" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+
+                />
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>
