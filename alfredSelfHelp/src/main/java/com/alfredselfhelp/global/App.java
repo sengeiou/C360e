@@ -1,7 +1,5 @@
 package com.alfredselfhelp.global;
 
-import android.text.TextUtils;
-
 import com.alfredbase.BaseApplication;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.User;
@@ -9,8 +7,10 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.CallBack;
 import com.alfredbase.utils.LogUtil;
 import com.alfredselfhelp.utils.TvPref;
+import com.alfredselfhelp.utils.UIHelp;
 import com.nordicid.nurapi.NurApi;
 import com.nordicid.nurapi.NurApiListener;
 import com.nordicid.nurapi.NurEventClientInfo;
@@ -22,6 +22,8 @@ import com.nordicid.nurapi.NurEventNxpAlarm;
 import com.nordicid.nurapi.NurEventProgrammingProgress;
 import com.nordicid.nurapi.NurEventTraceTag;
 import com.nordicid.nurapi.NurEventTriggeredRead;
+import com.nordicid.nurapi.NurTag;
+import com.nordicid.nurapi.NurTagStorage;
 
 
 public class App extends BaseApplication {
@@ -223,5 +225,62 @@ public class App extends BaseApplication {
 
     public void setMainPageType(int mainPageType) {
         this.mainPageType = mainPageType;
+    }
+
+    private void enableItems(boolean isConnected){
+        if(isConnected){
+            UIHelp.showToast(this, "RFID scanner is Connected");
+            try {
+                nurApi.setSetupOpFlags(NurApi.OPFLAGS_INVSTREAM_ZEROS);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            UIHelp.showToast(this, "RFID scanner is Disconnected");
+        }
+
+    }
+
+    public void startRFIDScan(){
+        if(nurApi != null && nurApi.isConnected() && !nurApi.isInventoryStreamRunning()){
+            try {
+                nurApi.startInventoryStream();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void stopRFIDScan(){
+        if(nurApi != null && nurApi.isConnected() && nurApi.isInventoryStreamRunning()){
+            try {
+                nurApi.stopInventoryStream();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void inventory(CallBack callBack){
+        synchronized (nurApi.getStorage()){
+            NurTagStorage tagStorage = nurApi.getStorage();
+            boolean tagAdded = false;
+            for (int n = 0; n < tagStorage.size(); n++){
+                NurTag tag = tagStorage.get(n);
+
+            }
+        }
+    }
+
+    @Override
+    public void onTerminate() {
+        if(nurApi != null && nurApi.isInventoryStreamRunning()){
+            try {
+                nurApi.stopInventoryStream();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        super.onTerminate();
     }
 }
