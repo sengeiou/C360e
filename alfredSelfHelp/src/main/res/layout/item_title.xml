@@ -6,6 +6,7 @@
     android:background="#f3f3f3"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:visibility="gone"
 
     >
 
@@ -16,7 +17,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
 
-        android:text=""
+        android:text="ssssssss"
         android:textColor="@android:color/black" />
 
     <ImageView

@@ -626,12 +626,15 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             detail.setTag(String.valueOf(i));
             detail.setViewType(1);
             itemDetailandCate.add(detail);
+
             for (int j = 0; j < itemCategorylist.size(); j++) {
                 int id, cid;
 
                 id = itemMainCategorielist.get(i).getId();
                 cid = itemCategorylist.get(j).getItemMainCategoryId();
                 if (id == cid) {
+
+
                     ItemDetail itemCateDetail = new ItemDetail();
                     itemCateDetail.setItemCategoryName(itemMainCategorielist.get(i).getMainCategoryName());
                     // detail.setId(list.get(j).getId());

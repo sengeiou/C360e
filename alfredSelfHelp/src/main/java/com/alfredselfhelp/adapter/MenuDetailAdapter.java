@@ -6,8 +6,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.utils.BH;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.activity.MenuActivity;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -21,12 +24,12 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     @Override
     protected int getLayoutId(int viewType) {
-        return viewType == 0 ? R.layout.item_title : R.layout.item_menu_detail;
+        return viewType == 1 ? R.layout.item_title : R.layout.item_menu_detail;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return  1;
+        return  3;
     }
 
     @Override
@@ -35,35 +38,37 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
     }
 
     public class DetailHolder extends RvHolder<ItemDetail> {
-        TextView tvCity;
-        ImageView avatar;
-        TextView tvTitle;
+        TextView tvPrice;
+        ImageView img;
+        TextView tvName;
 
         public DetailHolder(View itemView, int type, RvListener listener) {
             super(itemView, type, listener);
-            switch (type) {
-                case 0:
-                    tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
-                    break;
-                case 1:
-                    tvCity = (TextView) itemView.findViewById(R.id.tvCity);
-                    avatar = (ImageView) itemView.findViewById(R.id.ivAvatar);
-                    break;
-            }
+
+
+                   tvName = (TextView) itemView.findViewById(R.id.tv_modifier_name);
+                   img=(ImageView)itemView.findViewById(R.id.img_modifier);
+                    tvPrice=(TextView)itemView.findViewById(R.id.tv_modifier_price);
+
+
+
 
         }
 
         @Override
-        public void bindHolder(ItemDetail temDetail, int position) {
+        public void bindHolder(ItemDetail itemDetail, int position) {
             int itemViewType = MenuDetailAdapter.this.getItemViewType(position);
-            switch (itemViewType) {
-                case 0:
-                  //  tvTitle.setText(sortBean.getName());
-                    break;
-                case 1:
-                 //   tvCity.setText(sortBean.getName());
-                    break;
-            }
+
+            tvName.setText(itemDetail.getItemName());
+            Glide.with(mContext)
+                    .load(itemDetail.getImgUrl())
+                    .placeholder(R.drawable.logo_icon)
+                    .error(R.drawable.logo_icon)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(img);
+
+            tvPrice.setText("S$"+ BH.getBD(itemDetail.getPrice()).toString());
+//
 
         }
     }
