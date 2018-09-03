@@ -45,6 +45,8 @@ public class SyncCentre {
 			Handler handler){
 		HttpAPI.employeeId(context, parameters,
 				getAbsolutePOSUrlByIp(ip, APIName.KPM_EMPLOYEE_ID), httpClient, handler);
+
+
 	}
 
 	public void login(Context context, Map<String, Object> parameters,
@@ -80,6 +82,9 @@ public class SyncCentre {
 		HttpAPI.getHappyHour(context,
 				getAbsolutePOSUrlByIp(ip, APIName.HAPPYHOUR_GETHAPPYHOUR), parameters,
 				httpClient, handler);
+
+		HttpAPI.getItem(context, getAbsolutePOSUrlByIp(ip, APIName.ITEM_GETITEM),
+				parameters, httpClient);
 	}
 	
 	public void pairingComplete(Context context, String ip,

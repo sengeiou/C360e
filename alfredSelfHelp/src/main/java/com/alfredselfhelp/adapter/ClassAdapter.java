@@ -1,16 +1,18 @@
 package com.alfredselfhelp.adapter;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alfredbase.javabean.ItemCategory;
 import com.alfredselfhelp.R;
 
 import java.util.List;
 
-public class ClassAdapter extends RvAdapter<String> {
+public class ClassAdapter extends RvAdapter<ItemCategory> {
 
     private int checkedPosition;
 
@@ -19,7 +21,7 @@ public class ClassAdapter extends RvAdapter<String> {
         notifyDataSetChanged();
     }
 
-    public ClassAdapter(Context context, List<String> list, RvListener listener) {
+    public ClassAdapter(Context context, List<ItemCategory> list, RvListener listener) {
         super(context, list, listener);
     }
 
@@ -33,7 +35,7 @@ public class ClassAdapter extends RvAdapter<String> {
         return new ClassHolder(view, viewType, listener);
     }
 
-    private class ClassHolder extends RvHolder<String> {
+    private class ClassHolder extends RvHolder<ItemCategory> {
 
         private TextView tvName;
         private View mView;
@@ -42,18 +44,30 @@ public class ClassAdapter extends RvAdapter<String> {
             super(itemView, type, listener);
             this.mView = itemView;
 
+            tvName = (TextView) itemView.findViewById(R.id.tv_class_name);
+
         }
 
+
         @Override
-        public void bindHolder(String string, int position) {
-            tvName.setText(string);
+        public void bindHolder(ItemCategory itemCategory, int position) {
+            tvName.setText(itemCategory.getItemCategoryName());
             if (position == checkedPosition) {
-                mView.setBackgroundColor(Color.parseColor("#f3f3f3"));
-                tvName.setTextColor(Color.parseColor("#0068cf"));
+                mView.setBackgroundResource(R.color.gray);
+                tvName.setTextColor(mContext.getResources().getColor(R.color.green));
+
             } else {
-                mView.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                tvName.setTextColor(Color.parseColor("#1e1d1d"));
+                mView.setBackgroundResource(android.R.color.white);
+                tvName.setTextColor(mContext.getResources().getColor(R.color.gray2));
+
             }
+//            if (position == checkedPosition) {
+//                mView.setBackgroundColor(Color.parseColor("#f3f3f3"));
+//                tvName.setTextColor(Color.parseColor("#0068cf"));
+//            } else {
+//                mView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+//                tvName.setTextColor(Color.parseColor("#1e1d1d"));
+//            }
         }
 
     }

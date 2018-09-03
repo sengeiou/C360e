@@ -56,6 +56,7 @@ public class ItemHeaderDecoration extends RecyclerView.ItemDecoration {
         GridLayoutManager manager = (GridLayoutManager) parent.getLayoutManager();
         GridLayoutManager.SpanSizeLookup spanSizeLookup = manager.getSpanSizeLookup();
         int pos = ((LinearLayoutManager) (parent.getLayoutManager())).findFirstVisibleItemPosition();
+    //  int  pos=manager.findFirstVisibleItemPosition();
         int spanSize = spanSizeLookup.getSpanSize(pos);
         Log.d("pos--->", String.valueOf(pos));
         String tag = mDatas.get(pos).getTag();
@@ -68,15 +69,15 @@ public class ItemHeaderDecoration extends RecyclerView.ItemDecoration {
             tag = mDatas.get(pos).getTag();
             int i = child.getHeight() + child.getTop();
             Log.d("i---->", String.valueOf(i));
-            if (spanSize == 1) {
-                //body 才平移
-                if (child.getHeight() + child.getTop() < mTitleHeight) {
-//                    canvas.save();
-//                    isTranslate = true;
-//                    int height = child.getHeight() + child.getTop() - mTitleHeight;
-//                    canvas.translate(0, height);
-                }
-            }
+//            if (spanSize == 1) {
+//                //body 才平移
+//                if (child.getHeight() + child.getTop() < mTitleHeight) {
+////                    canvas.save();
+////                    isTranslate = true;
+////                    int height = child.getHeight() + child.getTop() - mTitleHeight;
+////                    canvas.translate(0, height);
+//                }
+//            }
 
 
         }

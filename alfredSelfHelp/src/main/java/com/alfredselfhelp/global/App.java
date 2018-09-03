@@ -42,6 +42,7 @@ public class App extends BaseApplication {
     private RevenueCenter revenueCenter;
     // RFID API
     private NurApi nurApi;
+    public static boolean isleftMoved;
 
 
     private static final String DATABASE_NAME = "com.alfredselfhelp";
