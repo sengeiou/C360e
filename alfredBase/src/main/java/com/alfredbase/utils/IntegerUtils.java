@@ -51,4 +51,8 @@ public class IntegerUtils {
 	public static int fromat(int index,int num){
 		return Integer.parseInt(index + String.format("%03d", num));
 	}
+
+	public static String format24(String barcode){
+		return String.format("%1$-24s",barcode).replace(' ', '0');
+	}
 }

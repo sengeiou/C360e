@@ -111,8 +111,6 @@ public class App extends BaseApplication {
     }
 
     public void setPosIp(String posIp) {
-
-
            Store.putString(App.instance, Store.KPM_IP, posIp);
 
     }
