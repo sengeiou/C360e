@@ -146,6 +146,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 	private String TAG = MainPosHttpServer.class.getSimpleName();
 	public MainPosHttpServer() {
 		super(APPConfig.HTTP_SERVER_PORT);
+		KpmgResponseUtil.getInstance().init(this);
 	}
 
 	private Object lockObject = new Object();
@@ -698,6 +699,58 @@ public class MainPosHttpServer extends AlfredHttpServer {
 			}
 		}
 	}
+
+
+	@Override
+	public Response doKPMGPost(String apiName, Method mothod, Map<String, String> params, String body) {
+		LogUtil.d(TAG, "apiName : " + apiName + " body : " + body);
+		JSONObject jsonObject;
+		try {
+			jsonObject = new JSONObject(body);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return this.getForbiddenResponse("");
+		}
+		String appVersion = jsonObject.optString("appVersion");
+		if (apiName == null || TextUtils.isEmpty(appVersion)) {
+			return this.getForbiddenResponse("");
+		}
+		Map<String, Object> result = new HashMap<String, Object>();
+
+		if (!App.instance.isRevenueKiosk()) {
+			result.put(RESULT_CODE, ResultCode.IS_NOT_KIOSK);
+			return this.getJsonResponse(gson.toJson(result));
+		}
+		if (!appVersion.endsWith(App.instance.VERSION)) {
+			result.put("resultCode", ResultCode.APP_VERSION_UNREAL);
+			result.put("posVersion", App.instance.VERSION);
+			String value = MobclickAgent.getConfigParams(App.getTopActivity(), "updateVersion");
+			result.put("versionUpdate", value);
+			return this.getJsonResponse(new Gson().toJson(result));
+		}
+		if (App.instance.getSessionStatus() == null) {
+			result.put("resultCode", ResultCode.SESSION_IS_CLOSED);
+			return this.getJsonResponse(new Gson().toJson(result));
+		}
+
+		if (apiName.equals(APIName.KPMG_LOGIN)) {
+			return KpmgResponseUtil.getInstance().kpmgLogin(body);
+		} else if (apiName.equals(APIName.KPMG_UPDATE_DATA)) {
+			return KpmgResponseUtil.getInstance().updateAllData();
+		}
+		int userId = jsonObject.optInt("userId");
+		User user = CoreData.getInstance().getUserById(userId);
+		if (user == null) {
+			result.put("resultCode", ResultCode.USER_NO_PERMIT);
+			return this.getJsonResponse(new Gson().toJson(result));
+		}
+		if (apiName.equals(APIName.KPMG_COMMIT_ORDER)) {
+			return KpmgResponseUtil.getInstance().commitOrder(body);
+		}
+		return getForbiddenResponse("Not Support yet");
+	}
+
 
 
 	@Override

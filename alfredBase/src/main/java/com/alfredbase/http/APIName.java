@@ -97,6 +97,11 @@ public class APIName {
 	public static final String SUBPOS_COMMIT_ORDERLOG = "subPos/commitOrderLog";
 	public static final String SUBPOS_COMMIT_REPORT = "subPos/commitReport";
 	public static final String SUBPOS_CLOSE_SESSION = "subPos/closeSession";
+	// kpmg专用
+	public static final String KPMG_LOGIN = "kpmg/login";
+	public static final String KPMG_UPDATE_DATA = "kpmg/updateData";
+	public static final String KPMG_COMMIT_ORDER = "kpmg/commitOrder";
+
 
 
 

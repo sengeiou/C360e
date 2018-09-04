@@ -390,6 +390,8 @@ public class SyncData extends BaseActivity {
 		textTypeFace.setTrajanProBlod((TextView)findViewById(R.id.tv_login_name));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_remind));
 		textTypeFace.setTrajanProRegular(et_user_id);
+		textTypeFace.setTrajanProRegular(et_password);
+		textTypeFace.setTrajanProRegular(et_biz_id);
 		textTypeFace.setTrajanProRegular((Button)findViewById(R.id.btn_ok));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_version));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_sync_tips));
