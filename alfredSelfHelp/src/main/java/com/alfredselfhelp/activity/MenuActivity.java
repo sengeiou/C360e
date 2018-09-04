@@ -99,6 +99,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_menu_details.setVisibility(View.VISIBLE);
                 ll_video.setVisibility(View.GONE);
 
+
                 getItemCategory(itemMainCategory.getId());
                 getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
 
@@ -172,17 +173,20 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         List<ItemCategory> itemCategorylist = ItemCategorySQL.getAllItemCategory();
         itemCategorys.clear();
-        for (int i = 0; i < itemCategorylist.size(); i++) {
-            ItemCategory itemCategory = itemCategorylist.get(i);
-            int cid;
-            cid = itemCategorylist.get(i).getItemMainCategoryId();
-            if (id == cid) {
-//
-                itemCategorys.add(itemCategory);
+        if (itemCategorylist != null || itemCategorielist.size() > 0) {
 
+
+            for (int i = 0; i < itemCategorylist.size(); i++) {
+                ItemCategory itemCategory = itemCategorylist.get(i);
+                int cid;
+                cid = itemCategorylist.get(i).getItemMainCategoryId();
+                if (id == cid) {
+//
+                    itemCategorys.add(itemCategory);
+
+                }
             }
         }
-
         mClassAdapter.notifyDataSetChanged();
         return itemCategorielist;
 
@@ -191,6 +195,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private List<ItemDetail> getItemDetail(String mainCategoryName, int id
     ) {
 
+        itemDetails.clear();
         re_menu_details.addOnScrollListener(new RecyclerViewListener());
         mManager = new GridLayoutManager(context, 3);
         //通过isTitle的标志来判断是否是title
@@ -216,14 +221,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         List<ItemDetail> itemDetailandCate = new ArrayList<ItemDetail>();
 //		itemDetaillist=CoreData.getInstance().getItemDetails();
 //		List<ItemCategory> list=new ArrayList<ItemCategory>();
+
         List<ItemCategory> itemCategorylist = ItemCategorySQL.getAllItemCategory();
         int tag = 0;
-
-        for (int j = 0; j < itemCategorylist.size(); j++) {
-            ItemCategory itemCategory = itemCategorylist.get(j);
-            int cid;
-            cid = itemCategorylist.get(j).getItemMainCategoryId();
-            if (id == cid) {
+        if (itemCategorylist != null || itemCategorylist.size() > 0) {
+            for (int j = 0; j < itemCategorylist.size(); j++) {
+                ItemCategory itemCategory = itemCategorylist.get(j);
+                int cid;
+                cid = itemCategorylist.get(j).getItemMainCategoryId();
+                if (id == cid) {
 //                ItemDetail itemCateDetail = new ItemDetail();
 //                itemCateDetail.setItemCategoryName(mainCategoryName);
 //                // detail.setId(list.get(j).getId());
@@ -231,32 +237,30 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                itemCateDetail.setTag(String.valueOf(j));
 //                itemCateDetail.setViewType(1);
 //                itemDetailandCate.add(itemCateDetail);
-                itemDetaillist.clear();
-                //  itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
-                itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
-                // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
-                for (int d = 0; d < itemDetaillist.size(); d++) {
-                    itemDetaillist.get(d).setItemCategoryName(mainCategoryName);
-                    itemDetaillist.get(d).setTag(String.valueOf(tag));
-                    itemDetaillist.get(d).setViewType(3);
-                    itemDetails.add(itemDetaillist.get(d));
-                    // }
+                    itemDetaillist.clear();
+                    //  itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
+                    itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
+                    // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
+                    if (itemDetaillist != null || itemDetaillist.size() > 0) {
+                        for (int d = 0; d < itemDetaillist.size(); d++) {
+                            itemDetaillist.get(d).setItemCategoryName(mainCategoryName);
+                            itemDetaillist.get(d).setTag(String.valueOf(tag));
+                            itemDetaillist.get(d).setViewType(3);
+                            itemDetails.add(itemDetaillist.get(d));
+                            // }
+                        }
+                    }
+
+                    tag++;
                 }
-
-                tag++;
             }
+
         }
-
-
-//		else {
-//			ItemCategory=CoreData.getInstance()
-//					.getItemCategories(itemMainCategory);
-//		}
-
         mDetailAdapter.notifyDataSetChanged();
         mDecoration.setData(itemDetails);
         return itemDetailandCate;
     }
+
 
     @Override
     protected void handlerClickEvent(View v) {
@@ -325,10 +329,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void moveToCenter(int position) {
         //将点击的position转换为当前屏幕上可见的item的位置以便于计算距离顶部的高度，从而进行移动居中
-        View childAt = re_main_category.getChildAt(position - mLinearLayoutManager.findFirstVisibleItemPosition());
+        View childAt = re_menu_classify.getChildAt(position - mLinearLayoutManager.findFirstVisibleItemPosition());
         if (childAt != null) {
             int y = (childAt.getTop() - re_main_category.getHeight() / 2);
-            re_main_category.smoothScrollBy(0, y);
+            re_menu_classify.smoothScrollBy(0, y);
         }
 
     }

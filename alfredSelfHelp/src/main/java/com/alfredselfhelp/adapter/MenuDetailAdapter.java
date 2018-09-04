@@ -3,6 +3,7 @@ package com.alfredselfhelp.adapter;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
@@ -24,7 +25,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     @Override
     protected int getLayoutId(int viewType) {
-        return viewType == 1 ? R.layout.item_title : R.layout.item_menu_detail;
+        return  R.layout.item_menu_detail;
     }
 
     @Override
@@ -39,24 +40,25 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     public class DetailHolder extends RvHolder<ItemDetail> {
         TextView tvPrice;
-        ImageView img;
-        TextView tvName;
+        ImageView img,add;
+        TextView tvName,num;
+
+        RelativeLayout  re_modifier_num;
 
         public DetailHolder(View itemView, int type, RvListener listener) {
             super(itemView, type, listener);
-
-
                    tvName = (TextView) itemView.findViewById(R.id.tv_modifier_name);
                    img=(ImageView)itemView.findViewById(R.id.img_modifier);
                     tvPrice=(TextView)itemView.findViewById(R.id.tv_modifier_price);
-
-
+                    add=(ImageView) itemView.findViewById(R.id.img_modifier_add);
+                //    re_modifier_num=(RelativeLayout)itemView.findViewById(R.id.re_modifier_num);
+                    num=(TextView)itemView.findViewById(R.id.tv_modifier_num);
 
 
         }
 
         @Override
-        public void bindHolder(ItemDetail itemDetail, int position) {
+        public void bindHolder(ItemDetail itemDetail, final int position) {
             int itemViewType = MenuDetailAdapter.this.getItemViewType(position);
 
             tvName.setText(itemDetail.getItemName());
@@ -68,6 +70,17 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
                     .into(img);
 
             tvPrice.setText("S$"+ BH.getBD(itemDetail.getPrice()).toString());
+
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   add.setImageResource(R.drawable.mod_num);
+
+                    num.setVisibility(View.VISIBLE);
+                    notifyItemChanged(position,null );
+
+                }
+            });
 //
 
         }

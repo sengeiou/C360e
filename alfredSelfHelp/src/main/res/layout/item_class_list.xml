@@ -1,5 +1,4 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linear_layout"
     android:layout_width="match_parent"
     android:layout_height="160dp"
@@ -13,17 +12,21 @@
         android:id="@+id/img_class"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/logo_icon"/>
+        android:src="@drawable/logo_icon" />
+
     <TextView
         android:id="@+id/tv_class_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="15dp"
+
+        android:ellipsize="end"
         android:gravity="center"
+        android:singleLine="true"
         android:text="wwwww"
-
-
         android:textColor="@color/gray2"
-        android:textSize="25sp"/>
+        android:textSize="25sp" />
 
 </LinearLayout>

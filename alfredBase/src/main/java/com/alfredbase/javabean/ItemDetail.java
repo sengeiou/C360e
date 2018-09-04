@@ -81,7 +81,7 @@ public class ItemDetail implements Serializable ,Parcelable{
 	
 	// 0不可以打折， 1可以打折
 	private int isDiscount = 1;
-
+   //
 	private String barcode;
 
 	private String itemCategoryName;

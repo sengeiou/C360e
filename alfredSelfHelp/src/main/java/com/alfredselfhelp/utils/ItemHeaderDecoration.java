@@ -62,24 +62,17 @@ public class ItemHeaderDecoration extends RecyclerView.ItemDecoration {
         String tag = mDatas.get(pos).getTag();
         View child = parent.findViewHolderForLayoutPosition(pos).itemView;
         boolean isTranslate = false;//canvas是否平移的标志
-        if (!TextUtils.equals(mDatas.get(pos).getTag(), mDatas.get(pos + 1).getTag())
-                || !TextUtils.equals(mDatas.get(pos).getTag(), mDatas.get(pos + 2).getTag())
-                || !TextUtils.equals(mDatas.get(pos).getTag(), mDatas.get(pos + 3).getTag())
-                ) {
-            tag = mDatas.get(pos).getTag();
-            int i = child.getHeight() + child.getTop();
-            Log.d("i---->", String.valueOf(i));
-//            if (spanSize == 1) {
-//                //body 才平移
-//                if (child.getHeight() + child.getTop() < mTitleHeight) {
-////                    canvas.save();
-////                    isTranslate = true;
-////                    int height = child.getHeight() + child.getTop() - mTitleHeight;
-////                    canvas.translate(0, height);
-//                }
-//            }
+        if(mDatas.size()>=3) {
 
+            if (!TextUtils.equals(mDatas.get(pos).getTag(), mDatas.get(pos + 1).getTag())
+                    || !TextUtils.equals(mDatas.get(pos).getTag(), mDatas.get(pos + 2).getTag())
+                    || !TextUtils.equals(mDatas.get(pos).getTag(), mDatas.get(pos + 3).getTag())
+                    ) {
+                tag = mDatas.get(pos).getTag();
+                int i = child.getHeight() + child.getTop();
+                Log.d("i---->", String.valueOf(i));
 
+            }
         }
     //    drawHeader(parent, pos, canvas);
         if (isTranslate) {
