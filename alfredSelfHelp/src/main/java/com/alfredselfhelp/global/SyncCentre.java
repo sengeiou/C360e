@@ -80,7 +80,7 @@ public class SyncCentre {
         payments.add(payment);
         List<OrderBill> orderBills = new ArrayList<>();
         orderBills.add(orderBill);
-        PaymentSettlement p = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_VISA, order.getTotal());
+        PaymentSettlement p = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_VISA, placeOrder.getTotal());
         List<PaymentSettlement> paymentSettlements = new ArrayList<>();
         paymentSettlements.add(p);
         map.put("order", placeOrder);

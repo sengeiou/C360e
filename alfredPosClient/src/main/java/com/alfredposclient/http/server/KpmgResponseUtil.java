@@ -54,6 +54,9 @@ import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
@@ -68,10 +71,6 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
-import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
-import com.alfredbase.store.sql.cpsql.CPOrderModifierSQL;
-import com.alfredbase.store.sql.cpsql.CPOrderSQL;
-import com.alfredbase.store.sql.cpsql.CPOrderSplitSQL;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
@@ -218,27 +217,25 @@ public class KpmgResponseUtil {
                     new TypeToken<List<OrderBill>>(){}.getType());
             List<RoundAmount> roundAmounts = gson.fromJson(jsonObject.getString("roundAmounts"),
                     new TypeToken<List<RoundAmount>>(){}.getType());
-            boolean isSuccessful = SubPosCommitSQL.commitOrderForKPMG(order, orderSplits, orderBills, payments, orderDetails,
+            final int orderId = SubPosCommitSQL.commitOrderForKPMG(order, orderSplits, orderBills, payments, orderDetails,
                     orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts);
             map.put("resultCode", ResultCode.SUCCESS);
-            if(isSuccessful) {
-                final int orderId = order.getId().intValue();
+            if(orderId != 0) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Order placeOrder = CPOrderSQL.getOrder(orderId);
-                        List<OrderSplit> placeOrderSplit = CPOrderSplitSQL.getUnFinishedOrderSplits(orderId);
+                        Order placeOrder = OrderSQL.getOrder(orderId);
+                        List<OrderSplit> placeOrderSplit = OrderSplitSQL.getUnFinishedOrderSplits(orderId);
                         KotSummary kotSummary = ObjectFactory.getInstance()
                                 .getKotSummary(
-                                        TableInfoSQL.getTableById(
-                                                placeOrder.getTableId()).getName(), placeOrder,
+                                        "", placeOrder,
                                         App.instance.getRevenueCenter(),
                                         App.instance.getBusinessDate());
                         if (placeOrderSplit != null && placeOrderSplit.size() > 0) {
                             for (OrderSplit orderSplit : placeOrderSplit) {
                                 if (kotSummary != null) {
                                     ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
-                                    List<OrderDetail> placedOrderDetails = CPOrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(orderSplit);
+                                    List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(orderSplit);
                                     List<Integer> orderDetailIds = new ArrayList<Integer>();
                                     ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                                     for (OrderDetail orderDetail : placedOrderDetails) {
@@ -264,7 +261,7 @@ public class KpmgResponseUtil {
                                         KotItemDetailSQL.update(kotItemDetail);
                                         kotItemDetails.add(kotItemDetail);
                                         orderDetailIds.add(orderDetail.getId());
-                                        ArrayList<OrderModifier> orderModifiers = CPOrderModifierSQL
+                                        ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
                                                 .getOrderModifiers(placeOrder, orderDetail);
                                         for (OrderModifier orderModifier : orderModifiers) {
                                             if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
@@ -286,7 +283,7 @@ public class KpmgResponseUtil {
                                     orderMap.put("orderId", orderSplit.getOrderId());
                                     orderMap.put("orderDetailIds", orderDetailIds);
                                     orderMap.put("orderPosType", ParamConst.POS_TYPE_SUB);
-                                    App.instance.getKdsJobManager().tearDownKotForSub(
+                                    App.instance.getKdsJobManager().tearDownKot(
                                             kotSummary, kotItemDetails,
                                             kotItemModifiers, ParamConst.JOB_NEW_KOT,
                                             orderMap);
@@ -296,7 +293,7 @@ public class KpmgResponseUtil {
                             if (kotSummary != null) {
                                 ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
                                 ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
-                                List<OrderDetail> placedOrderDetails = CPOrderDetailSQL.getOrderDetails(placeOrder.getId());
+                                List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetails(placeOrder.getId());
                                 List<Integer> orderDetailIds = new ArrayList<Integer>();
                                 for (OrderDetail orderDetail : placedOrderDetails) {
                                     orderDetailIds.add(orderDetail.getId());
@@ -316,7 +313,7 @@ public class KpmgResponseUtil {
                                     KotItemDetailSQL.update(kotItemDetail);
                                     kotItemDetails.add(kotItemDetail);
                                     orderDetailIds.add(orderDetail.getId());
-                                    ArrayList<OrderModifier> orderModifiers = CPOrderModifierSQL
+                                    ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
                                             .getOrderModifiers(placeOrder, orderDetail);
                                     for (OrderModifier orderModifier : orderModifiers) {
                                         if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
@@ -340,7 +337,7 @@ public class KpmgResponseUtil {
                                 orderMap.put("orderId", placeOrder.getId());
                                 orderMap.put("orderDetailIds", orderDetailIds);
                                 orderMap.put("orderPosType", ParamConst.POS_TYPE_SUB);
-                                App.instance.getKdsJobManager().tearDownKotForSub(
+                                App.instance.getKdsJobManager().tearDownKot(
                                         kotSummary, kotItemDetails,
                                         kotItemModifiers, ParamConst.JOB_NEW_KOT,
                                         orderMap);
