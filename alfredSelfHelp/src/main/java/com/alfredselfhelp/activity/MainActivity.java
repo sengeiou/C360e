@@ -82,14 +82,17 @@ public class MainActivity extends BaseActivity {
         btn_video.setOnClickListener(this);
         mVideoResManager = new VideoResManager(context);
                  Tax tax=new Tax();
-        Order order = ObjectFactory.getInstance().addOrderFromKioskDesktop(
-                ParamConst.ORDER_ORIGIN_TABLE, 0,
-                TableInfoSQL.getKioskTable(),
-                App.instance.getRevenueCenter(),
-                App.instance.getUser(),
+
+        Order order = ObjectFactory.getInstance().getOrder(
+                ParamConst.ORDER_ORIGIN_POS, 0, tables,
+                App.instance.getRevenueCenter(), App.instance.getUser(),
                 App.instance.getSessionStatus(),
-                TimeUtil.getNewBusinessDate(),
-               tax);
+                App.instance.getBusinessDate(),
+                App.instance.getIndexOfRevenueCenter(),
+                ParamConst.ORDER_STATUS_OPEN_IN_POS,
+                App.instance.getLocalRestaurantConfig()
+                        .getIncludedTax().getTax(), 0);
+
     }
 
 
