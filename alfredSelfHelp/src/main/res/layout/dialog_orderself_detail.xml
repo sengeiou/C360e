@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+	android:background="@drawable/popup_box"
+	android:gravity="center"
+	>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		>
+<LinearLayout
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:layout_marginLeft="100dp"
+	android:layout_marginRight="100dp"
+	android:background="@drawable/style_dialog_btn"
+
+	>
+      <LinearLayout 
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+          android:background="@color/white"
+		     android:orientation="vertical"
+		  >
+	        <TextView
+				android:layout_marginTop="30dp"
+	            android:id="@+id/tv_nur_name"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:text="Are you sure you got the right order?"
+	            android:gravity="center"
+	            android:textColor="@color/black"
+				android:layout_marginRight="50dp"
+				android:layout_marginLeft="50dp"
+	            android:textSize="22sp" />
+
+		  <android.support.v7.widget.RecyclerView
+			  android:id="@+id/re_nur_order"
+			  android:layout_marginTop="30dp"
+			  android:layout_marginLeft="20dp"
+			  android:layout_marginRight="20dp"
+			  android:layout_width="wrap_content"
+              android:layout_marginBottom="50dp"
+			  android:layout_height="400dp"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+    </LinearLayout>
+	<LinearLayout
+		android:layout_marginTop="40dp"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:orientation="horizontal"
+		android:gravity="center_horizontal"
+		>
+		<TextView
+			android:id="@+id/tv_ok"
+			android:layout_width="180dp"
+			android:layout_height="80dp"
+			android:text="No"
+			android:textSize="21sp"
+           android:gravity="center"
+			android:textColor="@color/white"
+			android:background="@drawable/main_btn_g"
+
+			/>
+		<TextView
+			android:layout_width="35dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/tv_no"
+			android:layout_width="180dp"
+			android:layout_height="80dp"
+			android:text="Yse"
+			android:textSize="21sp"
+              android:gravity="center"
+			android:textColor="@color/white"
+			android:background="@drawable/main_btn_g"
+
+			/>
+
+	</LinearLayout>
+	</LinearLayout>
+</RelativeLayout>
