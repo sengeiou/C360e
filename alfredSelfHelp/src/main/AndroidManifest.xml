@@ -29,6 +29,7 @@
             android:name=".activity.Welcome"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
+
             android:theme="@style/NullActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,12 +40,15 @@
         <activity
             android:name=".utils.FileDialog"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/NullActivityTheme"/>
         <activity
             android:name=".activity.ConnectPOS"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
-            android:theme="@style/NullActivityTheme" />
+            android:theme="@style/NullActivityTheme"
+
+            />
         <activity
             android:name=".activity.EmployeeID"
             android:configChanges="orientation|keyboardHidden"
@@ -62,11 +66,17 @@
             android:theme="@style/MainActivityTheme" />
         <activity
             android:name=".activity.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+
+            android:theme="@style/NullActivityTheme"/>
         <activity
             android:name=".activity.MenuActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.DialogActivity"></activity>
+            android:screenOrientation="portrait"
+
+            android:theme="@style/NullActivityTheme"/>
+        <activity android:name=".activity.DialogActivity"
+            android:theme="@style/NullActivityTheme"
+            ></activity>
     </application>
 
 </manifest>

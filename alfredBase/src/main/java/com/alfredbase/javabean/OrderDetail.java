@@ -111,6 +111,8 @@ public class OrderDetail implements Serializable {
 	 */
 	private int isSet = 0;
 
+	private String itemUrl;
+
 
 	/**
 	 * 不存数据库 临时缓存用
@@ -121,6 +123,15 @@ public class OrderDetail implements Serializable {
 		// set openItem False
 		this.isOpenItem = 0;
 	}
+
+	public String getItemUrl() {
+		return itemUrl;
+	}
+
+	public void setItemUrl(String itemUrl) {
+		this.itemUrl = itemUrl;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -432,6 +443,7 @@ public class OrderDetail implements Serializable {
 				", mainCategoryId=" + mainCategoryId +
 				", fireStatus=" + fireStatus +
 				", isSet=" + isSet +
+				", itemUrl='" + itemUrl + '\'' +
 				", transferFromDetailId=" + transferFromDetailId +
 				", transferFromDetailNum=" + transferFromDetailNum +
 				'}';

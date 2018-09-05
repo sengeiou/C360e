@@ -58,9 +58,9 @@ public class CountViewMod extends LinearLayout implements OnClickListener {
         }
     }
 
-    public void setParam(ItemDetail itemDetail, SetItemCountWindow setItemCountWindow) {
+    public void setParam(ItemDetail itemDetail ) {
         this.itemDetail = itemDetail;
-        this.setItemCountWindow = setItemCountWindow;
+//        this.setItemCountWindow = setItemCountWindow;
     }
 
     public void setInitCount(int count) {
@@ -97,24 +97,24 @@ public class CountViewMod extends LinearLayout implements OnClickListener {
 //                }
 //                break;
 //            }
-            case R.id.iv_add: {
+            case R.id.iv_minus: {
 
                 add.setImageResource(R.drawable.mod_num);
                 tv_count.setVisibility(VISIBLE);
-                int count = 0;
+                int count = 1;
                 Log.d("111111111--->", "111111111");
-                try {
-                    count = Integer.parseInt(tv_count.getText().toString());
-                    count++;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    count = Integer.parseInt(tv_count.getText().toString());
+//                    count++;
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
                 if (count < 1)
                     count = 1;
                 tv_count.setText(count + "");
                 if (onCountChange != null) {
                     onCountChange.onChange(itemDetail, count, true);
-                    Log.d("2222222222--->", "22222222222");
+                 //   Log.d("2222222222--->", "22222222222");
                 }
                 break;
             }

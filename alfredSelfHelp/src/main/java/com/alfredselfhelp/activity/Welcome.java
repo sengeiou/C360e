@@ -117,7 +117,7 @@ public class Welcome extends BaseActivity {
 			UIHelp.startSelectRevenue(context);
 			finish();
 		}else {
-			UIHelp.startMain(context);
+			UIHelp.startEmployeeID(context);
 			finish();
 		}
 //		if (mainPosInfo == null) {

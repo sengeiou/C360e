@@ -23,13 +23,13 @@ import java.util.List;
 
 public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
-    CountView.OnCountChange onCountChange;
+    CountViewMod.OnCountChange onCountChange;
     private List<OrderDetail> orderDetails;
     private int currentGroupId;
     private Order currentOrder;
     public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener, CountViewMod.OnCountChange countViewMod) {
         super(context, list, listener);
-        this.onCountChange = (CountView.OnCountChange) countViewMod;
+        this.onCountChange = countViewMod;
     }
 
 
@@ -90,8 +90,8 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
    count_view.setIsCanClick(getOrderDetailStatus(itemDetail));
                     count_view.setInitCount(getItemNum(itemDetail));
                     count_view.setTag(itemDetail);
-                  //  count_view.setParam(itemDetail,setItemCountWindow);
-                    count_view.setOnCountChange((CountViewMod.OnCountChange) onCountChange);
+                    count_view.setParam(itemDetail);
+                    count_view.setOnCountChange( onCountChange);
 
         }
 
@@ -106,6 +106,9 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     private int getItemNum(ItemDetail itemDetail) {
         int itemNum = 0;
+        if (orderDetails != null) {
+
+
         for (OrderDetail orderDetail : orderDetails) {
             if (orderDetail.getItemId().intValue() == itemDetail.getId()
                     .intValue()
@@ -113,18 +116,21 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
                 itemNum += orderDetail.getItemNum();
             }
         }
+        }
         return itemNum;
     }
 
     private boolean getOrderDetailStatus(ItemDetail itemDetail) {
-        for (OrderDetail orderDetail : orderDetails) {
-            if (orderDetail.getItemId().intValue() == itemDetail.getId()
-                    .intValue()
-                    ) {
-                if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
-                    return false;
-                } else {
-                    return true;
+        if(orderDetails != null) {
+            for (OrderDetail orderDetail : orderDetails) {
+                if (orderDetail.getItemId().intValue() == itemDetail.getId()
+                        .intValue()
+                        ) {
+                    if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+                        return false;
+                    } else {
+                        return true;
+                    }
                 }
             }
         }

@@ -109,9 +109,9 @@ public class HttpAnalysis {
 		Gson gson = new Gson();
 		try {
 			JSONObject object = new JSONObject(responseBody);
-			List<User> users = gson.fromJson(object.getString("users"),
-					new TypeToken<ArrayList<User>>() {
-					}.getType());
+//			List<User> users = gson.fromJson(object.getString("users"),
+//					new TypeToken<ArrayList<User>>() {
+//					}.getType());
 			OrderSQL.deleteAllOrder();
 			OrderDetailSQL.deleteAllOrderDetail();
 			OrderBillSQL.deleteAllOrderBill();
@@ -119,11 +119,11 @@ public class HttpAnalysis {
 			OrderModifierSQL.deleteAllOrderModifier();
 			PaymentSQL.deleteAllPayment();
 			PaymentSettlementSQL.deleteAllSettlement();
-			if(users != null && users.size() > 0){
-				UserSQL.deleteAllUser();
-				UserSQL.addUsers(users);
-				CoreData.getInstance().setUsers(users);
-			}
+//			if(users != null && users.size() > 0){
+//				UserSQL.deleteAllUser();
+//				UserSQL.addUsers(users);
+//				CoreData.getInstance().setUsers(users);
+//			}
 			final Restaurant restaurant = gson.fromJson(object.getString("restaurant"),
 					Restaurant.class);
 			if(restaurant != null){

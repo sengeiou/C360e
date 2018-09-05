@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
@@ -24,12 +25,14 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.CallBack;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
@@ -40,9 +43,12 @@ import com.alfredselfhelp.adapter.MenuDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.RfidApiCentre;
+import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.popuwindow.SetItemCountWindow;
 import com.alfredselfhelp.utils.CheckListener;
 import com.alfredselfhelp.utils.ItemHeaderDecoration;
+import com.alfredselfhelp.utils.ToolAlert;
+import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
 import com.nordicid.nurapi.NurTag;
@@ -61,7 +67,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private List<ItemMainCategory> itemMainCategories;
     private LinearLayoutManager mLinearLayoutManager;
     MainCategoryAdapter mainCategoryAdapter;
-    private LinearLayout ll_grab, ll_menu_details, ll_video, ll_view_cart, ll_view_cart_list;
+    private LinearLayout ll_grab, ll_menu_details, ll_video, ll_view_cart, ll_view_cart_list,ll_view_pay;
     private RecyclerView re_menu_classify, re_menu_details, re_view_cart;
     private ClassAdapter mClassAdapter;
     private MenuDetailAdapter mDetailAdapter;
@@ -102,14 +108,43 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
                     updateOrderDetail((ItemDetail) map.get("itemDetail"),
                             (Integer) map.get("count"));
-//                    refreshTotal();
-//                    refreshList();
+                    refreshTotal();
+                    refreshList();
 
                     boolean isadd = (boolean) map.get("isAdd");
 
 
                     break;
                 }
+                    case 1111:
+                        if(loadingDialog != null && loadingDialog.isShowing()){
+                            loadingDialog.dismiss();;
+                        }
+                        UIHelp.showToast(App.instance, "Success");
+
+                        OrderDetailSQL.deleteAllOrderDetail();
+                        OrderSQL.deleteAllOrder();
+                        nurOrder = ObjectFactory.getInstance().getOrder(
+                                ParamConst.ORDER_ORIGIN_POS, 0, TableInfoSQL.getKioskTable(),
+                                App.instance.getRevenueCenter(), App.instance.getUser(),
+                                App.instance.getSessionStatus(),
+                                App.instance.getBusinessDate(),
+                                App.instance.getIndexOfRevenueCenter(),
+                                ParamConst.ORDER_STATUS_OPEN_IN_POS,
+                                App.instance.getLocalRestaurantConfig()
+                                        .getIncludedTax().getTax(), 0);
+                        ll_grab.performClick();
+
+
+                        break;
+                case -1111:
+                    if(loadingDialog != null && loadingDialog.isShowing()){
+                        loadingDialog.dismiss();;
+                    }
+                    UIHelp.showToast(App.instance, "failed");
+                    break;
+
+              //  case  success
 
             }
 
@@ -126,6 +161,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ll_view_cart = (LinearLayout) findViewById(R.id.ll_view_cart);
         ll_view_cart_list = (LinearLayout) findViewById(R.id.ll_view_cart_list);
         re_view_cart = (RecyclerView) findViewById(R.id.re_view_cart);
+        ll_view_pay=(LinearLayout)findViewById(R.id.ll_view_pay);
+        ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
         ll_video.setVisibility(View.VISIBLE);
 //        ll_menu_details.setVisibility(View.VISIBLE);
@@ -133,7 +170,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ll_grab.setOnClickListener(this);
         ll_view_cart.setOnClickListener(this);
         // itemMainCategories = CoreData.getInstance().getItemMainCategories();
-        itemMainCategories = ItemMainCategorySQL.getAllItemMainCategory();
+        itemMainCategories = CoreData.getInstance().getItemMainCategories();
         menuDetail();
         re_main_category = (RecyclerView) findViewById(R.id.re_main_category);
         mLinearLayoutManager = new LinearLayoutManager(context);
@@ -151,8 +188,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_grab.setBackgroundResource(R.drawable.main_btn_g);
                 ll_menu_details.setVisibility(View.VISIBLE);
                 ll_video.setVisibility(View.GONE);
-
-
+                ll_view_cart_list.setVisibility(View.GONE);
+                ll_view_pay.setVisibility(View.GONE);
+                ll_view_cart.setVisibility(View.VISIBLE);
                 getItemCategory(itemMainCategory.getId());
                 getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
 
@@ -372,9 +410,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             }
         });
         re_menu_details.setAdapter(mDetailAdapter);
-        mDecoration = new ItemHeaderDecoration(context, itemDetails);
-        re_menu_details.addItemDecoration(mDecoration);
-        mDecoration.setCheckListener(this);
+//        mDecoration = new ItemHeaderDecoration(context, itemDetails);
+//        re_menu_details.addItemDecoration(mDecoration);
+//        mDecoration.setCheckListener(this);
         List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
 
         List<ItemDetail> itemDetailandCate = new ArrayList<ItemDetail>();
@@ -408,7 +446,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         }
         mDetailAdapter.notifyDataSetChanged();
-        mDecoration.setData(itemDetails);
+        //  mDecoration.setData(itemDetails);
         return itemDetailandCate;
     }
 
@@ -423,6 +461,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_grab.setBackgroundResource(R.drawable.main_btn_b);
                 ll_menu_details.setVisibility(View.GONE);
                 ll_video.setVisibility(View.VISIBLE);
+                ll_view_cart_list.setVisibility(View.GONE);
+                ll_view_pay.setVisibility(View.GONE);
+                ll_view_cart.setVisibility(View.VISIBLE);
 
                 break;
 
@@ -434,9 +475,33 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_menu_details.setVisibility(View.GONE);
                 ll_video.setVisibility(View.GONE);
                 ll_view_cart_list.setVisibility(View.VISIBLE);
+                ll_view_cart.setVisibility(View.GONE);
+                ll_view_pay.setVisibility(View.VISIBLE);
                 cartView();
 
                 break;
+                 case R.id.ll_view_pay:
+
+                     ll_view_cart.setVisibility(View.GONE);
+                     ll_view_pay.setVisibility(View.VISIBLE);
+                     loadingDialog = new LoadingDialog(this);
+                     loadingDialog.setTitle("Pay...");
+                     loadingDialog.show();
+                     SyncCentre.getInstance().commitOrder(this, nurOrder, handler);
+
+//                     dialog = ToolAlert.MyDialog(DialogActivity.this, "", "", "", new View.OnClickListener() {
+//                         @Override
+//                         public void onClick(View v) {
+//                             dialog.dismiss();
+//                         }
+//                     }, new View.OnClickListener() {
+//                         @Override
+//                         public void onClick(View v) {
+//                             dialog.dismiss();
+//                         }
+//                     });
+
+            break ;
         }
     }
 
@@ -449,10 +514,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         cartAdater = new CartDetailAdapter(context, orderDetails, setItemCountWindow, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
-                isMoved = true;
-                App.isleftMoved = true;
-                targetPosition = position;
-                setChecked(position, true, 0);
+//                isMoved = true;
+//                App.isleftMoved = true;
+//                targetPosition = position;
+//                setChecked(position, true, 0);
 
             }
         }, new CountView.OnCountChange() {
@@ -465,11 +530,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 map.put("isAdd", isAdd);
                 handler.sendMessage(handler.obtainMessage(
                         VIEW_EVENT_MODIFY_ITEM_COUNT, map));
-
             }
         });
 
-        re_view_cart.setAdapter(mClassAdapter);
+        re_view_cart.setAdapter(cartAdater);
 
 
     }
@@ -609,7 +673,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 ////        adapter.notifyDataSetChanged();
 
         mDetailAdapter.setParams(nurOrder, orderDetails, 0);
-        cartAdater.notifyDataSetChanged();
+        //cartAdater.notifyDataSetChanged();
         mDetailAdapter.notifyDataSetChanged();
 
     }
