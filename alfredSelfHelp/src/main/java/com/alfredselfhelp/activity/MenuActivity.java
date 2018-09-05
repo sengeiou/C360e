@@ -5,6 +5,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,6 +26,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.CallBack;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.CartDetailAdapter;
@@ -222,7 +224,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ItemDetail itemDetail = itemDetailAll.get(i);
                 for (int j = 0; j < nurTagStorageSize; j++) {
                     NurTag nurTag = nurTagStorage.get(j);
-                    if (itemDetail.getBarcode().equals(nurTag.getEpcString())) {
+                    if (!TextUtils.isEmpty(itemDetail.getBarcode())
+                            && IntegerUtils.format24(itemDetail.getBarcode()).equals("989292920000000000000000")) {
                         itemDetaillist.add(itemDetail);
                     }
                 }
@@ -528,7 +531,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void cartView() {
 
-
+        orderDetails = OrderDetailSQL.getOrderDetails(nurOrder.getId());
         mLinearLayoutManager = new LinearLayoutManager(context);
         mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
         re_view_cart.setLayoutManager(mLinearLayoutManager);
