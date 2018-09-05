@@ -97,7 +97,7 @@ public class HttpAPI {
 		}
 	}
 
-	public static void commitOrder(Context context, Map<String, Object> map, String url, AsyncHttpClient httpClient) {
+	public static void commitOrder(Context context, Map<String, Object> map, String url, AsyncHttpClient httpClient, final Handler handler) {
 
 		try {
 			String j = new Gson().toJson(map);
@@ -113,13 +113,16 @@ public class HttpAPI {
 											  byte[] responseBody) {
 							super.onSuccess(statusCode, headers, responseBody);
 							if (resultCode == ResultCode.SUCCESS) {
+								handler.sendEmptyMessage(1111);
 							} else {
+								handler.sendEmptyMessage(-1111);
 							}
 						}
 						@Override
 						public void onFailure(final int statusCode, final Header[] headers,
 											  final byte[] responseBody, final Throwable error) {
 							super.onFailure(statusCode, headers, responseBody, error);
+							handler.sendEmptyMessage(-1111);
 						}
 					});
 		} catch (Exception e) {
