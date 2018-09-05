@@ -164,7 +164,11 @@ public class RfidApiCentre {
             try {
                 nurApi.startInventoryStream();
                 mInventoryIsRunning = true;
+                if(callBack != null) {
+                    callBack.onSuccess();
+                }
             } catch (Exception e) {
+                callBack.onError();
                 e.printStackTrace();
             }
         }

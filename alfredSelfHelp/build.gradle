@@ -48,7 +48,6 @@ android {
     }
 
 
-
 }
 
 dependencies {
@@ -57,4 +56,5 @@ dependencies {
     //    implementation 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
     implementation files('libs/glide-3.6.0.jar')
     implementation files('libs/NurApi.jar')
+
 }

@@ -1,5 +1,8 @@
 package com.alfredselfhelp.activity;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,35 +12,50 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextClock;
+import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.utils.CallBack;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.ClassAdapter;
 import com.alfredselfhelp.adapter.MainCategoryAdapter;
 import com.alfredselfhelp.adapter.MenuDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.utils.CheckListener;
 import com.alfredselfhelp.utils.ItemHeaderDecoration;
+import com.nordicid.nurapi.NurTag;
+import com.nordicid.nurapi.NurTagStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MenuActivity extends BaseActivity implements CheckListener {
-
+    public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
+    public static final int VIEW_EVENT_MODIFIER_COUNT = 8;
 
     private RecyclerView re_main_category;
     private List<ItemMainCategory> itemMainCategories;
     private LinearLayoutManager mLinearLayoutManager;
     MainCategoryAdapter mainCategoryAdapter;
-    private LinearLayout ll_grab, ll_menu_details, ll_video;
+    private LinearLayout ll_grab, ll_menu_details, ll_video,ll_view_card;
     private RecyclerView re_menu_classify, re_menu_details;
 
     private ClassAdapter mClassAdapter;
@@ -49,6 +67,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
+    List<ItemDetail> itemDetailNur = new ArrayList<ItemDetail>();
+
     List<ItemCategory> itemCategorys = new ArrayList<ItemCategory>();
     private CheckListener checkListener;
 
@@ -57,6 +77,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private int mIndex;
     private GridLayoutManager mManager;
     private Boolean move = false;
+    private Order nurOrder;
+
 
     protected void initView() {
         super.initView();
@@ -64,6 +86,32 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         init();
     }
 
+
+    private Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+
+                case VIEW_EVENT_MODIFY_ITEM_COUNT: {
+                    Log.d("444444444444--->", "4444444444444");
+                    Map<String, Object> map = (Map<String, Object>) msg.obj;
+                    updateOrderDetail((ItemDetail) map.get("itemDetail"),
+                            (Integer) map.get("count"));
+//                    refreshTotal();
+//                    refreshList();
+
+                    boolean isadd= (boolean) map.get("isAdd");
+
+
+
+                    break;
+                }
+
+                }
+
+            }
+        }
+
+        ;
     private void init() {
         ll_grab = (LinearLayout) findViewById(R.id.ll_grab);
         ll_video = (LinearLayout) findViewById(R.id.ll_video);
@@ -71,10 +119,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         re_menu_classify = (RecyclerView) findViewById(R.id.re_menu_classify);
         re_menu_details = (RecyclerView) findViewById(R.id.re_menu_details);
         re_main_category = (RecyclerView) findViewById(R.id.re_main_category);
+        ll_view_card=(LinearLayout)findViewById(R.id.ll_view_card);
         ll_video.setVisibility(View.VISIBLE);
 //        ll_menu_details.setVisibility(View.VISIBLE);
 //        ll_video.setVisibility(View.GONE);
         ll_grab.setOnClickListener(this);
+        ll_view_card.setOnClickListener(this);
 
 
         // itemMainCategories = CoreData.getInstance().getItemMainCategories();
@@ -108,8 +158,110 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
         re_main_category.setAdapter(mainCategoryAdapter);
 
+        nurOrder= OrderSQL.getAllOrder().get(0);
+
+        RfidApiCentre.getInstance().startRFIDScan(new CallBack() {
+            @Override
+            public void onSuccess() {
+                initRfid();
+            }
+
+            @Override
+            public void onError() {
+            Log.e("startRFIDScan","获取失败");
+            }
+        });
+
+        List<ItemDetail> itemDetaillist= new ArrayList<ItemDetail>();
+        for (int i = 0; i <10; i++) {
+            ItemDetail item=new ItemDetail();
+            item.setItemName("Names");
+            item.setPrice("10.55");
+            itemDetaillist.add(item);
+
+
+        }
+
+//        final OrderSelfDialog   selfDialog = new OrderSelfDialog(MenuActivity.this);
+//        selfDialog.setList(itemDetaillist);
+//
+//        selfDialog.setYesOnclickListener("Yes", new OrderSelfDialog.onYesOnclickListener() {
+//            @Override
+//            public void onYesClick() {
+//                Toast.makeText(MenuActivity.this,"点击了--确定--按钮",Toast.LENGTH_LONG).show();
+//                selfDialog.dismiss();
+//            }
+//        });
+//        selfDialog.setNoOnclickListener("No", new OrderSelfDialog.onNoOnclickListener() {
+//            @Override
+//            public void onNoClick() {
+//                Toast.makeText(MenuActivity.this,"点击了--取消--按钮",Toast.LENGTH_LONG).show();
+//                selfDialog.dismiss();
+//            }
+//        });
+//        selfDialog.show();
+
+
+}
+
+    private void initRfid() {
+
+      List<ItemDetail>  itemDetailAll = CoreData.getInstance().getItemDetails();
+
+      if(itemDetailAll!=null){
+
+          NurTagStorage  nurTagStorage= RfidApiCentre.getInstance().getNurTagStorage();
+          int nurTagStorageSize=nurTagStorage.size();
+
+          for (int i = 0; i < itemDetailAll.size(); i++) {
+              ItemDetail itemDetail=itemDetailAll.get(i);
+              for (int j = 0; j <nurTagStorageSize ; j++) {
+                  NurTag nurTag=nurTagStorage.get(j);
+
+                  if(itemDetail.getBarcode().equals(nurTag.getEpcString()))
+                  {
+                      itemDetailNur.add(itemDetail);
+                  }
+
+              }
+
+
+          }
+
+          // 弹出
+      }
+
+
     }
 
+
+
+    private void updateOrderDetail(ItemDetail itemDetail, int count) {
+        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+                nurOrder, itemDetail, 0,
+                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
+//		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
+//				currentOrder, itemDetail, currentGroupId);
+        if (count == 0) {// 删除
+            OrderDetailSQL.deleteOrderDetail(orderDetail);
+            OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
+        } else {// 添加
+//			count = count - oldCount;
+            nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+            OrderSQL.update(nurOrder);
+            if (orderDetail == null) {
+                orderDetail = ObjectFactory.getInstance()
+                        .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                0, App.instance.getUser());
+                orderDetail.setItemNum(count);
+                OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+            } else {
+                orderDetail.setItemNum(count);
+                orderDetail.setUpdateTime(System.currentTimeMillis());
+                OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
+            }
+        }
+    }
 
     private void menuDetail() {
 
@@ -272,6 +424,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_grab.setBackgroundResource(R.drawable.main_btn_b);
                 ll_menu_details.setVisibility(View.GONE);
                 ll_video.setVisibility(View.VISIBLE);
+
+                break;
+
+
+            case R.id.ll_view_card:
+                Intent intent=new Intent();
+                intent.setClass(MenuActivity.this, DialogActivity.class);
+                startActivity(intent);
 
                 break;
         }

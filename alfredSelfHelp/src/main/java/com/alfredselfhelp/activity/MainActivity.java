@@ -12,6 +12,12 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.Tax;
+import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.TimeUtil;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.utils.FileDialog;
@@ -75,6 +81,15 @@ public class MainActivity extends BaseActivity {
         btn_picture.setOnClickListener(this);
         btn_video.setOnClickListener(this);
         mVideoResManager = new VideoResManager(context);
+                 Tax tax=new Tax();
+        Order order = ObjectFactory.getInstance().addOrderFromKioskDesktop(
+                ParamConst.ORDER_ORIGIN_TABLE, 0,
+                TableInfoSQL.getKioskTable(),
+                App.instance.getRevenueCenter(),
+                App.instance.getUser(),
+                App.instance.getSessionStatus(),
+                TimeUtil.getNewBusinessDate(),
+               tax);
     }
 
 

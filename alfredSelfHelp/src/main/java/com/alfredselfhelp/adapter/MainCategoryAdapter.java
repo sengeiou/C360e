@@ -69,5 +69,10 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
             }
         }
 
+        @Override
+        public void bindHolderItem(ItemMainCategory itemMainCategory, int position) {
+
+        }
+
     }
 }

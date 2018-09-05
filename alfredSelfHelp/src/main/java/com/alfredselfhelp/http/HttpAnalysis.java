@@ -117,12 +117,12 @@ public class HttpAnalysis {
 //				OrderModifierSQL.deleteAllOrderModifier();
 //				OrderDetailTaxSQL.deleteAllOrderDetailTax();
 //			}
-//			Store.saveObject(App.instance, Store.SESSION_STATUS, sessionStatus);
-//			App.instance.setMainPosInfo(mainPosInfo);
-//			App.instance.setSessionStatus(sessionStatus);
-//			App.instance.setCurrencySymbol(currencySymbol, isDouble);
-//			CoreData.getInstance().setUserKey(userKey);
-//			return userKey;
+		//	Store.saveObject(App.instance, Store.SESSION_STATUS, sessionStatus);
+			App.instance.setMainPosInfo(mainPosInfo);
+			App.instance.setSessionStatus(sessionStatus);
+			App.instance.setCurrencySymbol(currencySymbol, isDouble);
+			CoreData.getInstance().setUserKey(userKey);
+			return userKey;
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

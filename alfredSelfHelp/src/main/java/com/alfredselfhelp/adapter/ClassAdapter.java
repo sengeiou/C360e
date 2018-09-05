@@ -70,5 +70,10 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
 //            }
         }
 
+        @Override
+        public void bindHolderItem(ItemCategory itemCategory, int position) {
+
+        }
+
     }
 }

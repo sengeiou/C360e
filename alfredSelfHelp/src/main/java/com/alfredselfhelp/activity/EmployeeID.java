@@ -41,6 +41,8 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 	private TextTypeFace textTypeFace;
 	public static final int SYNC_DATA_TAG = 2015;
 	public static final int HANDLER_PAIRING_COMPLETE = 1001;
+
+	public static final int HANDLER_GET_PLACE_INFO = 1002;
 	private int syncDataCount = 0;
 	/**
 	 * 当前键盘输入对应的状态，0表示输入的员工ID，1表示输入的密码
@@ -123,40 +125,33 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 				finish();
 				break;
 			}
-//				case TablesPage.HANDLER_GET_PLACE_INFO: {
-//					// 预留2秒让数据存下数据库
-//					BaseApplication.postHandler.postDelayed(new Runnable() {
-//						@Override
-//						public void run() {
-//							Map<String, Object> parameters = new HashMap<String, Object>();
-//							WaiterDevice waiterDevice = new WaiterDevice();
-//							waiterDevice
-//									.setWaiterId(App.instance.getUser().getId());
-//							waiterDevice.setIP(CommonUtil.getLocalIpAddress());
-//							waiterDevice.setMac(CommonUtil
-//									.getLocalMacAddress(context));
-//							Store.saveObject(context, Store.WAITER_DEVICE,
-//									waiterDevice);
-//							parameters.put("device", waiterDevice);
-//							parameters.put("deviceType",
-//									ParamConst.DEVICE_TYPE_WAITER);
-//							SyncCentre.getInstance().pairingComplete(context,
-//									App.instance.getPairingIp(), parameters,
-//									handler);
-//						}
-//					}, 2 * 1000);
-//				}
-			//	break;
+				case HANDLER_GET_PLACE_INFO:
+					// 预留2秒让数据存下数据库
+					UIHelp.startLogin(context);
+					finish();
+
+				break;
 				case SYNC_DATA_TAG:
 					if(syncDataCount == 4){
 						BaseApplication.postHandler.postDelayed(new Runnable() {
 //						@Override
 						public void run() {
-							App.instance.setPosIp(App.instance.getPairingIp());
-					          UIHelp.startMain(context);
+						//	App.instance.setPosIp(App.instance.getPairingIp());
+
+							WaiterDevice waiterDevice = new WaiterDevice();
+							waiterDevice
+									.setWaiterId(App.instance.getUser().getId());
+							waiterDevice.setIP(CommonUtil.getLocalIpAddress());
+							waiterDevice.setMac(CommonUtil
+									.getLocalMacAddress(context));
+							Store.saveObject(context, Store.WAITER_DEVICE,
+									waiterDevice);
+						String	ip=App.instance.getPairingIp();
+							handler.sendEmptyMessage(EmployeeID.HANDLER_GET_PLACE_INFO);
+//					          UIHelp.startMain(context);
 						}
 					}, 2 * 1000);
-					//	handler.sendEmptyMessage(TablesPage.HANDLER_GET_PLACE_INFO);
+
 					}else{
 						syncDataCount++;
 					}

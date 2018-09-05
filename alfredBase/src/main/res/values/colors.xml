@@ -39,6 +39,10 @@
 
     <color name="gray1">#535664</color>
     <color name="gray2">#797b86</color>
+    <color name="gray3">#9fa1a9</color>
+
     <color name="green">#27c06b</color>
+
+    <color name="red">#ea68a2</color>
 
 </resources>

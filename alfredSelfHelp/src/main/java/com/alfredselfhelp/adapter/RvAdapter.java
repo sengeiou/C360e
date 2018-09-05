@@ -2,9 +2,12 @@ package com.alfredselfhelp.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.alfredbase.utils.LogUtil;
 
 import java.util.List;
 
@@ -31,9 +34,25 @@ public abstract class RvAdapter<T> extends RecyclerView.Adapter<RvHolder> {
 
     protected abstract int getLayoutId(int viewType);
 
+
     @Override
     public void onBindViewHolder(RvHolder holder, int position) {
         holder.bindHolder(list.get(position), position);
+    }
+
+    @Override
+    public void onBindViewHolder(RvHolder holder, int position, List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
+        Log.d("onBindViewHolder", String.valueOf(position));
+        if (payloads != null && payloads.size() > 0) {
+            holder.bindHolderItem(list.get(position), position);
+            Log.d("bindHolderItem", "刷新 -"+position);
+          //  LogUtil.e("onBindViewHolder","刷新 -"+position);
+        } else {
+         //   holder.bindHolder(list.get(position), position);
+        }
+
+
     }
 
     @Override

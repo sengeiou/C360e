@@ -148,6 +148,7 @@ public class Store {
 
 	//kpm
 	public static final String KPM_IP="KPM_IP";
+	public static final String KPM_USER = "kpm_user";
 
 
 	private Store() {

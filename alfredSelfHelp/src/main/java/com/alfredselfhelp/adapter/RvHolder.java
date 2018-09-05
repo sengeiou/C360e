@@ -19,5 +19,6 @@ public abstract class RvHolder<T> extends RecyclerView.ViewHolder {
     }
 
     public abstract void bindHolder(T t, int position);
+    public abstract void bindHolderItem(T t, int position);
 
 }

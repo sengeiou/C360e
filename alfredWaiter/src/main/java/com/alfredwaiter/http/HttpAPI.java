@@ -50,8 +50,7 @@ public class HttpAPI {
 						@Override
 						public void onSuccess(int statusCode, Header[] headers,
 								byte[] responseBody) {
-							super.onSuccess(statusCode, headers, responseBody);
-							if (resultCode == ResultCode.SUCCESS) {
+							super.onSuccess(statusCode, headers, responseBody);if (resultCode == ResultCode.SUCCESS) {
 								HttpAnalysis.employeeId(statusCode, headers,
 										responseBody, handler);
 							} else if (resultCode == ResultCode.USER_NO_PERMIT) {

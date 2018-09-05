@@ -9,23 +9,22 @@ import android.widget.TextView;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.utils.BH;
 import com.alfredselfhelp.R;
-import com.alfredselfhelp.activity.MenuActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
 
-public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
+public class NurDetailAdapter extends RvAdapter<ItemDetail> {
 
-    public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener) {
+    public NurDetailAdapter(Context context, List<ItemDetail> list, RvListener listener) {
         super(context, list, listener);
     }
 
 
     @Override
     protected int getLayoutId(int viewType) {
-        return R.layout.item_menu_detail;
+        return R.layout.item_nur_detail;
     }
 
     @Override
@@ -47,12 +46,12 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
         public DetailHolder(View itemView, int type, RvListener listener) {
             super(itemView, type, listener);
-            tvName = (TextView) itemView.findViewById(R.id.tv_modifier_name);
-            img = (ImageView) itemView.findViewById(R.id.img_modifier);
-            tvPrice = (TextView) itemView.findViewById(R.id.tv_modifier_price);
-            add = (ImageView) itemView.findViewById(R.id.img_modifier_add);
+            tvName = (TextView) itemView.findViewById(R.id.tv_nur_name);
+           // img = (ImageView) itemView.findViewById(R.id.img_modifier);
+            tvPrice = (TextView) itemView.findViewById(R.id.tv_nur_price);
+          //  add = (ImageView) itemView.findViewById(R.id.img_modifier_add);
             //    re_modifier_num=(RelativeLayout)itemView.findViewById(R.id.re_modifier_num);
-            num = (TextView) itemView.findViewById(R.id.tv_modifier_num);
+        //    num = (TextView) itemView.findViewById(R.id.tv_modifier_num);
 
 
         }
@@ -60,26 +59,26 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
         @Override
         public void bindHolder(ItemDetail itemDetail, final int position) {
-            int itemViewType = MenuDetailAdapter.this.getItemViewType(position);
+            int itemViewType = NurDetailAdapter.this.getItemViewType(position);
 
             tvName.setText(itemDetail.getItemName());
-            Glide.with(mContext)
-                    .load(itemDetail.getImgUrl())
-                    .placeholder(R.drawable.logo_icon)
-                    .error(R.drawable.logo_icon)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(img);
+//            Glide.with(mContext)
+//                    .load(itemDetail.getImgUrl())
+//                    .placeholder(R.drawable.logo_icon)
+//                    .error(R.drawable.logo_icon)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .into(img);
 
             tvPrice.setText("S$" + BH.getBD(itemDetail.getPrice()).toString());
-            add.setImageResource(R.drawable.icon_add);
-            add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    notifyItemChanged(position, "aaaa");
-
-                }
-            });
+//            add.setImageResource(R.drawable.icon_add);
+//            add.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    notifyItemChanged(position, "aaaa");
+//
+//                }
+//            });
 //
 
         }
