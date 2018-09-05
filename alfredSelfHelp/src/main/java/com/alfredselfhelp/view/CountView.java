@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.popuwindow.SetItemCountWindow;
@@ -17,7 +18,7 @@ import com.alfredselfhelp.popuwindow.SetItemCountWindow;
 public class CountView extends LinearLayout implements OnClickListener {
     private TextView tv_count;
     private OnCountChange onCountChange;
-    private ItemDetail itemDetail;
+    private OrderDetail orderDetail;
     private SetItemCountWindow setItemCountWindow;
 
     public CountView(Context context) {
@@ -52,14 +53,14 @@ public class CountView extends LinearLayout implements OnClickListener {
             ll_add.setOnClickListener(this);
             ll_count.setOnClickListener(this);
         } else {
-//			tv_minus.setTextColor(getResources().getColor(R.color.gray));
-            ll_add.setOnClickListener(this);
-            ll_count.setOnClickListener(this);
+//			tv_minus.setTextColor(getResources  ll_add.setOnClickListener(this);
+////            ll_count.setOnClickListener(this);().getColor(R.color.gray));
+//
         }
     }
 
-    public void setParam(ItemDetail itemDetail, SetItemCountWindow setItemCountWindow) {
-        this.itemDetail = itemDetail;
+    public void setParam(OrderDetail orderDetail, SetItemCountWindow setItemCountWindow) {
+        this.orderDetail = orderDetail;
         this.setItemCountWindow = setItemCountWindow;
     }
 
@@ -85,7 +86,7 @@ public class CountView extends LinearLayout implements OnClickListener {
                     count = 0;
                 tv_count.setText(count + "");
                 if (onCountChange != null) {
-                    onCountChange.onChange(itemDetail, count, false);
+                    onCountChange.onChange(orderDetail, count, false);
                 }
                 break;
             }
@@ -102,13 +103,13 @@ public class CountView extends LinearLayout implements OnClickListener {
                     count = 1;
                 tv_count.setText(count + "");
                 if (onCountChange != null) {
-                    onCountChange.onChange(itemDetail, count, true);
+                    onCountChange.onChange(orderDetail, count, true);
                     Log.d("2222222222--->", "22222222222");
                 }
                 break;
             }
             case R.id.ll_count:
-                setItemCountWindow.show(Integer.parseInt(tv_count.getText().toString()), itemDetail);
+                setItemCountWindow.show(Integer.parseInt(tv_count.getText().toString()), orderDetail);
                 break;
             default:
                 break;
@@ -117,7 +118,7 @@ public class CountView extends LinearLayout implements OnClickListener {
     }
 
     public interface OnCountChange {
-        void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd);
+        void onChange(OrderDetail orderDetail, int count, boolean isAdd);
     }
 
 }

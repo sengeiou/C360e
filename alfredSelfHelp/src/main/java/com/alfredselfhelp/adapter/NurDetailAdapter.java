@@ -81,14 +81,16 @@ public class NurDetailAdapter extends RvAdapter<ItemDetail> {
 //            });
 //
 
+
+
         }
 
         @Override
         public void bindHolderItem(ItemDetail itemDetail, int position) {
 
-            add.setImageResource(R.drawable.mod_num);
-
-            num.setVisibility(View.VISIBLE);
+//            add.setImageResource(R.drawable.mod_num);
+//
+//            num.setVisibility(View.VISIBLE);
 
         }
     }

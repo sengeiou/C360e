@@ -6,10 +6,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.BH;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.activity.MenuActivity;
+import com.alfredselfhelp.view.CountView;
+import com.alfredselfhelp.view.CountViewMod;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -18,11 +23,21 @@ import java.util.List;
 
 public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
-    public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener) {
+    CountView.OnCountChange onCountChange;
+    private List<OrderDetail> orderDetails;
+    private int currentGroupId;
+    private Order currentOrder;
+    public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener, CountViewMod.OnCountChange countViewMod) {
         super(context, list, listener);
+        this.onCountChange = (CountView.OnCountChange) countViewMod;
     }
 
 
+    public void setParams(Order currentOrder, List<OrderDetail> orderDetails, int currentGroupId) {
+        this.currentOrder = currentOrder;
+        this.orderDetails = orderDetails;
+        this.currentGroupId = currentGroupId;
+    }
     @Override
     protected int getLayoutId(int viewType) {
         return R.layout.item_menu_detail;
@@ -40,9 +55,9 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     public class DetailHolder extends RvHolder<ItemDetail> {
         TextView tvPrice;
-        ImageView img, add;
+        ImageView img;
         TextView tvName, num;
-
+         CountViewMod count_view;
         RelativeLayout re_modifier_num;
 
         public DetailHolder(View itemView, int type, RvListener listener) {
@@ -50,7 +65,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
             tvName = (TextView) itemView.findViewById(R.id.tv_modifier_name);
             img = (ImageView) itemView.findViewById(R.id.img_modifier);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_modifier_price);
-            add = (ImageView) itemView.findViewById(R.id.img_modifier_add);
+            count_view = (CountViewMod) itemView.findViewById(R.id.img_modifier_add);
             //    re_modifier_num=(RelativeLayout)itemView.findViewById(R.id.re_modifier_num);
             num = (TextView) itemView.findViewById(R.id.tv_modifier_num);
 
@@ -71,26 +86,48 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
                     .into(img);
 
             tvPrice.setText("S$" + BH.getBD(itemDetail.getPrice()).toString());
-            add.setImageResource(R.drawable.icon_add);
-            add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
 
-                    notifyItemChanged(position, "aaaa");
-
-                }
-            });
-//
+   count_view.setIsCanClick(getOrderDetailStatus(itemDetail));
+                    count_view.setInitCount(getItemNum(itemDetail));
+                    count_view.setTag(itemDetail);
+                  //  count_view.setParam(itemDetail,setItemCountWindow);
+                    count_view.setOnCountChange((CountViewMod.OnCountChange) onCountChange);
 
         }
 
         @Override
         public void bindHolderItem(ItemDetail itemDetail, int position) {
 
-            add.setImageResource(R.drawable.mod_num);
 
-            num.setVisibility(View.VISIBLE);
 
         }
+    }
+
+
+    private int getItemNum(ItemDetail itemDetail) {
+        int itemNum = 0;
+        for (OrderDetail orderDetail : orderDetails) {
+            if (orderDetail.getItemId().intValue() == itemDetail.getId()
+                    .intValue()
+                    ) {
+                itemNum += orderDetail.getItemNum();
+            }
+        }
+        return itemNum;
+    }
+
+    private boolean getOrderDetailStatus(ItemDetail itemDetail) {
+        for (OrderDetail orderDetail : orderDetails) {
+            if (orderDetail.getItemId().intValue() == itemDetail.getId()
+                    .intValue()
+                    ) {
+                if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        return true;
     }
 }

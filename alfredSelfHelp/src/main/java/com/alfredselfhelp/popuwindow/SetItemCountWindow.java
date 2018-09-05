@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -43,7 +44,7 @@ public class SetItemCountWindow implements OnClickListener, MoneyKeyboard.KeyBoa
 	private TextView tv_num;
 	private Handler handler;
 	private boolean flag = false;
-	private ItemDetail itemDetail;
+	private OrderDetail orderDetail;
 	private  int oldCount;
 
 	public SetItemCountWindow(BaseActivity parent, View parentView, Handler handler) {
@@ -75,10 +76,10 @@ public class SetItemCountWindow implements OnClickListener, MoneyKeyboard.KeyBoa
 		popupWindow.setFocusable(true);
 	}
 
-	public void show(int count,ItemDetail itemDetail) {
+	public void show(int count,OrderDetail orderDetail) {
 		init();
 		this.oldCount=count;
-		this.itemDetail = itemDetail;
+		this.orderDetail = orderDetail;
 		tv_num.setText(count+"");
 		flag = false;
 		popupWindow
@@ -124,7 +125,7 @@ public class SetItemCountWindow implements OnClickListener, MoneyKeyboard.KeyBoa
 					popupWindow.dismiss();
 					if(isEnter){
 						Map<String, Object> result = new HashMap<String, Object>();
-						result.put("itemDetail", itemDetail);
+						result.put("itemDetail", orderDetail);
 						result.put("count", Integer.parseInt(tv_num.getText().toString()));
 						int newCount=Integer.parseInt(tv_num.getText().toString());
 						if(newCount>oldCount) {
@@ -132,7 +133,6 @@ public class SetItemCountWindow implements OnClickListener, MoneyKeyboard.KeyBoa
 						}else {
 							result.put("isAdd", false);
 						}
-
 						handler.sendMessage(handler.obtainMessage(
 								MenuActivity.VIEW_EVENT_MODIFY_ITEM_COUNT, result));
 					}
