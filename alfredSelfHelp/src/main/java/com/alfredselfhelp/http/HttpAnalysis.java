@@ -47,10 +47,14 @@ import com.alfredbase.store.sql.ItemHappyHourSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.ModifierSQL;
+import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
+import com.alfredbase.store.sql.PaymentSQL;
+import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
@@ -108,6 +112,13 @@ public class HttpAnalysis {
 			List<User> users = gson.fromJson(object.getString("users"),
 					new TypeToken<ArrayList<User>>() {
 					}.getType());
+			OrderSQL.deleteAllOrder();
+			OrderDetailSQL.deleteAllOrderDetail();
+			OrderBillSQL.deleteAllOrderBill();
+			OrderDetailTaxSQL.deleteAllOrderDetailTax();
+			OrderModifierSQL.deleteAllOrderModifier();
+			PaymentSQL.deleteAllPayment();
+			PaymentSettlementSQL.deleteAllSettlement();
 			if(users != null && users.size() > 0){
 				UserSQL.deleteAllUser();
 				UserSQL.addUsers(users);

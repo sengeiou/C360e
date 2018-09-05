@@ -434,6 +434,14 @@ public class PaymentSQL {
 			e.printStackTrace();
 		}
 	}
-	
+	public static void deleteAllPayment() {
+		String sql = "delete from " + TableNames.Payment;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 }

@@ -319,5 +319,13 @@ public class OrderBillSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void deleteAllOrderBill() {
+		String sql = "delete from " + TableNames.OrderBill;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] { });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

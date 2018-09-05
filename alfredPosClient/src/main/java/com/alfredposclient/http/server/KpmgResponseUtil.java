@@ -110,7 +110,7 @@ public class KpmgResponseUtil {
         NanoHTTPD.Response resp = null;
         try {
             JSONObject jsonObject = new JSONObject(params);
-            String employeeId = jsonObject.optString("employeeId");
+            String employeeId = jsonObject.optString("employee_ID");
             int empId = Integer.parseInt(employeeId);
             long sessionStatusTime = 0l;
             if(jsonObject.has("sessionStatusTime")){

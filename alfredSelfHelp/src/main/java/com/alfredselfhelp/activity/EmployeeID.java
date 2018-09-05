@@ -99,6 +99,9 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 				case UPDATE_ALL_DATA_SUCCESS:
 //					dismissLoadingDialog();
 					// TODO startMainPage();
+					App.instance.setPosIp(App.instance.getPairingIp());
+					UIHelp.startMain(context);
+
 					break;
 				case UPDATE_ALL_DATA_FAILURE:
 					dismissLoadingDialog();
@@ -140,6 +143,7 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 			setPassword(keyBuf.length());
 			Map<String,Object> map = new HashMap<String, Object>();
 			map.put("employee_ID", employee_ID);
+			loadingDialog.setTitle("Login...");
 			loadingDialog.show();
 			Store.putString(context, Store.EMPLOYEE_ID, employee_ID);
 			SyncCentre.getInstance().login(context, map, handler);

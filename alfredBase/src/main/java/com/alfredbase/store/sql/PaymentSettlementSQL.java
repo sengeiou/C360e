@@ -1440,6 +1440,29 @@ public class PaymentSettlementSQL {
 		}
 
 	}
+	public static void deleteAllSettlement() {
+
+		String sql = "delete from " + TableNames.PaymentSettlement;
+		String sql1 = "delete from " + TableNames.CardsSettlement;
+		String sql2 = "delete from " + TableNames.BohHoldSettlement;
+		String sql4 = "delete from " + TableNames.NonChargableSettlement;
+		String sql5 = "delete from " + TableNames.NetsSettlement;
+		try {
+			SQLExe.getDB().execSQL(sql,
+					new Object[] {});
+			SQLExe.getDB().execSQL(sql1,
+					new Object[] { });
+			SQLExe.getDB().execSQL(sql2,
+					new Object[] {});
+			SQLExe.getDB().execSQL(sql4,
+					new Object[] {});
+			SQLExe.getDB().execSQL(sql5,
+					new Object[] {});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	public static void regainPaymentSettlementByPayment(Payment payment) {
 		String sql = "delete from " + TableNames.PaymentSettlement
