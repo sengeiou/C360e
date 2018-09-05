@@ -215,60 +215,74 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             }
         });
 
-        List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
-        for (int i = 0; i < 10; i++) {
-            ItemDetail item = new ItemDetail();
-            item.setItemName("Names");
-            item.setPrice("10.55");
-            itemDetaillist.add(item);
-        }
 
-//        final OrderSelfDialog   selfDialog = new OrderSelfDialog(MenuActivity.this);
-//        selfDialog.setList(itemDetaillist);
-//
-//        selfDialog.setYesOnclickListener("Yes", new OrderSelfDialog.onYesOnclickListener() {
-//            @Override
-//            public void onYesClick() {
-//                Toast.makeText(MenuActivity.this,"点击了--确定--按钮",Toast.LENGTH_LONG).show();
-//                selfDialog.dismiss();
-//            }
-//        });
-//        selfDialog.setNoOnclickListener("No", new OrderSelfDialog.onNoOnclickListener() {
-//            @Override
-//            public void onNoClick() {
-//                Toast.makeText(MenuActivity.this,"点击了--取消--按钮",Toast.LENGTH_LONG).show();
-//                selfDialog.dismiss();
-//            }
-//        });
-//        selfDialog.show();
+
 
 
     }
 
     private void initRfid() {
-
-        List<ItemDetail> itemDetailAll = CoreData.getInstance().getItemDetails();
-
-        if (itemDetailAll != null) {
-
-            NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+        final List<ItemDetail> itemDetaillist = new ArrayList<>();
+        final List<ItemDetail> itemDetailAll = CoreData.getInstance().getItemDetails();
+        NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+        if (itemDetailAll != null && nurTagStorage != null && nurTagStorage.size() > 0) {
             int nurTagStorageSize = nurTagStorage.size();
-
             for (int i = 0; i < itemDetailAll.size(); i++) {
                 ItemDetail itemDetail = itemDetailAll.get(i);
                 for (int j = 0; j < nurTagStorageSize; j++) {
                     NurTag nurTag = nurTagStorage.get(j);
-
                     if (itemDetail.getBarcode().equals(nurTag.getEpcString())) {
-                        itemDetailNur.add(itemDetail);
+                        itemDetaillist.add(itemDetail);
                     }
-
                 }
-
-
             }
 
             // 弹出
+            final OrderSelfDialog   selfDialog = new OrderSelfDialog(MenuActivity.this);
+            selfDialog.setList(itemDetaillist);
+
+            selfDialog.setYesOnclickListener("Yes", new OrderSelfDialog.onYesOnclickListener() {
+                @Override
+                public void onYesClick() {
+                    if(itemDetaillist != null){
+                        if(loadingDialog == null){
+                            loadingDialog = new LoadingDialog(MenuActivity.this);
+                        }
+                        loadingDialog.setTitle("Loading");
+                        loadingDialog.show();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for(ItemDetail itemDetail : itemDetaillist){
+                                    OrderDetail orderDetail = ObjectFactory.getInstance()
+                                            .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                                    0, App.instance.getUser());
+                                    orderDetail.setItemNum(1);
+                                    OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                                }
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if(loadingDialog != null && loadingDialog.isShowing()){
+                                            loadingDialog.dismiss();
+                                        }
+                                        selfDialog.dismiss();
+                                    }
+                                });
+                            }
+                        }).start();
+
+                    }
+
+                }
+            });
+            selfDialog.setNoOnclickListener("No", new OrderSelfDialog.onNoOnclickListener() {
+                @Override
+                public void onNoClick() {
+                   selfDialog.dismiss();
+                }
+            });
+            selfDialog.show();
         }
 
 

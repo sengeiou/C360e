@@ -1348,4 +1348,10 @@ public class DataHelper {
 
         }
     }
+
+    private void onUpgradeFor0chen0dVersionfor(SQLiteDatabase db) {
+
+        db.execSQL("ALTER TABLE " + TableNames.TempOrderDetail
+                + " ADD COLUMN itemUrl TEXT");
+    }
 }

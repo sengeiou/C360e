@@ -170,8 +170,8 @@ public class OrderDetailSQL {
 					+ "(id,orderId, orderOriginId, userId, itemId,itemName,itemNum, orderDetailStatus, orderDetailType,reason, printStatus, itemPrice,"
 					+ " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
 					+ " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
-					+ " fireStatus)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " fireStatus,itemUrl)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { orderDetail.getId(),
@@ -204,7 +204,8 @@ public class OrderDetailSQL {
 							orderDetail.getIsSet(),
 							orderDetail.getAppOrderDetailId(),
 							orderDetail.getMainCategoryId(),
-							orderDetail.getFireStatus()
+							orderDetail.getFireStatus(),
+							orderDetail.getItemUrl()
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
