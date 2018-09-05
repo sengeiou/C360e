@@ -47,6 +47,26 @@ public class SubPosCommitSQL {
         }
         return isSuccessful;
     }
+    public static boolean commitOrderForKPMG(Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
+                                      List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
+                                      List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements, List<RoundAmount> roundAmounts){
+        boolean isSuccessful;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            db.beginTransaction();
+            ObjectFactory.getInstance().cpOrderInfoForKPMG(subOrder, orderSplits, orderBills, payments, orderDetails,
+                    orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts);
+
+            db.setTransactionSuccessful();
+            isSuccessful = true;
+        }catch (Exception e){
+            isSuccessful = false;
+            e.printStackTrace();
+        }finally {
+            db.endTransaction();
+        }
+        return isSuccessful;
+    }
     public static boolean commitOrderLog(Order subOrder, List<OrderSplit> orderSplits,  List<Payment> payments,
                                          List<PaymentSettlement> paymentSettlements, List<RoundAmount> roundAmounts){
         boolean isSuccessful;

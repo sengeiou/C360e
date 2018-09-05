@@ -28,6 +28,7 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -38,6 +39,9 @@ import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
+import com.alfredbase.javabean.model.PrintOrderItem;
+import com.alfredbase.javabean.model.PrintOrderModifier;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
@@ -50,12 +54,16 @@ import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.MultiOrderRelationSQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
+import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
+import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SettlementRestaurantSQL;
 import com.alfredbase.store.sql.SubPosCommitSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
@@ -219,7 +227,7 @@ public class KpmgResponseUtil {
                     new TypeToken<List<OrderBill>>(){}.getType());
             List<RoundAmount> roundAmounts = gson.fromJson(jsonObject.getString("roundAmounts"),
                     new TypeToken<List<RoundAmount>>(){}.getType());
-            boolean isSuccessful = SubPosCommitSQL.commitOrder(subPosBeanId, order, orderSplits, orderBills, payments, orderDetails,
+            boolean isSuccessful = SubPosCommitSQL.commitOrderForKPMG(order, orderSplits, orderBills, payments, orderDetails,
                     orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts);
             map.put("resultCode", ResultCode.SUCCESS);
             if(isSuccessful) {
@@ -283,12 +291,6 @@ public class KpmgResponseUtil {
                                             }
                                         }
                                     }
-//									for (KotItemDetail kot : kotItemDetails) {
-//										ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
-//												.getKotItemModifiersByKotItemDetail(kot.getId());
-//										if (kotItemModifierObj != null)
-//											kotItemModifiers.addAll(kotItemModifierObj);
-//									}
                                     Map<String, Object> orderMap = new HashMap<String, Object>();
                                     orderMap.put("orderId", orderSplit.getOrderId());
                                     orderMap.put("orderDetailIds", orderDetailIds);
@@ -320,11 +322,6 @@ public class KpmgResponseUtil {
                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                     kotItemDetail.setItemNum(orderDetail
                                             .getItemNum());
-//										if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
-//											kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
-//											kotItemDetail
-//													.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
-//										}
                                     KotItemDetailSQL.update(kotItemDetail);
                                     kotItemDetails.add(kotItemDetail);
                                     orderDetailIds.add(orderDetail.getId());
@@ -346,33 +343,45 @@ public class KpmgResponseUtil {
                                         }
                                     }
                                 }
-//								for (KotItemDetail kot : kotItemDetails) {
-//									ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
-//											.getKotItemModifiersByKotItemDetail(kot.getId());
-//									if (kotItemModifierObj != null)
-//										kotItemModifiers.addAll(kotItemModifierObj);
-//								}
-//								TableInfo tableInfo = TableInfoSQL.getTableById(placeOrder.getTableId().intValue());
-//								PrinterTitle title = ObjectFactory.getInstance()
-//										.getPrinterTitle(
-//												App.instance.getRevenueCenter(),
-//												placeOrder,
-//												App.instance.getUser().getFirstName()
-//														+ App.instance.getUser().getLastName(),
-//												tableInfo.getName(), 1);
 
                                 Map<String, Object> orderMap = new HashMap<String, Object>();
 
                                 orderMap.put("orderId", placeOrder.getId());
                                 orderMap.put("orderDetailIds", orderDetailIds);
                                 orderMap.put("orderPosType", ParamConst.POS_TYPE_SUB);
-//								orderMap.put("paidOrder", placeOrder);
-//								orderMap.put("title", title);
-//								orderMap.put("placedOrderDetails", placedOrderDetails);
                                 App.instance.getKdsJobManager().tearDownKotForSub(
                                         kotSummary, kotItemDetails,
                                         kotItemModifiers, ParamConst.JOB_NEW_KOT,
                                         orderMap);
+                            }
+                        }
+                        {
+                            PrinterDevice printer = App.instance.getCahierPrinter();
+                            PrinterTitle title = ObjectFactory.getInstance()
+                                    .getPrinterTitle(
+                                            App.instance.getRevenueCenter(),
+                                            placeOrder,
+                                            App.instance.getUser().getFirstName()
+                                                    + App.instance.getUser().getLastName(),
+                                            "", 1);
+                            ArrayList<PrintOrderItem> orderItems = ObjectFactory
+                                    .getInstance().getItemList(
+                                            OrderDetailSQL.getOrderDetails(placeOrder
+                                                    .getId()));
+                            List<Map<String, String>> taxMap = OrderDetailTaxSQL
+                                    .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), placeOrder);
+
+                            ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                                    .getInstance().getItemModifierList(placeOrder, OrderDetailSQL.getOrderDetails(placeOrder
+                                            .getId()));
+
+                            OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+                                    placeOrder, App.instance.getRevenueCenter());
+                            RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(placeOrder, orderBill);
+                            if (orderItems.size() > 0 && printer != null) {
+                                List<PaymentSettlement> paymentSettlementList = PaymentSettlementSQL.getAllPaymentSettlementByOrderId(placeOrder.getId());
+                                App.instance.remoteBillPrint(printer, title, placeOrder,
+                                        orderItems, orderModifiers, taxMap, paymentSettlementList, roundAmount);
                             }
                         }
                     }
