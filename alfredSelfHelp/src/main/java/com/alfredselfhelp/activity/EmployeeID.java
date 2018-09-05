@@ -1,21 +1,16 @@
 package com.alfredselfhelp.activity;
 
 import android.os.Handler;
+import android.os.Message;
+import android.view.View;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
-import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.RevenueCenter;
-import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderDetailTaxSQL;
-import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
@@ -23,7 +18,6 @@ import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.utils.UIHelp;
-
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +35,10 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 	private TextTypeFace textTypeFace;
 	public static final int SYNC_DATA_TAG = 2015;
 	public static final int HANDLER_PAIRING_COMPLETE = 1001;
+
+	public static final int UPDATE_ALL_DATA_SUCCESS = 100;
+	public static final int UPDATE_ALL_DATA_FAILURE = -100;
+	public static final int GET_ORDER_SUCCESS = 101;
 
 	public static final int HANDLER_GET_PLACE_INFO = 1002;
 	private int syncDataCount = 0;
@@ -80,88 +78,46 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 		textTypeFace.setTrajanProRegular(tv_id_4);
 		textTypeFace.setTrajanProRegular(tv_id_5);
 	}
-	
-	private Handler handler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case ResultCode.SUCCESS: {
-				loadingDialog.dismiss();
-				HashMap<String, Object> map = (HashMap<String, Object>) msg.obj;
-//				UIHelp.startSelectRevenue(context, map);
-				RevenueCenter revenueCenter = (RevenueCenter) map.get("revenue");
-				App.instance.setRevenueCenter(revenueCenter);
-				Store.saveObject(context, Store.CURRENT_REVENUE_CENTER,
-						revenueCenter);
-				loadingDialog.setTitle(context.getResources().getString(R.string.loading));
-				loadingDialog.show();
-				new Thread(new Runnable() {
 
-					@Override
-					public void run() {
-						OrderSQL.deleteAllOrder();
-						OrderDetailSQL.deleteAllOrderDetail();
-						OrderModifierSQL.deleteAllOrderModifier();
-						OrderDetailTaxSQL.deleteAllOrderDetailTax();
-					}
-				}).start();
-				syncDataCount = 0;
-				SyncData();
-			//	getPlaces();
-//				finish();
-			}
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what){
+				case ResultCode.SUCCESS: {
+//					if (needSync) {
+						dismissLoadingDialog();
+						loadingDialog.setTitle("update all data");
+						loadingDialog.show();
+						SyncCentre.getInstance().updateAllData(context, handler);
+//					}else{
+//						App.instance.setSessionStatus(Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
+//						//TODO startMainPage();
+//					}
+				}
 				break;
-			case ResultCode.USER_NO_PERMIT:
-				loadingDialog.dismiss();
-				UIHelp.showToast(context, context.getResources().getString(R.string.access_denied));
-				break;
-			case ResultCode.CONNECTION_FAILED:
-				loadingDialog.dismiss();
-				UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable)msg.obj, 
-						context.getResources().getString(R.string.revenue_center)));
-				break;
-			case HANDLER_PAIRING_COMPLETE: {
-				loadingDialog.dismiss();
-				UIHelp.startLogin(context);
-				finish();
-				break;
-			}
-				case HANDLER_GET_PLACE_INFO:
-					// 预留2秒让数据存下数据库
-					UIHelp.startLogin(context);
-					finish();
-
-				break;
-				case SYNC_DATA_TAG:
-					if(syncDataCount == 4){
-						BaseApplication.postHandler.postDelayed(new Runnable() {
-//						@Override
-						public void run() {
-						//	App.instance.setPosIp(App.instance.getPairingIp());
-
-							WaiterDevice waiterDevice = new WaiterDevice();
-							waiterDevice
-									.setWaiterId(App.instance.getUser().getId());
-							waiterDevice.setIP(CommonUtil.getLocalIpAddress());
-							waiterDevice.setMac(CommonUtil
-									.getLocalMacAddress(context));
-							Store.saveObject(context, Store.WAITER_DEVICE,
-									waiterDevice);
-						String	ip=App.instance.getPairingIp();
-							handler.sendEmptyMessage(EmployeeID.HANDLER_GET_PLACE_INFO);
-//					          UIHelp.startMain(context);
-						}
-					}, 2 * 1000);
-
-					}else{
-						syncDataCount++;
-					}
+				case UPDATE_ALL_DATA_SUCCESS:
+//					dismissLoadingDialog();
+					// TODO startMainPage();
 					break;
-			default:
-				break;
-			}
-		};
-	};
+				case UPDATE_ALL_DATA_FAILURE:
+					dismissLoadingDialog();
+					break;
+				case ResultCode.SESSION_HAS_CHANGE:
+					dismissLoadingDialog();
+					DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), "Session has changed !", new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							loadingDialog.setTitle("update all data");
+							loadingDialog.show();
+							SyncCentre.getInstance().updateAllData(context, handler);
+						}
+					});
+					break;
 
+			}
+		}
+	};
 	private static final int KEY_LENGTH = 5;
 	private StringBuffer keyBuf = new StringBuffer();
 
@@ -186,22 +142,10 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 			map.put("employee_ID", employee_ID);
 			loadingDialog.show();
 			Store.putString(context, Store.EMPLOYEE_ID, employee_ID);
-			SyncCentre.getInstance().employeeId(context, App.instance.getPairingIp(), map, handler);
+			SyncCentre.getInstance().login(context, map, handler);
 		}
 	}
 
-	private void SyncData() {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		SyncCentre.getInstance().syncCommonData(context,
-				App.instance.getPairingIp(), parameters, handler);
-	}
-	private void getPlaces() {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("revenueId", App.instance.getRevenueCenter().getId());
-		SyncCentre.getInstance().getPlaceInfo(context,
-				App.instance.getPairingIp(), parameters, handler);
-
-	}
 
 	private void setPassword(int key_len) {
 		switch (key_len) {

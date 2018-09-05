@@ -71,8 +71,8 @@ public class SubPosSyncCentre {
 	public void login(Context context, Map<String, Object> parameters, final Handler handler) {
 		SubPosHttpAPI.login(context, parameters, getAbsoluteUrl(APIName.SUBPOS_LOGIN), httpClient, handler);
 	}
-	public void updaetAllData(Context context, final Handler handler) {
-		SubPosHttpAPI.updaetAllData(context, getAbsoluteUrl(APIName.SUBPOS_UPDATE_DATA), httpClient, handler);
+	public void updateAllData(Context context, final Handler handler) {
+		SubPosHttpAPI.updateAllData(context, getAbsoluteUrl(APIName.SUBPOS_UPDATE_DATA), httpClient, handler);
 	}
 	public void getOrder(Context context, Map<String, Object> parameters, final Handler handler) {
 		SubPosHttpAPI.getOrder(context, parameters, getAbsoluteUrl(APIName.SUBPOS_UPDATE_DATA), httpClient, handler);

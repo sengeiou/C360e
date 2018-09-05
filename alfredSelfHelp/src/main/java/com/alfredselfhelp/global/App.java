@@ -1,15 +1,21 @@
 package com.alfredselfhelp.global;
 
 import com.alfredbase.BaseApplication;
+import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.model.LocalRestaurantConfig;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.TimeUtil;
 import com.alfredselfhelp.utils.TvPref;
+
+import java.util.List;
 
 
 public class App extends BaseApplication {
@@ -25,9 +31,14 @@ public class App extends BaseApplication {
     private WaiterDevice waiterdev;
     private User user;
     private RevenueCenter revenueCenter;
-    // RFID API
+
+    private Long businessDate;
+    private Long lastBusinessDate;
+    private int indexOfRevenueCenter;
+
     public static boolean isleftMoved;
     private String currencySymbol = "$";
+    private LocalRestaurantConfig localRestaurantConfig;
 
     private static final String DATABASE_NAME = "com.alfredselfhelp";
     private SessionStatus sessionStatus;
@@ -63,6 +74,37 @@ public class App extends BaseApplication {
             mainPosInfo = Store.getObject(this.getApplicationContext(), Store.MAINPOSINFO, MainPosInfo.class);
         }
         return mainPosInfo;
+    }
+
+    public void setLocalRestaurantConfig(
+            List<RestaurantConfig> restaurantConfigs) {
+        this.localRestaurantConfig = getLocalRestaurantConfig();
+        for (RestaurantConfig restaurantConfig : restaurantConfigs) {
+            switch (restaurantConfig.getParaType().intValue()) {
+                case ParamConst.SALE_SESSION_TYPE:
+                    this.localRestaurantConfig
+                            .setSessionConfigType(restaurantConfig);
+                    break;
+                case ParamConst.PRICE_TAX_INCLUSIVE:
+                    this.localRestaurantConfig.setIncludedTax(restaurantConfig);
+                    break;
+                case ParamConst.ROUND_RULE_TYPE:
+                    this.localRestaurantConfig.setRoundType(restaurantConfig);
+                    break;
+                case ParamConst.CURRENCY_TYPE:
+                    this.localRestaurantConfig.setCurrencySymbol(restaurantConfig);
+                    this.localRestaurantConfig.setCurrencySymbolType(restaurantConfig);
+                    break;
+                case ParamConst.DEF_DISCOUNT_TYPE:
+                    this.localRestaurantConfig.setDiscountOption(restaurantConfig);
+                    break;
+                case ParamConst.SEND_FOOD_CARD_NUM:
+                    this.localRestaurantConfig.setSendFoodCardNumList(restaurantConfig);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public void setMainPosInfo(MainPosInfo mainPosInfo) {
@@ -142,6 +184,40 @@ public class App extends BaseApplication {
         BH.initFormart(isDouble);
     }
 
+    public LocalRestaurantConfig getLocalRestaurantConfig() {
+        return localRestaurantConfig;
+    }
+
+    public Long getBusinessDate() {
+        return businessDate;
+    }
+
+    public void setBusinessDate(Long businessDate) {
+        this.businessDate = businessDate;
+    }
+
+    public Long getLastBusinessDate() {
+        if (lastBusinessDate == null) {
+            lastBusinessDate = Store.getLong(this, Store.LAST_BUSINESSDATE);
+        }
+        // if all data is null, set today is businessDate
+        if (lastBusinessDate == null
+                || lastBusinessDate == Store.DEFAULT_LONG_TYPE) {
+            lastBusinessDate = TimeUtil.getNewBusinessDate();
+        }
+        return lastBusinessDate;
+    }
+
+    public void setLastBusinessDate(Long lastBusinessDate) {
+        this.lastBusinessDate = lastBusinessDate;
+    }
+
+    public int getIndexOfRevenueCenter() {
+        if (revenueCenter != null) {
+            indexOfRevenueCenter = revenueCenter.getId();
+        }
+        return indexOfRevenueCenter;
+    }
 
     @Override
     public void onTerminate() {

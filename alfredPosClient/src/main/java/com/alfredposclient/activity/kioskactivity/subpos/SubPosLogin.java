@@ -168,7 +168,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 						dismissLoadingDialog();
 						loadingDialog.setTitle("update all data");
 						loadingDialog.show();
-						SubPosSyncCentre.getInstance().updaetAllData(context, handler);
+						SubPosSyncCentre.getInstance().updateAllData(context, handler);
 					}else{
 						App.instance.setSessionStatus(Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
 						startMainPage();
@@ -189,7 +189,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 						public void onClick(View v) {
 							loadingDialog.setTitle("update all data");
 							loadingDialog.show();
-							SubPosSyncCentre.getInstance().updaetAllData(context, handler);
+							SubPosSyncCentre.getInstance().updateAllData(context, handler);
 						}
 					});
 					break;

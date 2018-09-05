@@ -131,8 +131,8 @@ public class SubPosHttpAPI {
             e.printStackTrace();
         }
     }
-    public static void updaetAllData(final Context context,
-                             String url, AsyncHttpClient httpClient, final Handler handler) {
+    public static void updateAllData(final Context context,
+                                     String url, AsyncHttpClient httpClient, final Handler handler) {
         Map<String, Object> parameters = new HashMap<>();
         if (parameters != null) {
             parameters.put("appVersion", App.instance.VERSION);
