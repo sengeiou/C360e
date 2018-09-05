@@ -185,6 +185,9 @@ public class App extends BaseApplication {
     }
 
     public LocalRestaurantConfig getLocalRestaurantConfig() {
+        if (localRestaurantConfig == null) {
+            this.localRestaurantConfig = LocalRestaurantConfig.getInstance();
+        }
         return localRestaurantConfig;
     }
 
