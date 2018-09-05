@@ -1,9 +1,6 @@
 package com.alfredselfhelp.activity;
 
-import android.app.Dialog;
-import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -11,24 +8,18 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
-import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.ItemCategorySQL;
-import com.alfredbase.store.sql.ItemDetailSQL;
-import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
@@ -47,7 +38,6 @@ import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.popuwindow.SetItemCountWindow;
 import com.alfredselfhelp.utils.CheckListener;
 import com.alfredselfhelp.utils.ItemHeaderDecoration;
-import com.alfredselfhelp.utils.ToolAlert;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
@@ -143,6 +133,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     }
                     UIHelp.showToast(App.instance, "failed");
                     break;
+
 
               //  case  success
 
@@ -478,7 +469,23 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_cart_list.setVisibility(View.GONE);
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
-
+            {// TODO
+                NurTagStorage nurTagStorage = new NurTagStorage();
+                String b = "989292920000000000000000";
+                NurTag tag = new NurTag(0,0,0,0,0,0,0, b.getBytes());
+                if(nurTagStorage.addTag(tag)) {
+                    HashMap<String, String> temp = new HashMap<>();
+                    temp.put("epc", tag.getEpcString());
+                    temp.put("rssi", "" + tag.getRssi());
+                    temp.put("timestamp", "" + tag.getTimestamp());
+                    temp.put("freq", "" + tag.getFreq() + " kHz (Ch: " + tag.getChannel() + ")");
+                    temp.put("found", "1");
+                    temp.put("foundpercent", "100");
+                    tag.setUserdata(temp);
+                }
+                RfidApiCentre.getInstance().setNurTagStorage(nurTagStorage);
+                initRfid();
+            }
                 break;
 
 

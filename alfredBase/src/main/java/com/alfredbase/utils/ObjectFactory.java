@@ -230,14 +230,15 @@ public class ObjectFactory {
 
 		synchronized (lock_order) {
 			if (subOrder != null) {
-				subOrder.setId(CommonSQL.getNextSeq(TableNames.CPOrder));
+				subOrder.setId(CommonSQL.getNextSeq(TableNames.Order));
+				subOrder.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
 				OrderSQL.update(subOrder);
 			}
 
 			Map<Integer, Integer> orderSplitMap = new HashMap<>();
 			for (OrderSplit orderSplit : orderSplits) {
 				int oldId = orderSplit.getId();
-				orderSplit.setId(CommonSQL.getNextSeq(TableNames.CPOrderSplit));
+				orderSplit.setId(CommonSQL.getNextSeq(TableNames.OrderSplit));
 				orderSplit.setOrderId(subOrder.getId());
 				OrderSplitSQL.update(orderSplit);
 				orderSplitMap.put(oldId, orderSplit.getId());
@@ -246,7 +247,7 @@ public class ObjectFactory {
 			Map<Integer, Integer> paymentMap = new HashMap<>();
 			for (Payment payment : payments) {
 				int oldId = payment.getId();
-				payment.setId(CommonSQL.getNextSeq(TableNames.CPPayment));
+				payment.setId(CommonSQL.getNextSeq(TableNames.Payment));
 				payment.setOrderId(subOrder.getId());
 				Integer orderSplitId = payment.getOrderSplitId();
 				if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
@@ -257,7 +258,7 @@ public class ObjectFactory {
 			}
 
 			for (RoundAmount roundAmount : roundAmounts) {
-				roundAmount.setId(CommonSQL.getNextSeq(TableNames.CPRoundAmount));
+				roundAmount.setId(CommonSQL.getNextSeq(TableNames.RoundAmount));
 				roundAmount.setOrderId(subOrder.getId());
 				Integer orderSplitId = roundAmount.getOrderSplitId();
 				if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
@@ -267,7 +268,7 @@ public class ObjectFactory {
 			}
 
 			for (OrderBill orderBill : orderBills) {
-				orderBill.setId(CommonSQL.getNextSeq(TableNames.CPOrderBill));
+				orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
 				orderBill.setOrderId(subOrder.getId());
 				Integer orderSplitId = orderBill.getOrderSplitId();
 				if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
@@ -279,7 +280,7 @@ public class ObjectFactory {
 			Map<Integer, Integer> orderDetailMap = new HashMap<>();
 			for (OrderDetail orderDetail : orderDetails) {
 				int oldId = orderDetail.getId();
-				orderDetail.setId(CommonSQL.getNextSeq(TableNames.CPOrderDetail));
+				orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
 				orderDetail.setOrderId(subOrder.getId());
 				Integer orderSplitId = orderDetail.getOrderSplitId();
 				if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
@@ -290,7 +291,7 @@ public class ObjectFactory {
 			}
 
 			for (OrderModifier orderModifier : orderModifiers) {
-				orderModifier.setId(CommonSQL.getNextSeq(TableNames.CPOrderModifier));
+				orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
 				Integer orderDetailId = orderModifier.getOrderDetailId();
 				if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
 					orderModifier.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
@@ -299,7 +300,7 @@ public class ObjectFactory {
 				OrderModifierSQL.updateOrderModifier(orderModifier);
 			}
 			for (OrderDetailTax orderDetailTax : orderDetailTaxs) {
-				orderDetailTax.setId(CommonSQL.getNextSeq(TableNames.CPOrderDetailTax));
+				orderDetailTax.setId(CommonSQL.getNextSeq(TableNames.OrderDetailTax));
 				Integer orderDetailId = orderDetailTax.getOrderDetailId();
 				if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
 					orderDetailTax.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
@@ -309,7 +310,7 @@ public class ObjectFactory {
 			}
 
 			for (PaymentSettlement paymentSettlement : paymentSettlements) {
-				paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.CPPaymentSettlement));
+				paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.PaymentSettlement));
 				Integer paymentId = paymentSettlement.getPaymentId();
 				if (paymentId != null && paymentMap.containsKey(paymentId.intValue())) {
 					paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));
