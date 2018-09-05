@@ -97,10 +97,11 @@ public class HttpAPI {
 		}
 	}
 
-	public static void commitOrder(Context context, String url, AsyncHttpClient httpClient) {
+	public static void commitOrder(Context context, Map<String, Object> map, String url, AsyncHttpClient httpClient) {
 
 		try {
-			JSONObject jsonObject = new JSONObject();
+			String j = new Gson().toJson(map);
+			JSONObject jsonObject = new JSONObject(j);
 			jsonObject.put("appVersion", App.instance.VERSION);
 			jsonObject.put("userId", App.instance.getUser().getId());
 			httpClient.post(context, url,

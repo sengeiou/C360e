@@ -14,7 +14,6 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Modifier;
-import com.alfredbase.javabean.MultiOrderRelation;
 import com.alfredbase.javabean.NanoHTTPD;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
@@ -53,7 +52,6 @@ import com.alfredbase.store.sql.ItemModifierSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.ModifierSQL;
-import com.alfredbase.store.sql.MultiOrderRelationSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
@@ -204,13 +202,6 @@ public class KpmgResponseUtil {
             Map<String, Object> map = new HashMap<>();
             JSONObject jsonObject = new JSONObject(params);
             Order order = gson.fromJson(jsonObject.getString("order"), Order.class);
-            int subPosBeanId = jsonObject.optInt("subPosBeanId");
-            MultiOrderRelation multiOrderRelation = MultiOrderRelationSQL.getMultiOrderRelationBySubOrderId(subPosBeanId, order.getId().intValue(), order.getCreateTime());
-            if(multiOrderRelation != null){
-                map.put("resultCode", ResultCode.RECEIVE_MSG_EXIST);
-                return mainPosHttpServer.getJsonResponse(gson.toJson(map));
-            }
-
             List<OrderDetail> orderDetails = gson.fromJson(jsonObject.getString("orderDetails"),
                     new TypeToken<List<OrderDetail>>(){}.getType());
             List<OrderModifier> orderModifiers = gson.fromJson(jsonObject.getString("orderModifiers"),
