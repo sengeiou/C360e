@@ -86,6 +86,7 @@ public class SyncCentre {
         map.put("order", placeOrder);
         map.put("orderDetails" , orderDetails);
         map.put("orderModifiers" , orderModifiers);
+        map.put("orderBills" , orderBills);
         map.put("payments" , payments);
         map.put("paymentSettlements" , paymentSettlements);
         map.put("orderDetailTaxs" , orderDetailTaxs);
