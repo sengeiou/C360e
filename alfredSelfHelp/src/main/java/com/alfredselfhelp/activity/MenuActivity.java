@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextClock;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
@@ -55,15 +56,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private List<ItemMainCategory> itemMainCategories;
     private LinearLayoutManager mLinearLayoutManager;
     MainCategoryAdapter mainCategoryAdapter;
-    private LinearLayout ll_grab, ll_menu_details, ll_video,ll_view_card;
-    private RecyclerView re_menu_classify, re_menu_details;
-
+    private LinearLayout ll_grab, ll_menu_details, ll_video, ll_view_card, ll_view_cart;
+    private RecyclerView re_menu_classify, re_menu_details, re_view_cart;
     private ClassAdapter mClassAdapter;
-
     private MenuDetailAdapter mDetailAdapter;
-
-
     ItemHeaderDecoration mDecoration;
+    private TextView total;
 
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
@@ -99,19 +97,17 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                    refreshTotal();
 //                    refreshList();
 
-                    boolean isadd= (boolean) map.get("isAdd");
-
+                    boolean isadd = (boolean) map.get("isAdd");
 
 
                     break;
                 }
 
-                }
-
             }
-        }
 
-        ;
+        }
+    };
+
     private void init() {
         ll_grab = (LinearLayout) findViewById(R.id.ll_grab);
         ll_video = (LinearLayout) findViewById(R.id.ll_video);
@@ -119,18 +115,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         re_menu_classify = (RecyclerView) findViewById(R.id.re_menu_classify);
         re_menu_details = (RecyclerView) findViewById(R.id.re_menu_details);
         re_main_category = (RecyclerView) findViewById(R.id.re_main_category);
-        ll_view_card=(LinearLayout)findViewById(R.id.ll_view_card);
+        ll_view_card = (LinearLayout) findViewById(R.id.ll_view_card);
+        re_view_cart = (RecyclerView) findViewById(R.id.re_view_cart);
+        total = (TextView) findViewById(R.id.tv_cart_total);
         ll_video.setVisibility(View.VISIBLE);
 //        ll_menu_details.setVisibility(View.VISIBLE);
 //        ll_video.setVisibility(View.GONE);
         ll_grab.setOnClickListener(this);
         ll_view_card.setOnClickListener(this);
-
-
         // itemMainCategories = CoreData.getInstance().getItemMainCategories();
         itemMainCategories = ItemMainCategorySQL.getAllItemMainCategory();
-        //
-
         menuDetail();
         re_main_category = (RecyclerView) findViewById(R.id.re_main_category);
         mLinearLayoutManager = new LinearLayoutManager(context);
@@ -158,7 +152,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
         re_main_category.setAdapter(mainCategoryAdapter);
 
-        nurOrder= OrderSQL.getAllOrder().get(0);
+        nurOrder = OrderSQL.getAllOrder().get(0);
 
         RfidApiCentre.getInstance().startRFIDScan(new CallBack() {
             @Override
@@ -168,18 +162,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
             @Override
             public void onError() {
-            Log.e("startRFIDScan","获取失败");
+                Log.e("startRFIDScan", "获取失败");
             }
         });
 
-        List<ItemDetail> itemDetaillist= new ArrayList<ItemDetail>();
-        for (int i = 0; i <10; i++) {
-            ItemDetail item=new ItemDetail();
+        List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
+        for (int i = 0; i < 10; i++) {
+            ItemDetail item = new ItemDetail();
             item.setItemName("Names");
             item.setPrice("10.55");
             itemDetaillist.add(item);
-
-
         }
 
 //        final OrderSelfDialog   selfDialog = new OrderSelfDialog(MenuActivity.this);
@@ -202,38 +194,36 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        selfDialog.show();
 
 
-}
+    }
 
     private void initRfid() {
 
-      List<ItemDetail>  itemDetailAll = CoreData.getInstance().getItemDetails();
+        List<ItemDetail> itemDetailAll = CoreData.getInstance().getItemDetails();
 
-      if(itemDetailAll!=null){
+        if (itemDetailAll != null) {
 
-          NurTagStorage  nurTagStorage= RfidApiCentre.getInstance().getNurTagStorage();
-          int nurTagStorageSize=nurTagStorage.size();
+            NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+            int nurTagStorageSize = nurTagStorage.size();
 
-          for (int i = 0; i < itemDetailAll.size(); i++) {
-              ItemDetail itemDetail=itemDetailAll.get(i);
-              for (int j = 0; j <nurTagStorageSize ; j++) {
-                  NurTag nurTag=nurTagStorage.get(j);
+            for (int i = 0; i < itemDetailAll.size(); i++) {
+                ItemDetail itemDetail = itemDetailAll.get(i);
+                for (int j = 0; j < nurTagStorageSize; j++) {
+                    NurTag nurTag = nurTagStorage.get(j);
 
-                  if(itemDetail.getBarcode().equals(nurTag.getEpcString()))
-                  {
-                      itemDetailNur.add(itemDetail);
-                  }
+                    if (itemDetail.getBarcode().equals(nurTag.getEpcString())) {
+                        itemDetailNur.add(itemDetail);
+                    }
 
-              }
+                }
 
 
-          }
+            }
 
-          // 弹出
-      }
+            // 弹出
+        }
 
 
     }
-
 
 
     private void updateOrderDetail(ItemDetail itemDetail, int count) {
@@ -282,40 +272,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         re_menu_classify.setAdapter(mClassAdapter);
 
 
-        // mDetailAdapter.notifyDataSetChanged();
-
-//        for (int i = 0; i < 10; i++) {
-//
-//            if (i == 0) {
-//                ItemDetail itemDetail = new ItemDetail();
-//                itemDetail.setViewType(1);
-//                itemDetails.add(itemDetail);
-//            }
-//            ItemDetail itemDetail = new ItemDetail();
-//            itemDetail.setViewType(3);
-//            itemDetails.add(itemDetail);
-//        }
-//
-//        GridLayoutManager mManager = new GridLayoutManager(context, 3);
-//        //通过isTitle的标志来判断是否是title
-////        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-////            @Override
-////            public int getSpanSize(int position) {
-////                return  1;
-////            }
-////        });1
-//        re_menu_details.setLayoutManager(mManager);
-//        mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
-//            @Override
-//            public void onItemClick(int id, int position) {
-//
-//            }
-//        });
-//       re_menu_details.setAdapter(mDetailAdapter);
-//        mDecoration = new ItemHeaderDecoration(context, itemDetails);
-//        re_menu_details.addItemDecoration(mDecoration);
-        // mDecoration.setCheckListener(checkListener);
-        //  itemDetails = getItemDetail("aaaaaa",1);
     }
 
 
@@ -369,11 +325,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         re_menu_details.addItemDecoration(mDecoration);
         mDecoration.setCheckListener(this);
         List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
-        //itemDetaillist=CoreData.getInstance().getItemDetails();
-        List<ItemDetail> itemDetailandCate = new ArrayList<ItemDetail>();
-//		itemDetaillist=CoreData.getInstance().getItemDetails();
-//		List<ItemCategory> list=new ArrayList<ItemCategory>();
 
+        List<ItemDetail> itemDetailandCate = new ArrayList<ItemDetail>();
+//
         List<ItemCategory> itemCategorylist = ItemCategorySQL.getAllItemCategory();
         int tag = 0;
         if (itemCategorylist != null || itemCategorylist.size() > 0) {
@@ -382,13 +336,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 int cid;
                 cid = itemCategorylist.get(j).getItemMainCategoryId();
                 if (id == cid) {
-//                ItemDetail itemCateDetail = new ItemDetail();
-//                itemCateDetail.setItemCategoryName(mainCategoryName);
-//                // detail.setId(list.get(j).getId());
-//                itemCateDetail.setItemName(itemCategory.getItemCategoryName());
-//                itemCateDetail.setTag(String.valueOf(j));
-//                itemCateDetail.setViewType(1);
-//                itemDetailandCate.add(itemCateDetail);
+//
                     itemDetaillist.clear();
                     //  itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
                     itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
@@ -429,7 +377,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
 
             case R.id.ll_view_card:
-                Intent intent=new Intent();
+                Intent intent = new Intent();
                 intent.setClass(MenuActivity.this, DialogActivity.class);
                 startActivity(intent);
 
@@ -557,14 +505,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
 
-//            if (move) {
-//                move = false;
-//                int n = mIndex - mManager.findFirstVisibleItemPosition();
-//                if (0 <= n && n < mRv.getChildCount()) {
-//                    int top = mRv.getChildAt(n).getTop();
-//                    mRv.scrollBy(0, top);
-//                }
-//            }
         }
     }
 }
