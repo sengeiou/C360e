@@ -1,6 +1,5 @@
 package com.alfredselfhelp.global;
 
-import com.alfredbase.utils.CallBack;
 import com.alfredbase.utils.LogUtil;
 import com.alfredselfhelp.utils.UIHelp;
 import com.nordicid.nurapi.NurApi;
@@ -28,7 +27,7 @@ public class RfidApiCentre {
     private NurTagStorage nurTagStorage;
     private boolean mInventoryIsRunning;
     private static RfidApiCentre instance;
-    private CallBack callBack;
+    private RfidCallBack callBack;
     private NurApiUsbAutoConnect mUsbAC;
     private boolean canConnectThenStart = false;
     private RfidApiCentre(){
@@ -51,7 +50,7 @@ public class RfidApiCentre {
         }
     }
 
-    public void setCallBack(CallBack callBack) {
+    public void setCallBack(RfidCallBack callBack) {
         this.callBack = callBack;
     }
 
@@ -86,7 +85,7 @@ public class RfidApiCentre {
                 if (nurEventInventory.tagsAdded > 0) {
                     inventory();
                     if(callBack != null)
-                        callBack.onSuccess();
+                        callBack.inventoryStreamEvent();
                 }
                 if (nurEventInventory.stopped && mInventoryIsRunning) {
                     try {
@@ -198,14 +197,20 @@ public class RfidApiCentre {
     }
 
     public void startRFIDScan(){
-        if(nurApi != null && nurApi.isConnected() && !nurApi.isInventoryStreamRunning()){
+        if(nurApi == null){
+            UIHelp.showToast(App.instance, "Please restart app");
+            return;
+        }
+        if(!nurApi.isConnected()){
+            UIHelp.showToast(App.instance, "Please check RFID scanner is Disconnected ");
+            return;
+        }
+        if(!nurApi.isInventoryStreamRunning()){
             try {
                 nurApi.startInventoryStream();
                 mInventoryIsRunning = true;
                 canConnectThenStart = true;
             } catch (Exception e) {
-                if(callBack != null)
-                    callBack.onError();
                 e.printStackTrace();
             }
         }
@@ -245,6 +250,11 @@ public class RfidApiCentre {
                 }
             }
         }
+    }
+
+
+    public interface RfidCallBack{
+        void inventoryStreamEvent();
     }
 
 }

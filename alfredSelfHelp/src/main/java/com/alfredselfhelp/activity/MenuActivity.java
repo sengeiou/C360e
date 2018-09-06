@@ -90,6 +90,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private Order nurOrder;
     SetItemCountWindow setItemCountWindow;
     CartDetailAdapter cartAdater;
+    private boolean isWaitting = false;
 
     List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 
@@ -249,15 +250,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 MenuActivity.this.runOnUiThread(r);
             }
         });
-        RfidApiCentre.getInstance().setCallBack(new CallBack() {
+        RfidApiCentre.getInstance().setCallBack(new RfidApiCentre.RfidCallBack() {
             @Override
-            public void onSuccess() {
-                initRfid();
-            }
+            public void inventoryStreamEvent() {
+                if(isWaitting){
 
-            @Override
-            public void onError() {
-                Log.e("startRFIDScan", "获取失败");
+                }else {
+                    initRfid();
+                }
             }
         });
 
