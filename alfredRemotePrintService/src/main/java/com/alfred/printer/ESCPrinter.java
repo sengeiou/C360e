@@ -330,8 +330,8 @@ public class ESCPrinter implements WIFIPrintCallback {
         Log.d("UsbPrint", " -----"+deviceList.size());
 
         for (UsbDevice device : deviceList.values()) {
-            if(device.getProductId()==Integer.valueOf(productId).intValue()&&device.getVendorId()==Integer.valueOf(vendorId).intValue()){
-       mUsbDevice=device;
+            if (device.getProductId() == Integer.valueOf(productId).intValue() && device.getVendorId() == Integer.valueOf(vendorId).intValue()) {
+                mUsbDevice = device;
             }
 
         }
@@ -355,7 +355,6 @@ public class ESCPrinter implements WIFIPrintCallback {
                                     Log.i("Return Status", "b-->" + b);
                                 }
                             }).start();
-
 
 
                             mUsbDeviceConnection.releaseInterface(usbInterface);

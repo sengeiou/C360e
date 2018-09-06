@@ -25,12 +25,12 @@ public class RfidApiCentre {
     private static final String TAG = RfidApiCentre.class.getSimpleName();
     // RFID API
     private NurApi nurApi;
-    public static boolean isleftMoved;
     private NurTagStorage nurTagStorage;
     private boolean mInventoryIsRunning;
     private static RfidApiCentre instance;
     private CallBack callBack;
     private NurApiUsbAutoConnect mUsbAC;
+    private boolean canConnectThenStart = false;
     private RfidApiCentre(){
     }
     public static RfidApiCentre getInstance() {
@@ -51,10 +51,13 @@ public class RfidApiCentre {
         }
     }
 
-    public void initApi(NurApiUiThreadRunner nurApiUiThreadRunner, CallBack MenuCallBack){
+    public void setCallBack(CallBack callBack) {
+        this.callBack = callBack;
+    }
+
+    public void initApi(NurApiUiThreadRunner nurApiUiThreadRunner){
         nurApi = new NurApi();
         nurTagStorage = new NurTagStorage();
-        this.callBack = MenuCallBack;
         nurApi.setListener(new NurApiListener() {
             @Override
             public void logEvent(int i, String s) {
@@ -165,6 +168,9 @@ public class RfidApiCentre {
         }else{
             UIHelp.showToast(App.instance, "RFID scanner is Disconnected");
         }
+        if(canConnectThenStart && isConnected){
+            startRFIDScan();
+        }
 
     }
 
@@ -174,14 +180,12 @@ public class RfidApiCentre {
         }
     }
 
-    protected void onDestroy()
-    {
-        if(mUsbAC != null) {
+    public void onDestroy() {
+        if (mUsbAC != null) {
             mUsbAC.onDestroy(); // Tell Android USB Autoconnection object to do onDestroy things
         }
-        if(nurApi != null )
-        {
-            if(nurApi.isConnected()) {
+        if (nurApi != null) {
+            if (nurApi.isConnected()) {
                 try {
                     nurApi.stopAllContinuousCommands(); // We don't want to let any streams open when closing activity
                 } catch (Exception e) {
@@ -190,6 +194,7 @@ public class RfidApiCentre {
             }
             nurApi.dispose();
         }
+        canConnectThenStart = false;
     }
 
     public void startRFIDScan(){
@@ -197,11 +202,10 @@ public class RfidApiCentre {
             try {
                 nurApi.startInventoryStream();
                 mInventoryIsRunning = true;
-                if(callBack != null) {
-                    callBack.onSuccess();
-                }
+                canConnectThenStart = true;
             } catch (Exception e) {
-                callBack.onError();
+                if(callBack != null)
+                    callBack.onError();
                 e.printStackTrace();
             }
         }
@@ -212,6 +216,7 @@ public class RfidApiCentre {
             try {
                 nurApi.stopInventoryStream();
                 mInventoryIsRunning = false;
+                canConnectThenStart = false;
                 nurTagStorage.clear();
             } catch (Exception e) {
                 e.printStackTrace();

@@ -206,7 +206,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             public void runOnUiThread(Runnable r) {
                 MenuActivity.this.runOnUiThread(r);
             }
-        }, new CallBack() {
+        });
+        RfidApiCentre.getInstance().setCallBack(new CallBack() {
             @Override
             public void onSuccess() {
                 initRfid();
@@ -229,7 +230,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RfidApiCentre.getInstance().onResume();
+        RfidApiCentre.getInstance().onDestroy();
     }
 
     private void initRfid() {
