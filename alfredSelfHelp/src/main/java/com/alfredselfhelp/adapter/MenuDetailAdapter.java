@@ -1,8 +1,10 @@
 package com.alfredselfhelp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -11,6 +13,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.activity.MenuActivity;
 import com.alfredselfhelp.global.App;
@@ -28,9 +31,12 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
     private List<OrderDetail> orderDetails;
     private int currentGroupId;
     private Order currentOrder;
+    private int WIDTH;
+
     public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener, CountViewMod.OnCountChange countViewMod) {
         super(context, list, listener);
         this.onCountChange = countViewMod;
+        WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 270));
     }
 
 
@@ -39,6 +45,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
         this.orderDetails = orderDetails;
         this.currentGroupId = currentGroupId;
     }
+
     @Override
     protected int getLayoutId(int viewType) {
         return R.layout.item_menu_detail;
@@ -58,11 +65,18 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
         TextView tvPrice;
         ImageView img;
         TextView tvName, num;
-         CountViewMod count_view;
+        CountViewMod count_view;
         RelativeLayout re_modifier_num;
+        private View mView;
 
         public DetailHolder(View itemView, int type, RvListener listener) {
             super(itemView, type, listener);
+            this.mView = itemView;
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, (WIDTH / 3) / 23 * 30));
+            params.setMargins(5, 5, 5, 5);
+            mView.setLayoutParams(params);
+
             tvName = (TextView) itemView.findViewById(R.id.tv_modifier_name);
             img = (ImageView) itemView.findViewById(R.id.img_modifier);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_modifier_price);
@@ -86,19 +100,18 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
 
-            tvPrice.setText("S"+ App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
+            tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
 
-                    count_view.setIsCanClick(getOrderDetailStatus(itemDetail));
-                    count_view.setInitCount(getItemNum(itemDetail));
-                    count_view.setTag(itemDetail);
-                    count_view.setParam(itemDetail);
-                    count_view.setOnCountChange( onCountChange);
+            count_view.setIsCanClick(getOrderDetailStatus(itemDetail));
+            count_view.setInitCount(getItemNum(itemDetail));
+            count_view.setTag(itemDetail);
+            count_view.setParam(itemDetail);
+            count_view.setOnCountChange(onCountChange);
 
         }
 
         @Override
         public void bindHolderItem(ItemDetail itemDetail, int position) {
-
 
 
         }
@@ -108,19 +121,19 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
     private int getItemNum(ItemDetail itemDetail) {
         int itemNum = 0;
         if (orderDetails != null) {
-        for (OrderDetail orderDetail : orderDetails) {
-            if (orderDetail.getItemId().intValue() == itemDetail.getId()
-                    .intValue()
-                    ) {
-                itemNum += orderDetail.getItemNum();
+            for (OrderDetail orderDetail : orderDetails) {
+                if (orderDetail.getItemId().intValue() == itemDetail.getId()
+                        .intValue()
+                        ) {
+                    itemNum += orderDetail.getItemNum();
+                }
             }
-        }
         }
         return itemNum;
     }
 
     private boolean getOrderDetailStatus(ItemDetail itemDetail) {
-        if(orderDetails != null) {
+        if (orderDetails != null) {
             for (OrderDetail orderDetail : orderDetails) {
                 if (orderDetail.getItemId().intValue() == itemDetail.getId()
                         .intValue()

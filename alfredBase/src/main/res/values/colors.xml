@@ -40,13 +40,17 @@
     <color name="gray1">#535664</color>
     <color name="gray2">#797b86</color>
     <color name="gray3">#9fa1a9</color>
+    <color name="gray4">#f4f9fb</color>
+    <color name="gray5">#edf0f3</color>
 
     <color name="green">#27c06b</color>
+    <color name="green1">#27b858</color>
 
     <color name="red">#ea68a2</color>
     <color name="red1">#ec6189</color>
 
     <color name="black1">#535664</color>
+    <color name="black2">#666773</color>
 
 
 </resources>

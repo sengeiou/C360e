@@ -74,6 +74,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private RelativeLayout rl_cart_num;
 
     private RelativeLayout rl_cart_total;
+    private LinearLayout li_menu;
 
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
@@ -203,7 +204,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         rl_cart_num = (RelativeLayout) findViewById(R.id.rl_cart_num);
         tv_total_price = (TextView) findViewById(R.id.tv_cart_total);
         rl_cart_total=(RelativeLayout)findViewById(R.id.rl_cart_total);
-
+        li_menu=(LinearLayout)findViewById(R.id.li_menu);
 
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
@@ -228,6 +229,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 RfidApiCentre.getInstance().stopRFIDScan();
                 ItemMainCategory itemMainCategory = itemMainCategories.get(position);
                 mainCategoryAdapter.setCheckedPosition(position);
+                li_menu.setBackgroundResource(R.drawable.bg_mod);
                 ll_grab.setBackgroundResource(R.drawable.btn_main_g);
                 ll_menu_details.setVisibility(View.VISIBLE);
                 ll_video.setVisibility(View.GONE);
@@ -566,6 +568,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             case R.id.ll_grab:
                 mainCategoryAdapter.setCheckedPosition(-1);
                 ll_grab.setBackgroundResource(R.drawable.main_btn_b);
+                li_menu.setBackgroundResource(R.drawable.bg_grab);
                 ll_menu_details.setVisibility(View.GONE);
                 ll_video.setVisibility(View.VISIBLE);
                 ll_view_cart_list.setVisibility(View.GONE);
@@ -601,6 +604,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_cart_list.setVisibility(View.VISIBLE);
                 ll_view_cart.setVisibility(View.GONE);
                 ll_view_pay.setVisibility(View.VISIBLE);
+                li_menu.setBackgroundResource(R.drawable.bg_grab);
 
                 cartView();
 
