@@ -125,12 +125,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="30sp"
                         android:layout_margin="20dp"
                         android:gravity="center"
                         android:text="Your Orders"
-                        />
+                        android:textColor="@color/white"
+                        android:textSize="30sp" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/re_view_cart"
@@ -140,7 +139,6 @@
                         android:overScrollMode="never"
                         android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
 
-
                 </LinearLayout>
 
 
@@ -148,25 +146,26 @@
                     android:id="@+id/rl_cart_total"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    >
+                    android:layout_marginRight="5dp"
+                    android:visibility="visible">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:textSize="18sp"
-                        android:layout_toLeftOf="@+id/tv_cart_total"
                         android:layout_alignParentBottom="true"
-                        android:text="Total:" />
+                        android:layout_marginLeft="5dp"
+                        android:layout_toLeftOf="@+id/tv_cart_total"
+                        android:text="Total:"
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/tv_cart_total"
-                        android:layout_marginLeft="20dp"
-                        android:textSize="28sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_marginLeft="20dp"
+                        android:textSize="28sp" />
 
                 </RelativeLayout>
 
