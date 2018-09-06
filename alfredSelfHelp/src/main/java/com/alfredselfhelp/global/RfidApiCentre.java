@@ -197,6 +197,7 @@ public class RfidApiCentre {
     }
 
     public void startRFIDScan(){
+        canConnectThenStart = true;
         if(nurApi == null){
             UIHelp.showToast(App.instance, "Please restart app");
             return;
@@ -209,7 +210,6 @@ public class RfidApiCentre {
             try {
                 nurApi.startInventoryStream();
                 mInventoryIsRunning = true;
-                canConnectThenStart = true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -217,11 +217,11 @@ public class RfidApiCentre {
     }
 
     public void stopRFIDScan(){
+        canConnectThenStart = false;
         if(nurApi != null && nurApi.isConnected() && nurApi.isInventoryStreamRunning()){
             try {
                 nurApi.stopInventoryStream();
                 mInventoryIsRunning = false;
-                canConnectThenStart = false;
                 nurTagStorage.clear();
             } catch (Exception e) {
                 e.printStackTrace();
