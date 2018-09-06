@@ -13,6 +13,7 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.BH;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.activity.MenuActivity;
+import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
 import com.bumptech.glide.Glide;
@@ -85,9 +86,9 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
 
-            tvPrice.setText("S$" + BH.getBD(itemDetail.getPrice()).toString());
+            tvPrice.setText("S"+ App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
 
-   count_view.setIsCanClick(getOrderDetailStatus(itemDetail));
+                    count_view.setIsCanClick(getOrderDetailStatus(itemDetail));
                     count_view.setInitCount(getItemNum(itemDetail));
                     count_view.setTag(itemDetail);
                     count_view.setParam(itemDetail);
@@ -107,8 +108,6 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
     private int getItemNum(ItemDetail itemDetail) {
         int itemNum = 0;
         if (orderDetails != null) {
-
-
         for (OrderDetail orderDetail : orderDetails) {
             if (orderDetail.getItemId().intValue() == itemDetail.getId()
                     .intValue()

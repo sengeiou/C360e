@@ -64,7 +64,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
                 tv_text.setBackgroundResource(R.drawable.main_btn_b);
 
             } else {
-                tv_text.setBackgroundResource(R.drawable.main_btn_g);
+                tv_text.setBackgroundResource(R.drawable.btn_main_g);
 
             }
         }

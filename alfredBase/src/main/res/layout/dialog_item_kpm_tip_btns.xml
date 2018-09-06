@@ -14,11 +14,26 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+
+
+
+        <ImageView
+            android:id="@+id/img_center"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="50dp"
+
+
+            />
+
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="30dp"
             android:gravity="center_horizontal"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
@@ -32,38 +47,15 @@
             android:id="@+id/tv_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Payment in progress..."
+
+            android:layout_marginBottom="50dp"
+            android:text="Payment in progress"
             android:textColor="@color/black1"
-            android:textSize="22sp" />
-
-
-        <ImageView
-            android:id="@+id/img_center"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/img_qc"
-
-            />
-
-
-        <TextView
-            android:id="@+id/tv_qc_de"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/style_dialog_btn1"
-            android:gravity="center"
-            android:text="Position the QR code at the sdanner"
-            android:textColor="@color/white"
-            android:textSize="22dp"
-            android:visibility="visible" />
+            android:textSize="16sp" />
     </LinearLayout>
 
 
@@ -71,6 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+
         android:layout_marginBottom="20dp"
         android:layout_marginTop="40dp"
         android:gravity="center_horizontal"

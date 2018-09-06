@@ -47,7 +47,7 @@
         android:layout_alignParentBottom="true"
         android:background="#FFFFFF" >
 
-        <com.alfredwaiter.view.MoneyKeyboard
+        <com.alfredselfhelp.utils.MoneyKeyboard
             android:id="@+id/numKeyboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

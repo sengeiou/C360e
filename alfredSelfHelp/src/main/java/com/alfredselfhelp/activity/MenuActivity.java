@@ -1,5 +1,6 @@
 package com.alfredselfhelp.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
@@ -26,6 +28,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.CallBack;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
@@ -55,17 +58,19 @@ import java.util.Map;
 public class MenuActivity extends BaseActivity implements CheckListener {
     public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
     public static final int VIEW_EVENT_MODIFIER_COUNT = 8;
-
+    public static final int MODIFY_ITEM_COUNT = 2;
+    public static final int VIEW_ORDER_DETAIL_MODIFY_ITEM_COUNT = 3;
     private RecyclerView re_main_category;
     private List<ItemMainCategory> itemMainCategories;
     private LinearLayoutManager mLinearLayoutManager;
     MainCategoryAdapter mainCategoryAdapter;
-    private LinearLayout ll_grab, ll_menu_details, ll_video, ll_view_cart, ll_view_cart_list,ll_view_pay;
+    private LinearLayout ll_grab, ll_menu_details, ll_video, ll_view_cart, ll_view_cart_list, ll_view_pay;
     private RecyclerView re_menu_classify, re_menu_details, re_view_cart;
     private ClassAdapter mClassAdapter;
     private MenuDetailAdapter mDetailAdapter;
     ItemHeaderDecoration mDecoration;
-    private TextView total;
+    private TextView total, tv_cart_num;
+    private RelativeLayout rl_cart_num;
 
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
@@ -98,6 +103,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
 
+    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -112,39 +118,66 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
                     boolean isadd = (boolean) map.get("isAdd");
 
+                }
+                break;
+
+                case MODIFY_ITEM_COUNT:
+
+                    Map<String, Object> map = (Map<String, Object>) msg.obj;
+                    updateitemOrderDetail((ItemDetail) map.get("itemDetail"),
+                            1);
+                    refreshTotal();
+                    refreshList();
 
                     break;
-                }
-                    case 1111:
-                        if(loadingDialog != null && loadingDialog.isShowing()){
-                            loadingDialog.dismiss();;
-                        }
-                        UIHelp.showToast(App.instance, "Success");
 
-                        OrderDetailSQL.deleteAllOrderDetail();
-                        OrderSQL.deleteAllOrder();
-                        nurOrder = ObjectFactory.getInstance().getOrder(
-                                ParamConst.ORDER_ORIGIN_POS, 0, TableInfoSQL.getKioskTable(),
-                                App.instance.getRevenueCenter(), App.instance.getUser(),
-                                App.instance.getSessionStatus(),
-                                App.instance.getBusinessDate(),
-                                App.instance.getIndexOfRevenueCenter(),
-                                ParamConst.ORDER_STATUS_OPEN_IN_POS,
-                                App.instance.getLocalRestaurantConfig()
-                                        .getIncludedTax().getTax(), 0);
-                        ll_grab.performClick();
+                case VIEW_ORDER_DETAIL_MODIFY_ITEM_COUNT:
+
+                    map = (Map<String, Object>) msg.obj;
+                    int count = (int) map.get("count");
+
+                    if (count == 0) {
+                        //   DialogFactory.
+                    } else {
+                        updateCartOrderDetail((OrderDetail) map.get("orderDetail"),
+                                count);
+                    }
 
 
-                        break;
+                    break;
+
+                case 1111:
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+
+                    }
+                    UIHelp.showToast(App.instance, "Success");
+
+                    OrderDetailSQL.deleteAllOrderDetail();
+                    OrderSQL.deleteAllOrder();
+                    nurOrder = ObjectFactory.getInstance().getOrder(
+                            ParamConst.ORDER_ORIGIN_POS, 0, TableInfoSQL.getKioskTable(),
+                            App.instance.getRevenueCenter(), App.instance.getUser(),
+                            App.instance.getSessionStatus(),
+                            App.instance.getBusinessDate(),
+                            App.instance.getIndexOfRevenueCenter(),
+                            ParamConst.ORDER_STATUS_OPEN_IN_POS,
+                            App.instance.getLocalRestaurantConfig()
+                                    .getIncludedTax().getTax(), 0);
+                    ll_grab.performClick();
+
+
+                    break;
                 case -1111:
-                    if(loadingDialog != null && loadingDialog.isShowing()){
-                        loadingDialog.dismiss();;
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+                        ;
                     }
                     UIHelp.showToast(App.instance, "failed");
                     break;
 
 
-              //  case  success
+                //  case  success
 
             }
 
@@ -161,7 +194,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ll_view_cart = (LinearLayout) findViewById(R.id.ll_view_cart);
         ll_view_cart_list = (LinearLayout) findViewById(R.id.ll_view_cart_list);
         re_view_cart = (RecyclerView) findViewById(R.id.re_view_cart);
-        ll_view_pay=(LinearLayout)findViewById(R.id.ll_view_pay);
+        ll_view_pay = (LinearLayout) findViewById(R.id.ll_view_pay);
+        tv_cart_num = (TextView) findViewById(R.id.tv_cart_num);
+        rl_cart_num = (RelativeLayout) findViewById(R.id.rl_cart_num);
+
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
         ll_video.setVisibility(View.VISIBLE);
@@ -185,7 +221,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 RfidApiCentre.getInstance().stopRFIDScan();
                 ItemMainCategory itemMainCategory = itemMainCategories.get(position);
                 mainCategoryAdapter.setCheckedPosition(position);
-                ll_grab.setBackgroundResource(R.drawable.main_btn_g);
+                ll_grab.setBackgroundResource(R.drawable.btn_main_g);
                 ll_menu_details.setVisibility(View.VISIBLE);
                 ll_video.setVisibility(View.GONE);
                 ll_view_cart_list.setVisibility(View.GONE);
@@ -220,9 +256,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
 
         RfidApiCentre.getInstance().startRFIDScan();
-
-
-
 
 
     }
@@ -302,6 +335,36 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
 
+    private void updateCartOrderDetail(OrderDetail orderDetail, int count) {
+//        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+//                nurOrder, itemDetail, 0,
+//                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
+//		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
+//				currentOrder, itemDetail, currentGroupId);
+        if (count == 0) {// 删除
+            orderDetails.clear();
+            OrderDetailSQL.deleteOrderDetail(orderDetail);
+            OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
+            orderDetails = OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder);
+            cartAdater.notifyDataSetChanged();
+        } else {// 添加
+//			count = count - oldCount;
+            nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+            OrderSQL.update(nurOrder);
+//            (orderDetail == null) {
+//                orderDetail = ObjectFactory.getInstance()
+//                        .createOrderDetailForWaiter(nurOrder, itemDetail,
+//                                0, App.instance.getUser());
+//                orderDetail.setItemNum(count);
+//                OrderDetailS ifQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+//            } else {
+            orderDetail.setItemNum(count);
+            orderDetail.setUpdateTime(System.currentTimeMillis());
+            OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
+            // }
+        }
+    }
+
     private void updateOrderDetail(ItemDetail itemDetail, int count) {
         OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
                 nurOrder, itemDetail, 0,
@@ -329,33 +392,37 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
     }
 
+    private void updateitemOrderDetail(ItemDetail itemDetail, int count) {
+        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+                nurOrder, itemDetail, 0,
+                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
+        if (orderDetail != null) {
+            count = count + orderDetail.getItemNum();
 
-//    private void updateDetail(ItemDetail itemDetail, int count) {
-//        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
-//                nurOrder, itemDetail, 0,
-//                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
-////		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
-////				currentOrder, itemDetail, currentGroupId);
-//        if (count == 0) {// 删除
-//            OrderDetailSQL.deleteOrderDetail(orderDetail);
-//            OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
-//        } else {// 添加
-////			count = count - oldCount;
-//            nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
-//            OrderSQL.update(nurOrder);
-//            if (orderDetail == null) {
-//                orderDetail = ObjectFactory.getInstance()
-//                        .createOrderDetailForWaiter(nurOrder, itemDetail,
-//                                0, App.instance.getUser());
-//                orderDetail.setItemNum(count);
-//                OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-//            } else {
-//                orderDetail.setItemNum(count);
-//                orderDetail.setUpdateTime(System.currentTimeMillis());
-//                OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
-//            }
-//        }
-//    }
+        } else {
+            count = 1;
+        }
+        if (count == 0) {// 删除
+            OrderDetailSQL.deleteOrderDetail(orderDetail);
+            OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
+        } else {// 添加
+//			count = count - oldCount;
+            nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+            OrderSQL.update(nurOrder);
+            if (orderDetail == null) {
+                orderDetail = ObjectFactory.getInstance()
+                        .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                0, App.instance.getUser());
+                orderDetail.setItemNum(count);
+                OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+            } else {
+                orderDetail.setItemNum(count);
+                orderDetail.setUpdateTime(System.currentTimeMillis());
+                OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
+            }
+        }
+    }
+
 
     private void menuDetail() {
 
@@ -421,7 +488,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
+                ItemDetail itemDetail = itemDetails.get(position);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("itemDetail", itemDetail);
 
+                handler.sendMessage(handler.obtainMessage(
+                        MODIFY_ITEM_COUNT, map));
             }
         }, new CountViewMod.OnCountChange() {
             @Override
@@ -472,7 +544,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             }
 
         }
-        mDetailAdapter.notifyDataSetChanged();
+
+        refreshList();
+        //  mDetailAdapter.notifyDataSetChanged();
         //  mDecoration.setData(itemDetails);
         return itemDetailandCate;
     }
@@ -524,14 +598,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 cartView();
 
                 break;
-                 case R.id.ll_view_pay:
+            case R.id.ll_view_pay:
 
-                     ll_view_cart.setVisibility(View.GONE);
-                     ll_view_pay.setVisibility(View.VISIBLE);
-                     loadingDialog = new LoadingDialog(this);
-                     loadingDialog.setTitle("Pay...");
-                     loadingDialog.show();
-                     SyncCentre.getInstance().commitOrder(this, nurOrder, handler);
+                ll_view_cart.setVisibility(View.GONE);
+                ll_view_pay.setVisibility(View.VISIBLE);
+                loadingDialog = new LoadingDialog(this);
+                loadingDialog.setTitle("Pay...");
+                loadingDialog.show();
+                SyncCentre.getInstance().commitOrder(this, nurOrder, handler);
 
 //                     dialog = ToolAlert.MyDialog(DialogActivity.this, "", "", "", new View.OnClickListener() {
 //                         @Override
@@ -545,7 +619,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                         }
 //                     });
 
-            break ;
+                break;
         }
     }
 
@@ -569,11 +643,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             public void onChange(OrderDetail selectedorderDetail, int count, boolean isAdd) {
 
                 Map<String, Object> map = new HashMap<String, Object>();
-                map.put("itemDetail", selectedorderDetail);
+                map.put("orderDetail", selectedorderDetail);
                 map.put("count", count);
-                map.put("isAdd", isAdd);
+//                map.put("isAdd", isAdd);
                 handler.sendMessage(handler.obtainMessage(
-                        VIEW_EVENT_MODIFY_ITEM_COUNT, map));
+                        VIEW_ORDER_DETAIL_MODIFY_ITEM_COUNT, map));
             }
         });
 
@@ -709,6 +783,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private void refreshTotal() {
         orderDetails = OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder);
         int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForWaiter(nurOrder.getId().intValue());
+
+        if (itemCount > 0) {
+            rl_cart_num.setVisibility(View.VISIBLE);
+            tv_cart_num.setText(itemCount + "");
+        } else {
+            rl_cart_num.setVisibility(View.GONE);
+        }
 
     }
 
