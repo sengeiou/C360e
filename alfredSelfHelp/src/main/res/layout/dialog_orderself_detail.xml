@@ -43,8 +43,8 @@
 		  <android.support.v7.widget.RecyclerView
 			  android:id="@+id/re_nur_order"
 			  android:layout_marginTop="30dp"
-			  android:layout_marginLeft="20dp"
-			  android:layout_marginRight="20dp"
+			  android:layout_marginLeft="30dp"
+			  android:layout_marginRight="30dp"
 			  android:layout_width="wrap_content"
               android:layout_marginBottom="50dp"
 			  android:layout_height="400dp"></android.support.v7.widget.RecyclerView>
@@ -58,32 +58,34 @@
 		android:orientation="horizontal"
 		android:gravity="center_horizontal"
 		>
+
+		<TextView
+			android:id="@+id/tv_no"
+			android:layout_width="180dp"
+			android:layout_height="80dp"
+			android:text="Yes"
+			android:textSize="21sp"
+			android:gravity="center"
+			android:textColor="@color/white"
+			android:background="@drawable/btn_main_g"
+
+			/>
+
+		<TextView
+			android:layout_width="35dp"
+			android:layout_height="wrap_content" />
+
 		<TextView
 			android:id="@+id/tv_ok"
 			android:layout_width="180dp"
 			android:layout_height="80dp"
 			android:text="No"
 			android:textSize="21sp"
-           android:gravity="center"
+			android:gravity="center"
 			android:textColor="@color/white"
 			android:background="@drawable/btn_main_g"
 
 			/>
-		<TextView
-			android:layout_width="35dp"
-			android:layout_height="wrap_content" />
-		<TextView
-			android:id="@+id/tv_no"
-			android:layout_width="180dp"
-			android:layout_height="80dp"
-			android:text="Yse"
-			android:textSize="21sp"
-              android:gravity="center"
-			android:textColor="@color/white"
-			android:background="@drawable/btn_main_g"
-
-			/>
-
 	</LinearLayout>
 	</LinearLayout>
 </RelativeLayout>

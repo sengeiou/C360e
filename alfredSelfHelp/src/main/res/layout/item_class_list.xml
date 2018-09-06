@@ -10,8 +10,9 @@
     <ImageView
 
         android:id="@+id/img_class"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/logo_icon" />
 
     <TextView
@@ -27,6 +28,6 @@
         android:singleLine="true"
         android:text="wwwww"
         android:textColor="@color/gray2"
-        android:textSize="25sp" />
+        android:textSize="20sp" />
 
 </LinearLayout>
