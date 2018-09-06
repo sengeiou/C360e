@@ -36,8 +36,8 @@ public class CountViewMod extends LinearLayout implements OnClickListener {
     private void init(Context context) {
         View.inflate(context, R.layout.count_view_mod, this);
         tv_count = (TextView) findViewById(R.id.tv_num);
-	add=(ImageView)findViewById(R.id.iv_minus);
-	add.setOnClickListener(this);
+        add = (ImageView) findViewById(R.id.iv_add);
+        add.setOnClickListener(this);
 //		findViewById(R.id.tv_add).setOnClickListener(this);
     }
 
@@ -58,16 +58,17 @@ public class CountViewMod extends LinearLayout implements OnClickListener {
         }
     }
 
-    public void setParam(ItemDetail itemDetail ) {
+    public void setParam(ItemDetail itemDetail) {
         this.itemDetail = itemDetail;
 //        this.setItemCountWindow = setItemCountWindow;
     }
 
     public void setInitCount(int count) {
-        if(count==0){
+        if (count == 0) {
+            tv_count.setText(count + "");
             add.setImageResource(R.drawable.icon_add);
             tv_count.setVisibility(GONE);
-        }else {
+        } else {
             tv_count.setText(count + "");
             add.setImageResource(R.drawable.mod_num);
             tv_count.setVisibility(VISIBLE);
@@ -97,24 +98,24 @@ public class CountViewMod extends LinearLayout implements OnClickListener {
 //                }
 //                break;
 //            }
-            case R.id.iv_minus: {
+            case R.id.iv_add: {
 
                 add.setImageResource(R.drawable.mod_num);
                 tv_count.setVisibility(VISIBLE);
                 int count = 1;
                 Log.d("111111111--->", "111111111");
-//                try {
-//                    count = Integer.parseInt(tv_count.getText().toString());
-//                    count++;
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    count = Integer.parseInt(tv_count.getText().toString());
+                    count++;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 if (count < 1)
                     count = 1;
                 tv_count.setText(count + "");
                 if (onCountChange != null) {
                     onCountChange.onChange(itemDetail, count, true);
-                 //   Log.d("2222222222--->", "22222222222");
+                    //   Log.d("2222222222--->", "22222222222");
                 }
                 break;
             }

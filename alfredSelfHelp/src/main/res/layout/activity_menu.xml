@@ -60,7 +60,7 @@
 
         android:id="@+id/ll_video"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
 
         android:visibility="gone">
@@ -116,7 +116,6 @@
         android:visibility="gone">
 
 
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/re_view_cart"
             android:layout_width="match_parent"
@@ -160,33 +159,104 @@
         android:layout_marginLeft="280dp"
         android:layout_marginRight="280dp"
         android:layout_marginTop="50dp"
-        android:background="@drawable/btn_view_card"
+
         android:gravity="center">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="View Cart"
-            android:textSize="18sp"
-            android:textColor="@color/white" />
-
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/view_card" />
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_view_card">
+
+            </LinearLayout>
+
 
             <TextView
+                android:id="@+id/tv_cart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textSize="35sp"
+                android:layout_centerInParent="true"
+                android:text="View Cart"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
 
-                />
+
+            <ImageView
+                android:id="@+id/img_view_cart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/tv_cart"
+                android:src="@drawable/view_card" />
+
+            <RelativeLayout
+                android:id="@+id/rl_cart_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/img_view_cart"
+                android:layout_marginLeft="-16dp"
+                android:layout_marginTop="-10dp"
+                android:visibility="gone"
+                android:layout_toRightOf="@id/img_view_cart"
+
+                >
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/icon_num_w"
+
+
+                    />
+
+                <TextView
+                    android:id="@+id/tv_cart_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="1"
+                    android:textColor="@color/red1" />
+
+            </RelativeLayout>
+
+
+            <!--<RelativeLayout-->
+            <!--android:id="@+id/rl_cart_num"-->
+            <!--android:layout_width="55dp"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:layout_alignRight="@id/img_view_cart"-->
+
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_toRightOf="@id/img_view_cart"-->
+            <!--android:visibility="visible">-->
+
+            <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/icon_num_w" />-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:text="1"-->
+            <!--android:textColor="@color/red1"-->
+            <!--android:textSize="12sp"-->
+
+            <!--/>-->
+
+
+            <!--</RelativeLayout>-->
+
         </RelativeLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -198,33 +268,17 @@
         android:layout_marginRight="280dp"
         android:layout_marginTop="50dp"
         android:background="@drawable/btn_view_card"
-        android:visibility="gone"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Credit Card"
-            android:textSize="18sp"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
 
-            <!--<ImageView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/view_card" />-->
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textSize="35sp"
-
-                />
-        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

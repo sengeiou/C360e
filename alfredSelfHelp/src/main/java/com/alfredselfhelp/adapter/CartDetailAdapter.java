@@ -56,7 +56,7 @@ public class CartDetailAdapter extends RvAdapter<OrderDetail> {
         public DetailHolder(View itemView, int type, RvListener listener) {
             super(itemView, type, listener);
             tvName = (TextView) itemView.findViewById(R.id.tv_modifier_name);
-            img = (ImageView) itemView.findViewById(R.id.img_modifier);
+            img = (ImageView) itemView.findViewById(R.id.img_cart_modifier);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_modifier_price);
 
             count_view = (CountView) itemView
@@ -74,15 +74,15 @@ public class CartDetailAdapter extends RvAdapter<OrderDetail> {
         public void bindHolder(OrderDetail orderDetail, final int position) {
             int itemViewType = CartDetailAdapter.this.getItemViewType(position);
             tvName.setText(orderDetail.getItemName());
-//            Glide.with(mContext)
-//                    .load(itemDetail.getImgUrl())
-//                    .placeholder(R.drawable.logo_icon)
-//                    .error(R.drawable.logo_icon)
-//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                    .into(img);
+            Glide.with(mContext)
+                    .load(orderDetail.getItemUrl())
+                    .placeholder(R.drawable.logo_icon)
+                    .error(R.drawable.logo_icon)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(img);
             tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString());
 
-            count_view.setIsCanClick(false);
+            count_view.setIsCanClick(true);
             count_view.setInitCount(orderDetail.getItemNum());
             count_view.setTag(orderDetail);
             count_view.setParam(orderDetail, setItemCountWindow);
