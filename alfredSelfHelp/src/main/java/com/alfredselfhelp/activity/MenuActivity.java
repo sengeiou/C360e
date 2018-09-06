@@ -27,8 +27,6 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
-import com.alfredbase.utils.CallBack;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
@@ -87,6 +85,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private Order nurOrder;
     SetItemCountWindow setItemCountWindow;
     CartDetailAdapter cartAdater;
+    private boolean isWaitting = false;
 
     List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 
@@ -243,15 +242,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 MenuActivity.this.runOnUiThread(r);
             }
         });
-        RfidApiCentre.getInstance().setCallBack(new CallBack() {
+        RfidApiCentre.getInstance().setCallBack(new RfidApiCentre.RfidCallBack() {
             @Override
-            public void onSuccess() {
-                initRfid();
-            }
+            public void inventoryStreamEvent() {
+                if(isWaitting){
 
-            @Override
-            public void onError() {
-                Log.e("startRFIDScan", "获取失败");
+                }else {
+                    initRfid();
+                }
             }
         });
 
