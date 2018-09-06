@@ -43,6 +43,7 @@ import com.alfredselfhelp.utils.ItemHeaderDecoration;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
+import com.nordicid.nurapi.NurApiUiThreadRunner;
 import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
@@ -88,6 +89,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         super.initView();
         setContentView(R.layout.activity_menu);
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RfidApiCentre.getInstance().onResume();
     }
 
 
@@ -175,7 +182,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
             @Override
             public void onItemClick(int id, int position) {
-
+                RfidApiCentre.getInstance().stopRFIDScan();
                 ItemMainCategory itemMainCategory = itemMainCategories.get(position);
                 mainCategoryAdapter.setCheckedPosition(position);
                 ll_grab.setBackgroundResource(R.drawable.main_btn_g);
@@ -195,8 +202,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         setItemCountWindow = new SetItemCountWindow(this, findViewById(R.id.rl_root),
                 handler);
         nurOrder = OrderSQL.getAllOrder().get(0);
-
-        RfidApiCentre.getInstance().startRFIDScan(new CallBack() {
+        RfidApiCentre.getInstance().initApi(new NurApiUiThreadRunner() {
+            public void runOnUiThread(Runnable r) {
+                MenuActivity.this.runOnUiThread(r);
+            }
+        }, new CallBack() {
             @Override
             public void onSuccess() {
                 initRfid();
@@ -208,10 +218,18 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             }
         });
 
+        RfidApiCentre.getInstance().startRFIDScan();
 
 
 
 
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RfidApiCentre.getInstance().onResume();
     }
 
     private void initRfid() {
@@ -225,60 +243,60 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 for (int j = 0; j < nurTagStorageSize; j++) {
                     NurTag nurTag = nurTagStorage.get(j);
                     if (!TextUtils.isEmpty(itemDetail.getBarcode())
-                            && IntegerUtils.format24(itemDetail.getBarcode()).equals("989292920000000000000000")) {
+                            && IntegerUtils.format24(itemDetail.getBarcode()).equals(nurTag.getEpcString())) {
                         itemDetaillist.add(itemDetail);
                     }
                 }
             }
+            if (itemDetaillist != null && itemDetaillist.size() > 0) {
+                // 弹出
+                final OrderSelfDialog selfDialog = new OrderSelfDialog(MenuActivity.this);
+                selfDialog.setList(itemDetaillist);
 
-            // 弹出
-            final OrderSelfDialog   selfDialog = new OrderSelfDialog(MenuActivity.this);
-            selfDialog.setList(itemDetaillist);
-
-            selfDialog.setYesOnclickListener("Yes", new OrderSelfDialog.onYesOnclickListener() {
-                @Override
-                public void onYesClick() {
-                    if(itemDetaillist != null){
-                        if(loadingDialog == null){
-                            loadingDialog = new LoadingDialog(MenuActivity.this);
-                        }
-                        loadingDialog.setTitle("Loading");
-                        loadingDialog.show();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                for(ItemDetail itemDetail : itemDetaillist){
-                                    OrderDetail orderDetail = ObjectFactory.getInstance()
-                                            .createOrderDetailForWaiter(nurOrder, itemDetail,
-                                                    0, App.instance.getUser());
-                                    orderDetail.setItemNum(1);
-                                    OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-                                }
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if(loadingDialog != null && loadingDialog.isShowing()){
-                                            loadingDialog.dismiss();
-                                        }
-                                        selfDialog.dismiss();
-                                    }
-                                });
+                selfDialog.setYesOnclickListener("Yes", new OrderSelfDialog.onYesOnclickListener() {
+                    @Override
+                    public void onYesClick() {
+                        if (itemDetaillist != null) {
+                            if (loadingDialog == null) {
+                                loadingDialog = new LoadingDialog(MenuActivity.this);
                             }
-                        }).start();
+                            loadingDialog.setTitle("Loading");
+                            loadingDialog.show();
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (ItemDetail itemDetail : itemDetaillist) {
+                                        OrderDetail orderDetail = ObjectFactory.getInstance()
+                                                .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                                        0, App.instance.getUser());
+                                        orderDetail.setItemNum(1);
+                                        OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                                    }
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (loadingDialog != null && loadingDialog.isShowing()) {
+                                                loadingDialog.dismiss();
+                                            }
+                                            selfDialog.dismiss();
+                                        }
+                                    });
+                                }
+                            }).start();
+
+                        }
 
                     }
-
-                }
-            });
-            selfDialog.setNoOnclickListener("No", new OrderSelfDialog.onNoOnclickListener() {
-                @Override
-                public void onNoClick() {
-                   selfDialog.dismiss();
-                }
-            });
-            selfDialog.show();
+                });
+                selfDialog.setNoOnclickListener("No", new OrderSelfDialog.onNoOnclickListener() {
+                    @Override
+                    public void onNoClick() {
+                        selfDialog.dismiss();
+                    }
+                });
+                selfDialog.show();
+            }
         }
-
 
     }
 
@@ -472,23 +490,24 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_cart_list.setVisibility(View.GONE);
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
-            {// TODO
-                NurTagStorage nurTagStorage = new NurTagStorage();
-                String b = "989292920000000000000000";
-                NurTag tag = new NurTag(0,0,0,0,0,0,0, b.getBytes());
-                if(nurTagStorage.addTag(tag)) {
-                    HashMap<String, String> temp = new HashMap<>();
-                    temp.put("epc", tag.getEpcString());
-                    temp.put("rssi", "" + tag.getRssi());
-                    temp.put("timestamp", "" + tag.getTimestamp());
-                    temp.put("freq", "" + tag.getFreq() + " kHz (Ch: " + tag.getChannel() + ")");
-                    temp.put("found", "1");
-                    temp.put("foundpercent", "100");
-                    tag.setUserdata(temp);
-                }
-                RfidApiCentre.getInstance().setNurTagStorage(nurTagStorage);
-                initRfid();
-            }
+                RfidApiCentre.getInstance().startRFIDScan();
+//            {// TODO
+//                NurTagStorage nurTagStorage = new NurTagStorage();
+//                String b = "989292920000000000000000";
+//                NurTag tag = new NurTag(0,0,0,0,0,0,0, b.getBytes());
+//                if(nurTagStorage.addTag(tag)) {
+//                    HashMap<String, String> temp = new HashMap<>();
+//                    temp.put("epc", tag.getEpcString());
+//                    temp.put("rssi", "" + tag.getRssi());
+//                    temp.put("timestamp", "" + tag.getTimestamp());
+//                    temp.put("freq", "" + tag.getFreq() + " kHz (Ch: " + tag.getChannel() + ")");
+//                    temp.put("found", "1");
+//                    temp.put("foundpercent", "100");
+//                    tag.setUserdata(temp);
+//                }
+//                RfidApiCentre.getInstance().setNurTagStorage(nurTagStorage);
+//                initRfid();
+//            }
                 break;
 
 

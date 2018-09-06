@@ -14,6 +14,7 @@ import com.alfredbase.store.Store;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredselfhelp.utils.TvPref;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.List;
 
@@ -48,10 +49,11 @@ public class App extends BaseApplication {
         instance = this;
         VERSION = getAppVersionName();
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
-        RfidApiCentre.getInstance().initApi();
         TvPref.init();
         mbPlayIMG = TvPref.readPlayIMGEn();
-
+        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
+        strategy.setAppChannel(APPPATH);
+        CrashReport.initCrashReport(getApplicationContext(), "4a949e77d4", isOpenLog, strategy);
     }
 
 
@@ -224,7 +226,7 @@ public class App extends BaseApplication {
 
     @Override
     public void onTerminate() {
-        RfidApiCentre.getInstance().stopRFIDScan(null);
+        RfidApiCentre.getInstance().stopRFIDScan();
         super.onTerminate();
     }
 }
