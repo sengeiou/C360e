@@ -764,6 +764,34 @@ public class OrderDetailSQL {
 		return result;
 	}
 
+
+	public static int getCreatedOrderDetailCountForKpm(int orderId) {
+		String sql = "select count(*) from " + TableNames.OrderDetail + " where orderDetailStatus >= "
+				+ ParamConst.ORDERDETAIL_STATUS_WAITER_ADD
+				+ " and orderId = ? and orderDetailType <> " + ParamConst.ORDERDETAIL_TYPE_VOID;
+		int result = 0;
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {orderId +""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			if(cursor.moveToFirst()){
+				result = cursor.getInt(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static int getOrderDetailSplitCountByOrder(Order order) {
 		String sql = "select count(*) from " + TableNames.OrderDetail + " where groupId <> 0 and orderId = ?";
 		int result = 0;

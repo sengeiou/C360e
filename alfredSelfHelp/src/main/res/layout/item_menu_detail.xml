@@ -8,8 +8,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:background="@color/black"
-    android:gravity="center"
- >
+    android:gravity="center">
 
 
     <!--<android.support.v7.widget.CardView-->
@@ -47,6 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/img_modifier"
             android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
             android:layout_marginTop="25dp"
             android:ellipsize="end"
             android:singleLine="true"
@@ -54,50 +54,49 @@
             android:textColor="@color/gray1"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginRight="60dp"
 
             />
 
-      <RelativeLayout
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignRight="@id/img_modifier"
-          android:layout_below="@id/img_modifier"
-          android:layout_marginRight="20dp"
-          android:layout_marginTop="-12dp"
-          >
-        <com.alfredselfhelp.view.CountViewMod
-            android:id="@+id/img_modifier_add"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_add"
+            android:layout_alignRight="@id/img_modifier"
+            android:layout_below="@id/img_modifier"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="-12dp">
 
-            />
+            <com.alfredselfhelp.view.CountViewMod
+                android:id="@+id/img_modifier_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_add"
 
-<!--<RelativeLayout-->
-    <!--android:id="@+id/re_modifier_num"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:visibility="gone"-->
-    <!--&gt;-->
-    <!--<ImageView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-      <!--android:src="@drawable/mod_num"-->
-        <!--/>-->
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/tv_modifier_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-       android:text="1"
-        android:layout_centerInParent="true"
+                />
 
-        />
-<!--</RelativeLayout>-->
+            <!--<RelativeLayout-->
+            <!--android:id="@+id/re_modifier_num"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:visibility="gone"-->
+            <!--&gt;-->
+            <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/mod_num"-->
+            <!--/>-->
+            <TextView
+                android:id="@+id/tv_modifier_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="1"
+                android:textColor="@color/white"
+                android:visibility="gone"
 
-      </RelativeLayout>
+                />
+            <!--</RelativeLayout>-->
+
+        </RelativeLayout>
 
         <TextView
 
@@ -106,13 +105,13 @@
             android:layout_height="35dp"
             android:layout_below="@id/tv_modifier_name"
             android:layout_marginLeft="30dp"
+            android:layout_marginRight="60dp"
             android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text=""
             android:textColor="@color/gray2"
             android:textSize="12sp"
-            android:layout_marginRight="60dp"
-            android:maxLines="2"
-            android:ellipsize="end"
 
             />
 
@@ -128,7 +127,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/style_price_btn"
-            android:padding="2dp"
+
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="S$50.00"

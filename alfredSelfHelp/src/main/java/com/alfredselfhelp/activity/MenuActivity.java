@@ -107,7 +107,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
-
                 case VIEW_EVENT_MODIFY_ITEM_COUNT: {
                     Log.d("444444444444--->", "4444444444444");
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
@@ -151,6 +150,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         loadingDialog.dismiss();
 
                     }
+                    rl_cart_num.setVisibility(View.GONE);
                     UIHelp.showToast(App.instance, "Success");
 
                     OrderDetailSQL.deleteAllOrderDetail();
@@ -235,7 +235,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
         re_main_category.setAdapter(mainCategoryAdapter);
 
-        setItemCountWindow = new SetItemCountWindow(this, findViewById(R.id.rl_root),
+        setItemCountWindow = new SetItemCountWindow(this, findViewById(R.id.li_menu),
                 handler);
         nurOrder = OrderSQL.getAllOrder().get(0);
         RfidApiCentre.getInstance().initApi(new NurApiUiThreadRunner() {
@@ -538,13 +538,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             // }
                         }
                     }
-
                     tag++;
                 }
             }
 
         }
 
+        refreshTotal();
         refreshList();
         //  mDetailAdapter.notifyDataSetChanged();
         //  mDecoration.setData(itemDetails);
@@ -602,10 +602,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
                 ll_view_cart.setVisibility(View.GONE);
                 ll_view_pay.setVisibility(View.VISIBLE);
+
                 loadingDialog = new LoadingDialog(this);
                 loadingDialog.setTitle("Pay...");
                 loadingDialog.show();
                 SyncCentre.getInstance().commitOrder(this, nurOrder, handler);
+
+                mainCategoryAdapter.setCheckedPosition(-1);
 
 //                     dialog = ToolAlert.MyDialog(DialogActivity.this, "", "", "", new View.OnClickListener() {
 //                         @Override
@@ -652,7 +655,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
 
         re_view_cart.setAdapter(cartAdater);
-
+        nurOrder = OrderSQL.getOrder(nurOrder.getId());
 
     }
 
@@ -782,7 +785,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void refreshTotal() {
         orderDetails = OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder);
-        int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForWaiter(nurOrder.getId().intValue());
+        int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForKpm(nurOrder.getId().intValue());
 
         if (itemCount > 0) {
             rl_cart_num.setVisibility(View.VISIBLE);
