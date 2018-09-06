@@ -27,6 +27,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CallBack;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
@@ -69,8 +70,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private ClassAdapter mClassAdapter;
     private MenuDetailAdapter mDetailAdapter;
     ItemHeaderDecoration mDecoration;
-    private TextView total, tv_cart_num;
+    private TextView total, tv_cart_num, tv_total_price;
     private RelativeLayout rl_cart_num;
+
+    private RelativeLayout rl_cart_total;
 
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
@@ -197,6 +200,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ll_view_pay = (LinearLayout) findViewById(R.id.ll_view_pay);
         tv_cart_num = (TextView) findViewById(R.id.tv_cart_num);
         rl_cart_num = (RelativeLayout) findViewById(R.id.rl_cart_num);
+        tv_total_price = (TextView) findViewById(R.id.tv_cart_total);
+        rl_cart_total=(RelativeLayout)findViewById(R.id.rl_cart_total);
+
 
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
@@ -595,6 +601,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_cart_list.setVisibility(View.VISIBLE);
                 ll_view_cart.setVisibility(View.GONE);
                 ll_view_pay.setVisibility(View.VISIBLE);
+
                 cartView();
 
                 break;
@@ -656,6 +663,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         re_view_cart.setAdapter(cartAdater);
         nurOrder = OrderSQL.getOrder(nurOrder.getId());
+
+        tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+        tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
 
     }
 
@@ -790,7 +800,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         if (itemCount > 0) {
             rl_cart_num.setVisibility(View.VISIBLE);
             tv_cart_num.setText(itemCount + "");
+            ll_view_cart.setEnabled(true);
         } else {
+            ll_view_cart.setEnabled(false);
             rl_cart_num.setVisibility(View.GONE);
         }
 

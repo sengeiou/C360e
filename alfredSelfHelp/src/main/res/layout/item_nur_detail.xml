@@ -31,36 +31,37 @@
         android:layout_height="50dp"
         android:gravity="center"
         android:orientation="horizontal">
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_weight="1"
-    android:orientation="vertical"
-    android:gravity="center_vertical"
-    >
-        <TextView
 
-            android:id="@+id/tv_nur_name"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_modifier_name"
-            android:layout_marginTop="3dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="aaaaaaaaaaaaaaa"
-            android:textColor="@color/gray1"
-            android:textSize="16sp"
+            <TextView
+
+                android:id="@+id/tv_nur_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_modifier_name"
+                android:layout_marginTop="3dp"
+
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="aaaaaaaaaaaaaaa"
+                android:textColor="@color/gray1"
+                android:textSize="16sp"
 
 
-            />
-    <!--<TextView-->
-        <!--android:id="@+id/tv_nur_bz"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" -->
-        <!--/>-->
+                />
+            <!--<TextView-->
+            <!--android:id="@+id/tv_nur_bz"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" -->
+            <!--/>-->
 
-</LinearLayout>
+        </LinearLayout>
 
 
         <LinearLayout
@@ -75,38 +76,38 @@
                 android:id="@+id/tv_nur_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray3"
-                android:textSize="12sp"
                 android:layout_marginRight="5dp"
                 android:text="1X "
+                android:textColor="@color/gray3"
+                android:textSize="12sp" />
+
+            <TextView
+
+                android:id="@+id/tv_nur_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/tv_modifier_de"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+
+                android:layout_marginRight="0dp"
+                android:background="@drawable/style_price_btn"
+
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="S$50.00"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+
                 />
-        <TextView
-
-            android:id="@+id/tv_nur_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/tv_modifier_de"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-
-            android:layout_marginRight="0dp"
-            android:background="@drawable/style_price_btn"
-
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="S$50.00"
-            android:textColor="@color/white"
-            android:textSize="13sp"
-            android:textStyle="bold"
-
-            />
         </LinearLayout>
     </LinearLayout>
-<View
-    android:layout_width="match_parent"
-    android:layout_height="0.5dp"
-    android:background="@color/gray3"
-></View>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/gray3"></View>
 </LinearLayout>
 
