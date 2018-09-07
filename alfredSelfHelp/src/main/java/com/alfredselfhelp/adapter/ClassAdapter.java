@@ -53,12 +53,12 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
         public void bindHolder(ItemCategory itemCategory, int position) {
             tvName.setText(itemCategory.getItemCategoryName());
             if (position == checkedPosition) {
-                mView.setBackgroundResource(R.color.gray);
-                tvName.setTextColor(mContext.getResources().getColor(R.color.green));
+                mView.setBackgroundResource(R.color.gray4);
+                tvName.setTextColor(mContext.getResources().getColor(R.color.green1));
 
             } else {
                 mView.setBackgroundResource(android.R.color.white);
-                tvName.setTextColor(mContext.getResources().getColor(R.color.gray2));
+                tvName.setTextColor(mContext.getResources().getColor(R.color.black2));
 
             }
 //            if (position == checkedPosition) {

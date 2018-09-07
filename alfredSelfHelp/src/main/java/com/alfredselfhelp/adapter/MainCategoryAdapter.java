@@ -25,6 +25,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
     public MainCategoryAdapter(Context context, List<ItemMainCategory> itemMainCategories, RvListener listener) {
         super(context, itemMainCategories, listener);
         this.mContext=context;
+
         WIDTH= (int) (ScreenSizeUtil.width-ScreenSizeUtil.dip2px((Activity) context, 120));
     }
 
@@ -48,9 +49,8 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
             this.mView = itemView;
             tv_text = (TextView) itemView.findViewById(R.id.tv_main_text);
            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                   WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, 100));
+                   WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, 130));
            params.setMargins(5,5,5,5);
-
            tv_text.setLayoutParams(params);
 
         }
