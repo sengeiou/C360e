@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.NurDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
@@ -184,7 +183,15 @@ public class OrderSelfDialog extends Dialog{
     }
 
     public void setList(List<ItemDetailDto> itemDetail) {
-        itemDetails = itemDetail;
+        itemDetails.clear();
+        itemDetails.addAll(itemDetail);
+    }
+    public List<ItemDetailDto> getList() {
+        return itemDetails;
+    }
+
+    public void notifyAdapter(){
+        adapter.notifyDataSetChanged();
     }
     /**
      * 从外界Activity为Dialog设置dialog的message

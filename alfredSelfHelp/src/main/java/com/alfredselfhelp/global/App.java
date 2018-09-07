@@ -226,7 +226,8 @@ public class App extends BaseApplication {
 
     @Override
     public void onTerminate() {
-        RfidApiCentre.getInstance().stopRFIDScan();
+//        RfidApiCentre.getInstance().stopRFIDScan();
+        RfidApiCentre.getInstance().onDestroy();
         super.onTerminate();
     }
 }

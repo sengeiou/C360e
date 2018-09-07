@@ -19,6 +19,7 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.utils.FileDialog;
 import com.alfredselfhelp.utils.PictureSwitch;
 import com.alfredselfhelp.utils.TvPref;
@@ -232,6 +233,14 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        RfidApiCentre.getInstance().onResume();
+        if(RfidApiCentre.getInstance().getNurTagStorage() != null){
+            RfidApiCentre.getInstance().stopRFIDScan();
+        }
+        super.onResume();
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == FileDialog.RESULT_SELECT_FILE) {
@@ -528,7 +537,6 @@ public class MainActivity extends BaseActivity {
             videoView.stopPlayback();
         }
         super.onDestroy();
-
     }
 
 }

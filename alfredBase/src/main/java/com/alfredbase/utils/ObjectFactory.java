@@ -736,6 +736,7 @@ public class ObjectFactory {
 		orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
 		orderDetail.setAppOrderDetailId(0);
 		orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
+		orderDetail.setBarCode(itemDetail.getBarcode());
 		return orderDetail;
 	}
 	Object lock_table = new Object();

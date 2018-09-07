@@ -1,7 +1,6 @@
 package com.alfredselfhelp.global;
 
 import com.alfredbase.utils.LogUtil;
-import com.alfredselfhelp.utils.UIHelp;
 import com.nordicid.nurapi.NurApi;
 import com.nordicid.nurapi.NurApiListener;
 import com.nordicid.nurapi.NurApiUiThreadRunner;
@@ -166,14 +165,14 @@ public class RfidApiCentre {
     }
     private void enableItems(boolean isConnected){
         if(isConnected){
-            UIHelp.showToast(App.instance, "RFID scanner is Connected");
+//            UIHelp.showToast(App.instance, "RFID scanner is Connected");
             try {
                 nurApi.setSetupOpFlags(NurApi.OPFLAGS_INVSTREAM_ZEROS);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{
-            UIHelp.showToast(App.instance, "RFID scanner is Disconnected");
+//            UIHelp.showToast(App.instance, "RFID scanner is Disconnected");
         }
         if(canConnectThenStart && isConnected){
             startRFIDScan();
@@ -207,15 +206,16 @@ public class RfidApiCentre {
     public void startRFIDScan(){
         canConnectThenStart = true;
         if(nurApi == null){
-            UIHelp.showToast(App.instance, "Please restart app");
+//            UIHelp.showToast(App.instance, "Please restart app");
             return;
         }
         if(!nurApi.isConnected()){
-            UIHelp.showToast(App.instance, "Please check RFID scanner is Disconnected ");
+//            UIHelp.showToast(App.instance, "Please check RFID scanner is Disconnected ");
             return;
         }
         if(!nurApi.isInventoryStreamRunning()){
             try {
+                nurTagStorage.clear();
                 nurApi.startInventoryStream();
                 mInventoryIsRunning = true;
             } catch (Exception e) {
