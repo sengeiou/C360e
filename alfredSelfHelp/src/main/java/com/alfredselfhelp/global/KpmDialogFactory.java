@@ -1,4 +1,4 @@
-package com.alfredbase.utils;
+package com.alfredselfhelp.global;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,16 +20,24 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 
-import com.alfredbase.R;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.BH;
+import com.alfredbase.utils.BitmapUtil;
+import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.ScreenSizeUtil;
+import com.alfredbase.utils.TextTypeFace;
+
+import com.alfredselfhelp.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -45,7 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DialogFactory {
+public class KpmDialogFactory {
 
 
     public static void commonTwoBtnDialog(BaseActivity activity,
@@ -162,49 +170,50 @@ public class DialogFactory {
 
 
 
-//    public static Dialog kpmFDialog(final BaseActivity activity,
-//                                       final String title, final String content, int drawableId,
+    public static Dialog kpmFDialog(final BaseActivity activity,
+
+
+                                       final OnClickListener backListener, final boolean canBack) {
+//		activity.runOnUiThread(new Runnable() {
 //
-//                                       final OnClickListener backListener, final boolean canBack) {
-////		activity.runOnUiThread(new Runnable() {
-////
-////			@Override
-////			public void run() {
-//        final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
-//        View view = LayoutInflater.from(activity).inflate(
-//                R.layout.dialog_item_kpm_f_btns, null);
-//
-////        ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+//			@Override
+//			public void run() {
+        final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
+        View view = LayoutInflater.from(activity).inflate(
+                R.layout.dialog_item_kpm_f_btns, null);
+
+//        ((TextView) view.findViewById(R.id.tv_content)).setText(content);
 //        ImageView img = (ImageView) view.findViewById(R.id.img_center);
 //
-//        img.setImageResource(drawableId);
-//
-////				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
-////				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
-//        dialog.show();
-//        dialog.setCancelable(canBack);
-//        dialog.setCanceledOnTouchOutside(false);
-//        dialog.setContentView(view);
-//
-//
-//        view.findViewById(R.id.tv_backs).setOnClickListener(
-//                new OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//                        if (backListener != null)
-//                            backListener.onClick(v);
-//                    }
-//                });
-////        if (activity == null || activity.isFinishing())
-////            return;
-//
-////			}
-////		});
-//        return dialog;
-//    }
-//
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams()
+      //  img.setImageResource(drawableId);
+
+//				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+//				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+        dialog.show();
+        dialog.setCancelable(canBack);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(view);
+
+
+        view.findViewById(R.id.tv_backs).setOnClickListener(
+                new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        if (backListener != null)
+                            backListener.onClick(v);
+                    }
+                });
+//        if (activity == null || activity.isFinishing())
+//            return;
+
+//			}
+//		});
+        return dialog;
+    }
+
 
 
     public static Dialog kpmTipsDialog(final BaseActivity activity,
