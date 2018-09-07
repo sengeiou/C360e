@@ -336,7 +336,7 @@ public class KpmgResponseUtil {
 
                                 orderMap.put("orderId", placeOrder.getId());
                                 orderMap.put("orderDetailIds", orderDetailIds);
-                                orderMap.put("orderPosType", ParamConst.POS_TYPE_SUB);
+                                orderMap.put("orderPosType", ParamConst.POS_TYPE_MAIN);
                                 App.instance.getKdsJobManager().tearDownKot(
                                         kotSummary, kotItemDetails,
                                         kotItemModifiers, ParamConst.JOB_NEW_KOT,

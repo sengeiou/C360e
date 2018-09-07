@@ -628,6 +628,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     paymentAction();
                 }else{
                     // TODO 显示等待拿货的Dialog
+                    UIHelp.showToast(MenuActivity.this, "Please grab it from the shelf and \nplace it on the sensor plate");
                     RfidApiCentre.getInstance().startRFIDScan();
                 }
 
