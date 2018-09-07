@@ -3,7 +3,6 @@ package com.alfredselfhelp.activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -11,15 +10,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredselfhelp.R;
-import com.alfredselfhelp.adapter.ClassAdapter;
 import com.alfredselfhelp.adapter.NurDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
-import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.javabean.ItemDetailDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +34,7 @@ public class OrderSelfDialog extends Dialog{
     private String yesStr, noStr;
 
     private RecyclerView re_nur;
-    List<ItemDetail> itemDetails= new ArrayList<ItemDetail>();
+    List<ItemDetailDto> itemDetails= new ArrayList<>();
     LinearLayoutManager mLinearLayoutManager;
 
     private Context mContext;
@@ -186,7 +183,7 @@ public class OrderSelfDialog extends Dialog{
         titleStr = title;
     }
 
-    public void setList(List<ItemDetail> itemDetail) {
+    public void setList(List<ItemDetailDto> itemDetail) {
         itemDetails = itemDetail;
     }
     /**

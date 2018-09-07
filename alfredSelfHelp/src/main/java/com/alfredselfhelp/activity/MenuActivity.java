@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -28,9 +27,6 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
-import com.alfredbase.utils.CallBack;
-import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.CartDetailAdapter;
@@ -41,14 +37,15 @@ import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.global.SyncCentre;
+import com.alfredselfhelp.javabean.ItemDetailDto;
 import com.alfredselfhelp.popuwindow.SetItemCountWindow;
 import com.alfredselfhelp.utils.CheckListener;
 import com.alfredselfhelp.utils.ItemHeaderDecoration;
+import com.alfredselfhelp.utils.OrderDetailRFIDHelp;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
 import com.nordicid.nurapi.NurApiUiThreadRunner;
-import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
 import java.util.ArrayList;
@@ -189,6 +186,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     };
 
     private void init() {
+        loadingDialog = new LoadingDialog(MenuActivity.this);
         ll_grab = (LinearLayout) findViewById(R.id.ll_grab);
         ll_video = (LinearLayout) findViewById(R.id.ll_video);
         ll_menu_details = (LinearLayout) findViewById(R.id.ll_menu_details);
@@ -253,10 +251,19 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         RfidApiCentre.getInstance().setCallBack(new RfidApiCentre.RfidCallBack() {
             @Override
             public void inventoryStreamEvent() {
-                if(isWaitting){
-
-                }else {
-                    initRfid();
+                if (nurOrder != null && nurOrder.getId() > 0) {
+//                        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(nurOrder.getId());
+                    NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+                    List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
+                    if(isWaitting && barCodes.size() == 0){
+                        if(OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0){
+                            RfidApiCentre.getInstance().stopRFIDScan();
+                            // TODO dismiss 等待拿货的 Dialog
+                            paymentAction();
+                        }
+                    }else {
+                        initRfid(barCodes);
+                    }
                 }
             }
         });
@@ -272,72 +279,75 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         RfidApiCentre.getInstance().onDestroy();
     }
 
-    private void initRfid() {
-        final List<ItemDetail> itemDetaillist = new ArrayList<>();
-        final List<ItemDetail> itemDetailAll = CoreData.getInstance().getItemDetails();
-        NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-        if (itemDetailAll != null && nurTagStorage != null && nurTagStorage.size() > 0) {
-            int nurTagStorageSize = nurTagStorage.size();
-            for (int i = 0; i < itemDetailAll.size(); i++) {
-                ItemDetail itemDetail = itemDetailAll.get(i);
-                for (int j = 0; j < nurTagStorageSize; j++) {
-                    NurTag nurTag = nurTagStorage.get(j);
-                    if (!TextUtils.isEmpty(itemDetail.getBarcode())
-                            && IntegerUtils.format24(itemDetail.getBarcode()).equals(nurTag.getEpcString())) {
-                        itemDetaillist.add(itemDetail);
+    private void initRfid(List<String> barCodes) {
+        Map<Integer, ItemDetailDto> itemDetailNumMap = new HashMap<>();
+        if (barCodes != null && barCodes.size() > 0) {
+            for (int j = 0; j < barCodes.size(); j++) {
+                String barCode = barCodes.get(j);
+                ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCodeForKPMG(barCode);
+                if (itemDetail != null) {
+                    int itemDetailId = itemDetail.getId();
+                    if (itemDetailNumMap.containsKey(itemDetailId)) {
+                        ItemDetailDto itemDetailDto = itemDetailNumMap.get(itemDetailId);
+                        itemDetailDto.setItemNum(itemDetailDto.getItemNum() + 1);
+                    } else {
+                        ItemDetailDto itemDetailDto = new ItemDetailDto();
+                        itemDetailDto.setItemId(itemDetailId);
+                        itemDetailDto.setItemNum(1);
+                        itemDetailDto.setItemName(itemDetail.getItemName());
+                        itemDetailDto.setItemPrice(itemDetail.getPrice());
+                        itemDetailNumMap.put(itemDetailId, itemDetailDto);
                     }
                 }
             }
-            if (itemDetaillist != null && itemDetaillist.size() > 0) {
-                // 弹出
-                final OrderSelfDialog selfDialog = new OrderSelfDialog(MenuActivity.this);
-                selfDialog.setList(itemDetaillist);
-
-                selfDialog.setYesOnclickListener("Yes", new OrderSelfDialog.onYesOnclickListener() {
-                    @Override
-                    public void onYesClick() {
-                        if (itemDetaillist != null) {
-                            if (loadingDialog == null) {
-                                loadingDialog = new LoadingDialog(MenuActivity.this);
-                            }
-                            loadingDialog.setTitle("Loading");
-                            loadingDialog.show();
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (ItemDetail itemDetail : itemDetaillist) {
-                                        OrderDetail orderDetail = ObjectFactory.getInstance()
-                                                .createOrderDetailForWaiter(nurOrder, itemDetail,
-                                                        0, App.instance.getUser());
-                                        orderDetail.setItemNum(1);
-                                        OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-                                    }
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (loadingDialog != null && loadingDialog.isShowing()) {
-                                                loadingDialog.dismiss();
-                                            }
-                                            selfDialog.dismiss();
-                                        }
-                                    });
-                                }
-                            }).start();
-
-                        }
-
-                    }
-                });
-                selfDialog.setNoOnclickListener("No", new OrderSelfDialog.onNoOnclickListener() {
-                    @Override
-                    public void onNoClick() {
-                        selfDialog.dismiss();
-                    }
-                });
-                selfDialog.show();
-            }
         }
+        if (itemDetailNumMap.size() > 0) {
+            final List<ItemDetailDto> itemDetailDtos = new ArrayList<>(itemDetailNumMap.values());
+            // 弹出
+            final OrderSelfDialog selfDialog = new OrderSelfDialog(MenuActivity.this);
+            selfDialog.setList(itemDetailDtos);
 
+            selfDialog.setYesOnclickListener("Yes", new OrderSelfDialog.onYesOnclickListener() {
+                @Override
+                public void onYesClick() {
+                    if (itemDetailDtos != null) {
+                        loadingDialog.setTitle("Loading");
+                        loadingDialog.show();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (ItemDetailDto itemDetailDto : itemDetailDtos) {
+                                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
+                                    OrderDetail orderDetail = ObjectFactory.getInstance()
+                                            .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                                    0, App.instance.getUser());
+                                    orderDetail.setItemNum(itemDetailDto.getItemNum());
+                                    OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                                }
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (loadingDialog != null && loadingDialog.isShowing()) {
+                                            loadingDialog.dismiss();
+                                        }
+                                        selfDialog.dismiss();
+                                    }
+                                });
+                            }
+                        }).start();
+
+                    }
+
+                }
+            });
+            selfDialog.setNoOnclickListener("No", new OrderSelfDialog.onNoOnclickListener() {
+                @Override
+                public void onNoClick() {
+                    selfDialog.dismiss();
+                }
+            });
+            selfDialog.show();
+        }
     }
 
 
@@ -571,6 +581,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_cart_list.setVisibility(View.GONE);
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
+                isWaitting = false;
                 RfidApiCentre.getInstance().startRFIDScan();
 //            {// TODO
 //                NurTagStorage nurTagStorage = new NurTagStorage();
@@ -603,19 +614,18 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_pay.setVisibility(View.VISIBLE);
 
                 cartView();
+                
 
                 break;
             case R.id.ll_view_pay:
-
-                ll_view_cart.setVisibility(View.GONE);
-                ll_view_pay.setVisibility(View.VISIBLE);
-
-                loadingDialog = new LoadingDialog(this);
-                loadingDialog.setTitle("Pay...");
-                loadingDialog.show();
-                SyncCentre.getInstance().commitOrder(this, nurOrder, handler);
-
-                mainCategoryAdapter.setCheckedPosition(-1);
+                isWaitting = true;
+                NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+                if(OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0){
+                    paymentAction();
+                }else{
+                    // TODO 显示等待拿货的Dialog
+                    RfidApiCentre.getInstance().startRFIDScan();
+                }
 
 //                     dialog = ToolAlert.MyDialog(DialogActivity.this, "", "", "", new View.OnClickListener() {
 //                         @Override
@@ -631,6 +641,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
                 break;
         }
+    }
+
+    private void paymentAction(){
+        ll_view_cart.setVisibility(View.GONE);
+        ll_view_pay.setVisibility(View.VISIBLE);
+        loadingDialog.setTitle("Pay...");
+        loadingDialog.show();
+        SyncCentre.getInstance().commitOrder(this, nurOrder, handler);
+
+        mainCategoryAdapter.setCheckedPosition(-1);
     }
 
     private void cartView() {

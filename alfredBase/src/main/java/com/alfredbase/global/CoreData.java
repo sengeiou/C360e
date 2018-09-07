@@ -328,6 +328,16 @@ public class CoreData {
 		}
 		return null;
 	}
+	public ItemDetail getItemDetailByBarCodeForKPMG(String barcode) {
+		if (TextUtils.isEmpty(barcode))
+			return null;
+		for (ItemDetail itemDetail : getItemDetails()) {
+			if (barcode.equals(IntegerUtils.format24(itemDetail.getBarcode()))) {
+				return itemDetail;
+			}
+		}
+		return null;
+	}
 
 	/*Bob: This function CANNNOT be used for Open Item coz all open items have no template ID*/
 	public ItemDetail getItemDetailByTemplateId(Integer id) {

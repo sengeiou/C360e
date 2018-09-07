@@ -96,6 +96,8 @@ public class OrderDetail implements Serializable {
      * 重量 暂时只前端用
      */
     private String weight;
+    private String barCode;
+
 
     // 目前只用于前端，从itemDetail过来的数据，方便用做计算和判断（在计算的时候减少数据库的耗时操作）
     private int isItemDiscount = 1;
@@ -408,6 +410,14 @@ public class OrderDetail implements Serializable {
         this.transferFromDetailId = transferFromDetailId;
     }
 
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
+    }
+
     @Override
     public String toString() {
         return "OrderDetail{" +
@@ -439,6 +449,7 @@ public class OrderDetail implements Serializable {
                 ", orderSplitId=" + orderSplitId +
                 ", isTakeAway=" + isTakeAway +
                 ", weight='" + weight + '\'' +
+                ", barCode='" + barCode + '\'' +
                 ", isItemDiscount=" + isItemDiscount +
                 ", appOrderDetailId=" + appOrderDetailId +
                 ", mainCategoryId=" + mainCategoryId +

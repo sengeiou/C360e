@@ -1381,6 +1381,8 @@ public class DataHelper {
 
             db.execSQL("ALTER TABLE " + TableNames.OrderDetail
                     + " ADD COLUMN itemUrl TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.OrderDetail
+                    + " ADD COLUMN barCode TEXT default ''");
         }
     }
 

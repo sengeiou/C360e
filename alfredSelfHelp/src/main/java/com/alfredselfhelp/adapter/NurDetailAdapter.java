@@ -6,18 +6,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.utils.BH;
 import com.alfredselfhelp.R;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.alfredselfhelp.javabean.ItemDetailDto;
 
 import java.util.List;
 
 
-public class NurDetailAdapter extends RvAdapter<ItemDetail> {
+public class NurDetailAdapter extends RvAdapter<ItemDetailDto> {
 
-    public NurDetailAdapter(Context context, List<ItemDetail> list, RvListener listener) {
+    public NurDetailAdapter(Context context, List<ItemDetailDto> list, RvListener listener) {
         super(context, list, listener);
     }
 
@@ -37,7 +35,7 @@ public class NurDetailAdapter extends RvAdapter<ItemDetail> {
         return new DetailHolder(view, viewType, listener);
     }
 
-    public class DetailHolder extends RvHolder<ItemDetail> {
+    public class DetailHolder extends RvHolder<ItemDetailDto> {
         TextView tvPrice;
         ImageView img, add;
         TextView tvName, num;
@@ -58,7 +56,7 @@ public class NurDetailAdapter extends RvAdapter<ItemDetail> {
 
 
         @Override
-        public void bindHolder(ItemDetail itemDetail, final int position) {
+        public void bindHolder(ItemDetailDto itemDetail, final int position) {
             int itemViewType = NurDetailAdapter.this.getItemViewType(position);
 
             tvName.setText(itemDetail.getItemName());
@@ -69,7 +67,7 @@ public class NurDetailAdapter extends RvAdapter<ItemDetail> {
 //                    .diskCacheStrategy(DiskCacheStrategy.NONE)
 //                    .into(img);
 
-            tvPrice.setText("S$" + BH.getBD(itemDetail.getPrice()).toString());
+            tvPrice.setText("S$" + BH.getBD(itemDetail.getItemPrice()).toString());
 //            add.setImageResource(R.drawable.icon_add);
 //            add.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -86,7 +84,7 @@ public class NurDetailAdapter extends RvAdapter<ItemDetail> {
         }
 
         @Override
-        public void bindHolderItem(ItemDetail itemDetail, int position) {
+        public void bindHolderItem(ItemDetailDto itemDetail, int position) {
 
 //            add.setImageResource(R.drawable.mod_num);
 //

@@ -30,6 +30,13 @@ public class RfidApiCentre {
     private RfidCallBack callBack;
     private NurApiUsbAutoConnect mUsbAC;
     private boolean canConnectThenStart = false;
+    private int mTagsCounter;
+    private long mLastInventoryTime;
+    private int mTpsUpdateInterval = 100;
+    // Tags Per Second
+    private double mLastTPS = 0;
+    // Max performance.
+    private double mPeakTPS = 0;
     private RfidApiCentre(){
     }
     public static RfidApiCentre getInstance() {
@@ -38,9 +45,9 @@ public class RfidApiCentre {
         return instance;
     }
 
-    public void setNurTagStorage(NurTagStorage nurTagStorage) {
-        this.nurTagStorage = nurTagStorage;
-    }
+//    public void setNurTagStorage(NurTagStorage nurTagStorage) {
+//        this.nurTagStorage = nurTagStorage;
+//    }
 
     public boolean isConnected(){
         if(nurApi != null && nurApi.isConnected()){
@@ -82,6 +89,9 @@ public class RfidApiCentre {
 
             @Override
             public void inventoryStreamEvent(NurEventInventory nurEventInventory) {
+//                mLastInventoryTime = System.currentTimeMillis();
+//                CalcTPS(nurEventInventory.tagsAdded); // Add tag count to tags per second counter
+//                mInventoryRounds += nurEventInventory.roundsDone;
                 if (nurEventInventory.tagsAdded > 0) {
                     inventory();
                     if(callBack != null)
@@ -251,6 +261,24 @@ public class RfidApiCentre {
             }
         }
     }
+
+//    private void CalcTPS(int ft) {
+//        mTagsCounter += ft;
+//        long elapsed = System.currentTimeMillis() - mLastInventoryTime;
+//
+//        if (elapsed >= mTpsUpdateInterval) {
+//            mLastTPS = (double) mTagsCounter / (double) elapsed * 1000.0;
+//            if (mLastTPS > mPeakTPS) {
+//                mPeakTPS = mLastTPS;
+//            }
+////            mInventoryTPSTextView.setText("" + (int)mLastTPS + ", peak: " + (int)mPeakTPS);
+//            if((int)mLastTPS == 0 && (int)mPeakTPS == 0){
+//
+//            }
+//            mLastInventoryTime = System.currentTimeMillis();
+//            mTagsCounter = 0;
+//        }
+//    }
 
 
     public interface RfidCallBack{

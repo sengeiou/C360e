@@ -232,6 +232,7 @@ public class ObjectFactory {
 			if (subOrder != null) {
 				subOrder.setId(CommonSQL.getNextSeq(TableNames.Order));
 				subOrder.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+				subOrder.setOrderNo(OrderHelper.calculateOrderNo(subOrder.getBusinessDate()));
 				OrderSQL.update(subOrder);
 			}
 
