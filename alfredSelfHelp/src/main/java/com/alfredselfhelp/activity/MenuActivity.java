@@ -1,6 +1,7 @@
 package com.alfredselfhelp.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.CartDetailAdapter;
@@ -35,6 +37,7 @@ import com.alfredselfhelp.adapter.MainCategoryAdapter;
 import com.alfredselfhelp.adapter.MenuDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.global.KpmDialogFactory;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.javabean.ItemDetailDto;
@@ -91,7 +94,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private boolean isWaitting = false;
 
     List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
-
+    Dialog fdialog;
     protected void initView() {
         super.initView();
         setContentView(R.layout.activity_menu);
@@ -137,14 +140,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     map = (Map<String, Object>) msg.obj;
                     int count = (int) map.get("count");
 
-                    if (count == 0) {
-                        //   DialogFactory.
-                    } else {
-                        updateCartOrderDetail((OrderDetail) map.get("orderDetail"),
-                                count);
-                    }
+//                    if (count == 0) {
+//
+//                    } else {
+                    updateCartOrderDetail((OrderDetail) map.get("orderDetail"),
+                            count);
+//                    }
 
-
+                    nurOrder = OrderSQL.getOrder(nurOrder.getId());
+                    tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+                    tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                     break;
 
                 case 1111:
@@ -201,8 +206,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         tv_cart_num = (TextView) findViewById(R.id.tv_cart_num);
         rl_cart_num = (RelativeLayout) findViewById(R.id.rl_cart_num);
         tv_total_price = (TextView) findViewById(R.id.tv_cart_total);
-        rl_cart_total=(RelativeLayout)findViewById(R.id.rl_cart_total);
-        li_menu=(LinearLayout)findViewById(R.id.li_menu);
+        rl_cart_total = (RelativeLayout) findViewById(R.id.rl_cart_total);
+        li_menu = (LinearLayout) findViewById(R.id.li_menu);
 
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
@@ -257,13 +262,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(nurOrder.getId());
                     NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
                     List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
-                    if(isWaitting && barCodes.size() == 0){
-                        if(OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0){
+                    if (isWaitting && barCodes.size() == 0) {
+                        if (OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0) {
                             RfidApiCentre.getInstance().stopRFIDScan();
                             // TODO dismiss 等待拿货的 Dialog
+                            if( fdialog!=null){
+                                fdialog.dismiss();
+                            }
                             paymentAction();
                         }
-                    }else {
+                    } else {
                         initRfid(barCodes);
                     }
                 }
@@ -363,8 +371,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             orderDetails.clear();
             OrderDetailSQL.deleteOrderDetail(orderDetail);
             OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
-            orderDetails = OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder);
-            cartAdater.notifyDataSetChanged();
+
         } else {// 添加
 //			count = count - oldCount;
             nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
@@ -381,6 +388,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
             // }
         }
+
+        orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder));
+        cartAdater.notifyDataSetChanged();
     }
 
     private void updateOrderDetail(ItemDetail itemDetail, int count) {
@@ -611,15 +621,18 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                Intent intent = new Intent();
 //                intent.setClass(MenuActivity.this, DialogActivity.class);
 //                startActivity(intent);
-                ll_menu_details.setVisibility(View.GONE);
-                ll_video.setVisibility(View.GONE);
-                ll_view_cart_list.setVisibility(View.VISIBLE);
-                ll_view_cart.setVisibility(View.GONE);
-                ll_view_pay.setVisibility(View.VISIBLE);
-                li_menu.setBackgroundResource(R.drawable.bg_grab);
+                if(orderDetails != null && orderDetails.size() > 0) {
+                    ll_menu_details.setVisibility(View.GONE);
+                    ll_video.setVisibility(View.GONE);
+                    ll_view_cart_list.setVisibility(View.VISIBLE);
+                    ll_view_cart.setVisibility(View.GONE);
+                    ll_view_pay.setVisibility(View.VISIBLE);
+                    li_menu.setBackgroundResource(R.drawable.bg_grab);
 
-                cartView();
-                
+                    cartView();
+                }else{
+                    UIHelp.showToast(MenuActivity.this, "Please Choose Menu First !");
+                }
 
                 break;
             case R.id.ll_view_pay:
@@ -635,7 +648,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     // TODO 显示等待拿货的Dialog
                     UIHelp.showToast(MenuActivity.this, "Please grab it from the shelf and \nplace it on the sensor plate");
                     RfidApiCentre.getInstance().startRFIDScan();
+                     fdialog = KpmDialogFactory.kpmFDialog(context,  new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    }, true);
+
+
                 }
+
 
 //                     dialog = ToolAlert.MyDialog(DialogActivity.this, "", "", "", new View.OnClickListener() {
 //                         @Override
@@ -653,7 +675,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
     }
 
-    private void paymentAction(){
+    private void paymentAction() {
         ll_view_cart.setVisibility(View.GONE);
         ll_view_pay.setVisibility(View.VISIBLE);
         loadingDialog.setTitle("Pay...");
@@ -693,7 +715,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         re_view_cart.setAdapter(cartAdater);
         nurOrder = OrderSQL.getOrder(nurOrder.getId());
-
         tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
         tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
 

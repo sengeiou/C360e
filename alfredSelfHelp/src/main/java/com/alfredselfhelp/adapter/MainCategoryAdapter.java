@@ -50,7 +50,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
             tv_text = (TextView) itemView.findViewById(R.id.tv_main_text);
            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                    WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, 130));
-           params.setMargins(5,5,5,5);
+           params.setMargins(5,0,5,0);
            tv_text.setLayoutParams(params);
 
         }
