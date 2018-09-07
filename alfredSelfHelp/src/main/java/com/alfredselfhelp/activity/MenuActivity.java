@@ -585,6 +585,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
                 isWaitting = false;
+                refreshTotal();
                 RfidApiCentre.getInstance().startRFIDScan();
 //            {// TODO
 //                NurTagStorage nurTagStorage = new NurTagStorage();
@@ -622,6 +623,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
                 break;
             case R.id.ll_view_pay:
+                if(orderDetails == null || orderDetails.size() == 0){
+                    UIHelp.showToast(MenuActivity.this, "Please choose menu !");
+                    return;
+                }
                 isWaitting = true;
                 NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
                 if(OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0){

@@ -94,8 +94,6 @@ public class RfidApiCentre {
 //                mInventoryRounds += nurEventInventory.roundsDone;
                 if (nurEventInventory.tagsAdded > 0) {
                     inventory();
-                    if(callBack != null)
-                        callBack.inventoryStreamEvent();
                 }
                 if (nurEventInventory.stopped && mInventoryIsRunning) {
                     try {
@@ -245,6 +243,7 @@ public class RfidApiCentre {
 
     private void inventory(){
         synchronized (nurApi.getStorage()){
+            boolean tagAdded = false;
             NurTagStorage tagStorage = nurApi.getStorage();
             for (int n = 0; n < tagStorage.size(); n++){
                 NurTag tag = tagStorage.get(n);
@@ -257,8 +256,14 @@ public class RfidApiCentre {
                     temp.put("found", "1");
                     temp.put("foundpercent", "100");
                     tag.setUserdata(temp);
+                    tagAdded = true;
                 }
             }
+            tagStorage.clear();
+            if(tagAdded && callBack != null){
+                callBack.inventoryStreamEvent();
+            }
+
         }
     }
 

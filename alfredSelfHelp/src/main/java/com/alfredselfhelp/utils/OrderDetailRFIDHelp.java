@@ -1,5 +1,7 @@
 package com.alfredselfhelp.utils;
 
+import android.text.TextUtils;
+
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.IntegerUtils;
 import com.nordicid.nurapi.NurTag;
@@ -16,6 +18,9 @@ public class OrderDetailRFIDHelp {
         List<String> barCodes = new ArrayList<>();
         if (orderDetails != null) {
             for (OrderDetail orderDetail : orderDetails) {
+                if(TextUtils.isEmpty(orderDetail.getBarCode())){
+                    continue;
+                }
                 String barCode = IntegerUtils.format24(orderDetail.getBarCode());
                 if (orderDetailNumMap.containsKey(barCode)) {
                     int orderDetailNum = orderDetailNumMap.get(barCode);
@@ -50,6 +55,9 @@ public class OrderDetailRFIDHelp {
         Map<String, Integer> orderDetailNumMap = new HashMap<>();
         if (orderDetails != null) {
             for (OrderDetail orderDetail : orderDetails) {
+                if(TextUtils.isEmpty(orderDetail.getBarCode())){
+                    continue;
+                }
                 String barCode = IntegerUtils.format24(orderDetail.getBarCode());
                 if (orderDetailNumMap.containsKey(barCode)) {
                     int orderDetailNum = orderDetailNumMap.get(barCode);
