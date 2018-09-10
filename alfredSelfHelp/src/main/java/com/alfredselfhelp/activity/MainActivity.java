@@ -235,7 +235,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        RfidApiCentre.getInstance().onResume();
+//        RfidApiCentre.getInstance().onResume();
         if(RfidApiCentre.getInstance().getNurTagStorage() != null){
             RfidApiCentre.getInstance().stopRFIDScan();
         }

@@ -48,13 +48,18 @@ import com.alfredselfhelp.utils.OrderDetailRFIDHelp;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
+import com.nordicid.nurapi.NurApi;
 import com.nordicid.nurapi.NurApiUiThreadRunner;
+import com.nordicid.nurapi.NurRespInventory;
+import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MenuActivity extends BaseActivity implements CheckListener {
     public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
@@ -93,12 +98,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     CartDetailAdapter cartAdater;
 //    private OrderSelfDialog selfDialog;
     List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+    private Timer timer = new Timer();
     private boolean isUpdating = false;
 //    Dialog fdialog;
     protected void initView() {
         super.initView();
         setContentView(R.layout.activity_menu);
         init();
+        timer.schedule(new MyTimertask(), 3000);
     }
 
     @Override
@@ -257,39 +264,53 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 MenuActivity.this.runOnUiThread(r);
             }
         });
-        RfidApiCentre.getInstance().setCallBack(new RfidApiCentre.RfidCallBack() {
-            @Override
-            public void inventoryStreamEvent() {
-                if (nurOrder != null && nurOrder.getId() > 0) {
-                    NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-                    List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
-                    if(!isUpdating) {
-                        UIHelp.showToast(MenuActivity.this, "Storage size:" + nurTagStorage.size());
-                        LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
-                        if (barCodes.size() > 0) {
-                            LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
-                            isUpdating = true;
-                            initRfid(barCodes);
-                        } else {
-                            Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
-                            if (map.size() > 0) {
-                                LogUtil.e("TAG", "Remove: ======= map size" + map.size());
-                                isUpdating = true;
-                                removeRfid(map);
-                            }
-                        }
-                    }
-                }
-            }
-        });
+//        RfidApiCentre.getInstance().setCallBack(new RfidApiCentre.RfidCallBack() {
+//            @Override
+//            public void inventoryStreamEvent() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (nurOrder != null && nurOrder.getId() > 0) {
+//                            NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+//                            UIHelp.showShortToast(App.instance, "nurTagStorage size" + nurTagStorage.size());
+//                            List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
+//                            if(!isUpdating) {
+//                                LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
+//                                if (barCodes.size() > 0) {
+//                                    LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
+//                                    isUpdating = true;
+//                                    initRfid(barCodes);
+//                                } else {
+//                                    Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
+//                                    if (map.size() > 0) {
+//                                        LogUtil.e("TAG", "Remove: ======= map size" + map.size());
+//                                        isUpdating = true;
+//                                        removeRfid(map);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        RfidApiCentre.getInstance().startRFIDScan();
+//                    }
+//
+//                });
+//
+//            }
+//        });
 
-        RfidApiCentre.getInstance().startRFIDScan();
 
 
     }
 
     @Override
     protected void onDestroy() {
+        try{
+            if(timer != null){
+                timer.cancel();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -339,9 +360,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                                }
                                 refreshTotal();
                                 if(ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE){
-                                    refreshList();
+                                    refreshViewCart();
                                 }
-                                RfidApiCentre.getInstance().getNurTagStorage().clear();
+//                                RfidApiCentre.getInstance().getNurTagStorage().clear();
                                 isUpdating = false;
 //                            }
 //                        });
@@ -382,12 +403,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                            UIHelp.showToast(MenuActivity.this, "Remove  on UI");
                             refreshTotal();
                             if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
-                                refreshList();
+                                refreshViewCart();
                             }
                             if(orderDetails.size() == 0){
                                 ll_grab.performClick();
                             }
-                            RfidApiCentre.getInstance().getNurTagStorage().clear();
+//                            RfidApiCentre.getInstance().getNurTagStorage().clear();
                             isUpdating = false;
 //                        }
 //                    });
@@ -874,7 +895,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
 
     private void refreshTotal() {
-        orderDetails = OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder);
+        orderDetails.clear();
+        orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder));
         int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForKpm(nurOrder.getId().intValue());
 
         if (itemCount > 0) {
@@ -898,6 +920,71 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     }
 
+    private void refreshViewCart(){
+        if(cartAdater != null){
+            nurOrder = OrderSQL.getOrder(nurOrder.getId());
+            cartAdater.notifyDataSetChanged();
+            tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+        }
+    }
+
+    class MyTimertask extends TimerTask {
+        @Override
+        public void run() {
+            try {
+                // Clear tag storage
+                NurApi api = RfidApiCentre.getInstance().getNurApi();
+                api.clearIdBuffer();
+                api.clearTagStorage();
+                LogUtil.e("TAG", "clear Api : " + api.getStorage().size());
+                NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+                nurTagStorage.clear();
+                LogUtil.e("TAG", "clear nurTagStorage  : " + nurTagStorage.size());
+                NurRespInventory resp = api.inventory();
+                System.out.println("inventory numTagsFound: " + resp.numTagsFound);
+                LogUtil.e("TAG", "inventory numTagsFound: " + resp.numTagsFound);
+                LogUtil.e("TAG", "api.getStorage(): " + api.getStorage());
+                if (resp.numTagsFound > 0) {
+                    // Fetch and print tags
+                    api.fetchTags();
+                    for (int n=0; n<resp.numTagsFound; n++) {
+                        NurTag tag = api.getStorage().get(n);
+                        nurTagStorage.addTag(tag);
+                    }
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (nurOrder != null && nurOrder.getId() > 0) {
+                            NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+//                            UIHelp.showShortToast(App.instance, "nurTagStorage size" + nurTagStorage.size());
+                            List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
+                            if(!isUpdating) {
+                                LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
+                                if (barCodes.size() > 0) {
+
+                                    LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
+                                    isUpdating = true;
+                                    initRfid(barCodes);
+                                } else {
+                                    Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
+                                    if (map.size() > 0) {
+                                        LogUtil.e("TAG", "Remove: ======= map size" + map.size());
+                                        isUpdating = true;
+                                        removeRfid(map);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }  catch (Exception ex) {
+                ex.printStackTrace();
+            }finally {
+                timer.schedule(new MyTimertask(), 2000);
+            }
+        }
+    }
 
 }
 

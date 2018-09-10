@@ -91,16 +91,16 @@ public class RfidApiCentre {
 //                mLastInventoryTime = System.currentTimeMillis();
 //                CalcTPS(nurEventInventory.tagsAdded); // Add tag count to tags per second counter
 //                mInventoryRounds += nurEventInventory.roundsDone;
-                if (nurEventInventory.tagsAdded > 0) {
-                    inventory();
-                }
-                if (nurEventInventory.stopped && mInventoryIsRunning) {
-                    try {
-                        nurApi.startInventoryStream();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+//                if (nurEventInventory.tagsAdded > 0) {
+//                    inventory();
+//                }
+//                if (nurEventInventory.stopped && mInventoryIsRunning) {
+//                    try {
+//                        nurApi.startInventoryStream();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
 
             @Override
@@ -163,6 +163,8 @@ public class RfidApiCentre {
         mUsbAC = new NurApiUsbAutoConnect(App.instance, nurApi);
         mUsbAC.setEnabled(true);
     }
+
+
     private void enableItems(boolean isConnected){
         if(isConnected){
 //            UIHelp.showToast(App.instance, "RFID scanner is Connected");
@@ -174,9 +176,9 @@ public class RfidApiCentre {
         }else{
 //            UIHelp.showToast(App.instance, "RFID scanner is Disconnected");
         }
-        if(canConnectThenStart && isConnected){
-            startRFIDScan();
-        }
+//        if(canConnectThenStart && isConnected){
+//            startRFIDScan();
+//        }
 
     }
 
@@ -294,6 +296,10 @@ public class RfidApiCentre {
 //        }
 //    }
 
+
+    public NurApi getNurApi() {
+        return nurApi;
+    }
 
     public interface RfidCallBack{
         void inventoryStreamEvent();

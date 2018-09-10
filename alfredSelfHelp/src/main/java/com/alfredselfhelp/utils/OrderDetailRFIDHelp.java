@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
 import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
@@ -30,6 +31,7 @@ public class OrderDetailRFIDHelp {
                 }
             }
         }
+        LogUtil.e("TAG", "orderDetails:" + orderDetails.size() +"  getUnChooseItemBarCode  map" + orderDetailNumMap.size());
         if (nurTagStorage != null && nurTagStorage.size() > 0) {
             for (int i = 0; i < nurTagStorage.size(); i++) {
                 NurTag nurTag = nurTagStorage.get(i);
@@ -67,6 +69,8 @@ public class OrderDetailRFIDHelp {
                 }
             }
         }
+
+        LogUtil.e("TAG", "getUnScannerItemBarCode  orderDetails" + orderDetails.size() + " orderDetailNumMap : "+orderDetailNumMap.size());
         if (nurTagStorage != null && nurTagStorage.size() > 0) {
             for (int i = 0; i < nurTagStorage.size(); i++) {
                 NurTag nurTag = nurTagStorage.get(i);
