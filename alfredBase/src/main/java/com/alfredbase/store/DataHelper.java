@@ -1383,6 +1383,8 @@ public class DataHelper {
                     + " ADD COLUMN itemUrl TEXT");
             db.execSQL("ALTER TABLE " + TableNames.OrderDetail
                     + " ADD COLUMN barCode TEXT default ''");
+            db.execSQL("ALTER TABLE " + TableNames.ItemMainCategory
+                    + " ADD COLUMN isShowDiner INTEGER default 1");
         }
     }
 

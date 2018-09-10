@@ -21,8 +21,8 @@ public class ItemMainCategorySQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.ItemMainCategory
-					+ "(id,mainCategoryName, color,restaurantId,isActive,indexId,userId,printerGroupId,createTime,updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?,?)";
+					+ "(id,mainCategoryName, color,restaurantId,isActive,indexId,userId,printerGroupId,createTime,updateTime,isShowDiner)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { itemMainCategory.getId(),
@@ -34,7 +34,8 @@ public class ItemMainCategorySQL {
 							itemMainCategory.getUserId(),
 							itemMainCategory.getPrinterGroupId(),
 							itemMainCategory.getCreateTime(),
-							itemMainCategory.getUpdateTime() });
+							itemMainCategory.getUpdateTime(),
+							itemMainCategory.getIsShowDiner()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -50,8 +51,8 @@ public class ItemMainCategorySQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.ItemMainCategory
-					+ "(id,mainCategoryName, color,restaurantId,isActive,indexId,userId,printerGroupId,createTime,updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?,?)";
+					+ "(id,mainCategoryName, color,restaurantId,isActive,indexId,userId,printerGroupId,createTime,updateTime,isShowDiner)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (ItemMainCategory itemMainCategory : itemMainCategories) {
@@ -75,6 +76,8 @@ public class ItemMainCategorySQL {
 							itemMainCategory.getCreateTime());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 10,
 							itemMainCategory.getUpdateTime());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 11,
+							itemMainCategory.getIsShowDiner());
 
 					sqLiteStatement.executeInsert();
 				}
@@ -111,6 +114,7 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setPrinterGroupId(cursor.getInt(7));
 				itemMainCategory.setCreateTime(cursor.getLong(8));
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
+				itemMainCategory.setIsShowDiner(cursor.getInt(10));
 				result.add(itemMainCategory);
 			}
 		} catch (Exception e) {
@@ -149,6 +153,7 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setPrinterGroupId(cursor.getInt(7));
 				itemMainCategory.setCreateTime(cursor.getLong(8));
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
+				itemMainCategory.setIsShowDiner(cursor.getInt(10));
 				result.add(itemMainCategory);
 			}
 		} catch (Exception e) {
@@ -188,6 +193,7 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setPrinterGroupId(cursor.getInt(7));
 				itemMainCategory.setCreateTime(cursor.getLong(8));
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
+				itemMainCategory.setIsShowDiner(cursor.getInt(10));
 				result.add(itemMainCategory);
 			}
 		} catch (Exception e) {
@@ -200,7 +206,45 @@ public class ItemMainCategorySQL {
 		}
 		return result;
 	}
-	
+	public static ArrayList<ItemMainCategory> getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp() {
+		ArrayList<ItemMainCategory> result = new ArrayList<ItemMainCategory>();
+		String sql = "select * from " + TableNames.ItemMainCategory + " where isActive = 1 and isShowDiner = 1 and id IN (select distinct itemMainCategoryId from " + TableNames.ItemDetail +" where isActive = 1) order by indexId";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+		try {
+			cursor = db.rawQuery(sql, new String[] {});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return result;
+			}
+			ItemMainCategory itemMainCategory = null;
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				itemMainCategory = new ItemMainCategory();
+				itemMainCategory.setId(cursor.getInt(0));
+				itemMainCategory.setMainCategoryName(cursor.getString(1));
+				itemMainCategory.setColor(cursor.getString(2));
+				itemMainCategory.setRestaurantId(cursor.getInt(3));
+				itemMainCategory.setIsActive(cursor.getInt(4));
+				itemMainCategory.setIndexId(cursor.getInt(5));
+				itemMainCategory.setUserId(cursor.getInt(6));
+				itemMainCategory.setPrinterGroupId(cursor.getInt(7));
+				itemMainCategory.setCreateTime(cursor.getLong(8));
+				itemMainCategory.setUpdateTime(cursor.getLong(9));
+				itemMainCategory.setIsShowDiner(cursor.getInt(10));
+				result.add(itemMainCategory);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return result;
+	}
+
 	public static ItemMainCategory getItemMainCategoryById(int itemMainCategoryId) {
 		String sql = "select * from " + TableNames.ItemMainCategory +" where id = ? and isActive = 1";
 		Cursor cursor = null;
@@ -221,6 +265,7 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setPrinterGroupId(cursor.getInt(7));
 				itemMainCategory.setCreateTime(cursor.getLong(8));
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
+				itemMainCategory.setIsShowDiner(cursor.getInt(10));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -253,6 +298,7 @@ public class ItemMainCategorySQL {
 				itemMainCategory.setPrinterGroupId(cursor.getInt(7));
 				itemMainCategory.setCreateTime(cursor.getLong(8));
 				itemMainCategory.setUpdateTime(cursor.getLong(9));
+				itemMainCategory.setIsShowDiner(cursor.getInt(10));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

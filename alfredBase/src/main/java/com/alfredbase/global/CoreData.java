@@ -78,6 +78,7 @@ public class CoreData {
 	private List<ItemDetail> itemDetails;
 	private List<ItemCategory> itemCategories;
 	private List<ItemMainCategory> itemMainCategories;
+	private List<ItemMainCategory> itemMainCategoriesForSelfHelp;
 	private LoginResult loginResult;
 	private List<TaxCategory> taxCategories;
 	private List<Modifier> modifierList;
@@ -812,6 +813,12 @@ public class CoreData {
 		if (itemMainCategories == null)
 			return Collections.emptyList();
 		itemMainCategories = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenter();
+		return itemMainCategories;
+	}
+	public List<ItemMainCategory> getItemMainCategoriesForSelp() {
+		if (itemMainCategories == null)
+			return Collections.emptyList();
+		itemMainCategories = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp();
 		return itemMainCategories;
 	}
 

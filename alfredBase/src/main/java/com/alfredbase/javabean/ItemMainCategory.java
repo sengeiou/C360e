@@ -1,8 +1,8 @@
 package com.alfredbase.javabean;
 
-import java.io.Serializable;
-
 import com.alfredbase.utils.CommonUtil;
+
+import java.io.Serializable;
 
 public class ItemMainCategory implements Serializable{
 	/**
@@ -31,6 +31,8 @@ public class ItemMainCategory implements Serializable{
 	private Long createTime;
 
 	private Long updateTime;
+
+	private int isShowDiner;
 
 	public ItemMainCategory() {
 	}
@@ -153,14 +155,29 @@ public class ItemMainCategory implements Serializable{
 		this.printerGroupId = printerGroupId;
 	}
 
+	public int getIsShowDiner() {
+		return isShowDiner;
+	}
+
+	public void setIsShowDiner(int isShowDiner) {
+		this.isShowDiner = isShowDiner;
+	}
+
 	@Override
 	public String toString() {
-		return "ItemMainCategory [id=" + id + ", mainCategoryName="
-				+ mainCategoryName + ", color=" + color + ", restaurantId="
-				+ restaurantId + ", isActive=" + isActive + ", indexId="
-				+ indexId + ", userId=" + userId + ", printerGroupId=" + printerGroupId
-				+ ", createTime=" + createTime + ", updateTime=" + updateTime
-				+ "]";
+		return "ItemMainCategory{" +
+				"id=" + id +
+				", mainCategoryName='" + mainCategoryName + '\'' +
+				", color='" + color + '\'' +
+				", restaurantId=" + restaurantId +
+				", isActive=" + isActive +
+				", indexId=" + indexId +
+				", userId=" + userId +
+				", printerGroupId=" + printerGroupId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", isShowDiner=" + isShowDiner +
+				'}';
 	}
 
 }

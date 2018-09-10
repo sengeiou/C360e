@@ -1,12 +1,12 @@
 package com.alfredselfhelp.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -28,6 +28,8 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.CartDetailAdapter;
@@ -36,7 +38,6 @@ import com.alfredselfhelp.adapter.MainCategoryAdapter;
 import com.alfredselfhelp.adapter.MenuDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
-import com.alfredselfhelp.global.KpmDialogFactory;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.javabean.ItemDetailDto;
@@ -90,10 +91,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private Order nurOrder;
     SetItemCountWindow setItemCountWindow;
     CartDetailAdapter cartAdater;
-    private boolean isWaitting = false;
-    private OrderSelfDialog selfDialog;
+//    private OrderSelfDialog selfDialog;
     List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
-    Dialog fdialog;
+    private boolean isUpdating = false;
+//    Dialog fdialog;
     protected void initView() {
         super.initView();
         setContentView(R.layout.activity_menu);
@@ -194,7 +195,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void init() {
         loadingDialog = new LoadingDialog(MenuActivity.this);
-        selfDialog = new OrderSelfDialog(MenuActivity.this);
+//        selfDialog = new OrderSelfDialog(MenuActivity.this);
         ll_grab = (LinearLayout) findViewById(R.id.ll_grab);
         ll_video = (LinearLayout) findViewById(R.id.ll_video);
         ll_menu_details = (LinearLayout) findViewById(R.id.ll_menu_details);
@@ -218,8 +219,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        ll_video.setVisibility(View.GONE);
         ll_grab.setOnClickListener(this);
         ll_view_cart.setOnClickListener(this);
-        // itemMainCategories = CoreData.getInstance().getItemMainCategories();
-        itemMainCategories = CoreData.getInstance().getItemMainCategories();
+        itemMainCategories = CoreData.getInstance().getItemMainCategoriesForSelp();
         menuDetail();
         re_main_category = (RecyclerView) findViewById(R.id.re_main_category);
         mLinearLayoutManager = new LinearLayoutManager(context);
@@ -231,7 +231,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
             @Override
             public void onItemClick(int id, int position) {
-                RfidApiCentre.getInstance().stopRFIDScan();
+//                RfidApiCentre.getInstance().stopRFIDScan();
                 ItemMainCategory itemMainCategory = itemMainCategories.get(position);
                 mainCategoryAdapter.setCheckedPosition(position);
                 li_menu.setBackgroundResource(R.drawable.bg_mod);
@@ -261,21 +261,23 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             @Override
             public void inventoryStreamEvent() {
                 if (nurOrder != null && nurOrder.getId() > 0) {
-//                        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(nurOrder.getId());
                     NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
                     List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
-                    if (isWaitting && barCodes.size() == 0) {
-                        if (OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0) {
-                            RfidApiCentre.getInstance().stopRFIDScan();
-                            // TODO dismiss 等待拿货的 Dialog
-                            if( fdialog!=null){
-                                fdialog.dismiss();
+                    if(!isUpdating) {
+                        UIHelp.showToast(MenuActivity.this, "Storage size:" + nurTagStorage.size());
+                        LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
+                        if (barCodes.size() > 0) {
+                            LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
+                            isUpdating = true;
+                            initRfid(barCodes);
+                        } else {
+                            Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
+                            if (map.size() > 0) {
+                                LogUtil.e("TAG", "Remove: ======= map size" + map.size());
+                                isUpdating = true;
+                                removeRfid(map);
                             }
-                            paymentAction();
                         }
-                    } else {
-//                        nurTagStorage.clear();
-                        initRfid(barCodes);
                     }
                 }
             }
@@ -315,56 +317,82 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
         if (itemDetailNumMap.size() > 0) {
             final List<ItemDetailDto> itemDetailDtos = new ArrayList<>(itemDetailNumMap.values());
-            if(!selfDialog.isShowing()) {
-                // 弹出
-                selfDialog.setList(itemDetailDtos);
-
-                selfDialog.setYesOnclickListener("Yes", new OrderSelfDialog.onYesOnclickListener() {
-                    @Override
-                    public void onYesClick() {
-                        if (itemDetailDtos != null) {
-                            loadingDialog.setTitle("Loading");
-                            loadingDialog.show();
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (ItemDetailDto itemDetailDto : selfDialog.getList()) {
-                                        ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
-                                        OrderDetail orderDetail = ObjectFactory.getInstance()
-                                                .createOrderDetailForWaiter(nurOrder, itemDetail,
-                                                        0, App.instance.getUser());
-                                        orderDetail.setItemNum(itemDetailDto.getItemNum());
-                                        OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-                                    }
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (loadingDialog != null && loadingDialog.isShowing()) {
-                                                loadingDialog.dismiss();
-                                            }
-                                            selfDialog.dismiss();
-                                            refreshTotal();
-//                                            RfidApiCentre.getInstance().getNurTagStorage().clear();
-                                        }
-                                    });
-                                }
-                            }).start();
-
+            if (itemDetailDtos != null) {
+//                loadingDialog.setTitle("Loading");
+//                loadingDialog.show();
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+                        for (ItemDetailDto itemDetailDto : itemDetailDtos) {
+                            ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
+                            OrderDetail orderDetail = ObjectFactory.getInstance()
+                                    .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                            0, App.instance.getUser());
+                            orderDetail.setItemNum(itemDetailDto.getItemNum());
+                            OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
                         }
-
-                    }
-                });
-                selfDialog.setNoOnclickListener("No", new OrderSelfDialog.onNoOnclickListener() {
-                    @Override
-                    public void onNoClick() {
-                        selfDialog.dismiss();
-                    }
-                });
-                selfDialog.show();
-            }else{
-                selfDialog.setList(itemDetailDtos);
-                selfDialog.notifyAdapter();
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (loadingDialog != null && loadingDialog.isShowing()) {
+//                                    loadingDialog.dismiss();
+//                                }
+                                refreshTotal();
+                                if(ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE){
+                                    refreshList();
+                                }
+                                RfidApiCentre.getInstance().getNurTagStorage().clear();
+                                isUpdating = false;
+//                            }
+//                        });
+//                    }
+//                }).start();
             }
+        }
+    }
+    private void removeRfid(final Map<String, Integer> map) {
+        if (map != null && map.size() > 0) {
+//            loadingDialog.setTitle("Loading");
+//            loadingDialog.show();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                    if(orderDetails != null && orderDetails.size() > 0){
+                        for(OrderDetail orderDetail : orderDetails){
+                            if(!TextUtils.isEmpty(orderDetail.getBarCode())){
+                                String barCode = IntegerUtils.format24(orderDetail.getBarCode());
+                                if(map.containsKey(barCode)) {
+                                    Integer num = map.get(barCode);
+                                    OrderDetailSQL.deleteOrderDetail(orderDetail);
+                                    if (orderDetail.getItemNum() < num.intValue()) {
+                                        map.put(barCode, num.intValue() - orderDetail.getItemNum());
+                                    } else {
+                                        map.remove(barCode);
+                                    }
+                                }
+                            }
+                        }
+                    }
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (loadingDialog != null && loadingDialog.isShowing()) {
+//                                loadingDialog.dismiss();
+//                            }
+//                            UIHelp.showToast(MenuActivity.this, "Remove  on UI");
+                            refreshTotal();
+                            if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
+                                refreshList();
+                            }
+                            if(orderDetails.size() == 0){
+                                ll_grab.performClick();
+                            }
+                            RfidApiCentre.getInstance().getNurTagStorage().clear();
+                            isUpdating = false;
+//                        }
+//                    });
+//                }
+//            }).start();
         }
     }
 
@@ -381,24 +409,19 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
 
         } else {// 添加
-//			count = count - oldCount;
             nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
             OrderSQL.update(nurOrder);
-//            (orderDetail == null) {
-//                orderDetail = ObjectFactory.getInstance()
-//                        .createOrderDetailForWaiter(nurOrder, itemDetail,
-//                                0, App.instance.getUser());
-//                orderDetail.setItemNum(count);
-//                OrderDetailS ifQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-//            } else {
             orderDetail.setItemNum(count);
             orderDetail.setUpdateTime(System.currentTimeMillis());
             OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
-            // }
         }
 
         orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder));
         cartAdater.notifyDataSetChanged();
+        if(orderDetails.size() == 0){
+            View view = re_main_category.getChildAt(0);//获取到第一个Item的View
+            view.performClick();
+        }
     }
 
     private void updateOrderDetail(ItemDetail itemDetail, int count) {
@@ -602,9 +625,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_cart_list.setVisibility(View.GONE);
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
-                isWaitting = false;
                 refreshTotal();
-                RfidApiCentre.getInstance().startRFIDScan();
+//                RfidApiCentre.getInstance().startRFIDScan();
 //            {// TODO
 //                NurTagStorage nurTagStorage = new NurTagStorage();
 //                String b = "989292920000000000000000";
@@ -648,20 +670,19 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                     return;
                 }
-                isWaitting = true;
                 NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
                 if(OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0){
                     paymentAction();
                 }else{
                     // TODO 显示等待拿货的Dialog
-                    UIHelp.showToast(App.instance, "Please grab it from the shelf and \nplace it on the sensor plate");
-                    RfidApiCentre.getInstance().startRFIDScan();
-                     fdialog = KpmDialogFactory.kpmFDialog(context,  new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                        }
-                    }, true);
+//                    UIHelp.showToast(App.instance, "Please grab it from the shelf and \nplace it on the sensor plate");
+//                    RfidApiCentre.getInstance().startRFIDScan();
+//                     fdialog = KpmDialogFactory.kpmFDialog(context,  new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//
+//                        }
+//                    }, true);
 
 
                 }
@@ -864,20 +885,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             ll_view_cart.setEnabled(false);
             rl_cart_num.setVisibility(View.GONE);
         }
-//        StringBuffer buffer = new StringBuffer();
-//        for(OrderDetail orderDetail : orderDetails){
-//            buffer.append(orderDetail.getBarCode()+"\n");
-//        }
-//        UIHelp.showToast(MenuActivity.this, buffer.toString());
     }
 
     private void refreshList() {
 //        adapter.setParams(currentOrder, orderDetails, currentGroupId);
 ////        adapter.notifyDataSetChanged();
-
-        mDetailAdapter.setParams(nurOrder, orderDetails, 0);
-        //cartAdater.notifyDataSetChanged();
-        mDetailAdapter.notifyDataSetChanged();
+        if(mDetailAdapter != null) {
+            mDetailAdapter.setParams(nurOrder, orderDetails, 0);
+            //cartAdater.notifyDataSetChanged();
+            mDetailAdapter.notifyDataSetChanged();
+        }
 
     }
 

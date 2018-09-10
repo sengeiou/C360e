@@ -5,10 +5,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredselfhelp.R;
@@ -45,17 +45,20 @@ public class CountView extends LinearLayout implements OnClickListener {
     public void setIsCanClick(boolean isCanClick) {
         LinearLayout ll_add = (LinearLayout) findViewById(R.id.ll_add);
         LinearLayout ll_minus = (LinearLayout) findViewById(R.id.ll_minus);
-//		ImageView tv_minus = (ImageView) findViewById(R.id.iv_minus);
-//		ImageView tv_add = (ImageView) findViewById(R.id.iv_add);
+		ImageView tv_add = (ImageView) findViewById(R.id.iv_add);
         LinearLayout ll_count = (LinearLayout) findViewById(R.id.ll_count);
+        ll_minus.setOnClickListener(this);
+        ll_add.setOnClickListener(this);
         if (isCanClick) {
-            ll_minus.setOnClickListener(this);
-            ll_add.setOnClickListener(this);
-            ll_count.setOnClickListener(this);
+            ll_add.setEnabled(true);
+            ll_minus.setEnabled(true);
+            ll_minus.setVisibility(View.VISIBLE);
+            tv_add.setImageResource(R.drawable.icon_orderdetail_add);
         } else {
-//			tv_minus.setTextColor(getResources  ll_add.setOnClickListener(this);
-////            ll_count.setOnClickListener(this);().getColor(R.color.gray));
-//
+            ll_add.setEnabled(false);
+            ll_minus.setEnabled(false);
+            ll_minus.setVisibility(View.INVISIBLE);
+            tv_add.setImageResource(R.drawable.icon_orderdetail_add);
         }
     }
 

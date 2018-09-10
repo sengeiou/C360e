@@ -39,7 +39,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
         return new CateHolder(view, viewType, listener);
     }
 
-    private class CateHolder extends RvHolder<ItemMainCategory> {
+    public class CateHolder extends RvHolder<ItemMainCategory> {
 
         private TextView tv_text;
         private View mView;
@@ -73,6 +73,12 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
         public void bindHolderItem(ItemMainCategory itemMainCategory, int position) {
 
         }
+
+//        public void performClick(){
+//            if(mView != null){
+//                mView.performClick();
+//            }
+//        }
 
     }
 }

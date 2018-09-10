@@ -245,6 +245,7 @@ public class RfidApiCentre {
         synchronized (nurApi.getStorage()){
             boolean tagAdded = false;
             NurTagStorage tagStorage = nurApi.getStorage();
+            LogUtil.e("TAG", "before add =======" + tagStorage.size());
             for (int n = 0; n < tagStorage.size(); n++){
                 NurTag tag = tagStorage.get(n);
                 if(nurTagStorage.addTag(tag)) {
@@ -257,13 +258,21 @@ public class RfidApiCentre {
                     temp.put("foundpercent", "100");
                     tag.setUserdata(temp);
                     tagAdded = true;
+                }else{
+                    tag = nurTagStorage.getTag(tag.getEpc());
+                    @SuppressWarnings("unchecked")
+                    HashMap<String, String> temp = (HashMap<String, String>) tag.getUserdata(); // Get tag instance from the tag storage
+                    temp.put("rssi", "" + tag.getRssi());
+                    temp.put("timestamp", "" + tag.getTimestamp());
+                    temp.put("freq", "" + tag.getFreq() + " kHz (Ch: " + tag.getChannel() + ")");
+                    temp.put("found", "" + tag.getUpdateCount());
+                    temp.put("foundpercent", "100" );
                 }
             }
-            tagStorage.clear();
-            if(tagAdded && callBack != null){
+            nurApi.clearTagStorage();
+            if(callBack != null){
                 callBack.inventoryStreamEvent();
             }
-
         }
     }
 

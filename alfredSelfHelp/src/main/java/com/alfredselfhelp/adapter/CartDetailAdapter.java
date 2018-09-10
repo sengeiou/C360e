@@ -1,13 +1,12 @@
 package com.alfredselfhelp.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alfredbase.javabean.ItemDetail;
-import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.BH;
 import com.alfredselfhelp.R;
@@ -81,8 +80,11 @@ public class CartDetailAdapter extends RvAdapter<OrderDetail> {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
             tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString());
-
-            count_view.setIsCanClick(true);
+            if(TextUtils.isEmpty(orderDetail.getBarCode())){
+                count_view.setIsCanClick(true);
+            }else{
+                count_view.setIsCanClick(false);
+            }
             count_view.setInitCount(orderDetail.getItemNum());
             count_view.setTag(orderDetail);
             count_view.setParam(orderDetail, setItemCountWindow);
