@@ -55,7 +55,7 @@
 
                             android:text="Good"
                             android:textColor="@color/white"
-                            android:textSize="40dp"
+                            android:textSize="52sp"
 
                             />
 
@@ -66,7 +66,7 @@
 
                             android:text="Afternoon"
                             android:textColor="@color/white"
-                            android:textSize="40dp"
+                            android:textSize="52sp"
 
                             />
                     </LinearLayout>
@@ -282,7 +282,6 @@
                 android:layout_marginLeft="280dp"
                 android:layout_marginRight="280dp"
                 android:layout_marginTop="50dp"
-
                 android:gravity="center">
 
                 <RelativeLayout

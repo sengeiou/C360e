@@ -93,7 +93,7 @@ public class DevicesActivity extends BaseActivity {
         map.clear();
         initUI();
         initData();
-      //  new MyThread().start();
+        //  new MyThread().start();
 
     }
 
@@ -508,7 +508,6 @@ public class DevicesActivity extends BaseActivity {
     }
 
 
-
     class MyAsyncTask extends AsyncTask<String, Integer, Bitmap> {
 
         @Override
@@ -541,27 +540,28 @@ public class DevicesActivity extends BaseActivity {
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
             //当任务执行完成是调用,在UI线程
-            if(bitmap != null) {
+            if (bitmap != null) {
                 device_code_img.setImageBitmap(bitmap);
             }
         }
     }
+
     private void initData() {
 
         //本机IP地址和MAC地址
         if (!TextUtils.isEmpty(CommonUtil.getLocalIpAddress()) && !TextUtils.isEmpty(CommonUtil.getLocalMacAddress(context))) {
             devices_ip_tv.setText(CommonUtil.getLocalIpAddress() + "\n"
                     + CommonUtil.getLocalMacAddress(context));
-         //   new MyThread().start();
+            //   new MyThread().start();
             new MyAsyncTask().execute();
         } else {
             devices_ip_tv.setVisibility(View.GONE);
             device_code_img.setVisibility(View.GONE);
         }
         printerDBModelList = new ArrayList<PrinterDevice>(App.instance.getPrinterDevices().values());
-        if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+        if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
             printerDeptModelList = PrinterSQL.getAllPrinterByType(1);
-        }else{
+        } else {
             printerDeptModelList = PrinterSQL.getCashierPrinter();
         }
         if (printerDeptModelList.size() > 0) {
@@ -590,9 +590,9 @@ public class DevicesActivity extends BaseActivity {
         devices_ip_tv = (TextView) findViewById(R.id.devices_ip_tv);
 
         devices_revenueCenter_tv = (TextView) findViewById(R.id.devices_revenueCenter_tv);
-        if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+        if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
             devices_revenueCenter_tv.setText(App.instance.getMainPosInfo().getName());
-        }else{
+        } else {
             devices_revenueCenter_tv.setText("");
         }
 

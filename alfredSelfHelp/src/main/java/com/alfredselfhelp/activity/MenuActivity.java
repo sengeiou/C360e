@@ -78,7 +78,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private ClassAdapter mClassAdapter;
     private MenuDetailAdapter mDetailAdapter;
     ItemHeaderDecoration mDecoration;
-    private TextView total, tv_cart_num, tv_total_price;
+    private TextView total, tv_cart_num, tv_total_price, tv_time;
     private RelativeLayout rl_cart_num;
 
     private RelativeLayout rl_cart_total;
@@ -117,6 +117,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     @Override
     protected void onResume() {
         super.onResume();
+        //  timeSlot();
+
     }
 
 
@@ -226,7 +228,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         rl_cart_total = (RelativeLayout) findViewById(R.id.rl_cart_total);
         li_menu = (LinearLayout) findViewById(R.id.li_menu);
         ll_menu_title = (LinearLayout) findViewById(R.id.ll_menu_title);
-
+        tv_time = (TextView) findViewById(R.id.tv_menu_titles);
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
         ll_video.setVisibility(View.VISIBLE);
@@ -645,11 +647,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         //  mDetailAdapter.notifyDataSetChanged();
         //  mDecoration.setData(itemDetails);
 
-        if (itemDetails != null && itemDetails.size() > 0) {
-            mDecoration = new ItemHeaderDecoration(context, itemDetails);
-            re_menu_details.addItemDecoration(mDecoration);
-            mDecoration.setCheckListener(this);
-        }
+//        if (itemDetails != null && itemDetails.size() > 0) {
+//            mDecoration = new ItemHeaderDecoration(context, itemDetails);
+//            re_menu_details.addItemDecoration(mDecoration);
+//            mDecoration.setCheckListener(this);
+//        }
         return itemDetailandCate;
     }
 
@@ -1041,25 +1043,30 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     }
 
-    private void timeSlot() {
 
-
-        Calendar cal = Calendar.getInstance();// 当前日期
-        int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
-        int minute = cal.get(Calendar.MINUTE);// 获取分钟
-
-
+//    private void timeSlot() {
+//
+//
+//        Calendar cal = Calendar.getInstance();// 当前日期
+//        int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
+//        int minute = cal.get(Calendar.MINUTE);// 获取分钟
+//
+//
 //        int minuteOfDay = hour * 60 + minute;// 从0:00分开是到目前为止的分钟数
 //        final int start = 17 * 60 + 20;// 起始时间 17:20的分钟数
 //        final int end = 19 * 60;// 结束时间 19:00的分钟数
-//        if ( hour>= 0 && hour <=) {
-//            System.out.println("在外围内");
-//        } else {
-//            System.out.println("在外围外");
+//        if (hour >= 0 && hour < 12) {
+//            tv_time.setText("Morning");
+//        } else if (hour >= 12 && hour < 17) {
+////            System.out.println("在外围外");
+//            tv_time.setText("Afternoon");
+//        } else if (hour >= 17 && hour < 20) {
+//            tv_time.setText("Evening");
+//        } else if (hour >= 20 && hour < 24) {
+//            tv_time.setText("Night");
 //        }
-
-    }
-
+//
+//    }
 
 }
 
