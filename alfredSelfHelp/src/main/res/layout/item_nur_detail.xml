@@ -51,18 +51,18 @@
                 android:maxLines="1"
                 android:text="aaaaaaaaaaaaaaa"
                 android:textColor="@color/gray1"
-                android:textSize="16sp"
+                android:textSize="32sp"
 
 
                 />
+
             <TextView
-            android:id="@+id/tv_nur_code"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-                android:textSize="10sp"
-              android:text="Grab &amp; Go"
+                android:id="@+id/tv_nur_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grab &amp; Go"
                 android:textColor="@color/green"
-            />
+                android:textSize="20sp" />
 
         </LinearLayout>
 
@@ -82,7 +82,7 @@
                 android:layout_marginRight="5dp"
                 android:text="1X "
                 android:textColor="@color/gray3"
-                android:textSize="12sp" />
+                android:textSize="24sp" />
 
             <TextView
 
@@ -101,7 +101,7 @@
                 android:paddingRight="10dp"
                 android:text="S$50.00"
                 android:textColor="@color/white"
-                android:textSize="13sp"
+                android:textSize="26sp"
                 android:textStyle="bold"
 
                 />

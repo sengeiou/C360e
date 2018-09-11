@@ -228,7 +228,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         rl_cart_total = (RelativeLayout) findViewById(R.id.rl_cart_total);
         li_menu = (LinearLayout) findViewById(R.id.li_menu);
         ll_menu_title = (LinearLayout) findViewById(R.id.ll_menu_title);
-        tv_time = (TextView) findViewById(R.id.tv_menu_titles);
+        tv_time = (TextView) findViewById(R.id.tv_menu_title);
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
         ll_video.setVisibility(View.VISIBLE);
@@ -1037,8 +1037,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_total));
         textTypeFace.setUbuntuBold((TextView) findViewById(R.id.tv_cart_total));
         textTypeFace.setUbuntuRegular((TextView) findViewById(R.id.tv_grab_content));
-        textTypeFace.setSrirachaRegular((TextView) findViewById(R.id.tv_menu_title));
-        textTypeFace.setSrirachaRegular((TextView) findViewById(R.id.tv_menu_titles));
+        textTypeFace.setRegular((TextView) findViewById(R.id.tv_menu_title));
 
 
     }

@@ -62,7 +62,7 @@
                             android:singleLine="true"
                             android:text="aaaaaaaaaa"
                             android:textColor="@color/gray1"
-                            android:textSize="18sp"
+                            android:textSize="36sp"
                             android:textStyle="bold"
 
                             />
@@ -81,7 +81,7 @@
                             android:maxLines="1"
                             android:text=""
                             android:textColor="@color/gray2"
-                            android:textSize="12sp" />
+                            android:textSize="24sp" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
                                 android:paddingRight="10dp"
                                 android:text="S$50.00"
                                 android:textColor="@color/white"
-                                android:textSize="16sp"
+                                android:textSize="30sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -116,7 +116,7 @@
                                 android:singleLine="true"
                                 android:text="Note: Remove Grab &amp; Go item(s) from the sensor to delete from cart"
                                 android:textColor="@color/red2"
-                                android:textSize="12sp"
+                                android:textSize="24sp"
                                 android:visibility="gone" />
 
                         </LinearLayout>

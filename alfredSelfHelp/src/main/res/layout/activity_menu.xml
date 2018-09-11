@@ -32,10 +32,9 @@
                 <LinearLayout
                     android:id="@+id/ll_menu_title"
                     android:layout_width="match_parent"
-                    android:layout_height="210dp"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-
 
                     >
 
@@ -52,23 +51,14 @@
                             android:id="@+id/tv_menu_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
-                            android:text="Good"
+                            android:gravity="center"
+                            android:text="Good\nAfternoon"
                             android:textColor="@color/white"
-                            android:textSize="52sp"
+                            android:textSize="100sp"
 
                             />
 
-                        <TextView
-                            android:id="@+id/tv_menu_titles"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
 
-                            android:text="Afternoon"
-                            android:textColor="@color/white"
-                            android:textSize="52sp"
-
-                            />
                     </LinearLayout>
 
 
@@ -101,7 +91,7 @@
                         android:layout_gravity="center_horizontal"
                         android:text="Grab &amp; Go"
                         android:textColor="@color/white"
-                        android:textSize="21sp"
+                        android:textSize="42sp"
                         android:visibility="visible"
 
                         />
@@ -114,7 +104,7 @@
                         android:layout_marginTop="5dp"
                         android:text="Place on Sensor"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="24sp"
 
                         />
                 </LinearLayout>
@@ -210,7 +200,7 @@
                             android:gravity="center"
                             android:text="Your Orders"
                             android:textColor="@color/white"
-                            android:textSize="30sp" />
+                            android:textSize="60sp" />
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/re_view_cart"
@@ -247,7 +237,7 @@
                             android:layout_marginLeft="5dp"
                             android:layout_toLeftOf="@+id/tv_cart_total"
                             android:text="Total:"
-                            android:textSize="18sp" />
+                            android:textSize="36sp" />
 
                         <TextView
                             android:id="@+id/tv_cart_total"
@@ -256,7 +246,7 @@
                             android:layout_alignParentBottom="true"
                             android:layout_alignParentRight="true"
                             android:layout_marginLeft="20dp"
-                            android:textSize="28sp" />
+                            android:textSize="56sp" />
 
                     </RelativeLayout>
 
@@ -313,7 +303,7 @@
                             android:layout_marginRight="10dp"
                             android:text="View Cart"
                             android:textColor="@color/white"
-                            android:textSize="20sp" />
+                            android:textSize="40sp" />
 
 
                         <ImageView
@@ -417,7 +407,7 @@
                         android:layout_height="wrap_content"
                         android:text="Credit Card"
                         android:textColor="@color/white"
-                        android:textSize="20sp" />
+                        android:textSize="40sp" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -436,7 +426,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginTop="70dp"
-
             android:visibility="gone">
 
             <ImageView
@@ -445,8 +434,17 @@
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
                 android:src="@drawable/video_bg"
+                android:visibility="visible"
 
                 />
+
+            <VideoView
+                  android:visibility="gone"
+                android:id="@+id/video_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp" />
 
         </LinearLayout>
     </RelativeLayout>

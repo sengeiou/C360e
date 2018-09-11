@@ -8,6 +8,7 @@ public class KpmTextTypeFace {
 	private Typeface ubuntuMedium  = null;
 	private Typeface ubuntuBold = null;
 	private Typeface srirachaRegular = null;
+	private Typeface regular = null;
 
 	private Typeface ubuntuRegular=null;
 
@@ -25,6 +26,10 @@ public class KpmTextTypeFace {
 		if (srirachaRegular == null) {
 			srirachaRegular = Typeface.createFromAsset(mActivity.getAssets(),
 					"fonts/Sriracha-Regular.ttf");
+		}
+		if (regular == null) {
+			regular = Typeface.createFromAsset(mActivity.getAssets(),
+					"fonts/regular.otf");
 		}
 		if (ubuntuBold == null) {
 			ubuntuBold = Typeface.createFromAsset(mActivity.getAssets(),
@@ -63,6 +68,11 @@ public class KpmTextTypeFace {
 	public void setSrirachaRegular(TextView textView){
 		if (textView != null && srirachaRegular != null) {
 			textView.setTypeface(srirachaRegular);
+		}
+	}
+	public void setRegular(TextView textView){
+		if (textView != null && regular != null) {
+			textView.setTypeface(regular);
 		}
 	}
 }

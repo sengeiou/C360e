@@ -95,14 +95,14 @@ public class CartDetailAdapter extends RvAdapter<OrderDetail> {
             textTypeFace.setUbuntuBold(tvPrice);
             textTypeFace.setUbuntuRegular(tv_de);
             textTypeFace.setUbuntuRegular(tv_code);
-             count_view.setIsCanClick(true);
-//            if (TextUtils.isEmpty(orderDetail.getBarCode())) {
-//                tv_code.setVisibility(View.GONE);
-//                count_view.setIsCanClick(true);
-//            } else {
-//                tv_code.setVisibility(View.VISIBLE);
-//                count_view.setIsCanClick(false);
-//            }
+            //    count_view.setIsCanClick(true);
+            if (TextUtils.isEmpty(orderDetail.getBarCode())) {
+                tv_code.setVisibility(View.GONE);
+                count_view.setIsCanClick(true);
+            } else {
+                tv_code.setVisibility(View.VISIBLE);
+                count_view.setIsCanClick(false);
+            }
 
             count_view.setInitCount(orderDetail.getItemNum());
             count_view.setTag(orderDetail);

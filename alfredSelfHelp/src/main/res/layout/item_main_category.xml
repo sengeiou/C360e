@@ -12,6 +12,6 @@
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_m" />
+        android:textSize="42sp" />
 
 </LinearLayout>

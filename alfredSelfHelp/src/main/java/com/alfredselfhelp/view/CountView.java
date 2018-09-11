@@ -46,9 +46,9 @@ public class CountView extends LinearLayout implements OnClickListener {
     public void setIsCanClick(boolean isCanClick) {
         LinearLayout ll_add = (LinearLayout) findViewById(R.id.ll_add);
         LinearLayout ll_minus = (LinearLayout) findViewById(R.id.ll_minus);
-        ImageView tv_add = (ImageView) findViewById(R.id.iv_add);
+        ImageView iv_add = (ImageView) findViewById(R.id.iv_add);
         LinearLayout ll_count = (LinearLayout) findViewById(R.id.ll_count);
-        ll_count.setOnClickListener(this);
+//        ll_count.setOnClickListener(this);
         RelativeLayout re_g = (RelativeLayout) findViewById(R.id.re_g);
         ll_minus.setOnClickListener(this);
         ll_add.setOnClickListener(this);
@@ -57,14 +57,15 @@ public class CountView extends LinearLayout implements OnClickListener {
             ll_minus.setEnabled(true);
             ll_minus.setVisibility(View.VISIBLE);
             re_g.setVisibility(GONE);
-            tv_add.setImageResource(R.drawable.icon_add);
+            iv_add.setVisibility(VISIBLE);
+            iv_add.setImageResource(R.drawable.icon_add);
         } else {
             ll_add.setEnabled(false);
             ll_minus.setEnabled(false);
-            ll_add.setVisibility(GONE);
+            iv_add.setVisibility(GONE);
             re_g.setVisibility(VISIBLE);
             ll_minus.setVisibility(View.INVISIBLE);
-            tv_add.setImageResource(R.drawable.icon_add);
+            iv_add.setImageResource(R.drawable.icon_add);
         }
     }
 
