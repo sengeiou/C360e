@@ -1041,24 +1041,24 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     }
 
-//    private void timeSlot() {
-//
-//
-//        Calendar cal = Calendar.getInstance();// 当前日期
-//        int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
-//        int minute = cal.get(Calendar.MINUTE);// 获取分钟
-//
-//
-////        int minuteOfDay = hour * 60 + minute;// 从0:00分开是到目前为止的分钟数
-////        final int start = 17 * 60 + 20;// 起始时间 17:20的分钟数
-////        final int end = 19 * 60;// 结束时间 19:00的分钟数
-//        if ( hour>= start && minuteOfDay <= end) {
+    private void timeSlot() {
+
+
+        Calendar cal = Calendar.getInstance();// 当前日期
+        int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
+        int minute = cal.get(Calendar.MINUTE);// 获取分钟
+
+
+//        int minuteOfDay = hour * 60 + minute;// 从0:00分开是到目前为止的分钟数
+//        final int start = 17 * 60 + 20;// 起始时间 17:20的分钟数
+//        final int end = 19 * 60;// 结束时间 19:00的分钟数
+//        if ( hour>= 0 && hour <=) {
 //            System.out.println("在外围内");
 //        } else {
 //            System.out.println("在外围外");
 //        }
-//
-//    }
+
+    }
 
 
 }
