@@ -85,8 +85,8 @@ public class CartDetailAdapter extends RvAdapter<OrderDetail> {
             tvName.setText(orderDetail.getItemName());
             Glide.with(mContext)
                     .load(orderDetail.getItemUrl())
-                    .placeholder(R.drawable.test)
-                    .error(R.drawable.test)
+                    .placeholder(R.drawable.logo_icon)
+                    .error(R.drawable.logo_icon)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
             tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString());
@@ -95,7 +95,7 @@ public class CartDetailAdapter extends RvAdapter<OrderDetail> {
             textTypeFace.setUbuntuBold(tvPrice);
             textTypeFace.setUbuntuRegular(tv_de);
             textTypeFace.setUbuntuRegular(tv_code);
-            count_view.setIsCanClick(true);
+             count_view.setIsCanClick(true);
 //            if (TextUtils.isEmpty(orderDetail.getBarCode())) {
 //                tv_code.setVisibility(View.GONE);
 //                count_view.setIsCanClick(true);

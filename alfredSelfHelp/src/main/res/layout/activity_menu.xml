@@ -169,11 +169,11 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="5dp"
                     android:fadeScrollbars="false"
-                    android:paddingRight="5dp"
+                    android:paddingRight="0dp"
                     android:scrollbarSize="6dp"
                     android:scrollbarStyle="outsideInset"
-                    android:scrollbarThumbVertical="@color/black"
-                    android:scrollbarTrackVertical="@drawable/scrollbar"
+                    android:scrollbarThumbVertical="@drawable/scrollbar"
+                    android:scrollbarTrackVertical="@drawable/scroll_bg"
                     android:scrollbars="vertical"
 
                     >
@@ -218,12 +218,15 @@
                             android:layout_height="match_parent"
                             android:layout_marginBottom="70dp"
                             android:fadeScrollbars="false"
-                            android:paddingRight="6dp"
-                            android:scrollbarSize="6dp"
+                            android:paddingRight="1dp"
+                            android:scrollbarSize="3dp"
                             android:scrollbarStyle="outsideInset"
-                            android:scrollbarThumbVertical="@color/black"
-                            android:scrollbarTrackVertical="@drawable/scrollbar"
-                            android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
+                            android:scrollbarThumbVertical="@drawable/scrollbar"
+                            android:scrollbarTrackVertical="@drawable/scroll_bg"
+                            android:scrollbars="vertical">
+
+
+                        </android.support.v7.widget.RecyclerView>
 
 
                     </LinearLayout>
@@ -292,7 +295,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/btn_view_card">
+                        android:background="@drawable/btn_view_cart">
 
                     </LinearLayout>
 
@@ -391,18 +394,20 @@
                 android:id="@+id/ll_view_pay"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:layout_marginLeft="280dp"
                 android:layout_marginRight="280dp"
                 android:layout_marginTop="50dp"
-                android:background="@drawable/btn_view_card"
+                android:background="@drawable/btn_view_cart"
                 android:gravity="center"
                 android:visibility="gone">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:layout_gravity="center"
+
+                    android:gravity="center"
                     android:orientation="horizontal"
 
                     >

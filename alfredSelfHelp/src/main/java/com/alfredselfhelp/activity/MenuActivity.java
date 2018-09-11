@@ -2,6 +2,7 @@ package com.alfredselfhelp.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -56,6 +57,7 @@ import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -307,16 +309,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        });
 
 
-
     }
 
     @Override
     protected void onDestroy() {
-        try{
-            if(timer != null){
+        try {
+            if (timer != null) {
                 timer.cancel();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         super.onDestroy();
@@ -353,31 +354,31 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                    @Override
 //                    public void run() {
                 boolean showViewCart = false;
-                if(orderDetails.size() == 0){
+                if (orderDetails.size() == 0) {
                     showViewCart = true;
                 }
-                        for (ItemDetailDto itemDetailDto : itemDetailDtos) {
-                            ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
-                            OrderDetail orderDetail = ObjectFactory.getInstance()
-                                    .createOrderDetailForWaiter(nurOrder, itemDetail,
-                                            0, App.instance.getUser());
-                            orderDetail.setItemNum(itemDetailDto.getItemNum());
-                            OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-                        }
+                for (ItemDetailDto itemDetailDto : itemDetailDtos) {
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
+                    OrderDetail orderDetail = ObjectFactory.getInstance()
+                            .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                    0, App.instance.getUser());
+                    orderDetail.setItemNum(itemDetailDto.getItemNum());
+                    OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                }
 //                        runOnUiThread(new Runnable() {
 //                            @Override
 //                            public void run() {
 //                                if (loadingDialog != null && loadingDialog.isShowing()) {
 //                                    loadingDialog.dismiss();
 //                                }
-                                refreshTotal();
-                                if(ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE){
-                                    refreshViewCart();
-                                }else if(showViewCart && ll_video.getVisibility() == View.VISIBLE){
-                                    ll_view_cart.performClick();
-                                }
+                refreshTotal();
+                if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
+                    refreshViewCart();
+                } else if (showViewCart && ll_video.getVisibility() == View.VISIBLE) {
+                    ll_view_cart.performClick();
+                }
 //                                RfidApiCentre.getInstance().getNurTagStorage().clear();
-                                isUpdating = false;
+                isUpdating = false;
 //                            }
 //                        });
 //                    }
@@ -393,22 +394,22 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //            new Thread(new Runnable() {
 //                @Override
 //                public void run() {
-                    if(orderDetails != null && orderDetails.size() > 0){
-                        for(OrderDetail orderDetail : orderDetails){
-                            if(!TextUtils.isEmpty(orderDetail.getBarCode())){
-                                String barCode = IntegerUtils.format24(orderDetail.getBarCode());
-                                if(map.containsKey(barCode)) {
-                                    Integer num = map.get(barCode);
-                                    OrderDetailSQL.deleteOrderDetail(orderDetail);
-                                    if (orderDetail.getItemNum() < num.intValue()) {
-                                        map.put(barCode, num.intValue() - orderDetail.getItemNum());
-                                    } else {
-                                        map.remove(barCode);
-                                    }
-                                }
+            if (orderDetails != null && orderDetails.size() > 0) {
+                for (OrderDetail orderDetail : orderDetails) {
+                    if (!TextUtils.isEmpty(orderDetail.getBarCode())) {
+                        String barCode = IntegerUtils.format24(orderDetail.getBarCode());
+                        if (map.containsKey(barCode)) {
+                            Integer num = map.get(barCode);
+                            OrderDetailSQL.deleteOrderDetail(orderDetail);
+                            if (orderDetail.getItemNum() < num.intValue()) {
+                                map.put(barCode, num.intValue() - orderDetail.getItemNum());
+                            } else {
+                                map.remove(barCode);
                             }
                         }
                     }
+                }
+            }
 //                    runOnUiThread(new Runnable() {
 //                        @Override
 //                        public void run() {
@@ -416,15 +417,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                                loadingDialog.dismiss();
 //                            }
 //                            UIHelp.showToast(MenuActivity.this, "Remove  on UI");
-                            refreshTotal();
-                            if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
-                                refreshViewCart();
-                            }
-                            if(orderDetails.size() == 0 && ll_video.getVisibility() != View.VISIBLE){
-                                ll_grab.performClick();
-                            }
+            refreshTotal();
+            if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
+                refreshViewCart();
+            }
+            if (orderDetails.size() == 0 && ll_video.getVisibility() != View.VISIBLE) {
+                ll_grab.performClick();
+            }
 //                            RfidApiCentre.getInstance().getNurTagStorage().clear();
-                            isUpdating = false;
+            isUpdating = false;
 //                        }
 //                    });
 //                }
@@ -456,7 +457,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         cartAdater.notifyDataSetChanged();
         if (orderDetails.size() == 0) {
             View view = re_main_category.getChildAt(0);//获取到第一个Item的View
-            if(view != null) {
+            if (view != null) {
                 view.performClick();
             }
         }
@@ -606,9 +607,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             }
         });
         re_menu_details.setAdapter(mDetailAdapter);
-//        mDecoration = new ItemHeaderDecoration(context, itemDetails);
-//        re_menu_details.addItemDecoration(mDecoration);
-//        mDecoration.setCheckListener(this);
+
         List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
 
         List<ItemDetail> itemDetailandCate = new ArrayList<ItemDetail>();
@@ -645,6 +644,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         refreshList();
         //  mDetailAdapter.notifyDataSetChanged();
         //  mDecoration.setData(itemDetails);
+
+        if (itemDetails != null && itemDetails.size() > 0) {
+            mDecoration = new ItemHeaderDecoration(context, itemDetails);
+            re_menu_details.addItemDecoration(mDecoration);
+            mDecoration.setCheckListener(this);
+        }
         return itemDetailandCate;
     }
 
@@ -690,7 +695,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                Intent intent = new Intent();
 //                intent.setClass(MenuActivity.this, DialogActivity.class);
 //                startActivity(intent);
-                if(orderDetails != null && orderDetails.size() > 0) {
+                if (orderDetails != null && orderDetails.size() > 0) {
                     ll_menu_details.setVisibility(View.GONE);
                     ll_video.setVisibility(View.GONE);
                     ll_view_cart_list.setVisibility(View.VISIBLE);
@@ -698,36 +703,50 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     ll_view_pay.setVisibility(View.VISIBLE);
                     li_menu.setBackgroundResource(R.drawable.bg_grab);
                     ll_menu_title.setVisibility(View.GONE);
-
+                    mainCategoryAdapter.setCheckedPosition(-1);
                     cartView();
-                }else{
+                } else {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                 }
 
                 break;
             case R.id.ll_view_pay:
-                if(orderDetails == null || orderDetails.size() == 0){
+                if (orderDetails == null || orderDetails.size() == 0) {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                     return;
                 }
-                NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-                if(OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0){
-                    paymentAction();
-                }else{
-                    // TODO 显示等待拿货的Dialog
-//                    UIHelp.showToast(App.instance, "Please grab it from the shelf and \nplace it on the sensor plate");
-//                    RfidApiCentre.getInstance().startRFIDScan();
-//                     fdialog = KpmDialogFactory.kpmFDialog(context,  new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//
+
+                final OrderSelfDialog dialog = new OrderSelfDialog(MenuActivity.this);
+
+                dialog.setList(orderDetails);
+                dialog.setNoOnclickListener("", new OrderSelfDialog.onNoOnclickListener() {
+
+                    @Override
+                    public void onNoClick() {
+                        dialog.dismiss();
+
+                    }
+                });
+
+                dialog.setYesOnclickListener("", new OrderSelfDialog.onYesOnclickListener() {
+                    @Override
+                    public void onYesClick() {
+
+
+//                        NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+//                        if (OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0) {
+                        paymentAction();
+                        dialog.dismiss();
+
+//                        } else {
+//                            // TODO 显示等待拿货的Dialog
 //                        }
-//                    }, true);
 
 
-                }
+                    }
+                });
 
-
+                dialog.show();
 //                     dialog = ToolAlert.MyDialog(DialogActivity.this, "", "", "", new View.OnClickListener() {
 //                         @Override
 //                         public void onClick(View v) {
@@ -830,7 +849,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
 
             }
-            ItemHeaderDecoration.setCurrentTag(String.valueOf(position));//如果是滑动右边联动左边，则按照右边传过来的位置作为tag
+            mDecoration.setCurrentTag(String.valueOf(position));//如果是滑动右边联动左边，则按照右边传过来的位置作为tag
 
 
         }
@@ -939,8 +958,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
 
     }
-    private void refreshViewCart(){
-        if(cartAdater != null){
+
+    private void refreshViewCart() {
+        if (cartAdater != null) {
             nurOrder = OrderSQL.getOrder(nurOrder.getId());
             cartAdater.notifyDataSetChanged();
             tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
@@ -966,7 +986,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if (resp.numTagsFound > 0) {
                     // Fetch and print tags
                     api.fetchTags();
-                    for (int n=0; n<resp.numTagsFound; n++) {
+                    for (int n = 0; n < resp.numTagsFound; n++) {
                         NurTag tag = api.getStorage().get(n);
                         nurTagStorage.addTag(tag);
                     }
@@ -978,7 +998,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
 //                            UIHelp.showShortToast(App.instance, "nurTagStorage size" + nurTagStorage.size());
                             List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
-                            if(!isUpdating) {
+                            if (!isUpdating) {
                                 LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
                                 if (barCodes.size() > 0) {
 
@@ -997,9 +1017,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         }
                     }
                 });
-            }  catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
-            }finally {
+            } finally {
                 timer.schedule(new MyTimerTask(), 2000);
             }
         }
@@ -1020,6 +1040,26 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
 
     }
+
+//    private void timeSlot() {
+//
+//
+//        Calendar cal = Calendar.getInstance();// 当前日期
+//        int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
+//        int minute = cal.get(Calendar.MINUTE);// 获取分钟
+//
+//
+////        int minuteOfDay = hour * 60 + minute;// 从0:00分开是到目前为止的分钟数
+////        final int start = 17 * 60 + 20;// 起始时间 17:20的分钟数
+////        final int end = 19 * 60;// 结束时间 19:00的分钟数
+//        if ( hour>= start && minuteOfDay <= end) {
+//            System.out.println("在外围内");
+//        } else {
+//            System.out.println("在外围外");
+//        }
+//
+//    }
+
 
 }
 

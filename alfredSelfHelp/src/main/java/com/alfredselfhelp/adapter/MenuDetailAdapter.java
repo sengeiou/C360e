@@ -38,7 +38,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
     public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener, CountViewMod.OnCountChange countViewMod) {
         super(context, list, listener);
         this.onCountChange = countViewMod;
-        WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 275));
+        WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 265));
     }
 
 
@@ -100,8 +100,8 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
             Glide.with(mContext)
                     .load(itemDetail.getImgUrl())
-                    .placeholder(R.drawable.test)
-                    .error(R.drawable.test)
+                    .placeholder(R.drawable.logo_icon)
+                    .error(R.drawable.logo_icon)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
 

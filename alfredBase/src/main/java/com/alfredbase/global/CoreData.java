@@ -817,8 +817,7 @@ public class CoreData {
 	}
 	public List<ItemMainCategory> getItemMainCategoriesForSelp() {
 		if (itemMainCategoriesForSelfHelp == null)
-			return Collections.emptyList();
-		itemMainCategoriesForSelfHelp = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp();
+			itemMainCategoriesForSelfHelp = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp();
 		return itemMainCategoriesForSelfHelp;
 	}
 
