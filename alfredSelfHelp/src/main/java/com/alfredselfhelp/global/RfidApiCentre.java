@@ -205,26 +205,26 @@ public class RfidApiCentre {
         canConnectThenStart = false;
     }
 
-    public void startRFIDScan(){
-        canConnectThenStart = true;
-        if(nurApi == null){
-//            UIHelp.showToast(App.instance, "Please restart app");
-            return;
-        }
-        if(!nurApi.isConnected()){
-//            UIHelp.showToast(App.instance, "Please check RFID scanner is Disconnected ");
-            return;
-        }
-        if(!nurApi.isInventoryStreamRunning()){
-            try {
-                nurTagStorage.clear();
-                nurApi.startInventoryStream();
-                mInventoryIsRunning = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    public void startRFIDScan(){
+//        canConnectThenStart = true;
+//        if(nurApi == null){
+////            UIHelp.showToast(App.instance, "Please restart app");
+//            return;
+//        }
+//        if(!nurApi.isConnected()){
+////            UIHelp.showToast(App.instance, "Please check RFID scanner is Disconnected ");
+//            return;
+//        }
+//        if(!nurApi.isInventoryStreamRunning()){
+//            try {
+//                nurTagStorage.clear();
+//                nurApi.startInventoryStream();
+//                mInventoryIsRunning = true;
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     public void stopRFIDScan(){
         canConnectThenStart = false;

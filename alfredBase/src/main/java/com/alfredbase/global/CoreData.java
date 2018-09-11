@@ -816,10 +816,10 @@ public class CoreData {
 		return itemMainCategories;
 	}
 	public List<ItemMainCategory> getItemMainCategoriesForSelp() {
-		if (itemMainCategories == null)
+		if (itemMainCategoriesForSelfHelp == null)
 			return Collections.emptyList();
-		itemMainCategories = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp();
-		return itemMainCategories;
+		itemMainCategoriesForSelfHelp = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp();
+		return itemMainCategoriesForSelfHelp;
 	}
 
 	public void setItemMainCategories(List<ItemMainCategory> itemMainCategories) {

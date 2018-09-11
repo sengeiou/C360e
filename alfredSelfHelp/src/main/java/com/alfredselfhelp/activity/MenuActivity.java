@@ -1,7 +1,6 @@
 package com.alfredselfhelp.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,7 +31,6 @@ import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
-import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.CartDetailAdapter;
 import com.alfredselfhelp.adapter.ClassAdapter;
@@ -51,13 +49,18 @@ import com.alfredselfhelp.utils.OrderDetailRFIDHelp;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
+import com.nordicid.nurapi.NurApi;
 import com.nordicid.nurapi.NurApiUiThreadRunner;
+import com.nordicid.nurapi.NurRespInventory;
+import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MenuActivity extends BaseActivity implements CheckListener {
     public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
@@ -96,6 +99,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     CartDetailAdapter cartAdater;
     //    private OrderSelfDialog selfDialog;
     List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+    private Timer timer = new Timer();
     private boolean isUpdating = false;
 
     private KpmTextTypeFace textTypeFace;
@@ -105,6 +109,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         super.initView();
         setContentView(R.layout.activity_menu);
         init();
+        timer.schedule(new MyTimertask(), 3000);
     }
 
     @Override
@@ -227,8 +232,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        ll_video.setVisibility(View.GONE);
         ll_grab.setOnClickListener(this);
         ll_view_cart.setOnClickListener(this);
-        //   itemMainCategories = CoreData.getInstance().getItemMainCategoriesForSelp();
-        itemMainCategories = CoreData.getInstance().getItemMainCategories();
+        itemMainCategories = CoreData.getInstance().getItemMainCategoriesForSelp();
         menuDetail();
         re_main_category = (RecyclerView) findViewById(R.id.re_main_category);
         mLinearLayoutManager = new LinearLayoutManager(context);
@@ -271,36 +275,50 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        RfidApiCentre.getInstance().setCallBack(new RfidApiCentre.RfidCallBack() {
 //            @Override
 //            public void inventoryStreamEvent() {
-//                if (nurOrder != null && nurOrder.getId() > 0) {
-//                    NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-//                    List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
-//                    if (!isUpdating) {
-//                        UIHelp.showToast(MenuActivity.this, "Storage size:" + nurTagStorage.size());
-//                        LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
-//                        if (barCodes.size() > 0) {
-//                            LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
-//                            isUpdating = true;
-//                            initRfid(barCodes);
-//                        } else {
-//                            Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
-//                            if (map.size() > 0) {
-//                                LogUtil.e("TAG", "Remove: ======= map size" + map.size());
-//                                isUpdating = true;
-//                                removeRfid(map);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (nurOrder != null && nurOrder.getId() > 0) {
+//                            NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+//                            UIHelp.showShortToast(App.instance, "nurTagStorage size" + nurTagStorage.size());
+//                            List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
+//                            if(!isUpdating) {
+//                                LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
+//                                if (barCodes.size() > 0) {
+//                                    LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
+//                                    isUpdating = true;
+//                                    initRfid(barCodes);
+//                                } else {
+//                                    Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
+//                                    if (map.size() > 0) {
+//                                        LogUtil.e("TAG", "Remove: ======= map size" + map.size());
+//                                        isUpdating = true;
+//                                        removeRfid(map);
+//                                    }
+//                                }
 //                            }
 //                        }
+//                        RfidApiCentre.getInstance().startRFIDScan();
 //                    }
-//                }
+//
+//                });
+//
 //            }
 //        });
 
-        RfidApiCentre.getInstance().startRFIDScan();
 
 
     }
 
     @Override
     protected void onDestroy() {
+        try{
+            if(timer != null){
+                timer.cancel();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -334,26 +352,26 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                new Thread(new Runnable() {
 //                    @Override
 //                    public void run() {
-                for (ItemDetailDto itemDetailDto : itemDetailDtos) {
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
-                    OrderDetail orderDetail = ObjectFactory.getInstance()
-                            .createOrderDetailForWaiter(nurOrder, itemDetail,
-                                    0, App.instance.getUser());
-                    orderDetail.setItemNum(itemDetailDto.getItemNum());
-                    OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-                }
+                        for (ItemDetailDto itemDetailDto : itemDetailDtos) {
+                            ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
+                            OrderDetail orderDetail = ObjectFactory.getInstance()
+                                    .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                            0, App.instance.getUser());
+                            orderDetail.setItemNum(itemDetailDto.getItemNum());
+                            OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                        }
 //                        runOnUiThread(new Runnable() {
 //                            @Override
 //                            public void run() {
 //                                if (loadingDialog != null && loadingDialog.isShowing()) {
 //                                    loadingDialog.dismiss();
 //                                }
-                refreshTotal();
-                if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
-                    refreshList();
-                }
-                RfidApiCentre.getInstance().getNurTagStorage().clear();
-                isUpdating = false;
+                                refreshTotal();
+                                if(ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE){
+                                    refreshViewCart();
+                                }
+//                                RfidApiCentre.getInstance().getNurTagStorage().clear();
+                                isUpdating = false;
 //                            }
 //                        });
 //                    }
@@ -369,22 +387,22 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //            new Thread(new Runnable() {
 //                @Override
 //                public void run() {
-            if (orderDetails != null && orderDetails.size() > 0) {
-                for (OrderDetail orderDetail : orderDetails) {
-                    if (!TextUtils.isEmpty(orderDetail.getBarCode())) {
-                        String barCode = IntegerUtils.format24(orderDetail.getBarCode());
-                        if (map.containsKey(barCode)) {
-                            Integer num = map.get(barCode);
-                            OrderDetailSQL.deleteOrderDetail(orderDetail);
-                            if (orderDetail.getItemNum() < num.intValue()) {
-                                map.put(barCode, num.intValue() - orderDetail.getItemNum());
-                            } else {
-                                map.remove(barCode);
+                    if(orderDetails != null && orderDetails.size() > 0){
+                        for(OrderDetail orderDetail : orderDetails){
+                            if(!TextUtils.isEmpty(orderDetail.getBarCode())){
+                                String barCode = IntegerUtils.format24(orderDetail.getBarCode());
+                                if(map.containsKey(barCode)) {
+                                    Integer num = map.get(barCode);
+                                    OrderDetailSQL.deleteOrderDetail(orderDetail);
+                                    if (orderDetail.getItemNum() < num.intValue()) {
+                                        map.put(barCode, num.intValue() - orderDetail.getItemNum());
+                                    } else {
+                                        map.remove(barCode);
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
 //                    runOnUiThread(new Runnable() {
 //                        @Override
 //                        public void run() {
@@ -392,15 +410,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                                loadingDialog.dismiss();
 //                            }
 //                            UIHelp.showToast(MenuActivity.this, "Remove  on UI");
-            refreshTotal();
-            if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
-                refreshList();
-            }
-            if (orderDetails.size() == 0) {
-                ll_grab.performClick();
-            }
-            RfidApiCentre.getInstance().getNurTagStorage().clear();
-            isUpdating = false;
+                            refreshTotal();
+                            if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
+                                refreshViewCart();
+                            }
+                            if(orderDetails.size() == 0){
+                                ll_grab.performClick();
+                            }
+//                            RfidApiCentre.getInstance().getNurTagStorage().clear();
+                            isUpdating = false;
 //                        }
 //                    });
 //                }
@@ -664,7 +682,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                Intent intent = new Intent();
 //                intent.setClass(MenuActivity.this, DialogActivity.class);
 //                startActivity(intent);
-                if (orderDetails != null && orderDetails.size() > 0) {
+                if(orderDetails != null && orderDetails.size() > 0) {
                     ll_menu_details.setVisibility(View.GONE);
                     ll_video.setVisibility(View.GONE);
                     ll_view_cart_list.setVisibility(View.VISIBLE);
@@ -674,42 +692,32 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     ll_menu_title.setVisibility(View.GONE);
 
                     cartView();
-                } else {
+                }else{
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                 }
 
                 break;
             case R.id.ll_view_pay:
+                if(orderDetails == null || orderDetails.size() == 0){
+                    UIHelp.showToast(App.instance, "Please Choose Menu First !");
+                    return;
+                }
+                NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+                if(OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0){
+                    paymentAction();
+                }else{
+                    // TODO 显示等待拿货的Dialog
+//                    UIHelp.showToast(App.instance, "Please grab it from the shelf and \nplace it on the sensor plate");
+//                    RfidApiCentre.getInstance().startRFIDScan();
+//                     fdialog = KpmDialogFactory.kpmFDialog(context,  new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
 //
-//                if (orderDetails == null || orderDetails.size() == 0) {
-//                    UIHelp.showToast(App.instance, "Please Choose Menu First !");
-//
-//                    return;
-//                }
-//                NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-//                if (OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0) {
-//                    paymentAction();
-//                } else {
-//                    // TODO 显示等待拿货的Dialog
-////                    UIHelp.showToast(App.instance, "Please grab it from the shelf and \nplace it on the sensor plate");
-////                    RfidApiCentre.getInstance().startRFIDScan();
-////                     fdialog = KpmDialogFactory.kpmFDialog(context,  new View.OnClickListener() {
-////                        @Override
-////                        public void onClick(View v) {
-////
-////                        }
-////                    }, true);
-//
-//
-//                }
-                List<ItemDetailDto> tos = new ArrayList<>();
-                ItemDetailDto to = new ItemDetailDto();
-                to.setItemName("aaaaaaaaa");
-                tos.add(to);
-                OrderSelfDialog sdialog = new OrderSelfDialog(context);
+//                        }
+//                    }, true);
 
-                sdialog.setList(tos);
-                sdialog.show();
+
+                }
 
 
 //                     dialog = ToolAlert.MyDialog(DialogActivity.this, "", "", "", new View.OnClickListener() {
@@ -899,7 +907,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
 
     private void refreshTotal() {
-        orderDetails = OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder);
+        orderDetails.clear();
+        orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder));
         int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForKpm(nurOrder.getId().intValue());
 
         if (itemCount > 0) {
@@ -922,7 +931,71 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
 
     }
+    private void refreshViewCart(){
+        if(cartAdater != null){
+            nurOrder = OrderSQL.getOrder(nurOrder.getId());
+            cartAdater.notifyDataSetChanged();
+            tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+        }
+    }
 
+    class MyTimertask extends TimerTask {
+        @Override
+        public void run() {
+            try {
+                // Clear tag storage
+                NurApi api = RfidApiCentre.getInstance().getNurApi();
+                api.clearIdBuffer();
+                api.clearTagStorage();
+                LogUtil.e("TAG", "clear Api : " + api.getStorage().size());
+                NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+                nurTagStorage.clear();
+                LogUtil.e("TAG", "clear nurTagStorage  : " + nurTagStorage.size());
+                NurRespInventory resp = api.inventory();
+                System.out.println("inventory numTagsFound: " + resp.numTagsFound);
+                LogUtil.e("TAG", "inventory numTagsFound: " + resp.numTagsFound);
+                LogUtil.e("TAG", "api.getStorage(): " + api.getStorage());
+                if (resp.numTagsFound > 0) {
+                    // Fetch and print tags
+                    api.fetchTags();
+                    for (int n=0; n<resp.numTagsFound; n++) {
+                        NurTag tag = api.getStorage().get(n);
+                        nurTagStorage.addTag(tag);
+                    }
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (nurOrder != null && nurOrder.getId() > 0) {
+                            NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+//                            UIHelp.showShortToast(App.instance, "nurTagStorage size" + nurTagStorage.size());
+                            List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
+                            if(!isUpdating) {
+                                LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
+                                if (barCodes.size() > 0) {
+
+                                    LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
+                                    isUpdating = true;
+                                    initRfid(barCodes);
+                                } else {
+                                    Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
+                                    if (map.size() > 0) {
+                                        LogUtil.e("TAG", "Remove: ======= map size" + map.size());
+                                        isUpdating = true;
+                                        removeRfid(map);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }  catch (Exception ex) {
+                ex.printStackTrace();
+            }finally {
+                timer.schedule(new MyTimertask(), 2000);
+            }
+        }
+    }
 
     private void initTextTypeFace() {
         textTypeFace = KpmTextTypeFace.getInstance();

@@ -14,23 +14,21 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ScreenSizeUtil;
-import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
-import com.alfredselfhelp.activity.MenuActivity;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
-import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     CountViewMod.OnCountChange onCountChange;
-    private List<OrderDetail> orderDetails;
+    private List<OrderDetail> orderDetails = new ArrayList<>();
     private int currentGroupId;
     private Order currentOrder;
     private int WIDTH;
@@ -46,7 +44,8 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     public void setParams(Order currentOrder, List<OrderDetail> orderDetails, int currentGroupId) {
         this.currentOrder = currentOrder;
-        this.orderDetails = orderDetails;
+        this.orderDetails.clear();
+        this.orderDetails.addAll(orderDetails);
         this.currentGroupId = currentGroupId;
     }
 

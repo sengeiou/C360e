@@ -18,7 +18,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.ObjectFactory;
-import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.RfidApiCentre;
@@ -196,7 +195,8 @@ public class MainActivity extends BaseActivity {
     protected void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
         Intent intent = new Intent(MainActivity.this, FileDialog.class);
-        switch (v.getId()) {
+        switch (v.getId())
+        {
             case R.id.btn_start:
                 UIHelp.startMenu(context);
 //                Intent intent1 = new Intent(MainActivity.this, DialogActivity.class);
@@ -245,8 +245,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        RfidApiCentre.getInstance().onResume();
-        if (RfidApiCentre.getInstance().getNurTagStorage() != null) {
+//        RfidApiCentre.getInstance().onResume();
+        if(RfidApiCentre.getInstance().getNurTagStorage() != null){
             RfidApiCentre.getInstance().stopRFIDScan();
         }
         super.onResume();
