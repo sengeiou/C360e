@@ -109,7 +109,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         super.initView();
         setContentView(R.layout.activity_menu);
         init();
-        timer.schedule(new MyTimertask(), 3000);
+        timer.schedule(new MyTimerTask(), 3000);
     }
 
     @Override
@@ -939,7 +939,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
     }
 
-    class MyTimertask extends TimerTask {
+    class MyTimerTask extends TimerTask {
         @Override
         public void run() {
             try {
@@ -992,7 +992,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             }  catch (Exception ex) {
                 ex.printStackTrace();
             }finally {
-                timer.schedule(new MyTimertask(), 2000);
+                timer.schedule(new MyTimerTask(), 2000);
             }
         }
     }
