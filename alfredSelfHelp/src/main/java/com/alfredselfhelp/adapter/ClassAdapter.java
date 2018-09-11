@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredselfhelp.R;
+import com.alfredselfhelp.utils.KpmTextTypeFace;
 
 import java.util.List;
 
 public class ClassAdapter extends RvAdapter<ItemCategory> {
 
     private int checkedPosition;
+
+    private KpmTextTypeFace textTypeFace= KpmTextTypeFace.getInstance();
 
     public void setCheckedPosition(int checkedPosition) {
         this.checkedPosition = checkedPosition;
@@ -52,6 +55,7 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
         @Override
         public void bindHolder(ItemCategory itemCategory, int position) {
             tvName.setText(itemCategory.getItemCategoryName());
+            textTypeFace.setUbuntuMedium(tvName);
             if (position == checkedPosition) {
                 mView.setBackgroundResource(R.color.gray4);
                 tvName.setTextColor(mContext.getResources().getColor(R.color.green1));

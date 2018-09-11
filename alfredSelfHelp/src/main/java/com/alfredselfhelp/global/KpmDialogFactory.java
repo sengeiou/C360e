@@ -38,6 +38,7 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 
 import com.alfredselfhelp.R;
+import com.alfredselfhelp.utils.KpmTextTypeFace;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -55,6 +56,7 @@ import java.util.Map;
 
 public class KpmDialogFactory {
 
+    private static KpmTextTypeFace textTypeFace = KpmTextTypeFace.getInstance();
 
     public static void commonTwoBtnDialog(BaseActivity activity,
                                           String title, String content,
@@ -133,9 +135,13 @@ public class KpmDialogFactory {
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.dialog_item_kpm_qr_btns, null);
         ((TextView) view.findViewById(R.id.tv_title)).setText(title);
-//        ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+        ((TextView) view.findViewById(R.id.tv_content)).setText(content);
         ImageView img = (ImageView) view.findViewById(R.id.img_center);
         TextView tv_qc_de = (TextView) view.findViewById(R.id.tv_qc_de);
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_title));
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_content));
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_backs));
+        textTypeFace.setUbuntuMedium(tv_qc_de);
         img.setImageResource(drawableId);
         if (isqc) {
             tv_qc_de.setVisibility(View.VISIBLE);
@@ -168,12 +174,10 @@ public class KpmDialogFactory {
     }
 
 
-
-
     public static Dialog kpmFDialog(final BaseActivity activity,
 
 
-                                       final OnClickListener backListener, final boolean canBack) {
+                                    final OnClickListener backListener, final boolean canBack) {
 //		activity.runOnUiThread(new Runnable() {
 //
 //			@Override
@@ -186,7 +190,7 @@ public class KpmDialogFactory {
 //        ImageView img = (ImageView) view.findViewById(R.id.img_center);
 //
 //        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams()
-      //  img.setImageResource(drawableId);
+        //  img.setImageResource(drawableId);
 
 //				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
 //				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
@@ -195,7 +199,7 @@ public class KpmDialogFactory {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(view);
 
-
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_backs));
         view.findViewById(R.id.tv_backs).setOnClickListener(
                 new OnClickListener() {
 
@@ -213,7 +217,6 @@ public class KpmDialogFactory {
 //		});
         return dialog;
     }
-
 
 
     public static Dialog kpmTipsDialog(final BaseActivity activity,
@@ -233,6 +236,8 @@ public class KpmDialogFactory {
         TextView tv_qc_de = (TextView) view.findViewById(R.id.tv_qc_de);
         img.setImageResource(drawableId);
 
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_title));
+        textTypeFace.setUbuntuRegular((TextView) view.findViewById(R.id.tv_content));
 //				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
 //				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
         dialog.show();
@@ -240,7 +245,7 @@ public class KpmDialogFactory {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(view);
 
-
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_backs));
         view.findViewById(R.id.tv_backs).setOnClickListener(
                 new OnClickListener() {
 
@@ -258,7 +263,6 @@ public class KpmDialogFactory {
 //		});
         return dialog;
     }
-
 
 
     public static Dialog kpmCompleteDialog(final BaseActivity activity,
@@ -281,7 +285,9 @@ public class KpmDialogFactory {
         ((TextView) view.findViewById(R.id.tv_content)).setText(content);
 
         TextView tv_qc_de = (TextView) view.findViewById(R.id.tv_qc_de);
-
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_title));
+        textTypeFace.setUbuntuRegular((TextView) view.findViewById(R.id.tv_content));
+        textTypeFace.setUbuntuRegular((TextView) view.findViewById(R.id.tv_content_bottom));
         dialog.show();
         dialog.setCancelable(canBack);
         dialog.setCanceledOnTouchOutside(false);

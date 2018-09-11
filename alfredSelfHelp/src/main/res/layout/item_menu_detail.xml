@@ -6,148 +6,160 @@
     android:id="@+id/content"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    android:background="@color/black"
+    android:layout_marginTop="5dp"
+    android:background="@drawable/re_de_item"
     android:gravity="center">
 
-    <RelativeLayout
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:layout_height="match_parent"
+        app:cardCornerRadius="5dp"
 
-        <LinearLayout
+        app:cardElevation="0dp">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
 
-            <ImageView
-                android:id="@+id/img_modifier"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_centerHorizontal="true"
-                android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:src="@drawable/logo_icon" />
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_modifier_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/img_modifier"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginTop="25dp"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="aaaaaaa"
-                    android:textColor="@color/gray1"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-
-                    />
-
-                <TextView
-
-                    android:id="@+id/tv_modifier_de"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:layout_below="@id/tv_modifier_name"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="60dp"
-                    android:layout_marginTop="3dp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text=""
-                    android:textColor="@color/gray2"
-                    android:textSize="12sp"
-
-                    />
+                <ImageView
+                    android:id="@+id/img_modifier"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
                     <TextView
+                        android:id="@+id/tv_modifier_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_below="@id/img_modifier"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="25dp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="aaaaaaa"
+                        android:textColor="@color/gray1"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+
                         />
-                <TextView
 
-                    android:id="@+id/tv_modifier_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/tv_modifier_de"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/style_price_btn"
+                    <TextView
 
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:text="S$50.00"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
+                        android:id="@+id/tv_modifier_de"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_below="@id/tv_modifier_name"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="60dp"
+                        android:layout_marginTop="3dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text=""
+                        android:textColor="@color/gray2"
+                        android:textSize="12sp"
+
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+
+                            android:id="@+id/tv_modifier_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_below="@id/tv_modifier_de"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginBottom="20dp"
+                            android:layout_marginRight="20dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/style_price_btn"
+
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:text="S$50.00"
+                            android:textColor="@color/white1"
+                            android:textSize="20sp"
 
 
-                    android:textStyle="bold"
+                            android:textStyle="bold"
 
-                    />
+                            />
+                    </LinearLayout>
                 </LinearLayout>
+
             </LinearLayout>
 
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="20dp">
-
-            <com.alfredselfhelp.view.CountViewMod
-                android:id="@+id/img_modifier_add"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/icon_add"
-
-                />
-
-            <!--<RelativeLayout-->
-            <!--android:id="@+id/re_modifier_num"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:visibility="gone"-->
-            <!--&gt;-->
-            <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/mod_num"-->
-            <!--/>-->
-            <TextView
-                android:id="@+id/tv_modifier_num"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
-                android:text="1"
-                android:textColor="@color/white"
-                android:visibility="gone"
+                android:layout_marginRight="20dp">
 
-                />
-            <!--</RelativeLayout>-->
+                <com.alfredselfhelp.view.CountViewMod
+                    android:id="@+id/img_modifier_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/icon_add"
 
+                    />
+
+                <!--<RelativeLayout-->
+                <!--android:id="@+id/re_modifier_num"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:visibility="gone"-->
+                <!--&gt;-->
+                <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:src="@drawable/mod_num"-->
+                <!--/>-->
+                <TextView
+                    android:id="@+id/tv_modifier_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="1"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+
+                    />
+                <!--</RelativeLayout>-->
+
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
-
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>
 

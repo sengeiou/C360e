@@ -16,6 +16,7 @@ import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.NurDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.javabean.ItemDetailDto;
+import com.alfredselfhelp.utils.KpmTextTypeFace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class OrderSelfDialog extends Dialog{
 
 
     private TextView yes;//确定按钮
-    private TextView no;//取消按钮
+    private TextView no,tv_nur_name;//取消按钮
     private TextView titleTv;//消息标题文本
     private TextView messageTv;//消息提示文本
     private String titleStr;//从外界设置的title文本
@@ -40,6 +41,8 @@ public class OrderSelfDialog extends Dialog{
     NurDetailAdapter adapter;
     private onNoOnclickListener noOnclickListener;//取消按钮被点击了的监听器
     private onYesOnclickListener yesOnclickListener;//确定按钮被点击了的监听器
+
+    KpmTextTypeFace textTypeFace=KpmTextTypeFace.getInstance();
 
     /**
      * 设置取消按钮的显示内容和监听
@@ -169,6 +172,13 @@ public class OrderSelfDialog extends Dialog{
         yes = (TextView) findViewById(R.id.tv_ok);
         no = (TextView) findViewById(R.id.tv_no);
         re_nur=(RecyclerView)findViewById(R.id.re_nur_order);
+
+        tv_nur_name=(TextView)findViewById(R.id.tv_nur_name);
+        textTypeFace.setUbuntuMedium(tv_nur_name);
+        textTypeFace.setUbuntuMedium(yes);
+        textTypeFace.setUbuntuMedium(no);
+
+
      //   titleTv = (TextView) findViewById(R.id.title);
      //   messageTv = (TextView) findViewById(R.id.message);
     }

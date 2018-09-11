@@ -25,7 +25,7 @@
         <!-- 是否透明 -->
         <item name="android:windowIsTranslucent">true</item>
         <!-- 背景透明 -->
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/transparent</item>
         <!-- 模糊 -->
         <item name="android:backgroundDimEnabled">true</item>
         <!--无标题 -->

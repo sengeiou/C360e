@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -17,10 +18,12 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.utils.FileDialog;
+import com.alfredselfhelp.utils.KpmTextTypeFace;
 import com.alfredselfhelp.utils.PictureSwitch;
 import com.alfredselfhelp.utils.TvPref;
 import com.alfredselfhelp.utils.UIHelp;
@@ -60,12 +63,16 @@ public class MainActivity extends BaseActivity {
     private Button btn_start;
 
     private LinearLayout li_select;
+    private KpmTextTypeFace textTypeFace;
 
 
     protected void initView() {
+
         super.initView();
         setContentView(R.layout.activity_main);
-        btn_start=(Button)findViewById(R.id.btn_start);
+        KpmTextTypeFace.getInstance().init(context);
+
+        btn_start = (Button) findViewById(R.id.btn_start);
         btn_start.setOnClickListener(this);
 
         videoView = (VideoView) findViewById(R.id.videoView);
@@ -73,10 +80,12 @@ public class MainActivity extends BaseActivity {
         picSwitch.setInAnimation(MainActivity.this, android.R.anim.fade_in);
         picSwitch.setOutAnimation(MainActivity.this, android.R.anim.fade_out);
 
-        btn_video = (Button)findViewById(R.id.btn_video);
+        btn_video = (Button) findViewById(R.id.btn_video);
         btn_picture = (Button) findViewById(R.id.btn_picture);
         btn_empty = (Button) findViewById(R.id.btn_empty);
         li_select = (LinearLayout) findViewById(R.id.li_select);
+        textTypeFace = KpmTextTypeFace.getInstance();
+        textTypeFace.setUbuntuRegular((TextView) findViewById(R.id.tv_start));
         btn_empty.setOnClickListener(this);
         btn_picture.setOnClickListener(this);
         btn_video.setOnClickListener(this);
@@ -92,6 +101,7 @@ public class MainActivity extends BaseActivity {
                 App.instance.getLocalRestaurantConfig()
                         .getIncludedTax().getTax(), 0);
     }
+
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
@@ -186,10 +196,12 @@ public class MainActivity extends BaseActivity {
     protected void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
         Intent intent = new Intent(MainActivity.this, FileDialog.class);
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.btn_start:
                 UIHelp.startMenu(context);
+//                Intent intent1 = new Intent(MainActivity.this, DialogActivity.class);
+//                startActivity(intent1);
+
                 break;
 
             case R.id.btn_picture:
@@ -226,8 +238,6 @@ public class MainActivity extends BaseActivity {
                 updateView();
 
 
-
-
                 break;
 
         }
@@ -235,8 +245,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-//        RfidApiCentre.getInstance().onResume();
-        if(RfidApiCentre.getInstance().getNurTagStorage() != null){
+        RfidApiCentre.getInstance().onResume();
+        if (RfidApiCentre.getInstance().getNurTagStorage() != null) {
             RfidApiCentre.getInstance().stopRFIDScan();
         }
         super.onResume();
@@ -286,11 +296,13 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
     void updateVideoView() {
         mVideoResManager.UpdateVideo();
         updateView();
         startPlay(false);
     }
+
     private void updateView() {
         String picpath = TvPref.readImageFilePath();
         Log.e("updateView", picpath);
@@ -363,6 +375,7 @@ public class MainActivity extends BaseActivity {
 //            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 //        }
     }
+
     /**
      * 播放视频
      * 1、从暂停状态恢复

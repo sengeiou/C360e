@@ -9,12 +9,14 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
+import com.alfredselfhelp.utils.KpmTextTypeFace;
+
 import java.util.List;
 
 public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
 
     private int checkedPosition=-1;
-    private TextTypeFace textTypeFace = TextTypeFace.getInstance();
+    private KpmTextTypeFace textTypeFace = KpmTextTypeFace.getInstance();
     private Context mContext;
     int WIDTH;
     public void setCheckedPosition(int checkedPosition) {
@@ -58,7 +60,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
         @Override
         public void bindHolder(ItemMainCategory item, int position) {
             tv_text.setText(item.getMainCategoryName());
-            textTypeFace.setTrajanProRegular(tv_text);
+            textTypeFace.setUbuntuMedium(tv_text);
 
             if (position == checkedPosition) {
                 tv_text.setBackgroundResource(R.drawable.main_btn_b);

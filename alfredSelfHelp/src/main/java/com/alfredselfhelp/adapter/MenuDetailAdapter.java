@@ -14,35 +14,39 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ScreenSizeUtil;
+import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
+import com.alfredselfhelp.activity.MenuActivity;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.utils.KpmTextTypeFace;
+import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     CountViewMod.OnCountChange onCountChange;
-    private List<OrderDetail> orderDetails = new ArrayList<>();
+    private List<OrderDetail> orderDetails;
     private int currentGroupId;
     private Order currentOrder;
     private int WIDTH;
 
+    private KpmTextTypeFace textTypeFace = KpmTextTypeFace.getInstance();
+
     public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener, CountViewMod.OnCountChange countViewMod) {
         super(context, list, listener);
         this.onCountChange = countViewMod;
-        WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 270));
+        WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 275));
     }
 
 
     public void setParams(Order currentOrder, List<OrderDetail> orderDetails, int currentGroupId) {
         this.currentOrder = currentOrder;
-        this.orderDetails.clear();
-        this.orderDetails.addAll(orderDetails);
+        this.orderDetails = orderDetails;
         this.currentGroupId = currentGroupId;
     }
 
@@ -67,6 +71,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
         TextView tvName, num;
         CountViewMod count_view;
         RelativeLayout re_modifier_num;
+        TextView de;
         private View mView;
 
         public DetailHolder(View itemView, int type, RvListener listener) {
@@ -74,7 +79,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
             this.mView = itemView;
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, (WIDTH / 3) / 23 * 30));
-            params.setMargins(5, 5, 5, 5);
+            params.setMargins(0, 0, 0, 0);
             mView.setLayoutParams(params);
 
             tvName = (TextView) itemView.findViewById(R.id.tv_modifier_name);
@@ -83,6 +88,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
             count_view = (CountViewMod) itemView.findViewById(R.id.img_modifier_add);
             //    re_modifier_num=(RelativeLayout)itemView.findViewById(R.id.re_modifier_num);
             num = (TextView) itemView.findViewById(R.id.tv_modifier_num);
+            de = (TextView) itemView.findViewById(R.id.tv_modifier_de);
 
 
         }
@@ -90,17 +96,21 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
         @Override
         public void bindHolder(ItemDetail itemDetail, final int position) {
-            int itemViewType = MenuDetailAdapter.this.getItemViewType(position);
-
             tvName.setText(itemDetail.getItemName());
+            textTypeFace.setUbuntuMedium(tvName);
+
             Glide.with(mContext)
                     .load(itemDetail.getImgUrl())
-                    .placeholder(R.drawable.logo_icon)
-                    .error(R.drawable.logo_icon)
+                    .placeholder(R.drawable.test)
+                    .error(R.drawable.test)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
 
             tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
+
+            textTypeFace.setUbuntuBold(tvPrice);
+            de.setText(itemDetail.getItemDesc());
+            textTypeFace.setUbuntuRegular(de);
 
             count_view.setIsCanClick(getOrderDetailStatus(itemDetail));
             count_view.setInitCount(getItemNum(itemDetail));

@@ -48,9 +48,13 @@
 
     <color name="red">#ea68a2</color>
     <color name="red1">#ec6189</color>
+    <color name="red2">#ff4949</color>
 
     <color name="black1">#535664</color>
     <color name="black2">#666773</color>
+
+
+    <color name="white1">#ebeced</color>
 
 
 </resources>

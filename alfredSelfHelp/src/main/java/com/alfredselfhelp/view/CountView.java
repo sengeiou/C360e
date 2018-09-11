@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.OrderDetail;
@@ -45,20 +46,25 @@ public class CountView extends LinearLayout implements OnClickListener {
     public void setIsCanClick(boolean isCanClick) {
         LinearLayout ll_add = (LinearLayout) findViewById(R.id.ll_add);
         LinearLayout ll_minus = (LinearLayout) findViewById(R.id.ll_minus);
-		ImageView tv_add = (ImageView) findViewById(R.id.iv_add);
+        ImageView tv_add = (ImageView) findViewById(R.id.iv_add);
         LinearLayout ll_count = (LinearLayout) findViewById(R.id.ll_count);
+        ll_count.setOnClickListener(this);
+        RelativeLayout re_g = (RelativeLayout) findViewById(R.id.re_g);
         ll_minus.setOnClickListener(this);
         ll_add.setOnClickListener(this);
         if (isCanClick) {
             ll_add.setEnabled(true);
             ll_minus.setEnabled(true);
             ll_minus.setVisibility(View.VISIBLE);
-            tv_add.setImageResource(R.drawable.icon_orderdetail_add);
+            re_g.setVisibility(GONE);
+            tv_add.setImageResource(R.drawable.icon_add);
         } else {
             ll_add.setEnabled(false);
             ll_minus.setEnabled(false);
+            ll_add.setVisibility(GONE);
+            re_g.setVisibility(VISIBLE);
             ll_minus.setVisibility(View.INVISIBLE);
-            tv_add.setImageResource(R.drawable.icon_orderdetail_add);
+            tv_add.setImageResource(R.drawable.icon_add);
         }
     }
 
