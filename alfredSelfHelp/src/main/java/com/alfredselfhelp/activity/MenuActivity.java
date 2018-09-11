@@ -352,6 +352,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                new Thread(new Runnable() {
 //                    @Override
 //                    public void run() {
+                boolean showViewCart = false;
+                if(orderDetails.size() == 0){
+                    showViewCart = true;
+                }
                         for (ItemDetailDto itemDetailDto : itemDetailDtos) {
                             ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
                             OrderDetail orderDetail = ObjectFactory.getInstance()
@@ -369,6 +373,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                                 refreshTotal();
                                 if(ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE){
                                     refreshViewCart();
+                                }else if(showViewCart && ll_video.getVisibility() == View.VISIBLE){
+                                    ll_view_cart.performClick();
                                 }
 //                                RfidApiCentre.getInstance().getNurTagStorage().clear();
                                 isUpdating = false;
@@ -414,7 +420,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
                                 refreshViewCart();
                             }
-                            if(orderDetails.size() == 0){
+                            if(orderDetails.size() == 0 && ll_video.getVisibility() != View.VISIBLE){
                                 ll_grab.performClick();
                             }
 //                            RfidApiCentre.getInstance().getNurTagStorage().clear();
@@ -450,7 +456,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         cartAdater.notifyDataSetChanged();
         if (orderDetails.size() == 0) {
             View view = re_main_category.getChildAt(0);//获取到第一个Item的View
-            view.performClick();
+            if(view != null) {
+                view.performClick();
+            }
         }
     }
 
