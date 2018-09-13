@@ -596,7 +596,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         re_menu_classify.setAdapter(mClassAdapter);
 
 
-
         mManager = new GridLayoutManager(context, 3);
         //通过isTitle的标志来判断是否是title
 //        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -653,7 +652,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             }
         }
         mClassAdapter.setCheckedPosition(0);
-      //  mClassAdapter.notifyDataSetChanged();
+        //  mClassAdapter.notifyDataSetChanged();
         if (itemCategorys != null && itemCategorys.size() > 0) {
             getItemDetailmod(itemCategorys.get(0));
         }
