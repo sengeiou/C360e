@@ -48,8 +48,6 @@ android {
             }
         }
     }
-
-
 }
 
 dependencies {
@@ -60,7 +58,6 @@ dependencies {
     implementation files('libs/NurApi.jar')
     implementation files('libs/NurApi-doc.jar')
     implementation files('libs/NurApiAndroid.jar')
-
     //noinspection GradleCompatible
     implementation 'com.android.support:cardview-v7:23.4.0'
 

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.TableInfo;
@@ -27,6 +28,7 @@ import com.alfredselfhelp.utils.PictureSwitch;
 import com.alfredselfhelp.utils.TvPref;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.utils.VideoResManager;
+import com.nordicid.nurapi.NurApiUiThreadRunner;
 
 
 public class MainActivity extends BaseActivity {
@@ -46,7 +48,7 @@ public class MainActivity extends BaseActivity {
     int mnVideoHeight = 0;
     private int counter = 0;
 
-    private Button btn_video, btn_picture, btn_empty;
+    private Button btn_video, btn_picture, btn_empty, btn_print_setting;
     private VideoView videoView;
     private boolean toPlayVideo = true;
     VideoResManager mVideoResManager;  //视频播放器
@@ -63,7 +65,7 @@ public class MainActivity extends BaseActivity {
 
     private LinearLayout li_select;
     private KpmTextTypeFace textTypeFace;
-
+    private boolean doubleBackToExitPressedOnce = false;
 
     protected void initView() {
 
@@ -82,12 +84,21 @@ public class MainActivity extends BaseActivity {
         btn_video = (Button) findViewById(R.id.btn_video);
         btn_picture = (Button) findViewById(R.id.btn_picture);
         btn_empty = (Button) findViewById(R.id.btn_empty);
+        btn_print_setting = (Button) findViewById(R.id.btn_print_setting);
         li_select = (LinearLayout) findViewById(R.id.li_select);
         textTypeFace = KpmTextTypeFace.getInstance();
         textTypeFace.setUbuntuRegular((TextView) findViewById(R.id.tv_start));
         btn_empty.setOnClickListener(this);
         btn_picture.setOnClickListener(this);
         btn_video.setOnClickListener(this);
+        btn_print_setting.setOnClickListener(this);
+        findViewById(R.id.ll_main).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                return false;
+            }
+        });
         mVideoResManager = new VideoResManager(context);
         TableInfo tables = TableInfoSQL.getKioskTable();
         Order order = ObjectFactory.getInstance().getOrder(
@@ -99,6 +110,12 @@ public class MainActivity extends BaseActivity {
                 ParamConst.ORDER_STATUS_OPEN_IN_POS,
                 App.instance.getLocalRestaurantConfig()
                         .getIncludedTax().getTax(), 0);
+        App.instance.connectRemotePrintService();
+        RfidApiCentre.getInstance().initApi(new NurApiUiThreadRunner() {
+            public void runOnUiThread(Runnable r) {
+                MainActivity.this.runOnUiThread(r);
+            }
+        });
     }
 
     private Runnable mRunnable = new Runnable() {
@@ -239,6 +256,9 @@ public class MainActivity extends BaseActivity {
 
 
                 break;
+            case R.id.btn_print_setting:
+
+                break;
 
         }
     }
@@ -246,9 +266,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
 //        RfidApiCentre.getInstance().onResume();
-        if(RfidApiCentre.getInstance().getNurTagStorage() != null){
-            RfidApiCentre.getInstance().stopRFIDScan();
-        }
+//        if(RfidApiCentre.getInstance().getNurTagStorage() != null){
+//            RfidApiCentre.getInstance().stopRFIDScan();
+//        }
+        doubleBackToExitPressedOnce = false;
         super.onResume();
     }
 
@@ -552,4 +573,21 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
+        BaseApplication.postHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
 }

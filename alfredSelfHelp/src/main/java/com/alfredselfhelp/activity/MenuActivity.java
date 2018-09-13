@@ -2,7 +2,6 @@ package com.alfredselfhelp.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -51,13 +50,11 @@ import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.CountView;
 import com.alfredselfhelp.view.CountViewMod;
 import com.nordicid.nurapi.NurApi;
-import com.nordicid.nurapi.NurApiUiThreadRunner;
 import com.nordicid.nurapi.NurRespInventory;
 import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -271,46 +268,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         setItemCountWindow = new SetItemCountWindow(this, findViewById(R.id.li_menu),
                 handler);
         nurOrder = OrderSQL.getAllOrder().get(0);
-        RfidApiCentre.getInstance().initApi(new NurApiUiThreadRunner() {
-            public void runOnUiThread(Runnable r) {
-                MenuActivity.this.runOnUiThread(r);
-            }
-        });
-//        RfidApiCentre.getInstance().setCallBack(new RfidApiCentre.RfidCallBack() {
-//            @Override
-//            public void inventoryStreamEvent() {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (nurOrder != null && nurOrder.getId() > 0) {
-//                            NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-//                            UIHelp.showShortToast(App.instance, "nurTagStorage size" + nurTagStorage.size());
-//                            List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
-//                            if(!isUpdating) {
-//                                LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
-//                                if (barCodes.size() > 0) {
-//                                    LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
-//                                    isUpdating = true;
-//                                    initRfid(barCodes);
-//                                } else {
-//                                    Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
-//                                    if (map.size() > 0) {
-//                                        LogUtil.e("TAG", "Remove: ======= map size" + map.size());
-//                                        isUpdating = true;
-//                                        removeRfid(map);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        RfidApiCentre.getInstance().startRFIDScan();
-//                    }
-//
-//                });
-//
-//            }
-//        });
-
-
     }
 
     @Override
@@ -379,23 +336,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 } else if (showViewCart && ll_video.getVisibility() == View.VISIBLE) {
                     ll_view_cart.performClick();
                 }
-//                                RfidApiCentre.getInstance().getNurTagStorage().clear();
                 isUpdating = false;
-//                            }
-//                        });
-//                    }
-//                }).start();
             }
         }
     }
 
     private void removeRfid(final Map<String, Integer> map) {
         if (map != null && map.size() > 0) {
-//            loadingDialog.setTitle("Loading");
-//            loadingDialog.show();
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
             if (orderDetails != null && orderDetails.size() > 0) {
                 for (OrderDetail orderDetail : orderDetails) {
                     if (!TextUtils.isEmpty(orderDetail.getBarCode())) {
@@ -412,13 +359,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     }
                 }
             }
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if (loadingDialog != null && loadingDialog.isShowing()) {
-//                                loadingDialog.dismiss();
-//                            }
-//                            UIHelp.showToast(MenuActivity.this, "Remove  on UI");
             refreshTotal();
             if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
                 refreshViewCart();
@@ -426,12 +366,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             if (orderDetails.size() == 0 && ll_video.getVisibility() != View.VISIBLE) {
                 ll_grab.performClick();
             }
-//                            RfidApiCentre.getInstance().getNurTagStorage().clear();
             isUpdating = false;
-//                        }
-//                    });
-//                }
-//            }).start();
         }
     }
 
@@ -1030,7 +965,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private void initTextTypeFace() {
         textTypeFace = KpmTextTypeFace.getInstance();
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_grab));
-
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_cart));
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_card));
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_you_order));
@@ -1038,8 +972,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         textTypeFace.setUbuntuBold((TextView) findViewById(R.id.tv_cart_total));
         textTypeFace.setUbuntuRegular((TextView) findViewById(R.id.tv_grab_content));
         textTypeFace.setRegular((TextView) findViewById(R.id.tv_menu_title));
-
-
     }
 
 

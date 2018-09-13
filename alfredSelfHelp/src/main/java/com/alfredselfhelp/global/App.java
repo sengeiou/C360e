@@ -1,22 +1,54 @@
 package com.alfredselfhelp.global;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.util.Log;
+import android.view.View;
+
+import com.alfred.remote.printservice.IAlfredRemotePrintService;
+import com.alfred.remote.printservice.RemotePrintServiceCallback;
+import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.LocalRestaurantConfig;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TimeUtil;
+import com.alfredselfhelp.R;
 import com.alfredselfhelp.utils.TvPref;
 import com.tencent.bugly.crashreport.CrashReport;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class App extends BaseApplication {
@@ -43,6 +75,12 @@ public class App extends BaseApplication {
 
     private static final String DATABASE_NAME = "com.alfredselfhelp";
     private SessionStatus sessionStatus;
+    private IntentFilter intentFilter;
+    // Remote Print Service
+    private IAlfredRemotePrintService mRemoteService = null;
+    private RemotePrintServiceCallback mCallback = new RemotePrintServiceCallback();
+    private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<>();
+    private Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
     @Override
     public void onCreate() {
         super.onCreate();
@@ -56,8 +94,177 @@ public class App extends BaseApplication {
         CrashReport.initCrashReport(getApplicationContext(), "4a949e77d4", isOpenLog, strategy);
     }
 
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String packName = intent.getDataString().substring(8);
+            //packName为所安装的程序的包名
+            String name = context.getResources().getString(R.string.printer_app_name);
+            if (packName.equals("com.alfred.remote.printservice")) {
+                connectRemotePrintService();
+                unregisterReceiver(receiver);
+            }
+        }
+    };
 
+    /*
+     * Remote Print Service Connection
+     */
+    private ServiceConnection mRemoteConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mRemoteService = null;
+            autoConnectRemotePrintService();
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+            mRemoteService = IAlfredRemotePrintService.Stub
+                    .asInterface(service);
+            try {
+                mRemoteService.registerCallBack(mCallback);
+                String txt = mRemoteService.getMessage();
+                mRemoteService.setMessage("Alfred Main POS");
+            } catch (RemoteException e1) {
+                e1.printStackTrace();
+            }
+        }
+    };
+
+    public void autoConnectRemotePrintService() {
+        int printVersionCode = 0;
+        int posVersionCode = 0;
+        try {
+            posVersionCode = instance.getPackageManager().getPackageInfo(instance.getPackageName(), 0).versionCode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<PackageInfo> packageinfo = this.getPackageManager()
+                .getInstalledPackages(0);
+
+        int count = packageinfo.size();
+        for (int i = 0; i < count; i++) {
+
+            PackageInfo pinfo = packageinfo.get(i);
+            ApplicationInfo appInfo = pinfo.applicationInfo;
+            if (!((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0)) {
+                String name = pinfo.applicationInfo.packageName;
+
+                if (name.equals("com.alfred.remote.printservice")) {
+                    printVersionCode = pinfo.versionCode;
+                }
+            }
+        }
+        if (printVersionCode < posVersionCode) {
+            printerDialog();
+        } else {
+            connectRemotePrintService();
+        }
+
+    }
+
+    /* Print service */
+    public void connectRemotePrintService() {
+        if (mRemoteService == null) {
+            Intent bindIntent = new Intent(
+                    "alfred.intent.action.bindPrintService");
+            bindIntent.putExtra("PRINTERKEY", "fxxxkprinting");
+            bindIntent.putExtra("isDouble", BH.IsDouble());
+            bindIntent.setClassName("com.alfred.remote.printservice",
+                    "com.alfred.remote.printservice.PrintService");
+
+            bindService(bindIntent, mRemoteConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    public void printerDialog() {
+        BaseActivity context = App.getTopActivity();
+        if (context == null)
+            return;
+        DialogFactory.commonTwoBtnDialog(context, context.getResources()
+                        .getString(R.string.print_down), context.getResources()
+                        .getString(R.string.reconnect_print), context.getResources()
+                        .getString(R.string.no),
+                context.getResources().getString(R.string.yes), null,
+                new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View arg0) {
+                        // TODO Auto-generated method stub
+                        App.instance.tryConnectRemotePrintService();
+                    }
+                });
+    }
+
+    public void tryConnectRemotePrintService() {
+        int printVersionCode = 0;
+        int posVersionCode = 0;
+        try {
+            posVersionCode = instance.getPackageManager().getPackageInfo(instance.getPackageName(), 0).versionCode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<PackageInfo> packageinfo = this.getPackageManager()
+                .getInstalledPackages(0);
+
+        int count = packageinfo.size();
+        for (int i = 0; i < count; i++) {
+
+            PackageInfo pinfo = packageinfo.get(i);
+            ApplicationInfo appInfo = pinfo.applicationInfo;
+            if (!((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0)) {
+                String name = pinfo.applicationInfo.packageName;
+
+                if (name.equals("com.alfred.remote.printservice")) {
+                    printVersionCode = pinfo.versionCode;
+                }
+            }
+        }
+        boolean hasApk = copyApkFromAssets(this, "printServiceApk/print.apk", Environment
+                .getExternalStorageDirectory().getAbsolutePath()
+                + "/print.apk");
+        if (printVersionCode < posVersionCode && hasApk) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setDataAndType(
+                    Uri.parse("file://"
+                            + Environment.getExternalStorageDirectory()
+                            .getAbsolutePath() + "/print.apk"),
+                    "application/vnd.android.package-archive");
+            intentFilter = new IntentFilter();
+            intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+            intentFilter.addDataScheme("package");
+            registerReceiver(receiver, intentFilter);
+            this.startActivity(intent);
+        } else {
+            connectRemotePrintService();
+        }
+
+    }
+
+    public boolean copyApkFromAssets(Context context, String fileName, String path) {
+        boolean copyIsFinish = false;
+        try {
+            InputStream is = context.getAssets().open(fileName);
+            File file = new File(path);
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file);
+            byte[] temp = new byte[1024];
+            int i = 0;
+            while ((i = is.read(temp)) > 0) {
+                fos.write(temp, 0, i);
+            }
+            fos.close();
+            is.close();
+            copyIsFinish = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return copyIsFinish;
+    }
 
     public String getPairingIp() {
         pairingIp = Store.getString(App.instance,"kip");
@@ -229,5 +436,90 @@ public class App extends BaseApplication {
 //        RfidApiCentre.getInstance().stopRFIDScan();
         RfidApiCentre.getInstance().onDestroy();
         super.onTerminate();
+    }
+
+    public Map<Integer, PrinterDevice> getPrinterDevices() {
+        return printerDevices;
+    }
+
+    public void setPrinterDevice(Integer deviceid, PrinterDevice device) {
+        this.printerDevices.put(deviceid, device);
+    }
+
+    public Map<Integer, List<PrinterDevice>> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<Integer, List<PrinterDevice>> map) {
+        this.map = map;
+    }
+
+    public void loadPrinters() {
+        List<LocalDevice> devices = CoreData.getInstance().getLocalDevices();
+        for (LocalDevice item : devices) {
+            int type = item.getDeviceType();
+            // load physical printer
+            if (type == ParamConst.DEVICE_TYPE_PRINTER) {
+                int devid = item.getDeviceId();
+                String ip = item.getIp();
+                String mac = item.getMacAddress();
+                String name = item.getDeviceName();
+                String model = item.getDeviceMode();
+                String printerName = item.getPrinterName();
+                int isLable = item.getIsLablePrinter();
+                PrinterDevice pdev = new PrinterDevice();
+                pdev.setDevice_id(devid);
+                pdev.setIP(ip);
+                pdev.setMac(mac);
+                pdev.setName(name);
+                pdev.setModel(model);
+                pdev.setPrinterName(printerName);
+                pdev.setIsLablePrinter(isLable);
+                pdev.setIsCahierPrinter(CoreData.getInstance()
+                        .isCashierPrinter(devid));
+                printerDevices.put(devid, pdev);
+            }
+        }
+    }
+    public void removePrinterDevice(Integer deviceid) {
+        for (Iterator<Map.Entry<Integer, PrinterDevice>> it = printerDevices
+                .entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Integer, PrinterDevice> entry = it.next();
+            if (entry.getKey().intValue() == deviceid.intValue()) {
+                it.remove();
+            }
+        }
+    }
+    public void closeDiscovery() {
+        if(mRemoteService == null){
+            return;
+        }
+        try {
+            mRemoteService.closeDiscovery();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void discoverPrinter(final Handler handler) {
+        if (mRemoteService == null) {
+            printerDialog();
+            return;
+        }
+
+        Log.d("discoverPrinter", "1856");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mCallback.setHandler(handler);
+                    mRemoteService.listPrinters();
+                    Log.d("discoverPrinter", "1860");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 }

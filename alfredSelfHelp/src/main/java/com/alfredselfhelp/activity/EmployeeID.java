@@ -97,11 +97,11 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 				}
 				break;
 				case UPDATE_ALL_DATA_SUCCESS:
-//					dismissLoadingDialog();
+					dismissLoadingDialog();
 					// TODO startMainPage();
 					App.instance.setPosIp(App.instance.getPairingIp());
 					UIHelp.startMain(context);
-
+					EmployeeID.this.finish();
 					break;
 				case UPDATE_ALL_DATA_FAILURE:
 					dismissLoadingDialog();
