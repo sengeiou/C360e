@@ -923,21 +923,21 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             mClassAdapter.setCheckedPosition(position);
 
         }
-        if (!App.isleftMoved) {
-            moveToCenter(position);
-        }
+//        if (!App.isleftMoved) {
+//          //  moveToCenter(position);
+//        }
 
     }
 
-    private void moveToCenter(int position) {
-        //将点击的position转换为当前屏幕上可见的item的位置以便于计算距离顶部的高度，从而进行移动居中
-        View childAt = re_menu_classify.getChildAt(position - mLinearLayoutManager.findFirstVisibleItemPosition());
-        if (childAt != null) {
-            int y = (childAt.getTop() - re_main_category.getHeight() / 2);
-            re_menu_classify.smoothScrollBy(0, y);
-        }
-
-    }
+//    private void moveToCenter(int position) {
+//        //将点击的position转换为当前屏幕上可见的item的位置以便于计算距离顶部的高度，从而进行移动居中
+//        View childAt = re_menu_classify.getChildAt(position - mLinearLayoutManager.findFirstVisibleItemPosition());
+//        if (childAt != null) {
+//            int y = (childAt.getTop() - re_main_category.getHeight() / 2);
+//            re_menu_classify.smoothScrollBy(0, y);
+//        }
+//
+//    }
 
     @Override
     public void check(int position, boolean isScroll) {
