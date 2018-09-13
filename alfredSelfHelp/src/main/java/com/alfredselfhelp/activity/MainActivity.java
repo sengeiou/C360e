@@ -1,23 +1,31 @@
 package com.alfredselfhelp.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.BaseApplication;
+import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
@@ -28,7 +36,11 @@ import com.alfredselfhelp.utils.PictureSwitch;
 import com.alfredselfhelp.utils.TvPref;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.utils.VideoResManager;
-import com.nordicid.nurapi.NurApiUiThreadRunner;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends BaseActivity {
@@ -48,7 +60,7 @@ public class MainActivity extends BaseActivity {
     int mnVideoHeight = 0;
     private int counter = 0;
 
-    private Button btn_video, btn_picture, btn_empty, btn_print_setting;
+    private Button btn_video, btn_picture, btn_empty;
     private VideoView videoView;
     private boolean toPlayVideo = true;
     VideoResManager mVideoResManager;  //视频播放器
@@ -63,9 +75,13 @@ public class MainActivity extends BaseActivity {
     private int mLoginStatus;
     private Button btn_start;
 
-    private LinearLayout li_select;
+    private LinearLayout li_select, ll_main;
     private KpmTextTypeFace textTypeFace;
-    private boolean doubleBackToExitPressedOnce = false;
+
+    private RelativeLayout re_main_select;
+
+    private ImageView img_mian_bg;
+    private String imgUrl;
 
     protected void initView() {
 
@@ -74,6 +90,9 @@ public class MainActivity extends BaseActivity {
         KpmTextTypeFace.getInstance().init(context);
 
         btn_start = (Button) findViewById(R.id.btn_start);
+        ll_main = (LinearLayout) findViewById(R.id.ll_main);
+
+        re_main_select = (RelativeLayout) findViewById(R.id.re_main_select);
         btn_start.setOnClickListener(this);
 
         videoView = (VideoView) findViewById(R.id.videoView);
@@ -81,22 +100,23 @@ public class MainActivity extends BaseActivity {
         picSwitch.setInAnimation(MainActivity.this, android.R.anim.fade_in);
         picSwitch.setOutAnimation(MainActivity.this, android.R.anim.fade_out);
 
-        btn_video = (Button) findViewById(R.id.btn_video);
+        // btn_video = (Button) findViewById(R.id.btn_video);
         btn_picture = (Button) findViewById(R.id.btn_picture);
-        btn_empty = (Button) findViewById(R.id.btn_empty);
-        btn_print_setting = (Button) findViewById(R.id.btn_print_setting);
+        //  btn_empty = (Button) findViewById(R.id.btn_empty);
         li_select = (LinearLayout) findViewById(R.id.li_select);
         textTypeFace = KpmTextTypeFace.getInstance();
         textTypeFace.setUbuntuRegular((TextView) findViewById(R.id.tv_start));
-        btn_empty.setOnClickListener(this);
+        img_mian_bg = (ImageView) findViewById(R.id.img_main_bg);
+        //  btn_empty.setOnClickListener(this);
         btn_picture.setOnClickListener(this);
-        btn_video.setOnClickListener(this);
-        btn_print_setting.setOnClickListener(this);
-        findViewById(R.id.ll_main).setOnLongClickListener(new View.OnLongClickListener() {
+        //   btn_video.setOnClickListener(this);
+        ll_main.setOnClickListener(this);
+        ll_main.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                re_main_select.setVisibility(View.VISIBLE);
 
-                return false;
+                return true;
             }
         });
         mVideoResManager = new VideoResManager(context);
@@ -110,12 +130,22 @@ public class MainActivity extends BaseActivity {
                 ParamConst.ORDER_STATUS_OPEN_IN_POS,
                 App.instance.getLocalRestaurantConfig()
                         .getIncludedTax().getTax(), 0);
-        App.instance.connectRemotePrintService();
-        RfidApiCentre.getInstance().initApi(new NurApiUiThreadRunner() {
-            public void runOnUiThread(Runnable r) {
-                MainActivity.this.runOnUiThread(r);
-            }
-        });
+
+
+        imgUrl = Store.getString(context, Store.MAIN_URL);
+
+        //
+        if (TextUtils.isEmpty(imgUrl)) {
+
+        } else {
+            Glide.with(MainActivity.this)
+                    .load(imgUrl)
+                    .placeholder(R.drawable.globe_bg)
+                    .error(R.drawable.globe_bg)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(img_mian_bg);
+
+        }
     }
 
     private Runnable mRunnable = new Runnable() {
@@ -212,8 +242,13 @@ public class MainActivity extends BaseActivity {
     protected void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
         Intent intent = new Intent(MainActivity.this, FileDialog.class);
-        switch (v.getId())
-        {
+        switch (v.getId()) {
+
+            case R.id.ll_main:
+
+                re_main_select.setVisibility(View.GONE);
+
+                break;
             case R.id.btn_start:
                 UIHelp.startMenu(context);
 //                Intent intent1 = new Intent(MainActivity.this, DialogActivity.class);
@@ -222,43 +257,43 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case R.id.btn_picture:
-                // 选择图片文件
+                // 选择图片
+//
+                input();
 
-                intent.putExtra(FileDialog.INP_FILE_FILTER, getResources()
-                        .getStringArray(R.array.fileEndingImage));
-                intent.putExtra(FileDialog.INP_CURRENT_PATH, TvPref.readVideoFile());
-                startActivityForResult(intent, 1);
+
+//                intent.putExtra(FileDialog.INP_FILE_FILTER, getResources()
+//                        .getStringArray(R.array.fileEndingImage));
+//                intent.putExtra(FileDialog.INP_CURRENT_PATH, TvPref.readVideoFile());
+//                startActivityForResult(intent, 1);
                 break;
-            case R.id.btn_video:
-
-                intent.putExtra(FileDialog.INP_FILE_FILTER, getResources()
-                        .getStringArray(R.array.fileEndingVideo));
-                intent.putExtra(FileDialog.INP_CURRENT_PATH, TvPref.readVideoFile());
-                startActivityForResult(intent, 2);
-                break;
-
-            case R.id.btn_empty:
-
-                if (videoView.isPlaying()) {
-                    videoView.stopPlayback();
-                }
-                if (picSwitch.isPlaying()) {
-                    picSwitch.stopPlay();
-                }
-                TvPref.saveVideoFile("");
-                TvPref.saveImageFilePath("");
-//                VideoResManager.DelFilesExcept(ShopInfo.getVideoPath(),
-////                        new String[0]);
-                videoView.setVisibility(View.GONE);
-                picSwitch.setVisibility(View.GONE);
-                mVideoResManager.UpdateVideo();
-                updateView();
-
-
-                break;
-            case R.id.btn_print_setting:
-
-                break;
+//            case R.id.btn_video:
+//
+//                intent.putExtra(FileDialog.INP_FILE_FILTER, getResources()
+//                        .getStringArray(R.array.fileEndingVideo));
+//                intent.putExtra(FileDialog.INP_CURRENT_PATH, TvPref.readVideoFile());
+//                startActivityForResult(intent, 2);
+//                break;
+//
+//            case R.id.btn_empty:
+//
+//                if (videoView.isPlaying()) {
+//                    videoView.stopPlayback();
+//                }
+//                if (picSwitch.isPlaying()) {
+//                    picSwitch.stopPlay();
+//                }
+//                TvPref.saveVideoFile("");
+//                TvPref.saveImageFilePath("");
+////                VideoResManager.DelFilesExcept(ShopInfo.getVideoPath(),
+//////                        new String[0]);
+//                videoView.setVisibility(View.GONE);
+//                picSwitch.setVisibility(View.GONE);
+//                mVideoResManager.UpdateVideo();
+//                updateView();
+//
+//
+//                break;
 
         }
     }
@@ -266,10 +301,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
 //        RfidApiCentre.getInstance().onResume();
-//        if(RfidApiCentre.getInstance().getNurTagStorage() != null){
-//            RfidApiCentre.getInstance().stopRFIDScan();
-//        }
-        doubleBackToExitPressedOnce = false;
+        if (RfidApiCentre.getInstance().getNurTagStorage() != null) {
+            RfidApiCentre.getInstance().stopRFIDScan();
+        }
         super.onResume();
     }
 
@@ -562,6 +596,57 @@ public class MainActivity extends BaseActivity {
 
     }
 
+
+    private void input() {
+
+
+        final EditText inputServer = new EditText(this);
+        imgUrl = Store.getString(context, Store.MAIN_URL);
+        if (!TextUtils.isEmpty(imgUrl)) {
+            inputServer.setText(imgUrl);
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("请输入图片地址");
+        builder.setView(inputServer)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        re_main_select.setVisibility(View.GONE);
+                    }
+                });
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                String input = inputServer.getText().toString();
+                // String input = "http://139.224.17.126/upload/img/item/c1cfbf26-7310-4a6e-b5a4-15e89a82a9c3.png";
+                if (isCompleteUrl(input)) {
+                    Store.putString(context, Store.MAIN_URL, input);
+                    loadingDialog = new LoadingDialog(MainActivity.this);
+                    loadingDialog.showByTime(2000);
+                    Glide.with(MainActivity.this)
+                            .load(input)
+                            .placeholder(R.drawable.globe_bg)
+                            .error(R.drawable.globe_bg)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(img_mian_bg);
+
+                } else {
+                    Toast.makeText(MainActivity.this, "输入的地址有误", Toast.LENGTH_LONG).show();
+                }
+
+                re_main_select.setVisibility(View.GONE);
+            }
+        });
+        builder.show();
+
+    }
+
+    public static boolean isCompleteUrl(String text) {
+        Pattern p = Pattern.compile("((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = p.matcher(text);
+        return matcher.find();
+    }
+
     public void onDestroy() {
         //    App.instance.setSave();
         if (picSwitch.isPlaying()) {
@@ -573,21 +658,4 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
-        BaseApplication.postHandler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce=false;
-            }
-        }, 2000);
-    }
 }

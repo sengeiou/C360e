@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
         android:background="@drawable/style_dialog_btn"
         android:orientation="vertical"
 
@@ -23,20 +23,20 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
-            android:background="@color/white"
+            android:background="@drawable/style_dialog_btn"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_nur_name"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
                 android:layout_marginTop="30dp"
                 android:gravity="center_horizontal"
                 android:text="Are you sure you got the right order?"
                 android:textColor="@color/black"
-                android:textSize="44sp" />
+                android:textSize="45sp" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/re_nur_order"

@@ -3,6 +3,7 @@ package com.alfredselfhelp.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -77,7 +78,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
             super(itemView, type, listener);
             this.mView = itemView;
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, (WIDTH / 3) / 23 * 30));
+                    ViewGroup.LayoutParams.MATCH_PARENT, (WIDTH / 3) / 4 * 5);
             params.setMargins(0, 0, 0, 0);
             mView.setLayoutParams(params);
 
@@ -96,17 +97,16 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
         @Override
         public void bindHolder(ItemDetail itemDetail, final int position) {
             tvName.setText(itemDetail.getItemName());
-            textTypeFace.setUbuntuMedium(tvName);
+            textTypeFace.setUbuntuBold(tvName);
 
             Glide.with(mContext)
                     .load(itemDetail.getImgUrl())
-                    .placeholder(R.drawable.logo_icon)
-                    .error(R.drawable.logo_icon)
+                    .placeholder(R.drawable.img_bg)
+                    .error(R.drawable.img_bg)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
 
             tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
-
             textTypeFace.setUbuntuBold(tvPrice);
             de.setText(itemDetail.getItemDesc());
             textTypeFace.setUbuntuRegular(de);

@@ -9,20 +9,27 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent">
 
-        >
+        <ImageView
+            android:id="@+id/img_main_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/globe_bg"
+            android:scaleType="centerCrop" />
 
         <RelativeLayout
+            android:id="@+id/re_main_select"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="gone">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <RelativeLayout
                     android:id="@+id/re_video_pic"
@@ -71,12 +78,13 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <Button
-                    android:id="@+id/btn_video"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="Choose Video" />
+                <!--<Button-->
+                <!--android:id="@+id/btn_video"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="5dp"-->
+                <!---->
+                <!--android:text="选择视频" />-->
 
                 <Button
                     android:id="@+id/btn_picture"
@@ -85,12 +93,12 @@
                     android:layout_margin="5dp"
                     android:text="Choose Image" />
 
-                <Button
-                    android:id="@+id/btn_empty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="Clear" />
+                <!--<Button-->
+                <!--android:id="@+id/btn_empty"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="5dp"-->
+                <!--android:text="清空" />-->
             </LinearLayout>
             <Button
                 android:id="@+id/btn_print_setting"
@@ -106,33 +114,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="150dp"
-            >
+            android:layout_marginBottom="150dp">
 
 
-        <Button
-            android:id="@+id/btn_start"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
+            <Button
+                android:id="@+id/btn_start"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
 
-            android:layout_marginLeft="150dp"
-            android:layout_marginRight="150dp"
-            android:background="@drawable/btn_start"
-            android:gravity="center"
+                android:layout_marginLeft="150dp"
+                android:layout_marginRight="150dp"
+                android:background="@drawable/btn_start"
+                android:gravity="center"
 
-            />
+                />
 
 
             <TextView
                 android:id="@+id/tv_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Touch to Start"
                 android:layout_centerInParent="true"
+                android:text="Touch to Start"
 
                 android:textColor="@color/white"
-                android:textSize="50sp"
-                />
+                android:textSize="50sp" />
         </RelativeLayout>
+
+
     </RelativeLayout>
 </LinearLayout>
