@@ -141,10 +141,7 @@
                 android:visibility="gone">
 
                 <LinearLayout
-
-
                     android:layout_width="wrap_content"
-
                     android:layout_height="wrap_content"
                     android:background="@drawable/re_class_bg"
                     android:paddingTop="0dp">

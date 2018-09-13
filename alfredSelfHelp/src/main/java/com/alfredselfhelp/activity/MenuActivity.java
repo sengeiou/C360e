@@ -294,7 +294,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_menu_title.setVisibility(View.GONE);
                 videoPause();
                 getItemCategory(itemMainCategory.getId());
-                getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
+                //   getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
 
 
             }
@@ -317,8 +317,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
         lp.height = WIDTH / 4 * 5;
         ll_menu_details.setLayoutParams(lp);
-
-
+//
+//
+//        ViewGroup.LayoutParams lpDe;
+//        lpDe = re_menu_details.getLayoutParams();
+//        lpDe.width = ViewGroup.LayoutParams.MATCH_PARENT;
+//        lpDe.height = WIDTH / 4 * 5;
+//        re_menu_details.setLayoutParams(lpDe);
         refreshTotal();
 //        viewCart(true);
 
@@ -577,15 +582,54 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mClassAdapter = new ClassAdapter(context, itemCategorys, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
-                isMoved = true;
-                App.isleftMoved = true;
-                targetPosition = position;
+
+                ItemCategory itemCategory = itemCategorys.get(position);
+                // isMoved = true;
+                //   App.isleftMoved = true;
+                //   targetPosition = position;
                 setChecked(position, true, 0);
+                getItemDetailmod(itemCategory);
 
             }
         });
 
         re_menu_classify.setAdapter(mClassAdapter);
+
+
+
+        mManager = new GridLayoutManager(context, 3);
+        //通过isTitle的标志来判断是否是title
+//        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+//            @Override
+//            public int getSpanSize(int position) {
+//                return  1;
+//            }
+//        });1
+        re_menu_details.setLayoutManager(mManager);
+        mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
+            @Override
+            public void onItemClick(int id, int position) {
+                ItemDetail itemDetail = itemDetails.get(position);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("itemDetail", itemDetail);
+
+                handler.sendMessage(handler.obtainMessage(
+                        MODIFY_ITEM_COUNT, map));
+            }
+        }, new CountViewMod.OnCountChange() {
+            @Override
+            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
+
+
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("itemDetail", selectedItemDetail);
+                map.put("count", count);
+                map.put("isAdd", isAdd);
+                handler.sendMessage(handler.obtainMessage(
+                        VIEW_EVENT_MODIFY_ITEM_COUNT, map));
+            }
+        });
+        re_menu_details.setAdapter(mDetailAdapter);
 
     }
 
@@ -608,7 +652,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
             }
         }
-        mClassAdapter.notifyDataSetChanged();
+        mClassAdapter.setCheckedPosition(0);
+      //  mClassAdapter.notifyDataSetChanged();
+        if (itemCategorys != null && itemCategorys.size() > 0) {
+            getItemDetailmod(itemCategorys.get(0));
+        }
+
+
         return itemCategorielist;
 
     }
@@ -617,7 +667,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     ) {
 
         itemDetails.clear();
-        re_menu_details.addOnScrollListener(new RecyclerViewListener());
+
         mManager = new GridLayoutManager(context, 3);
         //通过isTitle的标志来判断是否是title
 //        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -697,24 +747,26 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         return itemDetailandCate;
     }
 
-//    private List<ItemDetail> getItemDetailmod(ItemCategory itemCategory) {
-//        itemDetails.clear();
-//        List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
-//        itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
-//        // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
-//        if (itemDetaillist != null || itemDetaillist.size() > 0) {
-//            for (int d = 0; d < itemDetaillist.size(); d++) {
-//                itemDetaillist.get(d).setItemCategoryName("");
-//                itemDetaillist.get(d).setTag(String.valueOf(0));
-//                itemDetaillist.get(d).setViewType(3);
-//                itemDetails.add(itemDetaillist.get(d));
-//                // }
-//            }
-//        }
-//        refreshTotal();
-//        refreshList();
-//        return null;
-//    }
+    private List<ItemDetail> getItemDetailmod(ItemCategory itemCategory) {
+        itemDetails.clear();
+        List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
+        itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
+        // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
+        if (itemDetaillist != null || itemDetaillist.size() > 0) {
+            for (int d = 0; d < itemDetaillist.size(); d++) {
+                itemDetaillist.get(d).setItemCategoryName("");
+                itemDetaillist.get(d).setTag(String.valueOf(0));
+                itemDetaillist.get(d).setViewType(3);
+                itemDetails.add(itemDetaillist.get(d));
+                // }
+            }
+        }
+        mDetailAdapter.notifyDataSetChanged();
+
+        refreshTotal();
+        refreshList();
+        return null;
+    }
 
 
     @Override
@@ -840,7 +892,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                isMoved = true;
 //                App.isleftMoved = true;
 //                targetPosition = position;
-//                setChecked(position, true, 0);
+                setChecked(position, true, 0);
 
             }
         }, new CountView.OnCountChange() {
@@ -869,43 +921,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         Log.d("setChecked-------->", String.valueOf(position));
         if (isLeft) {
             mClassAdapter.setCheckedPosition(position);
-            //mSortAdapter.setCheckedPosition(position);
-            //此处的位置需要根据每个分类的集合来进行计算
-            Log.d("1111111-------->", String.valueOf(position));
-            List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
-            int count = 0;
-            List<ItemCategory> itemCategorylist = ItemCategorySQL.getAllItemCategory();
-            int tag = 0;
-
-
-            for (int i = 0; i < position; i++) {
-                itemDetaillist.clear();
-                //  itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
-                itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorys.get(i));
-                // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
-                for (int d = 0; d < itemDetaillist.size(); d++) {
-                    count++;
-                    // }
-                }
-            }
-
-//
-            count += position;
-            Log.d("count-------->", String.valueOf(count));
-            move(count);
-            mDecoration.setCurrentTag(String.valueOf(targetPosition));//凡是点击左边，将左边点击的位置作为当前的tag
-        } else {
-
-            if (isMoved) {
-                isMoved = false;
-            } else {
-                if (!App.isleftMoved) {
-                    mClassAdapter.setCheckedPosition(position);
-                }
-
-            }
-            mDecoration.setCurrentTag(String.valueOf(position));//如果是滑动右边联动左边，则按照右边传过来的位置作为tag
-
 
         }
         if (!App.isleftMoved) {
@@ -929,64 +944,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         setChecked(position, isScroll, 0);
     }
-
-    public void move(int n) {
-        mIndex = n;
-        re_menu_details.stopScroll();
-        smoothMoveToPosition(n);
-    }
-
-
-    private void smoothMoveToPosition(int n) {
-        int firstItem = mManager.findFirstVisibleItemPosition();
-        int lastItem = mManager.findLastVisibleItemPosition();
-        Log.d("first--->", String.valueOf(firstItem));
-        Log.d("last--->", String.valueOf(lastItem));
-        if (n <= firstItem) {
-            re_menu_details.smoothScrollToPosition(n);
-            // ((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
-        } else if (n <= lastItem) {
-            Log.d("pos---->", String.valueOf(n) + "VS" + firstItem);
-            int top = re_menu_details.getChildAt(n - firstItem).getTop();
-            Log.d("top---->", String.valueOf(top));
-            re_menu_details.scrollBy(0, top);
-        } else {
-            //((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
-            re_menu_details.smoothScrollToPosition(n);
-            move = true;
-        }
-    }
-
-
-    private class RecyclerViewListener extends RecyclerView.OnScrollListener {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-
-            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                Log.d("SCROLL--->", "拖拽中");
-                App.isleftMoved = false;
-            }
-            if (move && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                App.isleftMoved = false;
-                move = false;
-                int n = mIndex - mManager.findFirstVisibleItemPosition();
-                Log.d("n---->", String.valueOf(n));
-                if (0 <= n && n < re_menu_details.getChildCount()) {
-                    int top = re_menu_details.getChildAt(n).getTop();
-                    Log.d("top---Changed>", String.valueOf(top));
-                    re_menu_details.smoothScrollBy(0, top);
-                }
-            }
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-        }
-    }
-
 
     private void refreshTotal() {
         orderDetails.clear();
