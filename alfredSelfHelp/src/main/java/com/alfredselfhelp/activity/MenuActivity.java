@@ -319,9 +319,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
 
         int WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 265));
-//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//                ViewGroup.LayoutParams.MATCH_PARENT, (WIDTH / 3) / 4 * 5);
-
         ViewGroup.LayoutParams lp;
         lp = ll_menu_details.getLayoutParams();
         lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -496,11 +493,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
 
     private void updateCartOrderDetail(OrderDetail orderDetail, int count) {
-//        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
-//                nurOrder, itemDetail, 0,
-//                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
-//		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
-//				currentOrder, itemDetail, currentGroupId);
+
         orderDetails.clear();
         if (count == 0) {// 删除
             OrderDetailSQL.deleteOrderDetail(orderDetail);
@@ -601,6 +594,41 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         re_menu_classify.setAdapter(mClassAdapter);
 
+
+        re_menu_details.addOnScrollListener(new RecyclerViewListener());
+        mManager = new GridLayoutManager(context, 3);
+        //通过isTitle的标志来判断是否是title
+//        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+//            @Override
+//            public int getSpanSize(int position) {
+//                return  1;
+//            }
+//        });1
+        re_menu_details.setLayoutManager(mManager);
+        mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
+            @Override
+            public void onItemClick(int id, int position) {
+                ItemDetail itemDetail = itemDetails.get(position);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("itemDetail", itemDetail);
+
+                handler.sendMessage(handler.obtainMessage(
+                        MODIFY_ITEM_COUNT, map));
+            }
+        }, new CountViewMod.OnCountChange() {
+            @Override
+            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
+
+
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("itemDetail", selectedItemDetail);
+                map.put("count", count);
+                map.put("isAdd", isAdd);
+                handler.sendMessage(handler.obtainMessage(
+                        VIEW_EVENT_MODIFY_ITEM_COUNT, map));
+            }
+        });
+        re_menu_details.setAdapter(mDetailAdapter);
 
     }
 
@@ -712,6 +740,68 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         return itemDetailandCate;
     }
 
+//    private List<ItemDetail> getItemDetailmod(ItemCategory itemCategory) {
+//
+//        itemDetails.clear();
+//
+//
+//        List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
+//        itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
+//        // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
+//        if (itemDetaillist != null || itemDetaillist.size() > 0) {
+//            for (int d = 0; d < itemDetaillist.size(); d++) {
+//                itemDetaillist.get(d).setItemCategoryName("");
+//                itemDetaillist.get(d).setTag(String.valueOf(0));
+//                itemDetaillist.get(d).setViewType(3);
+//                itemDetails.add(itemDetaillist.get(d));
+//                // }
+//            }
+//        }
+//
+//
+//        List<ItemDetail> itemDetailandCate = new ArrayList<ItemDetail>();
+////
+//        List<ItemCategory> itemCategorylist = ItemCategorySQL.getAllItemCategory();
+//        int tag = 0;
+//        if (itemCategorylist != null || itemCategorylist.size() > 0) {
+//            for (int j = 0; j < itemCategorylist.size(); j++) {
+//                ItemCategory itemCategory = itemCategorylist.get(j);
+//                int cid;
+//                cid = itemCategorylist.get(j).getItemMainCategoryId();
+//                if (id == cid) {
+////
+//                    itemDetaillist.clear();
+//                    //  itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
+//                    itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
+//                    // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
+//                    if (itemDetaillist != null || itemDetaillist.size() > 0) {
+//                        for (int d = 0; d < itemDetaillist.size(); d++) {
+//                            itemDetaillist.get(d).setItemCategoryName("");
+//                            itemDetaillist.get(d).setTag(String.valueOf(tag));
+//                            itemDetaillist.get(d).setViewType(3);
+//                            itemDetails.add(itemDetaillist.get(d));
+//                            // }
+//                        }
+//                    }
+//                    tag++;
+//                }
+//            }
+//
+//        }
+//
+//        refreshTotal();
+//        refreshList();
+//        //  mDetailAdapter.notifyDataSetChanged();
+//        //  mDecoration.setData(itemDetails);
+//
+////        if (itemDetails != null && itemDetails.size() > 0) {
+////            mDecoration = new ItemHeaderDecoration(context, itemDetails);
+////            re_menu_details.addItemDecoration(mDecoration);
+////            mDecoration.setCheckListener(this);
+////        }
+//        return itemDetailandCate;
+//    }
+
 
     @Override
     protected void handlerClickEvent(View v) {
@@ -808,17 +898,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 });
 
                 dialog.show();
-//                     dialog = ToolAlert.MyDialog(DialogActivity.this, "", "", "", new View.OnClickListener() {
-//                         @Override
-//                         public void onClick(View v) {
-//                             dialog.dismiss();
-//                         }
-//                     }, new View.OnClickListener() {
-//                         @Override
-//                         public void onClick(View v) {
-//                             dialog.dismiss();
-//                         }
-//                     });
+//
 
                 break;
         }
