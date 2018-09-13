@@ -594,42 +594,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         re_menu_classify.setAdapter(mClassAdapter);
 
-
-        re_menu_details.addOnScrollListener(new RecyclerViewListener());
-        mManager = new GridLayoutManager(context, 3);
-        //通过isTitle的标志来判断是否是title
-//        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-//            @Override
-//            public int getSpanSize(int position) {
-//                return  1;
-//            }
-//        });1
-        re_menu_details.setLayoutManager(mManager);
-        mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
-            @Override
-            public void onItemClick(int id, int position) {
-                ItemDetail itemDetail = itemDetails.get(position);
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("itemDetail", itemDetail);
-
-                handler.sendMessage(handler.obtainMessage(
-                        MODIFY_ITEM_COUNT, map));
-            }
-        }, new CountViewMod.OnCountChange() {
-            @Override
-            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
-
-
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("itemDetail", selectedItemDetail);
-                map.put("count", count);
-                map.put("isAdd", isAdd);
-                handler.sendMessage(handler.obtainMessage(
-                        VIEW_EVENT_MODIFY_ITEM_COUNT, map));
-            }
-        });
-        re_menu_details.setAdapter(mDetailAdapter);
-
     }
 
 
