@@ -92,9 +92,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private RelativeLayout rl_cart_total;
     private LinearLayout li_menu, ll_view_order_card, ll_view_order_qc;
-
-    boolean isgrab = true;
-
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
     List<ItemDetail> itemDetailNur = new ArrayList<ItemDetail>();
@@ -129,11 +126,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
     private void initVideo() {
-
-
         mVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/tutorial"));
         mVideoView.start();
-
         //监听视频播放完的代码
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
@@ -298,7 +292,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
                 ll_menu_title.setVisibility(View.GONE);
-                isgrab = false;
                 videoPause();
                 getItemCategory(itemMainCategory.getId());
                 getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
@@ -705,12 +698,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
 //    private List<ItemDetail> getItemDetailmod(ItemCategory itemCategory) {
-//
 //        itemDetails.clear();
-//
-//
 //        List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
-//        itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
+//        itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
 //        // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
 //        if (itemDetaillist != null || itemDetaillist.size() > 0) {
 //            for (int d = 0; d < itemDetaillist.size(); d++) {
@@ -721,49 +711,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                // }
 //            }
 //        }
-//
-//
-//        List<ItemDetail> itemDetailandCate = new ArrayList<ItemDetail>();
-////
-//        List<ItemCategory> itemCategorylist = ItemCategorySQL.getAllItemCategory();
-//        int tag = 0;
-//        if (itemCategorylist != null || itemCategorylist.size() > 0) {
-//            for (int j = 0; j < itemCategorylist.size(); j++) {
-//                ItemCategory itemCategory = itemCategorylist.get(j);
-//                int cid;
-//                cid = itemCategorylist.get(j).getItemMainCategoryId();
-//                if (id == cid) {
-////
-//                    itemDetaillist.clear();
-//                    //  itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
-//                    itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
-//                    // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
-//                    if (itemDetaillist != null || itemDetaillist.size() > 0) {
-//                        for (int d = 0; d < itemDetaillist.size(); d++) {
-//                            itemDetaillist.get(d).setItemCategoryName("");
-//                            itemDetaillist.get(d).setTag(String.valueOf(tag));
-//                            itemDetaillist.get(d).setViewType(3);
-//                            itemDetails.add(itemDetaillist.get(d));
-//                            // }
-//                        }
-//                    }
-//                    tag++;
-//                }
-//            }
-//
-//        }
-//
 //        refreshTotal();
 //        refreshList();
-//        //  mDetailAdapter.notifyDataSetChanged();
-//        //  mDecoration.setData(itemDetails);
-//
-////        if (itemDetails != null && itemDetails.size() > 0) {
-////            mDecoration = new ItemHeaderDecoration(context, itemDetails);
-////            re_menu_details.addItemDecoration(mDecoration);
-////            mDecoration.setCheckListener(this);
-////        }
-//        return itemDetailandCate;
+//        return null;
 //    }
 
 
@@ -782,7 +732,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
                 ll_menu_title.setVisibility(View.VISIBLE);
-                isgrab = true;
+
                 refreshTotal();
                 videoStart();
 //                RfidApiCentre.getInstance().startRFIDScan();
@@ -1048,15 +998,19 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         }
         if (itemCount > 0) {
-            ll_view_cart.setVisibility(View.VISIBLE);
+            if (ll_view_cart_list.getVisibility() == View.VISIBLE) {
+                ll_view_cart.setVisibility(View.GONE);
+            } else {
+                ll_view_cart.setVisibility(View.VISIBLE);
+            }
+
             rl_cart_num.setVisibility(View.VISIBLE);
             tv_cart_num.setText(itemCount + "");
             ll_view_cart.setEnabled(true);
             viewCart(false);
         } else {
-            if (isgrab) {
+            if (ll_video.getVisibility() == View.VISIBLE) {
                 ll_view_cart.setVisibility(View.GONE);
-
             } else {
                 ll_view_cart.setVisibility(View.VISIBLE);
                 ll_view_cart.setEnabled(false);

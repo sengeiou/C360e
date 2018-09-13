@@ -33,5 +33,7 @@
     <dimen name="p850">850dp</dimen>
     <dimen name="p900">900dp</dimen>
 
+    <dimen name="spacing">90dp</dimen>
+
 
 </resources>

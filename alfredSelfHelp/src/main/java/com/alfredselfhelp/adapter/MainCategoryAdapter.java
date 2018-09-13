@@ -30,7 +30,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
         super(context, itemMainCategories, listener);
         this.mContext = context;
 
-        WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 120));
+        WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 120 + 90));
     }
 
     @Override
