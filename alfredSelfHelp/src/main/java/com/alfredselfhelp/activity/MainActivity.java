@@ -19,13 +19,13 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.TableInfoSQL;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
@@ -38,6 +38,7 @@ import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.utils.VideoResManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.nordicid.nurapi.NurApiUiThreadRunner;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,6 +83,7 @@ public class MainActivity extends BaseActivity {
 
     private ImageView img_mian_bg;
     private String imgUrl;
+    private boolean doubleBackToExitPressedOnce = false;
 
     protected void initView() {
 
@@ -111,6 +113,7 @@ public class MainActivity extends BaseActivity {
         btn_picture.setOnClickListener(this);
         //   btn_video.setOnClickListener(this);
         ll_main.setOnClickListener(this);
+        findViewById(R.id.btn_print_setting).setOnClickListener(this);
         ll_main.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -146,6 +149,11 @@ public class MainActivity extends BaseActivity {
                     .into(img_mian_bg);
 
         }
+        RfidApiCentre.getInstance().initApi(new NurApiUiThreadRunner() {
+            public void runOnUiThread(Runnable r) {
+                MainActivity.this.runOnUiThread(r);
+            }
+        });
     }
 
     private Runnable mRunnable = new Runnable() {
@@ -251,60 +259,23 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.btn_start:
                 UIHelp.startMenu(context);
-//                Intent intent1 = new Intent(MainActivity.this, DialogActivity.class);
-//                startActivity(intent1);
-
                 break;
 
             case R.id.btn_picture:
                 // 选择图片
-//
                 input();
-
-
-//                intent.putExtra(FileDialog.INP_FILE_FILTER, getResources()
-//                        .getStringArray(R.array.fileEndingImage));
-//                intent.putExtra(FileDialog.INP_CURRENT_PATH, TvPref.readVideoFile());
-//                startActivityForResult(intent, 1);
                 break;
-//            case R.id.btn_video:
-//
-//                intent.putExtra(FileDialog.INP_FILE_FILTER, getResources()
-//                        .getStringArray(R.array.fileEndingVideo));
-//                intent.putExtra(FileDialog.INP_CURRENT_PATH, TvPref.readVideoFile());
-//                startActivityForResult(intent, 2);
-//                break;
-//
-//            case R.id.btn_empty:
-//
-//                if (videoView.isPlaying()) {
-//                    videoView.stopPlayback();
-//                }
-//                if (picSwitch.isPlaying()) {
-//                    picSwitch.stopPlay();
-//                }
-//                TvPref.saveVideoFile("");
-//                TvPref.saveImageFilePath("");
-////                VideoResManager.DelFilesExcept(ShopInfo.getVideoPath(),
-//////                        new String[0]);
-//                videoView.setVisibility(View.GONE);
-//                picSwitch.setVisibility(View.GONE);
-//                mVideoResManager.UpdateVideo();
-//                updateView();
-//
-//
-//                break;
+            case R.id.btn_print_setting:
+
+                break;
 
         }
     }
 
     @Override
     protected void onResume() {
-//        RfidApiCentre.getInstance().onResume();
-        if (RfidApiCentre.getInstance().getNurTagStorage() != null) {
-            RfidApiCentre.getInstance().stopRFIDScan();
-        }
         super.onResume();
+        doubleBackToExitPressedOnce = false;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -658,4 +629,22 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
+
+        BaseApplication.postHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
 }
