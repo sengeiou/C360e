@@ -1,4 +1,5 @@
 package com.alfredselfhelp.adapter;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
@@ -15,10 +16,11 @@ import java.util.List;
 
 public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
 
-    private int checkedPosition=-1;
+    private int checkedPosition = -1;
     private KpmTextTypeFace textTypeFace = KpmTextTypeFace.getInstance();
     private Context mContext;
     int WIDTH;
+
     public void setCheckedPosition(int checkedPosition) {
         this.checkedPosition = checkedPosition;
         notifyDataSetChanged();
@@ -26,9 +28,9 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
 
     public MainCategoryAdapter(Context context, List<ItemMainCategory> itemMainCategories, RvListener listener) {
         super(context, itemMainCategories, listener);
-        this.mContext=context;
+        this.mContext = context;
 
-        WIDTH= (int) (ScreenSizeUtil.width-ScreenSizeUtil.dip2px((Activity) context, 120));
+        WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 120));
     }
 
     @Override
@@ -46,14 +48,14 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
         private TextView tv_text;
         private View mView;
 
-       CateHolder(View itemView, int type, RvListener listener) {
+        CateHolder(View itemView, int type, RvListener listener) {
             super(itemView, type, listener);
             this.mView = itemView;
             tv_text = (TextView) itemView.findViewById(R.id.tv_main_text);
-           LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                   WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, 130));
-           params.setMargins(5,0,5,0);
-           tv_text.setLayoutParams(params);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    WIDTH / 3, ScreenSizeUtil.dip2px((Activity) mContext, 140));
+            params.setMargins(10, 0, 0, 0);
+            tv_text.setLayoutParams(params);
 
         }
 
@@ -63,7 +65,7 @@ public class MainCategoryAdapter extends RvAdapter<ItemMainCategory> {
             textTypeFace.setUbuntuMedium(tv_text);
 
             if (position == checkedPosition) {
-                tv_text.setBackgroundResource(R.drawable.main_btn_b);
+                tv_text.setBackgroundResource(R.drawable.btn_main_b);
 
             } else {
                 tv_text.setBackgroundResource(R.drawable.btn_main_g);

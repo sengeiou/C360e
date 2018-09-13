@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
+
     android:background="@drawable/re_de_item"
     android:gravity="center">
 
@@ -16,11 +16,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="5dp"
+
         app:cardElevation="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,51 +38,58 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/logo_icon" />
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-
-                    android:background="@color/white"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_modifier_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/img_modifier"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginTop="25dp"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="aaaaaaa"
-                        android:textColor="@color/gray1"
-                        android:textSize="36sp"
-                        android:textStyle="bold"
-
-                        />
-
-                    <TextView
-
-                        android:id="@+id/tv_modifier_de"
-                        android:layout_width="wrap_content"
-                        android:layout_height="35dp"
-                        android:layout_below="@id/tv_modifier_name"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="60dp"
-                        android:layout_marginTop="3dp"
-                        android:ellipsize="end"
-                        android:maxLines="2"
-                        android:text=""
-                        android:textColor="@color/gray2"
-                        android:textSize="24sp"
-
-                        />
+                    android:background="@color/white">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_modifier_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/img_modifier"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="30dp"
+                            android:layout_marginTop="25dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="aaaaaaa"
+                            android:textColor="@color/gray1"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+
+                            />
+
+                        <TextView
+
+                            android:id="@+id/tv_modifier_de"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_modifier_name"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="60dp"
+                            android:layout_marginTop="3dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text=""
+                            android:textColor="@color/gray2"
+                            android:textSize="12sp"
+
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
                         android:orientation="horizontal">
 
                         <TextView
@@ -105,14 +114,16 @@
                             android:paddingRight="10dp"
                             android:text="S$50.00"
                             android:textColor="@color/white1"
-                            android:textSize="40sp"
+                            android:textSize="20sp"
                             android:textStyle="bold"
 
                             />
                     </LinearLayout>
-                </LinearLayout>
 
+
+                </RelativeLayout>
             </LinearLayout>
+
 
             <RelativeLayout
                 android:layout_width="wrap_content"

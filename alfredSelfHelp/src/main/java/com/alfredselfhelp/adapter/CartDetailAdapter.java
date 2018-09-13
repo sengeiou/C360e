@@ -85,8 +85,8 @@ public class CartDetailAdapter extends RvAdapter<OrderDetail> {
             tvName.setText(orderDetail.getItemName());
             Glide.with(mContext)
                     .load(orderDetail.getItemUrl())
-                    .placeholder(R.drawable.logo_icon)
-                    .error(R.drawable.logo_icon)
+                    .placeholder(R.drawable.img_bg)
+                    .error(R.drawable.img_bg)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
             tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString());

@@ -1,6 +1,9 @@
 package com.alfredselfhelp.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,9 +13,12 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -32,6 +38,7 @@ import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.CartDetailAdapter;
 import com.alfredselfhelp.adapter.ClassAdapter;
@@ -73,16 +80,20 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private List<ItemMainCategory> itemMainCategories;
     private LinearLayoutManager mLinearLayoutManager;
     MainCategoryAdapter mainCategoryAdapter;
-    private LinearLayout ll_grab, ll_menu_details, ll_video, ll_view_cart, ll_view_cart_list, ll_view_pay, ll_menu_title;
+    private LinearLayout ll_grab, ll_menu_details, ll_video, ll_view_cart, ll_view_cart_list, ll_view_pay, ll_menu_title, ll_view_cart_bg;
     private RecyclerView re_menu_classify, re_menu_details, re_view_cart;
     private ClassAdapter mClassAdapter;
     private MenuDetailAdapter mDetailAdapter;
     ItemHeaderDecoration mDecoration;
-    private TextView total, tv_cart_num, tv_total_price, tv_time;
+    private TextView total, tv_cart_num, tv_total_price, tv_time, tv_view_cart;
+
+    private ImageView img_view_cart;
     private RelativeLayout rl_cart_num;
 
     private RelativeLayout rl_cart_total;
-    private LinearLayout li_menu;
+    private LinearLayout li_menu, ll_view_order_card, ll_view_order_qc;
+
+    boolean isgrab = true;
 
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
@@ -106,18 +117,40 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private KpmTextTypeFace textTypeFace;
 
+    private VideoView mVideoView;
+
     //    Dialog fdialog;
     protected void initView() {
         super.initView();
         setContentView(R.layout.activity_menu);
         init();
         timer.schedule(new MyTimerTask(), 3000);
+
+    }
+
+    private void initVideo() {
+
+
+        mVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/tutorial"));
+        mVideoView.start();
+
+        //监听视频播放完的代码
+        mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mPlayer) {
+                // TODO Auto-generated method stub
+                mPlayer.start();
+                mPlayer.setLooping(true);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //  timeSlot();
+        timeSlot();
+        initVideo();
 
     }
 
@@ -228,7 +261,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         rl_cart_total = (RelativeLayout) findViewById(R.id.rl_cart_total);
         li_menu = (LinearLayout) findViewById(R.id.li_menu);
         ll_menu_title = (LinearLayout) findViewById(R.id.ll_menu_title);
-        tv_time = (TextView) findViewById(R.id.tv_menu_title);
+        ll_view_cart_bg = (LinearLayout) findViewById(R.id.ll_view_cart_bg);
+        tv_view_cart = (TextView) findViewById(R.id.tv_view_cart);
+        img_view_cart = (ImageView) findViewById(R.id.img_view_cart);
+        mVideoView = (VideoView) findViewById(R.id.video_menu);
+        tv_time = (TextView) findViewById(R.id.tv_time);
+        ll_view_order_card = (LinearLayout) findViewById(R.id.ll_view_order_card);
+        ll_view_order_card.setOnClickListener(this);
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
         ll_video.setVisibility(View.VISIBLE);
@@ -258,8 +297,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_cart_list.setVisibility(View.GONE);
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
-
                 ll_menu_title.setVisibility(View.GONE);
+                isgrab = false;
+                videoPause();
                 getItemCategory(itemMainCategory.getId());
                 getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
 
@@ -276,6 +316,23 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 MenuActivity.this.runOnUiThread(r);
             }
         });
+
+
+        int WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 265));
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                ViewGroup.LayoutParams.MATCH_PARENT, (WIDTH / 3) / 4 * 5);
+
+        ViewGroup.LayoutParams lp;
+        lp = ll_menu_details.getLayoutParams();
+        lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        lp.height = WIDTH / 4 * 5;
+        ll_menu_details.setLayoutParams(lp);
+
+
+        refreshTotal();
+//        viewCart(true);
+
+
 //        RfidApiCentre.getInstance().setCallBack(new RfidApiCentre.RfidCallBack() {
 //            @Override
 //            public void inventoryStreamEvent() {
@@ -322,6 +379,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        videoStop();
         super.onDestroy();
     }
 
@@ -560,9 +619,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 int cid;
                 cid = itemCategorylist.get(i).getItemMainCategoryId();
                 if (id == cid) {
-//
                     itemCategorys.add(itemCategory);
-
                 }
             }
         }
@@ -671,7 +728,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_view_pay.setVisibility(View.GONE);
                 ll_view_cart.setVisibility(View.VISIBLE);
                 ll_menu_title.setVisibility(View.VISIBLE);
+                isgrab = true;
                 refreshTotal();
+                videoStart();
 //                RfidApiCentre.getInstance().startRFIDScan();
 //            {// TODO
 //                NurTagStorage nurTagStorage = new NurTagStorage();
@@ -712,7 +771,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
 
                 break;
-            case R.id.ll_view_pay:
+            case R.id.ll_view_order_card:
                 if (orderDetails == null || orderDetails.size() == 0) {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                     return;
@@ -938,15 +997,28 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private void refreshTotal() {
         orderDetails.clear();
         orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder));
-        int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForKpm(nurOrder.getId().intValue());
+        //int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForKpm(nurOrder.getId().intValue());
+        int itemCount = 0;
+        for (int i = 0; i < orderDetails.size(); i++) {
+            itemCount = itemCount + orderDetails.get(i).getItemNum().intValue();
 
+        }
         if (itemCount > 0) {
+            ll_view_cart.setVisibility(View.VISIBLE);
             rl_cart_num.setVisibility(View.VISIBLE);
             tv_cart_num.setText(itemCount + "");
             ll_view_cart.setEnabled(true);
+            viewCart(false);
         } else {
-            ll_view_cart.setEnabled(false);
-            rl_cart_num.setVisibility(View.GONE);
+            if (isgrab) {
+                ll_view_cart.setVisibility(View.GONE);
+
+            } else {
+                ll_view_cart.setVisibility(View.VISIBLE);
+                ll_view_cart.setEnabled(false);
+                rl_cart_num.setVisibility(View.GONE);
+                viewCart(true);
+            }
         }
     }
 
@@ -1031,41 +1103,72 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         textTypeFace = KpmTextTypeFace.getInstance();
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_grab));
 
-        textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_cart));
+        textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_view_cart));
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_card));
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_you_order));
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_total));
         textTypeFace.setUbuntuBold((TextView) findViewById(R.id.tv_cart_total));
         textTypeFace.setUbuntuRegular((TextView) findViewById(R.id.tv_grab_content));
         textTypeFace.setRegular((TextView) findViewById(R.id.tv_menu_title));
+        textTypeFace.setRegular((TextView) findViewById(R.id.tv_time));
+    }
 
+    private void timeSlot() {
+        Calendar cal = Calendar.getInstance();// 当前日期
+        int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
+        int minute = cal.get(Calendar.MINUTE);// 获取分钟
+        if (hour >= 0 && hour < 12) {
+            tv_time.setText("Morning!");
+        } else if (hour >= 12 && hour < 17) {
+//            System.out.println("在外围外");
+            tv_time.setText("Afternoon!");
+        } else if (hour >= 17 && hour < 20) {
+            tv_time.setText("Evening!");
+        } else if (hour >= 20 && hour < 24) {
+            tv_time.setText("Night!");
+        }
 
     }
 
 
-//    private void timeSlot() {
-//
-//
-//        Calendar cal = Calendar.getInstance();// 当前日期
-//        int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
-//        int minute = cal.get(Calendar.MINUTE);// 获取分钟
-//
-//
-//        int minuteOfDay = hour * 60 + minute;// 从0:00分开是到目前为止的分钟数
-//        final int start = 17 * 60 + 20;// 起始时间 17:20的分钟数
-//        final int end = 19 * 60;// 结束时间 19:00的分钟数
-//        if (hour >= 0 && hour < 12) {
-//            tv_time.setText("Morning");
-//        } else if (hour >= 12 && hour < 17) {
-////            System.out.println("在外围外");
-//            tv_time.setText("Afternoon");
-//        } else if (hour >= 17 && hour < 20) {
-//            tv_time.setText("Evening");
-//        } else if (hour >= 20 && hour < 24) {
-//            tv_time.setText("Night");
-//        }
-//
-//    }
+    private void videoPause() {
+
+        if (mVideoView != null && mVideoView.isPlaying()) {
+            mVideoView.pause();
+        }
+    }
+
+    private void videoStart() {
+
+        if (mVideoView != null) {
+            mVideoView.start();
+        }
+    }
+
+    private void videoStop() {
+
+        if (mVideoView != null) {
+            if (mVideoView != null) {
+                mVideoView.stopPlayback();
+
+            }
+        }
+    }
+
+    private void viewCart(Boolean b) {
+        if (b) {
+            ll_view_cart_bg.setBackgroundResource(R.drawable.btn_view_cart_g);
+            tv_view_cart.setTextColor(getResources().getColor(R.color.gray6));
+            img_view_cart.setBackgroundResource(R.drawable.view_cart_g);
+        } else {
+            ll_view_cart_bg.setBackgroundResource(R.drawable.btn_view_cart);
+            tv_view_cart.setTextColor(getResources().getColor(R.color.white));
+            img_view_cart.setBackgroundResource(R.drawable.view_cart);
+        }
+
+
+    }
+
 
 }
 
