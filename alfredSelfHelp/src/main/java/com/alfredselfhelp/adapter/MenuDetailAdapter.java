@@ -28,7 +28,7 @@ import java.util.List;
 
 public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
-    CountViewMod.OnCountChange onCountChange;
+//    CountViewMod.OnCountChange onCountChange;
     private List<OrderDetail> orderDetails = new ArrayList<>();
     private int currentGroupId;
     private Order currentOrder;
@@ -36,9 +36,9 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
     private KpmTextTypeFace textTypeFace = KpmTextTypeFace.getInstance();
 
-    public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener, CountViewMod.OnCountChange countViewMod) {
+    public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener) {
         super(context, list, listener);
-        this.onCountChange = countViewMod;
+//        this.onCountChange = countViewMod;
         WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 265));
     }
 
@@ -115,7 +115,8 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
             count_view.setInitCount(getItemNum(itemDetail));
             count_view.setTag(itemDetail);
             count_view.setParam(itemDetail);
-            count_view.setOnCountChange(onCountChange);
+            count_view.setEnabled(false);
+//            count_view.setOnCountChange(onCountChange);
 
         }
 

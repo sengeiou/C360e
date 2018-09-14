@@ -15,10 +15,8 @@ import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
@@ -68,10 +66,8 @@ public class SyncCentre {
     }
 
 
-    public void commitOrder(Context context, Order order, Handler handler){
+    public void commitOrder(Context context, Order order, List<OrderDetail> orderDetails, Handler handler){
         Map<String, Object> map = new HashMap<>();
-        Order placeOrder = OrderSQL.getOrder(order.getId());
-        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
         List<OrderModifier> orderModifiers = OrderModifierSQL.getAllOrderModifier(order);
         List<OrderDetailTax> orderDetailTaxs = OrderDetailTaxSQL.getAllOrderDetailTax(order);
         List<Payment> payments = new ArrayList<>();
@@ -80,10 +76,10 @@ public class SyncCentre {
         payments.add(payment);
         List<OrderBill> orderBills = new ArrayList<>();
         orderBills.add(orderBill);
-        PaymentSettlement p = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_VISA, placeOrder.getTotal());
+        PaymentSettlement p = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_VISA, order.getTotal());
         List<PaymentSettlement> paymentSettlements = new ArrayList<>();
         paymentSettlements.add(p);
-        map.put("order", placeOrder);
+        map.put("order", order);
         map.put("orderDetails" , orderDetails);
         map.put("orderModifiers" , orderModifiers);
         map.put("orderBills" , orderBills);

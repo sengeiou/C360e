@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
+import com.alfredselfhelp.javabean.NurTagDto;
 import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
@@ -14,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 public class OrderDetailRFIDHelp {
-    public static List<String> getUnChooseItemBarCode(List<OrderDetail> orderDetails, NurTagStorage nurTagStorage) {
+    public static List<NurTagDto> getUnChooseItemBarCode(List<OrderDetail> orderDetails, NurTagStorage nurTagStorage) {
         Map<String, Integer> orderDetailNumMap = new HashMap<>();
-        List<String> barCodes = new ArrayList<>();
+        List<NurTagDto> barCodes = new ArrayList<>();
         if (orderDetails != null) {
             for (OrderDetail orderDetail : orderDetails) {
                 if(TextUtils.isEmpty(orderDetail.getBarCode())){
@@ -37,11 +38,12 @@ public class OrderDetailRFIDHelp {
                 NurTag nurTag = nurTagStorage.get(i);
                 String barCode = nurTag.getEpcString();
                 if (!orderDetailNumMap.containsKey(nurTag.getEpcString())) {
-                    barCodes.add(nurTag.getEpcString());
+                    NurTagDto nurTagDto = new NurTagDto(nurTag.getEpcString(), nurTag.getUpdateCount());
+                    barCodes.add(nurTagDto);
                 } else {
                     int orderDetailNum = orderDetailNumMap.get(barCode);
-                    if (orderDetailNum > 1) {
-                        orderDetailNumMap.put(barCode, orderDetailNum - 1);
+                    if (orderDetailNum > nurTag.getUpdateCount()) {
+                        orderDetailNumMap.put(barCode, orderDetailNum - nurTag.getUpdateCount());
                     } else {
                         orderDetailNumMap.remove(barCode);
                     }
@@ -77,8 +79,8 @@ public class OrderDetailRFIDHelp {
                 String barCode = nurTag.getEpcString();
                 if(orderDetailNumMap.containsKey(barCode)) {
                     int orderDetailNum = orderDetailNumMap.get(barCode);
-                    if (orderDetailNum > 1) {
-                        orderDetailNumMap.put(barCode, orderDetailNum - 1);
+                    if (orderDetailNum > nurTag.getUpdateCount()) {
+                        orderDetailNumMap.put(barCode, orderDetailNum - nurTag.getUpdateCount());
                     } else {
                         orderDetailNumMap.remove(barCode);
                     }

@@ -47,10 +47,10 @@ import java.util.Map;
 public class DevicesActivity extends BaseActivity {
 
 
-    final int ACTION_NEW_KDS_ADDED = 1041;
-    final int ACTION_NEW_WAITER_ADDED = 1042;
-    final int ACTION_ASSIGN_PRINTER_DEVICE = 10053;
-    final int ASSIGN_PRINTER_DEVICE = 1;
+    public static final int ACTION_NEW_KDS_ADDED = 1041;
+    public static final int ACTION_NEW_WAITER_ADDED = 1042;
+    public static final int ACTION_ASSIGN_PRINTER_DEVICE = 10053;
+    public static final int ASSIGN_PRINTER_DEVICE = 1;
     public static final int UNASSIGN_PRINTER_DEVICE = -1;
     public static final int MANUALLY_ADD_PRINTER = -100;
 

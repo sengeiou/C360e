@@ -21,12 +21,7 @@ import android.widget.VideoView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
-import com.alfredbase.ParamConst;
-import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.TableInfoSQL;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.RfidApiCentre;
@@ -123,16 +118,16 @@ public class MainActivity extends BaseActivity {
             }
         });
         mVideoResManager = new VideoResManager(context);
-        TableInfo tables = TableInfoSQL.getKioskTable();
-        Order order = ObjectFactory.getInstance().getOrder(
-                ParamConst.ORDER_ORIGIN_POS, 0, tables,
-                App.instance.getRevenueCenter(), App.instance.getUser(),
-                App.instance.getSessionStatus(),
-                App.instance.getBusinessDate(),
-                App.instance.getIndexOfRevenueCenter(),
-                ParamConst.ORDER_STATUS_OPEN_IN_POS,
-                App.instance.getLocalRestaurantConfig()
-                        .getIncludedTax().getTax(), 0);
+//        TableInfo tables = TableInfoSQL.getKioskTable();
+//        Order order = ObjectFactory.getInstance().getOrder(
+//                ParamConst.ORDER_ORIGIN_POS, 0, tables,
+//                App.instance.getRevenueCenter(), App.instance.getUser(),
+//                App.instance.getSessionStatus(),
+//                App.instance.getBusinessDate(),
+//                App.instance.getIndexOfRevenueCenter(),
+//                ParamConst.ORDER_STATUS_OPEN_IN_POS,
+//                App.instance.getLocalRestaurantConfig()
+//                        .getIncludedTax().getTax(), 0);
 
 
         imgUrl = Store.getString(context, Store.MAIN_URL);

@@ -12,8 +12,6 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
-import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.OrderHelper;
@@ -70,6 +68,17 @@ public class SelfOrderHelper {
         return order;
     }
 
+    public OrderDetail getOrderDetailFromList(ItemDetail itemDetail, List<OrderDetail> orderDetails){
+        if(orderDetails != null && orderDetails.size() > 0){
+            for(OrderDetail orderDetail : orderDetails){
+                if(orderDetail.getItemId().intValue() == itemDetail.getId().intValue()){
+                    return orderDetail;
+                }
+            }
+        }
+        return null;
+    }
+
     public OrderDetail createOrderDetailForWaiter(Order order,
                                                   ItemDetail itemDetail, int groupId, User user) {
         long time = Math.abs(System.currentTimeMillis());
@@ -109,12 +118,13 @@ public class SelfOrderHelper {
         return orderDetail;
     }
 
-    public void addOrderDetailETCForWaiterFirstAdd(OrderDetail orderDetail, List<OrderDetail> orderDetails) {
+    public void addOrderDetailETCForWaiterFirstAdd(Order order, OrderDetail orderDetail, List<OrderDetail> orderDetails) {
         if (orderDetail == null) {
             return;
         }
-        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+//        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
         calculate(order, orderDetail);
+        orderDetails.add(orderDetail);
         if(updateFreeOrderDetailForWaiter(order, orderDetail, orderDetails)) {
             calculate(order, orderDetail);
         }
@@ -199,7 +209,7 @@ public class SelfOrderHelper {
         return orderDetail;
     }
 
-    private static void calculate(Order order, List<OrderDetail> orderDetailList) {
+    public void calculate(Order order, List<OrderDetail> orderDetailList) {
 
         OrderHelper.setOrderSubTotal(order, orderDetailList);
         updateOrderDetail(order, orderDetailList);
@@ -208,8 +218,16 @@ public class SelfOrderHelper {
         OrderHelper.setOrderTotal(order, orderDetailList);
         OrderHelper.setOrderInclusiveTaxPrice(order);
     }
+    public void updateOrderDetailAndOrderForWaiter( Order order, List<OrderDetail> orderDetails,
+            OrderDetail orderDetail) {
+        if (orderDetail == null) {
+            return;
+        }
+        calculate(order, orderDetail);
+        calculate(order, orderDetails);
+    }
 
-    private static void updateOrderDetail(Order order, List<OrderDetail> orderDetails) {
+    private void updateOrderDetail(Order order, List<OrderDetail> orderDetails) {
         if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER) {
             for (OrderDetail orderDetail : orderDetails) {
                 // 本身是送的，不参与打折
@@ -228,11 +246,12 @@ public class SelfOrderHelper {
                     orderDetail
                             .setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE);
                     orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
-                    OrderDetailSQL.updateOrderDetail(orderDetail);
+//                    OrderDetailSQL.updateOrderDetail(orderDetail);
                 }
             }
         } else if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER) {
-            String sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
+//            String sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
+            String sumRealPrice = getSunRealPrice(orderDetails);
             if(BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))){
                 String discount_rate = BH.div(BH.getBD(order.getDiscountPrice()),
                         BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), false).toString();
@@ -253,7 +272,7 @@ public class SelfOrderHelper {
                         orderDetail
                                 .setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB);
                         orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(discount_rate), BH.getBD(orderDetail.getRealPrice()), false).toString());
-                        OrderDetailSQL.updateOrderDetail(orderDetail);
+//                        OrderDetailSQL.updateOrderDetail(orderDetail);
                     }
                 }
             }
@@ -280,14 +299,14 @@ public class SelfOrderHelper {
                             orderDetail
                                     .setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
                             orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
-                            OrderDetailSQL.updateOrderDetail(orderDetail);
+//                            OrderDetailSQL.updateOrderDetail(orderDetail);
                         }
                     }else if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
                             && orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
                         orderDetail.setDiscountRate("");
                         orderDetail.setDiscountPrice("0.00");
                         orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
-                        OrderDetailSQL.updateOrderDetail(orderDetail);
+//                        OrderDetailSQL.updateOrderDetail(orderDetail);
                     }
                 }
             }
@@ -343,18 +362,32 @@ public class SelfOrderHelper {
                                 orderDetail
                                         .setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
                                 orderDetail.setDiscountPrice(BH.mul(discount_rate, BH.getBD(orderDetail.getRealPrice()), false).toString());
-                                OrderDetailSQL.updateOrderDetail(orderDetail);
+//                                OrderDetailSQL.updateOrderDetail(orderDetail);
                             }
                         }else if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
                                 && orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
                             orderDetail.setDiscountRate("");
                             orderDetail.setDiscountPrice("0.00");
                             orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
-                            OrderDetailSQL.updateOrderDetail(orderDetail);
+//                            OrderDetailSQL.updateOrderDetail(orderDetail);
                         }
                     }
                 }
             }
         }
+    }
+
+    private String  getSunRealPrice(List<OrderDetail> orderDetails){
+        BigDecimal sum = BH.getBD(ParamConst.DOUBLE_ZERO);
+        if(orderDetails != null && orderDetails.size() > 0){
+            for(OrderDetail orderDetail : orderDetails){
+                if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+                        || orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
+
+                    sum = BH.add(sum, BH.getBD(orderDetail.getRealPrice()), true);
+                }
+            }
+        }
+        return sum.toString();
     }
 }

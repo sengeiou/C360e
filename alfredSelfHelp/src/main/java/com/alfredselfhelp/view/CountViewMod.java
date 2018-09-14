@@ -37,7 +37,7 @@ public class CountViewMod extends LinearLayout implements OnClickListener {
         View.inflate(context, R.layout.count_view_mod, this);
         tv_count = (TextView) findViewById(R.id.tv_num);
         add = (ImageView) findViewById(R.id.iv_add);
-        add.setOnClickListener(this);
+//        add.setOnClickListener(this);
 //		findViewById(R.id.tv_add).setOnClickListener(this);
     }
 

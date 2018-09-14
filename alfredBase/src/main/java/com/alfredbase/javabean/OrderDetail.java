@@ -52,7 +52,7 @@ public class OrderDetail implements Serializable {
     /**
      * 打折类型(0不打折、1根据自己比例打折、2根据自己直接减、3根据Order按照比例打折、4根据Order直接减, 5 根据分类按比例打折, 6根据分类直接减)
      */
-    private Integer discountType;
+    private Integer discountType = 0;
 
     private String modifierPrice;
     /**

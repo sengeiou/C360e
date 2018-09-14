@@ -30,7 +30,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
@@ -48,14 +47,15 @@ import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.javabean.ItemDetailDto;
+import com.alfredselfhelp.javabean.NurTagDto;
 import com.alfredselfhelp.popuwindow.SetItemCountWindow;
 import com.alfredselfhelp.utils.CheckListener;
 import com.alfredselfhelp.utils.ItemHeaderDecoration;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 import com.alfredselfhelp.utils.OrderDetailRFIDHelp;
+import com.alfredselfhelp.utils.SelfOrderHelper;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.CountView;
-import com.alfredselfhelp.view.CountViewMod;
 import com.nordicid.nurapi.NurApi;
 import com.nordicid.nurapi.NurRespInventory;
 import com.nordicid.nurapi.NurTag;
@@ -151,18 +151,18 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
-                case VIEW_EVENT_MODIFY_ITEM_COUNT: {
-                    Log.d("444444444444--->", "4444444444444");
-                    Map<String, Object> map = (Map<String, Object>) msg.obj;
-                    updateOrderDetail((ItemDetail) map.get("itemDetail"),
-                            (Integer) map.get("count"));
-                    refreshTotal();
-                    refreshList();
-
-                    boolean isadd = (boolean) map.get("isAdd");
-
-                }
-                break;
+//                case VIEW_EVENT_MODIFY_ITEM_COUNT: {
+//                    Log.d("444444444444--->", "4444444444444");
+//                    Map<String, Object> map = (Map<String, Object>) msg.obj;
+//                    updateOrderDetail((ItemDetail) map.get("itemDetail"),
+//                            (Integer) map.get("count"));
+//                    refreshTotal();
+//                    refreshList();
+//
+//                    boolean isadd = (boolean) map.get("isAdd");
+//
+//                }
+//                break;
 
                 case MODIFY_ITEM_COUNT:
 
@@ -185,8 +185,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     updateCartOrderDetail((OrderDetail) map.get("orderDetail"),
                             count);
 //                    }
+                    /**TODO
+                     * nurOrder = OrderSQL.getOrder(nurOrder.getId());
+                     */
 
-                    nurOrder = OrderSQL.getOrder(nurOrder.getId());
                     tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                     break;
@@ -301,7 +303,17 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         setItemCountWindow = new SetItemCountWindow(this, findViewById(R.id.li_menu),
                 handler);
-        nurOrder = OrderSQL.getAllOrder().get(0);
+//        nurOrder = OrderSQL.getAllOrder().get(0);
+// TODO
+        nurOrder = SelfOrderHelper.getInstance().getOrder(
+                ParamConst.ORDER_ORIGIN_POS, 0,
+                App.instance.getRevenueCenter(), App.instance.getUser(),
+                App.instance.getSessionStatus(),
+                App.instance.getBusinessDate(),
+                App.instance.getIndexOfRevenueCenter(),
+                ParamConst.ORDER_STATUS_OPEN_IN_POS,
+                App.instance.getLocalRestaurantConfig()
+                        .getIncludedTax().getTax(), 0);
 
         int WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 265));
         ViewGroup.LayoutParams lp;
@@ -330,21 +342,22 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         super.onDestroy();
     }
 
-    private void initRfid(List<String> barCodes) {
+    private void initRfid(List<NurTagDto> barCodes) {
         Map<Integer, ItemDetailDto> itemDetailNumMap = new HashMap<>();
         if (barCodes != null && barCodes.size() > 0) {
             for (int j = 0; j < barCodes.size(); j++) {
-                String barCode = barCodes.get(j);
-                ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCodeForKPMG(barCode);
+                NurTagDto nurTagDto = barCodes.get(j);
+
+                ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCodeForKPMG(nurTagDto.getBarCode());
                 if (itemDetail != null) {
                     int itemDetailId = itemDetail.getId();
                     if (itemDetailNumMap.containsKey(itemDetailId)) {
                         ItemDetailDto itemDetailDto = itemDetailNumMap.get(itemDetailId);
-                        itemDetailDto.setItemNum(itemDetailDto.getItemNum() + 1);
+                        itemDetailDto.setItemNum(itemDetailDto.getItemNum() + nurTagDto.getNum());
                     } else {
                         ItemDetailDto itemDetailDto = new ItemDetailDto();
                         itemDetailDto.setItemId(itemDetailId);
-                        itemDetailDto.setItemNum(1);
+                        itemDetailDto.setItemNum(nurTagDto.getNum());
                         itemDetailDto.setItemName(itemDetail.getItemName());
                         itemDetailDto.setItemPrice(itemDetail.getPrice());
                         itemDetailNumMap.put(itemDetailId, itemDetailDto);
@@ -366,11 +379,18 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
                 for (ItemDetailDto itemDetailDto : itemDetailDtos) {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
+                    /** TODO
                     OrderDetail orderDetail = ObjectFactory.getInstance()
                             .createOrderDetailForWaiter(nurOrder, itemDetail,
                                     0, App.instance.getUser());
                     orderDetail.setItemNum(itemDetailDto.getItemNum());
                     OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                    */
+                    OrderDetail orderDetail = SelfOrderHelper.getInstance()
+                            .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                    0, App.instance.getUser());
+                    orderDetail.setItemNum(itemDetailDto.getItemNum());
+                    SelfOrderHelper.getInstance().addOrderDetailETCForWaiterFirstAdd(nurOrder, orderDetail, orderDetails);
                 }
 //                        runOnUiThread(new Runnable() {
 //                            @Override
@@ -402,12 +422,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                @Override
 //                public void run() {
             if (orderDetails != null && orderDetails.size() > 0) {
-                for (OrderDetail orderDetail : orderDetails) {
+                for (int i = orderDetails.size() - 1; i >= 0; i--) {
+                    OrderDetail orderDetail = orderDetails.get(i);
                     if (!TextUtils.isEmpty(orderDetail.getBarCode())) {
                         String barCode = IntegerUtils.format24(orderDetail.getBarCode());
                         if (map.containsKey(barCode)) {
                             Integer num = map.get(barCode);
+                            /** TODO
                             OrderDetailSQL.deleteOrderDetail(orderDetail);
+                             */
+                            orderDetails.remove(i);
                             if (orderDetail.getItemNum() < num.intValue()) {
                                 map.put(barCode, num.intValue() - orderDetail.getItemNum());
                             } else {
@@ -443,20 +467,32 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void updateCartOrderDetail(OrderDetail orderDetail, int count) {
 
-        orderDetails.clear();
+        /**TODO
+         * orderDetails.clear();
+         */
+
         if (count == 0) {// 删除
+            /** TODO
             OrderDetailSQL.deleteOrderDetail(orderDetail);
             OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
+             */
+            orderDetails.remove(orderDetail);
 
         } else {// 添加
             nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+            /** TODO
             OrderSQL.update(nurOrder);
+             */
             orderDetail.setItemNum(count);
             orderDetail.setUpdateTime(System.currentTimeMillis());
+            /** TODO
             OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
+             */
+            SelfOrderHelper.getInstance().updateOrderDetailAndOrderForWaiter(nurOrder, orderDetails, orderDetail);
         }
-
+/**TODO
         orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForKpm(nurOrder));
+ */
         cartAdater.notifyDataSetChanged();
         if (orderDetails.size() == 0) {
             View view = re_main_category.getChildAt(0);//获取到第一个Item的View
@@ -466,37 +502,54 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
     }
 
-    private void updateOrderDetail(ItemDetail itemDetail, int count) {
-        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
-                nurOrder, itemDetail, 0,
-                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
-//		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
-//				currentOrder, itemDetail, currentGroupId);
-        if (count == 0) {// 删除
-            OrderDetailSQL.deleteOrderDetail(orderDetail);
-            OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
-        } else {// 添加
-//			count = count - oldCount;
-            nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
-            OrderSQL.update(nurOrder);
-            if (orderDetail == null) {
-                orderDetail = ObjectFactory.getInstance()
-                        .createOrderDetailForWaiter(nurOrder, itemDetail,
-                                0, App.instance.getUser());
-                orderDetail.setItemNum(count);
-                OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-            } else {
-                orderDetail.setItemNum(count);
-                orderDetail.setUpdateTime(System.currentTimeMillis());
-                OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
-            }
-        }
-    }
+//    private void updateOrderDetail(ItemDetail itemDetail, int count) {
+//        /**TODO
+//        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+//                nurOrder, itemDetail, 0,
+//                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
+//         */
+////		int oldCount = OrderDetailSQL.getUnFreeOrderDetailsNumInKOTOrPOS(
+////				currentOrder, itemDetail, currentGroupId);
+////        if (count == 0) {// 删除
+////            OrderDetailSQL.deleteOrderDetail(orderDetail);
+////            OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
+////        } else {// 添加
+////			count = count - oldCount;
+//            nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+//            /**TODO
+//            OrderSQL.update(nurOrder);
+//             */
+//            OrderDetail orderDetail = SelfOrderHelper.getInstance().getOrderDetailFromList(itemDetail, orderDetails);
+//            if (orderDetail == null) {
+//                /**TODO
+//                orderDetail = ObjectFactory.getInstance()
+//                        .createOrderDetailForWaiter(nurOrder, itemDetail,
+//                                0, App.instance.getUser());
+//                 */
+//                orderDetail = SelfOrderHelper.getInstance().createOrderDetailForWaiter(nurOrder, itemDetail,
+//                        0, App.instance.getUser());
+//                orderDetail.setItemNum(count);
+//                /**TODO
+//                OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+//                 */
+//                SelfOrderHelper.getInstance().addOrderDetailETCForWaiterFirstAdd(orderDetail, orderDetails);
+//            } else {
+//                orderDetail.setItemNum(count);
+//                orderDetail.setUpdateTime(System.currentTimeMillis());
+//                /**TODO
+//                OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
+//                 */
+//            }
+////        }
+//    }
 
     private void updateitemOrderDetail(ItemDetail itemDetail, int count) {
+        /** TODO
         OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
                 nurOrder, itemDetail, 0,
                 ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
+         */
+        OrderDetail orderDetail = SelfOrderHelper.getInstance().getOrderDetailFromList(itemDetail, orderDetails);
         if (orderDetail != null) {
             count = count + orderDetail.getItemNum();
 
@@ -504,22 +557,42 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             count = 1;
         }
         if (count == 0) {// 删除
+            /**TODO
             OrderDetailSQL.deleteOrderDetail(orderDetail);
             OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
+             */
+            if(orderDetail != null){
+                orderDetails.remove(orderDetail);
+                SelfOrderHelper.getInstance().calculate(nurOrder, orderDetails);
+            }
         } else {// 添加
 //			count = count - oldCount;
             nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
+            /**TODO
             OrderSQL.update(nurOrder);
+             */
             if (orderDetail == null) {
+                /**TODO
                 orderDetail = ObjectFactory.getInstance()
                         .createOrderDetailForWaiter(nurOrder, itemDetail,
                                 0, App.instance.getUser());
+                 */
+                orderDetail = SelfOrderHelper.getInstance()
+                        .createOrderDetailForWaiter(nurOrder, itemDetail,
+                                0, App.instance.getUser());
                 orderDetail.setItemNum(count);
+                /**
                 OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                 */
+                SelfOrderHelper.getInstance().addOrderDetailETCForWaiterFirstAdd(nurOrder, orderDetail, orderDetails);
             } else {
                 orderDetail.setItemNum(count);
                 orderDetail.setUpdateTime(System.currentTimeMillis());
-                OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
+                /**TODO
+                 *
+                 * OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
+                 */
+                SelfOrderHelper.getInstance().updateOrderDetailAndOrderForWaiter(nurOrder, orderDetails, orderDetail);
             }
         }
     }
@@ -592,18 +665,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
                 handler.sendMessage(handler.obtainMessage(
                         MODIFY_ITEM_COUNT, map));
-            }
-        }, new CountViewMod.OnCountChange() {
-            @Override
-            public void onChange(ItemDetail selectedItemDetail, int count, boolean isAdd) {
-
-
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("itemDetail", selectedItemDetail);
-                map.put("count", count);
-                map.put("isAdd", isAdd);
-                handler.sendMessage(handler.obtainMessage(
-                        VIEW_EVENT_MODIFY_ITEM_COUNT, map));
             }
         });
         re_menu_details.setAdapter(mDetailAdapter);
@@ -779,14 +840,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ll_view_pay.setVisibility(View.VISIBLE);
         loadingDialog.setTitle("Pay...");
         loadingDialog.show();
-        SyncCentre.getInstance().commitOrder(this, nurOrder, handler);
+        SyncCentre.getInstance().commitOrder(this, nurOrder, orderDetails, handler);
 
         mainCategoryAdapter.setCheckedPosition(-1);
     }
 
     private void cartView() {
-
+        /**TODO
         orderDetails = OrderDetailSQL.getOrderDetails(nurOrder.getId());
+         */
         mLinearLayoutManager = new LinearLayoutManager(context);
         mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
         re_view_cart.setLayoutManager(mLinearLayoutManager);
@@ -813,7 +875,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
 
         re_view_cart.setAdapter(cartAdater);
-        nurOrder = OrderSQL.getOrder(nurOrder.getId());
+        /**
+         * TODO
+         * nurOrder = OrderSQL.getOrder(nurOrder.getId());
+         */
+
         tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
         tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
 
@@ -945,8 +1011,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
 
     private void refreshTotal() {
+        /** TODO
         orderDetails.clear();
         orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder));
+         */
         //int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForKpm(nurOrder.getId().intValue());
         int itemCount = 0;
         for (int i = 0; i < orderDetails.size(); i++) {
@@ -989,7 +1057,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void refreshViewCart() {
         if (cartAdater != null) {
+            /** TODO
             nurOrder = OrderSQL.getOrder(nurOrder.getId());
+             */
             cartAdater.notifyDataSetChanged();
             tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
         }
@@ -999,52 +1069,55 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         @Override
         public void run() {
             try {
+
                 // Clear tag storage
                 NurApi api = RfidApiCentre.getInstance().getNurApi();
-                api.clearIdBuffer();
-                api.clearTagStorage();
-                LogUtil.e("TAG", "clear Api : " + api.getStorage().size());
-                NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-                nurTagStorage.clear();
-                LogUtil.e("TAG", "clear nurTagStorage  : " + nurTagStorage.size());
-                NurRespInventory resp = api.inventory();
-                System.out.println("inventory numTagsFound: " + resp.numTagsFound);
-                LogUtil.e("TAG", "inventory numTagsFound: " + resp.numTagsFound);
-                LogUtil.e("TAG", "api.getStorage(): " + api.getStorage());
-                if (resp.numTagsFound > 0) {
-                    // Fetch and print tags
-                    api.fetchTags();
-                    for (int n = 0; n < resp.numTagsFound; n++) {
-                        NurTag tag = api.getStorage().get(n);
-                        nurTagStorage.addTag(tag);
+                if(api != null && api.isConnected()) {
+                    api.clearIdBuffer();
+                    api.clearTagStorage();
+                    LogUtil.e("TAG", "clear Api : " + api.getStorage().size());
+                    NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+                    nurTagStorage.clear();
+                    LogUtil.e("TAG", "clear nurTagStorage  : " + nurTagStorage.size());
+                    NurRespInventory resp = api.inventory();
+                    System.out.println("inventory numTagsFound: " + resp.numTagsFound);
+                    LogUtil.e("TAG", "inventory numTagsFound: " + resp.numTagsFound);
+                    LogUtil.e("TAG", "api.getStorage(): " + api.getStorage());
+                    if (resp.numTagsFound > 0) {
+                        // Fetch and print tags
+                        api.fetchTags();
+                        for (int n = 0; n < resp.numTagsFound; n++) {
+                            NurTag tag = api.getStorage().get(n);
+                            nurTagStorage.addTag(tag);
+                        }
                     }
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (nurOrder != null && nurOrder.getId() > 0) {
-                            NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (nurOrder != null && nurOrder.getId() > 0) {
+                                NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
 //                            UIHelp.showShortToast(App.instance, "nurTagStorage size" + nurTagStorage.size());
-                            List<String> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
-                            if (!isUpdating) {
-                                LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
-                                if (barCodes.size() > 0) {
+                                List<NurTagDto> barCodes = OrderDetailRFIDHelp.getUnChooseItemBarCode(orderDetails, nurTagStorage);
+                                if (!isUpdating) {
+                                    LogUtil.e("TAG", "Storage size: =======" + nurTagStorage.size());
+                                    if (barCodes.size() > 0) {
 
-                                    LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
-                                    isUpdating = true;
-                                    initRfid(barCodes);
-                                } else {
-                                    Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
-                                    if (map.size() > 0) {
-                                        LogUtil.e("TAG", "Remove: ======= map size" + map.size());
+                                        LogUtil.e("TAG", "Add: ======= barCodes size" + barCodes.size());
                                         isUpdating = true;
-                                        removeRfid(map);
+                                        initRfid(barCodes);
+                                    } else {
+                                        Map<String, Integer> map = OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage);
+                                        if (map.size() > 0) {
+                                            LogUtil.e("TAG", "Remove: ======= map size" + map.size());
+                                            isUpdating = true;
+                                            removeRfid(map);
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                });
+                    });
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
