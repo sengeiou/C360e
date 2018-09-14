@@ -98,8 +98,8 @@
                 android:layout_marginRight="0dp"
                 android:background="@drawable/style_price_btn"
 
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
                 android:text="S$50.00"
                 android:textColor="@color/white"
                 android:textSize="24sp"

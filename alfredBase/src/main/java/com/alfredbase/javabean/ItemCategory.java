@@ -37,6 +37,16 @@ public class ItemCategory implements Serializable{
 
 	private Long updateTime;
 
+	private String imgUrl;
+
+	public String getImgUrl() {
+		return imgUrl;
+	}
+
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
 	public Integer getId() {
 		if (CommonUtil.isNull(id))
 			return 0;
@@ -170,6 +180,7 @@ public class ItemCategory implements Serializable{
 //				+ "]";
 //	}
 
+
 	@Override
 	public String toString() {
 		return "ItemCategory{" +
@@ -185,6 +196,7 @@ public class ItemCategory implements Serializable{
 				", userId=" + userId +
 				", createTime=" + createTime +
 				", updateTime=" + updateTime +
+				", imgUrl='" + imgUrl + '\'' +
 				'}';
 	}
 }

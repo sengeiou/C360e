@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -178,10 +181,7 @@ public class KpmDialogFactory {
 
 
                                     final OnClickListener backListener, final boolean canBack) {
-//		activity.runOnUiThread(new Runnable() {
-//
-//			@Override
-//			public void run() {
+
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.dialog_item_kpm_f_btns, null);
@@ -205,6 +205,64 @@ public class KpmDialogFactory {
 
                     @Override
                     public void onClick(View v) {
+                        dialog.dismiss();
+                        if (backListener != null)
+                            backListener.onClick(v);
+                    }
+                });
+//        if (activity == null || activity.isFinishing())
+//            return;
+
+//			}
+//		});
+        return dialog;
+    }
+
+
+    public static Dialog kpmVideoViewDialog(final BaseActivity activity,
+
+
+                                            final OnClickListener backListener, final boolean canBack) {
+
+        final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
+        View view = LayoutInflater.from(activity).inflate(
+                R.layout.dialog_item_kpm_video_btns, null);
+        final VideoView mvideoView = (VideoView) view.findViewById(R.id.dia_videoView);
+
+
+        mvideoView.setVideoURI(Uri.parse("android.resource://" + activity.getPackageName() + "/raw/grabplace"));
+        mvideoView.start();
+        //监听视频播放完的代码
+        mvideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mPlayer) {
+                // TODO Auto-generated method stub
+                mPlayer.start();
+                mPlayer.setLooping(true);
+            }
+        });
+//        ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+//        ImageView img = (ImageView) view.findViewById(R.id.img_center);
+//
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams()
+        //  img.setImageResource(drawableId);
+
+//				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+//				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+        dialog.show();
+        dialog.setCancelable(canBack);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setContentView(view);
+
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_backs));
+        view.findViewById(R.id.tv_backs).setOnClickListener(
+                new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+
+                        mvideoView.stopPlayback();
                         dialog.dismiss();
                         if (backListener != null)
                             backListener.onClick(v);

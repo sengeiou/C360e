@@ -2,6 +2,7 @@ package com.alfredselfhelp.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -46,6 +47,7 @@ import com.alfredselfhelp.adapter.MainCategoryAdapter;
 import com.alfredselfhelp.adapter.MenuDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.global.KpmDialogFactory;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.javabean.ItemDetailDto;
@@ -85,7 +87,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private ClassAdapter mClassAdapter;
     private MenuDetailAdapter mDetailAdapter;
     ItemHeaderDecoration mDecoration;
-    private TextView total, tv_cart_num, tv_total_price, tv_time, tv_view_cart;
+    private TextView total, tv_cart_num, tv_total_price, tv_time, tv_view_cart, tv_dialog_ok;
 
     private ImageView img_view_cart;
     private RelativeLayout rl_cart_num;
@@ -115,6 +117,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private KpmTextTypeFace textTypeFace;
 
     private VideoView mVideoView;
+    Dialog yesDialog;
 
     //    Dialog fdialog;
     protected void initView() {
@@ -261,6 +264,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mVideoView = (VideoView) findViewById(R.id.video_menu);
         tv_time = (TextView) findViewById(R.id.tv_time);
         ll_view_order_card = (LinearLayout) findViewById(R.id.ll_view_order_card);
+        tv_dialog_ok = (TextView) findViewById(R.id.tv_dialog_ok);
+        tv_dialog_ok.setOnClickListener(this);
         ll_view_order_card.setOnClickListener(this);
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
@@ -273,8 +278,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         menuDetail();
         re_main_category = (RecyclerView) findViewById(R.id.re_main_category);
         mLinearLayoutManager = new LinearLayoutManager(context);
-        mLinearLayoutManager.setOrientation(OrientationHelper.HORIZONTAL);
         re_main_category.setLayoutManager(mLinearLayoutManager);
+
+        mLinearLayoutManager.setOrientation(OrientationHelper.HORIZONTAL);
+        //  re_main_category.setLayoutManager(mLinearLayoutManager);
 //        DividerItemDecoration decoration = new DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL);
 //        re_main_category.addItemDecoration(decoration);
         mainCategoryAdapter = new MainCategoryAdapter(context, itemMainCategories, new RvListener() {
@@ -294,6 +301,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_menu_title.setVisibility(View.GONE);
                 videoPause();
                 getItemCategory(itemMainCategory.getId());
+
+                //     UIHelp.showToastTransparent(App.instance, "Item(s) have been added!");
                 //   getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
 
 
@@ -315,7 +324,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ViewGroup.LayoutParams lp;
         lp = ll_menu_details.getLayoutParams();
         lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        lp.height = WIDTH / 4 * 5;
+        lp.height = WIDTH / 4 * 5 - 5;
         ll_menu_details.setLayoutParams(lp);
 //
 //
@@ -413,6 +422,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if (orderDetails.size() == 0) {
                     showViewCart = true;
                 }
+                boolean showToast = false;
                 for (ItemDetailDto itemDetailDto : itemDetailDtos) {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
                     OrderDetail orderDetail = ObjectFactory.getInstance()
@@ -420,6 +430,17 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                                     0, App.instance.getUser());
                     orderDetail.setItemNum(itemDetailDto.getItemNum());
                     OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                    showToast = true;
+                }
+
+
+                if (showToast && mVideoView.getVisibility() == View.VISIBLE && ll_view_cart.getVisibility() == View.VISIBLE) {
+                    UIHelp.showToastTransparent(App.instance, "Item(s) have been added!");
+                }
+
+                if (showToast && ll_view_cart_list.getVisibility() == View.VISIBLE
+                        && yesDialog != null && yesDialog.isShowing()) {
+                    yesDialog.dismiss();
                 }
 //                        runOnUiThread(new Runnable() {
 //                            @Override
@@ -567,6 +588,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
             } else {
                 orderDetail.setItemNum(count);
+                orderDetail.setItemUrl(itemDetail.getImgUrl());
                 orderDetail.setUpdateTime(System.currentTimeMillis());
                 OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
             }
@@ -597,14 +619,36 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
 
         mManager = new GridLayoutManager(context, 3);
-        //通过isTitle的标志来判断是否是title
-//        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-//            @Override
-//            public int getSpanSize(int position) {
-//                return  1;
-//            }
-//        });1
+
         re_menu_details.setLayoutManager(mManager);
+
+//        re_menu_details.setLayoutManager(new GridLayoutManager(this,3){
+//
+//            @Override
+//            public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
+//                int count = state.getItemCount();
+//                if (count > 0) {
+//                    if(count>5){
+//                        count =5;
+//                    }
+//                    int realHeight = 0;
+//                    int realWidth = 0;
+//                    for(int i = 0;i < count; i++){
+//                        View view = recycler.getViewForPosition(0);
+//                        if (view != null) {
+//                            measureChild(view, widthSpec, heightSpec);
+//                            int measuredWidth = View.MeasureSpec.getSize(widthSpec);
+//                            int measuredHeight = view.getMeasuredHeight();
+//                            realWidth = realWidth > measuredWidth ? realWidth : measuredWidth;
+//                            realHeight += measuredHeight;
+//                        }
+//                        setMeasuredDimension(realWidth, realHeight);
+//                    }
+//                } else {
+//                    super.onMeasure(recycler, state, widthSpec, heightSpec);
+//                }
+//            }
+//        });
         mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
@@ -866,6 +910,17 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //
 
                 break;
+
+            case R.id.tv_dialog_ok:
+
+                yesDialog = KpmDialogFactory.kpmVideoViewDialog(context, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }, false);
+
+                break;
         }
     }
 
@@ -1065,6 +1120,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         textTypeFace.setUbuntuRegular((TextView) findViewById(R.id.tv_grab_content));
         textTypeFace.setRegular((TextView) findViewById(R.id.tv_menu_title));
         textTypeFace.setRegular((TextView) findViewById(R.id.tv_time));
+        textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_dia_title));
+        textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_dialog_ok));
     }
 
     private void timeSlot() {
