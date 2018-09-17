@@ -4,12 +4,16 @@ package com.alfredselfhelp.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Html;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -43,11 +47,14 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
         private TextView tvName;
         private View mView;
 
+        private ImageView img_class;
+
         ClassHolder(View itemView, int type, RvListener listener) {
             super(itemView, type, listener);
             this.mView = itemView;
 
             tvName = (TextView) itemView.findViewById(R.id.tv_class_name);
+            img_class=(ImageView)itemView.findViewById(R.id.img_class);
 
         }
 
@@ -56,6 +63,13 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
         public void bindHolder(ItemCategory itemCategory, int position) {
             tvName.setText(itemCategory.getItemCategoryName());
             textTypeFace.setUbuntuMedium(tvName);
+
+//            Glide.with(mContext)
+//                    .load(itemCategory.getImgUrl())
+//                    .placeholder(R.drawable.img_bg)
+//                    .error(R.drawable.img_bg)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .into(img_class);
             if (position == checkedPosition) {
                 mView.setBackgroundResource(R.color.gray4);
                 tvName.setTextColor(mContext.getResources().getColor(R.color.green1));

@@ -25,7 +25,7 @@
             android:text="KPMG QR Code"
             android:textColor="@color/black1"
 
-            android:textSize="22sp" />
+            android:textSize="45sp" />
 
 
         <TextView
@@ -38,7 +38,7 @@
             android:paddingRight="5dp"
             android:text="Payment in progress..."
             android:textColor="@color/black1"
-            android:textSize="22sp" />
+            android:textSize="45sp" />
 
 
         <ImageView
@@ -62,7 +62,7 @@
             android:gravity="center"
             android:text="Position the QR code at the sdanner"
             android:textColor="@color/white"
-            android:textSize="22dp"
+            android:textSize="42dp"
             android:visibility="visible" />
     </LinearLayout>
 

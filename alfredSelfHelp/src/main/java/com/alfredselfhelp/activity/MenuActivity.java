@@ -2,6 +2,7 @@ package com.alfredselfhelp.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -44,6 +45,7 @@ import com.alfredselfhelp.adapter.MainCategoryAdapter;
 import com.alfredselfhelp.adapter.MenuDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.global.KpmDialogFactory;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.javabean.ItemDetailDto;
@@ -83,7 +85,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private ClassAdapter mClassAdapter;
     private MenuDetailAdapter mDetailAdapter;
     ItemHeaderDecoration mDecoration;
-    private TextView total, tv_cart_num, tv_total_price, tv_time, tv_view_cart;
+    private TextView total, tv_cart_num, tv_total_price, tv_time, tv_view_cart, tv_dialog_ok;
 
     private ImageView img_view_cart;
     private RelativeLayout rl_cart_num;
@@ -113,6 +115,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private KpmTextTypeFace textTypeFace;
 
     private VideoView mVideoView;
+    Dialog yesDialog;
 
     //    Dialog fdialog;
     protected void initView() {
@@ -261,6 +264,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mVideoView = (VideoView) findViewById(R.id.video_menu);
         tv_time = (TextView) findViewById(R.id.tv_time);
         ll_view_order_card = (LinearLayout) findViewById(R.id.ll_view_order_card);
+        tv_dialog_ok = (TextView) findViewById(R.id.tv_dialog_ok);
+        tv_dialog_ok.setOnClickListener(this);
         ll_view_order_card.setOnClickListener(this);
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
@@ -273,8 +278,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         menuDetail();
         re_main_category = (RecyclerView) findViewById(R.id.re_main_category);
         mLinearLayoutManager = new LinearLayoutManager(context);
-        mLinearLayoutManager.setOrientation(OrientationHelper.HORIZONTAL);
         re_main_category.setLayoutManager(mLinearLayoutManager);
+
+        mLinearLayoutManager.setOrientation(OrientationHelper.HORIZONTAL);
+        //  re_main_category.setLayoutManager(mLinearLayoutManager);
 //        DividerItemDecoration decoration = new DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL);
 //        re_main_category.addItemDecoration(decoration);
         mainCategoryAdapter = new MainCategoryAdapter(context, itemMainCategories, new RvListener() {
@@ -294,7 +301,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 ll_menu_title.setVisibility(View.GONE);
                 videoPause();
                 getItemCategory(itemMainCategory.getId());
-                getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
+
+                //     UIHelp.showToastTransparent(App.instance, "Item(s) have been added!");
+                //   getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
 
 
             }
@@ -319,10 +328,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ViewGroup.LayoutParams lp;
         lp = ll_menu_details.getLayoutParams();
         lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        lp.height = WIDTH / 4 * 5;
+        lp.height = WIDTH / 4 * 5 - 5;
         ll_menu_details.setLayoutParams(lp);
-
-
+//
+//
+//        ViewGroup.LayoutParams lpDe;
+//        lpDe = re_menu_details.getLayoutParams();
+//        lpDe.width = ViewGroup.LayoutParams.MATCH_PARENT;
+//        lpDe.height = WIDTH / 4 * 5;
+//        re_menu_details.setLayoutParams(lpDe);
         refreshTotal();
 //        viewCart(true);
 
@@ -377,6 +391,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if (orderDetails.size() == 0) {
                     showViewCart = true;
                 }
+                boolean showToast = false;
                 for (ItemDetailDto itemDetailDto : itemDetailDtos) {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
                     /** TODO
@@ -391,6 +406,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                                     0, App.instance.getUser());
                     orderDetail.setItemNum(itemDetailDto.getItemNum());
                     SelfOrderHelper.getInstance().addOrderDetailETCForWaiterFirstAdd(nurOrder, orderDetail, orderDetails);
+                    showToast = true;
+                }
+
+                if (showToast && mVideoView.getVisibility() == View.VISIBLE && ll_view_cart.getVisibility() == View.VISIBLE) {
+                    UIHelp.showToastTransparent(App.instance, "Item(s) have been added!");
+                }
+
+                if (showToast && ll_view_cart_list.getVisibility() == View.VISIBLE
+                        && yesDialog != null && yesDialog.isShowing()) {
+                    yesDialog.dismiss();
                 }
 //                        runOnUiThread(new Runnable() {
 //                            @Override
@@ -587,6 +612,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 SelfOrderHelper.getInstance().addOrderDetailETCForWaiterFirstAdd(nurOrder, orderDetail, orderDetails);
             } else {
                 orderDetail.setItemNum(count);
+                orderDetail.setItemUrl(itemDetail.getImgUrl());
                 orderDetail.setUpdateTime(System.currentTimeMillis());
                 /**TODO
                  *
@@ -606,15 +632,63 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mClassAdapter = new ClassAdapter(context, itemCategorys, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
-                isMoved = true;
-                App.isleftMoved = true;
-                targetPosition = position;
+
+                ItemCategory itemCategory = itemCategorys.get(position);
+                // isMoved = true;
+                //   App.isleftMoved = true;
+                //   targetPosition = position;
                 setChecked(position, true, 0);
+                getItemDetailmod(itemCategory);
 
             }
         });
 
         re_menu_classify.setAdapter(mClassAdapter);
+
+
+        mManager = new GridLayoutManager(context, 3);
+
+        re_menu_details.setLayoutManager(mManager);
+
+//        re_menu_details.setLayoutManager(new GridLayoutManager(this,3){
+//
+//            @Override
+//            public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
+//                int count = state.getItemCount();
+//                if (count > 0) {
+//                    if(count>5){
+//                        count =5;
+//                    }
+//                    int realHeight = 0;
+//                    int realWidth = 0;
+//                    for(int i = 0;i < count; i++){
+//                        View view = recycler.getViewForPosition(0);
+//                        if (view != null) {
+//                            measureChild(view, widthSpec, heightSpec);
+//                            int measuredWidth = View.MeasureSpec.getSize(widthSpec);
+//                            int measuredHeight = view.getMeasuredHeight();
+//                            realWidth = realWidth > measuredWidth ? realWidth : measuredWidth;
+//                            realHeight += measuredHeight;
+//                        }
+//                        setMeasuredDimension(realWidth, realHeight);
+//                    }
+//                } else {
+//                    super.onMeasure(recycler, state, widthSpec, heightSpec);
+//                }
+//            }
+//        });
+        mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
+            @Override
+            public void onItemClick(int id, int position) {
+                ItemDetail itemDetail = itemDetails.get(position);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("itemDetail", itemDetail);
+
+                handler.sendMessage(handler.obtainMessage(
+                        MODIFY_ITEM_COUNT, map));
+            }
+        });
+        re_menu_details.setAdapter(mDetailAdapter);
 
     }
 
@@ -637,7 +711,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
             }
         }
-        mClassAdapter.notifyDataSetChanged();
+        mClassAdapter.setCheckedPosition(0);
+        //  mClassAdapter.notifyDataSetChanged();
+        if (itemCategorys != null && itemCategorys.size() > 0) {
+            getItemDetailmod(itemCategorys.get(0));
+        }
+
+
         return itemCategorielist;
 
     }
@@ -646,7 +726,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     ) {
 
         itemDetails.clear();
-        re_menu_details.addOnScrollListener(new RecyclerViewListener());
+
         mManager = new GridLayoutManager(context, 3);
         //通过isTitle的标志来判断是否是title
 //        mManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -714,24 +794,26 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         return itemDetailandCate;
     }
 
-//    private List<ItemDetail> getItemDetailmod(ItemCategory itemCategory) {
-//        itemDetails.clear();
-//        List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
-//        itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
-//        // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
-//        if (itemDetaillist != null || itemDetaillist.size() > 0) {
-//            for (int d = 0; d < itemDetaillist.size(); d++) {
-//                itemDetaillist.get(d).setItemCategoryName("");
-//                itemDetaillist.get(d).setTag(String.valueOf(0));
-//                itemDetaillist.get(d).setViewType(3);
-//                itemDetails.add(itemDetaillist.get(d));
-//                // }
-//            }
-//        }
-//        refreshTotal();
-//        refreshList();
-//        return null;
-//    }
+    private List<ItemDetail> getItemDetailmod(ItemCategory itemCategory) {
+        itemDetails.clear();
+        List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
+        itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
+        // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
+        if (itemDetaillist != null || itemDetaillist.size() > 0) {
+            for (int d = 0; d < itemDetaillist.size(); d++) {
+                itemDetaillist.get(d).setItemCategoryName("");
+                itemDetaillist.get(d).setTag(String.valueOf(0));
+                itemDetaillist.get(d).setViewType(3);
+                itemDetails.add(itemDetaillist.get(d));
+                // }
+            }
+        }
+        mDetailAdapter.notifyDataSetChanged();
+
+        refreshTotal();
+        refreshList();
+        return null;
+    }
 
 
     @Override
@@ -832,6 +914,17 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //
 
                 break;
+
+            case R.id.tv_dialog_ok:
+
+                yesDialog = KpmDialogFactory.kpmVideoViewDialog(context, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }, false);
+
+                break;
         }
     }
 
@@ -858,7 +951,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                isMoved = true;
 //                App.isleftMoved = true;
 //                targetPosition = position;
-//                setChecked(position, true, 0);
+                setChecked(position, true, 0);
 
             }
         }, new CountView.OnCountChange() {
@@ -891,124 +984,29 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         Log.d("setChecked-------->", String.valueOf(position));
         if (isLeft) {
             mClassAdapter.setCheckedPosition(position);
-            //mSortAdapter.setCheckedPosition(position);
-            //此处的位置需要根据每个分类的集合来进行计算
-            Log.d("1111111-------->", String.valueOf(position));
-            List<ItemDetail> itemDetaillist = new ArrayList<ItemDetail>();
-            int count = 0;
-            List<ItemCategory> itemCategorylist = ItemCategorySQL.getAllItemCategory();
-            int tag = 0;
 
+        }
+//        if (!App.isleftMoved) {
+//          //  moveToCenter(position);
+//        }
 
-            for (int i = 0; i < position; i++) {
-                itemDetaillist.clear();
-                //  itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
-                itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorys.get(i));
-                // itemDetaillist  = ItemDetailSQL.getAllItemDetail();
-                for (int d = 0; d < itemDetaillist.size(); d++) {
-                    count++;
-                    // }
-                }
-            }
+    }
 
+//    private void moveToCenter(int position) {
+//        //将点击的position转换为当前屏幕上可见的item的位置以便于计算距离顶部的高度，从而进行移动居中
+//        View childAt = re_menu_classify.getChildAt(position - mLinearLayoutManager.findFirstVisibleItemPosition());
+//        if (childAt != null) {
+//            int y = (childAt.getTop() - re_main_category.getHeight() / 2);
+//            re_menu_classify.smoothScrollBy(0, y);
+//        }
 //
-            count += position;
-            Log.d("count-------->", String.valueOf(count));
-            move(count);
-            mDecoration.setCurrentTag(String.valueOf(targetPosition));//凡是点击左边，将左边点击的位置作为当前的tag
-        } else {
-
-            if (isMoved) {
-                isMoved = false;
-            } else {
-                if (!App.isleftMoved) {
-                    mClassAdapter.setCheckedPosition(position);
-                }
-
-            }
-            mDecoration.setCurrentTag(String.valueOf(position));//如果是滑动右边联动左边，则按照右边传过来的位置作为tag
-
-
-        }
-        if (!App.isleftMoved) {
-            moveToCenter(position);
-        }
-
-    }
-
-    private void moveToCenter(int position) {
-        //将点击的position转换为当前屏幕上可见的item的位置以便于计算距离顶部的高度，从而进行移动居中
-        View childAt = re_menu_classify.getChildAt(position - mLinearLayoutManager.findFirstVisibleItemPosition());
-        if (childAt != null) {
-            int y = (childAt.getTop() - re_main_category.getHeight() / 2);
-            re_menu_classify.smoothScrollBy(0, y);
-        }
-
-    }
+//    }
 
     @Override
     public void check(int position, boolean isScroll) {
 
         setChecked(position, isScroll, 0);
     }
-
-    public void move(int n) {
-        mIndex = n;
-        re_menu_details.stopScroll();
-        smoothMoveToPosition(n);
-    }
-
-
-    private void smoothMoveToPosition(int n) {
-        int firstItem = mManager.findFirstVisibleItemPosition();
-        int lastItem = mManager.findLastVisibleItemPosition();
-        Log.d("first--->", String.valueOf(firstItem));
-        Log.d("last--->", String.valueOf(lastItem));
-        if (n <= firstItem) {
-            re_menu_details.smoothScrollToPosition(n);
-            // ((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
-        } else if (n <= lastItem) {
-            Log.d("pos---->", String.valueOf(n) + "VS" + firstItem);
-            int top = re_menu_details.getChildAt(n - firstItem).getTop();
-            Log.d("top---->", String.valueOf(top));
-            re_menu_details.scrollBy(0, top);
-        } else {
-            //((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
-            re_menu_details.smoothScrollToPosition(n);
-            move = true;
-        }
-    }
-
-
-    private class RecyclerViewListener extends RecyclerView.OnScrollListener {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-
-            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                Log.d("SCROLL--->", "拖拽中");
-                App.isleftMoved = false;
-            }
-            if (move && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                App.isleftMoved = false;
-                move = false;
-                int n = mIndex - mManager.findFirstVisibleItemPosition();
-                Log.d("n---->", String.valueOf(n));
-                if (0 <= n && n < re_menu_details.getChildCount()) {
-                    int top = re_menu_details.getChildAt(n).getTop();
-                    Log.d("top---Changed>", String.valueOf(top));
-                    re_menu_details.smoothScrollBy(0, top);
-                }
-            }
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-        }
-    }
-
 
     private void refreshTotal() {
         /** TODO
@@ -1138,6 +1136,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         textTypeFace.setUbuntuRegular((TextView) findViewById(R.id.tv_grab_content));
         textTypeFace.setRegular((TextView) findViewById(R.id.tv_menu_title));
         textTypeFace.setRegular((TextView) findViewById(R.id.tv_time));
+        textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_dia_title));
+        textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_dialog_ok));
     }
 
     private void timeSlot() {
