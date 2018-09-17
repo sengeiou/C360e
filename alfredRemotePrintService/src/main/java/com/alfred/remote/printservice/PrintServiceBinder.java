@@ -1095,9 +1095,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 
     @Override
-    public void listPrinters() {
-        if (service.registerReceiverBluetooth()) {
-            service.SearchBluetooth();
+    public void listPrinters(String type) {
+        if(type.equals("1")) {
+            if (service.registerReceiverBluetooth()) {
+                service.SearchBluetooth();
+            }
         }
      //   service.SearchUsb();
         final Gson gson = new Gson();

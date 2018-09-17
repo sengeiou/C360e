@@ -36,7 +36,7 @@ interface IAlfredRemotePrintService {
 
 	void kickCashDrawer(String printer);
 	
-	void listPrinters();
+	void listPrinters(String type);
 
 	void closeDiscovery();
 
