@@ -3,15 +3,12 @@ package com.alfredselfhelp.activity;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -59,9 +56,9 @@ public class DevicesActivity extends BaseActivity {
     private ImageButton btn_back;
     private TextView tv_title_name;
     private LinearLayout ll_print;
-    private ImageView device_code_img;
-    private TextView devices_ip_tv;
-    private TextView devices_revenueCenter_tv;
+//    private ImageView device_code_img;
+//    private TextView devices_ip_tv;
+//    private TextView devices_revenueCenter_tv;
     //打印机
     private LinearLayout devices_printe_lyt;
     //KDS
@@ -385,7 +382,7 @@ public class DevicesActivity extends BaseActivity {
             Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
             Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
             Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
-            device_code_img.setImageBitmap(mBitmap);
+//            device_code_img.setImageBitmap(mBitmap);
         }
     }
 
@@ -509,56 +506,56 @@ public class DevicesActivity extends BaseActivity {
     }
 
 
-    class MyAsyncTask extends AsyncTask<String, Integer, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            //这是在后台子线程中执行的
-            Bitmap mBitmap = null;
-            try {
-                Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
-                Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
-                mBitmap = BarcodeUtil.addLogo(bitmap, logo);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return mBitmap;
-        }
-
-        @Override
-        protected void onCancelled() {
-            //当任务被取消时回调
-            super.onCancelled();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            //更新进度
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            //当任务执行完成是调用,在UI线程
-            if (bitmap != null) {
-                device_code_img.setImageBitmap(bitmap);
-            }
-        }
-    }
+//    class MyAsyncTask extends AsyncTask<String, Integer, Bitmap> {
+//
+//        @Override
+//        protected Bitmap doInBackground(String... params) {
+//            //这是在后台子线程中执行的
+//            Bitmap mBitmap = null;
+//            try {
+//                Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
+//                Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
+//                mBitmap = BarcodeUtil.addLogo(bitmap, logo);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return mBitmap;
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            //当任务被取消时回调
+//            super.onCancelled();
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            super.onProgressUpdate(values);
+//            //更新进度
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Bitmap bitmap) {
+//            super.onPostExecute(bitmap);
+//            //当任务执行完成是调用,在UI线程
+//            if (bitmap != null) {
+//                device_code_img.setImageBitmap(bitmap);
+//            }
+//        }
+//    }
 
     private void initData() {
 
         //本机IP地址和MAC地址
-        if (!TextUtils.isEmpty(CommonUtil.getLocalIpAddress()) && !TextUtils.isEmpty(CommonUtil.getLocalMacAddress(context))) {
-            devices_ip_tv.setText(CommonUtil.getLocalIpAddress() + "\n"
-                    + CommonUtil.getLocalMacAddress(context));
-            //   new MyThread().start();
-            new MyAsyncTask().execute();
-        } else {
-            devices_ip_tv.setVisibility(View.GONE);
-            device_code_img.setVisibility(View.GONE);
-        }
+//        if (!TextUtils.isEmpty(CommonUtil.getLocalIpAddress()) && !TextUtils.isEmpty(CommonUtil.getLocalMacAddress(context))) {
+//            devices_ip_tv.setText(CommonUtil.getLocalIpAddress() + "\n"
+//                    + CommonUtil.getLocalMacAddress(context));
+//            //   new MyThread().start();
+////            new MyAsyncTask().execute();
+//        } else {
+//            devices_ip_tv.setVisibility(View.GONE);
+////            device_code_img.setVisibility(View.GONE);
+//        }
         printerDBModelList = new ArrayList<PrinterDevice>(App.instance.getPrinterDevices().values());
 //        if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
 //            printerDeptModelList = PrinterSQL.getAllPrinterByType(1);
@@ -586,15 +583,15 @@ public class DevicesActivity extends BaseActivity {
         tv_title_name.setText("Devices");
         hv_printer_group = (HorizontalListView) findViewById(R.id.hv_printer_group);
 
-        device_code_img = (ImageView) findViewById(R.id.device_code_img);
+//        device_code_img = (ImageView) findViewById(R.id.device_code_img);
 
-        devices_ip_tv = (TextView) findViewById(R.id.devices_ip_tv);
+//        devices_ip_tv = (TextView) findViewById(R.id.devices_ip_tv);
 
-        devices_revenueCenter_tv = (TextView) findViewById(R.id.devices_revenueCenter_tv);
+//        devices_revenueCenter_tv = (TextView) findViewById(R.id.devices_revenueCenter_tv);
 //        if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
 //            devices_revenueCenter_tv.setText(App.instance.getMainPosInfo().getName());
 //        } else {
-            devices_revenueCenter_tv.setText("");
+//            devices_revenueCenter_tv.setText("");
 //        }
 
         devices_printe_lyt = (LinearLayout) findViewById(R.id.devices_printe_lyt);

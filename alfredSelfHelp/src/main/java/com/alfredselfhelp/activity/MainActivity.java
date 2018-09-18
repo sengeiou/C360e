@@ -261,7 +261,7 @@ public class MainActivity extends BaseActivity {
                 input();
                 break;
             case R.id.btn_print_setting:
-
+                UIHelp.startDevices(context);
                 break;
 
         }

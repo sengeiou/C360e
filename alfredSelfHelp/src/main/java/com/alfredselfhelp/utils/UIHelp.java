@@ -14,6 +14,7 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.activity.ConnectPOS;
+import com.alfredselfhelp.activity.DevicesActivity;
 import com.alfredselfhelp.activity.EmployeeID;
 import com.alfredselfhelp.activity.Login;
 import com.alfredselfhelp.activity.MainActivity;
@@ -54,6 +55,11 @@ public class UIHelp {
         context.startActivity(intent);
         // context.overridePendingTransition(R.anim.slide_bottom_in,
         // R.anim.slide_top_out);
+    }
+
+    public static void startDevices(BaseActivity context){
+        Intent intent = new Intent(context, DevicesActivity.class);
+        context.startActivity(intent);
     }
 
     public static void startLogin(BaseActivity context) {
