@@ -1385,8 +1385,8 @@ public class DataHelper {
                     + " ADD COLUMN barCode TEXT default ''");
             db.execSQL("ALTER TABLE " + TableNames.ItemMainCategory
                     + " ADD COLUMN isShowDiner INTEGER default 1");
-//            db.execSQL("ALTER TABLE " + TableNames.ItemCategory
-//                    + " ADD COLUMN imgUrl TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ItemCategory
+                    + " ADD COLUMN imgUrl TEXT");
         }
     }
 

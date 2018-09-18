@@ -118,11 +118,11 @@
                     android:layout_width="230dp"
                     android:layout_height="110dp"
                     android:layout_marginLeft="5dp"
-                    android:background="@drawable/btn_view_card"
+                    android:background="@drawable/btn_view_card_g"
                     android:gravity="center"
                     android:padding="10dp"
                     android:text="Login"
-                    android:textColor="@color/white"
+                    android:textColor="@color/gray6"
                     android:textSize="36sp" />
             </LinearLayout>
 

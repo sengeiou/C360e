@@ -21,8 +21,8 @@ public class ItemCategorySQL {
         try {
             String sql = "replace into "
                     + TableNames.ItemCategory
-                    + "(id, itemCategoryName, superCategoryId, color, itemMainCategoryId, restaurantId, isActive, indexId, printerGroupId, userId, createTime, updateTime )"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "(id, itemCategoryName, superCategoryId, color, itemMainCategoryId, restaurantId, isActive, indexId, printerGroupId, userId, createTime, updateTime,imgUrl)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{itemCategory.getId(),
@@ -36,7 +36,9 @@ public class ItemCategorySQL {
                             itemCategory.getPrinterGroupId(),
                             itemCategory.getUserId(),
                             itemCategory.getCreateTime(),
-                            itemCategory.getUpdateTime()});
+                            itemCategory.getUpdateTime(),
+                             itemCategory.getImgUrl()
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,8 +53,8 @@ public class ItemCategorySQL {
             db.beginTransaction();
             String sql = "replace into "
                     + TableNames.ItemCategory
-                    + "(id, itemCategoryName, superCategoryId, color, itemMainCategoryId, restaurantId, isActive, indexId, printerGroupId, userId, createTime, updateTime )"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "(id, itemCategoryName, superCategoryId, color, itemMainCategoryId, restaurantId, isActive, indexId, printerGroupId, userId, createTime, updateTime,imgUrl)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (ItemCategory itemCategory : itemCategoryList) {
@@ -80,6 +82,8 @@ public class ItemCategorySQL {
                         itemCategory.getCreateTime());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 12,
                         itemCategory.getUpdateTime());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 13,
+                        itemCategory.getImgUrl());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -118,6 +122,7 @@ public class ItemCategorySQL {
                 itemCategory.setUserId(cursor.getInt(9));
                 itemCategory.setCreateTime(cursor.getLong(10));
                 itemCategory.setUpdateTime(cursor.getLong(11));
+                itemCategory.setImgUrl(cursor.getString(12));
                 result.add(itemCategory);
             }
         } catch (Exception e) {
@@ -159,6 +164,7 @@ public class ItemCategorySQL {
                 itemCategory.setUserId(cursor.getInt(9));
                 itemCategory.setCreateTime(cursor.getLong(10));
                 itemCategory.setUpdateTime(cursor.getLong(11));
+                itemCategory.setImgUrl(cursor.getString(12));
                 result.add(itemCategory);
             }
         } catch (Exception e) {
@@ -193,6 +199,7 @@ public class ItemCategorySQL {
                 itemCategory.setUserId(cursor.getInt(9));
                 itemCategory.setCreateTime(cursor.getLong(10));
                 itemCategory.setUpdateTime(cursor.getLong(11));
+                itemCategory.setImgUrl(cursor.getString(12));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -227,6 +234,7 @@ public class ItemCategorySQL {
                 itemCategory.setUserId(cursor.getInt(9));
                 itemCategory.setCreateTime(cursor.getLong(10));
                 itemCategory.setUpdateTime(cursor.getLong(11));
+                itemCategory.setImgUrl(cursor.getString(12));
             }
         } catch (Exception e) {
             e.printStackTrace();

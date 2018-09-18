@@ -79,7 +79,8 @@ public class SelectRevenue extends BaseActivity {
                 UdpMsg udpMsg = (UdpMsg) parent.getItemAtPosition(position);
                 revenueListAdapter.setCheckedPosition(position);
                 posIp = udpMsg.getIp();
-
+                tv_re_login.setBackgroundResource(R.drawable.btn_view_cart);
+                tv_re_login.setTextColor(getResources().getColor(R.color.white));
 //
             }
         });

@@ -64,12 +64,12 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
             tvName.setText(itemCategory.getItemCategoryName());
             textTypeFace.setUbuntuMedium(tvName);
 
-//            Glide.with(mContext)
-//                    .load(itemCategory.getImgUrl())
-//                    .placeholder(R.drawable.img_bg)
-//                    .error(R.drawable.img_bg)
-//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                    .into(img_class);
+            Glide.with(mContext)
+                    .load(itemCategory.getImgUrl())
+                    .placeholder(R.drawable.img_bg)
+                    .error(R.drawable.img_bg)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(img_class);
             if (position == checkedPosition) {
                 mView.setBackgroundResource(R.color.gray4);
                 tvName.setTextColor(mContext.getResources().getColor(R.color.green1));

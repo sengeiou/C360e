@@ -865,6 +865,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     li_menu.setBackgroundResource(R.drawable.bg_grab);
                     ll_menu_title.setVisibility(View.GONE);
                     mainCategoryAdapter.setCheckedPosition(-1);
+                    ll_order_dialog.setVisibility(View.VISIBLE);
                     cartView();
                 } else {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
@@ -877,37 +878,39 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     return;
                 }
 
-                final OrderSelfDialog dialog = new OrderSelfDialog(MenuActivity.this);
+                paymentAction();
 
-                dialog.setList(orderDetails);
-                dialog.setNoOnclickListener("", new OrderSelfDialog.onNoOnclickListener() {
-
-                    @Override
-                    public void onNoClick() {
-                        dialog.dismiss();
-
-                    }
-                });
-
-                dialog.setYesOnclickListener("", new OrderSelfDialog.onYesOnclickListener() {
-                    @Override
-                    public void onYesClick() {
-
-
-//                        NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-//                        if (OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0) {
-                        paymentAction();
-                        dialog.dismiss();
-
-//                        } else {
-//                            // TODO 显示等待拿货的Dialog
-//                        }
-
-
-                    }
-                });
-
-                dialog.show();
+//                final OrderSelfDialog dialog = new OrderSelfDialog(MenuActivity.this);
+//
+//                dialog.setList(orderDetails);
+//                dialog.setNoOnclickListener("", new OrderSelfDialog.onNoOnclickListener() {
+//
+//                    @Override
+//                    public void onNoClick() {
+//                        dialog.dismiss();
+//
+//                    }
+//                });
+//
+//                dialog.setYesOnclickListener("", new OrderSelfDialog.onYesOnclickListener() {
+//                    @Override
+//                    public void onYesClick() {
+//
+//
+////                        NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
+////                        if (OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0) {
+//                        paymentAction();
+//                        dialog.dismiss();
+//
+////                        } else {
+////                            // TODO 显示等待拿货的Dialog
+////                        }
+//
+//
+//                    }
+//                });
+//
+//                dialog.show();
 //
 
                 break;

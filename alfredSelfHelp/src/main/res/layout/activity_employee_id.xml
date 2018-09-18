@@ -33,6 +33,7 @@
                 android:lineSpacingExtra="8dp"
                 android:text="Login"
                 android:textColor="@color/white"
+                android:layout_marginBottom="30dp"
                 android:textSize="@dimen/text_size_b" />
 
             <LinearLayout
