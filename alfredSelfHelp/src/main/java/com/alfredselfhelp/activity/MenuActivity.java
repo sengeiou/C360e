@@ -30,13 +30,9 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.store.sql.ItemCategorySQL;
-import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.CartDetailAdapter;
@@ -205,18 +201,18 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     }
                     rl_cart_num.setVisibility(View.GONE);
                     UIHelp.showToast(App.instance, "Success");
-
-                    OrderDetailSQL.deleteAllOrderDetail();
-                    OrderSQL.deleteAllOrder();
-                    nurOrder = ObjectFactory.getInstance().getOrder(
-                            ParamConst.ORDER_ORIGIN_POS, 0, TableInfoSQL.getKioskTable(),
-                            App.instance.getRevenueCenter(), App.instance.getUser(),
-                            App.instance.getSessionStatus(),
-                            App.instance.getBusinessDate(),
-                            App.instance.getIndexOfRevenueCenter(),
-                            ParamConst.ORDER_STATUS_OPEN_IN_POS,
-                            App.instance.getLocalRestaurantConfig()
-                                    .getIncludedTax().getTax(), 0);
+//TODO
+//                    OrderDetailSQL.deleteAllOrderDetail();
+//                    OrderSQL.deleteAllOrder();
+//                    nurOrder = ObjectFactory.getInstance().getOrder(
+//                            ParamConst.ORDER_ORIGIN_POS, 0, TableInfoSQL.getKioskTable(),
+//                            App.instance.getRevenueCenter(), App.instance.getUser(),
+//                            App.instance.getSessionStatus(),
+//                            App.instance.getBusinessDate(),
+//                            App.instance.getIndexOfRevenueCenter(),
+//                            ParamConst.ORDER_STATUS_OPEN_IN_POS,
+//                            App.instance.getLocalRestaurantConfig()
+//                                    .getIncludedTax().getTax(), 0);
 //                    ll_grab.performClick();
                     MenuActivity.this.finish();
 

@@ -163,6 +163,8 @@ public class MainActivity extends BaseActivity {
     };
 
 
+
+
     private Runnable mUpdateUiRunnable = new Runnable() {
         @Override
         public void run() {

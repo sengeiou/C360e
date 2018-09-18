@@ -128,6 +128,7 @@ public class SelfOrderHelper {
         if(updateFreeOrderDetailForWaiter(order, orderDetail, orderDetails)) {
             calculate(order, orderDetail);
         }
+        calculate(order, orderDetails);
     }
 
     private void calculate(Order order, OrderDetail orderDetail) {
