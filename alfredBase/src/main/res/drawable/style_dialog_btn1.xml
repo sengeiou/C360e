@@ -12,10 +12,10 @@
     <solid android:color="@color/red1" />
 
     <corners
-        android:bottomLeftRadius="5dp"
+        android:bottomLeftRadius="4dp"
 
-        android:bottomRightRadius="5dp"
-        android:radius="5dp"
+        android:bottomRightRadius="4dp"
+
         android:topLeftRadius="0dp"
         android:topRightRadius="0dp" />
 

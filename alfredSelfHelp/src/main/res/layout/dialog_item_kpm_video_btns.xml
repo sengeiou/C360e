@@ -29,7 +29,7 @@
 
             <TextView
                 android:id="@+id/tv_backs"
-                android:layout_width="210dp"
+                android:layout_width="230dp"
                 android:layout_height="130dp"
 
                 android:background="@drawable/btn_main_g"

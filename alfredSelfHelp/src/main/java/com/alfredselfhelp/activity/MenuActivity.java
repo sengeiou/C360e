@@ -91,7 +91,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private RelativeLayout rl_cart_num;
 
     private RelativeLayout rl_cart_total;
-    private LinearLayout li_menu, ll_view_order_card, ll_view_order_qc;
+    private LinearLayout li_menu, ll_view_order_card, ll_view_order_qc, ll_order_dialog;
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
     List<ItemDetail> itemDetailNur = new ArrayList<ItemDetail>();
@@ -191,7 +191,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     /**TODO
                      * nurOrder = OrderSQL.getOrder(nurOrder.getId());
                      */
-
                     tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                     break;
@@ -265,6 +264,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         tv_time = (TextView) findViewById(R.id.tv_time);
         ll_view_order_card = (LinearLayout) findViewById(R.id.ll_view_order_card);
         tv_dialog_ok = (TextView) findViewById(R.id.tv_dialog_ok);
+        ll_order_dialog = (LinearLayout) findViewById(R.id.ll_order_dialog);
         tv_dialog_ok.setOnClickListener(this);
         ll_view_order_card.setOnClickListener(this);
         ll_view_pay.setOnClickListener(this);
@@ -395,12 +395,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 for (ItemDetailDto itemDetailDto : itemDetailDtos) {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
                     /** TODO
-                    OrderDetail orderDetail = ObjectFactory.getInstance()
-                            .createOrderDetailForWaiter(nurOrder, itemDetail,
-                                    0, App.instance.getUser());
-                    orderDetail.setItemNum(itemDetailDto.getItemNum());
-                    OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
-                    */
+                     OrderDetail orderDetail = ObjectFactory.getInstance()
+                     .createOrderDetailForWaiter(nurOrder, itemDetail,
+                     0, App.instance.getUser());
+                     orderDetail.setItemNum(itemDetailDto.getItemNum());
+                     OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                     */
                     OrderDetail orderDetail = SelfOrderHelper.getInstance()
                             .createOrderDetailForWaiter(nurOrder, itemDetail,
                                     0, App.instance.getUser());
@@ -416,6 +416,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if (showToast && ll_view_cart_list.getVisibility() == View.VISIBLE
                         && yesDialog != null && yesDialog.isShowing()) {
                     yesDialog.dismiss();
+                    ll_order_dialog.setVisibility(View.GONE);
                 }
 //                        runOnUiThread(new Runnable() {
 //                            @Override
@@ -454,7 +455,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         if (map.containsKey(barCode)) {
                             Integer num = map.get(barCode);
                             /** TODO
-                            OrderDetailSQL.deleteOrderDetail(orderDetail);
+                             OrderDetailSQL.deleteOrderDetail(orderDetail);
                              */
                             orderDetails.remove(i);
                             if (orderDetail.getItemNum() < num.intValue()) {
@@ -498,25 +499,25 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         if (count == 0) {// 删除
             /** TODO
-            OrderDetailSQL.deleteOrderDetail(orderDetail);
-            OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
+             OrderDetailSQL.deleteOrderDetail(orderDetail);
+             OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
              */
             orderDetails.remove(orderDetail);
 
         } else {// 添加
             nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
             /** TODO
-            OrderSQL.update(nurOrder);
+             OrderSQL.update(nurOrder);
              */
             orderDetail.setItemNum(count);
             orderDetail.setUpdateTime(System.currentTimeMillis());
             /** TODO
-            OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
+             OrderDetailSQL.updateOrderDetailAndOrderForWaiter(orderDetail);
              */
             SelfOrderHelper.getInstance().updateOrderDetailAndOrderForWaiter(nurOrder, orderDetails, orderDetail);
         }
 /**TODO
-        orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForKpm(nurOrder));
+ orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForKpm(nurOrder));
  */
         cartAdater.notifyDataSetChanged();
         if (orderDetails.size() == 0) {
@@ -570,9 +571,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void updateitemOrderDetail(ItemDetail itemDetail, int count) {
         /** TODO
-        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
-                nurOrder, itemDetail, 0,
-                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
+         OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+         nurOrder, itemDetail, 0,
+         ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
          */
         OrderDetail orderDetail = SelfOrderHelper.getInstance().getOrderDetailFromList(itemDetail, orderDetails);
         if (orderDetail != null) {
@@ -583,10 +584,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
         if (count == 0) {// 删除
             /**TODO
-            OrderDetailSQL.deleteOrderDetail(orderDetail);
-            OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
+             OrderDetailSQL.deleteOrderDetail(orderDetail);
+             OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
              */
-            if(orderDetail != null){
+            if (orderDetail != null) {
                 orderDetails.remove(orderDetail);
                 SelfOrderHelper.getInstance().calculate(nurOrder, orderDetails);
             }
@@ -594,20 +595,20 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //			count = count - oldCount;
             nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
             /**TODO
-            OrderSQL.update(nurOrder);
+             OrderSQL.update(nurOrder);
              */
             if (orderDetail == null) {
                 /**TODO
-                orderDetail = ObjectFactory.getInstance()
-                        .createOrderDetailForWaiter(nurOrder, itemDetail,
-                                0, App.instance.getUser());
+                 orderDetail = ObjectFactory.getInstance()
+                 .createOrderDetailForWaiter(nurOrder, itemDetail,
+                 0, App.instance.getUser());
                  */
                 orderDetail = SelfOrderHelper.getInstance()
                         .createOrderDetailForWaiter(nurOrder, itemDetail,
                                 0, App.instance.getUser());
                 orderDetail.setItemNum(count);
                 /**
-                OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
+                 OrderDetailSQL.addOrderDetailETCForWaiterFirstAdd(orderDetail);
                  */
                 SelfOrderHelper.getInstance().addOrderDetailETCForWaiterFirstAdd(nurOrder, orderDetail, orderDetails);
             } else {
@@ -940,7 +941,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void cartView() {
         /**TODO
-        orderDetails = OrderDetailSQL.getOrderDetails(nurOrder.getId());
+         orderDetails = OrderDetailSQL.getOrderDetails(nurOrder.getId());
          */
         mLinearLayoutManager = new LinearLayoutManager(context);
         mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
@@ -1010,8 +1011,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void refreshTotal() {
         /** TODO
-        orderDetails.clear();
-        orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder));
+         orderDetails.clear();
+         orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsForWaiter(nurOrder));
          */
         //int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForKpm(nurOrder.getId().intValue());
         int itemCount = 0;
@@ -1056,7 +1057,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private void refreshViewCart() {
         if (cartAdater != null) {
             /** TODO
-            nurOrder = OrderSQL.getOrder(nurOrder.getId());
+             nurOrder = OrderSQL.getOrder(nurOrder.getId());
              */
             cartAdater.notifyDataSetChanged();
             tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
@@ -1070,7 +1071,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
                 // Clear tag storage
                 NurApi api = RfidApiCentre.getInstance().getNurApi();
-                if(api != null && api.isConnected()) {
+                if (api != null && api.isConnected()) {
                     api.clearIdBuffer();
                     api.clearTagStorage();
                     LogUtil.e("TAG", "clear Api : " + api.getStorage().size());

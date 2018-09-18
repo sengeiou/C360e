@@ -81,7 +81,9 @@ public class HttpAPI {
 									|| resultCode == ResultCode.SESSION_HAS_CHANGE) {
 								HttpAnalysis.login(resultCode, body, handler);
 							} else {
-								elseResultCodeAction(resultCode, body);
+
+								handler.sendEmptyMessage(resultCode);
+							//	elseResultCodeAction(resultCode, body);
 							}
 						}
 						@Override
