@@ -414,35 +414,19 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     yesDialog.dismiss();
                     ll_order_dialog.setVisibility(View.GONE);
                 }
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (loadingDialog != null && loadingDialog.isShowing()) {
-//                                    loadingDialog.dismiss();
-//                                }
                 refreshTotal();
                 if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
                     refreshViewCart();
                 } else if (showViewCart && ll_video.getVisibility() == View.VISIBLE) {
                     ll_view_cart.performClick();
                 }
-//                                RfidApiCentre.getInstance().getNurTagStorage().clear();
                 isUpdating = false;
-//                            }
-//                        });
-//                    }
-//                }).start();
             }
         }
     }
 
     private void removeRfid(final Map<String, Integer> map) {
         if (map != null && map.size() > 0) {
-//            loadingDialog.setTitle("Loading");
-//            loadingDialog.show();
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
             if (orderDetails != null && orderDetails.size() > 0) {
                 for (int i = orderDetails.size() - 1; i >= 0; i--) {
                     OrderDetail orderDetail = orderDetails.get(i);
@@ -459,17 +443,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             } else {
                                 map.remove(barCode);
                             }
+                            SelfOrderHelper.getInstance().calculate(nurOrder, orderDetails);
                         }
                     }
                 }
             }
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if (loadingDialog != null && loadingDialog.isShowing()) {
-//                                loadingDialog.dismiss();
-//                            }
-//                            UIHelp.showToast(MenuActivity.this, "Remove  on UI");
             refreshTotal();
             if (ll_view_cart_list != null && ll_view_cart_list.getVisibility() == View.VISIBLE) {
                 refreshViewCart();
@@ -477,12 +455,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             if (orderDetails.size() == 0 && ll_video.getVisibility() != View.VISIBLE) {
                 ll_grab.performClick();
             }
-//                            RfidApiCentre.getInstance().getNurTagStorage().clear();
             isUpdating = false;
-//                        }
-//                    });
-//                }
-//            }).start();
         }
     }
 
@@ -499,6 +472,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
              OrderModifierSQL.deleteOrderModifierByOrderDetail(orderDetail);
              */
             orderDetails.remove(orderDetail);
+            SelfOrderHelper.getInstance().calculate(nurOrder, orderDetails);
 
         } else {// 添加
             nurOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_WAITER);
