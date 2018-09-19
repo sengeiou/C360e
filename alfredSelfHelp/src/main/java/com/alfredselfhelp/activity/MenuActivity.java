@@ -123,7 +123,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
     private void initVideo() {
-        mVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/tutorial"));
+        mVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/aaa"));
         mVideoView.start();
         //监听视频播放完的代码
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

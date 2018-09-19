@@ -56,7 +56,7 @@ public class DevicesActivity extends BaseActivity {
     private ImageButton btn_back;
     private TextView tv_title_name;
     private LinearLayout ll_print;
-//    private ImageView device_code_img;
+    //    private ImageView device_code_img;
 //    private TextView devices_ip_tv;
 //    private TextView devices_revenueCenter_tv;
     //打印机
@@ -91,7 +91,7 @@ public class DevicesActivity extends BaseActivity {
         map.clear();
         initUI();
         initData();
-        //  new MyThread().start();
+      //  new MyThread().start();
 
     }
 
@@ -378,10 +378,10 @@ public class DevicesActivity extends BaseActivity {
 
         public void run() {
             Log.d(TAG, "run");
-            //    App.instance.discoverPrinter(handler);
-            Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
-            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
-            Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
+            App.instance.discoverPrinter(handler);
+//            Bitmap bitmap = BarcodeUtil.createQRImage(CommonUtil.getLocalIpAddress());
+//            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.scanner_logo);
+//            Bitmap mBitmap = BarcodeUtil.addLogo(bitmap, logo);
 //            device_code_img.setImageBitmap(mBitmap);
         }
     }
@@ -560,7 +560,7 @@ public class DevicesActivity extends BaseActivity {
 //        if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
 //            printerDeptModelList = PrinterSQL.getAllPrinterByType(1);
 //        } else {
-            printerDeptModelList = PrinterSQL.getCashierPrinter();
+        printerDeptModelList = PrinterSQL.getCashierPrinter();
 //        }
         if (printerDeptModelList.size() > 0) {
             deviceGroupAdapter = new DeviceGroupAdapter(this, printerDeptModelList);
@@ -698,7 +698,7 @@ public class DevicesActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-            App.instance.closeDiscovery();
+        App.instance.closeDiscovery();
         super.onPause();
     }
 

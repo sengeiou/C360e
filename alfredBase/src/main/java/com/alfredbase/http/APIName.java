@@ -11,8 +11,6 @@ public class APIName {
 	public static final String TAX_GETTAX = "tax/getTax";
 	public static final String HAPPYHOUR_GETHAPPYHOUR = "happyHour/getHappyHour";
 	public static final String RESTAURANT_GETPLACEINFO = "restaurant/getPlaceInfo";
-
-
 	public static final String BOH_GETBOHHOLDUNPAID = "boh/getBohHoldUnpaid";
 	public static final String BOH_UPDATEBOHHOLDPAID = "boh/updateBohHoldPaid";
 	public static final String LOGIN_LOGOUT = "login/logout";

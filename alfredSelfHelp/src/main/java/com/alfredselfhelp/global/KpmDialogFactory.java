@@ -227,10 +227,11 @@ public class KpmDialogFactory {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.dialog_item_kpm_video_btns, null);
-        final VideoView mvideoView = (VideoView) view.findViewById(R.id.dia_videoView);
+        final VideoView mvideoView = (VideoView) view.findViewById(R.id.dia_videoViews);
 
 
-        mvideoView.setVideoURI(Uri.parse("android.resource://" + activity.getPackageName() + "/raw/grabplace"));
+        mvideoView.setVideoURI(Uri.parse("android.resource://" + activity.getPackageName() + "/raw/aaa"));
+        mvideoView.setZOrderOnTop(true);
         mvideoView.start();
         //监听视频播放完的代码
         mvideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -252,7 +253,7 @@ public class KpmDialogFactory {
 //				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
         dialog.show();
         dialog.setCancelable(canBack);
-        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(view);
 
         textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_backs));

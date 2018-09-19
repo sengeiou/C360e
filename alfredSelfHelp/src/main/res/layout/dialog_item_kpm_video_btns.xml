@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <VideoView
-            android:id="@+id/dia_videoView"
+            android:id="@+id/dia_videoViews"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

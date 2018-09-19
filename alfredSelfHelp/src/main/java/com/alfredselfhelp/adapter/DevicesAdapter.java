@@ -106,6 +106,7 @@ public class DevicesAdapter extends CustomAdapter {
 			holder.ll_auto_add = (LinearLayout) convertView.findViewById(R.id.ll_auto_add);
 			holder.ll_manually_add = (LinearLayout) convertView.findViewById(R.id.ll_manually_add);
 			holder.devices_item_type=(TextView) convertView.findViewById(R.id.devices_item_type);
+			holder.img_delete=(ImageView)convertView.findViewById(R.id.img_delete);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -143,8 +144,10 @@ public class DevicesAdapter extends CustomAdapter {
 //		}else {
 //			holder.devices_item_type.setText("网络");
 //		}
+		holder.img_delete.setOnClickListener(ocl);
 		if(printerDevice.getDevice_id() == -100){
 			holder.ll_auto_add.setVisibility(View.GONE);
+			holder.img_delete.setVisibility(View.GONE);
 			holder.ll_manually_add.setVisibility(View.VISIBLE);
 			holder.ll_manually_add.setOnClickListener(new OnClickListener() {
 				@Override
@@ -154,10 +157,11 @@ public class DevicesAdapter extends CustomAdapter {
 			});
 		}else {
 			holder.ll_auto_add.setVisibility(View.VISIBLE);
+			holder.img_delete.setVisibility(View.VISIBLE);
 			holder.ll_manually_add.setVisibility(View.GONE);
 			if (printerDevice.getDevice_id() != -1) {
-				holder.devices_unbund_tv.setOnClickListener(ocl);
-				holder.devices_unbund_tv.setText("Unassign");
+				//holder.devices_unbund_tv.setOnClickListener(ocl);
+				holder.devices_unbund_tv.setText("UNASSIGN_PRINTER_DEVICE");
 				if(printerDevice.getIP().contains(",")) {
 					holder.devices_ip_tv.setText("");
 				}else {
@@ -165,7 +169,7 @@ public class DevicesAdapter extends CustomAdapter {
 				}
 			} else {
 				holder.devices_unbund_tv.setOnClickListener(listener);
-				holder.devices_unbund_tv.setText("Assign");
+				holder.devices_unbund_tv.setText("Add Printer");
 				if(printerDevice.getIP().contains(",")) {
 					holder.devices_ip_tv.setText("");
 				}else {
@@ -234,7 +238,7 @@ public class DevicesAdapter extends CustomAdapter {
 
 		public TextView devices_item_type;
 		TextView devices_item_add_tv;
-		ImageView devices_item_add_img;
+		ImageView devices_item_add_img,img_delete;
 		LinearLayout ll_auto_add;
 		LinearLayout ll_manually_add;
 	}
