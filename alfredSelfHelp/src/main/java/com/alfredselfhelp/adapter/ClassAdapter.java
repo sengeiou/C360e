@@ -1,10 +1,7 @@
 package com.alfredselfhelp.adapter;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
-import android.text.Html;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -68,7 +65,7 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
                     .load(itemCategory.getImgUrl())
                     .placeholder(R.drawable.img_bg)
                     .error(R.drawable.img_bg)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .into(img_class);
             if (position == checkedPosition) {
                 mView.setBackgroundResource(R.color.gray4);

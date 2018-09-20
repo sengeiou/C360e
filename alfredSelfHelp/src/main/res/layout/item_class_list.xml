@@ -16,8 +16,7 @@
             android:id="@+id/img_class"
             android:layout_width="match_parent"
             android:layout_height="110dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/img_bg" />
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/tv_class_name"

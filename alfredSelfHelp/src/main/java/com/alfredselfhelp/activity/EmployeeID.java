@@ -11,14 +11,10 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.TextTypeFace;
-
-
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
-import com.alfredselfhelp.utils.MoneyKeyboard;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.view.Numerickeyboard;
 
@@ -108,11 +104,11 @@ public class EmployeeID extends BaseActivity implements Numerickeyboard.KeyBoard
                 }
                 break;
                 case UPDATE_ALL_DATA_SUCCESS:
-//					dismissLoadingDialog();
+					dismissLoadingDialog();
                     // TODO startMainPage();
                     App.instance.setPosIp(App.instance.getPairingIp());
                     UIHelp.startMain(context);
-
+                    EmployeeID.this.finish();
                     break;
                 case UPDATE_ALL_DATA_FAILURE:
                     dismissLoadingDialog();
