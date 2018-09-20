@@ -21,7 +21,7 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
 
     private int checkedPosition;
 
-    private KpmTextTypeFace textTypeFace= KpmTextTypeFace.getInstance();
+    private KpmTextTypeFace textTypeFace = KpmTextTypeFace.getInstance();
 
     public void setCheckedPosition(int checkedPosition) {
         this.checkedPosition = checkedPosition;
@@ -54,7 +54,7 @@ public class ClassAdapter extends RvAdapter<ItemCategory> {
             this.mView = itemView;
 
             tvName = (TextView) itemView.findViewById(R.id.tv_class_name);
-            img_class=(ImageView)itemView.findViewById(R.id.img_class);
+            img_class = (ImageView) itemView.findViewById(R.id.img_class);
 
         }
 
