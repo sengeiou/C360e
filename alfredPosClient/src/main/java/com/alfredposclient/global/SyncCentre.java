@@ -33,233 +33,234 @@ import java.util.TimerTask;
 
 public class SyncCentre {
 
-	private Timer timer;
+    private Timer timer;
 
-	private TimerTask timerTask;
+    private TimerTask timerTask;
 
-	private static AsyncHttpClient httpClient;
+    private static AsyncHttpClient httpClient;
 
-	private static SyncCentre instance;
-	private static SyncHttpClient syncHttpClient;
-	/**
-	 * 大数据用
-	 */
-	private static SyncHttpClient bigSyncHttpClient;
-	public static final int MODE_FIRST_SYNC = 1;
-	public static final int MODE_PUSH_SYNC = 2;
-	
-	private SyncCentre() {
+    private static SyncCentre instance;
+    private static SyncHttpClient syncHttpClient;
+    /**
+     * 大数据用
+     */
+    private static SyncHttpClient bigSyncHttpClient;
+    public static final int MODE_FIRST_SYNC = 1;
+    public static final int MODE_PUSH_SYNC = 2;
 
-	}
+    private SyncCentre() {
 
-	public static SyncCentre getInstance() {
-		init();
-		return instance;
-	}
+    }
 
-	private static void init() {
-		if (instance == null) {
-			instance = new SyncCentre();
+    public static SyncCentre getInstance() {
+        init();
+        return instance;
+    }
 
-			httpClient = new AsyncHttpClient();
-			httpClient.addHeader("Connection", "close");
-			httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
-			httpClient.setTimeout(20 * 1000);
-			syncHttpClient = new SyncHttpClient();
-			syncHttpClient.addHeader("Connection", "close");
-			syncHttpClient.setTimeout(20 * 1000);
-			syncHttpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
-			bigSyncHttpClient = new SyncHttpClient();
-			bigSyncHttpClient.addHeader("Connection", "close");
-			bigSyncHttpClient.setTimeout(100 * 1000);
-			bigSyncHttpClient.setMaxRetriesAndTimeout(0, 1 * 1000);
-		}
-	}
-	
-/*  We are using JOB. no need this function
-	public void startTimerTask(final BaseActivity baseActivity,final Long bizDate) {
-		if (timer == null) {
-			timer = new Timer();
-			timerTask = new TimerTask() {
-				@Override
-				public void run() {
-					syncOrderInfo(baseActivity,bizDate);
-				}
-			};
-			// 30分钟跑一次定时任务
-			timer.schedule(timerTask, 0, 30 * 60 * 1000);
-		}
-	}
-*/
-	public void stopTimerTask() {
-		if (timer != null) {
-			timer.cancel();
-			timer = null;
-		}
-	}
+    private static void init() {
+        if (instance == null) {
+            instance = new SyncCentre();
 
-	public void login(Context context, Map<String, Object> parameters,
-			Handler handler) {
-		HttpAPI.login(context, parameters,
-				getAbsoluteUrl(APIName.LOGIN_LOGINVERIFY), httpClient, handler);
-	}
+            httpClient = new AsyncHttpClient();
+            httpClient.addHeader("Connection", "close");
+            httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
+            httpClient.setTimeout(20 * 1000);
+            syncHttpClient = new SyncHttpClient();
+            syncHttpClient.addHeader("Connection", "close");
+            syncHttpClient.setTimeout(20 * 1000);
+            syncHttpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
+            bigSyncHttpClient = new SyncHttpClient();
+            bigSyncHttpClient.addHeader("Connection", "close");
+            bigSyncHttpClient.setTimeout(100 * 1000);
+            bigSyncHttpClient.setMaxRetriesAndTimeout(0, 1 * 1000);
+        }
+    }
 
-	public void getRestaurantInfo(Context context,
-			Map<String, Object> parameters, Handler handler) {
-		HttpAPI.getRestaurantInfo(context, parameters,
-				getAbsoluteUrl(APIName.RESTAURANT_GETRESTAURANTINFO),
-				httpClient, handler, MODE_FIRST_SYNC);
-	}
+    /*  We are using JOB. no need this function
+        public void startTimerTask(final BaseActivity baseActivity,final Long bizDate) {
+            if (timer == null) {
+                timer = new Timer();
+                timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        syncOrderInfo(baseActivity,bizDate);
+                    }
+                };
+                // 30分钟跑一次定时任务
+                timer.schedule(timerTask, 0, 30 * 60 * 1000);
+            }
+        }
+    */
+    public void stopTimerTask() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
 
-	//登录后获取并同步数据
-	public void syncCommonData(Context context, Handler handler) {
-		HttpAPI.getUser(context, getAbsoluteUrl(APIName.USER_GETUSER),
-				httpClient, handler, MODE_FIRST_SYNC);
+    public void login(Context context, Map<String, Object> parameters,
+                      Handler handler) {
+        HttpAPI.login(context, parameters,
+                getAbsoluteUrl(APIName.LOGIN_LOGINVERIFY), httpClient, handler);
+    }
+
+    public void getRestaurantInfo(Context context,
+                                  Map<String, Object> parameters, Handler handler) {
+        HttpAPI.getRestaurantInfo(context, parameters,
+                getAbsoluteUrl(APIName.RESTAURANT_GETRESTAURANTINFO),
+                httpClient, handler, MODE_FIRST_SYNC);
+    }
+
+    //登录后获取并同步数据
+    public void syncCommonData(Context context, Handler handler) {
+        HttpAPI.getUser(context, getAbsoluteUrl(APIName.USER_GETUSER),
+                httpClient, handler, MODE_FIRST_SYNC);
 //
-		HttpAPI.mediaSync(context,
-				getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT),httpClient,handler,MODE_FIRST_SYNC);
-		HttpAPI.getItemCategory(context,
-				getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
-		HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
-				httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.mediaSync(context,
+                getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.getItemCategory(context,
+                getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
+                httpClient, handler, MODE_FIRST_SYNC);
 
-		HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX), httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX), httpClient, handler, MODE_FIRST_SYNC);
 
-		HttpAPI.getHappyHour(context,
-				getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
-	}
+        HttpAPI.getHappyHour(context,
+                getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
+    }
 
-	public void getPlaceInfo(Context context, Map<String, Object> parameters,
-			Handler handler) {
-		HttpAPI.getItem(context, getAbsoluteUrl(APIName.ITEM_GETITEM),
-				httpClient, handler, MODE_FIRST_SYNC);
+    public void getPlaceInfo(Context context, Map<String, Object> parameters,
+                             Handler handler) {
+        HttpAPI.getItem(context, getAbsoluteUrl(APIName.ITEM_GETITEM),
+                httpClient, handler, MODE_FIRST_SYNC);
 //		HttpAPI.getPlaceInfo(context, parameters,
 //				getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO), httpClient,
 //				handler, MODE_FIRST_SYNC);
-		HttpAPI.getPlaceTable(context, getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFONEW), httpClient, parameters, handler);
-	}
+        HttpAPI.getPlaceTable(context, getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFONEW), httpClient, parameters, handler);
+    }
 
-	public void getBindDeviceIdInfo(Context context,
-			Map<String, Object> parameters, Handler handler) {
-		HttpAPI.getBindDeviceIdInfo(context, parameters,
-				getAbsoluteUrl(APIName.RESTAURANT_BINDDEVICEID), httpClient,
-				handler);
-	}
+    public void getBindDeviceIdInfo(Context context,
+                                    Map<String, Object> parameters, Handler handler) {
+        HttpAPI.getBindDeviceIdInfo(context, parameters,
+                getAbsoluteUrl(APIName.RESTAURANT_BINDDEVICEID), httpClient,
+                handler);
+    }
 
-	public void getBOHSettlement(Context context, Handler handler) {
-		HttpAPI.getBOHSettlement(context,
-				getAbsoluteUrl(APIName.BOH_GETBOHHOLDUNPAID), httpClient,
-				handler);
-	}
+    public void getBOHSettlement(Context context, Handler handler) {
+        HttpAPI.getBOHSettlement(context,
+                getAbsoluteUrl(APIName.BOH_GETBOHHOLDUNPAID), httpClient,
+                handler);
+    }
 
-	public void upDateBOHHoldPaid(Context context,
-			Map<String, Object> parameters, Handler handler) {
-		HttpAPI.uploadBOHPaidInfo(context,
-				getAbsoluteUrl(APIName.BOH_UPDATEBOHHOLDPAID), httpClient,
-				parameters, handler);
-	}
+    public void upDateBOHHoldPaid(Context context,
+                                  Map<String, Object> parameters, Handler handler) {
+        HttpAPI.uploadBOHPaidInfo(context,
+                getAbsoluteUrl(APIName.BOH_UPDATEBOHHOLDPAID), httpClient,
+                parameters, handler);
+    }
 
-	public void logout(Context context, Handler handler) {
-		HttpAPI.logout(context, getAbsoluteUrl(APIName.LOGIN_LOGOUT),
-				httpClient, handler);
-	}
+    public void logout(Context context, Handler handler) {
+        HttpAPI.logout(context, getAbsoluteUrl(APIName.LOGIN_LOGOUT),
+                httpClient, handler);
+    }
 
-	/*
-	 *  Sync Order Info to Cloud : for JOB
-	 * */
+    /*
+     *  Sync Order Info to Cloud : for JOB
+     * */
 //	ReportDaySales reportDaySales;
 //	List<ReportDayTax> reportDayTaxs;
-	public void syncSendEmail(Context context,
-							  ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs, List<ReportDayPayment> reportDayPayments, Handler handler) {
-		//orderDataMsg
-		HttpAPI.sendEmailSync(context, reportDaySales,reportDayTaxs,reportDayPayments,
-				getAbsoluteUrl(APIName.SEND_EMAIL), bigSyncHttpClient);
-	}
+    public void syncSendEmail(Context context,
+                              ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs, List<ReportDayPayment> reportDayPayments, Handler handler) {
+        //orderDataMsg
+        HttpAPI.sendEmailSync(context, reportDaySales, reportDayTaxs, reportDayPayments,
+                getAbsoluteUrl(APIName.SEND_EMAIL), bigSyncHttpClient);
+    }
 
 
+    public void syncMedia(Context context,
+                          Handler handler) {
+        //orderDataMsg
 
-	public void syncMedia(Context context,
-							 Handler handler) {
-		//orderDataMsg
+        HttpAPI.mediaSync(context,
+                getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), bigSyncHttpClient, handler, MODE_FIRST_SYNC);
 
-		HttpAPI.mediaSync(context,
-				getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT),bigSyncHttpClient,handler,MODE_FIRST_SYNC);
+    }
 
-	}
-	public void cloudSyncUploadOrderInfo( BaseActivity context,
-			SyncMsg syncMsg, Handler handler) {
-		//orderDataMsg
-			HttpAPI.cloudSync(context, syncMsg,
-					getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
-	}
-	/*
-	 *  Sync X/Z Report Info to Cloud : for JOB
-	 * */	
-	public void cloudSyncUploadReportInfo( BaseActivity context,
-			SyncMsg syncMsg, Handler handler) {
-		//reportDataMsg
-				HttpAPI.cloudSync(context, syncMsg,
-						getAbsoluteUrl("receive/reportDataMsg"), bigSyncHttpClient);
-	}
-	
-	/*load day sales report from cloud */
-	public void loadCloudDaySalesReport( BaseActivity context,
-			Map<String, Object> parameters, Handler handler) {
-				HttpAPI.loadCloudXZReport(context, 
-						getAbsoluteUrl(APIName.RESTAURANT_DAYSALES_REPORT), 
-						httpClient, parameters, handler);
-	}
-	
-	public void loadCloudMonthlySalesReport( BaseActivity context,
-			Map<String, Object> parameters, Handler handler) {
-				HttpAPI.loadCloudMonthlySalesReport(context, 
-						getAbsoluteUrl(APIName.RESTAURANT_MONTHLY_SALE_REPORT), 
-						httpClient, parameters, handler);
-	}
-	
-	public void loadCloudMonthlyPLUReport( BaseActivity context,
-			Map<String, Object> parameters, Handler handler) {
-				HttpAPI.loadCloudMonthlyPLUReport(context, 
-						getAbsoluteUrl(APIName.RESTAURANT_MONTHLY_PLU_REPORT), 
-						httpClient, parameters, handler);
-	}
-	
-	public void getOrderFromApp( BaseActivity context,
-			Map<String, Object> parameters) {
-				HttpAPI.getOrderFromApp(context, 
-						getAbsoluteUrl(APIName.POSORDER_GETORDERBYQRCODE), 
-						httpClient, parameters);
-	}
+    public void cloudSyncUploadOrderInfo(BaseActivity context,
+                                         SyncMsg syncMsg, Handler handler) {
+        //orderDataMsg
+        HttpAPI.cloudSync(context, syncMsg,
+                getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+    }
 
-	//设置中同步后台数据
-	public void pushCommonData(Context context, String type, Handler handler) {
+    /*
+     *  Sync X/Z Report Info to Cloud : for JOB
+     * */
+    public void cloudSyncUploadReportInfo(BaseActivity context,
+                                          SyncMsg syncMsg, Handler handler) {
+        //reportDataMsg
+        HttpAPI.cloudSync(context, syncMsg,
+                getAbsoluteUrl("receive/reportDataMsg"), bigSyncHttpClient);
+    }
 
-		if (type.equals(PushMessage.PAYMENT_METHOD)) {
-			HttpAPI.mediaSync(context,
-					getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), httpClient,handler,MODE_PUSH_SYNC);
-		}
-		if (type.equals(PushMessage.HAPPY_HOURS)) {
-			HttpAPI.getHappyHour(context,
-					getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_PUSH_SYNC);
-		} else if (type.equals(PushMessage.PRINTER)) {
-			HttpAPI.getRestaurantInfo(context, null,
-					getAbsoluteUrl(APIName.RESTAURANT_GETRESTAURANTINFO),
-					httpClient, handler, MODE_PUSH_SYNC);
-		} else if (type.equals(PushMessage.ITEM)) {
-			HttpAPI.getItem(context, getAbsoluteUrl(APIName.ITEM_GETITEM),
-					httpClient, handler, MODE_PUSH_SYNC);
-			HttpAPI.getItemCategory(context,
-					getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, null, MODE_PUSH_SYNC);
-		} else if (type.equals(PushMessage.MODIFIER)) {
-			HttpAPI.getModifier(context,
-					getAbsoluteUrl(APIName.ITEM_GETMODIFIER), httpClient, handler, MODE_PUSH_SYNC);
-		} else if (type.equals(PushMessage.USER)) {
-			HttpAPI.getUser(context, getAbsoluteUrl(APIName.USER_GETUSER),
-					httpClient, handler, MODE_PUSH_SYNC);
-		} else if (type.equals(PushMessage.RESTAURANT) || type.equals(PushMessage.REST_CONFIG)) {
-			HttpAPI.getRestaurantInfo(context, null,
-					getAbsoluteUrl(APIName.RESTAURANT_GETRESTAURANTINFO),
-					httpClient, handler, MODE_PUSH_SYNC);
+    /*load day sales report from cloud */
+    public void loadCloudDaySalesReport(BaseActivity context,
+                                        Map<String, Object> parameters, Handler handler) {
+        HttpAPI.loadCloudXZReport(context,
+                getAbsoluteUrl(APIName.RESTAURANT_DAYSALES_REPORT),
+                httpClient, parameters, handler);
+    }
+
+    public void loadCloudMonthlySalesReport(BaseActivity context,
+                                            Map<String, Object> parameters, Handler handler) {
+        HttpAPI.loadCloudMonthlySalesReport(context,
+                getAbsoluteUrl(APIName.RESTAURANT_MONTHLY_SALE_REPORT),
+                httpClient, parameters, handler);
+    }
+
+    public void loadCloudMonthlyPLUReport(BaseActivity context,
+                                          Map<String, Object> parameters, Handler handler) {
+        HttpAPI.loadCloudMonthlyPLUReport(context,
+                getAbsoluteUrl(APIName.RESTAURANT_MONTHLY_PLU_REPORT),
+                httpClient, parameters, handler);
+    }
+
+    public void getOrderFromApp(BaseActivity context,
+                                Map<String, Object> parameters) {
+        HttpAPI.getOrderFromApp(context,
+                getAbsoluteUrl(APIName.POSORDER_GETORDERBYQRCODE),
+                httpClient, parameters);
+    }
+
+    //设置中同步后台数据
+    public void pushCommonData(Context context, String type, Handler handler) {
+
+        if (type.equals(PushMessage.PAYMENT_METHOD)) {
+            HttpAPI.mediaSync(context,
+                    getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), httpClient, handler, MODE_PUSH_SYNC);
+        }
+        if (type.equals(PushMessage.HAPPY_HOURS)) {
+            HttpAPI.getHappyHour(context,
+                    getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_PUSH_SYNC);
+        } else if (type.equals(PushMessage.PRINTER)) {
+            HttpAPI.getRestaurantInfo(context, null,
+                    getAbsoluteUrl(APIName.RESTAURANT_GETRESTAURANTINFO),
+                    httpClient, handler, MODE_PUSH_SYNC);
+        } else if (type.equals(PushMessage.ITEM)) {
+            HttpAPI.getItem(context, getAbsoluteUrl(APIName.ITEM_GETITEM),
+                    httpClient, handler, MODE_PUSH_SYNC);
+            HttpAPI.getItemCategory(context,
+                    getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, null, MODE_PUSH_SYNC);
+        } else if (type.equals(PushMessage.MODIFIER)) {
+            HttpAPI.getModifier(context,
+                    getAbsoluteUrl(APIName.ITEM_GETMODIFIER), httpClient, handler, MODE_PUSH_SYNC);
+        } else if (type.equals(PushMessage.USER)) {
+            HttpAPI.getUser(context, getAbsoluteUrl(APIName.USER_GETUSER),
+                    httpClient, handler, MODE_PUSH_SYNC);
+        } else if (type.equals(PushMessage.RESTAURANT) || type.equals(PushMessage.REST_CONFIG)) {
+            HttpAPI.getRestaurantInfo(context, null,
+                    getAbsoluteUrl(APIName.RESTAURANT_GETRESTAURANTINFO),
+                    httpClient, handler, MODE_PUSH_SYNC);
 //		} else if (type.equals(PushMessage.PLACE_TABLE)) {
 //			RevenueCenter revenueCenter = App.instance.getRevenueCenter();
 //			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -267,97 +268,111 @@ public class SyncCentre {
 ////			HttpAPI.getPlaceTable(context, parameters,
 ////					getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO),
 ////					httpClient, handler);
-		} else if (type.equals(PushMessage.TAX)) {
-			HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX),
-					httpClient, handler, MODE_PUSH_SYNC);
-		} else if(type.equals(PushMessage.PUSH_ORDER)){
-			
-		}
-	}
-	
-	public void updatePassword(Context context,Map<String, Object> map, Handler handler){
-		User user = (User) map.get("user");
-		String newPassword = (String) map.get("newPassword");
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("empId", user.getEmpId());
-		parameters.put("oldPassword", user.getPassword());
-		parameters.put("newPassword", newPassword);
-		HttpAPI.updatePassword(context, getAbsoluteUrl(APIName.USER_UPDATEPASSWORD), httpClient, parameters, handler, user);
-	}
+        } else if (type.equals(PushMessage.TAX)) {
+            HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX),
+                    httpClient, handler, MODE_PUSH_SYNC);
+        } else if (type.equals(PushMessage.PUSH_ORDER)) {
 
-	public void getAppOrderById(Context context,Map<String, Object> parameters, Handler handler, boolean canCheck){
-		HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), syncHttpClient, parameters, handler, canCheck);
-	}
-	public void appOrderRefund(Context context, int appOrderId, Handler handler){
-		HttpAPI.appOrderRefund(context, getAbsoluteUrl(APIName.APP_ORDER_REFUND), httpClient, appOrderId, handler);
-	}
-	public void updateTableStatusForApp(Context context, int tableId, Handler handler){
-		HttpAPI.updateTableStatusForApp(context, getAbsoluteUrl(APIName.TABLE_UPDATETABLESTATUS), httpClient, tableId, handler);
-	}
-	public void getAllAppOrder(Context context,Map<String, Object> parameters, Handler handler){
-		HttpAPI.getAllAppOrder(context, getAbsoluteUrl(APIName.POSORDER_GETALLPAIEDAPPORDER), httpClient, parameters, handler);
-	}
-	public void updateAppOrderStatus(Context context, SyncMsg syncMsg){
-		HttpAPI.updateAppOrderStatus(context, getAbsoluteUrl(APIName.POSORDER_UPDATEAPPORDERSTATUS), syncHttpClient, syncMsg);
-	}
-	public void recevingAppOrderStatus(Context context, int appOrderId, Handler handler){
-		HttpAPI.recevingAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
-	}
+        }
+    }
 
-	public void updatePlaceTable(Context context,Map<String, Object> parameters, Handler handler){
-		HttpAPI.updatePlaceTable(context,getAbsoluteUrl(APIName.RESTAURANT_CHANGEPLACE),httpClient, parameters, handler);
-	}
-	public void getPlaceTable(Context context,Map<String, Object> parameters, Handler handler){
-		HttpAPI.getPlaceTable(context,getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFONEW),httpClient, parameters, handler);
-	}
-	public void registStoredCard(Context context,Map<String, Object> parameters, Handler handler){
-		HttpAPI.registStoredCard(context,getAbsoluteUrl(APIName.MEMBERSHIP_ACTIVATECARD),httpClient, parameters, handler);
-	}
-	public void updateStoredCardValue(Context context,Map<String, Object> parameters, Handler handler){
-		HttpAPI.updateStoredCardValue(context,getAbsoluteUrl(APIName.MEMBERSHIP_OPERATEBALANCE),httpClient, parameters, handler);
-	}
-	public void closeStoredCard(Context context, Map<String, Object> parameters, Handler handler){
-		HttpAPI.closeStoredCardValue(context,getAbsoluteUrl(APIName.MEMBERSHIP_REPORTCARD),httpClient, parameters, handler);
-	}
-	public void changeStoredCard(Context context, Map<String, Object> parameters, Handler handler){
-		HttpAPI.changeStoredCardValue(context,getAbsoluteUrl(APIName.MEMBERSHIP_REATTENDCARD),httpClient, parameters, handler);
-	}
-	public void queryStoredCardBalance(Context context, Map<String, Object> parameters, Handler handler){
-		HttpAPI.queryStoredCardBalance(context,getAbsoluteUrl(APIName.MEMBERSHIP_QUERYBALANCE),httpClient, parameters, handler);
-	}
-	public void getAppVersion(Context context, Map<String, Object> parameters, int applicationTypes){
-		HttpAPI.getAppVersion(context,getAbsoluteUrl(APIName.SOFTWARE_GETVERSION),httpClient, parameters, applicationTypes);
-	}
+    public void updatePassword(Context context, Map<String, Object> map, Handler handler) {
+        User user = (User) map.get("user");
+        String newPassword = (String) map.get("newPassword");
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("empId", user.getEmpId());
+        parameters.put("oldPassword", user.getPassword());
+        parameters.put("newPassword", newPassword);
+        HttpAPI.updatePassword(context, getAbsoluteUrl(APIName.USER_UPDATEPASSWORD), httpClient, parameters, handler, user);
+    }
+
+    public void getAppOrderById(Context context, Map<String, Object> parameters, Handler handler, boolean canCheck) {
+        HttpAPI.getAppOrderById(context, getAbsoluteUrl(APIName.POSORDER_GETPAIEDAPPORDERBYID), syncHttpClient, parameters, handler, canCheck);
+    }
+
+    public void appOrderRefund(Context context, int appOrderId, Handler handler) {
+        HttpAPI.appOrderRefund(context, getAbsoluteUrl(APIName.APP_ORDER_REFUND), httpClient, appOrderId, handler);
+    }
+
+    public void updateTableStatusForApp(Context context, int tableId, Handler handler) {
+        HttpAPI.updateTableStatusForApp(context, getAbsoluteUrl(APIName.TABLE_UPDATETABLESTATUS), httpClient, tableId, handler);
+    }
+
+    public void getAllAppOrder(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.getAllAppOrder(context, getAbsoluteUrl(APIName.POSORDER_GETALLPAIEDAPPORDER), httpClient, parameters, handler);
+    }
+
+    public void updateAppOrderStatus(Context context, SyncMsg syncMsg) {
+        HttpAPI.updateAppOrderStatus(context, getAbsoluteUrl(APIName.POSORDER_UPDATEAPPORDERSTATUS), syncHttpClient, syncMsg);
+    }
+
+    public void recevingAppOrderStatus(Context context, int appOrderId, Handler handler) {
+        HttpAPI.recevingAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
+    }
+
+    public void updatePlaceTable(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.updatePlaceTable(context, getAbsoluteUrl(APIName.RESTAURANT_CHANGEPLACE), httpClient, parameters, handler);
+    }
+
+    public void getPlaceTable(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.getPlaceTable(context, getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFONEW), httpClient, parameters, handler);
+    }
+
+    public void registStoredCard(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.registStoredCard(context, getAbsoluteUrl(APIName.MEMBERSHIP_ACTIVATECARD), httpClient, parameters, handler);
+    }
+
+    public void updateStoredCardValue(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.updateStoredCardValue(context, getAbsoluteUrl(APIName.MEMBERSHIP_OPERATEBALANCE), httpClient, parameters, handler);
+    }
+
+    public void closeStoredCard(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.closeStoredCardValue(context, getAbsoluteUrl(APIName.MEMBERSHIP_REPORTCARD), httpClient, parameters, handler);
+    }
+
+    public void changeStoredCard(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.changeStoredCardValue(context, getAbsoluteUrl(APIName.MEMBERSHIP_REATTENDCARD), httpClient, parameters, handler);
+    }
+
+    public void queryStoredCardBalance(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.queryStoredCardBalance(context, getAbsoluteUrl(APIName.MEMBERSHIP_QUERYBALANCE), httpClient, parameters, handler);
+    }
+
+    public void getAppVersion(Context context, Map<String, Object> parameters, int applicationTypes) {
+        HttpAPI.getAppVersion(context, getAbsoluteUrl(APIName.SOFTWARE_GETVERSION), httpClient, parameters, applicationTypes);
+    }
 //	public void downloadApk(String url){
 //		HttpAPI.downloadApk(url,new AsyncHttpClient());
 //	}
 
-	public void getClockInUserTimeSheet(Context context, Map<String, Object> parameters, Handler handler){
-		HttpAPI.getClockInUserTimeSheet(context, getAbsoluteUrl(APIName.CLOCK_GETUSERTIMESHEET), httpClient, parameters, handler);
-	}
-	public void clockInOut(Context context, Map<String, Object> parameters, Handler handler){
-		HttpAPI.clockInOut(context, getAbsoluteUrl(APIName.CLOCK_CLOCKINOUT), httpClient, parameters, handler);
-	}
+    public void getClockInUserTimeSheet(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.getClockInUserTimeSheet(context, getAbsoluteUrl(APIName.CLOCK_GETUSERTIMESHEET), httpClient, parameters, handler);
+    }
 
-	// Backend Server IP
-	private String getAbsoluteUrl(String relativeUrl) {
-		if (App.instance.isDebug) {
+    public void clockInOut(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.clockInOut(context, getAbsoluteUrl(APIName.CLOCK_CLOCKINOUT), httpClient, parameters, handler);
+    }
+
+    // Backend Server IP
+    private String getAbsoluteUrl(String relativeUrl) {
+        if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
-			return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
-		} else if (App.instance.isOpenLog) {
-			return "http://139.224.17.126/alfred-api/" + relativeUrl;
-		} else {
+            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
+        } else if (App.instance.isOpenLog) {
+
+            return "http://139.224.17.126/alfred-api/" + relativeUrl;
+        } else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-			return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
-		}
-	}
+            return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+        }
+    }
 
-	// private String getAbsoluteKDSUrl(String relativeUrl) {
-	// return "http://192.168.0.18"
-	// +":"+APPConfig.KDS_HTTP_SERVER_PORT+"/"+relativeUrl;
-	// }
+    // private String getAbsoluteKDSUrl(String relativeUrl) {
+    // return "http://192.168.0.18"
+    // +":"+APPConfig.KDS_HTTP_SERVER_PORT+"/"+relativeUrl;
+    // }
 
-	// WaiterBacken Server URLList
+    // WaiterBacken Server URLList
 //	private List<String> getAbsoluteWaiterUrlList1(String relativeUrl) {
 //		List<String> urls = new ArrayList<String>();
 //		Map<Integer, WaiterDevice> waiterDeviceMap = App.instance
@@ -371,7 +386,7 @@ public class SyncCentre {
 //		return urls;
 //	}
 
-	// KDSBacken Server URLList
+    // KDSBacken Server URLList
 //	private List<String> getAbsoluteKDSUrlList1(String relativeUrl) {
 //		List<String> urls = new ArrayList<String>();
 //		Map<Integer, KDSDevice> kdsDeviceMap = App.instance.getKDSDevices();
@@ -384,154 +399,157 @@ public class SyncCentre {
 //		return urls;
 //	}
 
-	private String getAbsoluteKDSUrlForJob(KDSDevice kdsDevice,
-			String relativeUrl) {
-		return "http://" + kdsDevice.getIP() + ":"
-				+ APPConfig.KDS_HTTP_SERVER_PORT + "/" + relativeUrl;
-	}
+    private String getAbsoluteKDSUrlForJob(KDSDevice kdsDevice,
+                                           String relativeUrl) {
+        return "http://" + kdsDevice.getIP() + ":"
+                + APPConfig.KDS_HTTP_SERVER_PORT + "/" + relativeUrl;
+    }
 
-	/**
-	 * forWaiter
-	 */
-	/*
-	 * notify waiter to get notification list parameters: {"total":##}
-	 */
-	public void notifyWaiterToGetNotifications(final BaseActivity context,
-			int KotNotificationqty) {
-
-		Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
-		Set<Integer> key = waiterDeviceMap.keySet();
-		for (Integer index : key) {
-			WaiterDevice waiterDevice = waiterDeviceMap.get(index);
-			if(waiterDevice == null || TextUtils.isEmpty(waiterDevice.getIP())){
-				continue;
-			}
-			String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.KOT_NOTIFICATION;
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("total", KotNotificationqty);
-			HTTPWaiterRequest.sendKotNotification(context, parameters, url, waiterDevice.clone(), syncHttpClient);
-		}
-
-	}
-
-	public void sendSessionClose(Context context, Map<String, Object> parameters) {
-
-		Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
-		Set<Integer> key = waiterDeviceMap.keySet();
-		for (Integer index : key) {
-			WaiterDevice waiterDevice = waiterDeviceMap.get(index);
-			String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.CLOSE_SESSION;
-			HTTPWaiterRequest.sendSessionClose(context, parameters, url, waiterDevice.clone(), httpClient);
-		}
-		
-		Map<Integer, KDSDevice> kdsDeviceMap = App.instance.getKDSDevices();
-		key = kdsDeviceMap.keySet();
-		for (Integer index : key) {
-			KDSDevice kdsDevice = kdsDeviceMap.get(index);
-			String url = "http://" + kdsDevice.getIP() + ":"
-					+ APPConfig.KDS_HTTP_SERVER_PORT + "/" + APIName.CLOSE_SESSION;
-			HTTPKDSRequest.sendSessionClose(context, parameters, url,kdsDevice.clone(), httpClient);
-		}
-	}
-
-	public void transferTable(Context context, Map<String, Object> parameters) {
-
-		Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
-		Set<Integer> key = waiterDeviceMap.keySet();
-		for (Integer index : key) {
-			WaiterDevice waiterDevice = waiterDeviceMap.get(index);
-			String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.TRANSFER_TABLE;
-			HTTPWaiterRequest.transferTable(context, parameters, url, waiterDevice.clone(), httpClient);
-		}
-
-	}
-
-	/**
-	 * for KDS
-	 */
-
-	/* sync KOT data to KDS */
-	public void syncSubmitKotToKDS(KDSDevice kdsDevice, BaseActivity context,
-			Map<String, Object> parameters, Handler handler) throws Throwable {
-		String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
-		HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
-				handler);
-
-	}
-
-	public void syncTransferTable(KDSDevice kdsDevice, BaseActivity context,
-			final Map<String, Object> parameters, Handler handler) {
-		String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_KOT);
-		HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(),syncHttpClient);
-	}
-	public void syncTransferItem(KDSDevice kdsDevice, BaseActivity context,
-			final Map<String, Object> parameters, Handler handler) {
-		String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_ITEM_KOT);
-		HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(),syncHttpClient);
-	}
-
-	/**
-	 * for callNum App
-	 * @param context
-	 * @param num
+    /**
+     * forWaiter
      */
-	public void callAppNo(final Context context,String tag, String num) {
-		String url ="http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/"+APIName.CALL_POS_NUM;
-		HttpAPI.callAppNo(context, url, syncHttpClient,tag, num);
+    /*
+     * notify waiter to get notification list parameters: {"total":##}
+     */
+    public void notifyWaiterToGetNotifications(final BaseActivity context,
+                                               int KotNotificationqty) {
 
-	}
-	public void posCloseSession(final Context context) {
-		if(!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-			String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_CLOSE_SESSION;
-			HttpAPI.posCloseSession(context, url, syncHttpClient);
-		}
+        Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
+        Set<Integer> key = waiterDeviceMap.keySet();
+        for (Integer index : key) {
+            WaiterDevice waiterDevice = waiterDeviceMap.get(index);
+            if (waiterDevice == null || TextUtils.isEmpty(waiterDevice.getIP())) {
+                continue;
+            }
+            String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.KOT_NOTIFICATION;
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("total", KotNotificationqty);
+            HTTPWaiterRequest.sendKotNotification(context, parameters, url, waiterDevice.clone(), syncHttpClient);
+        }
 
-	}
+    }
 
-	//3rd party services
-	public String requestAlipayUrl(final Map<String, Object> parameters) {
-		//{restaurantKey:"h6s235",userKey:"19x6ljc",revenueId:27,orderId:123243,billNo:12312,amount:100}
-		String url = null;
-		StringBuffer param = new StringBuffer( "userKey="+CoreData.getInstance().getLoginResult().getUserKey()+"&");
-		
-		if (App.instance.isDebug) {
-			url = "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
-			param.append("amount=0.01&");
-		} else if (App.instance.isOpenLog) {
-			url =  "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
-			param.append("amount=0.01&");			
-		} else {
-			if (App.instance.countryCode == ParamConst.CHINA) {
-				url =  "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
-			}else {
-			    url =  "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
-			}
-			param.append("amount="+parameters.get("amount")+"&");
-		}
+    public void sendSessionClose(Context context, Map<String, Object> parameters) {
 
-		param.append("restaurantKey="+CoreData.getInstance().getLoginResult()
-				.getRestaurantKey()+"&");
-		param.append("version="+App.instance.VERSION+"&");
-		param.append("deviceId="+CommonUtil.getLocalMacAddress(App.instance)+"&");
-		param.append("revenueId="+App.instance.getRevenueCenter().getId()+"&");
-		param.append("orderId="+parameters.get("orderId")+"&");
-		param.append("billNo="+parameters.get("billNo")+"&");
-		param.append("orderCreateTime="+parameters.get("orderCreateTime")+"&");
-		param.append("appOrderId="+(parameters.get("appOrderId") == null ? "0" : parameters.get("appOrderId")));
-		
-		return (url+'?'+param);
-		//HttpAPI.submitAlipay(context, url, httpClient, parameters);
-	}
-	
-	public String getAlipayVerifyReturnUrl(){
-		return getAbsoluteUrl("alipay/verifyReturnUrl");
-	}
-	
-	public String getAlipayVerifyErrorNotifyUrl(){
-		return getAbsoluteUrl("alipay/verifyErrorNotifyUrl");
-	}
-	
-	public String getURLStart(){
-		return getAbsoluteUrl("");
-	}
+        Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
+        Set<Integer> key = waiterDeviceMap.keySet();
+        for (Integer index : key) {
+            WaiterDevice waiterDevice = waiterDeviceMap.get(index);
+            String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.CLOSE_SESSION;
+            HTTPWaiterRequest.sendSessionClose(context, parameters, url, waiterDevice.clone(), httpClient);
+        }
+
+        Map<Integer, KDSDevice> kdsDeviceMap = App.instance.getKDSDevices();
+        key = kdsDeviceMap.keySet();
+        for (Integer index : key) {
+            KDSDevice kdsDevice = kdsDeviceMap.get(index);
+            String url = "http://" + kdsDevice.getIP() + ":"
+                    + APPConfig.KDS_HTTP_SERVER_PORT + "/" + APIName.CLOSE_SESSION;
+            HTTPKDSRequest.sendSessionClose(context, parameters, url, kdsDevice.clone(), httpClient);
+        }
+    }
+
+    public void transferTable(Context context, Map<String, Object> parameters) {
+
+        Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
+        Set<Integer> key = waiterDeviceMap.keySet();
+        for (Integer index : key) {
+            WaiterDevice waiterDevice = waiterDeviceMap.get(index);
+            String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.TRANSFER_TABLE;
+            HTTPWaiterRequest.transferTable(context, parameters, url, waiterDevice.clone(), httpClient);
+        }
+
+    }
+
+    /**
+     * for KDS
+     */
+
+    /* sync KOT data to KDS */
+    public void syncSubmitKotToKDS(KDSDevice kdsDevice, BaseActivity context,
+                                   Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
+        HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void syncTransferTable(KDSDevice kdsDevice, BaseActivity context,
+                                  final Map<String, Object> parameters, Handler handler) {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_KOT);
+        HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(), syncHttpClient);
+    }
+
+    public void syncTransferItem(KDSDevice kdsDevice, BaseActivity context,
+                                 final Map<String, Object> parameters, Handler handler) {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_ITEM_KOT);
+        HTTPKDSRequest.transferTable(context, parameters, url, kdsDevice.clone(), syncHttpClient);
+    }
+
+    /**
+     * for callNum App
+     *
+     * @param context
+     * @param num
+     */
+    public void callAppNo(final Context context, String tag, String num) {
+        String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.CALL_POS_NUM;
+        HttpAPI.callAppNo(context, url, syncHttpClient, tag, num);
+
+    }
+
+    public void posCloseSession(final Context context) {
+        if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
+            String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_CLOSE_SESSION;
+            HttpAPI.posCloseSession(context, url, syncHttpClient);
+        }
+
+    }
+
+    //3rd party services
+    public String requestAlipayUrl(final Map<String, Object> parameters) {
+        //{restaurantKey:"h6s235",userKey:"19x6ljc",revenueId:27,orderId:123243,billNo:12312,amount:100}
+        String url = null;
+        StringBuffer param = new StringBuffer("userKey=" + CoreData.getInstance().getLoginResult().getUserKey() + "&");
+
+        if (App.instance.isDebug) {
+            url = "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
+            param.append("amount=0.01&");
+        } else if (App.instance.isOpenLog) {
+            url = "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
+            param.append("amount=0.01&");
+        } else {
+            if (App.instance.countryCode == ParamConst.CHINA) {
+                url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
+            } else {
+                url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
+            }
+            param.append("amount=" + parameters.get("amount") + "&");
+        }
+
+        param.append("restaurantKey=" + CoreData.getInstance().getLoginResult()
+                .getRestaurantKey() + "&");
+        param.append("version=" + App.instance.VERSION + "&");
+        param.append("deviceId=" + CommonUtil.getLocalMacAddress(App.instance) + "&");
+        param.append("revenueId=" + App.instance.getRevenueCenter().getId() + "&");
+        param.append("orderId=" + parameters.get("orderId") + "&");
+        param.append("billNo=" + parameters.get("billNo") + "&");
+        param.append("orderCreateTime=" + parameters.get("orderCreateTime") + "&");
+        param.append("appOrderId=" + (parameters.get("appOrderId") == null ? "0" : parameters.get("appOrderId")));
+
+        return (url + '?' + param);
+        //HttpAPI.submitAlipay(context, url, httpClient, parameters);
+    }
+
+    public String getAlipayVerifyReturnUrl() {
+        return getAbsoluteUrl("alipay/verifyReturnUrl");
+    }
+
+    public String getAlipayVerifyErrorNotifyUrl() {
+        return getAbsoluteUrl("alipay/verifyErrorNotifyUrl");
+    }
+
+    public String getURLStart() {
+        return getAbsoluteUrl("");
+    }
 }
