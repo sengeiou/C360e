@@ -1667,7 +1667,7 @@ public class ObjectFactory {
 
     //get item list to print
     public ArrayList<PrintOrderItem> getItemList(
-            ArrayList<OrderDetail> orderDetails) {
+            List<OrderDetail> orderDetails) {
         ArrayList<PrintOrderItem> list = new ArrayList<PrintOrderItem>();
         for (OrderDetail orderDetail : orderDetails) {
             ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
@@ -1711,7 +1711,7 @@ public class ObjectFactory {
     }
 
     /* get order modifiers for print */
-    public ArrayList<PrintOrderModifier> getItemModifierList(Order order, ArrayList<OrderDetail> orderDetails) {
+    public ArrayList<PrintOrderModifier> getItemModifierList(Order order, List<OrderDetail> orderDetails) {
 
         ArrayList<PrintOrderModifier> list = new ArrayList<PrintOrderModifier>();
         ArrayList<OrderModifier> orderModifiers = OrderModifierSQL

@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.util.Base64;
 
 import com.alfredbase.global.CoreData;
-import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.HappyHour;
 import com.alfredbase.javabean.HappyHourWeek;
 import com.alfredbase.javabean.ItemCategory;
@@ -16,15 +15,16 @@ import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.OrderDetailTax;
-import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.PaymentMethod;
+import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.SettingData;
 import com.alfredbase.javabean.SettlementRestaurant;
 import com.alfredbase.javabean.TableInfo;
@@ -33,6 +33,8 @@ import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.javabean.model.PrintOrderItem;
+import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.TableAndKotNotificationList;
@@ -651,33 +653,37 @@ public class HttpAnalysis {
 		}
 	}
 
-	public static void commitOrderAndOrderDetails(int statusCode,
-			Header[] headers, byte[] responseBody, Handler handler) {
+	public static void commitOrderAndOrderDetails(byte[] responseBody) {
 		Gson gson = new Gson();
 		try {
 			JSONObject jsonObject = new JSONObject(new String(responseBody));
-			Order order = gson.fromJson(jsonObject.optString("order"),
-					Order.class);
-			List<OrderDetail> orderDetails = gson.fromJson(
-					jsonObject.optString("orderDetails"),
-					new TypeToken<List<OrderDetail>>() {
-					}.getType());
-			List<OrderModifier> orderModifiers = gson.fromJson(
-					jsonObject.optString("orderModifiers"),
-					new TypeToken<List<OrderModifier>>() {
-					}.getType());
-			List<OrderDetailTax> orderDetailTaxs = gson.fromJson(
-					jsonObject.optString("orderModifiers"),
-					new TypeToken<List<OrderDetailTax>>() {
-					}.getType());
-			OrderDetailSQL.deleteOrderDetailByOrder(order);
-			OrderModifierSQL.deleteOrderModifierByOrder(order);
-			OrderDetailSQL.addOrderDetailList(orderDetails);
-			OrderModifierSQL.addOrderModifierList(orderModifiers);
-			OrderDetailTaxSQL.deleteOrderDetailTax(order);
-			OrderDetailTaxSQL.addOrderDetailTaxList(orderDetailTaxs);
-			handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS,
-					orderDetails));
+			PrinterDevice printer = App.instance.getCahierPrinter();
+			if(printer != null) {
+				Order order = gson.fromJson(jsonObject.optString("order"),
+						Order.class);
+				PrinterTitle title = ObjectFactory.getInstance()
+						.getPrinterTitle(
+								App.instance.getRevenueCenter(),
+								order,
+								App.instance.getUser().getFirstName()
+										+ App.instance.getUser().getLastName(),
+								"", 1);
+				List<PrintOrderItem> orderItems = gson.fromJson(jsonObject.getString("orderItems"),
+						new TypeToken<List<PrintOrderItem>>() {
+						}.getType());
+				List<PrintOrderModifier> orderModifiers = gson.fromJson(jsonObject.getString("orderModifiers"),
+						new TypeToken<List<PrintOrderModifier>>() {
+						}.getType());
+				List<Map<String, String>> taxMaps = gson.fromJson(jsonObject.getString("taxMaps"),
+						new TypeToken<List<Map<String, String>>>() {
+						}.getType());
+				List<PaymentSettlement> paymentSettlements = gson.fromJson(jsonObject.getString("paymentSettlements"),
+						new TypeToken<List<PaymentSettlement>>() {
+						}.getType());
+				RoundAmount roundAmount = gson.fromJson(jsonObject.getString("roundAmount"), RoundAmount.class);
+				App.instance.remoteBillPrint(printer, title, order,
+						orderItems, orderModifiers, taxMaps, paymentSettlements, roundAmount);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

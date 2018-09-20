@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -23,27 +24,40 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.LocalDevice;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.PaymentMethod;
+import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
+import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.LocalRestaurantConfig;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.javabean.model.PrintOrderItem;
+import com.alfredbase.javabean.model.PrintOrderModifier;
+import com.alfredbase.javabean.model.PrintReceiptInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.CardsSettlementSQL;
+import com.alfredbase.store.sql.NetsSettlementSQL;
+import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.utils.TvPref;
+import com.google.gson.Gson;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -521,4 +535,109 @@ public class App extends BaseApplication {
         }).start();
 
     }
+
+
+    public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
+                                Order order, List<PrintOrderItem> orderItems,
+                                List<PrintOrderModifier> orderModifiers,
+                                List<Map<String, String>> taxes,
+                                List<PaymentSettlement> settlement, RoundAmount roundAmount) {
+        boolean openDrawer = false;
+        if (mRemoteService == null) {
+            printerDialog();
+            return;
+        }
+        List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
+        if (settlement != null) {
+            for (PaymentSettlement paymentSettlement : settlement) {
+                PrintReceiptInfo printReceiptInfo = new PrintReceiptInfo();
+                printReceiptInfo.setPaidAmount(paymentSettlement
+                        .getPaidAmount());
+                printReceiptInfo.setPaymentTypeId(paymentSettlement
+                        .getPaymentTypeId());
+                switch (paymentSettlement.getPaymentTypeId().intValue()) {
+                    case ParamConst.SETTLEMENT_TYPE_CASH:
+                        printReceiptInfo.setCashChange(paymentSettlement
+                                .getCashChange());
+                        break;
+                    case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
+                    case ParamConst.SETTLEMENT_TYPE_UNIPAY:
+                    case ParamConst.SETTLEMENT_TYPE_VISA:
+                    case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
+                    case ParamConst.SETTLEMENT_TYPE_AMEX:
+                    case ParamConst.SETTLEMENT_TYPE_JCB:
+                        printReceiptInfo
+                                .setCardNo(CardsSettlementSQL
+                                        .getCardNoByPaymentIdAndPaymentSettlementId(
+                                                paymentSettlement.getPaymentId()
+                                                        .intValue(),
+                                                paymentSettlement.getId()
+                                                        .intValue()));
+                        break;
+                    case ParamConst.SETTLEMENT_TYPE_NETS:
+                        printReceiptInfo
+                                .setCardNo(NetsSettlementSQL
+                                        .getNetsSettlementByPament(
+                                                paymentSettlement.getPaymentId()
+                                                        .intValue(),
+                                                paymentSettlement.getId()
+                                                        .intValue())
+                                        .getReferenceNo()
+                                        + "");
+                        break;
+
+                    default: {
+                        PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethodByPaymentTypeId(paymentSettlement.getPaymentTypeId().intValue());
+                        if (pamentMethod != null && !TextUtils.isEmpty(pamentMethod.getNameOt())) {
+                            printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
+                        }
+                    }
+                    break;
+                }
+                printReceiptInfos.add(printReceiptInfo);
+            }
+        }
+        try {
+            Map<String, String> roundingMap = new HashMap<String, String>();
+            String total = order.getTotal();
+            String rounding = "0.00";
+            if (roundAmount != null) {
+                total = BH.sub(BH.getBD(order.getTotal()),
+                        BH.getBD(roundAmount.getRoundBalancePrice()), true)
+                        .toString();
+                rounding = BH.getBD(roundAmount.getRoundBalancePrice())
+                        .toString();
+            }
+            roundingMap.put("Total", total);
+            roundingMap.put("Rounding", rounding);
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            String prtTitle = gson.toJson(title);
+            String orderStr = gson.toJson(order);
+            String details = gson.toJson(orderItems);
+            String mods = gson.toJson(orderModifiers);
+            String tax = gson.toJson(taxes);
+            String payment = gson.toJson(printReceiptInfos);
+            String roundStr = gson.toJson(roundingMap);
+            mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                    details, mods, tax, payment, false, false, roundStr,
+                    null, getLocalRestaurantConfig().getCurrencySymbol(),
+                    openDrawer, BH.IsDouble());
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public PrinterDevice getCahierPrinter() {
+        for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
+            Integer key = dev.getKey();
+            PrinterDevice devPrinter = dev.getValue();
+            if (devPrinter.getIsCahierPrinter() > 0) {
+                return devPrinter;
+            }
+        }
+        return null;
+    }
+
 }

@@ -27,7 +27,6 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
-import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -40,7 +39,6 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
-import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
@@ -343,39 +341,36 @@ public class KpmgResponseUtil {
                                         orderMap);
                             }
                         }
-                        {
-                            PrinterDevice printer = App.instance.getCahierPrinter();
-                            PrinterTitle title = ObjectFactory.getInstance()
-                                    .getPrinterTitle(
-                                            App.instance.getRevenueCenter(),
-                                            placeOrder,
-                                            App.instance.getUser().getFirstName()
-                                                    + App.instance.getUser().getLastName(),
-                                            "", 1);
-                            ArrayList<PrintOrderItem> orderItems = ObjectFactory
-                                    .getInstance().getItemList(
-                                            OrderDetailSQL.getOrderDetails(placeOrder
-                                                    .getId()));
-                            List<Map<String, String>> taxMap = OrderDetailTaxSQL
-                                    .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), placeOrder);
-
-                            ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
-                                    .getInstance().getItemModifierList(placeOrder, OrderDetailSQL.getOrderDetails(placeOrder
-                                            .getId()));
-
-                            OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
-                                    placeOrder, App.instance.getRevenueCenter());
-                            RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(placeOrder, orderBill);
-                            if (orderItems.size() > 0 && printer != null) {
-                                List<PaymentSettlement> paymentSettlementList = PaymentSettlementSQL.getAllPaymentSettlementByOrderId(placeOrder.getId());
-                                App.instance.remoteBillPrint(printer, title, placeOrder,
-                                        orderItems, orderModifiers, taxMap, paymentSettlementList, roundAmount);
-                            }
-                        }
                     }
 
                 }).start();
             }
+
+
+
+            Order placeOrder = OrderSQL.getOrder(orderId);
+
+            ArrayList<PrintOrderItem> orderItems = ObjectFactory
+                    .getInstance().getItemList(
+                            OrderDetailSQL.getOrderDetails(placeOrder
+                                    .getId()));
+            List<Map<String, String>> taxMaps = OrderDetailTaxSQL
+                    .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), placeOrder);
+
+            ArrayList<PrintOrderModifier> orderModifierList = ObjectFactory
+                    .getInstance().getItemModifierList(placeOrder, OrderDetailSQL.getOrderDetails(placeOrder
+                            .getId()));
+
+            OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+                    placeOrder, App.instance.getRevenueCenter());
+            RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(placeOrder, orderBill);
+            List<PaymentSettlement> paymentSettlementList = PaymentSettlementSQL.getAllPaymentSettlementByOrderId(placeOrder.getId());
+            map.put("order", placeOrder);
+            map.put("orderItems", orderItems);
+            map.put("orderModifiers", orderModifierList);
+            map.put("taxMaps", taxMaps);
+            map.put("paymentSettlements", paymentSettlementList);
+            map.put("roundAmount", roundAmount);
             resp = mainPosHttpServer.getJsonResponse(gson.toJson(map));
         } catch (Exception e){
             e.printStackTrace();

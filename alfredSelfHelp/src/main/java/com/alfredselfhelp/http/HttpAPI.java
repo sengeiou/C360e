@@ -115,6 +115,7 @@ public class HttpAPI {
 											  byte[] responseBody) {
 							super.onSuccess(statusCode, headers, responseBody);
 							if (resultCode == ResultCode.SUCCESS) {
+								HttpAnalysis.commitOrderAndOrderDetails(responseBody);
 								handler.sendEmptyMessage(1111);
 							} else {
 								handler.sendEmptyMessage(-1111);
