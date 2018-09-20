@@ -49,267 +49,270 @@ import java.util.List;
 
 public class NetWorkOrderActivity extends BaseActivity {
 
-	public static final int REFRESH_APPORDER_SUCCESS = 101;
-	public static final int RECEVING_APP_ORDER_SUCCESS = 102;
-	public static final int REFRESH_APPORDER_FAILED = -101;
-	public static final int HTTP_FAILED = -102;
-	public static final int RESULT_FAILED = -103;
-	public static final int CANCEL_APPORDER_SUCCESS = 103;
+    public static final int REFRESH_APPORDER_SUCCESS = 101;
+    public static final int RECEVING_APP_ORDER_SUCCESS = 102;
+    public static final int REFRESH_APPORDER_FAILED = -101;
+    public static final int HTTP_FAILED = -102;
+    public static final int RESULT_FAILED = -103;
+    public static final int CANCEL_APPORDER_SUCCESS = 103;
 
-	private List<AppOrder> appOrders = new ArrayList<AppOrder>();
-	private List<AppOrderDetail> appOrderDetails = new ArrayList<AppOrderDetail>();
-	private ListView lv_order_list;
-	private ListView lv_orderdetail_list;
-	private TextTypeFace textTypeFace = TextTypeFace.getInstance();
-	private LayoutInflater inflater;
-	private int selectOrderItem = 0;
-	private Button btn_check;
-	private Button btn_cancel;
-	public static final int CHECK_REQUEST_CODE = 110;
-	private AppOderAdapter appOderAdapter;
-	private AppOderDetailAdapter appOderDetailAdapter;
-	private int appOrderId = 0;
-	private int selectViewId;
-	private TextView tv_new_order;
-	private TextView tv_preparing_order;
-	private TextView tv_completed_order;
-	private TableLayoutFragment f_tables;
-	private LinearLayout ll_orderdetail_layout;
-	@Override
-	protected void initView() {
-		super.initView();
-		setContentView(R.layout.activity_network_order);
-		ll_orderdetail_layout = (LinearLayout) findViewById(R.id.ll_orderdetail_layout);
-		loadingDialog = new LoadingDialog(this);
-		loadingDialog.setTitle("Loading");
-		inflater = LayoutInflater.from(this);
-		lv_order_list = (ListView) findViewById(R.id.lv_order_list);
-		lv_orderdetail_list = (ListView) findViewById(R.id.lv_orderdetail_list);
-		selectViewId = R.id.tv_new_order;
-		initTextTypeFace();
+    private List<AppOrder> appOrders = new ArrayList<AppOrder>();
+    private List<AppOrderDetail> appOrderDetails = new ArrayList<AppOrderDetail>();
+    private ListView lv_order_list;
+    private ListView lv_orderdetail_list;
+    private TextTypeFace textTypeFace = TextTypeFace.getInstance();
+    private LayoutInflater inflater;
+    private int selectOrderItem = 0;
+    private Button btn_check;
+    private Button btn_cancel;
+    public static final int CHECK_REQUEST_CODE = 110;
+    private AppOderAdapter appOderAdapter;
+    private AppOderDetailAdapter appOderDetailAdapter;
+    private int appOrderId = 0;
+    private int selectViewId;
+    private TextView tv_new_order;
+    private TextView tv_preparing_order;
+    private TextView tv_completed_order;
+    private TableLayoutFragment f_tables;
+    private LinearLayout ll_orderdetail_layout;
 
-		btn_check = (Button) findViewById(R.id.btn_check);
-		btn_cancel = (Button) findViewById(R.id.btn_cancel);
-		btn_check.setOnClickListener(this);
-		btn_cancel.setOnClickListener(this);
-		findViewById(R.id.btn_back).setOnClickListener(this);
-		findViewById(R.id.btn_refresh).setOnClickListener(this);
-		tv_new_order = (TextView) findViewById(R.id.tv_new_order);
-		tv_preparing_order = (TextView) findViewById(R.id.tv_preparing_order);
-		tv_completed_order = (TextView) findViewById(R.id.tv_completed_order);
+    @Override
+    protected void initView() {
+        super.initView();
+        setContentView(R.layout.activity_network_order);
+        ll_orderdetail_layout = (LinearLayout) findViewById(R.id.ll_orderdetail_layout);
+        loadingDialog = new LoadingDialog(this);
+        loadingDialog.setTitle("Loading");
+        inflater = LayoutInflater.from(this);
+        lv_order_list = (ListView) findViewById(R.id.lv_order_list);
+        lv_orderdetail_list = (ListView) findViewById(R.id.lv_orderdetail_list);
+        selectViewId = R.id.tv_new_order;
+        initTextTypeFace();
 
-		tv_new_order.setOnClickListener(this);
-		tv_preparing_order.setOnClickListener(this);
-		tv_completed_order.setOnClickListener(this);
-		lv_order_list.setOnItemClickListener(new OnItemClickListener() {
+        btn_check = (Button) findViewById(R.id.btn_check);
+        btn_cancel = (Button) findViewById(R.id.btn_cancel);
+        btn_check.setOnClickListener(this);
+        btn_cancel.setOnClickListener(this);
+        findViewById(R.id.btn_back).setOnClickListener(this);
+        findViewById(R.id.btn_refresh).setOnClickListener(this);
+        tv_new_order = (TextView) findViewById(R.id.tv_new_order);
+        tv_preparing_order = (TextView) findViewById(R.id.tv_preparing_order);
+        tv_completed_order = (TextView) findViewById(R.id.tv_completed_order);
 
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				selectOrderItem = arg2;
-				refreshDataView();
-			}
-		});
-		initData();
-		appOderAdapter = new AppOderAdapter();
-		lv_order_list.setAdapter(appOderAdapter);
-		appOderDetailAdapter = new AppOderDetailAdapter();
-		lv_orderdetail_list.setAdapter(appOderDetailAdapter);
-		Intent intent = getIntent();
-		if (!TextUtils.isEmpty(intent.getStringExtra("appOrderId"))) {
-			appOrderId = Integer.parseInt(intent.getStringExtra("appOrderId"));
-		}
-		if (appOrderId != 0 ) {
-			for (AppOrder appOrder : appOrders) {
-				if (appOrder.getId().intValue() == appOrderId) {
-					selectOrderItem = appOrders
-							.indexOf(appOrder);
-					lv_order_list.setSelection(selectOrderItem);
-				}
-			}
-			appOrderId = 0;
-		}
-		FragmentManager fragmentManager = this.getSupportFragmentManager();
-		f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
-		closeTables();
-	}
-	private TableInfo tableInfo;
-	@Override
-	public void selectTable(TableInfo tableInfo) {
-		this.tableInfo = tableInfo;
-		AppOrder appOrder = (AppOrder) btn_check.getTag();
-		if(tableInfo == null)
-			return;
-		appOrder.setTableId(tableInfo.getPosId());
-		AppOrderSQL.updateAppOrder(appOrder);
-		List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId().intValue());
-		List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(appOrder.getId().intValue());
-		List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(appOrder.getId().intValue());
-		App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+        tv_new_order.setOnClickListener(this);
+        tv_preparing_order.setOnClickListener(this);
+        tv_completed_order.setOnClickListener(this);
+        lv_order_list.setOnItemClickListener(new OnItemClickListener() {
 
-		dismissLoadingDialog();
-		closeTables();
-	}
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                    long arg3) {
+                selectOrderItem = arg2;
+                refreshDataView();
+            }
+        });
+        initData();
+        appOderAdapter = new AppOderAdapter();
+        lv_order_list.setAdapter(appOderAdapter);
+        appOderDetailAdapter = new AppOderDetailAdapter();
+        lv_orderdetail_list.setAdapter(appOderDetailAdapter);
+        Intent intent = getIntent();
+        if (!TextUtils.isEmpty(intent.getStringExtra("appOrderId"))) {
+            appOrderId = Integer.parseInt(intent.getStringExtra("appOrderId"));
+        }
+        if (appOrderId != 0) {
+            for (AppOrder appOrder : appOrders) {
+                if (appOrder.getId().intValue() == appOrderId) {
+                    selectOrderItem = appOrders
+                            .indexOf(appOrder);
+                    lv_order_list.setSelection(selectOrderItem);
+                }
+            }
+            appOrderId = 0;
+        }
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
+        closeTables();
+    }
 
-	private void closeTables() {
-		FragmentManager fragmentManager = this.getSupportFragmentManager();
-		FragmentTransaction transaction = fragmentManager.beginTransaction();
-		transaction.hide(f_tables);
-		transaction.commitAllowingStateLoss();
-	}
+    private TableInfo tableInfo;
 
-	private void showTables() {
-		FragmentManager fragmentManager = this.getSupportFragmentManager();
-		FragmentTransaction transaction = fragmentManager.beginTransaction();
-		transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
-		transaction.show(f_tables);
-		transaction.commitAllowingStateLoss();
-		App.instance.showWelcomeToSecondScreen();
-	}
+    @Override
+    public void selectTable(TableInfo tableInfo) {
+        this.tableInfo = tableInfo;
+        AppOrder appOrder = (AppOrder) btn_check.getTag();
+        if (tableInfo == null)
+            return;
+        appOrder.setTableId(tableInfo.getPosId());
+        AppOrderSQL.updateAppOrder(appOrder);
+        List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId().intValue());
+        List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(appOrder.getId().intValue());
+        List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(appOrder.getId().intValue());
+        App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
 
-	private void initData(){
-		tv_new_order.setBackgroundColor(getResources().getColor(R.color.white));
-		tv_new_order.setTextColor(getResources().getColor(R.color.black));
-		tv_preparing_order.setBackgroundColor(getResources().getColor(R.color.white));
-		tv_preparing_order.setTextColor(getResources().getColor(R.color.black));
-		tv_completed_order.setBackgroundColor(getResources().getColor(R.color.white));
-		tv_completed_order.setTextColor(getResources().getColor(R.color.black));
-		btn_check.setVisibility(View.VISIBLE);
-		btn_cancel.setVisibility(View.GONE);
-		switch (selectViewId){
-			default:
-			case R.id.tv_new_order:
-				tv_new_order.setBackgroundColor(getResources().getColor(R.color.brownness));
-				tv_new_order.setTextColor(getResources().getColor(R.color.white));
-				appOrders = AppOrderSQL.getNewAppOrder(App.instance.getBusinessDate());
-				btn_check.setText(getResources().getText(R.string.receving_order));
-				if(!App.instance.isRevenueKiosk()){
-					btn_cancel.setVisibility(View.VISIBLE);
-				}
-				break;
-			case R.id.tv_preparing_order:
-				tv_preparing_order.setBackgroundColor(getResources().getColor(R.color.brownness));
-				tv_preparing_order.setTextColor(getResources().getColor(R.color.white));
-				appOrders = AppOrderSQL.getPreparAppOrder(App.instance.getBusinessDate());
-				btn_check.setText(getResources().getText(R.string.completed_order));
+        dismissLoadingDialog();
+        closeTables();
+    }
+
+    private void closeTables() {
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.hide(f_tables);
+        transaction.commitAllowingStateLoss();
+    }
+
+    private void showTables() {
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
+        transaction.show(f_tables);
+        transaction.commitAllowingStateLoss();
+        App.instance.showWelcomeToSecondScreen();
+    }
+
+    private void initData() {
+        tv_new_order.setBackgroundColor(getResources().getColor(R.color.white));
+        tv_new_order.setTextColor(getResources().getColor(R.color.black));
+        tv_preparing_order.setBackgroundColor(getResources().getColor(R.color.white));
+        tv_preparing_order.setTextColor(getResources().getColor(R.color.black));
+        tv_completed_order.setBackgroundColor(getResources().getColor(R.color.white));
+        tv_completed_order.setTextColor(getResources().getColor(R.color.black));
+        btn_check.setVisibility(View.VISIBLE);
+        btn_cancel.setVisibility(View.GONE);
+        switch (selectViewId) {
+            default:
+            case R.id.tv_new_order:
+                tv_new_order.setBackgroundColor(getResources().getColor(R.color.brownness));
+                tv_new_order.setTextColor(getResources().getColor(R.color.white));
+                appOrders = AppOrderSQL.getNewAppOrder(App.instance.getBusinessDate());
+                btn_check.setText(getResources().getText(R.string.receving_order));
+                if (!App.instance.isRevenueKiosk()) {
+                    btn_cancel.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.tv_preparing_order:
+                tv_preparing_order.setBackgroundColor(getResources().getColor(R.color.brownness));
+                tv_preparing_order.setTextColor(getResources().getColor(R.color.white));
+                appOrders = AppOrderSQL.getPreparAppOrder(App.instance.getBusinessDate());
+                btn_check.setText(getResources().getText(R.string.completed_order));
 //				if(!App.instance.isRevenueKiosk()){
 //					btn_check.setVisibility(View.INVISIBLE);
 //					btn_cancel.setVisibility(View.GONE);
 //				}
-				break;
-			case R.id.tv_completed_order:
-				tv_completed_order.setBackgroundColor(getResources().getColor(R.color.brownness));
-				tv_completed_order.setTextColor(getResources().getColor(R.color.white));
-				appOrders = AppOrderSQL.getAppOrderByOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED, App.instance.getBusinessDate());
-				btn_check.setText(getResources().getText(R.string.reprint_bill));
+                break;
+            case R.id.tv_completed_order:
+                tv_completed_order.setBackgroundColor(getResources().getColor(R.color.brownness));
+                tv_completed_order.setTextColor(getResources().getColor(R.color.white));
+                appOrders = AppOrderSQL.getAppOrderByOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED, App.instance.getBusinessDate());
+                btn_check.setText(getResources().getText(R.string.reprint_bill));
 //				if(!App.instance.isRevenueKiosk()){
 //					btn_check.setVisibility(View.INVISIBLE);
 //					btn_cancel.setVisibility(View.GONE);
 //				}
-				break;
-		}
-		if(appOrders.size() > 0){
-			ll_orderdetail_layout.setVisibility(View.VISIBLE);
-			if(selectOrderItem > appOrders.size() -1){
-				selectOrderItem = 0;
-			}
-			AppOrder appOrder = appOrders.get(selectOrderItem);
-			TextView tv_eat_type = (TextView)findViewById(R.id.tv_eat_type);
-			TextView tv_app_remarks = (TextView)findViewById(R.id.tv_app_remarks);
-			if(appOrder.getEatType() == ParamConst.APP_ORDER_TAKE_AWAY){
-				tv_eat_type.setText(getResources().getString(R.string.app_take_away));
-			}else{
-				tv_eat_type.setText(getResources().getString(R.string.app_dine_in));
-			}
-			if(!TextUtils.isEmpty(appOrder.getOrderRemark())){
-				tv_app_remarks.setText(appOrder.getOrderRemark());
-			}else{
-				tv_app_remarks.setText("");
-			}
-			appOrderDetails = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId().intValue());
-		}else{
-			ll_orderdetail_layout.setVisibility(View.INVISIBLE);
-		}
-	}
+                break;
+        }
+        if (appOrders.size() > 0) {
+            ll_orderdetail_layout.setVisibility(View.VISIBLE);
+            if (selectOrderItem > appOrders.size() - 1) {
+                selectOrderItem = 0;
+            }
+            AppOrder appOrder = appOrders.get(selectOrderItem);
+            TextView tv_eat_type = (TextView) findViewById(R.id.tv_eat_type);
+            TextView tv_app_remarks = (TextView) findViewById(R.id.tv_app_remarks);
+            if (appOrder.getEatType() == ParamConst.APP_ORDER_TAKE_AWAY) {
+                tv_eat_type.setText(getResources().getString(R.string.app_take_away));
+            } else {
+                tv_eat_type.setText(getResources().getString(R.string.app_dine_in));
+            }
+            if (!TextUtils.isEmpty(appOrder.getOrderRemark())) {
+                tv_app_remarks.setText(appOrder.getOrderRemark());
+            } else {
+                tv_app_remarks.setText("");
+            }
+            appOrderDetails = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId().intValue());
+        } else {
+            ll_orderdetail_layout.setVisibility(View.INVISIBLE);
+        }
+    }
 
-	private void refreshDataView(){
-		initData();
-		appOderAdapter.notifyDataSetChanged();
-		appOderDetailAdapter.notifyDataSetChanged();
-	}
+    private void refreshDataView() {
+        initData();
+        appOderAdapter.notifyDataSetChanged();
+        appOderDetailAdapter.notifyDataSetChanged();
+    }
 
-	private void initTextTypeFace() {
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.btn_back));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.btn_refresh));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_order_no));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_order_type));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_order_status));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_order_time));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_item_name));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_item_qty));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.btn_check));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.btn_cancel));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_new_order));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_preparing_order));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_completed_order));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_eat_type));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_remarks_title));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_remarks));
+    private void initTextTypeFace() {
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.btn_back));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.btn_refresh));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_order_no));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_order_type));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_order_status));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_order_time));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_item_name));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_item_qty));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.btn_check));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.btn_cancel));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_new_order));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_preparing_order));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_completed_order));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_eat_type));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_app_remarks_title));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_app_remarks));
 
 
-	}
+    }
 
-	@Override
-	protected void handlerClickEvent(View v) {
-		super.handlerClickEvent(v);
-		switch (v.getId()) {
-		case R.id.btn_check:{
-			final AppOrder appOrder = (AppOrder)v.getTag();
+    @Override
+    protected void handlerClickEvent(View v) {
+        super.handlerClickEvent(v);
+        switch (v.getId()) {
+            case R.id.btn_check: {
+                final AppOrder appOrder = (AppOrder) v.getTag();
 //			if(App.instance.isRevenueKiosk()){
-				selectOrderItem = 0;
-				if (appOrder == null) {
-					return;
-				}
-				if(selectViewId == R.id.tv_new_order){
+                selectOrderItem = 0;
+                if (appOrder == null) {
+                    return;
+                }
+                if (selectViewId == R.id.tv_new_order) {
 //					Map<String, Object> parameters = new HashMap<String, Object>();
 //					parameters.put("appOrderId", appOrder.getId().intValue());
 //					parameters.put("orderStatus", ParamConst.APP_ORDER_STATUS_ACCEPTED);
 //					parameters.put("orderNum", appOrder.getOrderNo());
 
 //					appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARED);
-					if(App.instance.isRevenueKiosk()) {
-						loadingDialog.setTitle("Loading");
-						loadingDialog.show();
-						SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
-					}else{
-						showTables();
-					}
-				}else {
-					appOrder
-							.setOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED);
-					AppOrderSQL.updateAppOrder(appOrder);
-					PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-							context);
-					printerLoadingDialog.setTitle(context.getResources().getString(
-							R.string.receipt_printing));
-					printerLoadingDialog.showByTime(3000);
-					App.instance.printerAppOrder(appOrder);
-					CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-					if (cloudSync != null) {
-						cloudSync.checkAppOrderStatus(
-								App.instance.getRevenueCenter().getId().intValue(),
-								appOrder.getId().intValue(),
-								appOrder.getOrderStatus().intValue(), "",
-								App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
-					}
-					handler.postDelayed(new Runnable() {
+                    if (App.instance.isRevenueKiosk()) {
+                        loadingDialog.setTitle("Loading");
+                        loadingDialog.show();
+                        SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
+                    } else {
+                        showTables();
+                    }
+                } else {
+                    appOrder
+                            .setOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED);
+                    AppOrderSQL.updateAppOrder(appOrder);
+                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                            context);
+                    printerLoadingDialog.setTitle(context.getResources().getString(
+                            R.string.receipt_printing));
+                    printerLoadingDialog.showByTime(3000);
+                    App.instance.printerAppOrder(appOrder);
+                    CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                    if (cloudSync != null) {
+                        cloudSync.checkAppOrderStatus(
+                                App.instance.getRevenueCenter().getId().intValue(),
+                                appOrder.getId().intValue(),
+                                appOrder.getOrderStatus().intValue(), "",
+                                App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
+                    }
+                    handler.postDelayed(new Runnable() {
 
-						@Override
-						public void run() {
-							refreshView();
-						}
-					}, 3000);
-				}
+                        @Override
+                        public void run() {
+                            refreshView();
+                        }
+                    }, 3000);
+                }
 //			}else{
 //				showTables();
 //			}
@@ -345,294 +348,296 @@ public class NetWorkOrderActivity extends BaseActivity {
 
 
 */
-		}
-			break;
-		case R.id.btn_cancel: {
-			AppOrder  appOrder = (AppOrder) v.getTag();
-			loadingDialog.show();
-			SyncCentre.getInstance().appOrderRefund(this,appOrder.getId().intValue(),handler);
-		}
-			break;
-		case R.id.btn_back:
-			this.finish();
-			break;
-		case R.id.btn_refresh:
-			refreshView();
-			break;
-		case R.id.tv_new_order:
-		case R.id.tv_preparing_order:
-		case R.id.tv_completed_order:
-			if(selectViewId != v.getId()) {
-				selectViewId = v.getId();
-				selectOrderItem = 0;
-				refreshDataView();
-			}
-			break;
-		default:
-			break;
-		}
-	}
+            }
+            break;
+            case R.id.btn_cancel: {
+                AppOrder appOrder = (AppOrder) v.getTag();
+                loadingDialog.show();
+                SyncCentre.getInstance().appOrderRefund(this, appOrder.getId().intValue(), handler);
+            }
+            break;
+            case R.id.btn_back:
+                this.finish();
+                break;
+            case R.id.btn_refresh:
+                refreshView();
+                break;
+            case R.id.tv_new_order:
+            case R.id.tv_preparing_order:
+            case R.id.tv_completed_order:
+                if (selectViewId != v.getId()) {
+                    selectViewId = v.getId();
+                    selectOrderItem = 0;
+                    refreshDataView();
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
-	private void checkOrder(TempOrder tempOrder){
-		tempOrder.setStatus(ParamConst.TEMPORDER_STATUS_CHECKED);
-		TempOrderSQL.updateTempOrder(tempOrder);
-		Intent intent = this.getIntent();
-		intent.putExtra("appOrderId", tempOrder.getAppOrderId());
-		setResult(CHECK_REQUEST_CODE, intent);
-		this.finish();
-	}
+    private void checkOrder(TempOrder tempOrder) {
+        tempOrder.setStatus(ParamConst.TEMPORDER_STATUS_CHECKED);
+        TempOrderSQL.updateTempOrder(tempOrder);
+        Intent intent = this.getIntent();
+        intent.putExtra("appOrderId", tempOrder.getAppOrderId());
+        setResult(CHECK_REQUEST_CODE, intent);
+        this.finish();
+    }
 
-	private Handler handler = new Handler(){
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what){
-				case REFRESH_APPORDER_SUCCESS:
-					loadingDialog.dismiss();
-					initData();
-					appOderAdapter.notifyDataSetChanged();
-					appOderDetailAdapter.notifyDataSetChanged();
-					break;
-				case REFRESH_APPORDER_FAILED:
-					dismissLoadingDialog();
-					initData();
-					appOderAdapter.notifyDataSetChanged();
-					appOderDetailAdapter.notifyDataSetChanged();
-					UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
-							(Throwable) msg.obj, context.getResources().getString(R.string.server)));
-					break;
-				case RESULT_OK:
-					initData();
-					appOderAdapter.notifyDataSetChanged();
-					appOderDetailAdapter.notifyDataSetChanged();
-					dismissLoadingDialog();
-					break;
-				case RECEVING_APP_ORDER_SUCCESS: {
-					dismissLoadingDialog();
-					int id = (Integer) msg.obj;
-					AppOrder appOrder = AppOrderSQL.getAppOrderById(id);
-					appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_ACCEPTED);
-					List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(id);
-					List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(id);
-					List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(id);
-					App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
-				}
-					break;
-				case HTTP_FAILED:
-					dismissLoadingDialog();
-					UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
-							(Throwable) msg.obj, context.getResources().getString(R.string.server)));
-					break;
-				case RESULT_FAILED:
-					dismissLoadingDialog();
-					UIHelp.showShortToast(context, ResultCode.getErrorResultStrByCode(context,
-							(Integer) msg.obj, context.getResources().getString(R.string.server)));
-					refreshDataView();
-					break;
-				case MainPage.VIEW_EVENT_SET_APPORDER_TABLE_PACKS: {
-					AppOrder appOrder = (AppOrder) btn_check.getTag();
-					if(tableInfo == null)
-						return;
-					appOrder.setTableId(tableInfo.getPosId());
-					AppOrderSQL.updateAppOrder(appOrder);
-					List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId().intValue());
-					List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(appOrder.getId().intValue());
-					List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(appOrder.getId().intValue());
-					App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
-					dismissLoadingDialog();
-					closeTables();
-				}
-					break;
-				case CANCEL_APPORDER_SUCCESS:
-					dismissLoadingDialog();
-					refreshDataView();
-					break;
-				case ResultCode.APP_REFUND_FAILD:
-					dismissLoadingDialog();
-					UIHelp.showToast(context, "Refund Error " + msg.obj);
-					break;
-			}
-			super.handleMessage(msg);
-		}
-	};
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case REFRESH_APPORDER_SUCCESS:
+                    loadingDialog.dismiss();
+                    initData();
+                    appOderAdapter.notifyDataSetChanged();
+                    appOderDetailAdapter.notifyDataSetChanged();
+                    break;
+                case REFRESH_APPORDER_FAILED:
+                    dismissLoadingDialog();
+                    initData();
+                    appOderAdapter.notifyDataSetChanged();
+                    appOderDetailAdapter.notifyDataSetChanged();
+                    UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
+                            (Throwable) msg.obj, context.getResources().getString(R.string.server)));
+                    break;
+                case RESULT_OK:
+                    initData();
+                    appOderAdapter.notifyDataSetChanged();
+                    appOderDetailAdapter.notifyDataSetChanged();
+                    dismissLoadingDialog();
+                    break;
+                case RECEVING_APP_ORDER_SUCCESS: {
+                    dismissLoadingDialog();
+                    int id = (Integer) msg.obj;
+                    AppOrder appOrder = AppOrderSQL.getAppOrderById(id);
+                    appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_ACCEPTED);
+                    List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(id);
+                    List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(id);
+                    List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(id);
+                    App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+                }
+                break;
+                case HTTP_FAILED:
+                    dismissLoadingDialog();
+                    UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
+                            (Throwable) msg.obj, context.getResources().getString(R.string.server)));
+                    break;
+                case RESULT_FAILED:
+                    dismissLoadingDialog();
+                    UIHelp.showShortToast(context, ResultCode.getErrorResultStrByCode(context,
+                            (Integer) msg.obj, context.getResources().getString(R.string.server)));
+                    refreshDataView();
+                    break;
+                case MainPage.VIEW_EVENT_SET_APPORDER_TABLE_PACKS: {
+                    AppOrder appOrder = (AppOrder) btn_check.getTag();
+                    if (tableInfo == null)
+                        return;
+                    appOrder.setTableId(tableInfo.getPosId());
+                    AppOrderSQL.updateAppOrder(appOrder);
+                    List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId().intValue());
+                    List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(appOrder.getId().intValue());
+                    List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(appOrder.getId().intValue());
+                    App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+                    dismissLoadingDialog();
+                    closeTables();
+                }
+                break;
+                case CANCEL_APPORDER_SUCCESS:
+                    dismissLoadingDialog();
+                    refreshDataView();
+                    break;
+                case ResultCode.APP_REFUND_FAILD:
+                    dismissLoadingDialog();
+                    UIHelp.showToast(context, "Refund Error " + msg.obj);
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
-	private void refreshView(){
-		loadingDialog.show();
-		SyncCentre.getInstance().getAllAppOrder(this, new HashMap<String, Object>(), handler);
-	}
+    private void refreshView() {
+        loadingDialog.show();
+        SyncCentre.getInstance().getAllAppOrder(this, new HashMap<String, Object>(), handler);
+    }
 
 
-	@Override
-	public void httpRequestAction(int action, Object obj) {
-		if(action == RESULT_OK){
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					loadingDialog.show();
-				}
-			});
-			handler.sendEmptyMessage(RESULT_OK);
-		}
-		if(action == ResultCode.APP_ORDER_REFUND){
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					refreshView();
-				}
-			});
-		}
-		super.httpRequestAction(action, obj);
+    @Override
+    public void httpRequestAction(int action, Object obj) {
+        if (action == RESULT_OK) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadingDialog.show();
+                }
+            });
+            handler.sendEmptyMessage(RESULT_OK);
+        }
+        if (action == ResultCode.APP_ORDER_REFUND) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    refreshView();
+                }
+            });
+        }
+        super.httpRequestAction(action, obj);
 
-	}
+    }
 
-	class AppOderAdapter extends BaseAdapter{
+    class AppOderAdapter extends BaseAdapter {
 
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return appOrders.size();
-		}
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return appOrders.size();
+        }
 
-		@Override
-		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
-			return appOrders.get(arg0);
-		}
+        @Override
+        public Object getItem(int arg0) {
+            // TODO Auto-generated method stub
+            return appOrders.get(arg0);
+        }
 
-		@Override
-		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
-			return arg0;
-		}
+        @Override
+        public long getItemId(int arg0) {
+            // TODO Auto-generated method stub
+            return arg0;
+        }
 
-		@Override
-		public View getView(int arg0, View arg1, ViewGroup arg2) {
-			HolderView holder = null;
-			if (arg1 == null) {
-				arg1 = inflater.inflate(R.layout.temp_order_item, null);
-				holder = new HolderView();
-				holder.tv_order_id = (TextView) arg1.findViewById(R.id.tv_order_id);
-				holder.tv_order_status = (TextView) arg1.findViewById(R.id.tv_order_status);
-				holder.tv_order_type = (TextView) arg1.findViewById(R.id.tv_order_type);
-				holder.tv_place_time = (TextView) arg1.findViewById(R.id.tv_place_time);
-				textTypeFace.setTrajanProRegular(holder.tv_order_id);
-				textTypeFace.setTrajanProRegular(holder.tv_order_type);
-				textTypeFace.setTrajanProRegular(holder.tv_place_time);
-				textTypeFace.setTrajanProRegular(holder.tv_order_status);
-				arg1.setTag(holder);
-			} else {
-				holder = (HolderView) arg1.getTag();
-			}
+        @Override
+        public View getView(int arg0, View arg1, ViewGroup arg2) {
+            HolderView holder = null;
+            if (arg1 == null) {
+                arg1 = inflater.inflate(R.layout.temp_order_item, null);
+                holder = new HolderView();
+                holder.tv_order_id = (TextView) arg1.findViewById(R.id.tv_order_id);
+                holder.tv_order_status = (TextView) arg1.findViewById(R.id.tv_order_status);
+                holder.tv_order_type = (TextView) arg1.findViewById(R.id.tv_order_type);
+                holder.tv_place_time = (TextView) arg1.findViewById(R.id.tv_place_time);
+                textTypeFace.setTrajanProRegular(holder.tv_order_id);
+                textTypeFace.setTrajanProRegular(holder.tv_order_type);
+                textTypeFace.setTrajanProRegular(holder.tv_place_time);
+                textTypeFace.setTrajanProRegular(holder.tv_order_status);
+                arg1.setTag(holder);
+            } else {
+                holder = (HolderView) arg1.getTag();
+            }
 
-			AppOrder appOrder = appOrders.get(arg0);
-			if(arg0 == selectOrderItem){
-				arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.brownness));
-				btn_check.setTag(appOrder);
-				btn_cancel.setTag(appOrder);
+            AppOrder appOrder = appOrders.get(arg0);
+            if (arg0 == selectOrderItem) {
+                arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.brownness));
+                btn_check.setTag(appOrder);
+                btn_cancel.setTag(appOrder);
 //				if(appOrder.getTableType().intValue() == ParamConst.APP_ORDER_TABLE_STATUS_USED){
 //					btn_check.setVisibility(View.VISIBLE);
 //				}else{
 //					btn_check.setVisibility(View.INVISIBLE);
 //				}
-				holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-				holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-				holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-				holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-			}else{
-				arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-				holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-				holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-				holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-				holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-			}
-			holder.tv_order_id.setText(appOrder.getId() + "");
-			String statusStr = "";
-			switch (appOrder.getOrderStatus().intValue()) {
-			case ParamConst.APP_ORDER_STATUS_PAID:
-				statusStr = getResources().getString(R.string.paid);
-				break;
-			case ParamConst.APP_ORDER_STATUS_ACCEPTED:
-				statusStr = getResources().getString(R.string.making);
-				break;
-			case ParamConst.APP_ORDER_STATUS_PREPARING:
-				statusStr = getResources().getString(R.string.preparing);
-				break;
-			case ParamConst.APP_ORDER_STATUS_PREPARED:
-				statusStr = getResources().getString(R.string.prepared);
-				break;
-			case ParamConst.APP_ORDER_STATUS_COMPLETED:
-				statusStr = getResources().getString(R.string.finish);
-				break;
-			default:
-				break;
-			}
-			holder.tv_order_status.setText(statusStr);
-			holder.tv_order_type.setText("Online");
-			holder.tv_place_time.setText(TimeUtil.getCloseBillDataTime(appOrder.getCreateTime()));
-			return arg1;
-		}
-		class HolderView {
-			public TextView tv_order_id;
-			public TextView tv_order_status;
-			public TextView tv_order_type;
-			public TextView tv_place_time;
-		}
-	}
+                holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+                holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+                holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+                holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+            } else {
+                arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+                holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+                holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+                holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+                holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+            }
+            holder.tv_order_id.setText(appOrder.getId() + "");
+            String statusStr = "";
+            switch (appOrder.getOrderStatus().intValue()) {
+                case ParamConst.APP_ORDER_STATUS_PAID:
+                    statusStr = getResources().getString(R.string.paid);
+                    break;
+                case ParamConst.APP_ORDER_STATUS_ACCEPTED:
+                    statusStr = getResources().getString(R.string.making);
+                    break;
+                case ParamConst.APP_ORDER_STATUS_PREPARING:
+                    statusStr = getResources().getString(R.string.preparing);
+                    break;
+                case ParamConst.APP_ORDER_STATUS_PREPARED:
+                    statusStr = getResources().getString(R.string.prepared);
+                    break;
+                case ParamConst.APP_ORDER_STATUS_COMPLETED:
+                    statusStr = getResources().getString(R.string.finish);
+                    break;
+                default:
+                    break;
+            }
+            holder.tv_order_status.setText(statusStr);
+            holder.tv_order_type.setText("Online");
+            holder.tv_place_time.setText(TimeUtil.getCloseBillDataTime(appOrder.getCreateTime()));
+            return arg1;
+        }
+
+        class HolderView {
+            public TextView tv_order_id;
+            public TextView tv_order_status;
+            public TextView tv_order_type;
+            public TextView tv_place_time;
+        }
+    }
 
 
-	class AppOderDetailAdapter extends BaseAdapter{
+    class AppOderDetailAdapter extends BaseAdapter {
 
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return appOrderDetails.size();
-		}
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return appOrderDetails.size();
+        }
 
-		@Override
-		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
-			return appOrderDetails.get(arg0);
-		}
+        @Override
+        public Object getItem(int arg0) {
+            // TODO Auto-generated method stub
+            return appOrderDetails.get(arg0);
+        }
 
-		@Override
-		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
-			return arg0;
-		}
+        @Override
+        public long getItemId(int arg0) {
+            // TODO Auto-generated method stub
+            return arg0;
+        }
 
-		@Override
-		public View getView(int arg0, View arg1, ViewGroup arg2) {
-			HolderView holder = null;
-			if (arg1 == null) {
-				arg1 = inflater.inflate(R.layout.temp_orderdetail_item, null);
-				holder = new HolderView();
-				holder.tv_orderdetail_name = (TextView) arg1.findViewById(R.id.tv_orderdetail_name);
-				holder.tv_orderdetail_qty = (TextView) arg1.findViewById(R.id.tv_orderdetail_qty);
-				holder.tv_temp_modifier = (TextView) arg1.findViewById(R.id.tv_temp_modifier);
-				textTypeFace.setTrajanProRegular(holder.tv_orderdetail_name);
-				textTypeFace.setTrajanProRegular(holder.tv_orderdetail_qty);
-				textTypeFace.setTrajanProRegular(holder.tv_temp_modifier);
-				arg1.setTag(holder);
-			} else {
-				holder = (HolderView) arg1.getTag();
-			}
-			AppOrderDetail appOrderDetail = appOrderDetails.get(arg0);
-			holder.tv_orderdetail_name.setText(appOrderDetail.getItemName());
-			holder.tv_orderdetail_qty.setText(appOrderDetail.getItemNum() + "");
-			List<AppOrderModifier> appOrderModifiers = AppOrderModifierSQL.getAppOrderModifierByOrderDetailId(appOrderDetail.getId().intValue());
-			StringBuffer modifierNames = new StringBuffer();
-			for(AppOrderModifier appOrderModifier : appOrderModifiers){
-				if(modifierNames.length() != 0){
-					modifierNames.append(",");
-				}
-				modifierNames.append(appOrderModifier.getModifierName());
-			}
-			holder.tv_temp_modifier.setText(modifierNames.toString());
-			return arg1;
-		}
-		class HolderView {
-			public TextView tv_orderdetail_name;
-			public TextView tv_orderdetail_qty;
-			public TextView tv_temp_modifier;
-		}
-	}
+        @Override
+        public View getView(int arg0, View arg1, ViewGroup arg2) {
+            HolderView holder = null;
+            if (arg1 == null) {
+                arg1 = inflater.inflate(R.layout.temp_orderdetail_item, null);
+                holder = new HolderView();
+                holder.tv_orderdetail_name = (TextView) arg1.findViewById(R.id.tv_orderdetail_name);
+                holder.tv_orderdetail_qty = (TextView) arg1.findViewById(R.id.tv_orderdetail_qty);
+                holder.tv_temp_modifier = (TextView) arg1.findViewById(R.id.tv_temp_modifier);
+                textTypeFace.setTrajanProRegular(holder.tv_orderdetail_name);
+                textTypeFace.setTrajanProRegular(holder.tv_orderdetail_qty);
+                textTypeFace.setTrajanProRegular(holder.tv_temp_modifier);
+                arg1.setTag(holder);
+            } else {
+                holder = (HolderView) arg1.getTag();
+            }
+            AppOrderDetail appOrderDetail = appOrderDetails.get(arg0);
+            holder.tv_orderdetail_name.setText(appOrderDetail.getItemName());
+            holder.tv_orderdetail_qty.setText(appOrderDetail.getItemNum() + "");
+            List<AppOrderModifier> appOrderModifiers = AppOrderModifierSQL.getAppOrderModifierByOrderDetailId(appOrderDetail.getId().intValue());
+            StringBuffer modifierNames = new StringBuffer();
+            for (AppOrderModifier appOrderModifier : appOrderModifiers) {
+                if (modifierNames.length() != 0) {
+                    modifierNames.append(",");
+                }
+                modifierNames.append(appOrderModifier.getModifierName());
+            }
+            holder.tv_temp_modifier.setText(modifierNames.toString());
+            return arg1;
+        }
+
+        class HolderView {
+            public TextView tv_orderdetail_name;
+            public TextView tv_orderdetail_qty;
+            public TextView tv_temp_modifier;
+        }
+    }
 }

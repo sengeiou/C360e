@@ -103,6 +103,7 @@ import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
+import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
@@ -472,7 +473,7 @@ public class App extends BaseApplication {
             }
         }
         posType = Store.getInt(instance, Store.POS_TYPE, 0);
-        if(posType == 0) {
+        if (posType == 0) {
             xmppThread = new XmppThread();
             xmppThread.start();
         }
@@ -1159,7 +1160,7 @@ public class App extends BaseApplication {
             this.mainPosInfo.setIP(CommonUtil.getLocalIpAddress());
             this.setMainPosInfo(mainPosInfo);
             Store.saveObject(getBaseContext(), Store.MAINPOSINFO, mainPosInfo);
-            if(posType == 0) {
+            if (posType == 0) {
                 XMPP.getInstance().onNetWorkConnect();
             }
         }
@@ -1285,7 +1286,7 @@ public class App extends BaseApplication {
     }
 
     public void setCallAppIp(String callAppIp) {
-        if(!TextUtils.isEmpty(callAppIp)) {
+        if (!TextUtils.isEmpty(callAppIp)) {
             this.callAppIp = callAppIp;
             Store.putString(this, Store.CALL_APP_IP, callAppIp);
         }
@@ -1487,11 +1488,11 @@ public class App extends BaseApplication {
         for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
             Integer key = dev.getKey();
             PrinterDevice devPrinter = dev.getValue();
-            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().contains(":")) {
+            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP()) && devPrinter.getIP().contains(":")) {
                 printlist.add(devPrinter);
             }
 
-            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP())&& devPrinter.getIP().contains(",")) {
+            if (devPrinter != null && !TextUtils.isEmpty(devPrinter.getIP()) && devPrinter.getIP().contains(",")) {
                 printlist.add(devPrinter);
             }
         }
@@ -1727,18 +1728,18 @@ public class App extends BaseApplication {
             printerDialog();
             return;
         }
-        String  direction=null;
-        if(!App.instance.getSystemSettings().isPrintLableD()){
-            direction="0";
+        String direction = null;
+        if (!App.instance.getSystemSettings().isPrintLableD()) {
+            direction = "0";
 
-        }else {
-            direction="1";
+        } else {
+            direction = "1";
         }
         try {
             //  mRemoteService.printTscBill("","","","");
 
 
-            mRemoteService.printTscBill(prtStr, titleStr, orderStr, orderDetailStr, orderModifiersStr, getLocalRestaurantConfig().getCurrencySymbol(),direction);
+            mRemoteService.printTscBill(prtStr, titleStr, orderStr, orderDetailStr, orderModifiersStr, getLocalRestaurantConfig().getCurrencySymbol(), direction);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -1807,11 +1808,11 @@ public class App extends BaseApplication {
 
                     default: {
                         PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethodByPaymentTypeId(paymentSettlement.getPaymentTypeId().intValue());
-                        if(pamentMethod != null && !TextUtils.isEmpty(pamentMethod.getNameOt())) {
+                        if (pamentMethod != null && !TextUtils.isEmpty(pamentMethod.getNameOt())) {
                             printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
                         }
                     }
-                        break;
+                    break;
                 }
                 printReceiptInfos.add(printReceiptInfo);
             }
@@ -1883,8 +1884,7 @@ public class App extends BaseApplication {
     }
 
 
-
-    public void printOutCashDrawer(PrinterDevice printer,CashInOut c,Restaurant title) {
+    public void printOutCashDrawer(PrinterDevice printer, CashInOut c, Restaurant title) {
         Gson gson = new Gson();
         String prtStr = gson.toJson(printer);
 
@@ -1895,11 +1895,12 @@ public class App extends BaseApplication {
             return;
         }
         try {
-            mRemoteService.printCashInOut(prtStr,cashStr,titleStr);
+            mRemoteService.printCashInOut(prtStr, cashStr, titleStr);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
+
     public void deleteOldPrinterMsg(long businessDate) {
 
         try {
@@ -1943,9 +1944,9 @@ public class App extends BaseApplication {
             public void run() {
                 try {
                     mCallback.setHandler(handler);
-                    if(App.instance.getSystemSettings().isPrintLable()) {
+                    if (App.instance.getSystemSettings().isPrintLable()) {
                         mRemoteService.listPrinters("1");
-                    }else {
+                    } else {
                         mRemoteService.listPrinters("0");
                     }
                     Log.d("discoverPrinter", "1860");
@@ -1958,7 +1959,7 @@ public class App extends BaseApplication {
     }
 
     public void closeDiscovery() {
-        if(mRemoteService == null){
+        if (mRemoteService == null) {
             return;
         }
         try {
@@ -2212,7 +2213,7 @@ public class App extends BaseApplication {
 //        this.bindService(PushService.startIntent(this.getApplicationContext()),
 //                this.pushConnection, Context.BIND_IMPORTANT);
 //        this.startService(PushService.startIntent(this.getApplicationContext()));
-        if(posType == 0) {
+        if (posType == 0) {
             syncJob = new CloudSyncJobManager(this);
         } else {
             subPosSyncJob = new SubPosCloudSyncJobManager(this);
@@ -2305,16 +2306,17 @@ public class App extends BaseApplication {
      * Cloud Sync manager: Sync Sales data to cloud
      */
     public CloudSyncJobManager getSyncJob() {
-        if(posType == 0) {
+        if (posType == 0) {
             return syncJob;
-        }else{
+        } else {
             return null;
         }
     }
+
     public SubPosCloudSyncJobManager getSubPosSyncJob() {
-        if(posType != 0) {
+        if (posType != 0) {
             return subPosSyncJob;
-        }else{
+        } else {
             return null;
         }
     }
@@ -2716,8 +2718,41 @@ public class App extends BaseApplication {
                 appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARING);
                 appOrder.setOrderNo(order.getOrderNo());
                 AppOrderSQL.addAppOrder(appOrder);
+
+                //  获取标签打印地址
+                List<PrinterDevice> printerList = App.instance.getPrinterLable();
+
+                if (printerList.size() > 0) {
+                    for (int i = 0; i < printerList.size(); i++) {
+                        PrinterDevice prntd = printerList.get(i);
+                        if (prntd.getIsLablePrinter() == 1) {
+                            final Order paidOrder = OrderSQL.getOrder(order.getId());
+                            PrinterTitle title = ObjectFactory.getInstance()
+                                    .getPrinterTitle(
+                                            App.instance.getRevenueCenter(),
+                                            paidOrder,
+                                            App.instance.getUser().getFirstName()
+                                                    + App.instance.getUser().getLastName(),
+                                            "", 1);
+
+                            List<OrderDetail> placedOrderDetailss
+                                    = OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
+
+                            ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                                    .getInstance().getItemModifierList(paidOrder, OrderDetailSQL.getOrderDetails(paidOrder
+                                            .getId()));
+
+                            if (App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isPrintLable()) {
+                                App.instance.remoteTBillPrint(prntd, title, paidOrder, (ArrayList<OrderDetail>) placedOrderDetailss, orderModifiers);
+                            }
+                        }
+//
+                    }
+                }
+
+
                 CloudSyncJobManager cloudSync = getSyncJob();
-                if (cloudSync != null){
+                if (cloudSync != null) {
                     cloudSync.checkAppOrderStatus(
                             App.instance.getRevenueCenter().getId().intValue(),
                             appOrder.getId().intValue(),
@@ -3007,7 +3042,7 @@ public class App extends BaseApplication {
     }
 
     public String getPairingIp() {
-        if(TextUtils.isEmpty(pairingIp)){
+        if (TextUtils.isEmpty(pairingIp)) {
             pairingIp = Store.getString(instance, Store.MAIN_POS_IP);
         }
         return pairingIp;
@@ -3018,10 +3053,10 @@ public class App extends BaseApplication {
         Store.putString(instance, Store.MAIN_POS_IP, pairingIp);
     }
 
-    public int getSubPosBeanId(){
-        if(subPosBean == null){
+    public int getSubPosBeanId() {
+        if (subPosBean == null) {
             return 0;
-        }else{
+        } else {
             return subPosBean.getId();
         }
     }
