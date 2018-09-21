@@ -659,15 +659,19 @@ public class HttpAnalysis {
 			JSONObject jsonObject = new JSONObject(new String(responseBody));
 			PrinterDevice printer = App.instance.getCahierPrinter();
 			if(printer != null) {
+
 				Order order = gson.fromJson(jsonObject.optString("order"),
 						Order.class);
-				PrinterTitle title = ObjectFactory.getInstance()
-						.getPrinterTitle(
-								App.instance.getRevenueCenter(),
-								order,
-								App.instance.getUser().getFirstName()
-										+ App.instance.getUser().getLastName(),
-								"", 1);
+				PrinterTitle title = gson.fromJson(jsonObject.optString("title"),
+						PrinterTitle.class);
+//				map.put("title", title);
+//				PrinterTitle title = ObjectFactory.getInstance()
+//						.getPrinterTitle(
+//								App.instance.getRevenueCenter(),
+//								order,
+//								App.instance.getUser().getFirstName()
+//										+ App.instance.getUser().getLastName(),
+//								"", 1);
 				List<PrintOrderItem> orderItems = gson.fromJson(jsonObject.getString("orderItems"),
 						new TypeToken<List<PrintOrderItem>>() {
 						}.getType());
@@ -680,7 +684,8 @@ public class HttpAnalysis {
 				List<PaymentSettlement> paymentSettlements = gson.fromJson(jsonObject.getString("paymentSettlements"),
 						new TypeToken<List<PaymentSettlement>>() {
 						}.getType());
-				RoundAmount roundAmount = gson.fromJson(jsonObject.getString("roundAmount"), RoundAmount.class);
+			//	RoundAmount roundAmount = gson.fromJson(jsonObject.getString("roundAmount"), RoundAmount.class);
+				RoundAmount roundAmount=new RoundAmount();
 				App.instance.remoteBillPrint(printer, title, order,
 						orderItems, orderModifiers, taxMaps, paymentSettlements, roundAmount);
 			}

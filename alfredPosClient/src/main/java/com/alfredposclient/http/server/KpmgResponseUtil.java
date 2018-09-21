@@ -27,6 +27,7 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -86,44 +87,46 @@ public class KpmgResponseUtil {
     private MainPosHttpServer mainPosHttpServer;
     private Gson gson;
     public static KpmgResponseUtil instance;
-    private KpmgResponseUtil(){
+
+    private KpmgResponseUtil() {
 
     }
 
     public static KpmgResponseUtil getInstance() {
-        if(instance == null){
+        if (instance == null) {
             instance = new KpmgResponseUtil();
         }
         return instance;
     }
 
-    public void init(MainPosHttpServer httpServer){
+    public void init(MainPosHttpServer httpServer) {
         mainPosHttpServer = httpServer;
         gson = new Gson();
     }
-    public NanoHTTPD.Response kpmgLogin(String params){
+
+    public NanoHTTPD.Response kpmgLogin(String params) {
         NanoHTTPD.Response resp = null;
         try {
             JSONObject jsonObject = new JSONObject(params);
             String employeeId = jsonObject.optString("employee_ID");
             int empId = Integer.parseInt(employeeId);
             long sessionStatusTime = 0l;
-            if(jsonObject.has("sessionStatusTime")){
+            if (jsonObject.has("sessionStatusTime")) {
                 sessionStatusTime = jsonObject.optLong("sessionStatusTime");
             }
             User user = CoreData.getInstance().getUserByEmpId(empId);
             Map<String, Object> result = new HashMap<>();
             if (user != null) {
-                if(user.getType() != ParamConst.USER_TYPE_MANAGER && user.getType() != ParamConst.USER_TYPE_POS
-                        && user.getType() != ParamConst.USER_TYPE_WAITER){
+                if (user.getType() != ParamConst.USER_TYPE_MANAGER && user.getType() != ParamConst.USER_TYPE_POS
+                        && user.getType() != ParamConst.USER_TYPE_WAITER) {
                     result.put(MainPosHttpServer.RESULT_CODE, ResultCode.USER_NO_PERMIT);
                     return mainPosHttpServer.getJsonResponse(new Gson().toJson(result));
                 }
                 result.put("user", user);
                 result.put("businessDate", App.instance.getBusinessDate());
-                if(sessionStatusTime != 0l && sessionStatusTime != App.instance.getSessionStatus().getTime()) {
+                if (sessionStatusTime != 0l && sessionStatusTime != App.instance.getSessionStatus().getTime()) {
                     result.put("resultCode", ResultCode.SESSION_HAS_CHANGE);
-                }else{
+                } else {
                     result.put("resultCode", ResultCode.SUCCESS);
                 }
                 resp = mainPosHttpServer.getJsonResponse(gson.toJson(result));
@@ -139,7 +142,7 @@ public class KpmgResponseUtil {
     }
 
 
-    public NanoHTTPD.Response updateAllData(){
+    public NanoHTTPD.Response updateAllData() {
         NanoHTTPD.Response resp = null;
         try {
             Restaurant restaurant = RestaurantSQL.getRestaurant();
@@ -187,38 +190,47 @@ public class KpmgResponseUtil {
             map.put("settlementRestaurants", settlementRestaurants);
             map.put("resultCode", ResultCode.SUCCESS);
             resp = mainPosHttpServer.getJsonResponse(gson.toJson(map));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             resp = mainPosHttpServer.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
         }
         return resp;
     }
-    public NanoHTTPD.Response commitOrder(String params){
+
+    public NanoHTTPD.Response commitOrder(String params) {
         NanoHTTPD.Response resp = null;
         try {
             Map<String, Object> map = new HashMap<>();
             JSONObject jsonObject = new JSONObject(params);
             Order order = gson.fromJson(jsonObject.getString("order"), Order.class);
             List<OrderDetail> orderDetails = gson.fromJson(jsonObject.getString("orderDetails"),
-                    new TypeToken<List<OrderDetail>>(){}.getType());
+                    new TypeToken<List<OrderDetail>>() {
+                    }.getType());
             List<OrderModifier> orderModifiers = gson.fromJson(jsonObject.getString("orderModifiers"),
-                    new TypeToken<List<OrderModifier>>(){}.getType());
+                    new TypeToken<List<OrderModifier>>() {
+                    }.getType());
             List<Payment> payments = gson.fromJson(jsonObject.getString("payments"),
-                    new TypeToken<List<Payment>>(){}.getType());
+                    new TypeToken<List<Payment>>() {
+                    }.getType());
             List<PaymentSettlement> paymentSettlements = gson.fromJson(jsonObject.getString("paymentSettlements"),
-                    new TypeToken<List<PaymentSettlement>>(){}.getType());
+                    new TypeToken<List<PaymentSettlement>>() {
+                    }.getType());
             List<OrderDetailTax> orderDetailTaxs = gson.fromJson(jsonObject.getString("orderDetailTaxs"),
-                    new TypeToken<List<OrderDetailTax>>(){}.getType());
+                    new TypeToken<List<OrderDetailTax>>() {
+                    }.getType());
             List<OrderSplit> orderSplits = gson.fromJson(jsonObject.getString("orderSplits"),
-                    new TypeToken<List<OrderSplit>>(){}.getType());
+                    new TypeToken<List<OrderSplit>>() {
+                    }.getType());
             List<OrderBill> orderBills = gson.fromJson(jsonObject.getString("orderBills"),
-                    new TypeToken<List<OrderBill>>(){}.getType());
+                    new TypeToken<List<OrderBill>>() {
+                    }.getType());
             List<RoundAmount> roundAmounts = gson.fromJson(jsonObject.getString("roundAmounts"),
-                    new TypeToken<List<RoundAmount>>(){}.getType());
+                    new TypeToken<List<RoundAmount>>() {
+                    }.getType());
             final int orderId = SubPosCommitSQL.commitOrderForKPMG(order, orderSplits, orderBills, payments, orderDetails,
                     orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts);
             map.put("resultCode", ResultCode.SUCCESS);
-            if(orderId != 0) {
+            if (orderId != 0) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -347,7 +359,6 @@ public class KpmgResponseUtil {
             }
 
 
-
             Order placeOrder = OrderSQL.getOrder(orderId);
 
             ArrayList<PrintOrderItem> orderItems = ObjectFactory
@@ -365,14 +376,23 @@ public class KpmgResponseUtil {
                     placeOrder, App.instance.getRevenueCenter());
             RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(placeOrder, orderBill);
             List<PaymentSettlement> paymentSettlementList = PaymentSettlementSQL.getAllPaymentSettlementByOrderId(placeOrder.getId());
+            PrinterTitle title = ObjectFactory.getInstance()
+                    .getPrinterTitle(
+                            App.instance.getRevenueCenter(),
+                            placeOrder,
+                            App.instance.getUser().getFirstName()
+                                    + App.instance.getUser().getLastName(),
+                            "", 1);
+
             map.put("order", placeOrder);
+            map.put("title", title);
             map.put("orderItems", orderItems);
             map.put("orderModifiers", orderModifierList);
             map.put("taxMaps", taxMaps);
             map.put("paymentSettlements", paymentSettlementList);
             map.put("roundAmount", roundAmount);
             resp = mainPosHttpServer.getJsonResponse(gson.toJson(map));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             resp = mainPosHttpServer.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
         }

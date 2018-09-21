@@ -72,9 +72,9 @@ public class App extends BaseApplication {
     public String VERSION;
     private String posIp;
     private MainPosInfo mainPosInfo;
-    public static final int HANDLER_REFRESH_CALL=1;
-    public static final int HANDLER_REFRESH_CALL_ON=2;
-    private String pairingIp,ip;
+    public static final int HANDLER_REFRESH_CALL = 1;
+    public static final int HANDLER_REFRESH_CALL_ON = 2;
+    private String pairingIp, ip;
     private WaiterDevice waiterdev;
     private User user;
     private RevenueCenter revenueCenter;
@@ -95,6 +95,7 @@ public class App extends BaseApplication {
     private RemotePrintServiceCallback mCallback = new RemotePrintServiceCallback();
     private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<>();
     private Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -281,7 +282,7 @@ public class App extends BaseApplication {
     }
 
     public String getPairingIp() {
-        pairingIp = Store.getString(App.instance,"kip");
+        pairingIp = Store.getString(App.instance, "kip");
         return pairingIp;
     }
 
@@ -293,7 +294,7 @@ public class App extends BaseApplication {
 
 
     public MainPosInfo getMainPosInfo() {
-        if(mainPosInfo == null){
+        if (mainPosInfo == null) {
             mainPosInfo = Store.getObject(this.getApplicationContext(), Store.MAINPOSINFO, MainPosInfo.class);
         }
         return mainPosInfo;
@@ -332,7 +333,7 @@ public class App extends BaseApplication {
 
     public void setMainPosInfo(MainPosInfo mainPosInfo) {
         this.mainPosInfo = mainPosInfo;
-        Store.saveObject(this.getApplicationContext(),Store.MAINPOSINFO, mainPosInfo);
+        Store.saveObject(this.getApplicationContext(), Store.MAINPOSINFO, mainPosInfo);
     }
 
     public RevenueCenter getRevenueCenter() {
@@ -345,8 +346,9 @@ public class App extends BaseApplication {
     public void setRevenueCenter(RevenueCenter revenueCenter) {
         this.revenueCenter = revenueCenter;
     }
+
     public WaiterDevice getWaiterdev() {
-        if(waiterdev == null){
+        if (waiterdev == null) {
             waiterdev = Store.getObject(this, Store.WAITER_DEVICE, WaiterDevice.class);
         }
         return waiterdev;
@@ -354,7 +356,7 @@ public class App extends BaseApplication {
 
     public void setWaiterdev(WaiterDevice waiterdev) {
         this.waiterdev = waiterdev;
-        Store.saveObject(this, Store.WAITER_DEVICE,waiterdev);
+        Store.saveObject(this, Store.WAITER_DEVICE, waiterdev);
     }
 
 
@@ -377,18 +379,18 @@ public class App extends BaseApplication {
 
     public String getPosIp() {
 
-        ip = Store.getString(App.instance,Store.KPM_IP);
+        ip = Store.getString(App.instance, Store.KPM_IP);
 
         return ip;
     }
 
     public void setPosIp(String posIp) {
-           Store.putString(App.instance, Store.KPM_IP, posIp);
+        Store.putString(App.instance, Store.KPM_IP, posIp);
 
     }
 
     public SessionStatus getSessionStatus() {
-        if(sessionStatus == null){
+        if (sessionStatus == null) {
             sessionStatus = Store.getObject(instance, Store.SESSION_STATUS, SessionStatus.class);
         }
         return sessionStatus;
@@ -494,6 +496,7 @@ public class App extends BaseApplication {
             }
         }
     }
+
     public void removePrinterDevice(Integer deviceid) {
         for (Iterator<Map.Entry<Integer, PrinterDevice>> it = printerDevices
                 .entrySet().iterator(); it.hasNext(); ) {
@@ -503,8 +506,9 @@ public class App extends BaseApplication {
             }
         }
     }
+
     public void closeDiscovery() {
-        if(mRemoteService == null){
+        if (mRemoteService == null) {
             return;
         }
         try {
@@ -526,7 +530,7 @@ public class App extends BaseApplication {
             public void run() {
                 try {
                     mCallback.setHandler(handler);
-                    mRemoteService.listPrinters();
+                    mRemoteService.listPrinters("0");
                     Log.d("discoverPrinter", "1860");
                 } catch (RemoteException e) {
                     e.printStackTrace();

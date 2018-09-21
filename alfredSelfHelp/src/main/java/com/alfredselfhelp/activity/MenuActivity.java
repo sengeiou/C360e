@@ -908,7 +908,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         loadingDialog.setTitle("Pay...");
         loadingDialog.show();
         SyncCentre.getInstance().commitOrder(this, nurOrder, orderDetails, handler);
-
         mainCategoryAdapter.setCheckedPosition(-1);
     }
 

@@ -3,8 +3,8 @@
     android:id="@+id/devices_root_lyt"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/devices_title"
@@ -137,23 +137,24 @@
             android:id="@+id/devices_view"
             android:layout_width="2dp"
             android:layout_height="match_parent"
-            android:background="#d1d1d1"
-            android:layout_toRightOf="@+id/devices_group_rl"/>
+            android:layout_toRightOf="@+id/devices_group_rl"
+            android:background="#d1d1d1" />
 
         <LinearLayout
             android:id="@+id/devices_ll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_toLeftOf="@+id/devices_view1"
-            android:layout_toRightOf="@+id/devices_view">
+            android:layout_toRightOf="@+id/devices_view"
+            android:background="@drawable/popup_box"
+            android:orientation="vertical">
 
             <com.alfredbase.view.HorizontalListView
                 android:id="@+id/hv_printer_group"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:background="@android:color/transparent"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
             <View
                 android:layout_width="match_parent"
@@ -164,7 +165,7 @@
                 android:id="@+id/devices_customlistview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
         </LinearLayout>
 

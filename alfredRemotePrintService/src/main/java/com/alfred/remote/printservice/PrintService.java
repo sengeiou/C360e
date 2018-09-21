@@ -63,13 +63,12 @@ public class PrintService extends Service {
     private static final String ACTION_USB_PERMISSION = "com.usb.printer.USB_PERMISSION";
 
 
-
     private Context mContext;
     private UsbDevice mUsbDevice;
     private PendingIntent mPermissionIntent;
     private UsbManager mUsbManager;
     private UsbDeviceConnection mUsbDeviceConnection;
-    private Map<Integer, List<Integer>> usbMap= new HashMap<>();
+    private Map<Integer, List<Integer>> usbMap = new HashMap<>();
     //IP Printer Handler
 //    static Map<String, WIFIPrinterHandler> printerHandlers = new ConcurrentHashMap<String, WIFIPrinterHandler>();
     private Map<String, ESCPrinter> escPrinterMap = new HashMap<String, ESCPrinter>();
@@ -123,7 +122,7 @@ public class PrintService extends Service {
 //				if (this.printJobMgr!=null)
 //					this.printJobMgr.addPingJob();
                 boolean isDouble = true;
-                if(extras.containsKey("isDouble")){
+                if (extras.containsKey("isDouble")) {
                     isDouble = extras.getBoolean("isDouble");
                 }
                 BH.initFormart(isDouble);
@@ -151,13 +150,11 @@ public class PrintService extends Service {
         }
 
 
-
         super.onDestroy();
         //this.printJobMgr = null;
 
 
     }
-
 
 
     public void closeAllSockets() {
@@ -249,13 +246,12 @@ public class PrintService extends Service {
     }
 
 
-
     //搜索USB
 
     public void SearchUsb() {
 //        Log.d("SearchBluetooth", "start");
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-    // mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+        // mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         //注册USB设备权限管理广播
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
@@ -266,13 +262,13 @@ public class PrintService extends Service {
         // 列出所有的USB设备，并且都请求获取USB权限
 
         HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
-        Log.d("typeUsb", " 33333333--"+deviceList.size());
-        if(deviceList.size()>0) {
+        Log.d("typeUsb", " 33333333--" + deviceList.size());
+        if (deviceList.size() > 0) {
             for (UsbDevice device : deviceList.values()) {
-                if(usbMap.containsKey(device.getVendorId())){
+                if (usbMap.containsKey(device.getVendorId())) {
                     List<Integer> list = usbMap.get(device.getVendorId());
-                    for(Integer item : list){
-                        if(device.getProductId() == item.intValue()){
+                    for (Integer item : list) {
+                        if (device.getProductId() == item.intValue()) {
                             mUsbManager.requestPermission(device, mPermissionIntent);
                         }
                     }
@@ -283,27 +279,26 @@ public class PrintService extends Service {
         }
 
 
-
     }
 
 
     private final BroadcastReceiver mUsbDeviceReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.d("typeUsb", " 444444444444" +action);
+            Log.d("typeUsb", " 444444444444" + action);
             if (ACTION_USB_PERMISSION.equals(action)) {
-               // Log.d("typeUsb", " 111111111111111");
+                // Log.d("typeUsb", " 111111111111111");
                 synchronized (this) {
                     UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) && usbDevice != null) {
-                        Log.d("typeUsb", usbDevice.getProductId()+" --111111111111111--"+usbDevice.getVendorId());
-                     // 获取USBDevice
+                        Log.d("typeUsb", usbDevice.getProductId() + " --111111111111111--" + usbDevice.getVendorId());
+                        // 获取USBDevice
 //                        if(usbMap.containsKey(usbDevice.getVendorId())){
 //                            List<Integer> list = usbMap.get(usbDevice.getVendorId());
 //                            for(Integer item : list){
 //                                if(usbDevice.getProductId() == item.intValue()){
-                                    mUsbDevice = usbDevice;
-                                    callback.getUsbDevices(mUsbDevice);
+                        mUsbDevice = usbDevice;
+                        callback.getUsbDevices(mUsbDevice);
 //                                    return;
 //                                }
 //                            }
@@ -330,7 +325,7 @@ public class PrintService extends Service {
         Log.d("SearchBluetooth", "start");
         mBluetoothDevicesDatas.clear();
         mBluetoothAdapter.startDiscovery();
-       SearchUsb();
+        SearchUsb();
     }
 
 
@@ -361,14 +356,14 @@ public class PrintService extends Service {
 //            return false;
 //        }else {
 //            Log.e("registerReceiverBluetoo", " ----");
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
-            registerReceiver(mReceiver, filter);
-            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            return true;
+        registerReceiver(mReceiver, filter);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return true;
 //        }
-      //  return false;
+        //  return false;
 
     }
 
@@ -399,21 +394,20 @@ public class PrintService extends Service {
 
                 Log.e("BluetoothAdapterend", "   " + mBluetoothDevicesDatas.size());
 
-                for(int i=0;i<mBluetoothDevicesDatas.size();i++){
-                 callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
-              //    callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
+                for (int i = 0; i < mBluetoothDevicesDatas.size(); i++) {
+                    callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
+                    //    callback.getBluetoothDevices(mBluetoothDevicesDatas.get(i));
                 }
-             //   mBluetoothAdapter.cancelDiscovery();
-               unregisterReceiver(mReceiver);
-         //    mReceiver=null;
+                //   mBluetoothAdapter.cancelDiscovery();
+                unregisterReceiver(mReceiver);
+                //    mReceiver=null;
 
-            //    abortBroadcast();
+                //    abortBroadcast();
             }
         }
 
 
     };
-
 
 
     //		/**
@@ -434,7 +428,6 @@ public class PrintService extends Service {
         if (device.getBondState() == BluetoothDevice.BOND_BONDED && device.getBluetoothClass().getDeviceClass() == PRINT_TYPE) {
 
 
-
             mBluetoothDevicesDatas.add(0, new PrintBean(device));
             Log.d("addBluetoothDevice", " -BOND_BONDED--" + mBluetoothDevicesDatas.size());
 
@@ -450,11 +443,10 @@ public class PrintService extends Service {
 //                    }
 
 
-
         } else {
 
 
-            Log.d("type", " ;;;;" + device.getBluetoothClass().getDeviceClass() + "--" + device.getName() + "---" + device.getAddress()+"---"+ device.getUuids()+""+device.getBluetoothClass().describeContents());
+            Log.d("type", " ;;;;" + device.getBluetoothClass().getDeviceClass() + "--" + device.getName() + "---" + device.getAddress() + "---" + device.getUuids() + "" + device.getBluetoothClass().describeContents());
 
             //  device.getBluetoothClass().getMajorDeviceClass()
             if (device.getBluetoothClass().getDeviceClass() == PRINT_TYPE) {
@@ -484,6 +476,7 @@ public class PrintService extends Service {
             Log.d("addBluetoothDevice", " ====" + mBluetoothDevicesDatas.size());
         }
     }
+
     //	**
 //			* 提供接口回调方法
 //     * @param callback
@@ -500,6 +493,7 @@ public class PrintService extends Service {
          * @return
          */
         void getBluetoothDevices(PrintBean pd);
+
         void getUsbDevices(UsbDevice ud);
     }
 }

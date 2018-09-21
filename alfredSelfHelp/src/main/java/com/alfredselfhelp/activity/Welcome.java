@@ -69,6 +69,7 @@ public class Welcome extends BaseActivity {
         downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         registerReceiver(downReceiver, downFilter);
         App.instance.finishAllActivityExceptOne(Welcome.class);
+
     }
 
 
@@ -116,7 +117,7 @@ public class Welcome extends BaseActivity {
 
         MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
         User user = Store.getObject(context, Store.WAITER_USER, User.class);
-
+        App.instance.connectRemotePrintService();
         if (TextUtils.isEmpty(App.instance.getPosIp())) {
             UIHelp.startSelectRevenue(context);
             finish();
