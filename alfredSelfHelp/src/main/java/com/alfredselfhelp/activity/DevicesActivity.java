@@ -593,16 +593,11 @@ public class DevicesActivity extends BaseActivity {
 //        } else {
 //            devices_revenueCenter_tv.setText("");
 //        }
-
         devices_printe_lyt = (LinearLayout) findViewById(R.id.devices_printe_lyt);
         selectedViewId = R.id.devices_printe_lyt;
         devices_transfer_lyt = (LinearLayout) findViewById(R.id.devices_transfer_lyt);
-
         devices_waiter_lyt = (LinearLayout) findViewById(R.id.devices_waiter_lyt);
-
         devices_customlistview = (CustomListView) findViewById(R.id.devices_customlistview);
-
-
         devices_customlistview.setDividerWidth(20);
         devices_customlistview.setDividerHeight(20);
     }

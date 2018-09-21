@@ -150,8 +150,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
             @Override
             public void getUsbDevices(UsbDevice ud) {
-              Gson gson=new Gson();
-                String prtStr = ud.getVendorId()+","+ud.getProductId();
+                Gson gson = new Gson();
+                String prtStr = ud.getVendorId() + "," + ud.getProductId();
 
                 Map<String, String> ret = new HashMap<String, String>();
                 ret.put(prtStr, ud.getDeviceName());
@@ -236,7 +236,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 salesPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 salesPrint.setCharSize(42);
             } else {
                 salesPrint.setCharSize(48);
@@ -289,7 +289,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 daPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 daPrint.setCharSize(42);
             } else {
                 daPrint.setCharSize(48);
@@ -341,7 +341,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 daPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 daPrint.setCharSize(42);
             } else {
                 daPrint.setCharSize(48);
@@ -381,7 +381,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 hsPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 hsPrint.setCharSize(42);
             } else {
                 hsPrint.setCharSize(48);
@@ -420,7 +420,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 viPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 viPrint.setCharSize(42);
             } else {
                 viPrint.setCharSize(48);
@@ -460,7 +460,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 eiPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 eiPrint.setCharSize(42);
             } else {
                 eiPrint.setCharSize(48);
@@ -508,7 +508,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     //set page size
                     if (this.service.isTMU220(name)) {
                         kot.setCharSize(33);
-                    } else if(this.service.isTM88(name)) {
+                    } else if (this.service.isTM88(name)) {
                         kot.setCharSize(42);
                     } else {
                         kot.setCharSize(48);
@@ -590,7 +590,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 //set page size
                                 if (this.service.isTMU220(name)) {
                                     kot.setCharSize(33);
-                                } else if(this.service.isTM88(name)) {
+                                } else if (this.service.isTM88(name)) {
                                     kot.setCharSize(42);
                                 } else {
                                     kot.setCharSize(48);
@@ -644,7 +644,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             //set page size
                             if (this.service.isTMU220(name)) {
                                 kot.setCharSize(33);
-                            } else if(this.service.isTM88(name)) {
+                            } else if (this.service.isTM88(name)) {
                                 kot.setCharSize(42);
                             } else {
                                 kot.setCharSize(48);
@@ -751,7 +751,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 prtTitle.getRestaurantName(),
                                 prtTitle.getAddressDetail(), prtTitle.getOptions());
                     } else {
-                        if(this.service.isTM88(name)) {
+                        if (this.service.isTM88(name)) {
                             billPrint.setCharSize(42);
                         } else {
                             billPrint.setCharSize(48);
@@ -879,7 +879,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 prtTitle.getRestaurantName(),
                                 prtTitle.getAddressDetail(), prtTitle.getOptions());
                     } else {
-                        if(this.service.isTM88(name)) {
+                        if (this.service.isTM88(name)) {
                             billPrint.setCharSize(42);
                         } else {
                             billPrint.setCharSize(48);
@@ -983,7 +983,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax());
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
-                       // String paymentType = "";
+                        // String paymentType = "";
                         String cardNo = null;
                         for (PrintReceiptInfo printReceiptInfo : settlement) {
                             String paymentType = "";
@@ -1055,7 +1055,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     paymentType = PrintService.instance.getResources().getString(R.string.deliveroo);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_UBEREATS:
-                                   paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
+                                    paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
                                     paymentType = PrintService.instance.getResources().getString(R.string.foodpanda);
@@ -1096,12 +1096,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void listPrinters(String type) {
-        if(type.equals("1")) {
+        if (type.equals("1")) {
             if (service.registerReceiverBluetooth()) {
                 service.SearchBluetooth();
             }
         }
-     //   service.SearchUsb();
+        //   service.SearchUsb();
         final Gson gson = new Gson();
 //        Log.e("PrintServiceBinder", " -----1054 listPrinters-----" );
 //        if (scheduler == null) {
@@ -1635,7 +1635,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     //set page size
                     if (this.service.isTMU220(name)) {
                         kot.setCharSize(33);
-                    } else if(this.service.isTM88(name)) {
+                    } else if (this.service.isTM88(name)) {
                         kot.setCharSize(42);
                     } else {
                         kot.setCharSize(48);
@@ -1718,7 +1718,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 //set page size
                                 if (this.service.isTMU220(name)) {
                                     kot.setCharSize(33);
-                                } else if(this.service.isTM88(name)) {
+                                } else if (this.service.isTM88(name)) {
                                     kot.setCharSize(42);
                                 } else {
                                     kot.setCharSize(48);
@@ -1772,7 +1772,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             //set page size
                             if (this.service.isTMU220(name)) {
                                 kot.setCharSize(33);
-                            } else if(this.service.isTM88(name)) {
+                            } else if (this.service.isTM88(name)) {
                                 kot.setCharSize(42);
                             } else {
                                 kot.setCharSize(48);
@@ -1883,12 +1883,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 prtTitle.getRestaurantName(),
                                 prtTitle.getAddressDetail(), null);
                     } else {
-                        if(this.service.isTM88(name)) {
+                        if (this.service.isTM88(name)) {
                             billPrint.setCharSize(42);
                         } else {
                             billPrint.setCharSize(48);
                         }
-                        billPrint.AddRestaurantInfo( SettingDataSQL.getSettingDataByUrl(
+                        billPrint.AddRestaurantInfo(SettingDataSQL.getSettingDataByUrl(
                                 prtTitle.getLogo()).getLogoString(),
                                 prtTitle.getRestaurantName(),
                                 prtTitle.getAddressDetail(), null);
@@ -2013,7 +2013,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 prtTitle.getRestaurantName(),
                                 prtTitle.getAddressDetail(), null);
                     } else {
-                        if(this.service.isTM88(name)) {
+                        if (this.service.isTM88(name)) {
                             billPrint.setCharSize(42);
                         } else {
                             billPrint.setCharSize(48);
@@ -2120,7 +2120,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
-                     //   String paymentType = "";
+                        //   String paymentType = "";
                         String cardNo = null;
 
                         for (PrintReceiptInfo printReceiptInfo : settlement) {
@@ -2193,7 +2193,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     paymentType = PrintService.instance.getResources().getString(R.string.deliveroo);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_UBEREATS:
-                                   paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
+                                    paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
                                     paymentType = PrintService.instance.getResources().getString(R.string.foodpanda);
@@ -2262,7 +2262,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 //set page size
                 if (this.service.isTMU220(name)) {
                     kot.setCharSize(33);
-                } else if(this.service.isTM88(name)) {
+                } else if (this.service.isTM88(name)) {
                     kot.setCharSize(42);
                 } else {
                     kot.setCharSize(48);
@@ -2345,7 +2345,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 daPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 daPrint.setCharSize(42);
             } else {
                 daPrint.setCharSize(48);
@@ -2389,7 +2389,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 daPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 daPrint.setCharSize(42);
             } else {
                 daPrint.setCharSize(48);
@@ -2430,7 +2430,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 daPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 daPrint.setCharSize(42);
             } else {
                 daPrint.setCharSize(48);
@@ -2470,7 +2470,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 daPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 daPrint.setCharSize(42);
             } else {
                 daPrint.setCharSize(48);
@@ -2504,7 +2504,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 storedCardPrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 storedCardPrint.setCharSize(42);
             } else {
                 storedCardPrint.setCharSize(48);
@@ -2536,7 +2536,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //set page size
             if (this.service.isTMU220(name)) {
                 tableQRCodePrint.setCharSize(33);
-            } else if(this.service.isTM88(name)) {
+            } else if (this.service.isTM88(name)) {
                 tableQRCodePrint.setCharSize(42);
             } else {
                 tableQRCodePrint.setCharSize(48);
@@ -2556,9 +2556,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
     @Override
-    public void printTscBill(String printer, String title, String order, String orderdetail, String modifiers, String currencySymbol,String  direction) throws RemoteException {
+    public void printTscBill(String printer, String title, String order, String orderdetail, String modifiers, String currencySymbol, String direction) throws RemoteException {
         String name;
+
+        BillTscPrint b = null;
         Gson gson = new Gson();
+        Boolean isTian = true;
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtitle = gson.fromJson(title, PrinterTitle.class);
         Order prorder = gson.fromJson(order, Order.class);
@@ -2571,9 +2574,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         PrintManager printMgr = this.service.getPrintMgr();
         JobManager printJobMgr;
-        if(prtDevice.getIP().contains(",")){
+        if (prtDevice.getIP().contains(",")) {
             printJobMgr = printMgr.configureJobManager("12:12:12");
-        }else {
+        } else {
             printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
         }
 
@@ -2586,19 +2589,23 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             name = "AAA";
         }
         String uuid = pqMgr.getDataUUID(prtitle.getBill_NO());
-        BillTscPrint b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()),26);
 
+        if (isTian) {
+            b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()), 25);
+        } else {
+            b = new BillTscPrint(uuid, Long.valueOf(prtitle.getBizDate()), 26);
+        }
         List<OrderDetail> lableOrderDetail = new ArrayList<OrderDetail>();
 
         for (int i = 0; i < prOrderDetail.size(); i++) {
-
-
+            b.setPrinterIp(prtDevice.getIP());
+            b.setIsLablePrinter(prtDevice.getIsLablePrinter(), Integer.valueOf(direction).intValue(), isTian);
             if (prOrderDetail.get(i).getItemNum() > 1) {
                 String price = BH.getBD(Double.parseDouble(prOrderDetail.get(i).getRealPrice()) / prOrderDetail.get(i).getItemNum() + "").toString();
                 for (Integer j = 0; j < prOrderDetail.get(i).getItemNum(); j++) {
-                    if(price.equals("0.00")||price.equals("0")) {
+                    if (price.equals("0.00") || price.equals("0")) {
                         prOrderDetail.get(i).setRealPrice("");
-                    }else{
+                    } else {
                         prOrderDetail.get(i).setRealPrice(price);
                     }
                     lableOrderDetail.add(prOrderDetail.get(i));
@@ -2611,17 +2618,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 
         for (int i = 0; i < lableOrderDetail.size(); i++) {
-            b.setPrinterIp(prtDevice.getIP());
-            b.setIsLablePrinter(prtDevice.getIsLablePrinter(),Integer.valueOf(direction).intValue());
+
             modbuf.setLength(0);
             if (orderModifiers != null) {
                 for (int m = 0; m < orderModifiers.size(); m++) {
                     PrintOrderModifier om = orderModifiers.get(m);
                     if (om.getOrderDetailId() == lableOrderDetail.get(i).getId()) {
 //                        if (om.getQty() > 1) {
-                        if(om.getPrice().toString().equals("0")){
+                        if (om.getPrice().toString().equals("0")) {
                             modbuf.append(om.getItemName() + "" + "/");
-                        }else {
+                        } else {
                             modbuf.append(om.getItemName() + "" + currencySymbol + BH.getBD(om.getPrice()).toString() + "/");
                         }
                         //    billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -2633,17 +2639,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
                 }
             }
-
             b.AddRestaurantInfo(null,
                     prtitle.getRevName(),
-                    prtitle.getOrderNo(), i, lableOrderDetail.size() + "", lableOrderDetail.get(i).getItemName() + "", modbuf.toString(), currencySymbol+lableOrderDetail.get(i).getRealPrice(), true);
+                    prtitle.getOrderNo(), i, lableOrderDetail.size() + "", lableOrderDetail.get(i).getItemName() + "", modbuf.toString(), currencySymbol + lableOrderDetail.get(i).getRealPrice(), true);
 
         }
         pqMgr.queuePrint(b.getJobForQueue());
-
-        if(prtDevice.getIP().contains(",")){
+        if (prtDevice.getIP().contains(",")) {
             printMgr.addJob("12:12:12", b);
-        }else {
+        } else {
             printMgr.addJob(prtDevice.getIP(), b);
         }
     }
@@ -2676,7 +2680,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     prtitle.getRestaurantName(),
                     prtitle.getAddressPrint(), null);
         } else {
-            if(this.service.isTM88(name)) {
+            if (this.service.isTM88(name)) {
                 billPrint.setCharSize(42);
             } else {
                 billPrint.setCharSize(48);
@@ -2686,9 +2690,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     prtitle.getAddressPrint(), null);
         }
 
-        String time=TimeUtil.getPrintDate(Long.parseLong(cashInOut.getCreateTime()));
-        billPrint.AddHeaderCash(cashInOut.getEmpId(),time);
-        billPrint.AddCashIn(cashInOut.getCash(),cashInOut.getComment(),cashInOut.getType());
+        String time = TimeUtil.getPrintDate(Long.parseLong(cashInOut.getCreateTime()));
+        billPrint.AddHeaderCash(cashInOut.getEmpId(), time);
+        billPrint.AddCashIn(cashInOut.getCash(), cashInOut.getComment(), cashInOut.getType());
         billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), false);
         pqMgr.queuePrint(billPrint.getJobForQueue());
         printMgr.addJob(prtDevice.getIP(), billPrint);

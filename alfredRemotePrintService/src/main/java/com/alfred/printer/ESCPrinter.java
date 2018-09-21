@@ -80,8 +80,6 @@ public class ESCPrinter implements WIFIPrintCallback {
         this.tprinter = new TscPOSPrinter((PrintService) context);
 
 
-
-
     }
 
     public ArrayList<String> discovery() {
@@ -148,14 +146,18 @@ public class ESCPrinter implements WIFIPrintCallback {
 //	}
 
 
-    public boolean setUSBData(List<PrintTscData> data, int direction) {
+    public boolean setUSBData(List<PrintTscData> data, int direction, boolean isTian) {
         boolean result = true;
         try {
 
             this.tprinter.addHome();
             //	this.tprinter.resetPrinter();
-            this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
 
+            if (isTian) {
+                this.tprinter.addTsize(35, 25, 1);//设置打印区域大小
+            } else {
+                this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+            }
             this.tprinter.addReference(0, 0); // 设置原点坐标
             this.tprinter.addSpeed();// 设置打印速度
             this.tprinter.addDensity();// 设置打印浓度
@@ -171,8 +173,11 @@ public class ESCPrinter implements WIFIPrintCallback {
                         sendUsbData();
 
                         this.tprinter.addHome();
-                        this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
-
+                        if (isTian) {
+                            this.tprinter.addTsize(35, 25, 1);//设置打印区域大小
+                        } else {
+                            this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+                        }
                         this.tprinter.addReference(0, 0); // 设置原点坐标
                         this.tprinter.addSpeed();// 设置打印速度
                         this.tprinter.addDensity();// 设置打印浓度
@@ -231,13 +236,18 @@ public class ESCPrinter implements WIFIPrintCallback {
         return result;
     }
 
-    public boolean setTscData(List<PrintTscData> data, int direction) {
+    public boolean setTscData(List<PrintTscData> data, int direction, Boolean isTian) {
         boolean result = true;
         try {
 
             this.tprinter.addHome();
             //	this.tprinter.resetPrinter();
-            this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+            if (isTian) {
+                this.tprinter.addTsize(35, 25, 1);//设置打印区域大小
+            } else {
+                this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+            }
+
 
             this.tprinter.addReference(0, 0); // 设置原点坐标
             this.tprinter.addSpeed();// 设置打印速度
@@ -254,7 +264,11 @@ public class ESCPrinter implements WIFIPrintCallback {
                         sendTData();
 
                         this.tprinter.addHome();
-                        this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+                        if (isTian) {
+                            this.tprinter.addTsize(35, 25, 1);//设置打印区域大小
+                        } else {
+                            this.tprinter.addTsize(40, 30, 1);//设置打印区域大小
+                        }
 
                         this.tprinter.addReference(0, 0); // 设置原点坐标
                         this.tprinter.addSpeed();// 设置打印速度
@@ -317,17 +331,17 @@ public class ESCPrinter implements WIFIPrintCallback {
 
 
     public void UsbPrint(final byte[] bytes) {
-          UsbDevice mUsbDevice = null;
-        String [] temp = null;
+        UsbDevice mUsbDevice = null;
+        String[] temp = null;
         temp = ip.split(",");
 
-        String  vendorId= temp[0];
-        String  productId= temp[1];
+        String vendorId = temp[0];
+        String productId = temp[1];
 
         mUsbManager = (UsbManager) App.instance.getSystemService(Context.USB_SERVICE);
 
         HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
-        Log.d("UsbPrint", " -----"+deviceList.size());
+        Log.d("UsbPrint", " -----" + deviceList.size());
 
         for (UsbDevice device : deviceList.values()) {
             if (device.getProductId() == Integer.valueOf(productId).intValue() && device.getVendorId() == Integer.valueOf(vendorId).intValue()) {
@@ -477,7 +491,7 @@ public class ESCPrinter implements WIFIPrintCallback {
         this.tprinter.clrCommand();
         try {
             Thread.sleep(400);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //this.close();
@@ -490,12 +504,12 @@ public class ESCPrinter implements WIFIPrintCallback {
 
         this.tprinter.resetPrinter();
         byte[] b = ByteTo_byte(this.tprinter.getCommand());
-         UsbPrint(b);
+        UsbPrint(b);
         //this.close();
         this.tprinter.clrCommand();
         try {
             Thread.sleep(400);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

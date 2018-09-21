@@ -49,6 +49,7 @@ public class PrintJob extends Job  {
     private int msgId; //all 0
     private Long created;
     private Long bizDate;
+    private Boolean  isTian;
     // BluetoothSocket mmSocket;
 
     private static OutputStream outputStream = null;
@@ -104,9 +105,10 @@ public class PrintJob extends Job  {
         return isLablePrinter;
     }
 
-    public void setIsLablePrinter(int isLablePrinter, int direction) {
+    public void setIsLablePrinter(int isLablePrinter, int direction ,Boolean isTian) {
         this.isLablePrinter = isLablePrinter;
-   this.direction=direction;
+         this.direction=direction;
+         this.isTian=isTian;
         Log.d(TAG, "setIsLablePrinter:" + this.isLablePrinter);
     }
 
@@ -221,7 +223,7 @@ public class PrintJob extends Job  {
         if(printerIp.contains(",")){
             if(getIsLablePrinter() == 1) {
                 printer = new ESCPrinter(this.printerIp, isLablePrinter);
-                printed =  printer.setUSBData(this.tdata, this.direction);
+                printed =  printer.setUSBData(this.tdata, this.direction,this.isTian);
                 if (printed) {
                     PrintQueueMsgSQL.updatePrintQueueMsgStatus(ParamConst.PRINTQUEUE_MSG_SUCCESS, this.msgUUID, this.created);
                     return;
@@ -266,7 +268,7 @@ public class PrintJob extends Job  {
 
 
                     if (isPrintLink) {
-                        printed = printer.setTscData(this.tdata,this.direction);
+                        printed = printer.setTscData(this.tdata,this.direction,this.isTian);
                     }
                 }
 
