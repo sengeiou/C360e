@@ -187,7 +187,7 @@ public class DevicesAdapter extends CustomAdapter {
 
                 holder.devices_unbund_tv.setOnClickListener(listener);
                 holder.ll_auto_add.setOnClickListener(listener);
-                //  holder.devices_unbund_tv.setText("Add Printer");
+                holder.devices_unbund_tv.setText("Add Printer");
                 holder.devices_unbund_tv.setBackgroundColor(con.getResources().getColor(R.color.red1));
                 holder.img_delete.setVisibility(View.GONE);
                 if (printerDevice.getIP().contains(",")) {
