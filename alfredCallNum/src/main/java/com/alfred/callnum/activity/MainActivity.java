@@ -130,11 +130,11 @@ public class MainActivity extends BaseActivity {
                                     twoFragment.getVideoPause(name);
 
                                 }
-//                                for (int j = 0; j < callNumber; j++) {
+                          //      for (int j = 0; j < 2; j++) {
                                 CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
 
                                 CallNumUtil.call(num1);
-//                                }
+                     //          }
 
                                 animaEnd = false;
                                 lon = callNumber * 2500;
@@ -185,9 +185,9 @@ public class MainActivity extends BaseActivity {
 
         CallNumUtil.initVideo(context);
         CallNumUtil.init(context, handler);
-//        CallBean c=new CallBean();
-//        c.setCallNumber("111111");
-//        queue.enQueue(c);
+        CallBean c=new CallBean();
+        c.setCallNumber("a123");
+        queue.enQueue(c);
         timer.schedule(new MyTimertask(), 1000);
     }
 
