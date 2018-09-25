@@ -201,9 +201,9 @@ public class MainActivity extends BaseActivity {
 
         CallNumUtil.initVideo(context);
         CallNumUtil.init(context, handler);
-        CallBean c=new CallBean();
-        c.setCallNumber("a1023");
-        queue.enQueue(c);
+//        CallBean c=new CallBean();
+//        c.setCallNumber("a1023");
+//        queue.enQueue(c);
         timer.schedule(new MyTimertask(), 1000);
 
 
