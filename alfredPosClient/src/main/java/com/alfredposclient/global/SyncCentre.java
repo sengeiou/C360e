@@ -357,11 +357,13 @@ public class SyncCentre {
     private String getAbsoluteUrl(String relativeUrl) {
         if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
+            //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
             return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
+
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
             return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
         }

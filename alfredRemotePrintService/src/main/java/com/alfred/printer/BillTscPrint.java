@@ -190,14 +190,14 @@ public class BillTscPrint extends PrintJob {
 
 
             StringBuilder totalbuf = new StringBuilder();
-            String strPrice = StringUtil.padLeft(price + "", size / 2 - 7);
+            String strPrice = StringUtil.padLeft(price + "", size);
             totalbuf.append(strPrice);
 
             PrintTscData total = new PrintTscData();
             total.setDataFormat(PrintTscData.FORMAT_TXT);
             total.setFontsizeX(1);
             total.setFontsizeY(1);
-            total.setX(190);
+            total.setX(10);
             total.setY(80);
             total.setText(totalbuf.toString());
             this.tdata.add(total);
