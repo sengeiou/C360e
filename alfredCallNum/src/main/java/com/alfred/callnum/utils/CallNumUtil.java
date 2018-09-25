@@ -2,6 +2,7 @@ package com.alfred.callnum.utils;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -42,11 +43,15 @@ public class CallNumUtil {
     static volatile boolean g_bAudioPlaying = false;
 
     static AudioManager mAudioManager;
+    private static MediaPlayer mediaPlayer = null;
 
+   // static byte[] mchars=new byte[10];
     /*
      * 用于播放其余语音文件，包括前缀，后缀，自定义语音文件
      */
     private static MediaPlayer mplayer = null;
+    private static int mindex;
+
 
     /*
      * 叫号/播放消息队列
@@ -68,6 +73,7 @@ public class CallNumUtil {
     public static Handler mMsgHandler = null;
     public static final int MSG_TYPE_START_CALL = 0x500;
     public static final int MSG_TYPE_END_CALL = 0x501;
+    static List<Integer> mchars=new ArrayList<Integer>();
 
 //	private static ShopInfo shop;
 
@@ -94,6 +100,9 @@ public class CallNumUtil {
         initAudioTrack();
 //		shop = shopInfo;
         AudBluetoothEn(true);
+
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(new CompletionListener());
     }
 
     public static void AudBluetoothEn(boolean en) {
@@ -741,7 +750,7 @@ public class CallNumUtil {
 
     final static int[] chars_resid = {R.raw.a, R.raw.b, R.raw.c, R.raw.d};
     final static int[] nums_resid = {R.raw.n0, R.raw.n1, R.raw.n2, R.raw.n3,
-            R.raw.n4, R.raw.n5, R.raw.n6, R.raw.n7, R.raw.n8, R.raw.n9};
+            R.raw.n4, R.raw.n5, R.raw.n6, R.raw.n7, R.raw.n8, R.raw.n9,R.raw.a, R.raw.b, R.raw.c, R.raw.d};
 
 //		final static int[] chars_resid = { R.raw.ma, R.raw.mb, R.raw.mc,R.raw.md
 //			};
@@ -993,8 +1002,196 @@ public class CallNumUtil {
         }
     }
 
+
+
+    private static void playNumMp3() {
+
+        if (mbHasBluetoothAudio) {// 蓝牙音箱
+            long silenceTime = System.currentTimeMillis() - s_EndPlayTime;// 静默时间
+            if (silenceTime > 6000) {
+                for (int i = 0; i < 3; i++) {
+                   // audioTrack.write(silence, 0, silence.length);// 200ms
+                }
+            }
+        }
+        boolean bFirst = true;
+        final int MAX_NUM = 2;
+        CallNumQueueUtil[] num_played = new CallNumQueueUtil[MAX_NUM];
+        int call_count = 0;
+        while (mCurTask != null) {
+            if (mCurTask.number > 0) {
+                if (call_count < MAX_NUM) {
+                    num_played[call_count] = mCurTask;
+                }
+                call_count++;
+                if (!bFirst) {
+                  //  audioTrack.write(silence, 0, silence.length);// 与前一个号间隔
+                }
+                String playstring = mCurTask.quenamevoice + mCurTask.value;// 桌名+号码
+//				LogFile.i(String.format("playstring=%s,callidx=%d", playstring,
+//						mCurTask.custcallwav));
+                byte[] chars = playstring.toUpperCase().getBytes(); // 全部大写
+                   mchars.clear();
+                for (byte c : chars) {
+                    byte[] data = null;
+                    if (c == 'V') {
+                        data = vipdata;
+                    } else if (c >= '0' && c <= 'I') {
+
+                        if(c>='A'){
+                            int pos = c - 'A';
+
+                            mchars.add(chars_resid[pos]);
+
+                        }else {
+                            int pos = c - '0';
+                            mchars.add(nums_resid[pos]);
+                        }
+//                        int pos = c - 'A';
+//                        if (pos < chars_list.size()) {
+//                            if (mCurTask.callInEn) {
+//                                //data = chars2_list.get(pos);// 优先查询配置的语音
+//
+//                                AssetFileDescriptor file = mCxt.getResources().openRawResourceFd(R.raw.c);
+//                                try {
+//                                    mediaPlayer.reset();
+//                                    mediaPlayer.setDataSource(file.getFileDescriptor(), file.getStartOffset(), file.getLength());
+//                                    mediaPlayer.prepare();
+//                                    file.close();
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//                                mediaPlayer.setVolume(0.5f, 0.5f); mediaPlayer.setLooping(false);
+//                                mediaPlayer.start();
+//
+//
+//                            }
+//                            if (data == null) {
+//                                //data = chars_list.get(pos);
+//                            }
+//                        }
+                        if (data == null) {
+//                            mMsgHdr.obtainMessage(1,
+//                                    String.format("字母语音%c.wav错误或缺失，请联系客服！", c))
+//                                    .sendToTarget();
+                        }
+                    } else if (c >= '0' && c <= '9') {
+                        int pos = c - '0';
+                        if (mCurTask.callInEn) {
+                            if (pos < nums2_list.size()) {
+                                data = nums2_list.get(pos);
+                            }
+                            if (data == null) {
+                                mMsgHdr.obtainMessage(
+                                        1,
+                                        String.format(
+                                                "数字语音e%c.wav错误或缺失，请联系客服！", c))
+                                        .sendToTarget();
+                            }
+                        } else {
+                            if (pos < nums_list.size()) {
+                                data = nums_list.get(pos);
+                            }
+                            if (data == null) {
+                                mMsgHdr.obtainMessage(
+                                        1,
+                                        String.format(
+                                                "数字语音n%c.wav错误或缺失，请联系客服！", c))
+                                        .sendToTarget();
+                            }
+                        }
+                    } else if (c == ',') {
+                        data = enddata;
+                    } else if (c == '!') {
+                        data = please;
+                    } else if (c == '@') {
+                        data = dao;
+                    } else if (c == '#') {
+                        data = chu;
+                    } else if (c == '$') {
+                        data = can;
+                    } else if (c == '%') {
+                        data = kou;
+                    } else if (c == '^') {
+                        data = qu;
+                    } else if (c == '&') {
+                        data = ba;
+                    } else if (c == '*') {
+                        data = tai;
+                    } else if (c == '-') {
+                        if (!mCurTask.callInEn && haodata != null) {
+                            data = haodata;
+                        } else {
+                            data = silence;// 批量叫号间隔
+                        }
+                    }
+                    if (data != null && !g_bStoping) {
+                        // long prepared_time=System.currentTimeMillis();
+                    //    audioTrack.write(data, 0, data.length);
+                        // long delteT=System.currentTimeMillis()-prepared_time;
+
+                        // Log.e(TAG, String.format("audio write=%d", delteT));
+                        /*
+                         * write():blocking and return when the data has been
+                         * transferred from the Java layer to the native layer
+                         * and queued for playback.
+                         */
+                        // fill silence
+                    //    audioTrack.write(silence, 0, 882 * 2);// 20ms
+                    }
+                }
+
+                playMp3();
+                g_bAudioPlaying=true;
+
+            } else {
+                // 放弃自定义语音
+            }
+            if (mCurTask.custcallwav > 0) {
+                break;
+            }
+            if (mbCallNumIn2ndLang
+                    && (mCurTask.called_num > 0 || mCurTask.callInEn)) {
+                if (mCurTask.callInEn) {
+                    break;
+                } else {
+                    mCurTask.callInEn = true;// 指明下次英语叫号
+                }
+            }
+              mCurTask = dequeue();// 尝试下一个号
+            if (mCurTask != null && mCurTask.index == 1 && !bFirst) {
+                byte[] b = new byte[882 * 50];
+                audioTrack.write(b, 0, b.length);// 与前一个号间隔
+            }
+            bFirst = false;
+        }
+        if (!(mCurTask != null && mCurTask.callInEn) && haodata != null) {
+          //  audioTrack.write(haodata, 0, haodata.length);
+        } else {
+         //   audioTrack.write(silence, 0, silence.length);
+        }
+     //   audioTrack.write(silence, 0, silence.length);
+
+
+      //  audioTrack.stop();
+
+        if (mMsgHandler != null) {
+            mMsgHandler.obtainMessage(MainActivity.TYPE_AGAIN_CALL).sendToTarget();// 通知视频暂停
+        }
+        if (call_count <= MAX_NUM && !g_bStoping)// 连叫号码少的情况下重播
+        {
+            for (int i = 0; i < call_count; i++) {
+                if (num_played[i].called_num > 0) {
+                    enqueue(num_played[i]);
+                }
+            }
+        }
+
+
+    }
+
     private static void playNum() {
-        audioTrack.play();
+      //  audioTrack.play();
         if (mbHasBluetoothAudio) {// 蓝牙音箱
             long silenceTime = System.currentTimeMillis() - s_EndPlayTime;// 静默时间
             if (silenceTime > 6000) {
@@ -1029,6 +1226,7 @@ public class CallNumUtil {
                         if (pos < chars_list.size()) {
                             if (mCurTask.callInEn) {
                                 data = chars2_list.get(pos);// 优先查询配置的语音
+
                             }
                             if (data == null) {
                                 data = chars_list.get(pos);
@@ -1170,6 +1368,9 @@ public class CallNumUtil {
                     AudioFormat.CHANNEL_CONFIGURATION_MONO,
                     AudioFormat.ENCODING_PCM_16BIT);
 
+
+
+
             audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 0xac44,
                     AudioFormat.CHANNEL_CONFIGURATION_MONO,
                     AudioFormat.ENCODING_PCM_16BIT, minBufferSize * 2,
@@ -1184,6 +1385,66 @@ public class CallNumUtil {
         }
     }
 
+
+    private static final class CompletionListener implements MediaPlayer.OnCompletionListener {
+
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            nextMp3();
+        }
+
+    }
+
+    private static void nextMp3() {
+
+        if (mindex < mchars.size() - 1) {
+            mindex = mindex + 1;
+            playMp3();
+        } else {
+            mindex = 0;
+
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+
+        //   mCurTask = dequeue();// 尝试下一个号
+
+//            if (mCurTask.custcallwav > 0) {
+//                break;
+//            }
+//            if (mbCallNumIn2ndLang
+//                    && (mCurTask.called_num > 0 || mCurTask.callInEn)) {
+//                if (mCurTask.callInEn) {
+//                    break;
+//                } else {
+//                    mCurTask.callInEn = true;// 指明下次英语叫号
+//                }
+//            }
+        //    mCurTask = dequeue();// 尝试下一个号
+//            if (mCurTask != null && mCurTask.index == 1 ) {
+//                byte[] b = new byte[882 * 50];
+//                audioTrack.write(b, 0, b.length);// 与前一个号间隔
+//            }
+         //   bFirst = false;
+        }
+    }
+
+    static void playMp3() {
+
+        AssetFileDescriptor file = mCxt.getResources().openRawResourceFd(mchars.get(mindex));
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(file.getFileDescriptor(), file.getStartOffset(), file.getLength());
+            mediaPlayer.prepare();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mediaPlayer.setVolume(1f, 1f); mediaPlayer.setLooping(false);
+        mediaPlayer.start();
+    }
     private static Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
@@ -1231,7 +1492,8 @@ public class CallNumUtil {
 
                 public void handleMessage(Message msg) {
                     if (msg.what == 1) {
-                        playNum();
+                    //    playNum();
+                        playNumMp3();
                         mMsgHdr.obtainMessage(2).sendToTarget();
                     }
                 }

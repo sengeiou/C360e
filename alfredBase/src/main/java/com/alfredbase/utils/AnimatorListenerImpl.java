@@ -15,22 +15,28 @@ public class AnimatorListenerImpl implements AnimatorListener {
 
 	@Override
 	public void onAnimationStart(Animator animation) {
+		LogUtil.e("AnimatorListener---","onAnimationStart");
 		isRunning = true;
 
 	}
 
 	@Override
 	public void onAnimationEnd(Animator animation) {
+		LogUtil.e("AnimatorListener---","onAnimationEnd");
 		isRunning = false;
 	}
 
 	@Override
 	public void onAnimationCancel(Animator animation) {
-		isRunning = false;
+		LogUtil.e("AnimatorListener---","onAnimationCancel");
+	isRunning = false;
 	}
 
 	@Override
 	public void onAnimationRepeat(Animator animation) {
+
+
+		LogUtil.e("AnimatorListener---","onAnimationRepeat");
 		isRunning = true;
 	}
 

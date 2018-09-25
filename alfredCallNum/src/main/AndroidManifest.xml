@@ -29,8 +29,6 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme">
-
-
         </activity>
 
         <activity android:name=".activity.WelcomeActivity">
