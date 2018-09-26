@@ -1588,6 +1588,8 @@ public class ReportObjectFactory {
 				reportDayTax.setTaxPercentage(taxPercentages.get(i));
 				reportDayTax.setTaxQty(taxCounts.get(i));
 				reportDayTax.setTaxAmount(BH.getBD(taxPriceSum.get(i)).toString());
+				Tax tax= TaxSQL.getTaxId(taxIds.get(i));
+				reportDayTax.setTaxType(tax.getTaxType());
 				reportDayTaxs.add(reportDayTax);
 			}
 		}
