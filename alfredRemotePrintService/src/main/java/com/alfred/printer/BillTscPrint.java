@@ -29,6 +29,7 @@ public class BillTscPrint extends PrintJob {
 
     public int nameSize = 17;
     public int modSize = 19;
+    public int tianSize = 15;
     public int lableSize;
     int size = 0;// 标签长度
     public static int COL4_ITEMNAME; // Width = CharSize/scale - FIXED_COL2_QTY/scale -
@@ -160,37 +161,57 @@ public class BillTscPrint extends PrintJob {
             radd.setText(addbuf.toString());
             this.tdata.add(radd);
 
-
+            //  日期
             ++num;
             String strnum;
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd ");// HH:mm:ss
             Date date = new Date(System.currentTimeMillis());
-            StringBuilder numbuf = new StringBuilder();
+            StringBuilder datebuf = new StringBuilder();
             String dates = simpleDateFormat.format(date).toString().trim();
-            numbuf.append(dates);
-            int nsize = 52;
-            int padlen = 0;
-            try {
-                padlen = size - dates.getBytes("GBK").length * 2;
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            strnum = StringUtil.padLeft(num + "/" + tNum + " ", padlen * 2 + 1);
+            datebuf.append(dates);
 
-            numbuf.append(strnum);
+//            int padlen = 0;
+//            try {
+//                padlen = size - dates.getBytes("GBK").length * 2;
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+//            strnum = StringUtil.padLeft(num + "/" + tNum + " ", padlen * 2 + 1);
+//
+//            numbuf.append(strnum);
             //name
             PrintTscData rInfo = new PrintTscData();
             rInfo.setDataFormat(PrintTscData.FORMAT_TXT);
             rInfo.setFontsizeX(1);
             rInfo.setFontsizeY(1);
-            rInfo.setX(25);
-            rInfo.setY(45);
-            rInfo.setText(numbuf.toString());
+            rInfo.setX(20);
+            rInfo.setY(10);
+            rInfo.setText(datebuf.toString());
             this.tdata.add(rInfo);
 
+            //数量
+            StringBuilder numbuf = new StringBuilder();
+            String strNum = StringUtil.padLeft(num + "/" + tNum + " " + "", size - 3);
+            numbuf.append(strNum);
+
+            PrintTscData printNum = new PrintTscData();
+            printNum.setDataFormat(PrintTscData.FORMAT_TXT);
+            printNum.setFontsizeX(1);
+            printNum.setFontsizeY(1);
+            printNum.setX(10);
+            printNum.setY(45);
+            printNum.setText(strNum.toString());
+            this.tdata.add(printNum);
+
+
+            toTianMultiLine(itemName, nameSize, 50);
+            if (!TextUtils.isEmpty(modifier)) {
+                String newmod = modifier.substring(0, modifier.length() - 1);
+                modTianMultiLine(itemName, modSize, 170, newmod);
+            }
 
             StringBuilder totalbuf = new StringBuilder();
-            String strPrice = StringUtil.padLeft(price + "", size);
+            String strPrice = StringUtil.padLeft(price + "", size - 3);
             totalbuf.append(strPrice);
 
             PrintTscData total = new PrintTscData();
@@ -201,26 +222,26 @@ public class BillTscPrint extends PrintJob {
             total.setY(80);
             total.setText(totalbuf.toString());
             this.tdata.add(total);
-            toTianMultiLine(itemName, nameSize, 80);
+            toTianMultiLine(itemName, nameSize, 50);
             if (!TextUtils.isEmpty(modifier)) {
                 String newmod = modifier.substring(0, modifier.length() - 1);
-                modTianMultiLine(itemName, modSize, 175, newmod);
+                modTianMultiLine(itemName, modSize, 170, newmod);
             }
 
 
-            StringBuilder rename = new StringBuilder();
-
-            rename.append(name);
-
-            PrintTscData names = new PrintTscData();
-            names.setDataFormat(PrintTscData.FORMAT_TXT);
-            names.setFontsizeX(1);
-            names.setFontsizeY(1);
-            names.setX(25);
-            names.setY(170);
-            //radd.setTextAlign(PrintTscData.ALIGN_CENTRE);
-            names.setText(rename.toString());
-            this.tdata.add(names);
+//            StringBuilder rename = new StringBuilder();
+//
+//            rename.append(name);
+//
+//            PrintTscData names = new PrintTscData();
+//            names.setDataFormat(PrintTscData.FORMAT_TXT);
+//            names.setFontsizeX(1);
+//            names.setFontsizeY(1);
+//            names.setX(25);
+//            names.setY(170);
+//            //radd.setTextAlign(PrintTscData.ALIGN_CENTRE);
+//            names.setText(rename.toString());
+//            this.tdata.add(names);
 
 //
 
@@ -337,14 +358,13 @@ public class BillTscPrint extends PrintJob {
         int y;
         y = s;
         try {
-            splitedcontents = StringUtil.formatLn(nameSize, str);
+            splitedcontents = StringUtil.formatLn(15, str);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        if (splitedcontents.length >= 2) {
-            size = 2;
+        if (splitedcontents.length >= 3) {
+            size = 3;
         } else {
-
             size = splitedcontents.length;
         }
         for (int i = 0; i < size; i++) {
@@ -354,7 +374,7 @@ public class BillTscPrint extends PrintJob {
             itemi.setDataFormat(PrintTscData.FORMAT_TXT);
             itemi.setFontsizeX(1);
             itemi.setFontsizeY(1);
-            itemi.setX(5);
+            itemi.setX(10);
             itemi.setY(y);
             //radd.setTextAlign(PrintTscData.ALIGN_CENTRE);
             itemi.setText(itemnbuf.toString());
@@ -380,7 +400,7 @@ public class BillTscPrint extends PrintJob {
         int y;
         y = s;
         try {
-            splitedmod = StringUtil.formatLn(22, mod);
+            splitedmod = StringUtil.formatLn(20, mod);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -388,16 +408,31 @@ public class BillTscPrint extends PrintJob {
 
         size = splitedmod.length;
 
-        if (splitedcontents.length >= 2) {
-            size = 1;
-            y = y - 30;
-        } else {
+        if (splitedcontents.length >= 3) {
+            size = 2;
+        } else if (splitedcontents.length > 1 && splitedcontents.length <= 2) {
             if (size >= 2) {
-                size = 2;
+                size = 3;
+            }
+            y = y - 60;
+        } else {
+            if (size >= 3) {
+                size = 3;
             }
             y = y - 60;
 
         }
+
+//        if (splitedcontents.length >= 2) {
+//            size = 1;
+//            y = y - 30;
+//        } else {
+//            if (size >= 2) {
+//                size = 2;
+//            }
+//            y = y - 60;
+//
+//        }
 
         for (int i = 0; i < size; i++) {
             StringBuilder itemnbuf = new StringBuilder();
