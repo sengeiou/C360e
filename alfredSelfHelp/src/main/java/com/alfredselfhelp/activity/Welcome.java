@@ -29,7 +29,6 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
-
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.utils.UIHelp;
 import com.google.gson.Gson;
@@ -68,8 +67,22 @@ public class Welcome extends BaseActivity {
         downFilter = new IntentFilter();
         downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         registerReceiver(downReceiver, downFilter);
-        App.instance.finishAllActivityExceptOne(Welcome.class);
 
+//        byte[] a ={0x43,0x32,0x30,0x30,0x30,0x34,0x31,0x32,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x31,0x30,0x30,0x35,
+//                0x37,0x30,0x36,0x30,0x30,0x30,0x30,0x37,0x35,0x36,0x31,0x32,0x30,0x30,0x30,0x31,0x30,0x39,
+//                0x30,0x34,0x30,0x31,0x31,0x32,0x31,0x32,0x31,0x32,0x30,0x30,0x30,0x30,0x31};
+//        Log.e("TAG", new String(a));
+//        String sales = "C200";
+//        String amount = "0412%012d";
+//        String identifier = "5706%06d";
+//        String trace = "612000109040112121200001";
+//        String msg = "100";
+//        StringBuffer str = new StringBuffer(sales);
+//        str.append(String.format(amount, Integer.parseInt(msg)));
+//        str.append(String.format(identifier, 1));
+//        msg = str.append(trace).toString();
+//        Log.e("TAG", "msg:" + msg);
+        App.instance.finishAllActivityExceptOne(Welcome.class);
     }
 
 

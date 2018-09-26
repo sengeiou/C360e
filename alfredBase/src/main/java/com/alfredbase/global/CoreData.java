@@ -333,7 +333,7 @@ public class CoreData {
 		if (TextUtils.isEmpty(barcode))
 			return null;
 		for (ItemDetail itemDetail : getItemDetails()) {
-			if (barcode.equals(IntegerUtils.format24(itemDetail.getBarcode()))) {
+			if (barcode.equals(IntegerUtils.format20(itemDetail.getBarcode()))) {
 				return itemDetail;
 			}
 		}

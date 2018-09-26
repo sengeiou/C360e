@@ -25,6 +25,7 @@ import com.alfredbase.store.Store;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.RfidApiCentre;
+import com.alfredselfhelp.global.VtintApiCentre;
 import com.alfredselfhelp.utils.FileDialog;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 import com.alfredselfhelp.utils.PictureSwitch;
@@ -149,6 +150,8 @@ public class MainActivity extends BaseActivity {
                 MainActivity.this.runOnUiThread(r);
             }
         });
+        VtintApiCentre.getInstance().init(context);
+        VtintApiCentre.getInstance().SearchUsb();
     }
 
     private Runnable mRunnable = new Runnable() {
@@ -623,6 +626,7 @@ public class MainActivity extends BaseActivity {
         if (videoView != null && videoView.isPlaying()) {
             videoView.stopPlayback();
         }
+        VtintApiCentre.getInstance().onDestory();
         super.onDestroy();
     }
 

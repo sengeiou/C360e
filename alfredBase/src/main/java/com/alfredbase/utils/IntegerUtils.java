@@ -55,4 +55,7 @@ public class IntegerUtils {
 	public static String format24(String barcode){
 		return String.format("%1$-24s",barcode).replace(' ', '0');
 	}
+	public static String format20(String barcode){
+		return String.format("%1$-20s",barcode).replace(' ', '0');
+	}
 }

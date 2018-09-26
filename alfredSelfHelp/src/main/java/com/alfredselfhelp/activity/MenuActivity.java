@@ -44,6 +44,7 @@ import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.KpmDialogFactory;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.global.SyncCentre;
+import com.alfredselfhelp.global.VtintApiCentre;
 import com.alfredselfhelp.javabean.ItemDetailDto;
 import com.alfredselfhelp.javabean.NurTagDto;
 import com.alfredselfhelp.popuwindow.SetItemCountWindow;
@@ -59,6 +60,7 @@ import com.nordicid.nurapi.NurRespInventory;
 import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -431,7 +433,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 for (int i = orderDetails.size() - 1; i >= 0; i--) {
                     OrderDetail orderDetail = orderDetails.get(i);
                     if (!TextUtils.isEmpty(orderDetail.getBarCode())) {
-                        String barCode = IntegerUtils.format24(orderDetail.getBarCode());
+                        String barCode = IntegerUtils.format20(orderDetail.getBarCode());
                         if (map.containsKey(barCode)) {
                             Integer num = map.get(barCode);
                             /** TODO
@@ -907,7 +909,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ll_view_pay.setVisibility(View.VISIBLE);
         loadingDialog.setTitle("Pay...");
         loadingDialog.show();
-        SyncCentre.getInstance().commitOrder(this, nurOrder, orderDetails, handler);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                VtintApiCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+                SyncCentre.getInstance().commitOrder(MenuActivity.this, nurOrder, orderDetails, handler);
+            }
+        }).start();
+
         mainCategoryAdapter.setCheckedPosition(-1);
     }
 

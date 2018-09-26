@@ -278,7 +278,7 @@
                                             android:layout_height="match_parent"
                                             android:layout_centerHorizontal="true"
                                             android:scaleType="centerCrop"
-                                            android:src="@drawable/img_bg" />
+                                            android:src="@drawable/promo" />
 
                                         <LinearLayout
                                             android:layout_width="wrap_content"
@@ -300,7 +300,7 @@
                                                     android:layout_marginTop="0dp"
                                                     android:ellipsize="end"
 
-                                                    android:text="Would you also like pumpkin soup to go with your order?"
+                                                    android:text="Would you also like orange juice to go with your order?"
                                                     android:textColor="@color/gray1"
                                                     android:textSize="24sp"
 
