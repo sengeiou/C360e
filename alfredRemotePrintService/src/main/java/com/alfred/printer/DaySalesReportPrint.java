@@ -1,5 +1,7 @@
 package com.alfred.printer;
 
+import android.text.TextUtils;
+
 import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
@@ -276,10 +278,13 @@ public class DaySalesReportPrint extends ReportBasePrint {
             BigDecimal taxSvg = BH.getBD("0.00");
             for (int i = 0; i < reportDayTaxs.size(); i++) {
                 //服务税
-                if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
-                    ReportDayTax reportDayTax = reportDayTaxs.get(i);
 
-                    taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
+                if (reportDayTaxs.get(i).getTaxType() != null) {
+                    if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
+                        ReportDayTax reportDayTax = reportDayTaxs.get(i);
+
+                        taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
+                    }
                 }
             }
 

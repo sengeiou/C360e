@@ -44,12 +44,11 @@ public class MainActivity extends BaseActivity {
     public static final int TYPE_AGAIN_CALL = 100;
     public static final int TYPE_ANIMA_END = 101;
     private Boolean animaEnd = true;
-    String header,footer;
-    private TextView tv_call_header,tv_call_footer;
+    String header, footer;
+    private TextView tv_call_header, tv_call_footer;
     private static MediaPlayer mediaPlayer;
 
-    private int mindex=0;
-
+    private int mindex = 0;
 
 
     public Handler handler = new Handler() {
@@ -65,13 +64,13 @@ public class MainActivity extends BaseActivity {
 //                     callBean.setType(2);
 //                    callBean.setName("A121");
 
-                    if(callBean.isUpdate()){
+                    if (callBean.isUpdate()) {
                         header = Store.getString(App.instance, Store.CALL_NUM_HEADER);
                         footer = Store.getString(App.instance, Store.CALL_NUM_FOOTER);
-                        if(!TextUtils.isEmpty(header)){
+                        if (!TextUtils.isEmpty(header)) {
                             tv_call_header.setText(header);
                         }
-                        if(!TextUtils.isEmpty(footer)){
+                        if (!TextUtils.isEmpty(footer)) {
                             tv_call_footer.setText(footer);
                         }
                     }
@@ -89,7 +88,6 @@ public class MainActivity extends BaseActivity {
                         timer = new Timer();
                         timer.schedule(new MyTimertask(), 1000);
                     }
-
 
 
                     break;
@@ -136,9 +134,9 @@ public class MainActivity extends BaseActivity {
                                     oneFragment.addData(0, callBean);
                                 }
 
-                          //      for (int j = 0; j < 2; j++) {
+                                //      for (int j = 0; j < 2; j++) {
 
-                                LogUtil.e("time----","tttttttt");
+                                LogUtil.e("time----", "tttttttt");
 //
                                 CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
 
@@ -149,14 +147,14 @@ public class MainActivity extends BaseActivity {
                                     twoFragment.getVideoPause(name);
 
                                 }
-                     //          }
+                                //          }
 
                                 animaEnd = false;
                                 lon = callNumber * 2500;
                                 //   lon=1000;
                             } else {
                                 if (twoFragment != null && viewId != 4) {
-                                   twoFragment.getVideoAgain();
+                                    twoFragment.getVideoAgain();
                                 }
                                 lon = 1000;
                                 timer.schedule(new MyTimertask(), lon);
@@ -184,14 +182,14 @@ public class MainActivity extends BaseActivity {
         Intent intent = getIntent();
         viewId = intent.getIntExtra("viewId", 0);
         bg = (ImageView) findViewById(R.id.img_call_bg);
-        tv_call_footer=(TextView)findViewById(R.id.tv_call_footer) ;
-        tv_call_header=(TextView)findViewById(R.id.tv_call_header) ;
-         header = Store.getString(App.instance, Store.CALL_NUM_HEADER);
-         footer = Store.getString(App.instance, Store.CALL_NUM_FOOTER);
-        if(!TextUtils.isEmpty(header)){
+        tv_call_footer = (TextView) findViewById(R.id.tv_call_footer);
+        tv_call_header = (TextView) findViewById(R.id.tv_call_header);
+        header = Store.getString(App.instance, Store.CALL_NUM_HEADER);
+        footer = Store.getString(App.instance, Store.CALL_NUM_FOOTER);
+        if (!TextUtils.isEmpty(header)) {
             tv_call_header.setText(header);
         }
-        if(!TextUtils.isEmpty(footer)){
+        if (!TextUtils.isEmpty(footer)) {
             tv_call_footer.setText(footer);
         }
 //        mediaPlayer=new MediaPlayer();
@@ -205,10 +203,7 @@ public class MainActivity extends BaseActivity {
 //        c.setCallNumber("a1023");
 //        queue.enQueue(c);
         timer.schedule(new MyTimertask(), 1000);
-
-
     }
-
 
 
     public void sAnimation(View view) {
@@ -262,7 +257,7 @@ public class MainActivity extends BaseActivity {
         aset4.playTogether(oanim2X, oanim2Y);
         AnimatorSet aset = new AnimatorSet();
         aset.playSequentially(aset1, aset2, aset3, aset4);
-    //    aset.addListener(new AnimatorListenerImpl());
+        //    aset.addListener(new AnimatorListenerImpl());
         aset.start();
     }
 

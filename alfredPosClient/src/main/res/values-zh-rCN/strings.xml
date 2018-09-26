@@ -278,6 +278,7 @@
     <string name="login_failed">登录失败</string>
     <string name="sync_data_failed">同步数据失败</string>
     <!-- CloseOrderWindow -->
+
     <string name="ref_id_not_empty">参考号不能为空</string>
     <string name="card_no_not_empty">卡号不能为空</string>
     <string name="card_no_for_four">卡号必须是4位有效数字</string>
@@ -387,9 +388,7 @@
     <string name="preparing_order">备餐中/已备餐</string>
     <string name="completed_order">已完成</string>
     <string name="receving_order">接单</string>
-
     <string name="welcome">欢迎光临</string>
-    
     <string name="bill_manage">账单管理</string>
     <string name="add_table_num">手动输入</string>
     <string name="input_table_num">请输入牌号</string>
