@@ -337,7 +337,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        re_menu_details.setLayoutParams(lpDe);
         refreshTotal();
 //        viewCart(true);
-
+        VtintApiCentre.getInstance().initUsb();
     }
 
     @Override
@@ -913,10 +913,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             @Override
             public void run() {
                 VtintApiCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
-                SyncCentre.getInstance().commitOrder(MenuActivity.this, nurOrder, orderDetails, handler);
+
             }
         }).start();
-
+        SyncCentre.getInstance().commitOrder(MenuActivity.this, nurOrder, orderDetails, handler);
         mainCategoryAdapter.setCheckedPosition(-1);
     }
 

@@ -117,66 +117,72 @@ public class VtintApiCentre {
 
     private boolean sendMsg(String msg){
         boolean status = false;
-        try {
-            StringBuffer str = new StringBuffer(sales);
-            str.append(String.format(amount, Integer.parseInt(msg)));
-            str.append(String.format(identifier, i++));
-            msg = str.append(trace).toString();
-            byte[] msgB = msg.getBytes("UTF8");
-            byte LRC = getBCC(msgB);
-            byte[] msgG = new byte[msgB.length + 3];
-            for(int i = 0; i < msgG.length; i++){
-                if(i == 0){
-                    msgG[i] = STX;
-                }else if (i == msgG.length -2){
-                    msgG[i] = ETX;
-                }else if(i == msgG.length - 1){
-                    msgG[i] = LRC;
-                }else{
-                    msgG[i] = msgB[i-1];
+        if(mUsbDeviceConnection != null && usbEpOut != null && usbEpIn != null) {
+            try {
+                StringBuffer str = new StringBuffer(sales);
+                str.append(String.format(amount, Integer.parseInt(msg)));
+                str.append(String.format(identifier, i++));
+                msg = str.append(trace).toString();
+                byte[] msgB = msg.getBytes("UTF8");
+                byte LRC = getBCC(msgB);
+                byte[] msgG = new byte[msgB.length + 3];
+                for (int i = 0; i < msgG.length; i++) {
+                    if (i == 0) {
+                        msgG[i] = STX;
+                    } else if (i == msgG.length - 2) {
+                        msgG[i] = ETX;
+                    } else if (i == msgG.length - 1) {
+                        msgG[i] = LRC;
+                    } else {
+                        msgG[i] = msgB[i - 1];
+                    }
                 }
-            }
-            int ret = -1;
-            ret = mUsbDeviceConnection.bulkTransfer(usbEpOut, msgG, msgG.length, 1500);
-            if(ret != -1){
-                byte[] receiveytes = new byte[1];
-                ret = mUsbDeviceConnection.bulkTransfer(usbEpIn, receiveytes, receiveytes.length, 2000);
-                if(ret != -1 && receiveytes[0] == ACK){
-                    status = true;
+                int ret = -1;
+                ret = mUsbDeviceConnection.bulkTransfer(usbEpOut, msgG, msgG.length, 1500);
+                if (ret != -1) {
+                    byte[] receiveytes = new byte[1];
+                    ret = mUsbDeviceConnection.bulkTransfer(usbEpIn, receiveytes, receiveytes.length, 2000);
+                    if (ret != -1 && receiveytes[0] == ACK) {
+                        status = true;
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }catch (Exception e){
-            e.printStackTrace();
         }
         return status;
     }
 
     private boolean checkEDC(){
         boolean canSendMsg = false;
-        byte[] data = new byte[1];
-        data[0] = ENQ;
-        int ret = -1;
-        ret = mUsbDeviceConnection.bulkTransfer(usbEpOut, data, data.length, 1500);
-        if(ret != -1){
-            byte[] receiveytes = new byte[1];
-            ret = mUsbDeviceConnection.bulkTransfer(usbEpIn, receiveytes, receiveytes.length, 2000);
-            if(ret != -1 && receiveytes[0] == ACK){
-                canSendMsg = true;
+        if(mUsbDeviceConnection != null && usbEpOut != null && usbEpIn != null) {
+            byte[] data = new byte[1];
+            data[0] = ENQ;
+            int ret = -1;
+            ret = mUsbDeviceConnection.bulkTransfer(usbEpOut, data, data.length, 1500);
+            if (ret != -1) {
+                byte[] receiveytes = new byte[1];
+                ret = mUsbDeviceConnection.bulkTransfer(usbEpIn, receiveytes, receiveytes.length, 2000);
+                if (ret != -1 && receiveytes[0] == ACK) {
+                    canSendMsg = true;
+                }
             }
         }
         return canSendMsg;
     }
     private boolean endEDC(){
         boolean canSendMsg = false;
-        byte[] data = new byte[1];
-        data[0] = EOT;
-        int ret = -1;
-        ret = mUsbDeviceConnection.bulkTransfer(usbEpOut, data, data.length, 5000);
-        if(ret != -1){
-            byte[] receiveytes = new byte[1];
-            ret = mUsbDeviceConnection.bulkTransfer(usbEpIn, receiveytes, receiveytes.length, 15*60*1000);
-            if(ret != -1 && receiveytes[0] == ENQ){
-                canSendMsg = true;
+        if(mUsbDeviceConnection != null && usbEpOut != null && usbEpIn != null) {
+            byte[] data = new byte[1];
+            data[0] = EOT;
+            int ret = -1;
+            ret = mUsbDeviceConnection.bulkTransfer(usbEpOut, data, data.length, 5000);
+            if (ret != -1) {
+                byte[] receiveytes = new byte[1];
+                ret = mUsbDeviceConnection.bulkTransfer(usbEpIn, receiveytes, receiveytes.length, 15 * 60 * 1000);
+                if (ret != -1 && receiveytes[0] == ENQ) {
+                    canSendMsg = true;
+                }
             }
         }
         return canSendMsg;
