@@ -52,7 +52,7 @@ public class BillTscPrint extends PrintJob {
         }
         //address
 
-
+        //大标签
         if (size == 26) {
             String strno;
             StringBuilder addbuf = new StringBuilder();
@@ -100,14 +100,14 @@ public class BillTscPrint extends PrintJob {
 
 
             StringBuilder totalbuf = new StringBuilder();
-            String strPrice = StringUtil.padLeft(price + "", size / 2 - 7);
+            String strPrice = StringUtil.padLeft(price + "", size - 2);
             totalbuf.append(strPrice);
 
             PrintTscData total = new PrintTscData();
             total.setDataFormat(PrintTscData.FORMAT_TXT);
             total.setFontsizeX(1);
             total.setFontsizeY(1);
-            total.setX(230);
+            total.setX(10);
             total.setY(80);
             total.setText(totalbuf.toString());
             this.tdata.add(total);
@@ -127,7 +127,7 @@ public class BillTscPrint extends PrintJob {
             names.setFontsizeX(1);
             names.setFontsizeY(1);
             names.setX(25);
-            names.setY(170);
+            names.setY(210);
             //radd.setTextAlign(PrintTscData.ALIGN_CENTRE);
             names.setText(rename.toString());
             this.tdata.add(names);
@@ -260,7 +260,7 @@ public class BillTscPrint extends PrintJob {
             itemi.setDataFormat(PrintTscData.FORMAT_TXT);
             itemi.setFontsizeX(1);
             itemi.setFontsizeY(1);
-            itemi.setX(5);
+            itemi.setX(10);
             itemi.setY(y);
             //radd.setTextAlign(PrintTscData.ALIGN_CENTRE);
             itemi.setText(itemnbuf.toString());

@@ -2561,7 +2561,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         BillTscPrint b = null;
         Gson gson = new Gson();
-        Boolean isTian = true;
+        Boolean isTian = false;
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtitle = gson.fromJson(title, PrinterTitle.class);
         Order prorder = gson.fromJson(order, Order.class);
