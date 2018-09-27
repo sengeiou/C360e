@@ -2662,11 +2662,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrintManager printMgr = this.service.getPrintMgr();
         JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
         PrinterQueueManager pqMgr = this.service.getPqMgr();
-
         String uuid = pqMgr.getDataUUID("drawer");
-
         BillPrint billPrint = new BillPrint(uuid, Long.valueOf(cashInOut.getBusinessDate()));
-
         billPrint.setPrinterIp(prtDevice.getIP());
         String name = prtDevice.getName();
         //set page size

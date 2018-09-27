@@ -245,14 +245,19 @@ public class WaiterModifierCPWindow {
                                 seletMap.put(modifierCPVariance.getCategoryId(),
                                         seletMap.get(modifierCPVariance.getCategoryId()) + 1);
                                 modifierIds.add(modifierCPVariance.getModifierId());
-                            } else {
+                            }
+                            else if(modifierCPVariance.getMax()==0){
+                                seletMap.put(modifierCPVariance.getCategoryId(),
+                                        seletMap.get(modifierCPVariance.getCategoryId()) + 1);
+                                modifierIds.add(modifierCPVariance.getModifierId());
+                            }
+                            else {
                                 UIHelp.showToast(context, context.getString(R.string.at_only)+"  " + modifierCPVariance.getMax() + " "+context.getString(R.string.items));
                             }
                         } else {
                             seletMap.put(modifierCPVariance.getCategoryId(), 1);
                             modifierIds.add(modifierCPVariance.getModifierId());
                         }
-
                     }
                     waiterModifierAdapter.notifyDataSetChanged();
                 }

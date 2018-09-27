@@ -2302,6 +2302,7 @@ public class MainPage extends BaseActivity {
                     ModifierCheckSql.addModifierCheck(modifierCheck);
                 }
             }
+
             mainPageMenuView.openModifiers(currentOrder, orderDetail,
                     itemModifiers);
         }
