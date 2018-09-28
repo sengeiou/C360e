@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.alfredselfhelp"
-        minSdkVersion 21
+        minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 23
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName

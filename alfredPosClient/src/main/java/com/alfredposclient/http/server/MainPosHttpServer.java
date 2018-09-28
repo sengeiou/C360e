@@ -1948,6 +1948,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 	private Response handlerCommitOrder(String params) {
 		System.out.println("1111111111111");
+
+
 		Response resp;
 		Map<String, Object> result = new HashMap<String, Object>();
 		

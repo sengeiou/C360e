@@ -3,6 +3,7 @@ package com.alfredselfhelp.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -69,6 +70,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class MenuActivity extends BaseActivity implements CheckListener {
     public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
     public static final int VIEW_EVENT_MODIFIER_COUNT = 8;
@@ -121,7 +123,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         setContentView(R.layout.activity_menu);
         init();
         timer.schedule(new MyTimerTask(), 3000);
-
+//  App.instance.startADKpm();
     }
 
     private void initVideo() {
@@ -137,6 +139,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 mPlayer.setLooping(true);
             }
         });
+    }
+
+
+    @Override
+    public void httpRequestAction(int action, Object obj) {
+
+        handler.sendMessage(handler.obtainMessage(action, obj));
     }
 
     @Override
@@ -174,6 +183,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     refreshList();
 
                     break;
+                case App.HANDLER_REFRESH_TIME:
+                    Intent intent = new Intent();
+                    intent.setClass(MenuActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                    break;
+
 
                 case VIEW_ORDER_DETAIL_MODIFY_ITEM_COUNT:
 
