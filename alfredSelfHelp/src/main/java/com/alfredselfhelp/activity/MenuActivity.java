@@ -29,6 +29,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
@@ -41,10 +42,9 @@ import com.alfredselfhelp.adapter.MainCategoryAdapter;
 import com.alfredselfhelp.adapter.MenuDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.global.CCCentre;
 import com.alfredselfhelp.global.KpmDialogFactory;
 import com.alfredselfhelp.global.RfidApiCentre;
-import com.alfredselfhelp.global.SyncCentre;
-import com.alfredselfhelp.global.VtintApiCentre;
 import com.alfredselfhelp.javabean.ItemDetailDto;
 import com.alfredselfhelp.javabean.NurTagDto;
 import com.alfredselfhelp.popuwindow.SetItemCountWindow;
@@ -336,8 +336,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        lpDe.height = WIDTH / 4 * 5;
 //        re_menu_details.setLayoutParams(lpDe);
         refreshTotal();
+        String ip = Store.getString(this, Store.KPM_CC_IP);
+        CCCentre.getInstance().connect(ip);
 //        viewCart(true);
-        VtintApiCentre.getInstance().initUsb();
+//        VtintApiCentre.getInstance().initUsb();
     }
 
     @Override
@@ -907,16 +909,17 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private void paymentAction() {
         ll_view_cart.setVisibility(View.GONE);
         ll_view_pay.setVisibility(View.VISIBLE);
-        loadingDialog.setTitle("Pay...");
-        loadingDialog.show();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                VtintApiCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
-
-            }
-        }).start();
-        SyncCentre.getInstance().commitOrder(MenuActivity.this, nurOrder, orderDetails, handler);
+//        loadingDialog.setTitle("Pay...");
+//        loadingDialog.show();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+////                VtintApiCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+//
+//            }
+//        }).start();
+        CCCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+//        SyncCentre.getInstance().commitOrder(MenuActivity.this, nurOrder, orderDetails, handler);
         mainCategoryAdapter.setCheckedPosition(-1);
     }
 

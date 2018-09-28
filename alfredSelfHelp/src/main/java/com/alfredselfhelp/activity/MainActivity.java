@@ -25,13 +25,13 @@ import com.alfredbase.store.Store;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.RfidApiCentre;
-import com.alfredselfhelp.global.VtintApiCentre;
 import com.alfredselfhelp.utils.FileDialog;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 import com.alfredselfhelp.utils.PictureSwitch;
 import com.alfredselfhelp.utils.TvPref;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.utils.VideoResManager;
+import com.alfredselfhelp.view.SelfHelpDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nordicid.nurapi.NurApiUiThreadRunner;
@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity {
     int mnVideoHeight = 0;
     private int counter = 0;
 
-    private Button btn_video, btn_picture, btn_empty;
+    private Button btn_video, btn_picture, btn_empty, btn_cc_ip;
     private VideoView videoView;
     private boolean toPlayVideo = true;
     VideoResManager mVideoResManager;  //视频播放器
@@ -100,6 +100,7 @@ public class MainActivity extends BaseActivity {
 
         // btn_video = (Button) findViewById(R.id.btn_video);
         btn_picture = (Button) findViewById(R.id.btn_picture);
+        btn_cc_ip = (Button) findViewById(R.id.btn_cc_ip);
         //  btn_empty = (Button) findViewById(R.id.btn_empty);
         li_select = (LinearLayout) findViewById(R.id.li_select);
         textTypeFace = KpmTextTypeFace.getInstance();
@@ -107,6 +108,7 @@ public class MainActivity extends BaseActivity {
         img_mian_bg = (ImageView) findViewById(R.id.img_main_bg);
         //  btn_empty.setOnClickListener(this);
         btn_picture.setOnClickListener(this);
+        btn_cc_ip.setOnClickListener(this);
         //   btn_video.setOnClickListener(this);
         ll_main.setOnClickListener(this);
         findViewById(R.id.btn_print_setting).setOnClickListener(this);
@@ -150,8 +152,8 @@ public class MainActivity extends BaseActivity {
                 MainActivity.this.runOnUiThread(r);
             }
         });
-        VtintApiCentre.getInstance().init(context);
-        VtintApiCentre.getInstance().SearchUsb();
+//        VtintApiCentre.getInstance().init(context);
+//        VtintApiCentre.getInstance().SearchUsb();
     }
 
     private Runnable mRunnable = new Runnable() {
@@ -264,6 +266,16 @@ public class MainActivity extends BaseActivity {
             case R.id.btn_picture:
                 // 选择图片
                 input();
+                break;
+            case R.id.btn_cc_ip:
+                SelfHelpDialog.commonTwoBtnIPInputDialog(MainActivity.this,
+                        "CC ip", "key in CC ip", "Cancel", "OK", null,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
                 break;
             case R.id.btn_print_setting:
                 UIHelp.startDevices(context);
@@ -626,7 +638,7 @@ public class MainActivity extends BaseActivity {
         if (videoView != null && videoView.isPlaying()) {
             videoView.stopPlayback();
         }
-        VtintApiCentre.getInstance().onDestory();
+//        VtintApiCentre.getInstance().onDestory();
         super.onDestroy();
     }
 

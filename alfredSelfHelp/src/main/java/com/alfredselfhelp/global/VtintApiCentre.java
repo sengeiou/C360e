@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
@@ -13,6 +14,7 @@ import android.hardware.usb.UsbManager;
 import android.util.Log;
 
 import com.alfredbase.BaseActivity;
+import com.alfredselfhelp.utils.UIHelp;
 
 import java.util.HashMap;
 
@@ -67,13 +69,16 @@ public class VtintApiCentre {
         // 列出所有的USB设备，并且都请求获取USB权限
         HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
         Log.d("typeUsb", " 33333333--"+deviceList.size());
-        int productId = 72800009;
+        int productId = 537;
         if(deviceList.size()>0) {
+            String id = "";
             for (UsbDevice device : deviceList.values()) {
+                id = id + device.getProductId() + ": " + device.getProductName()+",\n";
                 if (device.getProductId() == productId) {
                     mUsbManager.requestPermission(device, mPermissionIntent);
                 }
             }
+            UIHelp.showToast(context, "ProductId : " + id);
         }
     }
 
@@ -109,9 +114,40 @@ public class VtintApiCentre {
     public boolean startPay(String msg){
         boolean status = false;
         status = checkEDC();
-        status = sendMsg(msg);
-        status = endEDC();
+        if(status){
+            showMsg("ready now");
+        }else{
+            showMsg("ready failure");
+        }
+        if(status) {
+            status = sendMsg(msg);
+            if(status){
+                showMsg("payment now");
+            }else{
+                showMsg("Payment failure");
+            }
+        }
+
+        if(status) {
+            status = endEDC();
+            if(status){
+                showMsg("check now");
+            }else{
+                showMsg("check failure");
+            }
+        }
+
         return status;
+    }
+
+
+    private void showMsg(final String  msg){
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                UIHelp.showToast(context, msg);
+            }
+        });
     }
     private int i=0;
 
@@ -160,9 +196,11 @@ public class VtintApiCentre {
             data[0] = ENQ;
             int ret = -1;
             ret = mUsbDeviceConnection.bulkTransfer(usbEpOut, data, data.length, 1500);
+            showMsg("check EDC back ret :"+ret);
             if (ret != -1) {
                 byte[] receiveytes = new byte[1];
                 ret = mUsbDeviceConnection.bulkTransfer(usbEpIn, receiveytes, receiveytes.length, 2000);
+                showMsg("check ACK back ret :"+ret);
                 if (ret != -1 && receiveytes[0] == ACK) {
                     canSendMsg = true;
                 }
@@ -190,15 +228,30 @@ public class VtintApiCentre {
 
     public void initUsb(){
         if(mUsbDevice != null){
-            UsbInterface usbInterface = mUsbDevice.getInterface(0);
-            //用UsbDeviceConnection 与 UsbInterface 进行端点设置和通讯
-            if (usbInterface.getEndpoint(1) != null) {
-                usbEpOut = usbInterface.getEndpoint(1);
-            }
-            if (usbInterface.getEndpoint(0) != null) {
-                usbEpIn = usbInterface.getEndpoint(0);
-            }
             mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
+            if(mUsbDeviceConnection != null) {
+                for (int i = 0; i < mUsbDevice.getInterfaceCount(); i++) {
+                    UsbInterface usbInterface = mUsbDevice.getInterface(i);
+                    UIHelp.showToast(context, "mUsbDevice.getInterfaceCount() ="+mUsbDevice.getInterfaceCount()+"\n"
+                +"usbInterface.getInterfaceClass():" + usbInterface.getInterfaceClass());
+                    if ((UsbConstants.USB_CLASS_CDC_DATA != usbInterface.getInterfaceClass())
+                            && (UsbConstants.USB_CLASS_COMM != usbInterface.getInterfaceClass())) {
+                        continue;
+                    }
+                    for (int j = 0; j < usbInterface.getEndpointCount(); j++) {
+                        UsbEndpoint ep = usbInterface.getEndpoint(j);
+                        if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
+                            if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
+                                usbEpOut = ep;
+                                UIHelp.showToast(context, "get  out");
+                            } else if (ep.getDirection() == UsbConstants.USB_DIR_IN) {
+                                usbEpIn = ep;
+                                UIHelp.showToast(context, "get  in");
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

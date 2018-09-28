@@ -93,6 +93,15 @@
                     android:layout_margin="5dp"
                     android:text="Choose Image" />
 
+
+                <Button
+                    android:id="@+id/btn_cc_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="CC IP" />
+
                 <!--<Button-->
                 <!--android:id="@+id/btn_empty"-->
                 <!--android:layout_width="wrap_content"-->
