@@ -251,8 +251,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="5dp"
-
-
                             app:cardElevation="0dp">
 
                             <RelativeLayout
@@ -295,11 +293,8 @@
                                                     android:id="@+id/tv_dia_title"
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
-
-
                                                     android:layout_marginTop="0dp"
                                                     android:ellipsize="end"
-
                                                     android:text="Would you also like orange juice to go with your order?"
                                                     android:textColor="@color/gray1"
                                                     android:textSize="24sp"
@@ -320,12 +315,8 @@
                                                     android:textSize="36sp" />
 
                                             </RelativeLayout>
-
-
                                         </LinearLayout>
                                     </LinearLayout>
-
-
                                 </LinearLayout>
                             </RelativeLayout>
                         </android.support.v7.widget.CardView>

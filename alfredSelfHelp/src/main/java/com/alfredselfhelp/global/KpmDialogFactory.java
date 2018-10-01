@@ -22,13 +22,11 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
-
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
@@ -39,7 +37,6 @@ import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
-
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 import com.google.zxing.BarcodeFormat;
@@ -130,11 +127,16 @@ public class KpmDialogFactory {
                                   final String title, final String content, int drawableId, final Boolean isqc,
 
                                   final OnClickListener backListener, final boolean canBack) {
-//		activity.runOnUiThread(new Runnable() {
-//
-//			@Override
-//			public void run() {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
+        Window window =  dialog.getWindow();
+        if (dialog != null && window != null) {
+            WindowManager.LayoutParams attr = window.getAttributes();
+            if (attr != null) {
+                attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+            }
+        }
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.dialog_item_kpm_qr_btns, null);
         ((TextView) view.findViewById(R.id.tv_title)).setText(title);
@@ -151,8 +153,6 @@ public class KpmDialogFactory {
         } else {
             tv_qc_de.setVisibility(View.INVISIBLE);
         }
-//				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
-//				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
         dialog.show();
         dialog.setCancelable(canBack);
         dialog.setCanceledOnTouchOutside(false);
@@ -219,18 +219,16 @@ public class KpmDialogFactory {
     }
 
 
-    public static Dialog kpmVideoViewDialog(final BaseActivity activity,
-
-
+    public static Dialog kpmVideoViewDialog(final BaseActivity activity, int videoId,
                                             final OnClickListener backListener, final boolean canBack) {
 
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.dialog_item_kpm_video_btns, null);
         final VideoView mvideoView = (VideoView) view.findViewById(R.id.dia_videoViews);
+        String uri = "android.resource://" + activity.getPackageName() + "/" + videoId;
 
-
-        mvideoView.setVideoURI(Uri.parse("android.resource://" + activity.getPackageName() + "/raw/aaa"));
+        mvideoView.setVideoURI(Uri.parse(uri));
         mvideoView.setZOrderOnTop(true);
         mvideoView.start();
         //监听视频播放完的代码
@@ -279,30 +277,29 @@ public class KpmDialogFactory {
 
 
     public static Dialog kpmTipsDialog(final BaseActivity activity,
-                                       final String title, final String content, int drawableId,
+                                       final String title, String content, int drawableId,
 
                                        final OnClickListener backListener, final boolean canBack) {
-//		activity.runOnUiThread(new Runnable() {
-//
-//			@Override
-//			public void run() {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
+        Window window =  dialog.getWindow();
+        if (dialog != null && window != null) {
+            WindowManager.LayoutParams attr = window.getAttributes();
+            if (attr != null) {
+                attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+            }
+        }
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.dialog_item_kpm_tip_btns, null);
         ((TextView) view.findViewById(R.id.tv_title)).setText(title);
-//        ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+        ((TextView) view.findViewById(R.id.tv_content)).setText(content);
         ImageView img = (ImageView) view.findViewById(R.id.img_center);
         TextView tv_qc_de = (TextView) view.findViewById(R.id.tv_qc_de);
         img.setImageResource(drawableId);
 
         textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_title));
         textTypeFace.setUbuntuRegular((TextView) view.findViewById(R.id.tv_content));
-//				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
-//				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
-        dialog.show();
-        dialog.setCancelable(canBack);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setContentView(view);
 
         textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_backs));
         view.findViewById(R.id.tv_backs).setOnClickListener(
@@ -310,16 +307,16 @@ public class KpmDialogFactory {
 
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
-                        if (backListener != null)
+                        if (backListener != null) {
                             backListener.onClick(v);
+                        }
+                        dialog.dismiss();
                     }
                 });
-//        if (activity == null || activity.isFinishing())
-//            return;
-
-//			}
-//		});
+        dialog.show();
+        dialog.setCancelable(canBack);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(view);
         return dialog;
     }
 
@@ -328,11 +325,17 @@ public class KpmDialogFactory {
                                            final String title, final String content, String contentbottom, int drawableId,
 
                                            final boolean canBack) {
-//		activity.runOnUiThread(new Runnable() {
-//
-//			@Override
-//			public void run() {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
+        Window window =  dialog.getWindow();
+        if (dialog != null && window != null) {
+            WindowManager.LayoutParams attr = window.getAttributes();
+            if (attr != null) {
+                attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+            }
+        }
+
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.dialog_item_kpm_complete_btns, null);
         ((TextView) view.findViewById(R.id.tv_title)).setText(title);

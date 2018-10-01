@@ -55,8 +55,8 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
+import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
@@ -235,71 +235,16 @@ public class KpmgResponseUtil {
                     @Override
                     public void run() {
                         Order placeOrder = OrderSQL.getOrder(orderId);
-                        List<OrderSplit> placeOrderSplit = OrderSplitSQL.getUnFinishedOrderSplits(orderId);
-                        KotSummary kotSummary = ObjectFactory.getInstance()
-                                .getKotSummary(
-                                        "", placeOrder,
-                                        App.instance.getRevenueCenter(),
-                                        App.instance.getBusinessDate());
-                        if (placeOrderSplit != null && placeOrderSplit.size() > 0) {
-                            for (OrderSplit orderSplit : placeOrderSplit) {
-                                if (kotSummary != null) {
-                                    ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
-                                    List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(orderSplit);
-                                    List<Integer> orderDetailIds = new ArrayList<Integer>();
-                                    ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
-                                    for (OrderDetail orderDetail : placedOrderDetails) {
-                                        orderDetailIds.add(orderDetail.getId());
-                                        KotItemDetail kotItemDetail = ObjectFactory
-                                                .getInstance()
-                                                .getKotItemDetail(
-                                                        placeOrder,
-                                                        orderDetail,
-                                                        CoreData.getInstance()
-                                                                .getItemDetailById(
-                                                                        orderDetail
-                                                                                .getItemId()),
-                                                        kotSummary,
-                                                        App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
-                                        kotItemDetail.setItemNum(orderDetail
-                                                .getItemNum());
-//										if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
-//											kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
-//											kotItemDetail
-//													.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
-//										}
-                                        KotItemDetailSQL.update(kotItemDetail);
-                                        kotItemDetails.add(kotItemDetail);
-                                        orderDetailIds.add(orderDetail.getId());
-                                        ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
-                                                .getOrderModifiers(placeOrder, orderDetail);
-                                        for (OrderModifier orderModifier : orderModifiers) {
-                                            if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
-                                                KotItemModifier kotItemModifier = ObjectFactory
-                                                        .getInstance()
-                                                        .getKotItemModifier(
-                                                                kotItemDetail,
-                                                                orderModifier,
-                                                                CoreData.getInstance()
-                                                                        .getModifier(
-                                                                                orderModifier
-                                                                                        .getModifierId()));
-                                                KotItemModifierSQL.update(kotItemModifier);
-                                                kotItemModifiers.add(kotItemModifier);
-                                            }
-                                        }
-                                    }
-                                    Map<String, Object> orderMap = new HashMap<String, Object>();
-                                    orderMap.put("orderId", orderSplit.getOrderId());
-                                    orderMap.put("orderDetailIds", orderDetailIds);
-                                    orderMap.put("orderPosType", ParamConst.POS_TYPE_SUB);
-                                    App.instance.getKdsJobManager().tearDownKot(
-                                            kotSummary, kotItemDetails,
-                                            kotItemModifiers, ParamConst.JOB_NEW_KOT,
-                                            orderMap);
-                                }
-                            }
+                        Payment payment = PaymentSQL.getPaymentByOrderId(placeOrder.getId());
+                        if (payment == null) {
+                            placeOrder.setOrderStatus(ParamConst.ORDER_STATUS_HOLD);
+                            OrderSQL.updateOrder(placeOrder);
                         } else {
+                            KotSummary kotSummary = ObjectFactory.getInstance()
+                                    .getKotSummary(
+                                            "", placeOrder,
+                                            App.instance.getRevenueCenter(),
+                                            App.instance.getBusinessDate());
                             if (kotSummary != null) {
                                 ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
                                 ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
@@ -354,7 +299,6 @@ public class KpmgResponseUtil {
                             }
                         }
                     }
-
                 }).start();
             }
 

@@ -5,10 +5,8 @@ import android.app.Dialog;
 import android.view.View;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.KpmDialogFactory;
-import com.alfredselfhelp.utils.ToolAlert;
 
 
 public class DialogActivity extends BaseActivity {
@@ -25,7 +23,7 @@ public class DialogActivity extends BaseActivity {
         super.initView();
         setContentView(R.layout.activity_dialog);
 
-        Dialog dialogac =    KpmDialogFactory.kpmTipsDialog(context, "Credit Card Invalid", "", R.drawable.icon_tip_cq, new View.OnClickListener() {
+        Dialog dialogac =    KpmDialogFactory.kpmTipsDialog(context, "Credit Card Invalid","", R.drawable.icon_tip_cq, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.alfredbase.APPConfig;
-import com.alfredbase.ParamConst;
 import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
@@ -17,7 +16,6 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 
@@ -66,19 +64,19 @@ public class SyncCentre {
     }
 
 
-    public void commitOrder(Context context, Order order, List<OrderDetail> orderDetails, Handler handler){
+    public void commitOrder(Context context, Order order, OrderBill orderBill,  List<OrderDetail> orderDetails, Payment payment,  PaymentSettlement paymentSettlement,  Handler handler){
         Map<String, Object> map = new HashMap<>();
         List<OrderModifier> orderModifiers = OrderModifierSQL.getAllOrderModifier(order);
         List<OrderDetailTax> orderDetailTaxs = OrderDetailTaxSQL.getAllOrderDetailTax(order);
         List<Payment> payments = new ArrayList<>();
-        OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(order, App.instance.getRevenueCenter());
-        Payment payment = ObjectFactory.getInstance().getPayment(order, orderBill);
-        payments.add(payment);
         List<OrderBill> orderBills = new ArrayList<>();
+
         orderBills.add(orderBill);
-        PaymentSettlement p = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_VISA, order.getTotal());
         List<PaymentSettlement> paymentSettlements = new ArrayList<>();
-        paymentSettlements.add(p);
+        if(paymentSettlement != null) {
+            payments.add(payment);
+            paymentSettlements.add(paymentSettlement);
+        }
         map.put("order", order);
         map.put("orderDetails" , orderDetails);
         map.put("orderModifiers" , orderModifiers);

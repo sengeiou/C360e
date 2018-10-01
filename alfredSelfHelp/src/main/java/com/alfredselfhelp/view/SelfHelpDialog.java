@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.store.Store;
-import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.utils.UIHelp;
@@ -30,28 +29,28 @@ public class SelfHelpDialog extends DialogFactory {
             public void run() {
                 final Dialog dialog = new Dialog(activity, com.alfredbase.R.style.base_dialog);
                 final View view = LayoutInflater.from(activity).inflate(
-                        com.alfredbase.R.layout.dialog_input, null);
-                ((TextView) view.findViewById(com.alfredbase.R.id.tv_title)).setText(title);
-                ((TextView) view.findViewById(com.alfredbase.R.id.tv_content)).setText(content);
-                ((TextView) view.findViewById(com.alfredbase.R.id.tv_left)).setText(leftText);
-                ((TextView) view.findViewById(com.alfredbase.R.id.tv_right)).setText(rightText);
-                final EditText editText = (EditText) view.findViewById(com.alfredbase.R.id.et_input);
+                        R.layout.self_dialog_input, null);
+                ((TextView) view.findViewById(R.id.tv_title)).setText(title);
+                ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+                ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+                ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+                final EditText editText = (EditText) view.findViewById(R.id.et_input);
                 String inputNum = Store.getString(activity, Store.KPM_CC_IP);
 
                 if (!TextUtils.isEmpty(inputNum)) {
                     editText.setText(inputNum);
                 }
-
+                editText.setMaxLines(Integer.MAX_VALUE);
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.setContentView(view);
-                view.findViewById(com.alfredbase.R.id.tv_left).setOnClickListener(
+                view.findViewById(R.id.tv_left).setOnClickListener(
                         new View.OnClickListener() {
 
                             @Override
                             public void onClick(final View v) {
                                 dialog.dismiss();
-                                CommonUtil.hideSoftkeyBoard(activity);
+//                                CommonUtil.hideSoftkeyBoard(activity);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -61,7 +60,7 @@ public class SelfHelpDialog extends DialogFactory {
                                 }, 500);
                             }
                         });
-                view.findViewById(com.alfredbase.R.id.tv_right).setOnClickListener(
+                view.findViewById(R.id.tv_right).setOnClickListener(
                         new View.OnClickListener() {
 
                             @Override
@@ -84,7 +83,7 @@ public class SelfHelpDialog extends DialogFactory {
 
 
                                 dialog.dismiss();
-                                CommonUtil.hideSoftkeyBoard(activity);
+//                                CommonUtil.hideSoftkeyBoard(activity);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {

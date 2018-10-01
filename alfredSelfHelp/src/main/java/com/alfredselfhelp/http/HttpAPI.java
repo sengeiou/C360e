@@ -11,6 +11,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredselfhelp.activity.MenuActivity;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.utils.UIHelp;
 import com.google.gson.Gson;
@@ -116,16 +117,16 @@ public class HttpAPI {
 							super.onSuccess(statusCode, headers, responseBody);
 							if (resultCode == ResultCode.SUCCESS) {
 								HttpAnalysis.commitOrderAndOrderDetails(responseBody);
-								handler.sendEmptyMessage(1111);
+								handler.sendEmptyMessage(MenuActivity.VIEW_COMMIT_ORDER_SUCCEED);
 							} else {
-								handler.sendEmptyMessage(-1111);
+								handler.sendEmptyMessage(MenuActivity.VIEW_COMMIT_ORDER_FAILED);
 							}
 						}
 						@Override
 						public void onFailure(final int statusCode, final Header[] headers,
 											  final byte[] responseBody, final Throwable error) {
 							super.onFailure(statusCode, headers, responseBody, error);
-							handler.sendEmptyMessage(-1111);
+							handler.sendEmptyMessage(MenuActivity.VIEW_COMMIT_ORDER_FAILED);
 						}
 					});
 		} catch (Exception e) {
