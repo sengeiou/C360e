@@ -1,8 +1,5 @@
 package com.alfredwaiter.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -14,13 +11,8 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemCategory;
@@ -30,13 +22,15 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.CallBackMove;
 import com.alfredwaiter.activity.CheckListener;
-import com.alfredwaiter.activity.ItemDetailFragment;
 import com.alfredwaiter.activity.MainPage;
 import com.alfredwaiter.adapter.ItemHeaderDecoration;
 import com.alfredwaiter.adapter.ItemHeaderDetailDecoration;
 import com.alfredwaiter.adapter.MainCategoryAdapter;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.listener.RvItemClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 参考http://blog.csdn.net/hellogv/article/details/6828584
@@ -141,12 +135,19 @@ public class SlidePanelView extends LinearLayout implements
         mainCategoryAdapter = new MainCategoryAdapter(mContext, itemMainCategories, new RvItemClickListener() {
 
             public void onItemClick(View v, int position) {
-                isMoved = true;
-                App.isleftMoved = true;
-                targetPosition = position;
-                setChecked(position, true);
-
-
+                if(position == targetPosition){
+                    ItemMainCategory itemMainCategory = itemMainCategories.get(position);
+                    if(handler != null) {
+                        handler.sendMessage(handler.obtainMessage(
+                                MainPage.VIEW_EVENT_CLICK_MAIN_CATEGORY,
+                                itemMainCategory));
+                    }
+                }else {
+                    isMoved = true;
+                    App.isleftMoved = true;
+                    targetPosition = position;
+                    setChecked(position, true);
+                }
             }
         });
         re_main_category.setAdapter(mainCategoryAdapter);

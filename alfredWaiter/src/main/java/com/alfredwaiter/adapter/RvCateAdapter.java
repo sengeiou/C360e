@@ -2,7 +2,6 @@ package com.alfredwaiter.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,9 @@ public abstract class RvCateAdapter<T> extends RecyclerView.Adapter<RvCateHolder
         this.list = list;
         this.listener = listener;
     }
-
+    public List<T> getData(){
+        return list;
+    }
     @Override
     public RvCateHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(getLayoutId(viewType), parent, false);

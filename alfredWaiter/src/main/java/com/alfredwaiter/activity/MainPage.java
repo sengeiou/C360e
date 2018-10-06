@@ -52,6 +52,7 @@ import com.alfredwaiter.javabean.ModifierCPVariance;
 import com.alfredwaiter.javabean.ModifierVariance;
 import com.alfredwaiter.popupwindow.SearchMenuItemWindow;
 import com.alfredwaiter.popupwindow.SetItemCountWindow;
+import com.alfredwaiter.popupwindow.SubCategoryWindow;
 import com.alfredwaiter.popupwindow.WaiterModifierCPWindow;
 import com.alfredwaiter.utils.WaiterUtils;
 import com.alfredwaiter.view.CountView;
@@ -65,6 +66,7 @@ import java.util.Map;
 
 public class MainPage extends BaseActivity implements CheckListener, CallBackMove {
     public static final int VIEW_EVENT_CLICK_MAIN_CATEGORY = 0;
+    public static final int VIEW_EVENT_CLICK_SUB_CATEGORY = 9;
     public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
     public static final int VIEW_EVENT_SET_PERSON_INDEX = 2;
     public static final int VIEW_EVENT_SET_QTY = 3;
@@ -109,7 +111,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     private TextView tv_notification_qty;
 
     private SearchMenuItemWindow searchPopUp;
-
+    private SubCategoryWindow subCategoryWindow;
     private Button btn_slide;
     //	private ModifierWindow modifierWindow;
 //	private WaiterModifierWindow modifierWindow;
@@ -136,6 +138,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
          initTextTypeFace();
          initTitle();
         searchPopUp = new SearchMenuItemWindow(context, handler, findViewById(R.id.rl_root));
+        subCategoryWindow = new SubCategoryWindow(context, handler, findViewById(R.id.rl_root));
 //		modifierWindow = new ModifierWindow(context, handler, findViewById(R.id.rl_root));
 //		modifierWindow = new WaiterModifierWindow(context, handler, findViewById(R.id.rl_root));
         modifierWindow = new WaiterModifierCPWindow(context, handler, findViewById(R.id.rl_root));
@@ -271,16 +274,37 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case VIEW_EVENT_CLICK_MAIN_CATEGORY: {
+
                     ItemMainCategory itemMainCategory = (ItemMainCategory) msg.obj;
-                    itemCategoryAndDetailsList.clear();
-                    itemCategoryAndDetailsList
-                            .addAll(getItemCategoryAndDetails(itemMainCategory));
-                    for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
-                        expandableListView.expandGroup(i);
-                    }
-                    refreshList();
+//                    itemCategoryAndDetailsList.clear();
+//                    itemCategoryAndDetailsList
+//                            .addAll(getItemCategoryAndDetails(itemMainCategory));
+//                    for (int i = 0; i < itemCategoryAndDetailsList.size(); i++) {
+//                        expandableListView.expandGroup(i);
+//                    }
+//                    refreshList();
+                    List<ItemCategory> itemCategories = CoreData.getInstance().getItemCategories(itemMainCategory);
+                    subCategoryWindow.show(itemCategories);
                     break;
                 }
+                case VIEW_EVENT_CLICK_SUB_CATEGORY: {
+                    ItemCategory itemCategory = (ItemCategory) msg.obj;
+                    List<ItemDetail> itemDetails = detailAdapter.getData();
+                    int index = -1;
+                    if(itemDetails != null && itemDetails.size() > 0){
+                        for(ItemDetail itemDetail : itemDetails){
+                            if(itemDetail.getItemName().equals(itemCategory.getItemCategoryName())){
+                                index = itemDetails.indexOf(itemDetail);
+                                break;
+                            }
+                        }
+                    }
+                    if(index != -1) {
+                        fastMove(index);
+                    }
+                }
+                    break;
+
                 case VIEW_EVENT_CLICK_ALL_MAIN_CATEGORY: {
                     itemCategoryAndDetailsList.clear();
                     itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
@@ -826,6 +850,12 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         smoothMoveToPosition(n);
     }
 
+    private void fastMove(int n){
+        mIndex = n;
+        reItemdetail.stopScroll();
+        fastMoveToPosition(n);
+    }
+
     private void smoothMoveToPosition(int n) {
         int firstItem = mManager.findFirstVisibleItemPosition();
         int lastItem = mManager.findLastVisibleItemPosition();
@@ -842,6 +872,26 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         } else {
             //((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
             reItemdetail.smoothScrollToPosition(n);
+            move = true;
+        }
+    }
+
+    private void fastMoveToPosition(int n) {
+        int firstItem = mManager.findFirstVisibleItemPosition();
+        int lastItem = mManager.findLastVisibleItemPosition();
+        Log.d("first--->", String.valueOf(firstItem));
+        Log.d("last--->", String.valueOf(lastItem));
+        if (n <= firstItem) {
+            reItemdetail.scrollToPosition(n);
+            // ((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
+        } else if (n <= lastItem) {
+            Log.d("pos---->", String.valueOf(n) + "VS" + firstItem);
+            int top = reItemdetail.getChildAt(n - firstItem).getTop();
+            Log.d("top---->", String.valueOf(top));
+            reItemdetail.scrollBy(0, top);
+        } else {
+            //((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
+            reItemdetail.scrollToPosition(n);
             move = true;
         }
     }
@@ -881,5 +931,14 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 //                }
 //            }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(subCategoryWindow != null){
+            subCategoryWindow.dismiss();
+            return;
+        }
+        super.onBackPressed();
     }
 }
