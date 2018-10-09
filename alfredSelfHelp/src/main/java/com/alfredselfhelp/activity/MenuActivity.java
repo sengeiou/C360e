@@ -911,14 +911,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 break;
 
             case R.id.tv_dialog_ok:
+               if(yesDialog==null){
+                    yesDialog = KpmDialogFactory.kpmVideoViewDialog(context, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                yesDialog = KpmDialogFactory.kpmVideoViewDialog(context, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                }, false);
-
+                        }
+                    }, false);
+               }
                 break;
         }
     }
