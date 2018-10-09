@@ -111,9 +111,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
     private Timer timer = new Timer();
     private boolean isUpdating = false;
-
     private KpmTextTypeFace textTypeFace;
-
     private VideoView mVideoView;
     Dialog yesDialog;
 
@@ -433,6 +431,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if (showToast && ll_view_cart_list.getVisibility() == View.VISIBLE
                         && yesDialog != null && yesDialog.isShowing()) {
                     yesDialog.dismiss();
+                    App.instance.startADKpm();
+
                     ll_order_dialog.setVisibility(View.GONE);
                 }
                 refreshTotal();
@@ -872,7 +872,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                     return;
                 }
-
+                App.instance.stopADKpm();
                 paymentAction();
 
 //                final OrderSelfDialog dialog = new OrderSelfDialog(MenuActivity.this);

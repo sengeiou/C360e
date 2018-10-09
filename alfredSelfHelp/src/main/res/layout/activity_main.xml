@@ -143,7 +143,6 @@
                 android:id="@+id/btn_start"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-
                 android:layout_marginLeft="150dp"
                 android:layout_marginRight="150dp"
                 android:background="@drawable/btn_start"

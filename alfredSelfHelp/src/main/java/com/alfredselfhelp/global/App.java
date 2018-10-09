@@ -122,12 +122,15 @@ public class App extends BaseApplication {
         CrashReport.initCrashReport(getApplicationContext(), "4a949e77d4", isOpenLog, strategy);
 
 
-        observable = RxBus.getInstance().register("showRelogin");
+        observable = RxBus.getInstance().register("kpmTime");
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
             @Override
             public void call(Object object) {
 //
-                App.getTopActivity().httpRequestAction(HANDLER_REFRESH_TIME, null);
+                BaseActivity activity = App.getTopActivity();
+                if (activity instanceof MenuActivity) {
+                    App.getTopActivity().httpRequestAction(HANDLER_REFRESH_TIME, null);
+                }
             }
         });
     }
