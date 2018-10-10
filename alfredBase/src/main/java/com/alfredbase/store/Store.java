@@ -152,6 +152,8 @@ public class Store {
 	public static final String KPM_USER = "kpm_user";
 	public static final String MAIN_URL = "main_url";
 
+	public static final String KPM_TIME = "kpm_time";
+
 
 	private Store() {
 	};

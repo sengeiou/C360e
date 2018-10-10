@@ -62,6 +62,7 @@ public class BaseApplication extends Application {
     public static int UDP_INDEX_SUB_POS = 200;
     public static int UDP_INDEX_SELF_HELP = 300;
     private Handler reLoginHandler = new Handler();
+    private Handler reKpmHandler = new Handler();
     public static Handler postHandler = new Handler();
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -224,9 +225,53 @@ public class BaseApplication extends Application {
         reLoginHandler.removeCallbacks(runnable);
     }
 
+
+    private Runnable runnableKpm = new Runnable() {
+        @Override
+        public void run() {
+            LogUtil.d("BaseActivity", "show");
+            RxBus.getInstance().post("kpmTime", null);
+        }
+    };
+
+    public void startADKpm() {
+        LogUtil.d("BaseActivity", "Remove");
+        reKpmHandler.removeCallbacks(runnableKpm);
+        LogUtil.d("BaseActivity", "Start");
+
+        String time = Store.getString(instance, Store.KPM_TIME);
+        int timekpm = 0;
+        if (!TextUtils.isEmpty(time)) {
+            float t = convertToFloat(time, 1.0f);
+            timekpm = (int) (t * 60 * 1000);
+            if (t > 0) {
+                reKpmHandler.postDelayed(runnableKpm, timekpm);
+            }
+        }
+
+    }
+
+
+    public static float convertToFloat(String number, float defaultValue) {
+        if (TextUtils.isEmpty(number)) {
+            return defaultValue;
+        }
+        try {
+            return Float.parseFloat(number);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public void stopADKpm() {
+        reKpmHandler.removeCallbacks(runnableKpm);
+    }
+
     @Override
     public void onTerminate() {
         reLoginHandler.removeCallbacks(runnable);
+
+        reKpmHandler.removeCallbacks(runnableKpm);
         super.onTerminate();
     }
 

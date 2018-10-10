@@ -3,6 +3,7 @@ package com.alfredselfhelp.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -75,6 +76,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class MenuActivity extends BaseActivity implements CheckListener {
     public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
     public static final int VIEW_EVENT_MODIFIER_COUNT = 8;
@@ -124,9 +126,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
     private Timer timer = new Timer();
     private boolean isUpdating = false;
-
     private KpmTextTypeFace textTypeFace;
-
     private VideoView mVideoView;
     Dialog yesDialog;
     private Dialog paymentDialog;
@@ -137,7 +137,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         setContentView(R.layout.activity_menu);
         init();
         timer.schedule(new MyTimerTask(), 3000);
-
+//  App.instance.startADKpm();
     }
 
     private void initVideo() {
@@ -152,6 +152,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 mPlayer.setLooping(true);
             }
         });
+    }
+
+
+    @Override
+    public void httpRequestAction(int action, Object obj) {
+
+        handler.sendMessage(handler.obtainMessage(action, obj));
     }
 
     @Override
@@ -189,6 +196,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     refreshList();
 
                     break;
+                case App.HANDLER_REFRESH_TIME:
+                    Intent intent = new Intent();
+                    intent.setClass(MenuActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                    break;
+
 
                 case VIEW_ORDER_DETAIL_MODIFY_ITEM_COUNT:
 
@@ -497,6 +512,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if (showToast && ll_view_cart_list.getVisibility() == View.VISIBLE
                         && yesDialog != null && yesDialog.isShowing()) {
                     yesDialog.dismiss();
+                    App.instance.startADKpm();
+
                     ll_order_dialog.setVisibility(View.GONE);
                 }
                 refreshTotal();
@@ -859,6 +876,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                     return;
                 }
+                App.instance.stopADKpm();
                 DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning),
                         "",
                         context.getString(R.string.cancel), context.getString(R.string.ok),

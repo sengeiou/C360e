@@ -101,6 +101,7 @@ public class KpmDialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                App.instance.startADKpm();
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -111,6 +112,7 @@ public class KpmDialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                App.instance.startADKpm();
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
                             }
@@ -164,6 +166,7 @@ public class KpmDialogFactory {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        App.instance.startADKpm();
                         if (backListener != null)
                             backListener.onClick(v);
                     }
@@ -206,6 +209,7 @@ public class KpmDialogFactory {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        App.instance.startADKpm();
                         if (backListener != null)
                             backListener.onClick(v);
                     }
@@ -263,6 +267,8 @@ public class KpmDialogFactory {
 
                         mvideoView.stopPlayback();
                         dialog.dismiss();
+
+                        App.instance.startADKpm();
                         if (backListener != null)
                             backListener.onClick(v);
                     }
@@ -307,6 +313,7 @@ public class KpmDialogFactory {
 
                     @Override
                     public void onClick(View v) {
+                        App.instance.startADKpm();
                         if (backListener != null) {
                             backListener.onClick(v);
                         }

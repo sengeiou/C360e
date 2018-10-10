@@ -1,5 +1,6 @@
 package com.alfredselfhelp.global;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -47,10 +48,14 @@ import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredselfhelp.R;
+import com.alfredselfhelp.activity.MainActivity;
+import com.alfredselfhelp.activity.MenuActivity;
 import com.alfredselfhelp.utils.TvPref;
 import com.google.gson.Gson;
+import com.moonearly.utils.service.TcpUdpFactory;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
@@ -64,6 +69,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
 
 public class App extends BaseApplication {
     private static final String TAG = App.class.getSimpleName();
@@ -74,6 +83,9 @@ public class App extends BaseApplication {
     private MainPosInfo mainPosInfo;
     public static final int HANDLER_REFRESH_CALL = 1;
     public static final int HANDLER_REFRESH_CALL_ON = 2;
+
+    public static final int HANDLER_REFRESH_TIME = 5;
+
     private String pairingIp, ip;
     private WaiterDevice waiterdev;
     private User user;
@@ -95,6 +107,7 @@ public class App extends BaseApplication {
     private RemotePrintServiceCallback mCallback = new RemotePrintServiceCallback();
     private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<>();
     private Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
+    private Observable<Object> observable;
 
     @Override
     public void onCreate() {
@@ -107,7 +120,21 @@ public class App extends BaseApplication {
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
         strategy.setAppChannel(APPPATH);
         CrashReport.initCrashReport(getApplicationContext(), "4a949e77d4", isOpenLog, strategy);
+
+
+        observable = RxBus.getInstance().register("kpmTime");
+        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object object) {
+//
+                BaseActivity activity = App.getTopActivity();
+                if (activity instanceof MenuActivity) {
+                    App.getTopActivity().httpRequestAction(HANDLER_REFRESH_TIME, null);
+                }
+            }
+        });
     }
+
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -148,6 +175,7 @@ public class App extends BaseApplication {
             }
         }
     };
+
 
     public void autoConnectRemotePrintService() {
         int printVersionCode = 0;
@@ -450,6 +478,11 @@ public class App extends BaseApplication {
     @Override
     public void onTerminate() {
         RfidApiCentre.getInstance().onDestroy();
+
+        if (observable != null) {
+            RxBus.getInstance().unregister("showRelogin", observable);
+        }
+        //     TcpUdpFactory.stopUdpServer();
         super.onTerminate();
     }
 

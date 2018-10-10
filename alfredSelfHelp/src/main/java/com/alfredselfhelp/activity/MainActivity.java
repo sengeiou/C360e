@@ -5,7 +5,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +63,7 @@ public class MainActivity extends BaseActivity {
     int mnVideoHeight = 0;
     private int counter = 0;
 
-    private Button btn_video, btn_picture, btn_empty, btn_cc_ip;
+    private Button btn_video, btn_picture, btn_empty, btn_cc_ip, btn_time;
     private VideoView videoView;
     private boolean toPlayVideo = true;
     VideoResManager mVideoResManager;  //视频播放器
@@ -100,7 +106,9 @@ public class MainActivity extends BaseActivity {
 
         // btn_video = (Button) findViewById(R.id.btn_video);
         btn_picture = (Button) findViewById(R.id.btn_picture);
+        btn_time = (Button) findViewById(R.id.btn_time);
         btn_cc_ip = (Button) findViewById(R.id.btn_cc_ip);
+        btn_time.setOnClickListener(this);
         //  btn_empty = (Button) findViewById(R.id.btn_empty);
         li_select = (LinearLayout) findViewById(R.id.li_select);
         textTypeFace = KpmTextTypeFace.getInstance();
@@ -166,8 +174,6 @@ public class MainActivity extends BaseActivity {
         }
 
     };
-
-
 
 
     private Runnable mUpdateUiRunnable = new Runnable() {
@@ -266,6 +272,10 @@ public class MainActivity extends BaseActivity {
             case R.id.btn_picture:
                 // 选择图片
                 input();
+                break;
+
+            case R.id.btn_time:
+                diaTime();
                 break;
             case R.id.btn_cc_ip:
                 SelfHelpDialog.commonTwoBtnIPInputDialog(MainActivity.this,
@@ -624,6 +634,92 @@ public class MainActivity extends BaseActivity {
 
     }
 
+
+    private void diaTime() {
+
+        String time;
+        final EditText timeServer = new EditText(this);
+        timeServer.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+
+        timeServer.setKeyListener(new DigitsKeyListener(false, true));
+        timeServer.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String editStr = s.toString().trim();
+
+                int posDot = editStr.indexOf(".");
+                //不允许输入3位小数,超过三位就删掉
+                if (posDot < 0) {
+                    return;
+                }
+                if (editStr.length() - posDot - 1 > 1) {
+                    s.delete(posDot + 2, posDot + 3);
+                } else {
+                    //TODO...这里写逻辑
+                }
+            }
+        });
+
+
+        time = Store.getString(context, Store.KPM_TIME);
+        if (!TextUtils.isEmpty(time)) {
+            timeServer.setText(time);
+            timeServer.setSelection(time.length());
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("请输入时间(Minute)");
+        builder.setView(timeServer)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        re_main_select.setVisibility(View.GONE);
+                    }
+                });
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                String input = timeServer.getText().toString();
+                // String input = "http://139.224.17.126/upload/img/item/c1cfbf26-7310-4a6e-b5a4-15e89a82a9c3.png";
+                Store.putString(context, Store.KPM_TIME, input);
+                re_main_select.setVisibility(View.GONE);
+            }
+        });
+        builder.show();
+
+    }
+
+    private static final int DECIMAL_DIGITS = 1;
+
+    InputFilter lengthfilter = new InputFilter() {
+        public CharSequence filter(CharSequence source, int start, int end,
+                                   Spanned dest, int dstart, int dend) {
+            // 删除等特殊字符，直接返回
+            if ("".equals(source.toString())) {
+                return null;
+            }
+            String dValue = dest.toString();
+            String[] splitArray = dValue.split("//.");
+            if (splitArray.length > 1) {
+                String dotValue = splitArray[1];
+                int diff = dotValue.length() + 1 - DECIMAL_DIGITS;
+                if (diff > 0) {
+                    return source.subSequence(start, end - diff);
+                }
+            }
+            return null;
+        }
+    };
+
     public static boolean isCompleteUrl(String text) {
         Pattern p = Pattern.compile("((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?", Pattern.CASE_INSENSITIVE);
         Matcher matcher = p.matcher(text);
@@ -656,7 +752,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }
