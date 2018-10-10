@@ -876,9 +876,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                     return;
                 }
-                App.instance.stopADKpm();
                 DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning),
-                        "",
+                        "Kindly confirm to process the credit card ?",
                         context.getString(R.string.cancel), context.getString(R.string.ok),
                         null, new View.OnClickListener() {
                             @Override
@@ -939,6 +938,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         if(timer != null){
             timer.cancel();
         }
+        App.instance.stopADKpm();
         ll_view_cart.setVisibility(View.GONE);
         ll_view_pay.setVisibility(View.VISIBLE);
         if(paymentDialog != null && paymentDialog.isShowing()){
