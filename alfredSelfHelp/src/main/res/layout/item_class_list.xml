@@ -31,7 +31,7 @@
             android:singleLine="true"
             android:text="wwwww"
             android:textColor="@color/gray2"
-            android:textSize="24sp" />
+            android:textSize="22sp" />
     </LinearLayout>
 
     <TextView

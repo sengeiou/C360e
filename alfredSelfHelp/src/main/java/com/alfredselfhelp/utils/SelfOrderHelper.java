@@ -126,15 +126,15 @@ public class SelfOrderHelper {
             return;
         }
 //        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
-        calculate(order, orderDetail);
+        calculateOrderDetail(order, orderDetail);
         orderDetails.add(orderDetail);
         if (updateFreeOrderDetailForWaiter(order, orderDetail, orderDetails)) {
-            calculate(order, orderDetail);
+            calculateOrderDetail(order, orderDetail);
         }
         calculate(order, orderDetails);
     }
 
-    private void calculate(Order order, OrderDetail orderDetail) {
+    public void calculateOrderDetail(Order order, OrderDetail orderDetail) {
         orderDetail.setModifierPrice(OrderHelper.getOrderDetailModifierPrice(
                 order, orderDetail).toString());
 
@@ -228,7 +228,7 @@ public class SelfOrderHelper {
         if (orderDetail == null) {
             return;
         }
-        calculate(order, orderDetail);
+        calculateOrderDetail(order, orderDetail);
         calculate(order, orderDetails);
     }
 

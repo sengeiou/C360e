@@ -847,7 +847,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     public void move(int n) {
         mIndex = n;
         reItemdetail.stopScroll();
-        smoothMoveToPosition(n);
+        fastMoveToPosition(n);
     }
 
     private void fastMove(int n){
