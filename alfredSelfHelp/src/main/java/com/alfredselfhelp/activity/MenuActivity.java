@@ -121,7 +121,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         setContentView(R.layout.activity_menu);
         init();
         timer.schedule(new MyTimerTask(), 3000);
-//  App.instance.startADKpm();
+         App.instance.startADKpm();
     }
 
     private void initVideo() {
@@ -911,7 +911,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 break;
 
             case R.id.tv_dialog_ok:
-               if(yesDialog==null){
+               if(yesDialog==null ){
                     yesDialog = KpmDialogFactory.kpmVideoViewDialog(context, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

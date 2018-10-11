@@ -8,24 +8,24 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 
 public class DataHelper {
-	private SQLiteDatabase db;
-	private static String database_name;
-	private static int database_version;
+    private SQLiteDatabase db;
+    private static String database_name;
+    private static int database_version;
 
-	public DataHelper(Context _context, String name, int version) {
-		if (db == null) {
-			database_name = name;
-			database_version = version;
-			OpenHelper openHelper = new OpenHelper(_context);
-			this.db = openHelper.getWritableDatabase();
-		}
-	}
+    public DataHelper(Context _context, String name, int version) {
+        if (db == null) {
+            database_name = name;
+            database_version = version;
+            OpenHelper openHelper = new OpenHelper(_context);
+            this.db = openHelper.getWritableDatabase();
+        }
+    }
 
-	public SQLiteDatabase getDb() {
-		return db;
-	}
+    public SQLiteDatabase getDb() {
+        return db;
+    }
 
-	private static class OpenHelper extends SQLiteOpenHelper {
+    private static class OpenHelper extends SQLiteOpenHelper {
         Context context;
 
         public OpenHelper(Context context) {
@@ -1198,7 +1198,7 @@ public class DataHelper {
         }
 
 
-        private void onUpgradeFor0chen0dVersionfor(SQLiteDatabase db){
+        private void onUpgradeFor0chen0dVersionfor(SQLiteDatabase db) {
 
             db.execSQL("CREATE TABLE "
                     + TableNames.PaymentMethod
@@ -1223,11 +1223,9 @@ public class DataHelper {
         }
 
         private void onUpgradeForOldVersion24(SQLiteDatabase db) {
-
-
             db.execSQL("ALTER TABLE "
                     + TableNames.ReportDayTax
-                    + " ADD COLUMN  taxType INTEGER default 0");
+                    + " ADD COLUMN  taxType INTEGER default 2");
             db.execSQL("ALTER TABLE "
                     + TableNames.Modifier
                     + " ADD COLUMN  minNumber INTEGER default 0");

@@ -1,9 +1,9 @@
 <resources>
 
     <string name="app_name">AlfredRemotePrintService</string>
-    <string name="takeaway_print">打包</string>    
+    <string name="takeaway_print">打包</string>
     <!-- BillPrint -->
-    <string name="swift_no_">订单号</string>    
+    <string name="swift_no_">订单号</string>
     <string name="bill_no_">账单号</string>
     <string name="cashier">收银员</string>
     <string name="groupnum">分单号</string>
@@ -52,7 +52,7 @@
     <string name="powered_by_alfred">#SrevedByAlfred</string>
     <string name="kg">千克</string>
 
-   <!-- DaySalesReportPrint -->
+    <!-- DaySalesReportPrint -->
     <string name="sales_analysis">销售分析</string>
     <string name="type">类型</string>
     <string name="qty_">数量</string>
@@ -75,7 +75,7 @@
     <string name="rounding">抹零</string>
     <string name="nett_sales">销售净额</string>
     <string name="gross_total">销售总额</string>
-    <string name="next_saels">Next Saels + SVG</string>
+    <string name="next_saels">NETT Sales + SVG</string>
     <string name="media">支付汇总</string>
     <string name="cash">现金</string>
     <string name="mc">万事达</string>
@@ -112,7 +112,7 @@
     <string name="total_open_items">总零时菜</string>
     <string name="monthly_sales">月销售报表</string>
     <string name="monthly_plu">月品项销售</string>
-    
+
     <!-- Detail Analysis -->
     <string name="detail_analysis">详细分析</string>
     <string name="modifier_analysis">套餐与配料分析</string>
@@ -120,7 +120,7 @@
     <string name="report_no_">报表编号</string>
     <string name="business_date">营业时间</string>
     <string name="plu_name">名称</string>
-    
+
     <!-- Summary Analysis -->
     <string name="summary_analysis">品类分析</string>
     <!-- Hourly Sales -->
@@ -148,7 +148,7 @@
     <string name="wifi_printer_send_failed">数据发送错误，请重新连接网络打印机</string>
     <string name="wifi_printer_connect_error">连接网络打印机错误</string>
     <string name="wifi_printer_nopaper">打印机缺纸</string>
-    <string name="print_order_summary">- 客户联 -</string>      
-    <string name="monthly_start_date">开始日期</string>  
-    <string name="monthly_end_date">结束日期</string>        
+    <string name="print_order_summary">- 客户联 -</string>
+    <string name="monthly_start_date">开始日期</string>
+    <string name="monthly_end_date">结束日期</string>
 </resources>

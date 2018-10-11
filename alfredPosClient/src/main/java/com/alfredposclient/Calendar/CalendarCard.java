@@ -131,7 +131,7 @@ public class CalendarCard extends RelativeLayout {
 					((TextView)((RelativeLayout)v.getChildAt(0)).getChildAt(1)).setVisibility(VISIBLE);
 					v.setBackgroundColor(Color.parseColor("#EEE685"));
 					if (!TextUtils.isEmpty(amount)) {
-						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("Nett Sales:" + "\n" + amount);
+						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("Gross Total Sales:" + "\n" + amount);
 					}else {
 						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("");
 					}

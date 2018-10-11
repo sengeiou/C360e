@@ -48,7 +48,7 @@ public class ReportDaySalesItem extends LinearLayout {
     }
 
     public void setTitle(String title){
-        findViewById(R.id.ll_title).setVisibility(View.VISIBLE);
+        findViewById(R.id.ll_title_day).setVisibility(View.VISIBLE);
         tv_title.setText(title);
     }
 }

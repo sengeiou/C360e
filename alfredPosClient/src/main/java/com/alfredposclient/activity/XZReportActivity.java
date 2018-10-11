@@ -104,7 +104,7 @@ public class XZReportActivity extends BaseActivity {
         super.initView();
         setContentView(R.layout.activity_xzrerort);
         VerifyDialog verifyDialog = new VerifyDialog(context, handler);
-        verifyDialog.show("initData",null);
+        verifyDialog.show("initData", null);
         findViewById(R.id.tv_print).setOnClickListener(this);
         showBusinessDate = 0;
         reportDetailAnalysisItems = new ArrayList<>();
@@ -113,11 +113,11 @@ public class XZReportActivity extends BaseActivity {
         hourlyTotalAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
     }
 
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case VerifyDialog.DIALOG_RESPONSE:
                     init();
                     break;
@@ -129,13 +129,13 @@ public class XZReportActivity extends BaseActivity {
                     Long date = (Long) param.get("bizDate");
                     showBusinessDate = date.longValue();
                     loadOldReport(date);
-                    if(loadingDialog != null && loadingDialog.isShowing())
+                    if (loadingDialog != null && loadingDialog.isShowing())
                         loadingDialog.dismiss();
                     initData(businessDate);
 
                     break;
                 case ResultCode.CONNECTION_FAILED:
-                    if (loadingDialog!= null && loadingDialog.isShowing()) {
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
                         loadingDialog.dismiss();
                     }
                     UIHelp.showShortToast(XZReportActivity.this, "No Data");
@@ -144,9 +144,9 @@ public class XZReportActivity extends BaseActivity {
         }
     };
 
-    private void loadNewReport(long businessDate){
+    private void loadNewReport(long businessDate) {
         reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(businessDate);
-        if(reportDaySales != null) {
+        if (reportDaySales != null) {
             itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
             itemMainCategorys = ItemMainCategorySQL
                     .getAllItemMainCategoryForReport();
@@ -158,7 +158,7 @@ public class XZReportActivity extends BaseActivity {
             reportDayTaxs = ReportObjectFactory.getInstance().loadShowReportDayTax(businessDate);
             reportDayPayments = ReportObjectFactory.getInstance().loadShowReportDayPayment(businessDate);
             loadModel();
-        }else{
+        } else {
             reportDayTaxs = new ArrayList<>();
             reportDayPayments = new ArrayList<>();
             reportPluDayItems = new ArrayList<>();
@@ -174,9 +174,9 @@ public class XZReportActivity extends BaseActivity {
     }
 
 
-    private void loadOldReport(long businessDate){
+    private void loadOldReport(long businessDate) {
         reportDaySales = ReportObjectFactory.getInstance().loadReportDaySales(businessDate);
-        if(reportDaySales != null) {
+        if (reportDaySales != null) {
             itemCategorys = ItemCategorySQL.getAllItemCategoryForReport();
             itemMainCategorys = ItemMainCategorySQL
                     .getAllItemMainCategoryForReport();
@@ -185,11 +185,11 @@ public class XZReportActivity extends BaseActivity {
 
             reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
             reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
-            reportHourlys =ReportObjectFactory.getInstance().loadReportHourlys(businessDate);
+            reportHourlys = ReportObjectFactory.getInstance().loadReportHourlys(businessDate);
             reportDayTaxs = ReportObjectFactory.getInstance().loadReportDayTax(businessDate);
             reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
             loadModel();
-        }else{
+        } else {
             reportDayTaxs = new ArrayList<>();
             reportDayPayments = new ArrayList<>();
             reportPluDayItems = new ArrayList<ReportPluDayItem>();
@@ -202,31 +202,30 @@ public class XZReportActivity extends BaseActivity {
         }
     }
 
-    private void loadModel(){
+    private void loadModel() {
         reportDetailAnalysisItems.clear();
         reportDetailAnalysisItemList.clear();
         detailTotalAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
         hourlyTotalAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
         detailTotalQty = 0;
         hourlyTotalQty = 0;
-        if(reportPluDayItems != null && reportPluDayItems.size() > 0) {
+        if (reportPluDayItems != null && reportPluDayItems.size() > 0) {
             Collections.sort(reportPluDayItems);
             int mainId = 0;
             int id = 0;
-            for(ReportPluDayItem reportPluDayItem : reportPluDayItems){
-                if(mainId == reportPluDayItem.getItemMainCategoryId().intValue()){
+            for (ReportPluDayItem reportPluDayItem : reportPluDayItems) {
+                if (mainId == reportPluDayItem.getItemMainCategoryId().intValue()) {
                     ReportDetailAnalysisItem reportDetailAnalysisItem = new ReportDetailAnalysisItem();
                     reportDetailAnalysisItem.setName(reportPluDayItem.getItemName());
                     reportDetailAnalysisItem.setQty(reportPluDayItem.getItemCount());
                     reportDetailAnalysisItem.setAmount(BH.getBD(reportPluDayItem.getItemAmount()));
                     reportDetailAnalysisItem.setShowOther(true);
                     reportDetailAnalysisItems.add(reportDetailAnalysisItem);
-                }else{
+                } else {
                     mainId = reportPluDayItem.getItemMainCategoryId().intValue();
                     ReportDetailAnalysisItem reportDetailAnalysisItem1 = new ReportDetailAnalysisItem();
                     reportDetailAnalysisItem1.setName(reportPluDayItem.getItemMainCategoryName());
                     reportDetailAnalysisItem1.setShowOther(false);
-
                     ReportDetailAnalysisItem reportDetailAnalysisItem = new ReportDetailAnalysisItem();
                     reportDetailAnalysisItem.setName(reportPluDayItem.getItemName());
                     reportDetailAnalysisItem.setQty(reportPluDayItem.getItemCount());
@@ -236,11 +235,11 @@ public class XZReportActivity extends BaseActivity {
                     reportDetailAnalysisItems.add(reportDetailAnalysisItem1);
                     reportDetailAnalysisItems.add(reportDetailAnalysisItem);
                 }
-                if(id == reportPluDayItem.getItemCategoryId().intValue()){
+                if (id == reportPluDayItem.getItemCategoryId().intValue()) {
                     ReportDetailAnalysisItem reportDetailAnalysisItem = reportDetailAnalysisItemList.get(reportDetailAnalysisItemList.size() - 1);
                     reportDetailAnalysisItem.setQty(reportDetailAnalysisItem.getQty() + reportPluDayItem.getItemCount());
                     reportDetailAnalysisItem.setAmount(BH.add(BH.getBD(reportPluDayItem.getItemAmount()), reportDetailAnalysisItem.getAmount(), true));
-                }else{
+                } else {
                     mainId = reportPluDayItem.getItemMainCategoryId().intValue();
                     ReportDetailAnalysisItem reportDetailAnalysisItem1 = new ReportDetailAnalysisItem();
                     reportDetailAnalysisItem1.setName(reportPluDayItem.getItemMainCategoryName());
@@ -251,7 +250,6 @@ public class XZReportActivity extends BaseActivity {
                     reportDetailAnalysisItem.setQty(reportPluDayItem.getItemCount());
                     reportDetailAnalysisItem.setAmount(BH.getBD(reportPluDayItem.getItemAmount()));
                     reportDetailAnalysisItem.setShowOther(true);
-
                     reportDetailAnalysisItemList.add(reportDetailAnalysisItem1);
                     reportDetailAnalysisItemList.add(reportDetailAnalysisItem);
                 }
@@ -259,14 +257,15 @@ public class XZReportActivity extends BaseActivity {
                 detailTotalQty += reportPluDayItem.getItemCount().intValue();
             }
         }
-        if(reportHourlys != null && reportHourlys.size() > 0){
-            for (ReportHourly reportHourly : reportHourlys){
+        if (reportHourlys != null && reportHourlys.size() > 0) {
+            for (ReportHourly reportHourly : reportHourlys) {
                 hourlyTotalAmount = BH.add(hourlyTotalAmount, BH.getBD(reportHourly.getAmountPrice()), true);
                 hourlyTotalQty += reportHourly.getAmountQty().intValue();
             }
         }
     }
-    private void init(){
+
+    private void init() {
         calendarCard = (CalendarCard) findViewById(R.id.calendarCard);
         tv_title_name = (TextView) findViewById(R.id.tv_title_name);
         ll_print = (LinearLayout) findViewById(R.id.ll_print);
@@ -295,12 +294,13 @@ public class XZReportActivity extends BaseActivity {
     }
 
 
-    private void initData(long time){
+    private void initData(long time) {
         if (reportDaySales != null) {
             calendarCard.setVisibility(View.GONE);
             ll_xz_analsis.setVisibility(View.VISIBLE);
             ll_print.setVisibility(View.VISIBLE);
             ll_sales_total = (LinearLayout) findViewById(R.id.ll_sales_total);
+            ll_sales_total.removeAllViews();
             // Item Sales
             ReportDaySalesItem salesTotal = new ReportDaySalesItem(context);
             salesTotal.setData("Item Sales", reportDaySales.getItemSalesQty() + "", App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getItemSales(), true);
@@ -350,6 +350,38 @@ public class XZReportActivity extends BaseActivity {
             discountB.setData("Discount on $", reportDaySales.getDiscountQty() + "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscount(), true);
             ll_sales_total.addView(discountB);
+            double nSales = Double.parseDouble(reportDaySales.getItemSales()) + Double.parseDouble(reportDaySales.getTopUps()) - Double.parseDouble(reportDaySales.getFocItem()) - Double.parseDouble(reportDaySales.getFocBill()) - Double.parseDouble(reportDaySales.getItemVoid()) - Double.parseDouble(reportDaySales.getBillVoid()) - Double.parseDouble(reportDaySales.getBillRefund()) - Double.parseDouble(reportDaySales.getDiscount()) - Double.parseDouble(reportDaySales.getDiscountPer());
+            ReportDaySalesItem nettsSales = new ReportDaySalesItem(context);
+            nettsSales.setData("NETT Sales", "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(nSales).toString(), true)
+            ;
+            ll_sales_total.addView(nettsSales);
+
+            ReportDaySalesItem nettSalesSvg = new ReportDaySalesItem(context);
+
+            if (reportDayTaxs != null) {
+
+                BigDecimal taxSvg = BH.getBD("0.00");
+                for (int i = 0; i < reportDayTaxs.size(); i++) {
+                    //服务税
+                    if (reportDayTaxs.get(i).getTaxType() != null) {
+                        if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
+                            ReportDayTax reportDayTax = reportDayTaxs.get(i);
+
+                            taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
+                        }
+                    }
+                }
+
+                nettSalesSvg.setData("NETT Sales + SVG", "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.add(taxSvg, BH.getBD(nSales), true), true);
+            } else {
+                nettSalesSvg.setData("NETT Sales + SVG", "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(nSales), true)
+                ;
+            }
+
+            ll_sales_total.addView(nettSalesSvg);
             // Exlusive Tax
             ReportDaySalesItem exclusiveTax = new ReportDaySalesItem(context);
             exclusiveTax.setData("Exclusive Tax", "",
@@ -361,29 +393,36 @@ public class XZReportActivity extends BaseActivity {
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getInclusiveTaxAmt(), true);
             ll_sales_total.addView(inclusiveTax);
             BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
-            if(reportDayPayments != null && reportDayPayments.size() >0){
-                for(ReportDayPayment reportDayPayment : reportDayPayments){
+            if (reportDayPayments != null && reportDayPayments.size() > 0) {
+                for (ReportDayPayment reportDayPayment : reportDayPayments) {
                     BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
                 }
-                if(overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0){
+                if (overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
                     ReportDaySalesItem other = new ReportDaySalesItem(context);
                     other.setData("Custom Change", "",
                             App.instance.getLocalRestaurantConfig().getCurrencySymbol() + overPaymentAmount, true);
                     ll_sales_total.addView(other);
                 }
             }
+            ReportDaySalesItem rounding = new ReportDaySalesItem(context);
+            rounding.setData("Rounding", "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTotalBalancePrice(), true);
+            ll_sales_total.addView(rounding);
 
             // Total/sales
+            double grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue();
             ReportDaySalesItem totalSales = new ReportDaySalesItem(context);
             totalSales.setData("Gross Total Sales", "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true), true);
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(grossTotal).toString(), true);
             ll_sales_total.addView(totalSales);
             // CASH
             ReportDaySalesItem cashView = new ReportDaySalesItem(context);
-            cashView.setTitle("-----MEDIA-----");
+
             cashView.setData("CASH", reportDaySales.getCashQty() + "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getCash(), true);
+            cashView.setTitle("-----MEDIA-----");
             ll_sales_total.addView(cashView);
+
             // Diner App
             ReportDaySalesItem dinerApp = new ReportDaySalesItem(context);
             dinerApp.setData("Diner App", reportDaySales.getPaypalpayQty() + "",
@@ -453,12 +492,12 @@ public class XZReportActivity extends BaseActivity {
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getFoodpanda(), true);
             ll_sales_total.addView(foodpanda);
 
-            if(reportDayPayments != null && reportDayPayments.size() >0){
+            if (reportDayPayments != null && reportDayPayments.size() > 0) {
                 int totalCustomPaymentQty = 0;
                 BigDecimal totalCustomPayment = BH.getBD(ParamConst.DOUBLE_ZERO);
-                for(ReportDayPayment reportDayPayment : reportDayPayments){
+                for (ReportDayPayment reportDayPayment : reportDayPayments) {
                     totalCustomPaymentQty += reportDayPayment.getPaymentQty();
-                    totalCustomPayment = BH.add(totalCustomPayment, BH.getBD(reportDayPayment.getPaymentAmount()),false);
+                    totalCustomPayment = BH.add(totalCustomPayment, BH.getBD(reportDayPayment.getPaymentAmount()), false);
                     ReportDaySalesItem other = new ReportDaySalesItem(context);
                     other.setData(reportDayPayment.getPaymentName(), reportDayPayment.getPaymentQty() + "",
                             App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDayPayment.getPaymentAmount(), true);
@@ -499,63 +538,77 @@ public class XZReportActivity extends BaseActivity {
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getHoldld(), true);
             ll_sales_total.addView(totalBoh);
             // Netts/Sales
-            ReportDaySalesItem nettSales = new ReportDaySalesItem(context);
-            nettSales.setData("Nett Sales",  "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getNettSales(), true);
-            ll_sales_total.addView(nettSales);
+//            ReportDaySalesItem nettSales = new ReportDaySalesItem(context);
+//            nettSales.setData("Nett Sales", "",
+//                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getNettSales(), true);
+//            ll_sales_total.addView(nettSales);
             // VOID/Items
-            ReportDaySalesItem voidItemView = new ReportDaySalesItem(context);
-            voidItemView.setTitle("-----VOID/REFUND/SUMMARY-----");
-            voidItemView.setData("VOID Items",  reportDaySales.getItemVoidQty() + "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getItemVoid(), true);
-            ll_sales_total.addView(voidItemView);
-            // VOID Bills
-            ReportDaySalesItem voidBillView = new ReportDaySalesItem(context);
-            voidBillView.setData("VOID Bills",  reportDaySales.getBillVoidQty() + "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getBillVoid(), true);
-            ll_sales_total.addView(voidBillView);
-            // TOTAL VOID
-            float f1 = Float.parseFloat(reportDaySales.getItemVoid()) + Float.parseFloat(reportDaySales.getBillVoid());
-            ReportDaySalesItem totalVoid = new ReportDaySalesItem(context);
-            totalVoid.setData("TOTAL VOID",  "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f1, true);
-            ll_sales_total.addView(totalVoid);
-            // REFUND Bills
-            ReportDaySalesItem refundBillView = new ReportDaySalesItem(context);
-            refundBillView.setData("REFUND Bills",  reportDaySales.getBillRefundQty() + "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getBillRefund(), true);
-            ll_sales_total.addView(refundBillView);
-            // REFUND Taxes
-            ReportDaySalesItem refundTaxView = new ReportDaySalesItem(context);
-            refundTaxView.setData("REFUND Taxes",  "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getRefundTax(), true);
-            ll_sales_total.addView(refundTaxView);
-            // TOTAL REFUND
 
-            float f2 = Float.parseFloat(reportDaySales.getBillRefund()) + Float.parseFloat(reportDaySales.getRefundTax());
-            ReportDaySalesItem totalRefundView = new ReportDaySalesItem(context);
-            totalRefundView.setData("TOTAL REFUND",  "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f2, true);
-            ll_sales_total.addView(totalRefundView);
+
+            if (BH.getBD(reportDaySales.getBillVoid()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0
+                    || BH.getBD(reportDaySales.getItemVoid()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0
+                    || BH.getBD(reportDaySales.getBillRefund()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0
+                    || BH.getBD(reportDaySales.getRefundTax()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
+
+                ReportDaySalesItem voidItemView = new ReportDaySalesItem(context);
+                voidItemView.setTitle("-----VOID/REFUND/SUMMARY-----");
+                voidItemView.setData("VOID Items", reportDaySales.getItemVoidQty() + "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getItemVoid(), true);
+                ll_sales_total.addView(voidItemView);
+                // VOID Bills
+                ReportDaySalesItem voidBillView = new ReportDaySalesItem(context);
+                voidBillView.setData("VOID Bills", reportDaySales.getBillVoidQty() + "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getBillVoid(), true);
+                ll_sales_total.addView(voidBillView);
+                // TOTAL VOID
+                float f1 = Float.parseFloat(reportDaySales.getItemVoid()) + Float.parseFloat(reportDaySales.getBillVoid());
+                ReportDaySalesItem totalVoid = new ReportDaySalesItem(context);
+                totalVoid.setData("TOTAL VOID", "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f1, true);
+                ll_sales_total.addView(totalVoid);
+                // REFUND Bills
+                ReportDaySalesItem refundBillView = new ReportDaySalesItem(context);
+                refundBillView.setData("REFUND Bills", reportDaySales.getBillRefundQty() + "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getBillRefund(), true);
+                ll_sales_total.addView(refundBillView);
+                // REFUND Taxes
+                ReportDaySalesItem refundTaxView = new ReportDaySalesItem(context);
+                refundTaxView.setData("REFUND Taxes", "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getRefundTax(), true);
+                ll_sales_total.addView(refundTaxView);
+                // TOTAL REFUND
+
+                float f2 = Float.parseFloat(reportDaySales.getBillRefund()) + Float.parseFloat(reportDaySales.getRefundTax());
+                ReportDaySalesItem totalRefundView = new ReportDaySalesItem(context);
+                totalRefundView.setData("TOTAL REFUND", "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f2, true);
+                ll_sales_total.addView(totalRefundView);
+            }
+
             // Discount on%
 
-            ReportDaySalesItem disncountViewA = new ReportDaySalesItem(context);
-            disncountViewA.setTitle("-----DISCOUNTS-----");
-            disncountViewA.setData("Discount on %",  reportDaySales.getDiscountPerQty() + "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscountPer(), true);
-            ll_sales_total.addView(disncountViewA);
-            // Discount on$
 
-            ReportDaySalesItem disncountViewB = new ReportDaySalesItem(context);
-            disncountViewB.setData("Discount on $",  reportDaySales.getDiscountQty() + "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscount(), true);
-            ll_sales_total.addView(disncountViewB);
-            // Total Discount
-            float f3 = Float.parseFloat(reportDaySales.getDiscountPer()) + Float.parseFloat(reportDaySales.getDiscount());
-            ReportDaySalesItem totalDiscount = new ReportDaySalesItem(context);
-            totalDiscount.setData("Discount on $",  "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f3, true);
-            ll_sales_total.addView(totalDiscount);
+            if (BH.getBD(reportDaySales.getDiscountPer()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0
+                    || BH.getBD(reportDaySales.getDiscount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
+                ReportDaySalesItem disncountViewA = new ReportDaySalesItem(context);
+                disncountViewA.setTitle("-----DISCOUNTS-----");
+                disncountViewA.setData("Discount on %", reportDaySales.getDiscountPerQty() + "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscountPer(), true);
+                ll_sales_total.addView(disncountViewA);
+                // Discount on$
+
+                ReportDaySalesItem disncountViewB = new ReportDaySalesItem(context);
+                disncountViewB.setData("Discount on $", reportDaySales.getDiscountQty() + "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscount(), true);
+                ll_sales_total.addView(disncountViewB);
+                // Total Discount
+                float f3 = Float.parseFloat(reportDaySales.getDiscountPer()) + Float.parseFloat(reportDaySales.getDiscount());
+                ReportDaySalesItem totalDiscount = new ReportDaySalesItem(context);
+                totalDiscount.setData("Total Discount", "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f3, true);
+                ll_sales_total.addView(totalDiscount);
+            }
+
             // Svc Charge
 //        ((TextView)findViewById(R.id.tv_svc_charge_item_num)).setText(reportDaySales.getDiscountPerQty() + "");
 //        ((TextView)findViewById(R.id.tv_svc_charge_item)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDiscountPer());
@@ -565,77 +618,77 @@ public class XZReportActivity extends BaseActivity {
             // Inclusive Tax
             ReportDaySalesItem inclusiveTaxView = new ReportDaySalesItem(context);
             inclusiveTaxView.setTitle("-----TAX-----");
-            inclusiveTaxView.setData("Discount on $",  "",
+            inclusiveTaxView.setData("Inclusive Tax", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getInclusiveTaxAmt(), true);
             ll_sales_total.addView(inclusiveTaxView);
             // Total Tax
             float f4 = Float.parseFloat(reportDaySales.getTotalTax()) + Float.parseFloat(reportDaySales.getInclusiveTaxAmt());
             ReportDaySalesItem totalTaxView = new ReportDaySalesItem(context);
-            totalTaxView.setData("Discount on $",  "",
+            totalTaxView.setData("Total TAX/SVC", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + f4, true);
             ll_sales_total.addView(totalTaxView);
             // Start Drawer
             ReportDaySalesItem startDrawer = new ReportDaySalesItem(context);
             startDrawer.setTitle("-----DRAWER-----");
-            startDrawer.setData("Discount on $",  "",
+            startDrawer.setData("Start DRAWER", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getStartDrawerAmount(), true);
             ll_sales_total.addView(startDrawer);
             // TOTAL CASH
             ReportDaySalesItem totalCASHView = new ReportDaySalesItem(context);
-            totalCASHView.setData("Total Cash",  "",
+            totalCASHView.setData("Total Cash", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getTotalCash(), true);
             ll_sales_total.addView(totalCASHView);
             // Stored-card Cash Charge
             ReportDaySalesItem storedCardCashCharge = new ReportDaySalesItem(context);
-            storedCardCashCharge.setData("Stored-Card Cash Charge",  "",
+            storedCardCashCharge.setData("Stored-Card Cash Charge", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getCashTopUp(), true);
             ll_sales_total.addView(storedCardCashCharge);
             // Cash In
             ReportDaySalesItem cashIN = new ReportDaySalesItem(context);
-            cashIN.setData("Cash In",  "",
+            cashIN.setData("Cash In", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getCashInAmt(), true);
             ll_sales_total.addView(cashIN);
             // Cash Out
             ReportDaySalesItem cashOUT = new ReportDaySalesItem(context);
-            cashOUT.setData("Cash Out",  "",
+            cashOUT.setData("Cash Out", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getCashOutAmt(), true);
             ll_sales_total.addView(cashOUT);
             // Expected In Drawer
             ReportDaySalesItem expected = new ReportDaySalesItem(context);
-            expected.setData("Expected in Drawer",  "",
+            expected.setData("Expected in Drawer", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getExpectedAmount(), true);
             ll_sales_total.addView(expected);
             // Actual In Drawer
             ReportDaySalesItem actual = new ReportDaySalesItem(context);
-            actual.setData("Actual in Drawer",  "",
+            actual.setData("Actual in Drawer", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getWaiterAmount(), true);
             ll_sales_total.addView(actual);
             // Difference
             ReportDaySalesItem difference = new ReportDaySalesItem(context);
-            difference.setData("Difference",  "",
+            difference.setData("Difference", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getDifference(), true);
             ll_sales_total.addView(difference);
 
             ((TextView) findViewById(R.id.tv_total_bill)).setText(reportDaySales.getTotalBills().toString());
             ((TextView) findViewById(R.id.tv_total_temp_menu)).setText(reportDaySales.getOpenCount().toString());
-            ((TextView)findViewById(R.id.tv_detail_total_num)).setText(detailTotalQty + "");
-            ((TextView)findViewById(R.id.tv_detail_total)).setText(detailTotalAmount.toString());
-            ((TextView)findViewById(R.id.tv_summary_total_num)).setText(detailTotalQty + "");
-            ((TextView)findViewById(R.id.tv_summary_total)).setText(detailTotalAmount.toString());
-            ((TextView)findViewById(R.id.tv_hourly_total_num)).setText(hourlyTotalQty + "");
-            ((TextView)findViewById(R.id.tv_hourly_total)).setText(hourlyTotalAmount.toString());
+            ((TextView) findViewById(R.id.tv_detail_total_num)).setText(detailTotalQty + "");
+            ((TextView) findViewById(R.id.tv_detail_total)).setText(detailTotalAmount.toString());
+            ((TextView) findViewById(R.id.tv_summary_total_num)).setText(detailTotalQty + "");
+            ((TextView) findViewById(R.id.tv_summary_total)).setText(detailTotalAmount.toString());
+            ((TextView) findViewById(R.id.tv_hourly_total_num)).setText(hourlyTotalQty + "");
+            ((TextView) findViewById(R.id.tv_hourly_total)).setText(hourlyTotalAmount.toString());
             if (reportHourlys != null && reportHourlys.size() > 0) {
                 XZReportHourlyAdapter hourlyAdapter = new XZReportHourlyAdapter(reportHourlys, XZReportActivity.this);
                 lv_hourly_analsis.setAdapter(hourlyAdapter);
             }
-            if(reportPluDayItems != null && reportPluDayItems.size() > 0){
+            if (reportPluDayItems != null && reportPluDayItems.size() > 0) {
                 XZReportDetailAdapter xzReportDetailAdapter = new XZReportDetailAdapter(reportDetailAnalysisItems, context);
                 ((ListView) findViewById(R.id.lv_detail_analsis)).setAdapter(xzReportDetailAdapter);
                 XZReportSumaryAdapter xzReportSumaryAdapter = new XZReportSumaryAdapter(reportDetailAnalysisItemList, context);
                 ((ListView) findViewById(R.id.lv_summary_sales)).setAdapter(xzReportSumaryAdapter);
             }
 
-        }else {
+        } else {
             UIHelp.showShortToast(XZReportActivity.this, "No Data");
             calendarCard.setVisibility(View.VISIBLE);
             ll_xz_analsis.setVisibility(View.GONE);
@@ -649,14 +702,14 @@ public class XZReportActivity extends BaseActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.btn_back:
-                if (calendarCard.getVisibility() == View.VISIBLE && ll_xz_analsis.getVisibility() == View.GONE) {
-                    XZReportActivity.this.finish();
-                } else if (calendarCard.getVisibility() == View.GONE && ll_xz_analsis.getVisibility() == View.VISIBLE) {
-                    ll_xz_analsis.setVisibility(View.GONE);
-                    calendarCard.setVisibility(View.VISIBLE);
-                    ll_print.setVisibility(View.INVISIBLE);
-                    tv_title_name.setText(getString(R.string.day_sales_report));
-                }
+                    if (calendarCard.getVisibility() == View.VISIBLE && ll_xz_analsis.getVisibility() == View.GONE) {
+                        XZReportActivity.this.finish();
+                    } else if (calendarCard.getVisibility() == View.GONE && ll_xz_analsis.getVisibility() == View.VISIBLE) {
+                        ll_xz_analsis.setVisibility(View.GONE);
+                        calendarCard.setVisibility(View.VISIBLE);
+                        ll_print.setVisibility(View.INVISIBLE);
+                        tv_title_name.setText(getString(R.string.day_sales_report));
+                    }
                     break;
                 case R.id.ll_print:
 
@@ -680,15 +733,15 @@ public class XZReportActivity extends BaseActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if(App.instance.getSessionStatus() != null) {
+                        if (App.instance.getSessionStatus() != null) {
                             loadNewReport(showBusinessDate);
-                        }else{
+                        } else {
                             loadOldReport(showBusinessDate);
                         }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if(loadingDialog != null && loadingDialog.isShowing())
+                                if (loadingDialog != null && loadingDialog.isShowing())
                                     loadingDialog.dismiss();
                                 initData(businessDate);
                             }
@@ -697,7 +750,7 @@ public class XZReportActivity extends BaseActivity {
                 }).start();
 
 
-            }else if (revenueCenter != null) {
+            } else if (revenueCenter != null) {
 
                 Map<String, Object> param = new HashMap<String, Object>();
                 param.put("businessDate", TimeUtil.getMDY(date));
@@ -712,7 +765,7 @@ public class XZReportActivity extends BaseActivity {
 
     @Override
     protected void handlerClickEvent(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tv_print:
                 showPrintDialog(showBusinessDate, true);
                 break;
@@ -721,49 +774,49 @@ public class XZReportActivity extends BaseActivity {
     }
 
 
-    private void showPrintDialog(final Long bizDate, final boolean zPrint){
-            if (reportDaySales != null) {
-                DialogSelectReportPrint.show(context,
-                        new View.OnClickListener() {
+    private void showPrintDialog(final Long bizDate, final boolean zPrint) {
+        if (reportDaySales != null) {
+            DialogSelectReportPrint.show(context,
+                    new View.OnClickListener() {
 
-                            @Override
-                            public void onClick(View v) {
-                                switch (v.getId()) {
-                                    case R.id.btn_report_all: {
-                                        sendPrintData(
-                                                XZReportHtml.REPORT_PRINT_ALL,
-                                                zPrint, bizDate);
-                                    }
-                                    break;
-                                    case R.id.btn_report_sales: {
-                                        sendPrintData(
-                                                XZReportHtml.REPORT_PRINT_SALES,
-                                                zPrint, bizDate);
-                                    }
-                                    break;
-                                    case R.id.btn_report_detail_analysis: {
-                                        sendPrintData(
-                                                XZReportHtml.REPORT_PRINT_DETAILS,
-                                                zPrint, bizDate);
-                                    }
-                                    break;
-                                    case R.id.btn_report_summary_analysis: {
-                                        sendPrintData(
-                                                XZReportHtml.REPORT_PRINT_SUMMARY,
-                                                zPrint, bizDate);
-                                    }
-                                    break;
+                        @Override
+                        public void onClick(View v) {
+                            switch (v.getId()) {
+                                case R.id.btn_report_all: {
+                                    sendPrintData(
+                                            XZReportHtml.REPORT_PRINT_ALL,
+                                            zPrint, bizDate);
                                 }
+                                break;
+                                case R.id.btn_report_sales: {
+                                    sendPrintData(
+                                            XZReportHtml.REPORT_PRINT_SALES,
+                                            zPrint, bizDate);
+                                }
+                                break;
+                                case R.id.btn_report_detail_analysis: {
+                                    sendPrintData(
+                                            XZReportHtml.REPORT_PRINT_DETAILS,
+                                            zPrint, bizDate);
+                                }
+                                break;
+                                case R.id.btn_report_summary_analysis: {
+                                    sendPrintData(
+                                            XZReportHtml.REPORT_PRINT_SUMMARY,
+                                            zPrint, bizDate);
+                                }
+                                break;
                             }
-                        });
-            } else {
-                DialogFactory.alertDialog(
-                        context,
-                        context.getResources().getString(
-                                R.string.warning),
-                        context.getResources().getString(
-                                R.string.no_sales_print));
-            }
+                        }
+                    });
+        } else {
+            DialogFactory.alertDialog(
+                    context,
+                    context.getResources().getString(
+                            R.string.warning),
+                    context.getResources().getString(
+                            R.string.no_sales_print));
+        }
     }
 
     private void sendPrintData(int type, boolean zPrint, long bzDate) {
@@ -794,9 +847,9 @@ public class XZReportActivity extends BaseActivity {
 
         PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
         List<ReportUserOpenDrawer> reportUserOpenDrawers = new ArrayList<ReportUserOpenDrawer>();
-        if(zPrint){
+        if (zPrint) {
             reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawerByTime(businessDate);
-        }else{
+        } else {
             reportUserOpenDrawers = UserOpenDrawerRecordSQL.getReportUserOpenDrawer(session.getSession_status(), bzDate);
         }
         if (cashierPrinter == null) {
@@ -875,7 +928,7 @@ public class XZReportActivity extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             if (calendarCard != null && ll_xz_analsis != null
-                &&calendarCard.getVisibility() == View.GONE && ll_xz_analsis.getVisibility() == View.VISIBLE) {
+                    && calendarCard.getVisibility() == View.GONE && ll_xz_analsis.getVisibility() == View.VISIBLE) {
                 calendarCard.setVisibility(View.VISIBLE);
                 ll_xz_analsis.setVisibility(View.GONE);
                 ll_print.setVisibility(View.INVISIBLE);

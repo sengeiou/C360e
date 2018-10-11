@@ -309,7 +309,7 @@ public class ReportDayTaxSQL {
 		ArrayList<ReportDayTax> reportDayTaxs = new ArrayList<ReportDayTax>();
 
 		String sql = "select restaurantId, restaurantName, revenueId, revenueName,"
-				+ " businessDate, taxId, taxName, taxPercentage, sum(taxQty), sum(taxAmount) from "
+				+ " businessDate, taxId, taxName, taxPercentage, sum(taxQty), sum(taxAmount),taxType from "
 				+ TableNames.ReportDayTax
 				+ " where businessDate = ? group by taxId";
 		Cursor cursor = null;
@@ -353,7 +353,7 @@ public class ReportDayTaxSQL {
 		ArrayList<ReportDayTax> reportDayTaxs = new ArrayList<ReportDayTax>();
 
 		String sql = "select rdt.restaurantId, rdt.restaurantName, rdt.revenueId, rdt.revenueName," +
-				 "rdt.businessDate, rdt.taxId, rdt.taxName, rdt.taxPercentage, sum(rdt.taxQty), sum(rdt.taxAmount) from " +
+				 "rdt.businessDate, rdt.taxId, rdt.taxName, rdt.taxPercentage, sum(rdt.taxQty), sum(rdt.taxAmount),taxType from " +
 				 TableNames.ReportDayTax+" rdt" + " INNER JOIN "+ TableNames.Tax+" t"+" on  rdt.taxId=t.id and t.taxType = 1" +
 				" and rdt.businessDate = ?";
 		Cursor cursor = null;

@@ -274,7 +274,6 @@ public class DaySalesReportPrint extends ReportBasePrint {
         this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.getBD(nSales).toString(), 1);
 //reportDay
         if (reportDayTaxs != null) {
-
             BigDecimal taxSvg = BH.getBD("0.00");
             for (int i = 0; i < reportDayTaxs.size(); i++) {
                 //服务税
@@ -282,7 +281,6 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 if (reportDayTaxs.get(i).getTaxType() != null) {
                     if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
                         ReportDayTax reportDayTax = reportDayTaxs.get(i);
-
                         taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
                     }
                 }
