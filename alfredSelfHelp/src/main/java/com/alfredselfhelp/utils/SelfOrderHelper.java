@@ -118,6 +118,7 @@ public class SelfOrderHelper {
         orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
         orderDetail.setBarCode(itemDetail.getBarcode());
         orderDetail.setItemUrl(itemDetail.getImgUrl());
+        orderDetail.setItemDesc(itemDetail.getItemDesc());
         return orderDetail;
     }
 

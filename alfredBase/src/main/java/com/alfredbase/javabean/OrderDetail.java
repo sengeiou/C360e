@@ -115,6 +115,9 @@ public class OrderDetail implements Serializable {
     //菜品 图片
     private String itemUrl;
 
+    // 说明
+    private String itemDesc ;
+
 
     /**
      * 不存数据库 临时缓存用
@@ -125,6 +128,14 @@ public class OrderDetail implements Serializable {
     public OrderDetail() {
         // set openItem False
         this.isOpenItem = 0;
+    }
+
+    public String getItemDesc() {
+        return itemDesc;
+    }
+
+    public void setItemDesc(String itemDesc) {
+        this.itemDesc = itemDesc;
     }
 
     public String getItemUrl() {
@@ -456,6 +467,7 @@ public class OrderDetail implements Serializable {
                 ", fireStatus=" + fireStatus +
                 ", isSet=" + isSet +
                 ", itemUrl='" + itemUrl + '\'' +
+                ", itemDesc='" + itemDesc + '\'' +
                 ", transferFromDetailId=" + transferFromDetailId +
                 ", transferFromDetailNum=" + transferFromDetailNum +
                 '}';

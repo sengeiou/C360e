@@ -30,8 +30,8 @@
             android:gravity="center"
             android:singleLine="true"
             android:text="wwwww"
-            android:textColor="@color/gray2"
-            android:textSize="22sp" />
+            android:textColor="@color/gray7"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <TextView
