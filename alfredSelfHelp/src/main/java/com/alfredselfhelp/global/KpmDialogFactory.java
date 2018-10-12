@@ -124,7 +124,7 @@ public class KpmDialogFactory {
         });
 
     }
-
+// 扫码弹框
     public static Dialog qcDialog(final BaseActivity activity,
                                   final String title, final String content, int drawableId, final Boolean isqc,
 
@@ -186,6 +186,17 @@ public class KpmDialogFactory {
                                     final OnClickListener backListener, final boolean canBack) {
 
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
+
+
+        Window window =  dialog.getWindow();
+        if (dialog != null && window != null) {
+            WindowManager.LayoutParams attr = window.getAttributes();
+            if (attr != null) {
+                attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+            }
+        }
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.dialog_item_kpm_f_btns, null);
 
@@ -222,6 +233,7 @@ public class KpmDialogFactory {
         return dialog;
     }
 
+// VideoView 视频播放
 
     public static Dialog kpmVideoViewDialog(final BaseActivity activity, int videoId,
                                             final OnClickListener backListener, final boolean canBack) {
@@ -280,7 +292,7 @@ public class KpmDialogFactory {
         return dialog;
     }
 
-
+//错误提示消息弹框（back按钮）
     public static Dialog kpmTipsDialog(final BaseActivity activity,
                                        final String title, String content, int drawableId,
 
@@ -325,10 +337,9 @@ public class KpmDialogFactory {
         dialog.setContentView(view);
         return dialog;
     }
-
-
+    //支付完成弹框(不带按钮的)
     public static Dialog kpmCompleteDialog(final BaseActivity activity,
-                                           final String title, final String content, String contentbottom, int drawableId,
+                                           final String title, final String content, int drawableId,
 
                                            final boolean canBack) {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
@@ -346,8 +357,8 @@ public class KpmDialogFactory {
                 R.layout.dialog_item_kpm_complete_btns, null);
         ((TextView) view.findViewById(R.id.tv_title)).setText(title);
         ((TextView) view.findViewById(R.id.tv_content)).setText(content);
-        TextView contentbottoms = (TextView) view.findViewById(R.id.tv_content_bottom);
-        contentbottoms.setText(contentbottom);
+//        TextView contentbottoms = (TextView) view.findViewById(R.id.tv_content_bottom);
+//        contentbottoms.setText(contentbottom);
         ImageView img = (ImageView) view.findViewById(R.id.img_center);
         img.setImageResource(drawableId);
         ((TextView) view.findViewById(R.id.tv_content)).setText(content);

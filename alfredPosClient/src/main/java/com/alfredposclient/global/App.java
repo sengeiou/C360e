@@ -1937,7 +1937,6 @@ public class App extends BaseApplication {
             printerDialog();
             return;
         }
-
         Log.d("discoverPrinter", "1856");
         new Thread(new Runnable() {
             @Override
