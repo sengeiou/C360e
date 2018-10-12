@@ -250,7 +250,6 @@ public class KpmDialogFactory {
 //
 //        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams()
         //  img.setImageResource(drawableId);
-
 //				((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
 //				((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
         dialog.show();

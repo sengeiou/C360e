@@ -137,7 +137,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         setContentView(R.layout.activity_menu);
         init();
         timer.schedule(new MyTimerTask(), 3000);
-//  App.instance.startADKpm();
+         App.instance.startADKpm();
     }
 
     private void initVideo() {
