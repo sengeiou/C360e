@@ -369,6 +369,11 @@ public class XZReportActivity extends BaseActivity {
                             ReportDayTax reportDayTax = reportDayTaxs.get(i);
 
                             taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
+                        }else if(reportDayTaxs.get(i).getTaxType().intValue() == 2) {
+                            if (!reportDayTaxs.get(i).getTaxPercentage().equals(0.07)) {
+                                ReportDayTax reportDayTax = reportDayTaxs.get(i);
+                                taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
+                            }
                         }
                     }
                 }
