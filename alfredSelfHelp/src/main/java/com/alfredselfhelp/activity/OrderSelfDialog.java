@@ -13,29 +13,32 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.utils.BH;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.NurDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
+import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.javabean.ItemDetailDto;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderSelfDialog extends Dialog{
+public class OrderSelfDialog extends Dialog {
 
 
     private TextView yes;//确定按钮
-    private TextView no,tv_nur_name;//取消按钮
+    private TextView no, tv_nur_name;//取消按钮
     private TextView titleTv;//消息标题文本
     private TextView messageTv;//消息提示文本
-    private String titleStr;//从外界设置的title文本
+    private String titleStr,totalStr;//从外界设置的title文本
     private String messageStr;//从外界设置的消息文本
+    private TextView name, total;
     //确定文本和取消文本的显示内容
     private String yesStr, noStr;
 
     private RecyclerView re_nur;
-    List<OrderDetail> itemDetails= new ArrayList<>();
+    List<OrderDetail> itemDetails = new ArrayList<>();
     LinearLayoutManager mLinearLayoutManager;
 
     private Context mContext;
@@ -43,7 +46,7 @@ public class OrderSelfDialog extends Dialog{
     private onNoOnclickListener noOnclickListener;//取消按钮被点击了的监听器
     private onYesOnclickListener yesOnclickListener;//确定按钮被点击了的监听器
 
-    KpmTextTypeFace textTypeFace=KpmTextTypeFace.getInstance();
+    KpmTextTypeFace textTypeFace = KpmTextTypeFace.getInstance();
 
     /**
      * 设置取消按钮的显示内容和监听
@@ -53,7 +56,7 @@ public class OrderSelfDialog extends Dialog{
      */
     public void setNoOnclickListener(String str, onNoOnclickListener onNoOnclickListener) {
         if (str != null) {
-        //    noStr = str;
+            //    noStr = str;
         }
         this.noOnclickListener = onNoOnclickListener;
     }
@@ -66,14 +69,14 @@ public class OrderSelfDialog extends Dialog{
      */
     public void setYesOnclickListener(String str, onYesOnclickListener onYesOnclickListener) {
         if (str != null) {
-          //  yesStr = str;
+            //  yesStr = str;
         }
         this.yesOnclickListener = onYesOnclickListener;
     }
 
     public OrderSelfDialog(Context context) {
-        super(context,R.style.dialog);
-        this.mContext=context;
+        super(context, R.style.dialog);
+        this.mContext = context;
     }
 
 
@@ -115,6 +118,7 @@ public class OrderSelfDialog extends Dialog{
             }
         });
     }
+
     public void show() {
         super.show();
         /**
@@ -129,6 +133,7 @@ public class OrderSelfDialog extends Dialog{
 
         getWindow().setAttributes(layoutParams);
     }
+
     /**
      * 初始化界面控件的显示数据
      */
@@ -149,9 +154,9 @@ public class OrderSelfDialog extends Dialog{
 
 
 //        //如果用户自定了title和message
-//        if (titleStr != null) {
-//            titleTv.setText(titleStr);
-//        }
+        if (totalStr != null) {
+            total.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(totalStr));
+        }
 //        if (messageStr != null) {
 //            messageTv.setText(messageStr);
 //        }
@@ -172,16 +177,21 @@ public class OrderSelfDialog extends Dialog{
     private void initView() {
         yes = (TextView) findViewById(R.id.tv_ok);
         no = (TextView) findViewById(R.id.tv_no);
-        re_nur=(RecyclerView)findViewById(R.id.re_nur_order);
+        re_nur = (RecyclerView) findViewById(R.id.re_nur_order);
 
-        tv_nur_name=(TextView)findViewById(R.id.tv_nur_name);
+        tv_nur_name = (TextView) findViewById(R.id.tv_nur_name);
+        name = (TextView) findViewById(R.id.tv_dialog_name);
+        total = (TextView) findViewById(R.id.tv_dialog_total);
+
         textTypeFace.setUbuntuMedium(tv_nur_name);
         textTypeFace.setUbuntuMedium(yes);
         textTypeFace.setUbuntuMedium(no);
+        textTypeFace.setUbuntuMedium(name);
+        textTypeFace.setUbuntuMedium(total);
 
 
-     //   titleTv = (TextView) findViewById(R.id.title);
-     //   messageTv = (TextView) findViewById(R.id.message);
+        //   titleTv = (TextView) findViewById(R.id.title);
+        //   messageTv = (TextView) findViewById(R.id.message);
     }
 
     /**
@@ -189,21 +199,28 @@ public class OrderSelfDialog extends Dialog{
      *
      * @param title
      */
+
     public void setTitle(String title) {
         titleStr = title;
+    }
+
+    public void setTotal(String total) {
+        totalStr = total;
     }
 
     public void setList(List<OrderDetail> itemDetail) {
         itemDetails.clear();
         itemDetails.addAll(itemDetail);
     }
+
     public List<OrderDetail> getList() {
         return itemDetails;
     }
 
-    public void notifyAdapter(){
+    public void notifyAdapter() {
         adapter.notifyDataSetChanged();
     }
+
     /**
      * 从外界Activity为Dialog设置dialog的message
      *
