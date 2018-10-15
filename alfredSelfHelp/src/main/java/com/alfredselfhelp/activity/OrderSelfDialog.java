@@ -13,11 +13,11 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.utils.BH;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.NurDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
 import com.alfredselfhelp.global.App;
-import com.alfredselfhelp.javabean.ItemDetailDto;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 
 import java.util.ArrayList;
