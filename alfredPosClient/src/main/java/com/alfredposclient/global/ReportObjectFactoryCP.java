@@ -156,7 +156,7 @@ public class ReportObjectFactoryCP {
 
 		Map<String, String> weixinpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate);
+						ParamConst.SETTLEMENT_TYPE_EZLINK, businessDate);
 		String weixinpay = BH.getBD(weixinpayMap.get("sumAmount")).toString();
 		String weixinpayQty = weixinpayMap.get("count");
 
@@ -2205,7 +2205,7 @@ public class ReportObjectFactoryCP {
 		
 		Map<String, String> weixinpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_WEIXIN, businessDate,
+						ParamConst.SETTLEMENT_TYPE_EZLINK, businessDate,
 						sessionStatus);
 		String weixinpay = BH.getBD(weixinpayMap.get("sumAmount")).toString();
 		String weixinpayQty = weixinpayMap.get("count");

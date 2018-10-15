@@ -9,7 +9,11 @@ import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +43,7 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
+import com.alfredselfhelp.utils.UIHelp;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -53,6 +58,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class KpmDialogFactory {
 
@@ -64,6 +71,280 @@ public class KpmDialogFactory {
                                           OnClickListener leftListener,
                                           OnClickListener rghtListener) {
         commonTwoBtnDialog(activity, title, content, leftText, rightText, leftListener, rghtListener, false);
+    }
+
+    // 两个按钮带 input的 只给ip用
+    public static void commonTwoBtnIPInputDialog(final BaseActivity activity, final String title, final String content,
+                                                 final String leftText, final String rightText,
+                                                 final View.OnClickListener leftListener,
+                                                 final View.OnClickListener rghtListener) {
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                final Dialog dialog = new Dialog(activity, com.alfredbase.R.style.base_dialog);
+                Window window =  dialog.getWindow();
+                if (dialog != null && window != null) {
+                    WindowManager.LayoutParams attr = window.getAttributes();
+                    if (attr != null) {
+                        attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+                    }
+                }
+                final View view = LayoutInflater.from(activity).inflate(
+                        R.layout.self_dialog_input, null);
+                ((TextView) view.findViewById(R.id.tv_title)).setText(title);
+                ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+                ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+                ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+                final EditText editText = (EditText) view.findViewById(R.id.et_input);
+                String inputNum = Store.getString(activity, Store.KPM_CC_IP);
+
+                if (!TextUtils.isEmpty(inputNum)) {
+                    editText.setText(inputNum);
+                }
+                editText.setMaxLines(Integer.MAX_VALUE);
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setContentView(view);
+                view.findViewById(R.id.tv_left).setOnClickListener(
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(final View v) {
+                                dialog.dismiss();
+//                                CommonUtil.hideSoftkeyBoard(activity);
+                                BaseApplication.postHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (leftListener != null)
+                                            leftListener.onClick(v);
+                                    }
+                                }, 500);
+                            }
+                        });
+                view.findViewById(R.id.tv_right).setOnClickListener(
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+
+                                String num = editText.getText().toString();
+                                if (TextUtils.isEmpty(num)) {
+                                    Store.remove(activity, Store.KPM_CC_IP);
+                                } else {
+                                    String ip = "(2[5][0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})";
+                                    Pattern pattern = Pattern.compile(ip);
+                                    Matcher matcher = pattern.matcher(num);
+                                    if (matcher.matches()) {
+                                        Store.putString(activity, Store.KPM_CC_IP, num);
+                                    } else {
+                                        UIHelp.showToast(activity, activity.getResources().getString(R.string.invalid_ip_));
+                                        return;
+                                    }
+
+                                }
+
+
+                                dialog.dismiss();
+//                                CommonUtil.hideSoftkeyBoard(activity);
+                                BaseApplication.postHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (rghtListener != null)
+                                            rghtListener.onClick(editText);
+                                    }
+                                }, 500);
+                            }
+                        });
+                if (activity == null || activity.isFinishing())
+                    return;
+                dialog.show();
+            }
+        });
+
+    }
+
+
+    // 两个按钮带 input的 只给时间用
+    public static void commonTwoBtnTimeInputDialog(final BaseActivity activity, final String title, final String content,
+                                                 final String leftText, final String rightText,
+                                                 final View.OnClickListener leftListener,
+                                                 final View.OnClickListener rghtListener) {
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                final Dialog dialog = new Dialog(activity, com.alfredbase.R.style.base_dialog);
+                Window window =  dialog.getWindow();
+                if (dialog != null && window != null) {
+                    WindowManager.LayoutParams attr = window.getAttributes();
+                    if (attr != null) {
+                        attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+                    }
+                }
+                final View view = LayoutInflater.from(activity).inflate(
+                        R.layout.self_dialog_input, null);
+                ((TextView) view.findViewById(R.id.tv_title)).setText(title);
+                ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+                ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+                ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+                final EditText editText = (EditText) view.findViewById(R.id.et_input);
+                editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+
+                editText.setKeyListener(new DigitsKeyListener(false, true));
+                editText.addTextChangedListener(new TextWatcher() {
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        String editStr = s.toString().trim();
+
+                        int posDot = editStr.indexOf(".");
+                        //不允许输入3位小数,超过三位就删掉
+                        if (posDot < 0) {
+                            return;
+                        }
+                        if (editStr.length() - posDot - 1 > 1) {
+                            s.delete(posDot + 2, posDot + 3);
+                        } else {
+                            //TODO...这里写逻辑
+                        }
+                    }
+                });
+                editText.setMaxLines(Integer.MAX_VALUE);
+                String time = Store.getString(activity, Store.KPM_TIME);
+                if (!TextUtils.isEmpty(time)) {
+                    editText.setText(time);
+                    editText.setSelection(time.length());
+                }
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setContentView(view);
+                view.findViewById(R.id.tv_left).setOnClickListener(
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(final View v) {
+                                dialog.dismiss();
+                                BaseApplication.postHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (leftListener != null)
+                                            leftListener.onClick(v);
+                                    }
+                                }, 500);
+                            }
+                        });
+                view.findViewById(R.id.tv_right).setOnClickListener(
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+//                                CommonUtil.hideSoftkeyBoard(activity);
+                                BaseApplication.postHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (rghtListener != null)
+                                            rghtListener.onClick(editText);
+                                    }
+                                }, 500);
+                            }
+                        });
+                if (activity == null || activity.isFinishing())
+                    return;
+                dialog.show();
+            }
+        });
+
+    }
+
+
+    // 两个按钮带 input的 只给ImageURL用
+    public static void commonTwoBtnImageURLInputDialog(final BaseActivity activity, final String title, final String content,
+                                                 final String leftText, final String rightText,
+                                                 final View.OnClickListener leftListener,
+                                                 final View.OnClickListener rghtListener) {
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                final Dialog dialog = new Dialog(activity, com.alfredbase.R.style.base_dialog);
+                Window window =  dialog.getWindow();
+                if (dialog != null && window != null) {
+                    WindowManager.LayoutParams attr = window.getAttributes();
+                    if (attr != null) {
+                        attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+                    }
+                }
+                final View view = LayoutInflater.from(activity).inflate(
+                        R.layout.self_dialog_input, null);
+                ((TextView) view.findViewById(R.id.tv_title)).setText(title);
+                ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+                ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+                ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+                final EditText editText = (EditText) view.findViewById(R.id.et_input);
+                String imgUrl = Store.getString(activity, Store.MAIN_URL);
+                if (!TextUtils.isEmpty(imgUrl)) {
+                    editText.setText(imgUrl);
+                }
+                editText.setMaxLines(Integer.MAX_VALUE);
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setContentView(view);
+                view.findViewById(R.id.tv_left).setOnClickListener(
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(final View v) {
+                                dialog.dismiss();
+//                                CommonUtil.hideSoftkeyBoard(activity);
+                                BaseApplication.postHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (leftListener != null)
+                                            leftListener.onClick(v);
+                                    }
+                                }, 500);
+                            }
+                        });
+                view.findViewById(R.id.tv_right).setOnClickListener(
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+
+                                dialog.dismiss();
+//                                CommonUtil.hideSoftkeyBoard(activity);
+                                BaseApplication.postHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (rghtListener != null)
+                                            rghtListener.onClick(editText);
+                                    }
+                                }, 500);
+                            }
+                        });
+                if (activity == null || activity.isFinishing())
+                    return;
+                dialog.show();
+            }
+        });
+
     }
 
     /**
@@ -86,6 +367,15 @@ public class KpmDialogFactory {
             @Override
             public void run() {
                 final Dialog dialog = new Dialog(activity, R.style.base_dialog);
+                Window window =  dialog.getWindow();
+                if (dialog != null && window != null) {
+                    WindowManager.LayoutParams attr = window.getAttributes();
+                    if (attr != null) {
+                        attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+                    }
+                }
                 View view = LayoutInflater.from(activity).inflate(
                         R.layout.dialog_item_common_two_btn, null);
                 ((TextView) view.findViewById(R.id.tv_title)).setText(title);
@@ -145,10 +435,16 @@ public class KpmDialogFactory {
         ((TextView) view.findViewById(R.id.tv_content)).setText(content);
         ImageView img = (ImageView) view.findViewById(R.id.img_center);
         TextView tv_qc_de = (TextView) view.findViewById(R.id.tv_qc_de);
+        TextView tv_backs = (TextView) view.findViewById(R.id.tv_backs);
         textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_title));
         textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_content));
-        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_backs));
+        textTypeFace.setUbuntuMedium(tv_backs);
         textTypeFace.setUbuntuMedium(tv_qc_de);
+        if(canBack){
+            tv_backs.setVisibility(View.VISIBLE);
+        }else{
+            tv_backs.setVisibility(View.GONE);
+        }
         img.setImageResource(drawableId);
         if (isqc) {
             tv_qc_de.setVisibility(View.VISIBLE);

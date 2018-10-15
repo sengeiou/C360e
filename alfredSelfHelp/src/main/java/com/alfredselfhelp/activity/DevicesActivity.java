@@ -1,8 +1,6 @@
 package com.alfredselfhelp.activity;
 
 import android.animation.ObjectAnimator;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -20,8 +18,6 @@ import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.PrinterSQL;
-import com.alfredbase.utils.BarcodeUtil;
-import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.view.CustomListView;
 import com.alfredbase.view.HorizontalListView;
@@ -600,6 +596,8 @@ public class DevicesActivity extends BaseActivity {
         devices_customlistview = (CustomListView) findViewById(R.id.devices_customlistview);
         devices_customlistview.setDividerWidth(20);
         devices_customlistview.setDividerHeight(20);
+        findViewById(R.id.devices_transfer_lyt).setVisibility(View.GONE);
+        findViewById(R.id.devices_waiter_lyt).setVisibility(View.GONE);
     }
 
     private void registEvent() {

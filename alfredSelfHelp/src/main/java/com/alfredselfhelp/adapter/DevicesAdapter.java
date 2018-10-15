@@ -16,11 +16,11 @@ import android.widget.TextView;
 
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.view.CustomAdapter;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.activity.DevicesActivity;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.global.KpmDialogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -229,7 +229,7 @@ public class DevicesAdapter extends CustomAdapter {
 
         @Override
         public void onClick(final View view) {
-            DialogFactory.commonTwoBtnDialog(App.getTopActivity(), con.getResources().getString(R.string.warning), "Unassign will disconnect Printer!", con.getResources().getString(R.string.cancel), con.getResources().getString(R.string.ok), null, new OnClickListener() {
+            KpmDialogFactory.commonTwoBtnDialog(App.getTopActivity(), con.getResources().getString(R.string.warning), "Unassign will disconnect Printer!", con.getResources().getString(R.string.cancel), con.getResources().getString(R.string.ok), null, new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -246,7 +246,9 @@ public class DevicesAdapter extends CustomAdapter {
         public void onClick(View view) {
             if (ButtonClickTimer.canClick(view)) {
                 PrinterDevice device = (PrinterDevice) view.getTag();
-                handler.sendMessage(handler.obtainMessage(DevicesActivity.ASSIGN_PRINTER_DEVICE, device));
+                if(device.getDevice_id() == -1) {
+                    handler.sendMessage(handler.obtainMessage(DevicesActivity.ASSIGN_PRINTER_DEVICE, device));
+                }
             }
         }
     };

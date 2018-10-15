@@ -1,17 +1,11 @@
 package com.alfredselfhelp.activity;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +24,7 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.store.Store;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.global.KpmDialogFactory;
 import com.alfredselfhelp.global.RfidApiCentre;
 import com.alfredselfhelp.utils.FileDialog;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
@@ -37,7 +32,6 @@ import com.alfredselfhelp.utils.PictureSwitch;
 import com.alfredselfhelp.utils.TvPref;
 import com.alfredselfhelp.utils.UIHelp;
 import com.alfredselfhelp.utils.VideoResManager;
-import com.alfredselfhelp.view.SelfHelpDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nordicid.nurapi.NurApiUiThreadRunner;
@@ -76,7 +70,7 @@ public class MainActivity extends BaseActivity {
     private final static int LOGIN_STATUS_READY = 5;
     private int mVideoDefaultCurPos = 0;// in milisec
     private int mLoginStatus;
-    private Button btn_start;
+    private Button btn_start, btn_cc_ez;
 
     private LinearLayout li_select, ll_main;
     private KpmTextTypeFace textTypeFace;
@@ -94,7 +88,14 @@ public class MainActivity extends BaseActivity {
         KpmTextTypeFace.getInstance().init(context);
 
         btn_start = (Button) findViewById(R.id.btn_start);
+        btn_cc_ez = (Button) findViewById(R.id.btn_cc_ez);
         ll_main = (LinearLayout) findViewById(R.id.ll_main);
+        int paymentType = Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1);
+        if(paymentType == 1){
+            btn_cc_ez.setText("CC");
+        }else{
+            btn_cc_ez.setText("EZ-Link");
+        }
 
         re_main_select = (RelativeLayout) findViewById(R.id.re_main_select);
         btn_start.setOnClickListener(this);
@@ -119,6 +120,7 @@ public class MainActivity extends BaseActivity {
         btn_cc_ip.setOnClickListener(this);
         //   btn_video.setOnClickListener(this);
         ll_main.setOnClickListener(this);
+        btn_cc_ez.setOnClickListener(this);
         findViewById(R.id.btn_print_setting).setOnClickListener(this);
         ll_main.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -273,17 +275,34 @@ public class MainActivity extends BaseActivity {
                 // 选择图片
                 input();
                 break;
-
+            case R.id.btn_cc_ez:
+                int paymentType = Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1);
+                if(paymentType == 1){
+                    paymentType = 2;
+                    Store.putInt(context, Store.KPMG_PAYMENT_TYPE, paymentType);
+                    btn_cc_ez.setText("EZ-Link");
+                }else{
+                    paymentType = 1;
+                    Store.putInt(context, Store.KPMG_PAYMENT_TYPE, paymentType);
+                    btn_cc_ez.setText("CC");
+                }
+                break;
             case R.id.btn_time:
                 diaTime();
                 break;
             case R.id.btn_cc_ip:
-                SelfHelpDialog.commonTwoBtnIPInputDialog(MainActivity.this,
-                        "CC ip", "key in CC ip", "Cancel", "OK", null,
+                KpmDialogFactory.commonTwoBtnIPInputDialog(MainActivity.this,
+                        "CC ip", "key in CC ip", "Cancel", "OK",
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
+                                re_main_select.setVisibility(View.GONE);
+                            }
+                        },
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                re_main_select.setVisibility(View.GONE);
                             }
                         });
                 break;
@@ -322,7 +341,7 @@ public class MainActivity extends BaseActivity {
 
 
                 } else {
-                    Toast.makeText(MainActivity.this, "未选择图像文件", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "No Image", Toast.LENGTH_SHORT).show();
                 }
             } else if (requestCode == 2) {
                 if (selFile != null) {
@@ -339,7 +358,7 @@ public class MainActivity extends BaseActivity {
 
 
                 } else {
-                    Toast.makeText(MainActivity.this, "未选择视频文件", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "No Video", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -593,108 +612,156 @@ public class MainActivity extends BaseActivity {
     private void input() {
 
 
-        final EditText inputServer = new EditText(this);
-        imgUrl = Store.getString(context, Store.MAIN_URL);
-        if (!TextUtils.isEmpty(imgUrl)) {
-            inputServer.setText(imgUrl);
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("请输入图片地址");
-        builder.setView(inputServer)
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//        final EditText inputServer = new EditText(this);
+//        imgUrl = Store.getString(context, Store.MAIN_URL);
+//        if (!TextUtils.isEmpty(imgUrl)) {
+//            inputServer.setText(imgUrl);
+//        }
+        KpmDialogFactory.commonTwoBtnImageURLInputDialog(MainActivity.this,
+                "Background Image", "Please input URL for background image", "Cancel", "OK",
+                new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
+                        re_main_select.setVisibility(View.GONE);
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String input =  ((EditText)v).getText().toString();
+                        if (isCompleteUrl(input)) {
+                            Store.putString(context, Store.MAIN_URL, input);
+                            loadingDialog = new LoadingDialog(MainActivity.this);
+                            loadingDialog.showByTime(2000);
+                            Glide.with(MainActivity.this)
+                                    .load(input)
+                                    .placeholder(R.drawable.globe_bg)
+                                    .error(R.drawable.globe_bg)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .into(img_mian_bg);
+
+                        } else {
+//                            Toast.makeText(MainActivity.this, "输入的地址有误", Toast.LENGTH_LONG).show();
+                            UIHelp.showToast(MainActivity.this, "URL error. Please double check link");
+                        }
+
                         re_main_select.setVisibility(View.GONE);
                     }
                 });
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                String input = inputServer.getText().toString();
-                // String input = "http://139.224.17.126/upload/img/item/c1cfbf26-7310-4a6e-b5a4-15e89a82a9c3.png";
-                if (isCompleteUrl(input)) {
-                    Store.putString(context, Store.MAIN_URL, input);
-                    loadingDialog = new LoadingDialog(MainActivity.this);
-                    loadingDialog.showByTime(2000);
-                    Glide.with(MainActivity.this)
-                            .load(input)
-                            .placeholder(R.drawable.globe_bg)
-                            .error(R.drawable.globe_bg)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .into(img_mian_bg);
-
-                } else {
-                    Toast.makeText(MainActivity.this, "输入的地址有误", Toast.LENGTH_LONG).show();
-                }
-
-                re_main_select.setVisibility(View.GONE);
-            }
-        });
-        builder.show();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("请输入图片地址");
+//        builder.setView(inputServer)
+//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        re_main_select.setVisibility(View.GONE);
+//                    }
+//                });
+//        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//
+//            public void onClick(DialogInterface dialog, int which) {
+//                String input = inputServer.getText().toString();
+//                // String input = "http://139.224.17.126/upload/img/item/c1cfbf26-7310-4a6e-b5a4-15e89a82a9c3.png";
+//                if (isCompleteUrl(input)) {
+//                    Store.putString(context, Store.MAIN_URL, input);
+//                    loadingDialog = new LoadingDialog(MainActivity.this);
+//                    loadingDialog.showByTime(2000);
+//                    Glide.with(MainActivity.this)
+//                            .load(input)
+//                            .placeholder(R.drawable.globe_bg)
+//                            .error(R.drawable.globe_bg)
+//                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                            .into(img_mian_bg);
+//
+//                } else {
+//                    Toast.makeText(MainActivity.this, "输入的地址有误", Toast.LENGTH_LONG).show();
+//                }
+//
+//                re_main_select.setVisibility(View.GONE);
+//            }
+//        });
+//        builder.show();
 
     }
 
 
     private void diaTime() {
 
-        String time;
-        final EditText timeServer = new EditText(this);
-        timeServer.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-
-        timeServer.setKeyListener(new DigitsKeyListener(false, true));
-        timeServer.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String editStr = s.toString().trim();
-
-                int posDot = editStr.indexOf(".");
-                //不允许输入3位小数,超过三位就删掉
-                if (posDot < 0) {
-                    return;
-                }
-                if (editStr.length() - posDot - 1 > 1) {
-                    s.delete(posDot + 2, posDot + 3);
-                } else {
-                    //TODO...这里写逻辑
-                }
-            }
-        });
-
-
-        time = Store.getString(context, Store.KPM_TIME);
-        if (!TextUtils.isEmpty(time)) {
-            timeServer.setText(time);
-            timeServer.setSelection(time.length());
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("请输入时间(Minute)");
-        builder.setView(timeServer)
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//        String time;
+//        final EditText timeServer = new EditText(this);
+//        timeServer.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+//
+//        timeServer.setKeyListener(new DigitsKeyListener(false, true));
+//        timeServer.addTextChangedListener(new TextWatcher() {
+//
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//            }
+//
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                String editStr = s.toString().trim();
+//
+//                int posDot = editStr.indexOf(".");
+//                //不允许输入3位小数,超过三位就删掉
+//                if (posDot < 0) {
+//                    return;
+//                }
+//                if (editStr.length() - posDot - 1 > 1) {
+//                    s.delete(posDot + 2, posDot + 3);
+//                } else {
+//                    //TODO...这里写逻辑
+//                }
+//            }
+//        });
+//
+//
+//        time = Store.getString(context, Store.KPM_TIME);
+//        if (!TextUtils.isEmpty(time)) {
+//            timeServer.setText(time);
+//            timeServer.setSelection(time.length());
+//        }
+        KpmDialogFactory.commonTwoBtnTimeInputDialog(MainActivity.this,
+                "Idle Time", "Please input idle waiting time (minutes)", "Cancel", "OK",
+                new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
+                        re_main_select.setVisibility(View.GONE);
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String input =  ((EditText)v).getText().toString();
+                        // String input = "http://139.224.17.126/upload/img/item/c1cfbf26-7310-4a6e-b5a4-15e89a82a9c3.png";
+                        Store.putString(context, Store.KPM_TIME, input);
                         re_main_select.setVisibility(View.GONE);
                     }
                 });
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                String input = timeServer.getText().toString();
-                // String input = "http://139.224.17.126/upload/img/item/c1cfbf26-7310-4a6e-b5a4-15e89a82a9c3.png";
-                Store.putString(context, Store.KPM_TIME, input);
-                re_main_select.setVisibility(View.GONE);
-            }
-        });
-        builder.show();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("请输入时间(Minute)");
+//        builder.setView(timeServer)
+//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        re_main_select.setVisibility(View.GONE);
+//                    }
+//                });
+//        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//
+//            public void onClick(DialogInterface dialog, int which) {
+//                String input = timeServer.getText().toString();
+//                // String input = "http://139.224.17.126/upload/img/item/c1cfbf26-7310-4a6e-b5a4-15e89a82a9c3.png";
+//                Store.putString(context, Store.KPM_TIME, input);
+//                re_main_select.setVisibility(View.GONE);
+//            }
+//        });
+//        builder.show();
 
     }
 

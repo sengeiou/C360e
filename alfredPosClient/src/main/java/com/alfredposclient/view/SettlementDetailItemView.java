@@ -114,7 +114,7 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 			return R.drawable.settle_ent;
 		case ParamConst.SETTLEMENT_TYPE_ALIPAY:
 			return R.drawable.icon_alipay;
-		case ParamConst.SETTLEMENT_TYPE_WEIXIN:
+		case ParamConst.SETTLEMENT_TYPE_EZLINK:
 			return R.drawable.icon_wxpay;		
 		default:
 			return R.drawable.icon_settle_cash;

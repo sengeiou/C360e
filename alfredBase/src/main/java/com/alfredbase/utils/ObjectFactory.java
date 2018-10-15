@@ -228,7 +228,8 @@ public class ObjectFactory {
 
     public Order cpOrderInfoForKPMG(Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
                                     List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
-                                    List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements, List<RoundAmount> roundAmounts) throws Exception {
+                                    List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements,
+                                    List<RoundAmount> roundAmounts, String cardNum) throws Exception {
 
         synchronized (lock_order) {
             if (subOrder != null) {
@@ -317,6 +318,23 @@ public class ObjectFactory {
                 Integer paymentId = paymentSettlement.getPaymentId();
                 if (paymentId != null && paymentMap.containsKey(paymentId.intValue())) {
                     paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));
+                    if(!TextUtils.isEmpty(cardNum)) {
+                        switch (paymentSettlement.getPaymentTypeId()) {
+                            case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
+                            case ParamConst.SETTLEMENT_TYPE_UNIPAY:
+                            case ParamConst.SETTLEMENT_TYPE_VISA:
+                            case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
+                            case ParamConst.SETTLEMENT_TYPE_AMEX:
+                            case ParamConst.SETTLEMENT_TYPE_JCB:
+                                getCardsSettlementForKPMG(paymentId, paymentSettlement,
+                                        paymentSettlement.getPaymentTypeId(), cardNum, 123);
+                                break;
+                            case ParamConst.SETTLEMENT_TYPE_NETS:
+
+                                break;
+
+                        }
+                    }
                 }
                 PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
             }
@@ -2142,6 +2160,41 @@ public class ObjectFactory {
                 cardsSettlement.setCardNo(cardNo);
                 cardsSettlement.setCvvNo(Integer.parseInt(cvvNo));
                 cardsSettlement.setCardExpiryDate(cardExpiryDateStr);
+                cardsSettlement.setUpdateTime(times);
+            }
+            CardsSettlementSQL.addCardsSettlement(cardsSettlement);
+        }
+        return cardsSettlement;
+    }
+    public CardsSettlement getCardsSettlementForKPMG(int paymentId,
+                                              PaymentSettlement paymentSettlement, int paymentTypeId,
+                                              String cardNo, int billNo) {
+
+        CardsSettlement cardsSettlement = null;
+
+        synchronized (lock_getCardsSettlement) {
+            cardsSettlement = CardsSettlementSQL
+                    .getCardsSettlementByPament(paymentId,
+                            paymentSettlement.getId());
+            long times = System.currentTimeMillis();
+            if (cardsSettlement == null) {
+                cardsSettlement = new CardsSettlement();
+                cardsSettlement.setId(CommonSQL
+                        .getNextSeq(TableNames.CardsSettlement));
+                cardsSettlement.setPaymentId(paymentId);
+                cardsSettlement.setPaymentSettId(paymentSettlement.getId());
+                cardsSettlement.setBillNo(billNo);
+                cardsSettlement.setCardNo(cardNo);
+                cardsSettlement.setCardType(paymentTypeId);
+                cardsSettlement.setCvvNo(0);
+                cardsSettlement.setCardExpiryDate("11/88");
+                cardsSettlement.setCreateTime(times);
+                cardsSettlement.setUpdateTime(times);
+                cardsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
+            } else {
+                cardsSettlement.setCardNo(cardNo);
+                cardsSettlement.setCvvNo(0);
+                cardsSettlement.setCardExpiryDate("11/88");
                 cardsSettlement.setUpdateTime(times);
             }
             CardsSettlementSQL.addCardsSettlement(cardsSettlement);

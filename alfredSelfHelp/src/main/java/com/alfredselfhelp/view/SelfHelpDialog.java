@@ -28,6 +28,7 @@ public class SelfHelpDialog extends DialogFactory {
             @Override
             public void run() {
                 final Dialog dialog = new Dialog(activity, com.alfredbase.R.style.base_dialog);
+
                 final View view = LayoutInflater.from(activity).inflate(
                         R.layout.self_dialog_input, null);
                 ((TextView) view.findViewById(R.id.tv_title)).setText(title);

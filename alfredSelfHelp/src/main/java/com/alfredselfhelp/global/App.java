@@ -1,6 +1,5 @@
 package com.alfredselfhelp.global;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -43,19 +42,15 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.CardsSettlementSQL;
-import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredselfhelp.R;
-import com.alfredselfhelp.activity.MainActivity;
 import com.alfredselfhelp.activity.MenuActivity;
 import com.alfredselfhelp.utils.TvPref;
 import com.google.gson.Gson;
-import com.moonearly.utils.service.TcpUdpFactory;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
@@ -108,6 +103,7 @@ public class App extends BaseApplication {
     private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<>();
     private Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
     private Observable<Object> observable;
+
 
     @Override
     public void onCreate() {
@@ -578,7 +574,8 @@ public class App extends BaseApplication {
                                 Order order, List<PrintOrderItem> orderItems,
                                 List<PrintOrderModifier> orderModifiers,
                                 List<Map<String, String>> taxes,
-                                List<PaymentSettlement> settlement, RoundAmount roundAmount) {
+                                List<PaymentSettlement> settlement,
+                                RoundAmount roundAmount, String cardNum) {
         boolean openDrawer = false;
         if (mRemoteService == null) {
             printerDialog();
@@ -603,26 +600,13 @@ public class App extends BaseApplication {
                     case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
                     case ParamConst.SETTLEMENT_TYPE_AMEX:
                     case ParamConst.SETTLEMENT_TYPE_JCB:
-                        printReceiptInfo
-                                .setCardNo(CardsSettlementSQL
-                                        .getCardNoByPaymentIdAndPaymentSettlementId(
-                                                paymentSettlement.getPaymentId()
-                                                        .intValue(),
-                                                paymentSettlement.getId()
-                                                        .intValue()));
-                        break;
                     case ParamConst.SETTLEMENT_TYPE_NETS:
-                        printReceiptInfo
-                                .setCardNo(NetsSettlementSQL
-                                        .getNetsSettlementByPament(
-                                                paymentSettlement.getPaymentId()
-                                                        .intValue(),
-                                                paymentSettlement.getId()
-                                                        .intValue())
-                                        .getReferenceNo()
-                                        + "");
+                        String num = "";
+                        if(!TextUtils.isEmpty(cardNum)){
+                                num = cardNum;
+                        }
+                        printReceiptInfo.setCardNo(num);
                         break;
-
                     default: {
                         PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethodByPaymentTypeId(paymentSettlement.getPaymentTypeId().intValue());
                         if (pamentMethod != null && !TextUtils.isEmpty(pamentMethod.getNameOt())) {

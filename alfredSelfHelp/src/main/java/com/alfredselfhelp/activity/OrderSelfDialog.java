@@ -16,7 +16,6 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.NurDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
-import com.alfredselfhelp.javabean.ItemDetailDto;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 
 import java.util.ArrayList;
@@ -76,7 +75,7 @@ public class OrderSelfDialog extends Dialog{
         this.mContext=context;
     }
 
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_orderself_detail);
@@ -146,22 +145,6 @@ public class OrderSelfDialog extends Dialog{
         });
 
         re_nur.setAdapter(adapter);
-
-
-//        //如果用户自定了title和message
-//        if (titleStr != null) {
-//            titleTv.setText(titleStr);
-//        }
-//        if (messageStr != null) {
-//            messageTv.setText(messageStr);
-//        }
-        //如果设置按钮的文字
-//        if (yesStr != null) {
-//            yes.setText(yesStr);
-//        }
-//        if (noStr != null) {
-//            no.setText(noStr);
-//        }
         yes.setText("Yes");
         no.setText("No");
     }
@@ -178,10 +161,6 @@ public class OrderSelfDialog extends Dialog{
         textTypeFace.setUbuntuMedium(tv_nur_name);
         textTypeFace.setUbuntuMedium(yes);
         textTypeFace.setUbuntuMedium(no);
-
-
-     //   titleTv = (TextView) findViewById(R.id.title);
-     //   messageTv = (TextView) findViewById(R.id.message);
     }
 
     /**
@@ -217,11 +196,11 @@ public class OrderSelfDialog extends Dialog{
      * 设置确定按钮和取消被点击的接口
      */
     public interface onYesOnclickListener {
-        public void onYesClick();
+        void onYesClick();
     }
 
     public interface onNoOnclickListener {
-        public void onNoClick();
+        void onNoClick();
     }
 
 

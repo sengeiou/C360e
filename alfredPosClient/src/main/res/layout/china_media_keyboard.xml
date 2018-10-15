@@ -49,7 +49,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:src="@drawable/wxpay_selector"
-            android:visibility="invisible" />
+            android:visibility="visible" />
     </LinearLayout>
 
 </LinearLayout>

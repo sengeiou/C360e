@@ -25,6 +25,7 @@ public class ParamConst {
 	 public static final int ORDER_STATUS_PAYED = 12; //not used
 	 public static final int ORDER_STATUS_HOLD = 13;//not
 	 public static final int ORDER_STATUS_KIOSK = 14;//not
+	 public static final int ORDER_STATUS_HOLD_KITCHEN = 15;//not
 	public static final int ORDER_STATUS_UNPACK = 20; // split order
 	public static final int ORDER_STATUS_UNPACK_CLOSING = 21;
 	public static final int ORDER_STATUS_FINISHED = 30;
@@ -182,7 +183,7 @@ public class ParamConst {
 	public static final int SETTLEMENT_TYPE_DINNER_INTERMATIONAL = 7;
 	public static final int SETTLEMENT_TYPE_NETS = 1000;
 	public static final int SETTLEMENT_TYPE_ALIPAY = 1001;
-	public static final int SETTLEMENT_TYPE_WEIXIN = 1002;
+	public static final int SETTLEMENT_TYPE_EZLINK = 1002;
 	public static final int SETTLEMENT_TYPE_PAYPAL = 1003;
 	public static final int SETTLEMENT_TYPE_STORED_CARD = 1004;
 	public static final int SETTLEMENT_TYPE_BILL_ON_HOLD = 101;

@@ -36,7 +36,6 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.utils.BH;
-import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
@@ -88,7 +87,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     public static final int VIEW_CC_CONNECT_SUCCEED = 1112;
     public static final int VIEW_CC_CONNECT_FAILED = -1112;
 
-    public static final int VIEW_CC_PAYMENT_SUCCEED = 1113;
+    public static final int VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED = 1113;
+    public static final int VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED = 1114;
     public static final int VIEW_CC_PAYMENT_FAILED = -1113;
 
     private RecyclerView re_main_category;
@@ -106,7 +106,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private RelativeLayout rl_cart_num;
 
     private RelativeLayout rl_cart_total;
-    private LinearLayout li_menu, ll_view_order_card, ll_view_order_qc, ll_order_dialog;
+    private LinearLayout li_menu, ll_view_order_card, ll_view_order_ez, ll_view_order_qc, ll_order_dialog;
     List<ItemDetail> itemDetails = new ArrayList<ItemDetail>();
 
     List<ItemDetail> itemDetailNur = new ArrayList<ItemDetail>();
@@ -130,6 +130,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private VideoView mVideoView;
     Dialog yesDialog;
     private Dialog paymentDialog;
+    private int CCPaymentType = 1;
+    private OrderSelfDialog dialog;
 
     //    Dialog fdialog;
     protected void initView() {
@@ -220,7 +222,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                     break;
 
-                case VIEW_COMMIT_ORDER_SUCCEED:
+                case VIEW_COMMIT_ORDER_SUCCEED: {
+                    PaymentSettlement paymentSettlement = (PaymentSettlement) msg.obj;
                     try {
                         if (loadingDialog != null && loadingDialog.isShowing()) {
                             loadingDialog.dismiss();
@@ -229,8 +232,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         e.printStackTrace();
                     }
                     rl_cart_num.setVisibility(View.GONE);
-                    UIHelp.showToast(App.instance, "Success");
+                    if(paymentSettlement != null) {
+                        UIHelp.showToast(App.instance, "Success");
+                    }else{
+                        UIHelp.showToast(App.instance, "Please go to counter");
+                    }
                     MenuActivity.this.finish();
+                }
                     break;
                 case VIEW_COMMIT_ORDER_FAILED:
                     if (loadingDialog != null && loadingDialog.isShowing()) {
@@ -239,7 +247,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                    UIHelp.showToast(context, "Please try again !");
                     break;
                 case VIEW_CC_CONNECT_SUCCEED:
-                    CCCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+                    if(CCPaymentType == 1) {
+                        CCCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+                    }else{
+                        CCCentre.getInstance().startNetsPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+                    }
                     break;
                 case VIEW_CC_CONNECT_FAILED:
                     if(paymentDialog != null && paymentDialog.isShowing()){
@@ -260,7 +272,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                                 paymentDialog.dismiss();
                             }
                             OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
-                            commitOrder(orderBill, null, null);
+                            commitOrder(orderBill, null, null, null);
                         }
                     }, 3000);
                     break;
@@ -268,9 +280,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     if(paymentDialog != null && paymentDialog.isShowing()){
                         paymentDialog.dismiss();
                     }
-                    paymentDialog = KpmDialogFactory.kpmTipsDialog(context, "Credit Card Invalid",
-                            "Please try with QR code payment or proceed to\nthe POS counter for cash payment",
-                            R.drawable.icon_tip_cq, new View.OnClickListener() {
+                    String title = "Credit Card Invalid";
+                    String content = "Please try with QR code payment or proceed to\nthe POS counter for cash payment";
+                    if(CCPaymentType != 1){
+                        title = "EZ-Link Invalid";
+                        content = "Please proceed to the counter \nfor cash payment";
+                    }
+                    paymentDialog = KpmDialogFactory.kpmTipsDialog(context, title, content
+                            ,
+                            R.drawable.icon_tip_card, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
@@ -284,16 +302,18 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                                 paymentDialog.dismiss();
                             }
                             OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
-                            commitOrder(orderBill, null, null);
+                            commitOrder(orderBill, null, null, null);
 
                         }
                     }, 5000);
 
 //                    dismissLoadingDialog();
                     break;
-                case VIEW_CC_PAYMENT_SUCCEED:
-                    final int paymentType = (int) msg.obj;
-                    if(paymentDialog != null && paymentDialog.isShowing()){
+                case VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED: {
+                    Map<String, Object> cardInfoMap = (Map<String, Object>) msg.obj;
+                    final int paymentType = (int) cardInfoMap.get("paymentType");
+                    final String cardNum = (String) cardInfoMap.get("cardNum");
+                    if (paymentDialog != null && paymentDialog.isShowing()) {
                         paymentDialog.dismiss();
                     }
                     paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
@@ -302,15 +322,38 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if(paymentDialog != null && paymentDialog.isShowing()){
+                            if (paymentDialog != null && paymentDialog.isShowing()) {
                                 paymentDialog.dismiss();
                             }
                             OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
                             Payment payment = ObjectFactory.getInstance().getPayment(nurOrder, orderBill);
                             PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, paymentType, nurOrder.getTotal());
-                            commitOrder(orderBill, payment, paymentSettlement);
+                            commitOrder(orderBill, payment, paymentSettlement, cardNum);
                         }
                     }, 5000);
+                }
+                    break;
+                case VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED: {
+                    final int paymentType = (int) msg.obj;
+                    if (paymentDialog != null && paymentDialog.isShowing()) {
+                        paymentDialog.dismiss();
+                    }
+                    paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
+                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
+                    CCCentre.getInstance().disconnect();
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (paymentDialog != null && paymentDialog.isShowing()) {
+                                paymentDialog.dismiss();
+                            }
+                            OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
+                            Payment payment = ObjectFactory.getInstance().getPayment(nurOrder, orderBill);
+                            PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, paymentType, nurOrder.getTotal());
+                            commitOrder(orderBill, payment, paymentSettlement, "");
+                        }
+                    }, 5000);
+                }
                     break;
             }
 
@@ -318,14 +361,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     };
 
 
-    private void commitOrder(OrderBill orderBill, Payment payment, PaymentSettlement paymentSettlement){
+    private void commitOrder(OrderBill orderBill, Payment payment, PaymentSettlement paymentSettlement, String cardNum){
         loadingDialog.setTitle("Committing Order...");
         loadingDialog.show();
-        SyncCentre.getInstance().commitOrder(context, nurOrder, orderBill, orderDetails, payment,paymentSettlement, handler);
+        SyncCentre.getInstance().commitOrder(context, nurOrder, orderBill, orderDetails, payment,paymentSettlement, handler, cardNum);
     }
 
     private void init() {
         initTextTypeFace();
+        CCPaymentType = Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1);
         loadingDialog = new LoadingDialog(MenuActivity.this);
 //        selfDialog = new OrderSelfDialog(MenuActivity.this);
         ll_grab = (LinearLayout) findViewById(R.id.ll_grab);
@@ -350,10 +394,21 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mVideoView = (VideoView) findViewById(R.id.video_menu);
         tv_time = (TextView) findViewById(R.id.tv_time);
         ll_view_order_card = (LinearLayout) findViewById(R.id.ll_view_order_card);
+        ll_view_order_ez = (LinearLayout) findViewById(R.id.ll_view_order_ez);
         tv_dialog_ok = (TextView) findViewById(R.id.tv_dialog_ok);
         ll_order_dialog = (LinearLayout) findViewById(R.id.ll_order_dialog);
+
+        if(Store.getInt(context, Store.KPMG_PAYMENT_TYPE) == 1){
+            ll_view_order_card.setVisibility(View.VISIBLE);
+            ll_view_order_ez.setVisibility(View.GONE);
+        }else{
+            ll_view_order_card.setVisibility(View.GONE);
+            ll_view_order_ez.setVisibility(View.VISIBLE);
+        }
+
         tv_dialog_ok.setOnClickListener(this);
         ll_view_order_card.setOnClickListener(this);
+        ll_view_order_ez.setOnClickListener(this);
         ll_view_pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.tv_cart_total);
         ll_video.setVisibility(View.VISIBLE);
@@ -425,6 +480,27 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        re_menu_details.setLayoutParams(lpDe);
         refreshTotal();
         CCCentre.getInstance().init(handler);
+        dialog = new OrderSelfDialog(MenuActivity.this);
+        dialog.setNoOnclickListener("", new OrderSelfDialog.onNoOnclickListener() {
+
+            @Override
+            public void onNoClick() {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+
+            }
+        });
+
+        dialog.setYesOnclickListener("", new OrderSelfDialog.onYesOnclickListener() {
+            @Override
+            public void onYesClick() {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                paymentAction();
+            }
+        });
 //        viewCart(true);
 //        VtintApiCentre.getInstance().initUsb();
     }
@@ -810,11 +886,24 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         return null;
     }
 
+    public long lastClickTime;
+    public boolean canClick() {
+        long currentTimeMillis = System.currentTimeMillis();
+        if (currentTimeMillis - lastClickTime > 500) {
+            lastClickTime = currentTimeMillis;
+            return true;
+        } else {
+            lastClickTime = currentTimeMillis;
+            return false;
+        }
+    }
+
 
     @Override
     protected void handlerClickEvent(View v) {
-        super.handlerClickEvent(v);
-
+        if(!canClick()){
+            return;
+        }
         switch (v.getId()) {
             case R.id.ll_grab:
                 mainCategoryAdapter.setCheckedPosition(-1);
@@ -871,55 +960,23 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
                 break;
             case R.id.ll_view_order_card:
+            case R.id.ll_view_order_ez: {
                 if (orderDetails == null || orderDetails.size() == 0) {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                     return;
                 }
-                DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning),
-                        "Kindly confirm to process the credit card ?",
-                        context.getString(R.string.cancel), context.getString(R.string.ok),
-                        null, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                paymentAction();
-                            }
-                        });
-
-
-
-//                final OrderSelfDialog dialog = new OrderSelfDialog(MenuActivity.this);
-//
-//                dialog.setList(orderDetails);
-//                dialog.setNoOnclickListener("", new OrderSelfDialog.onNoOnclickListener() {
-//
-//                    @Override
-//                    public void onNoClick() {
-//                        dialog.dismiss();
-//
-//                    }
-//                });
-//
-//                dialog.setYesOnclickListener("", new OrderSelfDialog.onYesOnclickListener() {
-//                    @Override
-//                    public void onYesClick() {
-//
-//
-////                        NurTagStorage nurTagStorage = RfidApiCentre.getInstance().getNurTagStorage();
-////                        if (OrderDetailRFIDHelp.getUnScannerItemBarCode(orderDetails, nurTagStorage).size() == 0) {
-//                        paymentAction();
-//                        dialog.dismiss();
-//
-////                        } else {
-////                            // TODO 显示等待拿货的Dialog
-////                        }
-//
-//
-//                    }
-//                });
-//
-//                dialog.show();
-//
-
+//                DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning),
+//                        "Kindly confirm to process the credit card ?",
+//                        context.getString(R.string.cancel), context.getString(R.string.ok),
+//                        null, new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                paymentAction();
+//                            }
+//                        });
+                dialog.setList(orderDetails);
+                dialog.show();
+            }
                 break;
 
             case R.id.tv_dialog_ok:
@@ -943,7 +1000,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         if(paymentDialog != null && paymentDialog.isShowing()){
             paymentDialog.dismiss();
         }
-        paymentDialog = KpmDialogFactory.qcDialog(context, "Credit Card\nPayment in progress…",
+
+        String ccTitle = "Credit Card\nPayment in progress…";
+        if(CCPaymentType != 1){
+            ccTitle = "EZ-Link\nPayment in progress…";
+        }
+        paymentDialog = KpmDialogFactory.qcDialog(context, ccTitle,
                 "", R.drawable.credit_card, false,
                 new View.OnClickListener() {
                     @Override
@@ -956,7 +1018,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     }
                 },false);
         String ip = Store.getString(App.instance, Store.KPM_CC_IP);
-        CCCentre.getInstance().connect(ip);
+        if(TextUtils.isEmpty(ip)){
+            UIHelp.showToast(context, "Please contact Staff for IP Address");
+        }else {
+            CCCentre.getInstance().connect(ip);
+        }
 
 //        new Thread(new Runnable() {
 //            @Override
@@ -1052,6 +1118,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         } else {
             if (ll_video.getVisibility() == View.VISIBLE) {
                 ll_view_cart.setVisibility(View.GONE);
+                ll_view_cart.setEnabled(true);
             } else {
                 ll_view_cart.setVisibility(View.VISIBLE);
                 ll_view_cart.setEnabled(false);

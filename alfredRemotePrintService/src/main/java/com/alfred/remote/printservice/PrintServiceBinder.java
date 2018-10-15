@@ -1042,8 +1042,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 case ParamConst.SETTLEMENT_TYPE_ALIPAY:
                                     paymentType = PrintService.instance.getResources().getString(R.string.alipay);
                                     break;
-                                case ParamConst.SETTLEMENT_TYPE_WEIXIN:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.weixin);
+                                case ParamConst.SETTLEMENT_TYPE_EZLINK:
+                                    paymentType = "EZ-Link";
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                     paymentType = PrintService.instance.getResources().getString(R.string.paypal);
@@ -2180,8 +2180,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 case ParamConst.SETTLEMENT_TYPE_ALIPAY:
                                     paymentType = PrintService.instance.getResources().getString(R.string.alipay);
                                     break;
-                                case ParamConst.SETTLEMENT_TYPE_WEIXIN:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.weixin);
+                                case ParamConst.SETTLEMENT_TYPE_EZLINK:
+                                    paymentType = "EZ-Link";
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                     paymentType = PrintService.instance.getResources().getString(R.string.paypal);

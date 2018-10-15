@@ -154,6 +154,8 @@ public class Store {
 
 	public static final String KPM_TIME = "kpm_time";
 
+	public static final String KPMG_PAYMENT_TYPE = "kpmg_payment_type";
+
 
 	private Store() {
 	};

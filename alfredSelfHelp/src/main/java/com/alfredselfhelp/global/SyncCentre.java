@@ -64,7 +64,8 @@ public class SyncCentre {
     }
 
 
-    public void commitOrder(Context context, Order order, OrderBill orderBill,  List<OrderDetail> orderDetails, Payment payment,  PaymentSettlement paymentSettlement,  Handler handler){
+    public void commitOrder(Context context, Order order, OrderBill orderBill,  List<OrderDetail> orderDetails,
+                            Payment payment,  PaymentSettlement paymentSettlement,  Handler handler, String cardNum){
         Map<String, Object> map = new HashMap<>();
         List<OrderModifier> orderModifiers = OrderModifierSQL.getAllOrderModifier(order);
         List<OrderDetailTax> orderDetailTaxs = OrderDetailTaxSQL.getAllOrderDetailTax(order);
@@ -83,6 +84,7 @@ public class SyncCentre {
         map.put("orderBills" , orderBills);
         map.put("payments" , payments);
         map.put("paymentSettlements" , paymentSettlements);
+        map.put("cardNum", cardNum);
         map.put("orderDetailTaxs" , orderDetailTaxs);
         map.put("orderSplits" , new ArrayList<OrderSplit>());
         map.put("roundAmounts" , new ArrayList<RoundAmount>());
@@ -105,7 +107,7 @@ public class SyncCentre {
          List<RoundAmount> roundAmounts = gson.fromJson(jsonObject.getString("roundAmounts"),
          new TypeToken<List<RoundAmount>>(){}.getType());
          */
-        HttpAPI.commitOrder(context, map, getAbsoluteUrl(APIName.KPMG_COMMIT_ORDER), httpClient, handler);
+        HttpAPI.commitOrder(context, map, getAbsoluteUrl(APIName.KPMG_COMMIT_ORDER), httpClient, handler, paymentSettlement, cardNum);
 
     }
 

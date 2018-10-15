@@ -75,6 +75,7 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.activity.EmployeeID;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.SyncCentre;
+import com.alfredselfhelp.utils.UIHelp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -653,7 +654,7 @@ public class HttpAnalysis {
 		}
 	}
 
-	public static void commitOrderAndOrderDetails(byte[] responseBody) {
+	public static void commitOrderAndOrderDetails(byte[] responseBody, String cardNum) {
 		Gson gson = new Gson();
 		try {
 			JSONObject jsonObject = new JSONObject(new String(responseBody));
@@ -687,9 +688,16 @@ public class HttpAnalysis {
 			//	RoundAmount roundAmount = gson.fromJson(jsonObject.getString("roundAmount"), RoundAmount.class);
 				RoundAmount roundAmount=new RoundAmount();
 				App.instance.remoteBillPrint(printer, title, order,
-						orderItems, orderModifiers, taxMaps, paymentSettlements, roundAmount);
+						orderItems, orderModifiers, taxMaps, paymentSettlements, roundAmount, cardNum);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
+            App.getTopActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                            UIHelp.showToast(App.instance, "error:"+e.getMessage());
+                    }
+                });
 			e.printStackTrace();
 		}
 	}

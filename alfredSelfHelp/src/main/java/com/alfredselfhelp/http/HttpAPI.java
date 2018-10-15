@@ -8,6 +8,7 @@ import android.view.View;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
@@ -100,7 +101,9 @@ public class HttpAPI {
 		}
 	}
 
-	public static void commitOrder(Context context, Map<String, Object> map, String url, AsyncHttpClient httpClient, final Handler handler) {
+	public static void commitOrder(Context context, Map<String, Object> map, String url,
+								   AsyncHttpClient httpClient, final Handler handler,
+								   final PaymentSettlement paymentSettlement, final String cardNum) {
 
 		try {
 			String j = new Gson().toJson(map);
@@ -116,8 +119,8 @@ public class HttpAPI {
 											  byte[] responseBody) {
 							super.onSuccess(statusCode, headers, responseBody);
 							if (resultCode == ResultCode.SUCCESS) {
-								HttpAnalysis.commitOrderAndOrderDetails(responseBody);
-								handler.sendEmptyMessage(MenuActivity.VIEW_COMMIT_ORDER_SUCCEED);
+								HttpAnalysis.commitOrderAndOrderDetails(responseBody, cardNum);
+								handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_COMMIT_ORDER_SUCCEED, paymentSettlement));
 							} else {
 								handler.sendEmptyMessage(MenuActivity.VIEW_COMMIT_ORDER_FAILED);
 							}

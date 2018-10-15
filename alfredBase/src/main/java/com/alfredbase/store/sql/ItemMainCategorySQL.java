@@ -209,7 +209,7 @@ public class ItemMainCategorySQL {
 
     public static ArrayList<ItemMainCategory> getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp() {
         ArrayList<ItemMainCategory> result = new ArrayList<ItemMainCategory>();
-        String sql = "select * from " + TableNames.ItemMainCategory + " where isActive = 1 and isShowDiner != 1 and id IN (select distinct itemMainCategoryId from " + TableNames.ItemDetail + " where isActive = 1) order by indexId";
+        String sql = "select * from " + TableNames.ItemMainCategory + " where isActive = 1 and isShowDiner = 1 and id IN (select distinct itemMainCategoryId from " + TableNames.ItemDetail + " where isActive = 1) order by indexId";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {

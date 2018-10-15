@@ -447,7 +447,7 @@ public class EditSettlementPage extends BaseActivity {
                                             .addAlipaySettlement(oldAlipaySettlement);
                                 }
                                 break;
-                            case ParamConst.SETTLEMENT_TYPE_WEIXIN:
+                            case ParamConst.SETTLEMENT_TYPE_EZLINK:
                                 WeixinSettlement oldWeixinSettlement = (WeixinSettlement) paymentMap
                                         .get("subPaymentSettlement");
                                 if (oldWeixinSettlement != null) {
@@ -530,7 +530,7 @@ public class EditSettlementPage extends BaseActivity {
                                             .deleteAlipaySettlement(newAlipaySettlement);
                                 }
                                 break;
-                            case ParamConst.SETTLEMENT_TYPE_WEIXIN:
+                            case ParamConst.SETTLEMENT_TYPE_EZLINK:
                                 WeixinSettlement newWeixinSettlement = (WeixinSettlement) newPaymentMap
                                         .get("newSubPaymentSettlement");
                                 if (newWeixinSettlement != null) {

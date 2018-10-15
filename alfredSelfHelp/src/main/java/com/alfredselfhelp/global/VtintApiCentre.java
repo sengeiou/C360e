@@ -26,6 +26,7 @@ public class VtintApiCentre {
     private static final byte ACK = 0x06;
     private static final byte NAK = 0x15;
     private static final String sales = "C200";
+    private static final String netsSales = "C200";
     private static final String amount = "0412%012d";
     private static final String identifier = "5706%06d";
     private static final String trace = "612000109040112121200001";

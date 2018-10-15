@@ -30,8 +30,6 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
-import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -44,12 +42,10 @@ import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
-import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
@@ -60,7 +56,6 @@ import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
-import com.alfredposclient.push.SendEmailThread;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -271,9 +266,9 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				if(order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED){
 					return;
 				}
-				DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning), "Hold the Order ?",
-						parent.getString(R.string.cancel), parent.getString(R.string.ok),
-						null, new OnClickListener() {
+				DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning), "Hold the Order\nSending to Kitchen ?",
+						parent.getString(R.string.no), parent.getString(R.string.yes),
+						new OnClickListener() {
 							@Override
 							public void onClick(View v) {
 								order.setOrderStatus(ParamConst.ORDER_STATUS_HOLD);
@@ -282,7 +277,60 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 								App.instance.setKioskHoldNum(count);
 								handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
 							}
-						});
+						}, new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								order.setOrderStatus(ParamConst.ORDER_STATUS_HOLD_KITCHEN);
+								//Sent to Kitchen after close bill in kiosk mode
+								String kotCommitStatus = ParamConst.JOB_NEW_KOT;
+								List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetails(order.getId());
+								List<Integer> orderDetailIds = new ArrayList<Integer>();
+								ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
+								ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+								for (OrderDetail orderDetail : placedOrderDetails) {
+									orderDetailIds.add(orderDetail.getId());
+								}
+
+								KotSummary kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
+								if (kotSummary != null) {
+									ArrayList<KotItemDetail> kotItemDetails =
+											KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummary.getId(), order.getId());
+
+									kotorderModifiers = OrderModifierSQL.getAllOrderModifierByOrderAndNormal(order);
+									for (KotItemDetail kot : kotItemDetails) {
+										ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
+												.getKotItemModifiersByKotItemDetail(kot.getId());
+										if (kotItemModifierObj != null)
+											kotItemModifiers.addAll(kotItemModifierObj);
+									}
+
+									PrinterTitle title = ObjectFactory.getInstance()
+											.getPrinterTitle(
+													App.instance.getRevenueCenter(),
+													order,
+													App.instance.getUser().getFirstName()
+															+ App.instance.getUser().getLastName(),
+													"", 1);
+
+									Map<String, Object> orderMap = new HashMap<String, Object>();
+
+									orderMap.put("orderId", order.getId());
+									orderMap.put("orderDetailIds", orderDetailIds);
+									orderMap.put("paidOrder", order);
+									orderMap.put("title", title);
+									orderMap.put("placedOrderDetails", placedOrderDetails);
+									App.instance.getKdsJobManager().tearDownKot(
+											kotSummary, kotItemDetails,
+											kotItemModifiers, kotCommitStatus,
+											orderMap);
+								}
+								//end KOT print
+								OrderSQL.updateOrder(order);
+								int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+								App.instance.setKioskHoldNum(count);
+								handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+							}
+						}, true);
 				break;
 			case R.id.tv_table_name:
 				parent.openCustomNoteView();

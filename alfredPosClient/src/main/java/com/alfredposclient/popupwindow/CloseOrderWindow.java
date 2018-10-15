@@ -879,7 +879,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                 AlipaySettlementSQL.deleteAlipaySettlement(alipaySettlement);
                             }
                             break;
-                        case ParamConst.SETTLEMENT_TYPE_WEIXIN:
+                        case ParamConst.SETTLEMENT_TYPE_EZLINK:
                             WeixinSettlement weixinSettlement = WeixinSettlementSQL
                                     .getWeixinSettlementByPament(payment.getId(),
                                             paymentSettlement.getId());
@@ -1063,7 +1063,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         TextView tv_wechat_ali_settlement = (TextView) contentView.findViewById(R.id.tv_wechat_ali_settlement);
         if (payTypeId == ParamConst.SETTLEMENT_TYPE_ALIPAY) {
             tv_wechat_ali_settlement.setText(parent.getResources().getString(R.string.alipay_settlement));
-        } else if (payTypeId == ParamConst.SETTLEMENT_TYPE_WEIXIN) {
+        } else if (payTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK) {
             tv_wechat_ali_settlement.setText(parent.getResources().getString(R.string.wechat_settlement));
         }
         tv_wechat_ali_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
@@ -1538,7 +1538,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_ALIPAY);
                     break;
                 case R.id.iv_wechatpay:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_WEIXIN);
+                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_EZLINK);
                     break;
                 case R.id.tv_VOID:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
@@ -1820,7 +1820,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         View.VISIBLE);
                 // show.append(0);
                 break;
-            case ParamConst.SETTLEMENT_TYPE_WEIXIN:
+            case ParamConst.SETTLEMENT_TYPE_EZLINK:
                 initWeChatAlipaySettlement(payTypeId);
                 contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
                         View.VISIBLE);
@@ -1904,7 +1904,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
                         View.INVISIBLE);
                 break;
-            case ParamConst.SETTLEMENT_TYPE_WEIXIN:
+            case ParamConst.SETTLEMENT_TYPE_EZLINK:
                 contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
                         View.INVISIBLE);
                 break;
@@ -2460,7 +2460,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
             break;
 
-            case ParamConst.SETTLEMENT_TYPE_WEIXIN: {
+            case ParamConst.SETTLEMENT_TYPE_EZLINK: {
                 BigDecimal paidBD = BH.getBD(tv_wechat_ali_amount_paid_num.getText().toString());
                 if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                     PaymentSettlement paymentSettlement = ObjectFactory.getInstance()

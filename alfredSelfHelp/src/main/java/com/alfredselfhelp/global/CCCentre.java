@@ -13,6 +13,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,6 +34,7 @@ public class CCCentre {
     private static CCCentre instance;
     private String paymentMsg;
     private static final String sales = "C200";
+    private static final String ntesSales = "C610";
     private static final String amount = "0412%012d";
     private static final String identifier = "5706%06d";
     private Handler handler;
@@ -66,6 +69,17 @@ public class CCCentre {
 
         if (mExecutorService != null && !TextUtils.isEmpty(HOST)) {
             StringBuffer str = new StringBuffer(sales);
+            str.append(String.format(amount, Integer.parseInt(price)));
+            str.append(String.format(identifier, i++));
+            send(str.toString());
+            paymentMsg = str.toString();
+        }
+    }
+
+    public void startNetsPay(String price) {
+
+        if (mExecutorService != null && !TextUtils.isEmpty(HOST)) {
+            StringBuffer str = new StringBuffer(ntesSales);
             str.append(String.format(amount, Integer.parseInt(price)));
             str.append(String.format(identifier, i++));
             send(str.toString());
@@ -128,11 +142,38 @@ public class CCCentre {
                         if(lastRespont.contains("UNIONPAY")){
                             paymentType = ParamConst.SETTLEMENT_TYPE_UNIPAY;
                         }
-                        if(lastRespont.contains("NETS")){
-                            paymentType = ParamConst.SETTLEMENT_TYPE_NETS;
+//                        if(lastRespont.contains("NETS")){
+//                            paymentType = ParamConst.SETTLEMENT_TYPE_NETS;
+//                        }
+                        String x = "XXXXXXXXXXXX";
+                        String cardNum = "";
+                        if(lastRespont.contains(x)){
+                            try{
+                                String[] strings = lastRespont.split(x);
+                                String last = strings[1];
+                                cardNum = last.substring(0,4);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
+                        Map<String, Object> cardInfoMap = new HashMap<>();
+                        cardInfoMap.put("paymentType", paymentType);
+                        cardInfoMap.put("cardNum", cardNum);
                         
-                        handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_SUCCEED, paymentType));
+                        handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED, paymentType));
+                    } else if(lastRespont.contains("R610")
+                            ){
+//                        App.getTopActivity().runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+////                            UIHelp.showToast(App.instance, "sending Command");
+//                            UIHelp.showToast(App.instance, "respones" + lastRespont);
+//                        }
+//                    });
+                        if(lastRespont.contains("390200")) {
+                            handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED, ParamConst.SETTLEMENT_TYPE_EZLINK));
+                        }
                     }else{
                         handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
                     }
@@ -141,8 +182,8 @@ public class CCCentre {
 //                        @Override
 //                        public void run() {
 //
-//                            UIHelp.showToast(App.instance, "sending Command");
-////                            UIHelp.showToast(App.instance, lastRespont);
+////                            UIHelp.showToast(App.instance, "sending Command");
+////                            UIHelp.showToast(App.instance, "Response:" + lastRespont);
 //                        }
 //                    });
                 }
@@ -178,6 +219,13 @@ public class CCCentre {
                 socket.setTcpNoDelay(true);
                 out = socket.getOutputStream();
                 handler.sendEmptyMessage(MenuActivity.VIEW_CC_CONNECT_SUCCEED);
+//                App.getTopActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                            UIHelp.showToast(App.instance, "ConnectService Command");
+//                    }
+//                });
             } catch (final Exception e) {
                 LogUtil.e(TAG, ("connectService:" + e.getMessage()));
                 handler.sendEmptyMessage(MenuActivity.VIEW_CC_CONNECT_FAILED);
