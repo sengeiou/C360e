@@ -282,6 +282,12 @@ public class DaySalesReportPrint extends ReportBasePrint {
                     if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
                         ReportDayTax reportDayTax = reportDayTaxs.get(i);
                         taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
+                    }else if(reportDayTaxs.get(i).getTaxType().intValue() == 2) {
+
+                        if (!reportDayTaxs.get(i).getTaxPercentage().equals(0.07)) {
+                            ReportDayTax reportDayTax = reportDayTaxs.get(i);
+                            taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
+                        }
                     }
                 }
             }

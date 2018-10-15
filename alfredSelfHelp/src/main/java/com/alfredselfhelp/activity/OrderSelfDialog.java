@@ -16,6 +16,8 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.adapter.NurDetailAdapter;
 import com.alfredselfhelp.adapter.RvListener;
+import com.alfredselfhelp.global.App;
+import com.alfredselfhelp.javabean.ItemDetailDto;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 
 import java.util.ArrayList;
@@ -28,8 +30,9 @@ public class OrderSelfDialog extends Dialog{
     private TextView no,tv_nur_name;//取消按钮
     private TextView titleTv;//消息标题文本
     private TextView messageTv;//消息提示文本
-    private String titleStr;//从外界设置的title文本
+    private String titleStr,totalStr;//从外界设置的title文本
     private String messageStr;//从外界设置的消息文本
+    private TextView name, total;
     //确定文本和取消文本的显示内容
     private String yesStr, noStr;
 
@@ -145,6 +148,22 @@ public class OrderSelfDialog extends Dialog{
         });
 
         re_nur.setAdapter(adapter);
+
+
+//        //如果用户自定了title和message
+        if (totalStr != null) {
+            total.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(totalStr));
+        }
+//        if (messageStr != null) {
+//            messageTv.setText(messageStr);
+//        }
+        //如果设置按钮的文字
+//        if (yesStr != null) {
+//            yes.setText(yesStr);
+//        }
+//        if (noStr != null) {
+//            no.setText(noStr);
+//        }
         yes.setText("Yes");
         no.setText("No");
     }
@@ -157,10 +176,19 @@ public class OrderSelfDialog extends Dialog{
         no = (TextView) findViewById(R.id.tv_no);
         re_nur=(RecyclerView)findViewById(R.id.re_nur_order);
 
-        tv_nur_name=(TextView)findViewById(R.id.tv_nur_name);
+        tv_nur_name = (TextView) findViewById(R.id.tv_nur_name);
+        name = (TextView) findViewById(R.id.tv_dialog_name);
+        total = (TextView) findViewById(R.id.tv_dialog_total);
+
         textTypeFace.setUbuntuMedium(tv_nur_name);
         textTypeFace.setUbuntuMedium(yes);
         textTypeFace.setUbuntuMedium(no);
+        textTypeFace.setUbuntuMedium(name);
+        textTypeFace.setUbuntuMedium(total);
+
+
+        //   titleTv = (TextView) findViewById(R.id.title);
+        //   messageTv = (TextView) findViewById(R.id.message);
     }
 
     /**
@@ -170,6 +198,10 @@ public class OrderSelfDialog extends Dialog{
      */
     public void setTitle(String title) {
         titleStr = title;
+    }
+
+    public void setTotal(String total) {
+        totalStr = total;
     }
 
     public void setList(List<OrderDetail> itemDetail) {
