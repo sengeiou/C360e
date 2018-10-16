@@ -248,9 +248,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     break;
                 case VIEW_CC_CONNECT_SUCCEED:
                     if(CCPaymentType == 1) {
-                        CCCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+                        CCCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 90*1000);
                     }else{
-                        CCCentre.getInstance().startNetsPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+                        CCCentre.getInstance().startEZLinkPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 20*1000);
                     }
                     break;
                 case VIEW_CC_CONNECT_FAILED:
@@ -974,6 +974,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                                paymentAction();
 //                            }
 //                        });
+                dialog.setTotal(nurOrder.getTotal());
                 dialog.setList(orderDetails);
                 dialog.show();
             }

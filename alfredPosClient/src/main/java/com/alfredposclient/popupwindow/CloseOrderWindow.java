@@ -44,7 +44,6 @@ import com.alfredbase.javabean.SettlementRestaurant;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.VoidSettlement;
-import com.alfredbase.javabean.WeixinSettlement;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
 import com.alfredbase.store.sql.BohHoldSettlementSQL;
 import com.alfredbase.store.sql.CardsSettlementSQL;
@@ -60,7 +59,6 @@ import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
-import com.alfredbase.store.sql.WeixinSettlementSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.BitmapUtil;
@@ -880,16 +878,16 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                             }
                             break;
                         case ParamConst.SETTLEMENT_TYPE_EZLINK:
-                            WeixinSettlement weixinSettlement = WeixinSettlementSQL
-                                    .getWeixinSettlementByPament(payment.getId(),
-                                            paymentSettlement.getId());
-                            subPaymentSettlement = weixinSettlement;
-                            if (parent instanceof EditSettlementPage) {
-                                weixinSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
-                                WeixinSettlementSQL.addWeixinSettlement(weixinSettlement);
-                            } else {
-                                WeixinSettlementSQL.deleteWeixinSettlement(weixinSettlement);
-                            }
+//                            WeixinSettlement weixinSettlement = WeixinSettlementSQL
+//                                    .getWeixinSettlementByPament(payment.getId(),
+//                                            paymentSettlement.getId());
+//                            subPaymentSettlement = weixinSettlement;
+//                            if (parent instanceof EditSettlementPage) {
+//                                weixinSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
+//                                WeixinSettlementSQL.addWeixinSettlement(weixinSettlement);
+//                            } else {
+//                                WeixinSettlementSQL.deleteWeixinSettlement(weixinSettlement);
+//                            }
                             break;
                         default:
                             break;
@@ -1064,7 +1062,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         if (payTypeId == ParamConst.SETTLEMENT_TYPE_ALIPAY) {
             tv_wechat_ali_settlement.setText(parent.getResources().getString(R.string.alipay_settlement));
         } else if (payTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK) {
-            tv_wechat_ali_settlement.setText(parent.getResources().getString(R.string.wechat_settlement));
+            tv_wechat_ali_settlement.setText("EZ-Link Settlement");
         }
         tv_wechat_ali_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
         tv_wechat_ali_ref_num.setText("");
@@ -2477,13 +2475,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         remainTotal = BH.sub(remainTotal, settlementNum, false);
                     }
                     PaymentSQL.addPayment(payment);
-                    WeixinSettlement weixinSettlement = ObjectFactory.getInstance().getWeixinSettlement(payment, paymentSettlement, "0", "");
+//                    WeixinSettlement weixinSettlement = ObjectFactory.getInstance().getWeixinSettlement(payment, paymentSettlement, "0", "");
                     payment_amount = remainTotal;
                     paymentType = viewTag;
                     if (newPaymentMapList != null) {
                         Map<String, Object> paymentMap = new HashMap<String, Object>();
                         paymentMap.put("newPaymentSettlement", paymentSettlement);
-                        paymentMap.put("newSubPaymentSettlement", weixinSettlement);
+//                        paymentMap.put("newSubPaymentSettlement", weixinSettlement);
                         newPaymentMapList.add(paymentMap);
                     }
                 }

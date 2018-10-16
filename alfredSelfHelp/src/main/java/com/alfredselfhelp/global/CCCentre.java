@@ -65,31 +65,31 @@ public class CCCentre {
 
     int i = 1;
 
-    public void startPay(String price) {
+    public void startPay(String price, int timeOut) {
 
         if (mExecutorService != null && !TextUtils.isEmpty(HOST)) {
             StringBuffer str = new StringBuffer(sales);
             str.append(String.format(amount, Integer.parseInt(price)));
             str.append(String.format(identifier, i++));
-            send(str.toString());
+            send(str.toString(), timeOut);
             paymentMsg = str.toString();
         }
     }
 
-    public void startNetsPay(String price) {
+    public void startEZLinkPay(String price, int timeOut) {
 
         if (mExecutorService != null && !TextUtils.isEmpty(HOST)) {
             StringBuffer str = new StringBuffer(ntesSales);
             str.append(String.format(amount, Integer.parseInt(price)));
             str.append(String.format(identifier, i++));
-            send(str.toString());
+            send(str.toString(), timeOut);
             paymentMsg = str.toString();
         }
     }
 
-    public void send(String sendMsg) {
+    public void send(String sendMsg, int timeOut) {
         if(mExecutorService != null && !TextUtils.isEmpty(HOST)) {
-            mExecutorService.execute(new SendService(sendMsg));
+            mExecutorService.execute(new SendService(sendMsg, timeOut));
         }
     }
 
@@ -101,15 +101,17 @@ public class CCCentre {
 
     private class SendService implements Runnable {
         private String msg;
-
-        SendService(String msg) {
+        private int timeOut;
+        SendService(String msg, int timeOut) {
             this.msg = msg;
+            this.timeOut = timeOut;
         }
 
         @Override
         public void run() {
             try {
                 if(out != null){
+                    socket.setSoTimeout(timeOut);
                     out.write(this.msg.getBytes());
                     out.flush();
                     bff = new BufferedReader(new InputStreamReader(
@@ -203,8 +205,8 @@ public class CCCentre {
         return false;
     }
 
-    public void cancel(){
-        send(new String(new byte[]{0x18}));
+    public void cancel(int timeOut){
+        send(new String(new byte[]{0x18}), timeOut);
     }
 
     private class ConnectService implements Runnable {
@@ -213,7 +215,7 @@ public class CCCentre {
             try {
                 InetAddress inetAddress = InetAddress.getByName(CommonUtil.getLocalIpAddress());
                 socket = new Socket(HOST, PORT, inetAddress, LOCAL_PORT);
-                socket.setSoTimeout(15*60*1000);
+                socket.setSoTimeout(10*1000);
                 socket.setKeepAlive(true);
                 socket.setReuseAddress(true);
                 socket.setTcpNoDelay(true);

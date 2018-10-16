@@ -32,7 +32,6 @@ import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.VoidSettlement;
-import com.alfredbase.javabean.WeixinSettlement;
 import com.alfredbase.javabean.javabeanforhtml.EditSettlementInfo;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
@@ -55,7 +54,6 @@ import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
-import com.alfredbase.store.sql.WeixinSettlementSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
@@ -448,13 +446,13 @@ public class EditSettlementPage extends BaseActivity {
                                 }
                                 break;
                             case ParamConst.SETTLEMENT_TYPE_EZLINK:
-                                WeixinSettlement oldWeixinSettlement = (WeixinSettlement) paymentMap
-                                        .get("subPaymentSettlement");
-                                if (oldWeixinSettlement != null) {
-                                    oldWeixinSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
-                                    WeixinSettlementSQL
-                                            .addWeixinSettlement(oldWeixinSettlement);
-                                }
+//                                WeixinSettlement oldWeixinSettlement = (WeixinSettlement) paymentMap
+//                                        .get("subPaymentSettlement");
+//                                if (oldWeixinSettlement != null) {
+//                                    oldWeixinSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_ACTIVE);
+//                                    WeixinSettlementSQL
+//                                            .addWeixinSettlement(oldWeixinSettlement);
+//                                }
                                 break;
                             default:
                                 break;
@@ -531,12 +529,12 @@ public class EditSettlementPage extends BaseActivity {
                                 }
                                 break;
                             case ParamConst.SETTLEMENT_TYPE_EZLINK:
-                                WeixinSettlement newWeixinSettlement = (WeixinSettlement) newPaymentMap
-                                        .get("newSubPaymentSettlement");
-                                if (newWeixinSettlement != null) {
-                                    WeixinSettlementSQL
-                                            .deleteWeixinSettlement(newWeixinSettlement);
-                                }
+//                                WeixinSettlement newWeixinSettlement = (WeixinSettlement) newPaymentMap
+//                                        .get("newSubPaymentSettlement");
+//                                if (newWeixinSettlement != null) {
+//                                    WeixinSettlementSQL
+//                                            .deleteWeixinSettlement(newWeixinSettlement);
+//                                }
                                 break;
                             default:
                                 break;

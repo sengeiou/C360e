@@ -154,11 +154,11 @@ public class ReportObjectFactoryCP {
 		String alipay = BH.getBD(alipayMap.get("sumAmount")).toString();
 		String alipayQty = alipayMap.get("count");
 
-		Map<String, String> weixinpayMap = PaymentSettlementSQL
+		Map<String, String> ezPayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_EZLINK, businessDate);
-		String weixinpay = BH.getBD(weixinpayMap.get("sumAmount")).toString();
-		String weixinpayQty = weixinpayMap.get("count");
+		String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
+		String ezPayQty = ezPayMap.get("count");
 
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -452,7 +452,7 @@ public class ReportObjectFactoryCP {
 		nettSales = BH.add(nettSales, BH.getBD(totalCash), true);
 		nettSales = BH.add(nettSales, BH.getBD(paypalpay), true);
 		nettSales = BH.add(nettSales, BH.getBD(storedCard), true);
-		nettSales = BH.add(nettSales, BH.getBD(weixinpay), true);
+		nettSales = BH.add(nettSales, BH.getBD(ezPay), true);
 		nettSales = BH.add(nettSales, BH.getBD(alipay), true);
 		nettSales = BH.add(nettSales, BH.getBD(nets), true);
 		nettSales = BH.add(nettSales, BH.getBD(holdld), true);
@@ -498,8 +498,8 @@ public class ReportObjectFactoryCP {
 		reportDaySales.setNetsQty(Integer.parseInt(netsQty));
 		reportDaySales.setAlipay(alipay);
 		reportDaySales.setAlipayQty(Integer.parseInt(alipayQty));
-		reportDaySales.setWeixinpay(weixinpay);
-		reportDaySales.setWeixinpayQty(Integer.parseInt(weixinpayQty));
+		reportDaySales.setWeixinpay(ezPay);
+		reportDaySales.setWeixinpayQty(Integer.parseInt(ezPayQty));
 		reportDaySales.setPaypalpay(paypalpay);
 		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
 		reportDaySales.setStoredCard(storedCard);
@@ -2203,12 +2203,12 @@ public class ReportObjectFactoryCP {
 		String alipay = BH.getBD(alipayMap.get("sumAmount")).toString();
 		String alipayQty = alipayMap.get("count");
 		
-		Map<String, String> weixinpayMap = PaymentSettlementSQL
+		Map<String, String> ezPayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_EZLINK, businessDate,
 						sessionStatus);
-		String weixinpay = BH.getBD(weixinpayMap.get("sumAmount")).toString();
-		String weixinpayQty = weixinpayMap.get("count");
+		String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
+		String ezPayQty = ezPayMap.get("count");
 
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -2512,7 +2512,7 @@ public class ReportObjectFactoryCP {
 		nettSales = BH.add(nettSales, BH.getBD(totalCash), true);
 		nettSales = BH.add(nettSales, BH.getBD(paypalpay), true);
 		nettSales = BH.add(nettSales, BH.getBD(storedCard), true);
-		nettSales = BH.add(nettSales, BH.getBD(weixinpay), true);
+		nettSales = BH.add(nettSales, BH.getBD(ezPay), true);
 		nettSales = BH.add(nettSales, BH.getBD(alipay), true);
 		nettSales = BH.add(nettSales, BH.getBD(nets), true);
 		nettSales = BH.add(nettSales, BH.getBD(holdld), true);
@@ -2567,8 +2567,8 @@ public class ReportObjectFactoryCP {
 		reportDaySales.setNetsQty(Integer.parseInt(netsQty));
 		reportDaySales.setAlipay(alipay);
 		reportDaySales.setAlipayQty(Integer.parseInt(alipayQty));
-		reportDaySales.setWeixinpay(weixinpay);
-		reportDaySales.setWeixinpayQty(Integer.parseInt(weixinpayQty));
+		reportDaySales.setWeixinpay(ezPay);
+		reportDaySales.setWeixinpayQty(Integer.parseInt(ezPayQty));
 		reportDaySales.setPaypalpay(paypalpay);
 		reportDaySales.setPaypalpayQty(Integer.parseInt(paypalpayQty));
 		reportDaySales.setStoredCard(storedCard);
