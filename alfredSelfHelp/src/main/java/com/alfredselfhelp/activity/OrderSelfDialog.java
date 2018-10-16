@@ -6,10 +6,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.OrderDetail;
@@ -42,6 +46,7 @@ public class OrderSelfDialog extends Dialog{
 
     private Context mContext;
     NurDetailAdapter adapter;
+    int   width,height;
     private onNoOnclickListener noOnclickListener;//取消按钮被点击了的监听器
     private onYesOnclickListener yesOnclickListener;//确定按钮被点击了的监听器
 
@@ -185,6 +190,16 @@ public class OrderSelfDialog extends Dialog{
         textTypeFace.setUbuntuMedium(no);
         textTypeFace.setUbuntuMedium(name);
         textTypeFace.setUbuntuMedium(total);
+        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+        width = dm.widthPixels;
+        height = dm.heightPixels;
+
+
+        LinearLayout center = (LinearLayout) findViewById(R.id.ll_dialog_center);//获取当前控件的对象
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) center.getLayoutParams();
+//获取当前控件的布局对象
+        params.height = height / 3 * 2;//设置当前控件布局的高度
+        center.setLayoutParams(params);
 
 
         //   titleTv = (TextView) findViewById(R.id.title);
