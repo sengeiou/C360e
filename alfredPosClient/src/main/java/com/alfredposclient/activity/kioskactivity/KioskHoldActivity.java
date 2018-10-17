@@ -29,6 +29,7 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -40,6 +41,7 @@ import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
@@ -59,7 +61,7 @@ import java.util.List;
  * Created by Alex on 2018/4/16.
  */
 
-public class KioskHoldActivity extends BaseActivity {
+public class KioskHoldActivity extends BaseActivity implements View.OnLongClickListener {
     private boolean hasOrder;
     private LinearLayout ll_orderdetail_layout;
     private ListView lv_order_list;
@@ -73,7 +75,7 @@ public class KioskHoldActivity extends BaseActivity {
     private KioskHoldOderDetailAdapter kioskHoldOderDetailAdapter;
     private TextTypeFace textTypeFace = TextTypeFace.getInstance();
     private int selectViewId;
-    private TextView tv_hold_order;
+    private TextView tv_hold_order, tv_hold_kitchen_order;
     private TextView tv_kiosk_order;
     private TextView tv_remarks;
     private TextView tv_eat_type;
@@ -100,10 +102,21 @@ public class KioskHoldActivity extends BaseActivity {
         loadingDialog.setTitle("Loading");
         inflater = LayoutInflater.from(this);
         selectOrderItem = 0;
-        selectViewId = R.id.tv_kiosk_order;
+        int status = Store.getInt(context, Store.DEFAULT_VIEW, -1);
+        selectViewId = R.id.tv_hold_kitchen_order;
+        if(status>0){
+            if(status == ParamConst.ORDER_STATUS_HOLD){
+                selectViewId = R.id.tv_hold_order;
+            }else if(status == ParamConst.ORDER_STATUS_KIOSK){
+                selectViewId = R.id.tv_kiosk_order;
+            }else {
+                selectViewId = R.id.tv_hold_kitchen_order;
+            }
+        }
         lv_order_list = (ListView) findViewById(R.id.lv_order_list);
         lv_orderdetail_list = (ListView) findViewById(R.id.lv_orderdetail_list);
         tv_hold_order = (TextView) findViewById(R.id.tv_hold_order);
+        tv_hold_kitchen_order = (TextView) findViewById(R.id.tv_hold_kitchen_order);
         tv_kiosk_order = (TextView) findViewById(R.id.tv_kiosk_order);
         btn_close_w_cash = (Button) findViewById(R.id.btn_close_w_cash);
         btn_get_order = (Button) findViewById(R.id.btn_get_order);
@@ -177,7 +190,11 @@ public class KioskHoldActivity extends BaseActivity {
         kioskHoldOderDetailAdapter = new KioskHoldOderDetailAdapter();
         lv_orderdetail_list.setAdapter(kioskHoldOderDetailAdapter);
         tv_hold_order.setOnClickListener(this);
+        tv_hold_kitchen_order.setOnClickListener(this);
         tv_kiosk_order.setOnClickListener(this);
+        tv_hold_order.setOnLongClickListener(this);
+        tv_hold_kitchen_order.setOnLongClickListener(this);
+        tv_kiosk_order.setOnLongClickListener(this);
         btn_close_w_cash.setOnClickListener(this);
         btn_get_order.setOnClickListener(this);
         btn_refresh.setOnClickListener(this);
@@ -194,14 +211,21 @@ public class KioskHoldActivity extends BaseActivity {
     private void initData(){
         tv_hold_order.setBackgroundColor(getResources().getColor(R.color.white));
         tv_hold_order.setTextColor(getResources().getColor(R.color.black));
+        tv_hold_kitchen_order.setBackgroundColor(getResources().getColor(R.color.white));
+        tv_hold_kitchen_order.setTextColor(getResources().getColor(R.color.black));
         tv_kiosk_order.setBackgroundColor(getResources().getColor(R.color.white));
         tv_kiosk_order.setTextColor(getResources().getColor(R.color.black));
-        int orderStatus = ParamConst.ORDER_STATUS_HOLD;
+        int orderStatus = ParamConst.ORDER_STATUS_HOLD_KITCHEN;
         switch (selectViewId){
             case R.id.tv_hold_order:
                 orderStatus = ParamConst.ORDER_STATUS_HOLD;
                 tv_hold_order.setBackgroundColor(getResources().getColor(R.color.brownness));
                 tv_hold_order.setTextColor(getResources().getColor(R.color.white));
+                break;
+            case R.id.tv_hold_kitchen_order:
+                orderStatus = ParamConst.ORDER_STATUS_HOLD_KITCHEN;
+                tv_hold_kitchen_order.setBackgroundColor(getResources().getColor(R.color.brownness));
+                tv_hold_kitchen_order.setTextColor(getResources().getColor(R.color.white));
                 break;
             case R.id.tv_kiosk_order:
                 orderStatus = ParamConst.ORDER_STATUS_KIOSK;
@@ -244,6 +268,7 @@ public class KioskHoldActivity extends BaseActivity {
         super.handlerClickEvent(v);
         switch (v.getId()){
             case R.id.tv_hold_order:
+            case R.id.tv_hold_kitchen_order:
             case R.id.tv_kiosk_order:
                 selectViewId = v.getId();
                 et_search.setQuery("", false);
@@ -412,6 +437,44 @@ public class KioskHoldActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()){
+            case R.id.tv_hold_order:
+                DialogFactory.commonTwoBtnDialog(context, getString(R.string.warning), "Default View ?",
+                        getString(R.string.cancel), getString(R.string.ok), null,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Store.putInt(context, Store.DEFAULT_VIEW, ParamConst.ORDER_STATUS_HOLD);
+                            }
+                        });
+
+                break;
+            case R.id.tv_hold_kitchen_order:
+                DialogFactory.commonTwoBtnDialog(context, getString(R.string.warning), "Default View ?",
+                        getString(R.string.cancel), getString(R.string.ok), null,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Store.putInt(context, Store.DEFAULT_VIEW, ParamConst.ORDER_STATUS_HOLD_KITCHEN);
+                            }
+                });
+                break;
+            case R.id.tv_kiosk_order:
+                DialogFactory.commonTwoBtnDialog(context, getString(R.string.warning), "Default View ?",
+                        getString(R.string.cancel), getString(R.string.ok), null,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Store.putInt(context, Store.DEFAULT_VIEW, ParamConst.ORDER_STATUS_KIOSK);
+                            }
+                        });
+                break;
+        }
+        return false;
     }
 
     class KioskHoldOderAdapter extends BaseAdapter {

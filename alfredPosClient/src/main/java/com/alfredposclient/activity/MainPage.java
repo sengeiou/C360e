@@ -789,6 +789,7 @@ public class MainPage extends BaseActivity {
                             .getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
                     KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                     if (kotSummary != null) {
+
                         kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
                         KotSummarySQL.update(kotSummary);
                     }

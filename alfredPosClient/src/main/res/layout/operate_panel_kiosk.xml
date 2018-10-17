@@ -110,15 +110,15 @@
 
         <TextView
             android:id="@+id/tv_print_bill"
-            android:layout_width="@dimen/dp90"
-            android:layout_height="@dimen/dp100"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="@dimen/dp60"
             android:background="@drawable/box_bill_selector"
-            android:layout_marginRight="5dp"
             android:gravity="center"
             android:text="@string/print_bill"
             android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_small" 
-            android:visibility="gone"/>
+            android:textSize="@dimen/text_size_small"/>
 
         <TextView
             android:id="@+id/tv_discount"

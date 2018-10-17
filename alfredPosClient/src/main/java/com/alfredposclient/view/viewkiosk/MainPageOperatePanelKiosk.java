@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
+import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.SureDialog;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
@@ -104,7 +105,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 		findViewById(R.id.tv_discount).setOnClickListener(this);
 		findViewById(R.id.tv_open_item).setOnClickListener(this);
 		findViewById(R.id.tv_delete_order).setOnClickListener(this);
-//		findViewById(R.id.tv_print_bill).setOnClickListener(this);
+		findViewById(R.id.tv_print_bill).setOnClickListener(this);
 //		findViewById(R.id.tv_transfer_table).setOnClickListener(this);
 		findViewById(R.id.tv_kick_cashdrawer).setOnClickListener(this);
 		findViewById(R.id.tv_take_away).setOnClickListener(this);
@@ -161,6 +162,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 
 	private void initTextTypeFace() {
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_print_bill));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_discount));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_open_item));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_delete_order));
@@ -244,9 +246,9 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				msg.what = MainPage.VIEW_EVENT_SHOW_OPEN_ITEM_WINDOW;
 				handler.sendMessage(msg);
 				break;
-//			case R.id.tv_print_bill:
-//				handler.sendEmptyMessage(MainPage.VIEW_EVENT_OPERATEPANEL);
-//				break;
+			case R.id.tv_print_bill:
+				handler.sendEmptyMessage(MainPage.VIEW_EVENT_OPERATEPANEL);
+				break;
 			case R.id.tv_transfer_table:
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_TANSFER_TABLE);
 				break;
@@ -281,8 +283,146 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 							@Override
 							public void onClick(View v) {
 								order.setOrderStatus(ParamConst.ORDER_STATUS_HOLD_KITCHEN);
+								{
+									List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
+
+									Map<Integer, String> categorMap = new HashMap<Integer, String>();
+									Map<String, Map<Integer, String>> checkMap = new HashMap<String, Map<Integer, String>>();
+									for (int i = 0; i < allModifierCheck.size(); i++) {
+										ModifierCheck modifierCheck;
+										modifierCheck = allModifierCheck.get(i);
+										boolean needCheck = false;
+										if (orderDetails != null && orderDetails.size() > 0) {
+											for (OrderDetail orderDetail : orderDetails) {
+												if (orderDetail.getId().intValue() == modifierCheck.getOrderDetailId()) {
+													needCheck = true;
+												}
+											}
+										}
+										if (modifierCheck.getNum() > 0 && needCheck) {
+											if (checkMap.containsKey(modifierCheck.getItemName())) {
+												categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.At_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
+												checkMap.put(modifierCheck.getItemName(), categorMap);
+
+											} else {
+												categorMap = new HashMap<Integer, String>();
+												categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.At_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
+												checkMap.put(modifierCheck.getItemName(), categorMap);
+											}
+										}
+									}
+
+
+									if (checkMap.size() > 0) {
+										StringBuffer checkbuf = new StringBuffer();
+										Iterator iter = checkMap.entrySet().iterator();
+										while (iter.hasNext()) {
+											Map.Entry entry = (Map.Entry) iter.next();
+											String key = (String) entry.getKey();
+											checkbuf.append(" " + key + ":");
+											Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
+											Iterator iter2 = val.entrySet().iterator();
+											while (iter2.hasNext()) {
+												Map.Entry entry2 = (Map.Entry) iter2.next();
+												String val2 = (String) entry2.getValue();
+												checkbuf.append(val2 + " ");
+											}
+										}
+
+										UIHelp.showToast(parent, checkbuf.toString());
+										return;
+									} else {
+										OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+												order, App.instance.getRevenueCenter());
+										OrderBillSQL.add(orderBill);
+
+										List<OrderDetail> placedOrderDetails
+												= OrderDetailSQL.getOrderDetails(order.getId());
+										KotSummary kotSummary = ObjectFactory.getInstance()
+												.getKotSummary(
+														TableInfoSQL.getTableById(
+																order.getTableId()).getName(), order,
+														App.instance.getRevenueCenter(),
+														App.instance.getBusinessDate());
+										ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+										List<Integer> orderDetailIds = new ArrayList<Integer>();
+										ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+										String kotCommitStatus = ParamConst.JOB_NEW_KOT;
+										for (OrderDetail orderDetail : placedOrderDetails) {
+											if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_PREPARED) {
+												continue;
+											}
+											if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+												kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+											} else {
+												KotItemDetail kotItemDetail = ObjectFactory
+														.getInstance()
+														.getKotItemDetail(
+																order,
+																orderDetail,
+																CoreData.getInstance()
+																		.getItemDetailById(
+																				orderDetail
+																						.getItemId()),
+																kotSummary,
+																App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+												kotItemDetail.setItemNum(orderDetail
+														.getItemNum());
+												if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
+													kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
+													kotItemDetail
+															.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+												}
+												KotItemDetailSQL.update(kotItemDetail);
+												kotItemDetails.add(kotItemDetail);
+												orderDetailIds.add(orderDetail.getId());
+												ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+														.getOrderModifiers(order, orderDetail);
+												for (OrderModifier orderModifier : orderModifiers) {
+													if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
+														KotItemModifier kotItemModifier = ObjectFactory
+																.getInstance()
+																.getKotItemModifier(
+																		kotItemDetail,
+																		orderModifier,
+																		CoreData.getInstance()
+																				.getModifier(
+																						orderModifier
+																								.getModifierId()));
+														KotItemModifierSQL.update(kotItemModifier);
+														kotItemModifiers.add(kotItemModifier);
+													}
+												}
+											}
+										}
+										KotSummarySQL.update(kotSummary);
+										PrinterTitle title = ObjectFactory.getInstance()
+												.getPrinterTitle(
+														App.instance.getRevenueCenter(),
+														order,
+														App.instance.getUser().getFirstName()
+																+ App.instance.getUser().getLastName(),
+														"", 1);
+
+										Map<String, Object> orderMap = new HashMap<String, Object>();
+
+										orderMap.put("orderId", order.getId());
+										orderMap.put("orderDetailIds", orderDetailIds);
+										orderMap.put("paidOrder", order);
+										orderMap.put("title", title);
+										orderMap.put("placedOrderDetails", placedOrderDetails);
+										PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+												parent);
+										printerLoadingDialog.setTitle(parent.getResources().getString(R.string.receipt_printing));
+										printerLoadingDialog.showByTime(3000);
+										App.instance.getKdsJobManager().tearDownKot(
+												kotSummary, kotItemDetails,
+												kotItemModifiers, kotCommitStatus,
+												orderMap);
+									}
+								}
 								//Sent to Kitchen after close bill in kiosk mode
-								String kotCommitStatus = ParamConst.JOB_NEW_KOT;
+								/**String kotCommitStatus = ParamConst.JOB_NEW_KOT;
 								List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetails(order.getId());
 								List<Integer> orderDetailIds = new ArrayList<Integer>();
 								ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
@@ -324,6 +464,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 											kotItemModifiers, kotCommitStatus,
 											orderMap);
 								}
+								 */
 								//end KOT print
 								OrderSQL.updateOrder(order);
 								int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());

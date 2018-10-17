@@ -2,12 +2,12 @@ package com.alfredselfhelp.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -128,5 +128,25 @@ public class UIHelp {
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(view);
         toast.show();
+    }
+
+    public static void showSoShortToast(BaseActivity context, String text){
+        final Toast toast = new Toast(context);
+        LayoutInflater inflater = context.getLayoutInflater();
+        View view = inflater.inflate(com.alfredbase.R.layout.toast_view, null);
+        TextView tv_toast_view = (TextView) view.findViewById(com.alfredbase.R.id.tv_toast_view);
+        tv_toast_view.setText(text);
+        TextTypeFace textTypeFace = TextTypeFace.getInstance();
+        textTypeFace.setTrajanProRegular(tv_toast_view);
+        toast.setGravity(Gravity.BOTTOM, 0, 10);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(view);
+        toast.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                toast.cancel();
+            }
+        },5000);
     }
 }

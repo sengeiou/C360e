@@ -139,7 +139,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -645,7 +644,8 @@ public class MainPageKiosk extends BaseActivity {
 
                     PrinterDevice printer = App.instance.getCahierPrinter();
                     List<Map<String, String>> taxMap = OrderDetailTaxSQL
-                            .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
+                            .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig()
+                                    .getIncludedTax().getTax(), currentOrder);
 
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
                             .getInstance().getItemList(
@@ -655,9 +655,11 @@ public class MainPageKiosk extends BaseActivity {
                             .getOrderBillByOrder(currentOrder);
                     if (OrderDetailSQL
                             .getOrderDetailsCountUnPlaceOrder(currentOrder.getId()) > 0) {
-                        UIHelp.showToast(context, context.getResources().getString(R.string.place_before_print));
+                        UIHelp.showToast(context,
+                                context.getResources().getString(R.string.place_before_print));
                     } else if (printer == null) {
-                        UIHelp.showToast(context, context.getResources().getString(R.string.setting_printer));
+                        UIHelp.showToast(
+                                context, context.getResources().getString(R.string.setting_printer));
                     } else if (orderItems.size() > 0 && printer != null
                             && orderBill != null && orderBill.getBillNo() != null) {
                         int orderSplitCount = OrderSplitSQL.getOrderSplitsCountByOrder(currentOrder);
@@ -682,10 +684,8 @@ public class MainPageKiosk extends BaseActivity {
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
                                             .getId()));
-                            RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(currentOrder);
                             App.instance.remoteBillPrint(printer, title, currentOrder,
-                                    orderItems, orderModifiers, taxMap, null, roundAmount);
-                            ModifierCheckSql.deleteAllModifierCheck(currentOrder.getId());
+                                    orderItems, orderModifiers, taxMap, null, null);
                         }
                     } else {
                         UIHelp.showToast(context, context.getResources().getString(R.string.no_items));
@@ -801,7 +801,7 @@ public class MainPageKiosk extends BaseActivity {
                             App.instance.kickOutCashDrawer(printer);
                         }
                     }
-                    if(App.instance.getPosType() == 0) {
+                    if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
 
                         //Sent to Kitchen after close bill in kiosk mode
                         String kotCommitStatus = ParamConst.JOB_NEW_KOT;
@@ -809,22 +809,49 @@ public class MainPageKiosk extends BaseActivity {
                         List<Integer> orderDetailIds = new ArrayList<Integer>();
                         ArrayList<OrderModifier> kotorderModifiers = new ArrayList<OrderModifier>();
                         ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
-                        for (OrderDetail orderDetail : placedOrderDetails) {
-                            orderDetailIds.add(orderDetail.getId());
-                        }
 
                         KotSummary kotSummary = KotSummarySQL.getKotSummary(paidOrder.getId(), paidOrder.getNumTag());
                         if (kotSummary != null) {
-                            ArrayList<KotItemDetail> kotItemDetails =
-                                    KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummary.getId(), paidOrder.getId());
-
-                            kotorderModifiers = OrderModifierSQL.getAllOrderModifierByOrderAndNormal(paidOrder);
-                            for (KotItemDetail kot : kotItemDetails) {
+                            ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
+                            for (OrderDetail orderDetail : placedOrderDetails) {
+                                if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+                                    continue;
+                                }
+                                orderDetailIds.add(orderDetail.getId());
+                                KotItemDetail kotItemDetail = ObjectFactory
+                                        .getInstance()
+                                        .getKotItemDetail(
+                                                paidOrder,
+                                                orderDetail,
+                                                CoreData.getInstance()
+                                                        .getItemDetailById(
+                                                                orderDetail
+                                                                        .getItemId()),
+                                                kotSummary,
+                                                App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+                                kotItemDetail.setItemNum(orderDetail
+                                        .getItemNum());
+                                kotItemDetails.add(kotItemDetail);
                                 ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
-                                        .getKotItemModifiersByKotItemDetail(kot.getId());
+                                        .getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
                                 if (kotItemModifierObj != null)
                                     kotItemModifiers.addAll(kotItemModifierObj);
+
                             }
+//                            ArrayList<KotItemDetail> kotItemDetailList =
+//                                    KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummary.getId(), paidOrder.getId());
+//                            kotorderModifiers = OrderModifierSQL.getAllOrderModifierByOrderAndNormal(paidOrder);
+//
+//                            for (KotItemDetail kot : kotItemDetailList) {
+//                                if(kot.getKotStatus() > ParamConst.KOT_STATUS_UNSEND){
+//                                    continue;
+//                                }
+//                                kotItemDetails.add(kot);
+//                                ArrayList<KotItemModifier> kotItemModifierObj = KotItemModifierSQL
+//                                        .getKotItemModifiersByKotItemDetail(kot.getId());
+//                                if (kotItemModifierObj != null)
+//                                    kotItemModifiers.addAll(kotItemModifierObj);
+//                            }
 
 
 //					List<OrderDetail> placedOrderDetails

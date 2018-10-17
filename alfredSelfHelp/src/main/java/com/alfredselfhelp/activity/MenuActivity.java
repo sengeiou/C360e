@@ -138,7 +138,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         super.initView();
         setContentView(R.layout.activity_menu);
         init();
-        timer.schedule(new MyTimerTask(), 3000);
+        startTimer(3000);
          App.instance.startADKpm();
     }
 
@@ -156,6 +156,28 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
     }
 
+    private void startTimer(long delay){
+        try {
+            if(timer == null){
+                timer = new Timer();
+            }
+            timer.schedule(new MyTimerTask(), delay);
+        }catch (Exception e){
+            Log.e("Error",e.getMessage());
+        }
+
+    }
+
+    private void cancelTimer(){
+        try {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+        }catch (Exception e){
+            Log.e("Error",e.getMessage());
+        }
+    }
 
     @Override
     public void httpRequestAction(int action, Object obj) {
@@ -398,7 +420,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         tv_dialog_ok = (TextView) findViewById(R.id.tv_dialog_ok);
         ll_order_dialog = (LinearLayout) findViewById(R.id.ll_order_dialog);
 
-        if(Store.getInt(context, Store.KPMG_PAYMENT_TYPE) == 1){
+        if(Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1) == 1){
             ll_view_order_card.setVisibility(View.VISIBLE);
             ll_view_order_ez.setVisibility(View.GONE);
         }else{
@@ -498,7 +520,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if (dialog != null && dialog.isShowing()) {
                     dialog.dismiss();
                 }
-                paymentAction();
+                String ip = Store.getString(App.instance, Store.KPM_CC_IP);
+                if(TextUtils.isEmpty(ip)){
+                    UIHelp.showToast(context, "Please contact Staff for IP Address");
+                }else {
+                    paymentAction(ip);
+                }
             }
         });
 //        viewCart(true);
@@ -508,9 +535,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     @Override
     protected void onDestroy() {
         try {
-            if (timer != null) {
-                timer.cancel();
-            }
+            cancelTimer();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -965,17 +990,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                     return;
                 }
-//                DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning),
-//                        "Kindly confirm to process the credit card ?",
-//                        context.getString(R.string.cancel), context.getString(R.string.ok),
-//                        null, new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                paymentAction();
-//                            }
-//                        });
                 dialog.setTotal(nurOrder.getTotal());
                 dialog.setList(orderDetails);
+                dialog.notifyAdapter();
                 dialog.show();
             }
                 break;
@@ -991,10 +1008,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
     }
 
-    private void paymentAction() {
-        if(timer != null){
-            timer.cancel();
-        }
+    private void paymentAction(String ip) {
+        cancelTimer();
         App.instance.stopADKpm();
         ll_view_cart.setVisibility(View.GONE);
         ll_view_pay.setVisibility(View.VISIBLE);
@@ -1018,12 +1033,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         }
                     }
                 },false);
-        String ip = Store.getString(App.instance, Store.KPM_CC_IP);
-        if(TextUtils.isEmpty(ip)){
-            UIHelp.showToast(context, "Please contact Staff for IP Address");
-        }else {
-            CCCentre.getInstance().connect(ip);
-        }
+        CCCentre.getInstance().connect(ip);
 
 //        new Thread(new Runnable() {
 //            @Override
@@ -1203,7 +1213,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
-                timer.schedule(new MyTimerTask(), 2000);
+                startTimer(2000);
             }
         }
     }

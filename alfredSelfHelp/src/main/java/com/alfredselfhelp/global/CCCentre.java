@@ -109,6 +109,7 @@ public class CCCentre {
 
         @Override
         public void run() {
+
             try {
                 if(out != null){
                     socket.setSoTimeout(timeOut);
@@ -165,16 +166,10 @@ public class CCCentre {
                         handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED, paymentType));
                     } else if(lastRespont.contains("R610")
                             ){
-//                        App.getTopActivity().runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-////                            UIHelp.showToast(App.instance, "sending Command");
-//                            UIHelp.showToast(App.instance, "respones" + lastRespont);
-//                        }
-//                    });
                         if(lastRespont.contains("390200")) {
                             handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED, ParamConst.SETTLEMENT_TYPE_EZLINK));
+                        }else{
+                            handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
                         }
                     }else{
                         handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
@@ -185,12 +180,22 @@ public class CCCentre {
 //                        public void run() {
 //
 ////                            UIHelp.showToast(App.instance, "sending Command");
+//                            UIHelp.showToast(App.instance, "Response:" + lastRespont);
+//                        }
+//                    });
+                }else{
+                    handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
+                }
+            } catch (final Exception e) {
+//                App.getTopActivity().runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            UIHelp.showToast(App.instance, "connectService:" + e.getMessage());
 ////                            UIHelp.showToast(App.instance, "Response:" + lastRespont);
 //                        }
 //                    });
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+                LogUtil.e(TAG, ("connectService:" + e.getMessage()));
                 handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
             }
         }
@@ -215,7 +220,7 @@ public class CCCentre {
             try {
                 InetAddress inetAddress = InetAddress.getByName(CommonUtil.getLocalIpAddress());
                 socket = new Socket(HOST, PORT, inetAddress, LOCAL_PORT);
-                socket.setSoTimeout(10*1000);
+//                socket.setSoTimeout(10*1000);
                 socket.setKeepAlive(true);
                 socket.setReuseAddress(true);
                 socket.setTcpNoDelay(true);

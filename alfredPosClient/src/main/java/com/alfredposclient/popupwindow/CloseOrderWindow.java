@@ -722,7 +722,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL)
 //						return;
 //					}
-                    if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL)
+                    if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYPAL || paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK)
                         return;
                     remainTotal = BH.getBD(paymentSettlement.getTotalAmount());
                     settlementNum = BH.sub(settlementNum,

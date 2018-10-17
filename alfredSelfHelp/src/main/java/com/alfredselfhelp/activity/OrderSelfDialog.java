@@ -11,7 +11,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -145,18 +144,17 @@ public class OrderSelfDialog extends Dialog{
         mLinearLayoutManager = new LinearLayoutManager(mContext);
         mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
         re_nur.setLayoutManager(mLinearLayoutManager);
-        adapter = new NurDetailAdapter(mContext, itemDetails, new RvListener() {
-            @Override
-            public void onItemClick(int id, int position) {
+        if(adapter == null) {
+            adapter = new NurDetailAdapter(mContext, itemDetails, new RvListener() {
+                @Override
+                public void onItemClick(int id, int position) {
 
-            }
-        });
-
-        re_nur.setAdapter(adapter);
-
-
+                }
+            });
+            re_nur.setAdapter(adapter);
+        }
 //        //如果用户自定了title和message
-        if (totalStr != null) {
+        if (totalStr != null && total != null) {
             total.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(totalStr));
         }
 //        if (messageStr != null) {
@@ -228,7 +226,12 @@ public class OrderSelfDialog extends Dialog{
     }
 
     public void notifyAdapter(){
-        adapter.notifyDataSetChanged();
+        if (totalStr != null && total != null) {
+            total.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(totalStr));
+        }
+        if(adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
     /**
      * 从外界Activity为Dialog设置dialog的message

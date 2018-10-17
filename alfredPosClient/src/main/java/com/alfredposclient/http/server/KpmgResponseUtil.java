@@ -227,7 +227,10 @@ public class KpmgResponseUtil {
             List<RoundAmount> roundAmounts = gson.fromJson(jsonObject.getString("roundAmounts"),
                     new TypeToken<List<RoundAmount>>() {
                     }.getType());
-            String cardNum = jsonObject.getString("cardNum");
+            String cardNum ="";
+            if(jsonObject.has("cardNum")) {
+                jsonObject.getString("cardNum");
+            }
             final int orderId = SubPosCommitSQL.commitOrderForKPMG(order, orderSplits, orderBills, payments, orderDetails,
                     orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts, cardNum);
             map.put("resultCode", ResultCode.SUCCESS);
