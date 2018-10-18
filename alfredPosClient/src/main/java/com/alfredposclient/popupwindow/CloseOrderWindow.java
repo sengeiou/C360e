@@ -2595,6 +2595,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
             break;
             case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD: {
+                // if (remainTotal.compareTo(showBigDecimal) > -1) {
+                // tv_authentication_amount_num.setText(BH.doubleFormat
+                // .format(shownum));
+                // } else {
+                // show.delete(show.length() - key.length(), show.length());
+                // }
             }
             break;
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT: {

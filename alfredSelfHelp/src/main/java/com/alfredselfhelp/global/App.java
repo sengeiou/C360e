@@ -441,6 +441,13 @@ public class App extends BaseApplication {
     }
 
     public Long getBusinessDate() {
+        if (businessDate == null) {
+            businessDate = (Long) Store.getLong(this, Store.BUSINESS_DATE);
+        }
+        // if all data is null, set today is businessDate
+        if (businessDate == Store.DEFAULT_LONG_TYPE) {
+            businessDate = TimeUtil.getNewBusinessDate();
+        }
         return businessDate;
     }
 

@@ -722,6 +722,9 @@ public class CoreData {
 	}
 
 	public Restaurant getRestaurant() {
+		if(restaurant == null){
+			restaurant = RestaurantSQL.getRestaurant();
+		}
 		return restaurant;
 	}
 

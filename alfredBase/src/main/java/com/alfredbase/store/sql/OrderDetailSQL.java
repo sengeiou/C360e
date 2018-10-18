@@ -2481,6 +2481,33 @@ public class OrderDetailSQL {
         return count;
     }
 
+    public static int getNoVoidCountByOrderId(int orderId){
+        String sql = "select count(*) from "
+                + TableNames.OrderDetail
+                + " where orderId = ? and orderDetailType <> " + ParamConst.ORDERDETAIL_TYPE_VOID;
+        int result = 0;
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{orderId + ""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            if (cursor.moveToFirst()) {
+                result = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
     public static ArrayList<OrderDetail> getOrderDetailByOrderIdAndOrderOriginId(
             int orderId, int orderOriginId) {
         ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();

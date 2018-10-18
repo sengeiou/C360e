@@ -38,7 +38,7 @@
     <string name="ent">ENT</string>
     <string name="nets">NETS</string>
     <string name="alipay">ALIPAY</string>
-    <string name="weixin">WECHATPAY</string>
+    <string name="weixin">EZ-Link</string>
     <string name="paypal">Diner App</string>
     <string name="stored_card_use">Stored-Card Use</string>
     <string name="stored_card">Stored-Card</string>

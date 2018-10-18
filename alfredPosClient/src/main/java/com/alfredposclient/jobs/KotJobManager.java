@@ -11,18 +11,14 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Printer;
-import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.model.KDSDevice;
-import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
 import com.alfredbase.utils.LogUtil;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
@@ -621,7 +617,10 @@ public class KotJobManager {
         kotItemModifiers.addAll(KotItemModifierSQL
                 .getKotItemModifiersByKotItemDetail(kotItemDetail
                         .getId()));
-        KotSummarySQL.deleteKotSummary(fromKotSummary);
+        List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
+        if(kotItemDetails == null || kotItemDetails.size() == 0) {
+            KotSummarySQL.deleteKotSummary(fromKotSummary);
+        }
         context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
         printKotSummary = toKotSummary;
         boolean printed = false;

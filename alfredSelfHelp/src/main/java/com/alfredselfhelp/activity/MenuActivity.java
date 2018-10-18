@@ -728,14 +728,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mClassAdapter = new ClassAdapter(context, itemCategorys, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
-
-                ItemCategory itemCategory = itemCategorys.get(position);
-                // isMoved = true;
-                //   App.isleftMoved = true;
-                //   targetPosition = position;
-                setChecked(position, true, 0);
-                getItemDetailmod(itemCategory);
-
+                if(itemCategorys != null && itemCategorys.size() > 0) {
+                    ItemCategory itemCategory = itemCategorys.get(position);
+                    // isMoved = true;
+                    //   App.isleftMoved = true;
+                    //   targetPosition = position;
+                    setChecked(position, true, 0);
+                    getItemDetailmod(itemCategory);
+                }
             }
         });
 

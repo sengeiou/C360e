@@ -1308,7 +1308,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     public void closeDiscovery() {
         try {
             Discovery.stop();
-        } catch (Epos2Exception e) {
+        } catch (Exception e) {
 //            e.printStackTrace();
         }
     }

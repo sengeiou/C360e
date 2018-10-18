@@ -22,6 +22,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
@@ -226,8 +227,14 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 				dismiss();
 			} else {
 				if(order != null){
-					order.setPersons(Integer.parseInt((String) tv_pax.getText().toString()));
-					OrderSQL.updateOrderPersions(Integer.parseInt((String) tv_pax.getText().toString()),order.getId());
+					int num = 4;
+					try {
+						num = Integer.parseInt((String) tv_pax.getText().toString());
+					}catch (Exception e){
+						LogUtil.e("ERROR", e.getMessage());
+					}
+					order.setPersons(num);
+					OrderSQL.updateOrderPersions(num,order.getId());
 				}
 				Message msg = handler.obtainMessage();
 				msg.what = MainPage.VIEW_EVENT_SET_TABLE_PACKS;

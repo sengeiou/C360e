@@ -37,7 +37,7 @@
     <string name="ent">免费</string>
     <string name="nets">NETS</string>
     <string name="alipay">支付宝</string>
-    <string name="weixin">微信支付</string>
+    <string name="weixin">EZ-Link</string>
     <string name="paypal">客户端支付</string>
     <string name="stored_card_use">储值卡消费</string>
     <string name="stored_card">储值卡</string>

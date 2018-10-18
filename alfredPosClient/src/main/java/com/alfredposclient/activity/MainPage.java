@@ -1299,6 +1299,7 @@ public class MainPage extends BaseActivity {
                                 }
 
                                 if (transfItemOrderDetail.getOrderDetailStatus().intValue() > ParamConst.ORDERDETAIL_STATUS_ADDED) {
+                                    OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(currentOrder,App.instance.getRevenueCenter());
                                     KotSummary toKotSummary = KotSummarySQL
                                             .getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                                     if (toKotSummary == null) {
@@ -1332,6 +1333,26 @@ public class MainPage extends BaseActivity {
                                     kotItemDetail.setKotSummaryId(toKotSummary.getId().intValue());
                                     kotItemDetail.setOrderId(toKotSummary.getOrderId().intValue());
                                     KotItemDetailSQL.update(kotItemDetail);
+                                    int surplusCount = OrderDetailSQL.getNoVoidCountByOrderId(oldOrder.getId());
+                                    if(surplusCount == 0){
+                                        OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
+                                        KotSummarySQL.deleteKotSummaryByOrder(oldOrder);
+                                        OrderBillSQL.deleteOrderBillByOrder(oldOrder);
+                                        OrderSQL.deleteOrder(oldOrder);
+                                        TableInfo tables = TableInfoSQL.getTableById(oldOrder.getTableId().intValue());
+                                        tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
+                                        TableInfoSQL.updateTables(tables);
+                                        try {
+                                            JSONObject jsonObject = new JSONObject();
+                                            jsonObject.put("tableId", tables.getPosId().intValue());
+                                            jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
+                                            jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+                                            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+                                            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                                     App.instance.getKdsJobManager()
                                             .transferItemDownKot(
                                                     toKotSummary,

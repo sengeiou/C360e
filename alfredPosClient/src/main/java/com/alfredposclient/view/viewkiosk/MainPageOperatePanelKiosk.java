@@ -105,7 +105,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 		findViewById(R.id.tv_discount).setOnClickListener(this);
 		findViewById(R.id.tv_open_item).setOnClickListener(this);
 		findViewById(R.id.tv_delete_order).setOnClickListener(this);
-		findViewById(R.id.tv_print_bill).setOnClickListener(this);
+		findViewById(R.id.tv_print_bill_).setOnClickListener(this);
 //		findViewById(R.id.tv_transfer_table).setOnClickListener(this);
 		findViewById(R.id.tv_kick_cashdrawer).setOnClickListener(this);
 		findViewById(R.id.tv_take_away).setOnClickListener(this);
@@ -162,10 +162,10 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 
 	private void initTextTypeFace() {
 		TextTypeFace textTypeFace = TextTypeFace.getInstance();
-		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_print_bill));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_discount));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_open_item));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_delete_order));
+		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_print_bill_));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_take_away));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_hold_bill));
 		textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_table_name));
@@ -246,7 +246,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				msg.what = MainPage.VIEW_EVENT_SHOW_OPEN_ITEM_WINDOW;
 				handler.sendMessage(msg);
 				break;
-			case R.id.tv_print_bill:
+			case R.id.tv_print_bill_:
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_OPERATEPANEL);
 				break;
 			case R.id.tv_transfer_table:

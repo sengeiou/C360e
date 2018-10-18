@@ -687,7 +687,7 @@ public class HttpAnalysis {
 						}.getType());
 			//	RoundAmount roundAmount = gson.fromJson(jsonObject.getString("roundAmount"), RoundAmount.class);
                 if(paymentSettlements == null || paymentSettlements.size() ==0){
-                    title.setOrderNo(title.getOrderNo() + "\n(Invalid Transaction)");
+                    title.setOrderNo(title.getOrderNo() + "\n(Payment Failed)");
                 }
 				RoundAmount roundAmount=new RoundAmount();
 				App.instance.remoteBillPrint(printer, title, order,
