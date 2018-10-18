@@ -536,8 +536,12 @@ public class CoreData {
 	public User getUser(String employee_ID, String password) {
 		if (CommonUtil.isNull(employee_ID) || CommonUtil.isNull(password))
 			return null;
-		if (users == null)
+		if (users == null || users.size() == 0) {
+			users = UserSQL.getAllUser();
+		}
+		if (users == null) {
 			return null;
+		}
 		for (User user : users) {
 			if (Integer.parseInt(employee_ID) == user.getEmpId().intValue()
 					&& password.equals(user.getPassword() + ""))
@@ -548,8 +552,11 @@ public class CoreData {
 	}
 
 	public User getUserByEmpId(int empId) {
-		if (users == null)
+		if (users == null || users.size() == 0)
+			users = UserSQL.getAllUser();
+		if(users == null){
 			return null;
+		}
 		for (User user : users) {
 			if (user.getEmpId().intValue() == empId) {
 				return user;
@@ -561,8 +568,11 @@ public class CoreData {
 	public User getUserById(int uId) {
 		if (uId < 1)
 			return null;
-		if (users == null)
+		if (users == null || users.size() == 0)
+			users = UserSQL.getAllUser();
+		if (users == null) {
 			return null;
+		}
 		for (User user : users) {
 			if (user.getId().intValue() == uId) {
 				return user;
@@ -673,8 +683,11 @@ public class CoreData {
 	}
 
 	public List<User> getUsers() {
-		if (users == null)
+		if (users == null || users.size() == 0)
+			users = UserSQL.getAllUser();
+		if (users == null) {
 			return Collections.emptyList();
+		}
 		return users;
 	}
 
