@@ -229,7 +229,10 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 				if(order != null){
 					int num = 4;
 					try {
-						num = Integer.parseInt((String) tv_pax.getText().toString());
+						String paxNum = tv_pax.getText().toString().trim().replace(":","");
+						paxNum = paxNum.replace("Pax","");
+						paxNum = paxNum.replace("pax","");
+						num = Integer.parseInt(paxNum);
 					}catch (Exception e){
 						LogUtil.e("ERROR", e.getMessage());
 					}

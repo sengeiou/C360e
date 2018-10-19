@@ -15,7 +15,7 @@ public class XmppThread extends Thread {
         while(App.instance.getIndexOfActivity(OpenRestaruant.class) == -1){
             try {
                 Thread.sleep(3000);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
