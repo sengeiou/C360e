@@ -160,6 +160,7 @@ public class SearchMenuItemWindow implements OnClickListener {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("itemDetail", itemDetail);
 				map.put("count", count);
+				map.put("isAdd", true);
 				Message msg = null;
 
 				msg = handler.obtainMessage();

@@ -77,6 +77,8 @@ import java.util.TimerTask;
 
 
 public class MenuActivity extends BaseActivity implements CheckListener {
+    public static final int CC_TYPE_CC = 1;
+    public static final int CC_TYPE_EZ = 2;
     public static final int VIEW_EVENT_MODIFY_ITEM_COUNT = 1;
     public static final int VIEW_EVENT_MODIFIER_COUNT = 8;
     public static final int MODIFY_ITEM_COUNT = 2;
@@ -130,7 +132,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private VideoView mVideoView;
     Dialog yesDialog;
     private Dialog paymentDialog;
-    private int CCPaymentType = 1;
+    private int CCPaymentType = CC_TYPE_CC;
     private OrderSelfDialog dialog;
 
     //    Dialog fdialog;
@@ -269,7 +271,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                    UIHelp.showToast(context, "Please try again !");
                     break;
                 case VIEW_CC_CONNECT_SUCCEED:
-                    if(CCPaymentType == 1) {
+                    if(CCPaymentType == CC_TYPE_CC) {
                         CCCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 90*1000);
                     }else{
                         CCCentre.getInstance().startEZLinkPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 20*1000);
@@ -304,7 +306,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     }
                     String title = "Credit Card Invalid";
                     String content = "Please try with QR code payment or proceed to\nthe POS counter for cash payment";
-                    if(CCPaymentType != 1){
+                    if(CCPaymentType != CC_TYPE_CC){
                         title = "EZ-Link Invalid";
                         content = "Please proceed to the counter \nfor cash payment";
                     }
@@ -391,7 +393,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void init() {
         initTextTypeFace();
-        CCPaymentType = Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1);
+//        CCPaymentType = Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1);
         loadingDialog = new LoadingDialog(MenuActivity.this);
 //        selfDialog = new OrderSelfDialog(MenuActivity.this);
         ll_grab = (LinearLayout) findViewById(R.id.ll_grab);
@@ -419,14 +421,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         ll_view_order_ez = (LinearLayout) findViewById(R.id.ll_view_order_ez);
         tv_dialog_ok = (TextView) findViewById(R.id.tv_dialog_ok);
         ll_order_dialog = (LinearLayout) findViewById(R.id.ll_order_dialog);
-
-        if(Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1) == 1){
-            ll_view_order_card.setVisibility(View.VISIBLE);
-            ll_view_order_ez.setVisibility(View.GONE);
-        }else{
-            ll_view_order_card.setVisibility(View.GONE);
-            ll_view_order_ez.setVisibility(View.VISIBLE);
-        }
+        ll_view_order_card.setVisibility(View.VISIBLE);
+        ll_view_order_ez.setVisibility(View.VISIBLE);
 
         tv_dialog_ok.setOnClickListener(this);
         ll_view_order_card.setOnClickListener(this);
@@ -977,23 +973,21 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     li_menu.setBackgroundResource(R.drawable.bg_grab);
                     ll_menu_title.setVisibility(View.GONE);
                     mainCategoryAdapter.setCheckedPosition(-1);
-                    ll_order_dialog.setVisibility(View.VISIBLE);
+                    ll_order_dialog.setVisibility(View.GONE);
                     cartView();
                 } else {
                     UIHelp.showToast(App.instance, "Please Choose Menu First !");
                 }
 
                 break;
-            case R.id.ll_view_order_card:
+            case R.id.ll_view_order_card: {
+                CCPaymentType = CC_TYPE_CC;
+                paymentCheck();
+            }
+                break;
             case R.id.ll_view_order_ez: {
-                if (orderDetails == null || orderDetails.size() == 0) {
-                    UIHelp.showToast(App.instance, "Please Choose Menu First !");
-                    return;
-                }
-                dialog.setTotal(nurOrder.getTotal());
-                dialog.setList(orderDetails);
-                dialog.notifyAdapter();
-                dialog.show();
+                CCPaymentType = CC_TYPE_EZ;
+                paymentCheck();
             }
                 break;
 
@@ -1008,6 +1002,17 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
     }
 
+    private void paymentCheck(){
+        if (orderDetails == null || orderDetails.size() == 0) {
+            UIHelp.showToast(App.instance, "Please Choose Menu First !");
+            return;
+        }
+        dialog.setTotal(nurOrder.getTotal());
+        dialog.setList(orderDetails);
+        dialog.notifyAdapter();
+        dialog.show();
+    }
+
     private void paymentAction(String ip) {
         cancelTimer();
         App.instance.stopADKpm();
@@ -1018,7 +1023,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
 
         String ccTitle = "Credit Card\nPayment in progress…";
-        if(CCPaymentType != 1){
+        if(CCPaymentType != CC_TYPE_CC){
             ccTitle = "EZ-Link\nPayment in progress…";
         }
         paymentDialog = KpmDialogFactory.qcDialog(context, ccTitle,
@@ -1224,6 +1229,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_view_cart));
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_card));
+        textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_ez));
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_you_order));
         textTypeFace.setUbuntuMedium((TextView) findViewById(R.id.tv_total));
         textTypeFace.setUbuntuBold((TextView) findViewById(R.id.tv_cart_total));

@@ -136,7 +136,8 @@
                 android:layout_margin="5dp"
                 android:text="CC"
                 android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@id/btn_time"/>
+                android:layout_toLeftOf="@id/btn_time"
+                android:visibility="gone"/>
 
 
         </RelativeLayout>

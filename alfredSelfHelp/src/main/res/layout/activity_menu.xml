@@ -528,10 +528,10 @@
 
 
                     android:id="@+id/ll_view_order_qc"
-                    android:layout_width="400dp"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/p140"
                     android:layout_gravity="center"
-
+                    android:layout_weight="1"
                     android:background="@drawable/btn_view_card_g"
 
                     >
@@ -540,7 +540,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-
                         android:gravity="center"
                         android:orientation="horizontal"
 
@@ -550,7 +549,8 @@
                             android:id="@+id/tv_qc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="KPMG QR Code"
+                            android:text="KPMG\nQR Code"
+                            android:gravity="center_horizontal"
                             android:textColor="@color/gray6"
                             android:textSize="@dimen/p36" />
 
@@ -564,10 +564,11 @@
 
                 <LinearLayout
                     android:id="@+id/ll_view_order_card"
-                    android:layout_width="400dp"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/p140"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/btn_view_card"
 
                     >
@@ -600,10 +601,11 @@
 
                 <LinearLayout
                     android:id="@+id/ll_view_order_ez"
-                    android:layout_width="400dp"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/p140"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_weight="1"
                     android:background="@drawable/btn_view_card"
 
                     >
@@ -630,7 +632,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
-                            android:src="@drawable/img_card" />
+                            android:src="@drawable/img_ezlink" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

@@ -163,7 +163,7 @@ public class CCCentre {
                         cardInfoMap.put("paymentType", paymentType);
                         cardInfoMap.put("cardNum", cardNum);
                         
-                        handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED, paymentType));
+                        handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED, cardInfoMap));
                     } else if(lastRespont.contains("R610")
                             ){
                         if(lastRespont.contains("390200")) {

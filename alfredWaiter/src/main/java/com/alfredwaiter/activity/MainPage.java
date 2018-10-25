@@ -6,7 +6,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -36,6 +35,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
@@ -127,6 +127,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     private GridLayoutManager mManager;
     private ItemDetailAdapter detailAdapter;
     private boolean move = false;
+    private boolean needScrollNext = false;
     private int mIndex = 0;
     private static ItemHeaderDetailDecoration mDecoration;
     private static CheckListener checkListener;
@@ -148,7 +149,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 handler);
         dialog = new SelectPersonDialog(context, handler);
         getIntentData();
-        Log.d("111111111111--->", "1111111111");
+        LogUtil.d("111111111111--->", "1111111111");
      //   itemDetails.clear();
         itemDetails.addAll(getItemDetail());
 
@@ -289,13 +290,21 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 }
                 case VIEW_EVENT_CLICK_SUB_CATEGORY: {
                     ItemCategory itemCategory = (ItemCategory) msg.obj;
+                    if(itemCategory == null){
+                        return;
+                    }
                     List<ItemDetail> itemDetails = detailAdapter.getData();
                     int index = -1;
                     if(itemDetails != null && itemDetails.size() > 0){
                         for(ItemDetail itemDetail : itemDetails){
-                            if(itemDetail.getItemName().equals(itemCategory.getItemCategoryName())){
+                            if(itemDetail.getItemCategoryId() != null
+                                    && itemCategory.getId() != null
+                                    && itemDetail.getItemCategoryId().intValue() == itemCategory.getId().intValue()){
                                 index = itemDetails.indexOf(itemDetail);
                                 break;
+//                            }else if(itemDetail.getItemName().equals(itemCategory.getItemCategoryName())){
+//                                index = itemDetails.indexOf(itemDetail);
+//                                break;
                             }
                         }
                     }
@@ -315,7 +324,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                     break;
                 }
                 case VIEW_EVENT_MODIFY_ITEM_COUNT: {
-                    Log.d("444444444444--->", "4444444444444");
+                    LogUtil.d("444444444444--->", "4444444444444");
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
                     updateOrderDetail((ItemDetail) map.get("itemDetail"),
                             (Integer) map.get("count"));
@@ -655,19 +664,20 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 int id, cid;
 
                 id = itemMainCategorielist.get(i).getId();
-                cid = itemCategorylist.get(j).getItemMainCategoryId();
+                ItemCategory itemCategory = itemCategorylist.get(j);
+                cid = itemCategory.getItemMainCategoryId();
                 if (id == cid) {
-
 
                     ItemDetail itemCateDetail = new ItemDetail();
                     itemCateDetail.setItemCategoryName(itemMainCategorielist.get(i).getMainCategoryName());
                     // detail.setId(list.get(j).getId());
-                    itemCateDetail.setItemName(itemCategorylist.get(j).getItemCategoryName());
+                    itemCateDetail.setItemName(itemCategory.getItemCategoryName());
+                    itemCateDetail.setItemCategoryId(itemCategory.getId());
                     itemCateDetail.setTag(String.valueOf(i));
                     itemCateDetail.setViewType(2);
                     itemDetailandCate.add(itemCateDetail);
                     itemDetaillist.clear();
-                    itemDetaillist = CoreData.getInstance().getItemDetails(itemCategorylist.get(j));
+                    itemDetaillist = CoreData.getInstance().getItemDetails(itemCategory);
                     for (int d = 0; d < itemDetaillist.size(); d++) {
                         itemDetaillist.get(d).setItemCategoryName(itemMainCategorielist.get(i).getMainCategoryName());
                         itemDetaillist.get(d).setTag(String.valueOf(i));
@@ -804,7 +814,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 
 
     //	private void setChecked(int position, boolean isLeft) {
-//		Log.d("p-------->", String.valueOf(position));
+//		LogUtil.d("p-------->", String.valueOf(position));
 //		if (isLeft) {
 //			itemCateAdapter.setCheckedPosition(position);
 //			//此处的位置需要根据每个分类的集合来进行计算
@@ -859,15 +869,15 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     private void smoothMoveToPosition(int n) {
         int firstItem = mManager.findFirstVisibleItemPosition();
         int lastItem = mManager.findLastVisibleItemPosition();
-        Log.d("first--->", String.valueOf(firstItem));
-        Log.d("last--->", String.valueOf(lastItem));
+        LogUtil.d("first--->", String.valueOf(firstItem));
+        LogUtil.d("last--->", String.valueOf(lastItem));
         if (n <= firstItem) {
             reItemdetail.smoothScrollToPosition(n);
             // ((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
         } else if (n <= lastItem) {
-            Log.d("pos---->", String.valueOf(n) + "VS" + firstItem);
+            LogUtil.d("pos---->", String.valueOf(n) + "VS" + firstItem);
             int top = reItemdetail.getChildAt(n - firstItem).getTop();
-            Log.d("top---->", String.valueOf(top));
+            LogUtil.d("top---->", String.valueOf(top));
             reItemdetail.scrollBy(0, top);
         } else {
             //((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
@@ -877,22 +887,27 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     }
 
     private void fastMoveToPosition(int n) {
+        needScrollNext = false;
         int firstItem = mManager.findFirstVisibleItemPosition();
         int lastItem = mManager.findLastVisibleItemPosition();
-        Log.d("first--->", String.valueOf(firstItem));
-        Log.d("last--->", String.valueOf(lastItem));
+        LogUtil.d("first--->", String.valueOf(firstItem));
+        LogUtil.d("last--->", String.valueOf(lastItem));
+        LogUtil.d("n--->", String.valueOf(n));
         if (n <= firstItem) {
             reItemdetail.scrollToPosition(n);
+            LogUtil.d("<<<first--->", String.valueOf(n));
             // ((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
         } else if (n <= lastItem) {
-            Log.d("pos---->", String.valueOf(n) + "VS" + firstItem);
+            LogUtil.d("pos---->", String.valueOf(n) + "VS" + firstItem);
             int top = reItemdetail.getChildAt(n - firstItem).getTop();
-            Log.d("top---->", String.valueOf(top));
+            LogUtil.d("top---->", String.valueOf(top));
             reItemdetail.scrollBy(0, top);
         } else {
             //((LinearLayoutManager)mRv.getLayoutManager()).scrollToPositionWithOffset(n,0);
             reItemdetail.scrollToPosition(n);
             move = true;
+            needScrollNext = true;
+            LogUtil.d(">>>lastItem--->", String.valueOf(n));
         }
     }
 
@@ -902,17 +917,17 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             super.onScrollStateChanged(recyclerView, newState);
 
             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                Log.d("SCROLL--->","拖拽中" );
+                LogUtil.d("SCROLL--->","拖拽中" );
                 App.isleftMoved = false;
             }
             if (move && newState == RecyclerView.SCROLL_STATE_IDLE) {
                 App.isleftMoved = false;
                 move = false;
                 int n = mIndex - mManager.findFirstVisibleItemPosition();
-                Log.d("n---->", String.valueOf(n));
+                LogUtil.d("n---->", String.valueOf(n));
                 if (0 <= n && n < reItemdetail.getChildCount()) {
                     int top = reItemdetail.getChildAt(n).getTop();
-                    Log.d("top---Changed>", String.valueOf(top));
+                    LogUtil.d("top---Changed>", String.valueOf(top));
                     reItemdetail.smoothScrollBy(0, top);
                 }
             }
@@ -921,7 +936,15 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-
+              if(needScrollNext){
+                  needScrollNext = false;
+                  LogUtil.d("needScrollNext--->",  "1111111");
+                  int n = mIndex - mManager.findFirstVisibleItemPosition();
+                if (0 <= n && n < recyclerView.getChildCount()) {
+                    int top = recyclerView.getChildAt(n).getTop();
+                    recyclerView.scrollBy(0, top);
+                }
+              }
 //            if (move) {
 //                move = false;
 //                int n = mIndex - mManager.findFirstVisibleItemPosition();

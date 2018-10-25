@@ -31,8 +31,8 @@
     <string name="param_error">Parameter Error</string> 
     <string name="invalid_rest_key">Invalid restaurant access key</string> 
     <string name="no_user">No User</string> 
-    <string name="incorrect_pwd">incorrect password</string> 
-    <string name="invalid_user_key">invalid user access key</string> 
+    <string name="incorrect_pwd">Incorrect password</string>
+    <string name="invalid_user_key">Invalid user access key</string>
     <string name="login_other_devices">The account logined in on other devices</string> 
     <string name="user_no_permission">User no permission</string> 
     <string name="not_start_session">The revenue center does not start a session yet.</string> 

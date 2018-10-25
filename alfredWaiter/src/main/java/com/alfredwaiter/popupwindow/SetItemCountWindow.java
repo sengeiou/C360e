@@ -1,8 +1,5 @@
 package com.alfredwaiter.popupwindow;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -27,6 +24,9 @@ import com.alfredwaiter.activity.MainPage;
 import com.alfredwaiter.global.UIHelp;
 import com.alfredwaiter.view.MoneyKeyboard;
 import com.alfredwaiter.view.MoneyKeyboard.KeyBoardClickListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SetItemCountWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_1 = 300;
@@ -123,10 +123,16 @@ public class SetItemCountWindow implements OnClickListener, KeyBoardClickListene
 					super.onAnimationEnd(animation);
 					popupWindow.dismiss();
 					if(isEnter){
+						int newCount= 0;
+						try {
+							newCount = Integer.parseInt(tv_num.getText().toString());
+						}catch (Exception e){
+							e.printStackTrace();
+						}
+
 						Map<String, Object> result = new HashMap<String, Object>();
 						result.put("itemDetail", itemDetail);
-						result.put("count", Integer.parseInt(tv_num.getText().toString()));
-						int newCount=Integer.parseInt(tv_num.getText().toString());
+						result.put("count", newCount);
 						if(newCount>oldCount) {
 							result.put("isAdd", true);
 						}else {

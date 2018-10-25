@@ -104,6 +104,8 @@ public class OrderDetailPage extends BaseActivity {
 			public void onChange(ItemDetail itemDetail, int count, boolean isAdd) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("count", count);
+				map.put("itemDetail", itemDetail);
+				map.put("isAdd", isAdd);
 				handler.sendMessage(handler.obtainMessage(
 						MainPage.VIEW_EVENT_MODIFY_ITEM_COUNT, map));
 			}
