@@ -136,8 +136,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     protected void initView() {
         super.initView();
         setContentView(R.layout.activity_main_page);
-         initTextTypeFace();
-         initTitle();
+        initTextTypeFace();
+        initTitle();
         searchPopUp = new SearchMenuItemWindow(context, handler, findViewById(R.id.rl_root));
         subCategoryWindow = new SubCategoryWindow(context, handler, findViewById(R.id.rl_root));
 //		modifierWindow = new ModifierWindow(context, handler, findViewById(R.id.rl_root));
@@ -150,12 +150,12 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         dialog = new SelectPersonDialog(context, handler);
         getIntentData();
         LogUtil.d("111111111111--->", "1111111111");
-     //   itemDetails.clear();
+        //   itemDetails.clear();
         itemDetails.addAll(getItemDetail());
 
 //        expandableListView = (ExpandableListView) findViewById(R.id.expandedListViewEx);
 //        expandableListView.setDividerHeight(0);
-      //  itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
+        //  itemCategoryAndDetailsList.addAll(getItemCategoryAndDetails(null));
         //右侧子分类列表recyclerView
 //        reItemCate=(RecyclerView)findViewById(R.id.recyc_itemCate) ;
 //		mLinearLayoutManager = new LinearLayoutManager(context);
@@ -209,9 +209,10 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         parameters.put("order", currentOrder);
         SyncCentre.getInstance().handlerGetOrderDetails(context, parameters,
                 handler);
-           createAdapter();
+        createAdapter();
 
     }
+
     public static void setListener(CheckListener listener) {
         checkListener = listener;
         mDecoration.setCheckListener(checkListener);
@@ -255,6 +256,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         reItemdetail.addItemDecoration(mDecoration);
 //
     }
+
     private void getIntentData() {
         Intent intent = getIntent();
         currentOrder = (Order) intent.getExtras().get("order");
@@ -290,16 +292,16 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 }
                 case VIEW_EVENT_CLICK_SUB_CATEGORY: {
                     ItemCategory itemCategory = (ItemCategory) msg.obj;
-                    if(itemCategory == null){
+                    if (itemCategory == null) {
                         return;
                     }
                     List<ItemDetail> itemDetails = detailAdapter.getData();
                     int index = -1;
-                    if(itemDetails != null && itemDetails.size() > 0){
-                        for(ItemDetail itemDetail : itemDetails){
-                            if(itemDetail.getItemCategoryId() != null
+                    if (itemDetails != null && itemDetails.size() > 0) {
+                        for (ItemDetail itemDetail : itemDetails) {
+                            if (itemDetail.getItemCategoryId() != null
                                     && itemCategory.getId() != null
-                                    && itemDetail.getItemCategoryId().intValue() == itemCategory.getId().intValue()){
+                                    && itemDetail.getItemCategoryId().intValue() == itemCategory.getId().intValue()) {
                                 index = itemDetails.indexOf(itemDetail);
                                 break;
 //                            }else if(itemDetail.getItemName().equals(itemCategory.getItemCategoryName())){
@@ -308,11 +310,11 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                             }
                         }
                     }
-                    if(index != -1) {
+                    if (index != -1) {
                         fastMove(index);
                     }
                 }
-                    break;
+                break;
 
                 case VIEW_EVENT_CLICK_ALL_MAIN_CATEGORY: {
                     itemCategoryAndDetailsList.clear();
@@ -331,8 +333,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                     refreshTotal();
                     refreshList();
 
-                    boolean isadd= (boolean) map.get("isAdd");
-                    if(isadd){
+                    boolean isadd = (boolean) map.get("isAdd");
+                    if (isadd) {
                         isShow((ItemDetail) map.get("itemDetail"));
                     }
 
@@ -463,10 +465,10 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 Modifier modifier = CoreData.getInstance().getModifier(
                         itemModifier);
 
-                if(modifier.getMinNumber()>0){
+                if (modifier.getMinNumber() > 0) {
                     List<Integer> modifierIds = OrderModifierSQL.getOrderModifierIdsByOrderDetailId(orderDetail.getId());
 
-                    modifierWindow.show(itemDetail, modifierIds, currentOrder,orderDetail);
+                    modifierWindow.show(itemDetail, modifierIds, currentOrder, orderDetail);
                     return;
                 }
             }
@@ -762,7 +764,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 OrderDetail orderDetail = (OrderDetail) v.getTag();
                 ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId().intValue());
                 List<Integer> modifierIds = OrderModifierSQL.getOrderModifierIdsByOrderDetailId(orderDetail.getId());
-                modifierWindow.show(itemDetail, modifierIds, currentOrder ,orderDetail);
+                modifierWindow.show(itemDetail, modifierIds, currentOrder, orderDetail);
             }
             break;
             default:
@@ -860,7 +862,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         fastMoveToPosition(n);
     }
 
-    private void fastMove(int n){
+    private void fastMove(int n) {
         mIndex = n;
         reItemdetail.stopScroll();
         fastMoveToPosition(n);
@@ -917,7 +919,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             super.onScrollStateChanged(recyclerView, newState);
 
             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                LogUtil.d("SCROLL--->","拖拽中" );
+                LogUtil.d("SCROLL--->", "拖拽中");
                 App.isleftMoved = false;
             }
             if (move && newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -936,15 +938,15 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-              if(needScrollNext){
-                  needScrollNext = false;
-                  LogUtil.d("needScrollNext--->",  "1111111");
-                  int n = mIndex - mManager.findFirstVisibleItemPosition();
+            if (needScrollNext) {
+                needScrollNext = false;
+                LogUtil.d("needScrollNext--->", "1111111");
+                int n = mIndex - mManager.findFirstVisibleItemPosition();
                 if (0 <= n && n < recyclerView.getChildCount()) {
                     int top = recyclerView.getChildAt(n).getTop();
                     recyclerView.scrollBy(0, top);
                 }
-              }
+            }
 //            if (move) {
 //                move = false;
 //                int n = mIndex - mManager.findFirstVisibleItemPosition();
@@ -958,7 +960,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 
     @Override
     public void onBackPressed() {
-        if(subCategoryWindow != null){
+        if (subCategoryWindow != null) {
             subCategoryWindow.dismiss();
             return;
         }

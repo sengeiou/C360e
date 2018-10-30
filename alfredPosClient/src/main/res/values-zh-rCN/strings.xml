@@ -92,6 +92,8 @@
 	<string name="free">免费</string>
 	<string name="take_away_">打包</string>
     <string name="app_take_away">打包</string>
+
+    <string name="app_delivery">外卖</string>
     <string name="app_dine_in">堂吃</string>
 	<string name="transfer">转移</string>
 	<string name="weight">重量</string>

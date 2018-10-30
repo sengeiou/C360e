@@ -21,9 +21,37 @@ public class AppOrder {
     private String tableNo;
     private Integer bizType = 0; // 业务类型, 0点菜,1预点单
     private String orderRemark;
-    private int eatType; // 0 堂吃, 1 打包
+    private int eatType; // 0 堂吃, 1 打包, 2外卖
     private int payStatus;
     private int person;
+
+    private String address;//外卖地址
+    private String name;
+    private String phone;  //收货人电话
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public Integer getId() {
         return id;
@@ -244,6 +272,9 @@ public class AppOrder {
                 ", eatType=" + eatType +
                 ", payStatus=" + payStatus +
                 ", person=" + person +
+                ", address='" + address + '\'' +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
                 '}';
     }
 }

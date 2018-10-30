@@ -41,19 +41,20 @@ private long updateTime; 	//'更新时间',
             String sql = "insert into "
                     + TableNames.AppOrderDetail
                     + "(id, orderId, custId, itemId, itemName, itemNum, itemPrice, taxPrice, discountPrice, discountRate, "
-                    + " realPrice, orderDetailStatus, discountType, modifierPrice, specialInstractions, createTime, updateTime, totalItemPrice)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " realPrice, orderDetailStatus, discountType, modifierPrice, specialInstractions, createTime, updateTime, totalItemPrice,address,name,phone)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
-                    new Object[] { appOrderDetail.getId(),appOrderDetail.getOrderId(),
-                    appOrderDetail.getCustId(), appOrderDetail.getItemId(),
-                    appOrderDetail.getItemName(), appOrderDetail.getItemNum(),
-                    appOrderDetail.getItemPrice(), appOrderDetail.getTaxPrice(),
-                    appOrderDetail.getDiscountPrice(), appOrderDetail.getDiscountRate(),
-                    appOrderDetail.getRealPrice(), appOrderDetail.getOrderDetailStatus(),
-                    appOrderDetail.getDiscountType(), appOrderDetail.getModifierPrice(),
-                    appOrderDetail.getSpecialInstractions(), appOrderDetail.getCreateTime(),
-                    appOrderDetail.getUpdateTime(), appOrderDetail.getTotalItemPrice()});
+                    new Object[]{appOrderDetail.getId(), appOrderDetail.getOrderId(),
+                            appOrderDetail.getCustId(), appOrderDetail.getItemId(),
+                            appOrderDetail.getItemName(), appOrderDetail.getItemNum(),
+                            appOrderDetail.getItemPrice(), appOrderDetail.getTaxPrice(),
+                            appOrderDetail.getDiscountPrice(), appOrderDetail.getDiscountRate(),
+                            appOrderDetail.getRealPrice(), appOrderDetail.getOrderDetailStatus(),
+                            appOrderDetail.getDiscountType(), appOrderDetail.getModifierPrice(),
+                            appOrderDetail.getSpecialInstractions(), appOrderDetail.getCreateTime(),
+                            appOrderDetail.getUpdateTime(), appOrderDetail.getTotalItemPrice(),
+                            appOrderDetail.getAddress(), appOrderDetail.getName(), appOrderDetail.getPhone()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,8 +71,8 @@ private long updateTime; 	//'更新时间',
             String sql = "replace into "
                     + TableNames.AppOrderDetail
                     + "(id, orderId, custId, itemId, itemName, itemNum, itemPrice, taxPrice, discountPrice, discountRate, "
-                    + " realPrice, orderDetailStatus, discountType, modifierPrice, specialInstractions, createTime, updateTime, totalItemPrice)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " realPrice, orderDetailStatus, discountType, modifierPrice, specialInstractions, createTime, updateTime, totalItemPrice,address,name,phone)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (AppOrderDetail appOrderDetail : appOrderDetailList) {
@@ -111,6 +112,12 @@ private long updateTime; 	//'更新时间',
                         appOrderDetail.getUpdateTime());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 18,
                         appOrderDetail.getTotalItemPrice());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 19,
+                        appOrderDetail.getAddress());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 20,
+                        appOrderDetail.getName());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 21,
+                        appOrderDetail.getPhone());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -150,6 +157,11 @@ private long updateTime; 	//'更新时间',
                 appOrderDetail.setCreateTime(cursor.getLong(15));
                 appOrderDetail.setUpdateTime(cursor.getLong(16));
                 appOrderDetail.setTotalItemPrice(cursor.getString(17));
+                appOrderDetail.setAddress(cursor.getString(18));
+                appOrderDetail.setName(cursor.getString(19));
+                appOrderDetail.setPhone(cursor.getString(20));
+
+
                 result.add(appOrderDetail);
             }
         } catch (Exception e) {

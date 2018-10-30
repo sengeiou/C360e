@@ -1385,6 +1385,24 @@ public class DataHelper {
                     + " ADD COLUMN isShowDiner INTEGER default 1");
             db.execSQL("ALTER TABLE " + TableNames.ItemCategory
                     + " ADD COLUMN imgUrl TEXT");
+
+            db.execSQL("ALTER TABLE " + TableNames.AppOrderDetail
+                    + " ADD COLUMN name TEXT");
+
+            db.execSQL("ALTER TABLE " + TableNames.AppOrderDetail
+                    + " ADD COLUMN address TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.AppOrderDetail
+                    + " ADD COLUMN phone TEXT");
+
+            db.execSQL("ALTER TABLE " + TableNames.AppOrder
+                    + " ADD COLUMN name TEXT");
+
+            db.execSQL("ALTER TABLE " + TableNames.AppOrder
+                    + " ADD COLUMN address TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.AppOrder
+                    + " ADD COLUMN phone TEXT");
+
+
         }
     }
 

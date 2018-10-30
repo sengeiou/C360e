@@ -1747,6 +1747,163 @@ public class App extends BaseApplication {
     }
 
 
+//    public void remoteAppOrderBillPrint(PrinterDevice printer, PrinterTitle title,
+//                                        AppOrder order, ArrayList<PrintOrderItem> orderItems,
+//                                        ArrayList<PrintOrderModifier> orderModifiers,
+//                                        List<Map<String, String>> taxes,
+//                                        List<PaymentSettlement> settlement, RoundAmount roundAmount) {
+//
+//
+//        Map<String, String> roundingMap = new HashMap<String, String>();
+//        String total = order.getTotal();
+//        String rounding = "0.00";
+//        if (roundAmount != null) {
+//            total = BH.sub(BH.getBD(order.getTotal()),
+//                    BH.getBD(roundAmount.getRoundBalancePrice()), true)
+//                    .toString();
+//            rounding = BH.getBD(roundAmount.getRoundBalancePrice())
+//                    .toString();
+//        }
+//        roundingMap.put("Total", total);
+//        roundingMap.put("Rounding", rounding);
+//        Gson gson = new Gson();
+//        String prtStr = gson.toJson(printer);
+//        String prtTitle = gson.toJson(title);
+//        String orderStr = gson.toJson(order);
+//        String details = gson.toJson(orderItems);
+//        String mods = gson.toJson(orderModifiers);
+//        String tax = gson.toJson(taxes);
+//        String payment = gson.toJson(printReceiptInfos);
+//        String roundStr = gson.toJson(roundingMap);
+//
+//        mRemoteService.printAppOrderBill(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
+//
+//       }
+
+
+
+    public void remoteAppOrderBillPrint(PrinterDevice printer, PrinterTitle title,
+                                AppOrder order, ArrayList<PrintOrderItem> orderItems,
+                                ArrayList<PrintOrderModifier> orderModifiers,
+                                List<Map<String, String>> taxes,
+                                List<PaymentSettlement> settlement, RoundAmount roundAmount) {
+
+        remoteAppOrderBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
+    }
+
+    public void remoteAppOrderBillPrint(PrinterDevice printer, PrinterTitle title,
+                                AppOrder order, ArrayList<PrintOrderItem> orderItems,
+                                ArrayList<PrintOrderModifier> orderModifiers,
+                                List<Map<String, String>> taxes,
+                                List<PaymentSettlement> settlement, RoundAmount roundAmount,
+                                boolean openDrawer) {
+
+        if (mRemoteService == null) {
+            printerDialog();
+            return;
+        }
+        List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
+        if (settlement != null) {
+            for (PaymentSettlement paymentSettlement : settlement) {
+                PrintReceiptInfo printReceiptInfo = new PrintReceiptInfo();
+                printReceiptInfo.setPaidAmount(paymentSettlement
+                        .getPaidAmount());
+                printReceiptInfo.setPaymentTypeId(paymentSettlement
+                        .getPaymentTypeId());
+                switch (paymentSettlement.getPaymentTypeId().intValue()) {
+                    case ParamConst.SETTLEMENT_TYPE_CASH:
+                        printReceiptInfo.setCashChange(paymentSettlement
+                                .getCashChange());
+                        break;
+                    case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
+                    case ParamConst.SETTLEMENT_TYPE_UNIPAY:
+                    case ParamConst.SETTLEMENT_TYPE_VISA:
+                    case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
+                    case ParamConst.SETTLEMENT_TYPE_AMEX:
+                    case ParamConst.SETTLEMENT_TYPE_JCB:
+                        printReceiptInfo
+                                .setCardNo(CardsSettlementSQL
+                                        .getCardNoByPaymentIdAndPaymentSettlementId(
+                                                paymentSettlement.getPaymentId()
+                                                        .intValue(),
+                                                paymentSettlement.getId()
+                                                        .intValue()));
+                        break;
+                    case ParamConst.SETTLEMENT_TYPE_NETS:
+                        printReceiptInfo
+                                .setCardNo(NetsSettlementSQL
+                                        .getNetsSettlementByPament(
+                                                paymentSettlement.getPaymentId()
+                                                        .intValue(),
+                                                paymentSettlement.getId()
+                                                        .intValue())
+                                        .getReferenceNo()
+                                        + "");
+                        break;
+
+                    default: {
+                        PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethodByPaymentTypeId(paymentSettlement.getPaymentTypeId().intValue());
+                        if (pamentMethod != null && !TextUtils.isEmpty(pamentMethod.getNameOt())) {
+                            printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
+                        }
+                    }
+                    break;
+                }
+                printReceiptInfos.add(printReceiptInfo);
+            }
+        }
+        try {
+            Map<String, String> roundingMap = new HashMap<String, String>();
+            String total = order.getTotal();
+            String rounding = "0.00";
+            if (roundAmount != null) {
+                total = BH.sub(BH.getBD(order.getTotal()),
+                        BH.getBD(roundAmount.getRoundBalancePrice()), true)
+                        .toString();
+                rounding = BH.getBD(roundAmount.getRoundBalancePrice())
+                        .toString();
+            }
+            roundingMap.put("Total", total);
+            roundingMap.put("Rounding", rounding);
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            String prtTitle = gson.toJson(title);
+            String orderStr = gson.toJson(order);
+            String details = gson.toJson(orderItems);
+            String mods = gson.toJson(orderModifiers);
+            String tax = gson.toJson(taxes);
+            String payment = gson.toJson(printReceiptInfos);
+            String roundStr = gson.toJson(roundingMap);
+            // gson.toJson(roundingMap);
+            if (isRevenueKiosk()) {
+                if (countryCode == ParamConst.CHINA)
+                    mRemoteService.printAppOrderBill(prtStr, prtTitle, orderStr,
+                            details, mods, tax, payment,
+                            this.systemSettings.isDoubleBillPrint(),
+                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                            getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
+                            true, BH.IsDouble());
+                else
+                    mRemoteService.printAppOrderBill(prtStr, prtTitle, orderStr,
+                            details, mods, tax, payment,
+                            this.systemSettings.isDoubleBillPrint(),
+                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                            null, getLocalRestaurantConfig().getCurrencySymbol(),
+                            openDrawer, BH.IsDouble());
+
+            } else {
+                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                        mods, tax, payment,
+                        this.systemSettings.isDoubleBillPrint(),
+                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                        getLocalRestaurantConfig().getCurrencySymbol(),
+                        openDrawer, BH.IsDouble());
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
                                 Order order, ArrayList<PrintOrderItem> orderItems,
                                 ArrayList<PrintOrderModifier> orderModifiers,
@@ -2810,7 +2967,7 @@ public class App extends BaseApplication {
                         .getRoundAmount(paidOrder);
 //
 //                if(printer.getIsLablePrinter()==0) {
-                App.instance.remoteBillPrint(printer, title, paidOrder,
+                App.instance.remoteAppOrderBillPrint(printer, title, appOrder,
                         orderItems, orderModifiers, taxMap, paymentSettlements,
                         roundAmount);
 //                }else {
