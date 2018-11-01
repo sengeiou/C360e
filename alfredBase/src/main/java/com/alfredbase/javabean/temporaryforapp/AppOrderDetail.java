@@ -24,7 +24,15 @@ public class AppOrderDetail {
     private String address;//外卖地址
     private String name;
     private String phone;  //收货人电话
+    private long deliveryTime;
 
+    public long getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(long deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
 
     public String getAddress() {
         return address;
@@ -218,6 +226,7 @@ public class AppOrderDetail {
                 ", address='" + address + '\'' +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
+                ", deliveryTime=" + deliveryTime +
                 '}';
     }
 }

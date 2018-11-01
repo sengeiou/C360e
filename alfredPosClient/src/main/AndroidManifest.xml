@@ -232,6 +232,10 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/MainActivityTheme"/>
+
+        <activity android:name=".activity.DeliveryDialogActivity"
+            android:theme="@style/NullActivityTheme"
+            />
     </application>
 
 </manifest>

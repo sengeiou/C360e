@@ -1,6 +1,8 @@
 package com.alfredbase.javabean.temporaryforapp;
 
-public class AppOrder {
+import java.io.Serializable;
+
+public class AppOrder implements Serializable {
     private Integer id;    //'主键id',
     private Integer orderNum;    //'订单编号'
     private Integer custId;    //'顾客id',
@@ -26,8 +28,17 @@ public class AppOrder {
     private int person;
 
     private String address;//外卖地址
-    private String name;
-    private String phone;  //收货人电话
+    private String contact;
+    private String mobile;  //收货人电话
+    private long deliveryTime;
+
+    public long getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(long deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
 
     public String getAddress() {
         return address;
@@ -37,20 +48,20 @@ public class AppOrder {
         this.address = address;
     }
 
-    public String getName() {
-        return name;
+    public String getContact() {
+        return contact;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public Integer getId() {
@@ -245,7 +256,6 @@ public class AppOrder {
         this.person = person;
     }
 
-
     @Override
     public String toString() {
         return "AppOrder{" +
@@ -273,8 +283,9 @@ public class AppOrder {
                 ", payStatus=" + payStatus +
                 ", person=" + person +
                 ", address='" + address + '\'' +
-                ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
+                ", contact='" + contact + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", deliveryTime=" + deliveryTime +
                 '}';
     }
 }

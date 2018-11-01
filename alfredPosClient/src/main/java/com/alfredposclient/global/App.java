@@ -1781,22 +1781,21 @@ public class App extends BaseApplication {
 //       }
 
 
-
     public void remoteAppOrderBillPrint(PrinterDevice printer, PrinterTitle title,
-                                AppOrder order, ArrayList<PrintOrderItem> orderItems,
-                                ArrayList<PrintOrderModifier> orderModifiers,
-                                List<Map<String, String>> taxes,
-                                List<PaymentSettlement> settlement, RoundAmount roundAmount) {
+                                        Order order, ArrayList<PrintOrderItem> orderItems,
+                                        ArrayList<PrintOrderModifier> orderModifiers,
+                                        List<Map<String, String>> taxes,
+                                        List<PaymentSettlement> settlement, RoundAmount roundAmount, String info, String orderStr, List<AppOrder> appOrderList) {
 
-        remoteAppOrderBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
+        remoteAppOrderBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint(), info, orderStr, appOrderList);
     }
 
     public void remoteAppOrderBillPrint(PrinterDevice printer, PrinterTitle title,
-                                AppOrder order, ArrayList<PrintOrderItem> orderItems,
-                                ArrayList<PrintOrderModifier> orderModifiers,
-                                List<Map<String, String>> taxes,
-                                List<PaymentSettlement> settlement, RoundAmount roundAmount,
-                                boolean openDrawer) {
+                                        Order order, ArrayList<PrintOrderItem> orderItems,
+                                        ArrayList<PrintOrderModifier> orderModifiers,
+                                        List<Map<String, String>> taxes,
+                                        List<PaymentSettlement> settlement, RoundAmount roundAmount,
+                                        boolean openDrawer, String info, String ordernoStr, List<AppOrder> appOrderlist) {
 
         if (mRemoteService == null) {
             printerDialog();
@@ -1874,6 +1873,10 @@ public class App extends BaseApplication {
             String tax = gson.toJson(taxes);
             String payment = gson.toJson(printReceiptInfos);
             String roundStr = gson.toJson(roundingMap);
+            if (appOrderlist == null) {
+                String apporders = gson.toJson("");
+            }
+            String apporders = gson.toJson(appOrderlist);
             // gson.toJson(roundingMap);
             if (isRevenueKiosk()) {
                 if (countryCode == ParamConst.CHINA)
@@ -1882,22 +1885,22 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-                            true, BH.IsDouble());
+                            true, BH.IsDouble(), info, apporders);
                 else
                     mRemoteService.printAppOrderBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             null, getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble());
+                            openDrawer, BH.IsDouble(), info, apporders);
 
             } else {
-                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-                        mods, tax, payment,
-                        this.systemSettings.isDoubleBillPrint(),
-                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                        getLocalRestaurantConfig().getCurrencySymbol(),
-                        openDrawer, BH.IsDouble());
+//                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+//                        mods, tax, payment,
+//                        this.systemSettings.isDoubleBillPrint(),
+//                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
+//                        getLocalRestaurantConfig().getCurrencySymbol(),
+//                        openDrawer, BH.IsDouble());
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -2933,7 +2936,7 @@ public class App extends BaseApplication {
 //			}).start();
     }
 
-    public void printerAppOrder(final AppOrder appOrder) {
+    public void printerAppOrder(final AppOrder appOrder, String orderStr, List<AppOrder> appOrderlist) {
         try {
 
             Order paidOrder = OrderSQL.getOrderByAppOrderId(appOrder
@@ -2965,11 +2968,39 @@ public class App extends BaseApplication {
                                 .intValue());
                 RoundAmount roundAmount = RoundAmountSQL
                         .getRoundAmount(paidOrder);
+
+                String userinfo, phone;
+                String name = null;
+                if (TextUtils.isEmpty(appOrder.getAddress())) {
+                    userinfo = "";
+                } else {
+
+
+                    if (TextUtils.isEmpty(appOrder.getContact())) {
+                        name = "";
+                    } else {
+                        //    String addr = appOrder.getAddress();
+
+                        if (TextUtils.isEmpty(appOrder.getMobile())) {
+                            name = appOrder.getContact() + "\n";
+                        } else {
+                            name = "" + appOrder.getContact() + "   " + "   " + "   ";
+                        }
+                    }
+                    if (TextUtils.isEmpty(appOrder.getContact())) {
+                        phone = "";
+                    } else {
+                        //    String addr = appOrder.getAddress();
+                        phone = "" + appOrder.getMobile() + "\n";
+                    }
+                    userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                }
+
 //
 //                if(printer.getIsLablePrinter()==0) {
-                App.instance.remoteAppOrderBillPrint(printer, title, appOrder,
+                App.instance.remoteAppOrderBillPrint(printer, title, paidOrder,
                         orderItems, orderModifiers, taxMap, paymentSettlements,
-                        roundAmount);
+                        roundAmount, userinfo, orderStr, appOrderlist);
 //                }else {
 //                    App.instance.remoteTBillPrint(printer);
 //                }

@@ -52,6 +52,8 @@ public class CallNumUtil {
     private static MediaPlayer mplayer = null;
     private static int mindex;
 
+    public static boolean isPlay = false;
+
 
     /*
      * 叫号/播放消息队列
@@ -1408,7 +1410,7 @@ public class CallNumUtil {
                 mediaPlayer.release();
                 mediaPlayer = null;
             }
-
+            isPlay = false;
         //   mCurTask = dequeue();// 尝试下一个号
 
 //            if (mCurTask.custcallwav > 0) {
@@ -1432,7 +1434,7 @@ public class CallNumUtil {
     }
 
     static void playMp3() {
-
+        isPlay = true;
         AssetFileDescriptor file = mCxt.getResources().openRawResourceFd(mchars.get(mindex));
         try {
             mediaPlayer.reset();

@@ -40,8 +40,8 @@ public class AppOrderSQL {
                     + TableNames.AppOrder
                     + " (id, orderNo, custId, restId, revenueId, sourceType, tableId, orderStatus, subTotal, taxAmount, "
                     + " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType,"
-                    + " orderRemark, eatType, payStatus, person,address,name,phone)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " orderRemark, eatType, payStatus, person, address, contact, mobile,deliveryTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{appOrder.getId(), appOrder.getOrderNo(),
@@ -56,7 +56,7 @@ public class AppOrderSQL {
                             appOrder.getBizType(), appOrder.getOrderRemark(),
                             appOrder.getEatType(), appOrder.getPayStatus(),
                             appOrder.getPerson(), appOrder.getAddress(),
-                            appOrder.getName(), appOrder.getPhone()});
+                            appOrder.getContact(), appOrder.getMobile(), appOrder.getDeliveryTime()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,8 +72,8 @@ public class AppOrderSQL {
                     + TableNames.AppOrder
                     + " (id, orderNo, custId, restId, revenueId, sourceType, tableId, orderStatus, subTotal, taxAmount, "
                     + " discountAmount, discountType, total, orderCount, createTime, updateTime, tableType, tableNo, bizType,"
-                    + " orderRemark, eatType, payStatus, person,address,name,phone)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " orderRemark, eatType, payStatus, person,address,contact,mobile,deliveryTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{appOrder.getId(), appOrder.getOrderNo(),
@@ -88,7 +88,7 @@ public class AppOrderSQL {
                             appOrder.getBizType(), appOrder.getOrderRemark(),
                             appOrder.getEatType(), appOrder.getPayStatus(),
                             appOrder.getPerson(), appOrder.getAddress(),
-                            appOrder.getName(), appOrder.getPhone()});
+                            appOrder.getContact(), appOrder.getMobile(), appOrder.getDeliveryTime()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,7 +96,7 @@ public class AppOrderSQL {
 
 
     public static List<AppOrder> getAppOrderByOrderStatus(int orderStatus, long time) {
-        String sql = "select * from " + TableNames.AppOrder + " where orderStatus = ? and createTime > ? order by id desc ";
+        String sql = "select * from " + TableNames.AppOrder + " where orderStatus = ? and createTime > ? and eatType < " + ParamConst.APP_ORDER_DELIVERY + " order by id desc ";
         Cursor cursor = null;
         List<AppOrder> result = new ArrayList<AppOrder>();
         SQLiteDatabase db = SQLExe.getDB();
@@ -129,8 +129,109 @@ public class AppOrderSQL {
                 appOrder.setPayStatus(cursor.getInt(21));
                 appOrder.setPerson(cursor.getInt(22));
                 appOrder.setAddress(cursor.getString(23));
-                appOrder.setName(cursor.getString(24));
-                appOrder.setPhone(cursor.getString(25));
+                appOrder.setContact(cursor.getString(24));
+                appOrder.setMobile(cursor.getString(25));
+                appOrder.setDeliveryTime(cursor.getLong(26));
+                result.add(appOrder);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static List<AppOrder> getAppOrderList(long time) {
+        String sql = "select * from " + TableNames.AppOrder + " where orderStatus > " + ParamConst.APP_ORDER_STATUS_ACCEPTED + " and createTime > ? and eatType = " + ParamConst.APP_ORDER_DELIVERY + " order by id desc ";
+        Cursor cursor = null;
+        List<AppOrder> result = new ArrayList<AppOrder>();
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{time + ""});
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                AppOrder appOrder = new AppOrder();
+                appOrder.setId(cursor.getInt(0));
+                appOrder.setOrderNo(cursor.getInt(1));
+                appOrder.setCustId(cursor.getInt(2));
+                appOrder.setRestId(cursor.getInt(3));
+                appOrder.setRevenueId(cursor.getInt(4));
+                appOrder.setSourceType(cursor.getInt(5));
+                appOrder.setTableId(cursor.getInt(6));
+                appOrder.setOrderStatus(cursor.getInt(7));
+                appOrder.setSubTotal(cursor.getString(8));
+                appOrder.setTaxAmount(cursor.getString(9));
+                appOrder.setDiscountAmount(cursor.getString(10));
+                appOrder.setDiscountType(cursor.getInt(11));
+                appOrder.setTotal(cursor.getString(12));
+                appOrder.setOrderCount(cursor.getInt(13));
+                appOrder.setCreateTime(cursor.getLong(14));
+                appOrder.setUpdateTime(cursor.getLong(15));
+                appOrder.setTableType(cursor.getInt(16));
+                appOrder.setTableNo(cursor.getString(17));
+                appOrder.setBizType(cursor.getInt(18));
+                appOrder.setOrderRemark(cursor.getString(19));
+                appOrder.setEatType(cursor.getInt(20));
+                appOrder.setPayStatus(cursor.getInt(21));
+                appOrder.setPerson(cursor.getInt(22));
+                appOrder.setAddress(cursor.getString(23));
+                appOrder.setContact(cursor.getString(24));
+                appOrder.setMobile(cursor.getString(25));
+                appOrder.setDeliveryTime(cursor.getLong(26));
+                result.add(appOrder);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static List<AppOrder> getAppOrderByOrderStatusDelivery(int orderStatus, long time) {
+        String sql = "select * from " + TableNames.AppOrder + " where orderStatus = ? and createTime > ? and eatType = " + ParamConst.APP_ORDER_DELIVERY + " order by id desc ";
+        Cursor cursor = null;
+        List<AppOrder> result = new ArrayList<AppOrder>();
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{orderStatus + "", time + ""});
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                AppOrder appOrder = new AppOrder();
+                appOrder.setId(cursor.getInt(0));
+                appOrder.setOrderNo(cursor.getInt(1));
+                appOrder.setCustId(cursor.getInt(2));
+                appOrder.setRestId(cursor.getInt(3));
+                appOrder.setRevenueId(cursor.getInt(4));
+                appOrder.setSourceType(cursor.getInt(5));
+                appOrder.setTableId(cursor.getInt(6));
+                appOrder.setOrderStatus(cursor.getInt(7));
+                appOrder.setSubTotal(cursor.getString(8));
+                appOrder.setTaxAmount(cursor.getString(9));
+                appOrder.setDiscountAmount(cursor.getString(10));
+                appOrder.setDiscountType(cursor.getInt(11));
+                appOrder.setTotal(cursor.getString(12));
+                appOrder.setOrderCount(cursor.getInt(13));
+                appOrder.setCreateTime(cursor.getLong(14));
+                appOrder.setUpdateTime(cursor.getLong(15));
+                appOrder.setTableType(cursor.getInt(16));
+                appOrder.setTableNo(cursor.getString(17));
+                appOrder.setBizType(cursor.getInt(18));
+                appOrder.setOrderRemark(cursor.getString(19));
+                appOrder.setEatType(cursor.getInt(20));
+                appOrder.setPayStatus(cursor.getInt(21));
+                appOrder.setPerson(cursor.getInt(22));
+                appOrder.setAddress(cursor.getString(23));
+                appOrder.setContact(cursor.getString(24));
+                appOrder.setMobile(cursor.getString(25));
+                appOrder.setDeliveryTime(cursor.getLong(26));
                 result.add(appOrder);
             }
         } catch (Exception e) {
@@ -145,7 +246,13 @@ public class AppOrderSQL {
     }
 
     public static List<AppOrder> getNewAppOrder(long time) {
-        String sql = "select * from " + TableNames.AppOrder + " where orderStatus = " + ParamConst.APP_ORDER_STATUS_PAID + " or orderStatus = " + ParamConst.APP_ORDER_STATUS_ACCEPTED + " and createTime > ? order by orderStatus desc, id desc ";
+        String sql = "select * from "
+                + TableNames.AppOrder
+                + " where (orderStatus = " + ParamConst.APP_ORDER_STATUS_PAID + " or orderStatus = "
+                + ParamConst.APP_ORDER_STATUS_ACCEPTED
+                + " and createTime > ? ) and eatType < "
+                + ParamConst.APP_ORDER_DELIVERY
+                + " order by orderStatus desc, id desc ";
         Cursor cursor = null;
         List<AppOrder> result = new ArrayList<AppOrder>();
         SQLiteDatabase db = SQLExe.getDB();
@@ -178,8 +285,9 @@ public class AppOrderSQL {
                 appOrder.setPayStatus(cursor.getInt(21));
                 appOrder.setPerson(cursor.getInt(22));
                 appOrder.setAddress(cursor.getString(23));
-                appOrder.setName(cursor.getString(24));
-                appOrder.setPhone(cursor.getString(25));
+                appOrder.setContact(cursor.getString(24));
+                appOrder.setMobile(cursor.getString(25));
+                appOrder.setDeliveryTime(cursor.getLong(26));
                 result.add(appOrder);
             }
         } catch (Exception e) {
@@ -193,8 +301,12 @@ public class AppOrderSQL {
         return result;
     }
 
-    public static List<AppOrder> getDeAppOrder(long time) {
-        String sql = "select * from " + TableNames.AppOrder + " where orderStatus = " + ParamConst.APP_ORDER_STATUS_PAID + " or orderStatus = " + ParamConst.APP_ORDER_STATUS_ACCEPTED + " and createTime > ? and address!=null order by orderStatus desc, id desc ";
+    public static List<AppOrder> getNewAppOrderAddress(long time) {
+        String sql = "select * from " + TableNames.AppOrder
+                + " where (orderStatus = " + ParamConst.APP_ORDER_STATUS_PAID + " or orderStatus = "
+                + ParamConst.APP_ORDER_STATUS_ACCEPTED
+                + " and createTime > ? ) and eatType = " + ParamConst.APP_ORDER_DELIVERY
+                + " order by orderStatus desc, id desc ";
         Cursor cursor = null;
         List<AppOrder> result = new ArrayList<AppOrder>();
         SQLiteDatabase db = SQLExe.getDB();
@@ -227,8 +339,9 @@ public class AppOrderSQL {
                 appOrder.setPayStatus(cursor.getInt(21));
                 appOrder.setPerson(cursor.getInt(22));
                 appOrder.setAddress(cursor.getString(23));
-                appOrder.setName(cursor.getString(24));
-                appOrder.setPhone(cursor.getString(25));
+                appOrder.setContact(cursor.getString(24));
+                appOrder.setMobile(cursor.getString(25));
+                appOrder.setDeliveryTime(cursor.getLong(26));
                 result.add(appOrder);
             }
         } catch (Exception e) {
@@ -244,7 +357,11 @@ public class AppOrderSQL {
 
 
     public static List<AppOrder> getPreparAppOrder(long time) {
-        String sql = "select * from " + TableNames.AppOrder + " where orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARING + " or orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARED + " and createTime > ? order by orderStatus desc, id desc ";
+        String sql = " select * from " + TableNames.AppOrder
+                + " where ( orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARING
+                + " or orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARED
+                + " and createTime > ? ) and eatType < " + ParamConst.APP_ORDER_DELIVERY
+                + " order by orderStatus desc, id desc ";
         Cursor cursor = null;
         List<AppOrder> result = new ArrayList<AppOrder>();
         SQLiteDatabase db = SQLExe.getDB();
@@ -277,8 +394,59 @@ public class AppOrderSQL {
                 appOrder.setPayStatus(cursor.getInt(21));
                 appOrder.setPerson(cursor.getInt(22));
                 appOrder.setAddress(cursor.getString(23));
-                appOrder.setName(cursor.getString(24));
-                appOrder.setPhone(cursor.getString(25));
+                appOrder.setContact(cursor.getString(24));
+                appOrder.setMobile(cursor.getString(25));
+                appOrder.setDeliveryTime(cursor.getLong(26));
+                result.add(appOrder);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static List<AppOrder> getPreparAppOrderDelivery(long time) {
+        String sql = " select * from " + TableNames.AppOrder + " where ( orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARING + " or orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARED + " and createTime > ? ) and eatType = " + ParamConst.APP_ORDER_DELIVERY + " order by orderStatus desc, id desc ";
+        Cursor cursor = null;
+        List<AppOrder> result = new ArrayList<AppOrder>();
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{time + ""});
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                AppOrder appOrder = new AppOrder();
+                appOrder.setId(cursor.getInt(0));
+                appOrder.setOrderNo(cursor.getInt(1));
+                appOrder.setCustId(cursor.getInt(2));
+                appOrder.setRestId(cursor.getInt(3));
+                appOrder.setRevenueId(cursor.getInt(4));
+                appOrder.setSourceType(cursor.getInt(5));
+                appOrder.setTableId(cursor.getInt(6));
+                appOrder.setOrderStatus(cursor.getInt(7));
+                appOrder.setSubTotal(cursor.getString(8));
+                appOrder.setTaxAmount(cursor.getString(9));
+                appOrder.setDiscountAmount(cursor.getString(10));
+                appOrder.setDiscountType(cursor.getInt(11));
+                appOrder.setTotal(cursor.getString(12));
+                appOrder.setOrderCount(cursor.getInt(13));
+                appOrder.setCreateTime(cursor.getLong(14));
+                appOrder.setUpdateTime(cursor.getLong(15));
+                appOrder.setTableType(cursor.getInt(16));
+                appOrder.setTableNo(cursor.getString(17));
+                appOrder.setBizType(cursor.getInt(18));
+                appOrder.setOrderRemark(cursor.getString(19));
+                appOrder.setEatType(cursor.getInt(20));
+                appOrder.setPayStatus(cursor.getInt(21));
+                appOrder.setPerson(cursor.getInt(22));
+                appOrder.setAddress(cursor.getString(23));
+                appOrder.setContact(cursor.getString(24));
+                appOrder.setMobile(cursor.getString(25));
+                appOrder.setDeliveryTime(cursor.getLong(26));
                 result.add(appOrder);
             }
         } catch (Exception e) {
@@ -325,8 +493,9 @@ public class AppOrderSQL {
                 appOrder.setPayStatus(cursor.getInt(21));
                 appOrder.setPerson(cursor.getInt(22));
                 appOrder.setAddress(cursor.getString(23));
-                appOrder.setName(cursor.getString(24));
-                appOrder.setPhone(cursor.getString(25));
+                appOrder.setContact(cursor.getString(24));
+                appOrder.setMobile(cursor.getString(25));
+                appOrder.setDeliveryTime(cursor.getLong(26));
             }
         } catch (Exception e) {
             e.printStackTrace();

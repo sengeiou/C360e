@@ -106,11 +106,10 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
     Map<String, Object> callMap = new HashMap<String, Object>();
     private AnimationSet textAnimationSet;
     private Boolean type = true;
-    private TextView call_big,line,lines;
+    private TextView call_big, line, lines;
     ScaleAnimation scaleAnimation;
 
     private Handler handlers;
-
 
 
     public static TwoFragment newInstance(String param1, String param2) {
@@ -144,7 +143,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
         super.onActivityCreated(savedInstanceState);
         initView();
 
-     //   mPeriodEventHdr.postDelayed(mUpdateUiRunnable, 3000);
+        //   mPeriodEventHdr.postDelayed(mUpdateUiRunnable, 3000);
     }
 
     private void initView() {
@@ -163,14 +162,14 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
         re_video_pic = (RelativeLayout) getActivity().findViewById(R.id.re_video_pic);
 
         call_big = (TextView) getActivity().findViewById(R.id.tv_call_big);
-        line=(TextView) getActivity().findViewById(R.id.tv_line);
-        lines=(TextView)getActivity().findViewById(R.id.tv_lines) ;
+        line = (TextView) getActivity().findViewById(R.id.tv_line);
+        lines = (TextView) getActivity().findViewById(R.id.tv_lines);
         re_video_pic.setOnTouchListener(this);
         li_select.setVisibility(View.GONE);
         btn_video.setOnClickListener(this);
         btn_picture.setOnClickListener(this);
         btn_empty.setOnClickListener(this);
-       mVideoResManager = new VideoResManager(getActivity());
+        mVideoResManager = new VideoResManager(getActivity());
 
         if (vid == 1) {
 
@@ -261,11 +260,10 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
     public void setViewId(int vid, Handler mhandler) {
         this.vid = vid;
-        this.handlers=mhandler;
+        this.handlers = mhandler;
     }
 
     public void addData(int position, CallBean call) {
-
 
 
         if (vid == 1) {
@@ -278,7 +276,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                         mDataLeft.remove(i);
                         mAdapterLeft.notifyDataSetChanged();
                     } else {
-                      //  App.instance.setCall(call);
+                        //  App.instance.setCall(call);
                     }
                 }
             }
@@ -452,15 +450,13 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                 call_big.setVisibility(View.GONE);
 
 
-
-
                 break;
         }
 
     }
 
     public void dataClear() {
-     call_big.setVisibility(View.GONE);
+        call_big.setVisibility(View.GONE);
         mDatasRight.clear();
         mDataLeft.clear();
         mAdapterLeft.notifyDataSetChanged();
@@ -818,12 +814,11 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 //            call_big.startAnimation(scaleAnimation);
             //  startScaleAnimation(call_big);
 
-           ((MainActivity)getActivity()).sAnimation(call_big);
+            ((MainActivity) getActivity()).sAnimation(call_big);
         } else {
             call_big.setVisibility(View.GONE);
         }
     }
-
 
 
     public void getVideoAgain() {
@@ -843,9 +838,9 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
     public void onResume() {
 
 
-        if(videoView.getVisibility() == View.GONE && picSwitch.getVisibility() == View.GONE){
+        if (videoView.getVisibility() == View.GONE && picSwitch.getVisibility() == View.GONE) {
 
-        }else {
+        } else {
             updateView();
             startPlay(false);
         }

@@ -136,6 +136,7 @@
     <string name="table_">台号:</string>
     <string name="kot_no_">KOT编号: </string>
     <string name="order_no_">订单号:</string>
+    <string name="app_delivery">外卖</string>
     <string name="date_">时间: </string>
     <string name="void_">*** 退菜 ***</string>
     <string name="kot_copy">KOT副本</string>

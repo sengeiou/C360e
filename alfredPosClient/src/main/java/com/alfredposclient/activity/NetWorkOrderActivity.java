@@ -2,6 +2,7 @@ package com.alfredposclient.activity;
 
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -17,23 +18,27 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
+import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderModifierSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.Fragment.TableLayoutFragment;
@@ -42,12 +47,16 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
+import com.alfredposclient.view.dialog.DeliveryDialog;
+import com.alfredposclient.view.dialog.MediaDialog;
+import com.test.alfred.taskqueue.MainActivity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NetWorkOrderActivity extends BaseActivity {
+public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog.PaymentClickListener {
 
     public static final int REFRESH_APPORDER_SUCCESS = 101;
     public static final int RECEVING_APP_ORDER_SUCCESS = 102;
@@ -57,6 +66,7 @@ public class NetWorkOrderActivity extends BaseActivity {
     public static final int CANCEL_APPORDER_SUCCESS = 103;
 
     private List<AppOrder> appOrders = new ArrayList<AppOrder>();
+    private List<AppOrder> selectAppOrders = new ArrayList<AppOrder>();
 
     private List<AppOrder> appOrderNet = new ArrayList<AppOrder>();
 
@@ -70,7 +80,7 @@ public class NetWorkOrderActivity extends BaseActivity {
 
     private int isEat = 0;
     private Button btn_check;
-    private Button btn_cancel;
+    private Button btn_cancel, btn_delivery;
     public static final int CHECK_REQUEST_CODE = 110;
     private AppOderAdapter appOderAdapter;
     private AppOderDetailAdapter appOderDetailAdapter;
@@ -80,7 +90,10 @@ public class NetWorkOrderActivity extends BaseActivity {
     private TextView tv_preparing_order;
     private TextView tv_completed_order, tv_net_order, tv_delivery_order;
     private TableLayoutFragment f_tables;
-    private LinearLayout ll_orderdetail_layout;
+    private LinearLayout ll_orderdetail_layout, ll_address;
+
+    private TextView tv_app_address, tv_app_address_name, tv_app_address_phone;
+    private DeliveryDialog deliveryDialog;
 
     @Override
     protected void initView() {
@@ -97,6 +110,8 @@ public class NetWorkOrderActivity extends BaseActivity {
 
         btn_check = (Button) findViewById(R.id.btn_check);
         btn_cancel = (Button) findViewById(R.id.btn_cancel);
+        btn_delivery = (Button) findViewById(R.id.btn_delivery);
+        btn_delivery.setOnClickListener(this);
         btn_check.setOnClickListener(this);
         btn_cancel.setOnClickListener(this);
         findViewById(R.id.btn_back).setOnClickListener(this);
@@ -106,11 +121,14 @@ public class NetWorkOrderActivity extends BaseActivity {
         tv_completed_order = (TextView) findViewById(R.id.tv_completed_order);
         tv_net_order = (TextView) findViewById(R.id.tv_net_order);
         tv_delivery_order = (TextView) findViewById(R.id.tv_delivery_order);
-
+        ll_address = (LinearLayout) findViewById(R.id.ll_address);
+        tv_app_address = (TextView) findViewById(R.id.tv_app_address);
+        tv_app_address_name = (TextView) findViewById(R.id.tv_app_address_name);
+        tv_app_address_phone = (TextView) findViewById(R.id.tv_app_address_phone);
         tv_net_order.setOnClickListener(this);
         tv_delivery_order.setOnClickListener(this);
-//        tv_net_order.setBackgroundColor(getResources().getColor(R.color.brownness));
-//        tv_net_order.setTextColor(getResources().getColor(R.color.white));
+        tv_net_order.setBackgroundColor(getResources().getColor(R.color.brownness));
+        tv_net_order.setTextColor(getResources().getColor(R.color.white));
 
 
         tv_new_order.setOnClickListener(this);
@@ -144,9 +162,13 @@ public class NetWorkOrderActivity extends BaseActivity {
             }
             appOrderId = 0;
         }
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
-        closeTables();
+
+        if (!App.instance.isRevenueKiosk()) {
+            FragmentManager fragmentManager = this.getSupportFragmentManager();
+            f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
+
+            closeTables();
+        }
     }
 
     private TableInfo tableInfo;
@@ -165,13 +187,15 @@ public class NetWorkOrderActivity extends BaseActivity {
         App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
 
         dismissLoadingDialog();
-        closeTables();
+        //  closeTables();
     }
 
     private void closeTables() {
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.hide(f_tables);
+        if (!App.instance.isRevenueKiosk()) {
+            transaction.hide(f_tables);
+        }
         transaction.commitAllowingStateLoss();
     }
 
@@ -179,7 +203,9 @@ public class NetWorkOrderActivity extends BaseActivity {
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
-        transaction.show(f_tables);
+        if (!App.instance.isRevenueKiosk()) {
+            transaction.show(f_tables);
+        }
         transaction.commitAllowingStateLoss();
         App.instance.showWelcomeToSecondScreen();
     }
@@ -198,9 +224,12 @@ public class NetWorkOrderActivity extends BaseActivity {
             case R.id.tv_new_order:
                 tv_new_order.setBackgroundColor(getResources().getColor(R.color.brownness));
                 tv_new_order.setTextColor(getResources().getColor(R.color.white));
-
-                appOrders = AppOrderSQL.getNewAppOrder(App.instance.getBusinessDate());
-
+                btn_delivery.setVisibility(View.GONE);
+                if (isEat == 0) {
+                    appOrders = AppOrderSQL.getNewAppOrder(App.instance.getBusinessDate());
+                } else {
+                    appOrders = AppOrderSQL.getNewAppOrderAddress(App.instance.getBusinessDate());
+                }
                 btn_check.setText(getResources().getText(R.string.receving_order));
                 if (!App.instance.isRevenueKiosk()) {
                     btn_cancel.setVisibility(View.VISIBLE);
@@ -209,7 +238,14 @@ public class NetWorkOrderActivity extends BaseActivity {
             case R.id.tv_preparing_order:
                 tv_preparing_order.setBackgroundColor(getResources().getColor(R.color.brownness));
                 tv_preparing_order.setTextColor(getResources().getColor(R.color.white));
-                appOrders = AppOrderSQL.getPreparAppOrder(App.instance.getBusinessDate());
+                if (isEat == 0) {
+                    btn_delivery.setVisibility(View.GONE);
+                    appOrders = AppOrderSQL.getPreparAppOrder(App.instance.getBusinessDate());
+                } else {
+                    btn_delivery.setVisibility(View.VISIBLE);
+                    appOrders = AppOrderSQL.getPreparAppOrderDelivery(App.instance.getBusinessDate());
+                }
+
                 btn_check.setText(getResources().getText(R.string.completed_order));
 //				if(!App.instance.isRevenueKiosk()){
 //					btn_check.setVisibility(View.INVISIBLE);
@@ -219,7 +255,15 @@ public class NetWorkOrderActivity extends BaseActivity {
             case R.id.tv_completed_order:
                 tv_completed_order.setBackgroundColor(getResources().getColor(R.color.brownness));
                 tv_completed_order.setTextColor(getResources().getColor(R.color.white));
-                appOrders = AppOrderSQL.getAppOrderByOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED, App.instance.getBusinessDate());
+                if (isEat == 0) {
+                    btn_delivery.setVisibility(View.GONE);
+                    appOrders = AppOrderSQL.getAppOrderByOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED, App.instance.getBusinessDate());
+                } else {
+                    btn_delivery.setVisibility(View.VISIBLE);
+                    appOrders = AppOrderSQL.getAppOrderByOrderStatusDelivery(ParamConst.APP_ORDER_STATUS_COMPLETED, App.instance.getBusinessDate());
+                }
+
+
                 btn_check.setText(getResources().getText(R.string.reprint_bill));
 //				if(!App.instance.isRevenueKiosk()){
 //					btn_check.setVisibility(View.INVISIBLE);
@@ -235,6 +279,37 @@ public class NetWorkOrderActivity extends BaseActivity {
             AppOrder appOrder = appOrders.get(selectOrderItem);
             TextView tv_eat_type = (TextView) findViewById(R.id.tv_eat_type);
             TextView tv_app_remarks = (TextView) findViewById(R.id.tv_app_remarks);
+
+            if (isEat == 0) {
+                ll_address.setVisibility(View.GONE);
+            } else {
+                ll_address.setVisibility(View.VISIBLE);
+
+                if (TextUtils.isEmpty(appOrder.getAddress())) {
+                    tv_app_address.setText("");
+                } else {
+                    //    String addr = appOrder.getAddress();
+                    tv_app_address.setText(appOrder.getAddress());
+                }
+
+                if (TextUtils.isEmpty(appOrder.getContact())) {
+                    tv_app_address_name.setText("");
+                } else {
+                    //    String addr = appOrder.getAddress();
+                    tv_app_address_name.setText(appOrder.getContact());
+                }
+
+                if (TextUtils.isEmpty(appOrder.getContact())) {
+                    tv_app_address_phone.setText("");
+                } else {
+                    //    String addr = appOrder.getAddress();
+                    tv_app_address_phone.setText(appOrder.getMobile());
+                }
+
+
+//              ;
+//                tv_app_address_phone.setText(appOrder.getPhone());
+            }
             if (appOrder.getEatType() == ParamConst.APP_ORDER_TAKE_AWAY) {
                 tv_eat_type.setText(getResources().getString(R.string.app_take_away));
             } else if (appOrder.getEatType() == ParamConst.APP_ORDER_DELIVERY) {
@@ -303,7 +378,7 @@ public class NetWorkOrderActivity extends BaseActivity {
                         loadingDialog.show();
                         SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
                     } else {
-                        showTables();
+                        //      showTables();
                     }
                 } else {
                     appOrder
@@ -314,7 +389,8 @@ public class NetWorkOrderActivity extends BaseActivity {
                     printerLoadingDialog.setTitle(context.getResources().getString(
                             R.string.receipt_printing));
                     printerLoadingDialog.showByTime(3000);
-                    App.instance.printerAppOrder(appOrder);
+                    List<AppOrder> list = new ArrayList<>();
+                    App.instance.printerAppOrder(appOrder, "", list);
                     CloudSyncJobManager cloudSync = App.instance.getSyncJob();
                     if (cloudSync != null) {
                         cloudSync.checkAppOrderStatus(
@@ -396,6 +472,8 @@ public class NetWorkOrderActivity extends BaseActivity {
                 tv_net_order.setTextColor(getResources().getColor(R.color.white));
                 tv_delivery_order.setBackgroundColor(getResources().getColor(R.color.white));
                 tv_delivery_order.setTextColor(getResources().getColor(R.color.black));
+                selectOrderItem = 0;
+                refreshDataView();
                 break;
             case R.id.tv_delivery_order:
                 tv_delivery_order.setBackgroundColor(getResources().getColor(R.color.brownness));
@@ -403,6 +481,27 @@ public class NetWorkOrderActivity extends BaseActivity {
                 tv_net_order.setBackgroundColor(getResources().getColor(R.color.white));
                 tv_net_order.setTextColor(getResources().getColor(R.color.black));
                 isEat = 1;
+                selectOrderItem = 0;
+                refreshDataView();
+                break;
+
+            case R.id.btn_delivery:
+                appOrders = AppOrderSQL.getAppOrderList(App.instance.getBusinessDate());
+                if (isEat == 1 && selectViewId != R.id.tv_new_order) {
+                    deliveryDialog = new DeliveryDialog(NetWorkOrderActivity.this, appOrders);
+                    deliveryDialog.setPaymentClickListener(this);
+                }
+
+
+//                if (appOrders.size() > 0) {
+//                    Intent intent = new Intent();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable("apporder",
+//                            (Serializable) appOrders);// 将数据打包存入intent
+//                    intent.setClass(NetWorkOrderActivity.this, DeliveryDialogActivity.class);
+//                    intent.putExtras(bundle);
+//                    startActivityForResult(intent, 100);
+//                }
                 break;
             default:
                 break;
@@ -475,7 +574,7 @@ public class NetWorkOrderActivity extends BaseActivity {
                     List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(appOrder.getId().intValue());
                     App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
                     dismissLoadingDialog();
-                    closeTables();
+                    //  closeTables();
                 }
                 break;
                 case CANCEL_APPORDER_SUCCESS:
@@ -517,6 +616,51 @@ public class NetWorkOrderActivity extends BaseActivity {
             });
         }
         super.httpRequestAction(action, obj);
+
+    }
+
+    @Override
+    public void onPaymentClick(List<AppOrder> order) {
+
+        StringBuffer str = new StringBuffer();
+
+        for (int i = 0; i < order.size(); i++) {
+
+            Order paidOrder = OrderSQL.getOrderByAppOrderId(order.get(i)
+                    .getId().intValue());
+
+
+            if (paidOrder != null) {
+                order.get(i).setOrderNo(Integer.valueOf(IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), paidOrder.getOrderNo().toString())));
+            }
+//            str.append(getResources().getString(R.string.order_no_) + " " + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), paidOrder.getOrderNo().toString()) + "\n");
+//            AppOrder appOrder = order.get(i);
+//            if (!TextUtils.isEmpty(appOrder.getContact())) {
+//                if (!TextUtils.isEmpty(appOrder.getMobile())) {
+//                    str.append(appOrder.getContact() + "    " + appOrder.getMobile() + "\n");
+//                } else {
+//                    str.append(appOrder.getContact() + "   " + "\n");
+//                }
+//
+//            } else {
+//                if (!TextUtils.isEmpty(appOrder.getMobile())) {
+//                    str.append(appOrder.getMobile() + "\n");
+//                } else {
+//                    //   str.append(appOrder.getContact()+"   "+"\n");
+//                }
+//            }
+//            if (!TextUtils.isEmpty(appOrder.getAddress())) {
+//                str.append(appOrder.getAddress() + "\n");
+//            }
+//
+//
+        }
+
+
+        App.instance.printerAppOrder(appOrders.get(0), "", order);
+//        Toast.makeText(NetWorkOrderActivity.this, "print !", Toast.LENGTH_SHORT)
+//                .show();
+
 
     }
 
@@ -562,99 +706,98 @@ public class NetWorkOrderActivity extends BaseActivity {
             AppOrder appOrder = appOrders.get(arg0);
 
 
-            if (appOrder.getEatType() == 3 && isEat == 1) {
-                if (arg0 == selectOrderItem) {
-                    arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.brownness));
-                    btn_check.setTag(appOrder);
-                    btn_cancel.setTag(appOrder);
+            if (arg0 == selectOrderItem) {
+                arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.brownness));
+                btn_check.setTag(appOrder);
+                btn_cancel.setTag(appOrder);
 //				if(appOrder.getTableType().intValue() == ParamConst.APP_ORDER_TABLE_STATUS_USED){
 //					btn_check.setVisibility(View.VISIBLE);
 //				}else{
 //					btn_check.setVisibility(View.INVISIBLE);
 //				}
-                    holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                    holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                    holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                    holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                } else {
-                    arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                    holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-                    holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-                    holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-                    holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-                }
-                holder.tv_order_id.setText(appOrder.getId() + "");
-                String statusStr = "";
-                switch (appOrder.getOrderStatus().intValue()) {
-                    case ParamConst.APP_ORDER_STATUS_PAID:
-                        statusStr = getResources().getString(R.string.paid);
-                        break;
-                    case ParamConst.APP_ORDER_STATUS_ACCEPTED:
-                        statusStr = getResources().getString(R.string.making);
-                        break;
-                    case ParamConst.APP_ORDER_STATUS_PREPARING:
-                        statusStr = getResources().getString(R.string.preparing);
-                        break;
-                    case ParamConst.APP_ORDER_STATUS_PREPARED:
-                        statusStr = getResources().getString(R.string.prepared);
-                        break;
-                    case ParamConst.APP_ORDER_STATUS_COMPLETED:
-                        statusStr = getResources().getString(R.string.finish);
-                        break;
-                    default:
-                        break;
-                }
-                holder.tv_order_status.setText(statusStr);
-                holder.tv_order_type.setText("Online");
-                holder.tv_place_time.setText(TimeUtil.getCloseBillDataTime(appOrder.getCreateTime()));
+                holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+                holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+                holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+                holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
             } else {
-
-                if (arg0 == selectOrderItem) {
-                    arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.brownness));
-                    btn_check.setTag(appOrder);
-                    btn_cancel.setTag(appOrder);
-//				if(appOrder.getTableType().intValue() == ParamConst.APP_ORDER_TABLE_STATUS_USED){
-//					btn_check.setVisibility(View.VISIBLE);
-//				}else{
-//					btn_check.setVisibility(View.INVISIBLE);
-//				}
-                    holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                    holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                    holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                    holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                } else {
-                    arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
-                    holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-                    holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-                    holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-                    holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
-                }
-                holder.tv_order_id.setText(appOrder.getId() + "");
-                String statusStr = "";
-                switch (appOrder.getOrderStatus().intValue()) {
-                    case ParamConst.APP_ORDER_STATUS_PAID:
-                        statusStr = getResources().getString(R.string.paid);
-                        break;
-                    case ParamConst.APP_ORDER_STATUS_ACCEPTED:
-                        statusStr = getResources().getString(R.string.making);
-                        break;
-                    case ParamConst.APP_ORDER_STATUS_PREPARING:
-                        statusStr = getResources().getString(R.string.preparing);
-                        break;
-                    case ParamConst.APP_ORDER_STATUS_PREPARED:
-                        statusStr = getResources().getString(R.string.prepared);
-                        break;
-                    case ParamConst.APP_ORDER_STATUS_COMPLETED:
-                        statusStr = getResources().getString(R.string.finish);
-                        break;
-                    default:
-                        break;
-                }
-                holder.tv_order_status.setText(statusStr);
-                holder.tv_order_type.setText("Online");
-                holder.tv_place_time.setText(TimeUtil.getCloseBillDataTime(appOrder.getCreateTime()));
-
+                arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+                holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+                holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+                holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+                holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
             }
+            holder.tv_order_id.setText(appOrder.getId() + "");
+            String statusStr = "";
+            switch (appOrder.getOrderStatus().intValue()) {
+                case ParamConst.APP_ORDER_STATUS_PAID:
+                    statusStr = getResources().getString(R.string.paid);
+                    break;
+                case ParamConst.APP_ORDER_STATUS_ACCEPTED:
+                    statusStr = getResources().getString(R.string.making);
+                    break;
+                case ParamConst.APP_ORDER_STATUS_PREPARING:
+                    statusStr = getResources().getString(R.string.preparing);
+                    break;
+                case ParamConst.APP_ORDER_STATUS_PREPARED:
+                    statusStr = getResources().getString(R.string.prepared);
+                    break;
+                case ParamConst.APP_ORDER_STATUS_COMPLETED:
+                    statusStr = getResources().getString(R.string.finish);
+                    break;
+                default:
+                    break;
+            }
+            holder.tv_order_status.setText(statusStr);
+            holder.tv_order_type.setText("Online");
+            holder.tv_place_time.setText(TimeUtil.getCloseBillDataTime(appOrder.getCreateTime()));
+//            } else {
+//
+//                if (arg0 == selectOrderItem) {
+//                    arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.brownness));
+//                    btn_check.setTag(appOrder);
+//                    btn_cancel.setTag(appOrder);
+////				if(appOrder.getTableType().intValue() == ParamConst.APP_ORDER_TABLE_STATUS_USED){
+////					btn_check.setVisibility(View.VISIBLE);
+////				}else{
+////					btn_check.setVisibility(View.INVISIBLE);
+////				}
+//                    holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+//                    holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+//                    holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+//                    holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+//                } else {
+//                    arg1.setBackgroundColor(NetWorkOrderActivity.this.getResources().getColor(R.color.white));
+//                    holder.tv_order_id.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+//                    holder.tv_order_status.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+//                    holder.tv_order_type.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+//                    holder.tv_place_time.setTextColor(NetWorkOrderActivity.this.getResources().getColor(R.color.black));
+//                }
+//                holder.tv_order_id.setText(appOrder.getId() + "");
+//                String statusStr = "";
+//                switch (appOrder.getOrderStatus().intValue()) {
+//                    case ParamConst.APP_ORDER_STATUS_PAID:
+//                        statusStr = getResources().getString(R.string.paid);
+//                        break;
+//                    case ParamConst.APP_ORDER_STATUS_ACCEPTED:
+//                        statusStr = getResources().getString(R.string.making);
+//                        break;
+//                    case ParamConst.APP_ORDER_STATUS_PREPARING:
+//                        statusStr = getResources().getString(R.string.preparing);
+//                        break;
+//                    case ParamConst.APP_ORDER_STATUS_PREPARED:
+//                        statusStr = getResources().getString(R.string.prepared);
+//                        break;
+//                    case ParamConst.APP_ORDER_STATUS_COMPLETED:
+//                        statusStr = getResources().getString(R.string.finish);
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                holder.tv_order_status.setText(statusStr);
+//                holder.tv_order_type.setText("Online");
+//                holder.tv_place_time.setText(TimeUtil.getCloseBillDataTime(appOrder.getCreateTime()));
+//
+//            }
             return arg1;
         }
 
@@ -696,10 +839,10 @@ public class NetWorkOrderActivity extends BaseActivity {
                 holder.tv_orderdetail_name = (TextView) arg1.findViewById(R.id.tv_orderdetail_name);
                 holder.tv_orderdetail_qty = (TextView) arg1.findViewById(R.id.tv_orderdetail_qty);
                 holder.tv_temp_modifier = (TextView) arg1.findViewById(R.id.tv_temp_modifier);
-                holder.ll_address=(LinearLayout) arg1.findViewById(R.id.ll_address);
-                holder.tv_app_address=(TextView) arg1.findViewById(R.id.tv_app_address);
-                holder.tv_app_address_phone=(TextView) arg1.findViewById(R.id.tv_app_address);
-                holder.tv_app_address_name=(TextView) arg1.findViewById(R.id.tv_app_address);
+                holder.ll_address = (LinearLayout) arg1.findViewById(R.id.ll_address);
+                holder.tv_app_address = (TextView) arg1.findViewById(R.id.tv_app_address);
+                holder.tv_app_address_phone = (TextView) arg1.findViewById(R.id.tv_app_address);
+                holder.tv_app_address_name = (TextView) arg1.findViewById(R.id.tv_app_address);
                 textTypeFace.setTrajanProRegular(holder.tv_orderdetail_name);
                 textTypeFace.setTrajanProRegular(holder.tv_orderdetail_qty);
                 textTypeFace.setTrajanProRegular(holder.tv_temp_modifier);
@@ -710,14 +853,7 @@ public class NetWorkOrderActivity extends BaseActivity {
             AppOrderDetail appOrderDetail = appOrderDetails.get(arg0);
             holder.tv_orderdetail_name.setText(appOrderDetail.getItemName());
             holder.tv_orderdetail_qty.setText(appOrderDetail.getItemNum() + "");
-            if (appOrderDetail.getAddress() != null) {
-                holder.ll_address.setVisibility(View.VISIBLE);
-                holder.tv_app_address.setText(appOrderDetail.getAddress());
-                holder.tv_app_address_phone.setText(appOrderDetail.getPhone());
-                holder.tv_app_address_name.setText(appOrderDetail.getName());
-            } else {
-                holder.ll_address.setVisibility(View.GONE);
-            }
+
             List<AppOrderModifier> appOrderModifiers = AppOrderModifierSQL.getAppOrderModifierByOrderDetailId(appOrderDetail.getId().intValue());
             StringBuffer modifierNames = new StringBuffer();
             for (AppOrderModifier appOrderModifier : appOrderModifiers) {
@@ -740,6 +876,46 @@ public class NetWorkOrderActivity extends BaseActivity {
 
         }
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {// 请求码为MainToDialog
+            if (resultCode == 200) {// 取消
+                selectAppOrders = (List<AppOrder>) getIntent().getSerializableExtra("selectedApporder");
+            } else if (resultCode == 10000) {
+//                selectedStudent = data
+//                        .getParcelableArrayListExtra("selectedStudents");getParcelableArrayListExtra
+            }
+        }
+        handleSelectedData();
+    }
+
+    private void handleSelectedData() {
+
+        if (selectAppOrders == null) {// 取消
+            Toast.makeText(NetWorkOrderActivity.this, "你没有选择任何数据", Toast.LENGTH_SHORT)
+                    .show();
+        } else {// 确定
+            if (selectAppOrders.size() >= 1) {// 有选择
+                StringBuilder sb = new StringBuilder();
+                Toast.makeText(NetWorkOrderActivity.this, "你有选择",
+                        Toast.LENGTH_SHORT).show();
+//                App student = null;
+//                for (int i = 0; i < selectedStudent.size(); i++) {
+//                    student = selectedStudent.get(i);
+//                    sb.append(student.getName() + ",");
+//                }
+//                sb.deleteCharAt(sb.length() - 1);
+//                tvShow.setText(sb.toString());
+            } else {// 无选择
+                Toast.makeText(NetWorkOrderActivity.this, "你没有选择任何数据",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }
 
 

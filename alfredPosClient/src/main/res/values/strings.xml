@@ -100,6 +100,7 @@
     <string name="weight_">Weight(KG)</string>
     <string name="pax">Pax:</string>
     <string name="order_id">Order ID:</string>
+    <string name="order_no_">Order No.:</string>
     <string name="discount">Discount</string>
     <string name="unseat">Unseat</string>
     <string name="bill">Bill</string>

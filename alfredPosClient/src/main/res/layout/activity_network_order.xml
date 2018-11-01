@@ -27,7 +27,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="Order"
+                android:text="@string/take_away_"
                 android:textColor="@color/text_light_black"
                 android:textSize="15sp" />
 
@@ -58,6 +58,8 @@
             android:text="@string/back"
             android:visibility="gone" />
 
+
+
         <Button
             android:id="@+id/btn_refresh"
             android:layout_width="wrap_content"
@@ -68,6 +70,15 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:text="@string/refresh" />
+
+        <Button
+            android:id="@+id/btn_delivery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="0dp"
+            android:layout_toLeftOf="@id/btn_refresh"
+            android:text="delivery print" />
     </RelativeLayout>
 
 
@@ -243,6 +254,7 @@
 
                 <LinearLayout
                     android:id="@+id/ll_address"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -481,6 +493,7 @@
         android:id="@+id/f_tables_net"
         android:name="com.alfredposclient.Fragment.TableLayoutFragment"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent" />
 
 </RelativeLayout>

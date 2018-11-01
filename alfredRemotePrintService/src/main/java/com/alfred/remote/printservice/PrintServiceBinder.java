@@ -52,6 +52,7 @@ import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.ReportEntItem;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.ReportVoidItem;
+import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
@@ -59,7 +60,6 @@ import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.JobManager;
-import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.discovery.DeviceInfo;
 import com.epson.epos2.discovery.Discovery;
 import com.epson.epos2.discovery.DiscoveryListener;
@@ -1821,12 +1821,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
 
-
-    @Override
     public void printAppOrderBill(String printer, String title, String order,
-                               String orderDetail, String modifiers, String tax, String payment,
-                               boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,
-                               String currencySymbol, boolean openDrawer, boolean isDouble) throws RemoteException {
+                                  String orderDetail, String modifiers, String tax, String payment,
+                                  boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,
+                                  String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist) throws RemoteException {
+
+
         BH.initFormart(isDouble);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
@@ -1850,6 +1850,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         List<PrintReceiptInfo> settlement = gson.fromJson(payment,
                 new TypeToken<List<PrintReceiptInfo>>() {
+                }.getType());
+
+        List<AppOrder> appOrders = gson.fromJson(appOrderlist,
+                new TypeToken<List<AppOrder>>() {
                 }.getType());
 
         PrintManager printMgr = this.service.getPrintMgr();
@@ -1903,9 +1907,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     if (!TextUtils.isEmpty(orderNo))
                         billPrint.AddOrderNo(orderNo);
-                    billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
+                    billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info);
 
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
@@ -2006,91 +2010,97 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     BillPrint billPrint = new BillPrint(uuid, Long.valueOf(prtTitle.getBizDate()));
                     billPrint.setPrinterIp(prtDevice.getIP());
+
+
                     //set page size
                     if (this.service.isTMU220(name)) {
                         billPrint.setCharSize(33);
-                        billPrint.AddRestaurantInfo(null,
-                                prtTitle.getRestaurantName(),
-                                prtTitle.getAddressDetail(), null);
+                        if (appOrders==null||appOrders.size()<=0) {
+                            billPrint.AddRestaurantInfo(null,
+                                    prtTitle.getRestaurantName(),
+                                    prtTitle.getAddressDetail(), null);
+                        }
                     } else {
                         if (this.service.isTM88(name)) {
                             billPrint.setCharSize(42);
                         } else {
                             billPrint.setCharSize(48);
                         }
-                        billPrint.AddRestaurantInfo(prtTitle.getLogo(),
-                                prtTitle.getRestaurantName(),
-                                prtTitle.getAddressDetail(), null);
-
-                    }
-
-                    String orderNo1;
-                    if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                    } else {
-                        orderNo1 = prtTitle.getOrderNo();
-                    }
-
-                    if (!TextUtils.isEmpty(orderNo))
-                        billPrint.AddOrderNo(orderNo);
-                    billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
-                            theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum());
-
-                    billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
-                            PrintService.instance.getResources().getString(R.string.price),
-                            PrintService.instance.getResources().getString(R.string.qty),
-                            PrintService.instance.getResources().getString(R.string.total));
-
-
-                    if (printOrderItemList != null && printOrderItemList.size() > 0) {
-                        LinkedHashMap<String, PrintOrderItem> map = new LinkedHashMap<>();
-                        for (int index = 0; index < printOrderItemList.size(); index++) {
-                            boolean canMerge = true;
-                            PrintOrderItem item = printOrderItemList.get(index).clone();
-                            if (orderModifiers != null) {
-                                for (int m = 0; m < orderModifiers.size(); m++) {
-                                    PrintOrderModifier om = orderModifiers.get(m);
-                                    if (om.getOrderDetailId() == item.getOrderDetailId()) {
-                                        canMerge = false;
-                                        break;
-                                    }
-                                }
-                            } else {
-                                canMerge = true;
-                            }
-                            if (canMerge) {
-                                if (map.containsKey(item.getItemDetailId().intValue() + "")) {
-                                    PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
-                                    printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
-                                    printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
-                                    map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
-                                } else {
-                                    map.put(item.getItemDetailId().intValue() + "", item);
-                                }
-                            } else {
-                                map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
-                            }
+                        if (appOrders==null||appOrders.size()<=0) {
+                            billPrint.AddRestaurantInfo(prtTitle.getLogo(),
+                                    prtTitle.getRestaurantName(),
+                                    prtTitle.getAddressDetail(), null);
                         }
 
-                        for (PrintOrderItem item : map.values()) {
-                            billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
-                            //getModifiersByDetailId()
-                            ////
-                            if (orderModifiers != null) {
-                                for (int m = 0; m < orderModifiers.size(); m++) {
-                                    PrintOrderModifier om = orderModifiers.get(m);
-                                    if (om.getOrderDetailId() == item.getOrderDetailId()) {
-                                        if (om.getQty() > 1) {
-                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
-                                        } else {
-                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                    }
+                    if (appOrders==null||appOrders.size()<=0) {
+                        String orderNo1;
+                        if (prtTitle.getCopy() == 2) {
+                            orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
+                        } else {
+                            orderNo1 = prtTitle.getOrderNo();
+                        }
+
+                        if (!TextUtils.isEmpty(orderNo))
+                            billPrint.AddOrderNo(orderNo);
+                        billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
+                                theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
+                                prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info);
+
+                        billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
+                                PrintService.instance.getResources().getString(R.string.price),
+                                PrintService.instance.getResources().getString(R.string.qty),
+                                PrintService.instance.getResources().getString(R.string.total));
+
+
+                        if (printOrderItemList != null && printOrderItemList.size() > 0) {
+                            LinkedHashMap<String, PrintOrderItem> map = new LinkedHashMap<>();
+                            for (int index = 0; index < printOrderItemList.size(); index++) {
+                                boolean canMerge = true;
+                                PrintOrderItem item = printOrderItemList.get(index).clone();
+                                if (orderModifiers != null) {
+                                    for (int m = 0; m < orderModifiers.size(); m++) {
+                                        PrintOrderModifier om = orderModifiers.get(m);
+                                        if (om.getOrderDetailId() == item.getOrderDetailId()) {
+                                            canMerge = false;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    canMerge = true;
+                                }
+                                if (canMerge) {
+                                    if (map.containsKey(item.getItemDetailId().intValue() + "")) {
+                                        PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
+                                        printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
+                                        printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
+                                        map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
+                                    } else {
+                                        map.put(item.getItemDetailId().intValue() + "", item);
+                                    }
+                                } else {
+                                    map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
+                                }
+                            }
+
+                            for (PrintOrderItem item : map.values()) {
+                                billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
+                                        item.getQty(), item.getAmount(), 1, item.getWeight());
+                                //getModifiersByDetailId()
+                                ////
+                                if (orderModifiers != null) {
+                                    for (int m = 0; m < orderModifiers.size(); m++) {
+                                        PrintOrderModifier om = orderModifiers.get(m);
+                                        if (om.getOrderDetailId() == item.getOrderDetailId()) {
+                                            if (om.getQty() > 1) {
+                                                billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+                                            } else {
+                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
 //						for (int index = printOrderItemList.size() - 1;index >= 0;index--) {
 //							PrintOrderItem item = printOrderItemList.get(index);
@@ -2111,120 +2121,127 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //								}
 //							}
 //						}
-                    }
-                    ////////////// Bill Summary
-                    String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
-                    String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
-                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                        }
+                        ////////////// Bill Summary
+                        String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
+                        String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+                        String grandTotal = BH.getBD(theOrder.getTotal()).toString();
 
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
-                    List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
-                    if (settlement != null) {
-                        //   String paymentType = "";
-                        String cardNo = null;
+                        billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
+                        List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
+                        if (settlement != null) {
+                            //   String paymentType = "";
+                            String cardNo = null;
 
-                        for (PrintReceiptInfo printReceiptInfo : settlement) {
-                            LinkedHashMap<String, String> stmt = new LinkedHashMap<String, String>();
-                            String paymentType = "";
-                            switch (printReceiptInfo.getPaymentTypeId()) {
-                                case ParamConst.SETTLEMENT_TYPE_CASH:
-                                    if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.getBD(printReceiptInfo.getCashChange()).toString());
-                                        isCashSettlement = true;
-                                    }
-                                    if (isCashSettlement && i == 0) {
-                                        if (openDrawer)
-                                            this.kickCashDrawer(printer);
-                                    }
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.mastercard);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_UNIPAY:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.unionpay);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_VISA:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.visa);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_AMEX:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.amex_);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_JCB:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.jcb);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.dinner_intern);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.hold_bill);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_COMPANY:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.com_credits);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_HOURS_CHARGE:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.house_charge);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_VOID:
-                                    paymentType = PrintService.instance.getResources().getString(R.string._void);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_REFUND:
-                                    paymentType = PrintService.instance.getResources().getString(R.string._refund);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.ent);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_NETS:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.nets);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_ALIPAY:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.alipay);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_EZLINK:
-                                    paymentType = "EZ-Link";
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_PAYPAL:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.paypal);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_STORED_CARD:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.stored_card);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_DELIVEROO:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.deliveroo);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_UBEREATS:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.foodpanda);
-                                    break;
-                                case ParamConst.SETTLEMENT_TYPE_VOUCHER:
-                                    paymentType = PrintService.instance.getResources().getString(R.string.voucher);
-                                    break;
-                                default:
-                                    paymentType = printReceiptInfo.getPaymentTypeName();
-                                    break;
+                            for (PrintReceiptInfo printReceiptInfo : settlement) {
+                                LinkedHashMap<String, String> stmt = new LinkedHashMap<String, String>();
+                                String paymentType = "";
+                                switch (printReceiptInfo.getPaymentTypeId()) {
+                                    case ParamConst.SETTLEMENT_TYPE_CASH:
+                                        if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
+                                            stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
+                                            stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.getBD(printReceiptInfo.getCashChange()).toString());
+                                            isCashSettlement = true;
+                                        }
+                                        if (isCashSettlement && i == 0) {
+                                            if (openDrawer)
+                                                this.kickCashDrawer(printer);
+                                        }
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.mastercard);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_UNIPAY:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.unionpay);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_VISA:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.visa);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_AMEX:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.amex_);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_JCB:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.jcb);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.dinner_intern);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.hold_bill);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_COMPANY:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.com_credits);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_HOURS_CHARGE:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.house_charge);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_VOID:
+                                        paymentType = PrintService.instance.getResources().getString(R.string._void);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_REFUND:
+                                        paymentType = PrintService.instance.getResources().getString(R.string._refund);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.ent);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_NETS:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.nets);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_ALIPAY:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.alipay);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_EZLINK:
+                                        paymentType = "EZ-Link";
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_PAYPAL:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.paypal);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_STORED_CARD:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.stored_card);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_DELIVEROO:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.deliveroo);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_UBEREATS:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.ubereats);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.foodpanda);
+                                        break;
+                                    case ParamConst.SETTLEMENT_TYPE_VOUCHER:
+                                        paymentType = PrintService.instance.getResources().getString(R.string.voucher);
+                                        break;
+                                    default:
+                                        paymentType = printReceiptInfo.getPaymentTypeName();
+                                        break;
+                                }
+                                if (!TextUtils.isEmpty(paymentType)) {
+                                    stmt.put(paymentType,
+                                            BH.getBD(printReceiptInfo.getPaidAmount()).toString());
+                                }
+                                if (!TextUtils
+                                        .isEmpty(printReceiptInfo.getCardNo())) {
+                                    stmt.put(PrintService.instance.getResources().getString(R.string.card_no),
+                                            "**** " + printReceiptInfo.getCardNo());
+                                }
+                                stmtList.add(stmt);
                             }
-                            if (!TextUtils.isEmpty(paymentType)) {
-                                stmt.put(paymentType,
-                                        BH.getBD(printReceiptInfo.getPaidAmount()).toString());
-                            }
-                            if (!TextUtils
-                                    .isEmpty(printReceiptInfo.getCardNo())) {
-                                stmt.put(PrintService.instance.getResources().getString(R.string.card_no),
-                                        "**** " + printReceiptInfo.getCardNo());
-                            }
-                            stmtList.add(stmt);
+
+                            billPrint.AddSettlementDetails(stmtList, currencySymbol);
+                            billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
+                            //print check clo
+                            billPrint.addCloseBillDate();
+                            billPrint.addWelcomeMsg();
                         }
 
-                        billPrint.AddSettlementDetails(stmtList, currencySymbol);
-                        billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
-                        //print check clo
-                        billPrint.addCloseBillDate();
-                        billPrint.addWelcomeMsg();
+                        billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), false);
+                    } else {
+
+                        //  打印appOrder 地址列表
+                        printAddress(billPrint, appOrders);
                     }
                     /////////
-                    billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), false);
+
                     pqMgr.queuePrint(billPrint.getJobForQueue());
                     printMgr.addJob(prtDevice.getIP(), billPrint);
                 }
@@ -2233,6 +2250,47 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 
     }
+
+    private void printAddress(BillPrint billPrint, List<AppOrder> appOrders) {
+        int size = appOrders.size();
+        for (int j = 0; j < appOrders.size(); j++) {
+            AppOrder appOrder = appOrders.get(j);
+            StringBuffer str = new StringBuffer();
+            if (!TextUtils.isEmpty(appOrder.getContact())) {
+                str.append(appOrder.getContact());
+            }
+            if (!TextUtils.isEmpty(appOrder.getMobile())) {
+                String space = "";
+                if (str.length() > 0) {
+                    space = " ";
+                }
+                str.append(space + appOrder.getMobile());
+            }
+            String addressNext = "";
+            if (str.length() > 0) {
+                addressNext = " ";
+            }
+            str.append(addressNext + appOrder.getAddress() + " ");
+            str.append(TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()));
+            ///    billPrint.addBillOrderStr(appOrder.getOrderNo().toString() + "\n");
+//                            if (TextUtils.isEmpty(str.toString())) {
+//                                billPrint.printDeliveryList(appOrder.getOrderNo().toString(), appOrder.getAddress(), 1);
+//                            } else {
+            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+appOrder.getOrderNo().toString(), str.toString(), 1);
+            //  billPrint.printDeliveryList(" ", appOrder.getAddress().toString(), 1);
+//                                billPrint.AddAddress(appOrder.getAddress());
+//                            }
+            if (j != size - 1) {
+                billPrint.addHor();
+            }
+
+        }
+        //   billPrint.addBillOrderStr(orderNoStr);
+
+        billPrint.addBillDate();
+    }
+
+
     @Override
     public void printKioskBill(String printer, String title, String order,
                                String orderDetail, String modifiers, String tax, String payment,
