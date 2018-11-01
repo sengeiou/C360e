@@ -274,6 +274,7 @@ public class ObjectFactory {
             for (OrderBill orderBill : orderBills) {
                 orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
                 orderBill.setOrderId(subOrder.getId());
+                orderBill.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(subOrder.getRevenueId()));
                 Integer orderSplitId = orderBill.getOrderSplitId();
                 if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
                     orderBill.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));

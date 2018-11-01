@@ -91,6 +91,7 @@ import com.alfredbase.store.sql.CardsSettlementSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
@@ -1175,7 +1176,7 @@ public class App extends BaseApplication {
      * Generate Printer and KDS device from DB after the first setup
      */
     public void initKdsAndPrinters() {
-        List<LocalDevice> devices = CoreData.getInstance().getLocalDevices();
+        List<LocalDevice> devices = LocalDeviceSQL.getAllLocalDevice();
 
         for (LocalDevice item : devices) {
             int devid = item.getDeviceId();

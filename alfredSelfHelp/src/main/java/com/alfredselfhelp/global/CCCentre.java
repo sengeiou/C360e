@@ -4,14 +4,11 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
-import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredselfhelp.activity.MenuActivity;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,7 +106,7 @@ public class CCCentre {
 
         @Override
         public void run() {
-
+            /**TODO Test
             try {
                 if(out != null){
                     socket.setSoTimeout(timeOut);
@@ -198,6 +195,11 @@ public class CCCentre {
                 LogUtil.e(TAG, ("connectService:" + e.getMessage()));
                 handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
             }
+             */
+            Map<String, Object> cardInfoMap = new HashMap<>();
+            cardInfoMap.put("paymentType", ParamConst.SETTLEMENT_TYPE_VISA);
+            cardInfoMap.put("cardNum", "22223");
+            handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED, cardInfoMap));
         }
     }
 
@@ -218,6 +220,7 @@ public class CCCentre {
         @Override
         public void run() {
             try {
+                /**TODO Test
                 InetAddress inetAddress = InetAddress.getByName(CommonUtil.getLocalIpAddress());
                 socket = new Socket(HOST, PORT, inetAddress, LOCAL_PORT);
 //                socket.setSoTimeout(10*1000);
@@ -225,6 +228,7 @@ public class CCCentre {
                 socket.setReuseAddress(true);
                 socket.setTcpNoDelay(true);
                 out = socket.getOutputStream();
+                 */
                 handler.sendEmptyMessage(MenuActivity.VIEW_CC_CONNECT_SUCCEED);
 //                App.getTopActivity().runOnUiThread(new Runnable() {
 //                    @Override

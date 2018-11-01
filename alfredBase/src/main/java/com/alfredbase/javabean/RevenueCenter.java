@@ -45,6 +45,11 @@ public class RevenueCenter implements Serializable {
 	
 	private int isKiosk;
 
+	/*
+	 *	currentReportValue  销售报表的记录下标
+	 */
+	private int currentReportNo;
+
 	public RevenueCenter() {
 	}
 
@@ -174,18 +179,6 @@ public class RevenueCenter implements Serializable {
 		this.currentValue = currentValue;
 	}
 
-	@Override
-	public String toString() {
-		return "RevenueCenter [id=" + id + ", restaurantId=" + restaurantId
-				+ ", printId=" + printId + ", revName=" + revName
-				+ ", isActive=" + isActive + ", createTime=" + createTime
-				+ ", updateTime=" + updateTime + ", happyHourId=" + happyHourId
-				+ ", happyStartTime=" + happyStartTime + ", happyEndTime="
-				+ happyEndTime + ", currentBillNo=" + currentBillNo
-				+ ", indexId=" + indexId + ", currentValue=" + currentValue
-				+ ", isKiosk=" + isKiosk + "]";
-	}
-
 	public int getIsKiosk() {
 		return isKiosk;
 	}
@@ -193,5 +186,33 @@ public class RevenueCenter implements Serializable {
 	public void setIsKiosk(int isKiosk) {
 		this.isKiosk = isKiosk;
 	}
-	
+
+	public int getCurrentReportNo() {
+		return currentReportNo;
+	}
+
+	public void setCurrentReportNo(int currentReportNo) {
+		this.currentReportNo = currentReportNo;
+	}
+
+	@Override
+	public String toString() {
+		return "RevenueCenter{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", printId=" + printId +
+				", revName='" + revName + '\'' +
+				", isActive=" + isActive +
+				", createTime='" + createTime + '\'' +
+				", updateTime='" + updateTime + '\'' +
+				", happyHourId=" + happyHourId +
+				", happyStartTime=" + happyStartTime +
+				", happyEndTime=" + happyEndTime +
+				", currentBillNo='" + currentBillNo + '\'' +
+				", indexId=" + indexId +
+				", currentValue=" + currentValue +
+				", isKiosk=" + isKiosk +
+				", currentReportNo=" + currentReportNo +
+				'}';
+	}
 }

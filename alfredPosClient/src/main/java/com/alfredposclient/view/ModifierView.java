@@ -1,8 +1,5 @@
 package com.alfredposclient.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
@@ -36,6 +33,9 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.UIHelp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModifierView extends LinearLayout implements OnClickListener {
     //	private static final int ROW_COUNT = 4;

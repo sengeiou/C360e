@@ -192,4 +192,8 @@ public class KotItemModifierSQL {
 			e.printStackTrace();
 		}
 	}
+
+	public static void deleteKotItemModifierByOrderModifierId(int orderModifierId){
+
+	}
 }

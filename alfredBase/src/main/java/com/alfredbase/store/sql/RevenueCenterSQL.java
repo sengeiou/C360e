@@ -23,8 +23,8 @@ public class RevenueCenterSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.RevenueCenter
-					+ "(id,restaurantId, printId,revName, isActive,createTime,updateTime,happy_hour_id,happy_start_time,happy_end_time, currentBillNo, indexId, currentValue, isKiosk)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id,restaurantId, printId,revName, isActive,createTime,updateTime,happy_hour_id,happy_start_time,happy_end_time, currentBillNo, indexId, currentValue, isKiosk, currentReportNo)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { revenueCenter.getId(),
@@ -40,7 +40,8 @@ public class RevenueCenterSQL {
 							revenueCenter.getCurrentBillNo(),
 							revenueCenter.getIndexId(),
 							revenueCenter.getCurrentValue(),
-							revenueCenter.getIsKiosk()});
+							revenueCenter.getIsKiosk(),
+							revenueCenter.getCurrentReportNo()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -55,8 +56,8 @@ public class RevenueCenterSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.RevenueCenter
-					+ " (id,restaurantId, printId,revName, isActive,createTime,updateTime,happy_hour_id,happy_start_time,happy_end_time, currentBillNo, indexId, currentValue, isKiosk)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " (id,restaurantId, printId,revName, isActive,createTime,updateTime,happy_hour_id,happy_start_time,happy_end_time, currentBillNo, indexId, currentValue, isKiosk, currentReportNo)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (RevenueCenter revenueCenter : revenueCenters) {
@@ -88,6 +89,8 @@ public class RevenueCenterSQL {
 							revenueCenter.getCurrentValue());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 14,
 							revenueCenter.getIsKiosk());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 15,
+							revenueCenter.getCurrentReportNo());
 					sqLiteStatement.executeInsert();
 				}
 				db.setTransactionSuccessful();
@@ -127,6 +130,7 @@ public class RevenueCenterSQL {
 				revenueCenter.setIndexId(cursor.getInt(11));
 				revenueCenter.setCurrentValue(cursor.getInt(12));
 				revenueCenter.setIsKiosk(cursor.getInt(13));
+				revenueCenter.setCurrentReportNo(cursor.getInt(14));
 				result.add(revenueCenter);
 			}
 		} catch (Exception e) {
@@ -163,6 +167,7 @@ public class RevenueCenterSQL {
 				revenueCenter.setIndexId(cursor.getInt(11));
 				revenueCenter.setCurrentValue(cursor.getInt(12));
 				revenueCenter.setIsKiosk(cursor.getInt(13));
+				revenueCenter.setCurrentReportNo(cursor.getInt(14));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,6 +1,9 @@
 package com.alfredposclient.global;
 
+import android.text.TextUtils;
+
 import com.alfredbase.ParamConst;
+import com.alfredbase.ParamHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.CashInOut;
 import com.alfredbase.javabean.ItemCategory;
@@ -475,7 +478,7 @@ public class ReportObjectFactory {
 		String sumExpected = ReportSessionSalesSQL.getSumExpected(businessDate);
 		String sumActual = ReportSessionSalesSQL.getSumActual(businessDate);
 		String sumDifference = ReportSessionSalesSQL.getSumDifference(businessDate);
-
+		String reportNoStr = ReportDaySalesSQL.getReportNoStrByBusiness(businessDate);
 		reportDaySales.setRestaurantId(restaurant.getId());
 		reportDaySales.setRestaurantName(restaurant.getRestaurantName());
 		reportDaySales.setRevenueId(revenueCenter.getId());
@@ -573,6 +576,12 @@ public class ReportObjectFactory {
 		reportDaySales.setVoucherQty(Integer.parseInt(voucherQty));
 		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
 		reportDaySales.setTotalHour(totalHour);
+		if(TextUtils.isEmpty(reportNoStr)){
+			reportNoStr = ParamHelper.getPrintOrderBillNo(
+					App.instance.getIndexOfRevenueCenter(),
+					App.instance.getRevenueCenter().getCurrentReportNo());
+		}
+		reportDaySales.setReportNoStr(reportNoStr);
 		return reportDaySales;
 	}
 
@@ -2338,7 +2347,7 @@ public class ReportObjectFactory {
 		expected = BH.sub(expected, cashOutAmt, false);
 
 		BigDecimal difference = BH.sub(BH.getBD(actualAmount), expected, false);
-
+		String reportNoStr = ReportDaySalesSQL.getReportNoStrByBusiness(businessDate);
 
 		reportDaySales.setRestaurantId(restaurant.getId());
 		reportDaySales.setRestaurantName(restaurant.getRestaurantName());
@@ -2438,6 +2447,12 @@ public class ReportObjectFactory {
 		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
 		reportDaySales.setTotalHour(totalHour);
 		reportDaySales.setId(CommonSQL.getNextSeq(TableNames.ReportDaySales));
+		if(TextUtils.isEmpty(reportNoStr)){
+			reportNoStr = ParamHelper.getPrintOrderBillNo(
+					App.instance.getIndexOfRevenueCenter(),
+					App.instance.getRevenueCenter().getCurrentReportNo());
+		}
+		reportDaySales.setReportNoStr(reportNoStr);
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 
 		//-----------------------分割线----------------------------

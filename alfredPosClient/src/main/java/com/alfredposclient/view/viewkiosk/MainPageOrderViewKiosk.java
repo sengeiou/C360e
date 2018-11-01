@@ -274,6 +274,16 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 																					.getModifierId()));
 											KotItemModifierSQL.update(kotItemModifier);
 											kotItemModifiers.add(kotItemModifier);
+										}else if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_DELETE){
+
+											KotItemModifier kotItemModifier = KotItemModifierSQL
+													.getKotItemModifier(kotItemDetail.getId(), CoreData.getInstance()
+															.getModifier(
+																	orderModifier
+																			.getModifierId()).getId());
+											if(kotItemModifier != null) {
+												KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
+											}
 										}
 									}
 								}
