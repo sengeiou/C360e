@@ -87,6 +87,7 @@ public class MediaDialog extends Dialog  {
 				}
 				//  pays = (String) list.get(position).get("id");
 				System.out.println("======y优惠券fangs======" + position);
+
 				dlg.cancel();
 			}
 		});

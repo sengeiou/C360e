@@ -91,13 +91,16 @@
     <string name="void_">Void</string>
     <string name="free">Free</string>
     <string name="take_away_">Takeaway</string>
-    <string name="app_take_away">Take Away</string>
+    <string name="app_delivery">Delivery</string>
+
+    <string name="app_de">Take Away</string>
     <string name="app_dine_in">Dine In</string>
     <string name="transfer">Transfer</string>
     <string name="weight">Weight</string>
     <string name="weight_">Weight(KG)</string>
     <string name="pax">Pax:</string>
     <string name="order_id">Order ID:</string>
+    <string name="order_no_">Order No.:</string>
     <string name="discount">Discount</string>
     <string name="unseat">Unseat</string>
     <string name="bill">Bill</string>

@@ -138,6 +138,7 @@
     <string name="table_">Table:</string>
     <string name="kot_no_">KOT No: </string>
     <string name="order_no_">Order No.:</string>
+    <string name="app_delivery">Delivery</string>
     <string name="date_">Date: </string>
     <string name="void_">*** VOID ***</string>
     <string name="kot_copy">KOT COPY</string>

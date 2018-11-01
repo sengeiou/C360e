@@ -1,6 +1,8 @@
 package com.alfredbase.javabean.temporaryforapp;
 
-public class AppOrder {
+import java.io.Serializable;
+
+public class AppOrder implements Serializable {
     private Integer id;    //'主键id',
     private Integer orderNum;    //'订单编号'
     private Integer custId;    //'顾客id',
@@ -21,9 +23,46 @@ public class AppOrder {
     private String tableNo;
     private Integer bizType = 0; // 业务类型, 0点菜,1预点单
     private String orderRemark;
-    private int eatType; // 0 堂吃, 1 打包
+    private int eatType; // 0 堂吃, 1 打包, 2外卖
     private int payStatus;
     private int person;
+
+    private String address;//外卖地址
+    private String contact;
+    private String mobile;  //收货人电话
+    private long deliveryTime;
+
+    public long getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(long deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     public Integer getId() {
         return id;
@@ -217,7 +256,6 @@ public class AppOrder {
         this.person = person;
     }
 
-
     @Override
     public String toString() {
         return "AppOrder{" +
@@ -244,6 +282,10 @@ public class AppOrder {
                 ", eatType=" + eatType +
                 ", payStatus=" + payStatus +
                 ", person=" + person +
+                ", address='" + address + '\'' +
+                ", contact='" + contact + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", deliveryTime=" + deliveryTime +
                 '}';
     }
 }

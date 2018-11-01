@@ -45,15 +45,15 @@ private long updateTime; 	//'更新时间',
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
-                    new Object[] { appOrderDetail.getId(),appOrderDetail.getOrderId(),
-                    appOrderDetail.getCustId(), appOrderDetail.getItemId(),
-                    appOrderDetail.getItemName(), appOrderDetail.getItemNum(),
-                    appOrderDetail.getItemPrice(), appOrderDetail.getTaxPrice(),
-                    appOrderDetail.getDiscountPrice(), appOrderDetail.getDiscountRate(),
-                    appOrderDetail.getRealPrice(), appOrderDetail.getOrderDetailStatus(),
-                    appOrderDetail.getDiscountType(), appOrderDetail.getModifierPrice(),
-                    appOrderDetail.getSpecialInstractions(), appOrderDetail.getCreateTime(),
-                    appOrderDetail.getUpdateTime(), appOrderDetail.getTotalItemPrice()});
+                    new Object[]{appOrderDetail.getId(), appOrderDetail.getOrderId(),
+                            appOrderDetail.getCustId(), appOrderDetail.getItemId(),
+                            appOrderDetail.getItemName(), appOrderDetail.getItemNum(),
+                            appOrderDetail.getItemPrice(), appOrderDetail.getTaxPrice(),
+                            appOrderDetail.getDiscountPrice(), appOrderDetail.getDiscountRate(),
+                            appOrderDetail.getRealPrice(), appOrderDetail.getOrderDetailStatus(),
+                            appOrderDetail.getDiscountType(), appOrderDetail.getModifierPrice(),
+                            appOrderDetail.getSpecialInstractions(), appOrderDetail.getCreateTime(),
+                            appOrderDetail.getUpdateTime(), appOrderDetail.getTotalItemPrice()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,6 +111,7 @@ private long updateTime; 	//'更新时间',
                         appOrderDetail.getUpdateTime());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 18,
                         appOrderDetail.getTotalItemPrice());
+
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();

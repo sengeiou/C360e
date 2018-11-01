@@ -123,7 +123,7 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void run() {
 
-                    if (!AnimatorListenerImpl.isRunning) {
+                    if (!AnimatorListenerImpl.isRunning && !CallNumUtil.isPlay) {
                         int lon = 1000;
                         try {
                             if (queue.QueueLength() > 0) {
@@ -150,7 +150,7 @@ public class MainActivity extends BaseActivity {
                                 //          }
 
                                 animaEnd = false;
-                                lon = callNumber * 2500;
+                                //  lon = callNumber * 2500;
                                 //   lon=1000;
                             } else {
                                 if (twoFragment != null && viewId != 4) {
@@ -199,9 +199,7 @@ public class MainActivity extends BaseActivity {
 
         CallNumUtil.initVideo(context);
         CallNumUtil.init(context, handler);
-//        CallBean c=new CallBean();
-//        c.setCallNumber("a1023");
-//        queue.enQueue(c);
+
         timer.schedule(new MyTimertask(), 1000);
     }
 
@@ -229,7 +227,7 @@ public class MainActivity extends BaseActivity {
         aset4.playTogether(oanim2X, oanim2Y);
         AnimatorSet aset = new AnimatorSet();
         aset.playSequentially(aset1, aset2, aset3, aset4);
-        aset.addListener(new AnimatorListenerImpl());
+        //    aset.addListener(new AnimatorListenerImpl());
         aset.start();
     }
 
@@ -257,7 +255,7 @@ public class MainActivity extends BaseActivity {
         aset4.playTogether(oanim2X, oanim2Y);
         AnimatorSet aset = new AnimatorSet();
         aset.playSequentially(aset1, aset2, aset3, aset4);
-        //    aset.addListener(new AnimatorListenerImpl());
+        aset.addListener(new AnimatorListenerImpl());
         aset.start();
     }
 

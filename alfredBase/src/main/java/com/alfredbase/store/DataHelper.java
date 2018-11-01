@@ -1386,6 +1386,22 @@ public class DataHelper {
                     + " ADD COLUMN isShowDiner INTEGER default 1");
             db.execSQL("ALTER TABLE " + TableNames.ItemCategory
                     + " ADD COLUMN imgUrl TEXT");
+
+
+
+            db.execSQL("ALTER TABLE " + TableNames.AppOrder
+                    + " ADD COLUMN address TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.AppOrder
+                    + " ADD COLUMN contact TEXT");
+
+
+            db.execSQL("ALTER TABLE " + TableNames.AppOrder
+                    + " ADD COLUMN mobile TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.AppOrder
+                    + " ADD COLUMN deliveryTime INTEGER default 0");
+
+
+
         }
 
         private void onUpgradeForOldVersion26(SQLiteDatabase db){
