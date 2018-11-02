@@ -60,11 +60,9 @@ interface IAlfredRemotePrintService {
     void printTableQRCode(String printer, String tableId, String title, String qrCodeText);
     void printTscBill(String printer,String title,String order,String orderdetail,String modifiers,String currencySymbol,String direction);
     void printCashInOut(String printer,String cashinout,String title);
-
-      void printAppOrderBill(String printer, String title,
-            							String appOrder, String orderDetail,
-            							String modifiers,String tax, String payment,
-            							boolean doubleprint, boolean doubleReceipts,
-            							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble);
-
+    void printAppOrderBill(String printer, String title,
+           							String appOrder, String orderDetail,
+           							String modifiers,String tax, String payment,
+           							boolean doubleprint, boolean doubleReceipts,
+           							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr);
 }

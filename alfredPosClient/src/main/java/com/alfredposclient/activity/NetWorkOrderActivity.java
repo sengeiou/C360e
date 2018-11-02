@@ -166,8 +166,8 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
         if (!App.instance.isRevenueKiosk()) {
             FragmentManager fragmentManager = this.getSupportFragmentManager();
             f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
-
             closeTables();
+
         }
     }
 
@@ -187,7 +187,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
         App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
 
         dismissLoadingDialog();
-        //  closeTables();
+        closeTables();
     }
 
     private void closeTables() {
@@ -378,7 +378,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                         loadingDialog.show();
                         SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
                     } else {
-                        //      showTables();
+                        showTables();
                     }
                 } else {
                     appOrder
@@ -574,7 +574,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                     List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(appOrder.getId().intValue());
                     App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
                     dismissLoadingDialog();
-                    //  closeTables();
+                    closeTables();
                 }
                 break;
                 case CANCEL_APPORDER_SUCCESS:
