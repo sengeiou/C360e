@@ -631,6 +631,11 @@ public class OrderSplitSQL {
 	public static void deleteOrderSplitPaxByOrderId(Order order){
 		List<OrderSplit> orderSplits = getOrderSplits(order);
 		for(OrderSplit orderSplit : orderSplits){
+			if(orderSplit.getSplitByPax() <= 0){
+				return;
+			}
+		}
+		for(OrderSplit orderSplit : orderSplits){
 			OrderBillSQL.getOrderBillByOrderSplit(orderSplit);
 			Payment payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId());
 			if(payment != null) {

@@ -251,7 +251,7 @@
     <string name="place_order_failed">Place Order Failed</string>
     <string name="no_set_item_print">Menu : *%s* not set printer</string>
     <string name="print_bill_">Please print bill</string>
-    <string name="assign_items">Plese assign ? items to a group.</string>
+    <string name="assign_items">Please assign ? items to a group.</string>
     <string name="not_complete_order">Not complete the order.</string>
     <string name="the_table">The table  </string>
     <string name="occupied_time">  has been occupied for 2 hours at lease</string>

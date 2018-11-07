@@ -1,5 +1,7 @@
 package com.alfredbase.javabean;
 
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
 
 public class OrderDetail implements Serializable {
@@ -100,6 +102,7 @@ public class OrderDetail implements Serializable {
 
 
     // 目前只用于前端，从itemDetail过来的数据，方便用做计算和判断（在计算的时候减少数据库的耗时操作）
+    @Expose(serialize = false)
     private int isItemDiscount = 1;
 
     private int appOrderDetailId = 0;
@@ -122,7 +125,9 @@ public class OrderDetail implements Serializable {
     /**
      * 不存数据库 临时缓存用
      */
+    @Expose(serialize = false)
     private int transferFromDetailId = 0;
+    @Expose(serialize = false)
     private int transferFromDetailNum = 0;
 
     public OrderDetail() {

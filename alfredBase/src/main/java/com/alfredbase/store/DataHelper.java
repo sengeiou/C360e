@@ -1403,6 +1403,10 @@ public class DataHelper {
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN reportNoStr TEXT");
 
+            db.execSQL("ALTER TABLE " + TableNames.SyncMsg
+                    + " ADD COLUMN reportNo INTEGER");
+
+
         }
     }
 

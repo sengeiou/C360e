@@ -7,7 +7,6 @@ import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.http.server.CallNumHttpServer;
 import com.alfred.callnum.utils.TvPref;
 import com.alfredbase.BaseApplication;
-import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,7 +39,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+//        SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         TvPref.init();
 
         mbPlayIMG = TvPref.readPlayIMGEn();

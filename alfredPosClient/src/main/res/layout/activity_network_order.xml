@@ -493,7 +493,7 @@
         android:id="@+id/f_tables_net"
         android:name="com.alfredposclient.Fragment.TableLayoutFragment"
         android:layout_width="match_parent"
-
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
 
 </RelativeLayout>

@@ -20,8 +20,8 @@ public class SyncMsgSQL {
 			String sql = "replace into "
 					+ TableNames.SyncMsg
 					+ "(id, orderId, msg_type, data, status, createTime, revenueId, businessDate, currCount, appOrderId, orderStatus,"
-					+ "orderNum, billNo)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "orderNum, billNo, reportNo)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { syncMsg.getId(), syncMsg.getOrderId(),
@@ -30,7 +30,7 @@ public class SyncMsgSQL {
 							syncMsg.getRevenueId(), syncMsg.getBusinessDate(),
 							syncMsg.getCurrCount(), syncMsg.getAppOrderId(),
 							syncMsg.getOrderStatus(), syncMsg.getOrderNum(),
-							syncMsg.getBillNo()});
+							syncMsg.getBillNo(), syncMsg.getReportNo()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -64,6 +64,7 @@ public class SyncMsgSQL {
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
 				syncMsg.setBillNo(cursor.getInt(12));
+				syncMsg.setReportNo(cursor.getInt(13));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -109,6 +110,7 @@ public class SyncMsgSQL {
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
 				syncMsg.setBillNo(cursor.getInt(12));
+				syncMsg.setReportNo(cursor.getInt(13));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -157,6 +159,7 @@ public class SyncMsgSQL {
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
 				syncMsg.setBillNo(cursor.getInt(12));
+				syncMsg.setReportNo(cursor.getInt(13));
 				result.add(syncMsg);
 			}
 		} catch (Exception e) {
@@ -198,6 +201,7 @@ public class SyncMsgSQL {
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
 				syncMsg.setBillNo(cursor.getInt(12));
+				syncMsg.setReportNo(cursor.getInt(13));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -238,6 +242,7 @@ public class SyncMsgSQL {
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
 				syncMsg.setBillNo(cursor.getInt(12));
+				syncMsg.setReportNo(cursor.getInt(13));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -277,6 +282,7 @@ public class SyncMsgSQL {
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
 				syncMsg.setBillNo(cursor.getInt(12));
+				syncMsg.setReportNo(cursor.getInt(13));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -318,6 +324,7 @@ public class SyncMsgSQL {
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
 				syncMsg.setBillNo(cursor.getInt(12));
+				syncMsg.setReportNo(cursor.getInt(13));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -359,6 +366,7 @@ public class SyncMsgSQL {
 				syncMsg.setOrderStatus(cursor.getInt(10));
 				syncMsg.setOrderNum(cursor.getInt(11));
 				syncMsg.setBillNo(cursor.getInt(12));
+				syncMsg.setReportNo(cursor.getInt(13));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

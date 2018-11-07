@@ -1,5 +1,7 @@
 package com.alfredbase.javabean;
 
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
 
 public class Order implements Serializable {
@@ -111,11 +113,14 @@ public class Order implements Serializable {
 
 	private String discountCategoryId;
 	// 在已经结账的订单上面做修改的时候 用到 临时用 不存数据库
+	@Expose(serialize = false)
 	private String oldTotal;
 	// 给SubPos使用的tag，A,B,C等字母
 	private String numTag = "";
 
 	private int subPosBeanId = 0;// IF it is main Pos， subPosBeanId is  zero
+	@Expose(serialize = false)
+	private int isSplitByPax;
 	
 	public Order() {
 	}

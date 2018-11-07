@@ -23,6 +23,7 @@ public class SyncMsg {
 	private Integer orderStatus;
 	private Integer orderNum;
 	private Integer billNo;
+	private Integer reportNo;
 	public SyncMsg() {
 	}
 
@@ -146,6 +147,14 @@ public class SyncMsg {
 		this.billNo = billNo;
 	}
 
+	public Integer getReportNo() {
+		return reportNo;
+	}
+
+	public void setReportNo(Integer reportNo) {
+		this.reportNo = reportNo;
+	}
+
 	@Override
 	public String toString() {
 		return "SyncMsg{" +
@@ -162,6 +171,7 @@ public class SyncMsg {
 				", orderStatus=" + orderStatus +
 				", orderNum=" + orderNum +
 				", billNo=" + billNo +
+				", reportNo=" + reportNo +
 				'}';
 	}
 

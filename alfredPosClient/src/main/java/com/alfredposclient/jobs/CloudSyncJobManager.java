@@ -252,7 +252,7 @@ public class CloudSyncJobManager {
 
     //Sync XReport
     public void syncXReport(Map<String, Object> reportInfo, int revenueCenterId, 
-    							Long bizDate, SessionStatus sessionStatus ) {
+    							Long bizDate, SessionStatus sessionStatus, int reportNo) {
 		SyncMsgJob syncXReportJob = null;
 		Gson gson = new Gson();
 		SyncMsg syncMsg = new SyncMsg();
@@ -264,6 +264,7 @@ public class CloudSyncJobManager {
 		syncMsg.setCreateTime(System.currentTimeMillis());
 		syncMsg.setStatus(ParamConst.SYNC_MSG_UN_SEND);
 		syncMsg.setRevenueId(revenueCenterId);
+		syncMsg.setReportNo(reportNo);
 		syncMsg.setBusinessDate(bizDate);
 		SyncMsgSQL.add(syncMsg);
 		syncXReportJob = new SyncMsgJob(revenueCenterId, HttpAPI.REPORT_DATA, uuid, 

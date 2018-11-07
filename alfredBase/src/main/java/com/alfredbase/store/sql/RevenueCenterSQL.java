@@ -228,6 +228,45 @@ public class RevenueCenterSQL {
 		return billNo;
 	}
 
+	public static String getReportNoFromRevenueCenter(int id){
+		String reportNo = "0";
+		int currentReportNo = 0;
+		int indexId = 0;
+		String sqlGet = "select currentReportNo, indexId from " + TableNames.RevenueCenter + " where id =?";
+		String sqlUpdate = "update " + TableNames.RevenueCenter + " set currentReportNo = ? where id = ?";
+		SQLiteDatabase db = SQLExe.getDB();
+		Cursor cursor = null;
+		try {
+			db.beginTransaction();
+			cursor = db.rawQuery(sqlGet, new String[] {String.valueOf(id)});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return reportNo;
+			}
+			if (cursor.moveToNext()) {
+				currentReportNo = cursor.getInt(0) + 1;
+				indexId = cursor.getInt(1);
+			}
+
+			db.execSQL(sqlUpdate, new String[]{String.valueOf(currentReportNo), String.valueOf(id)});
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+			db.endTransaction();
+		}
+		String reportNoStr = ParamHelper.getPrintOrderBillNo(indexId, currentReportNo);
+		if(TextUtils.isEmpty(reportNoStr)){
+			return reportNo;
+		}
+		reportNo = reportNoStr;
+		return reportNo;
+	}
+
 	public static void deleteRevenueCenter(RevenueCenter revenueCenter) {
 		String sql = "delete from " + TableNames.RevenueCenter
 				+ " where id = ?";

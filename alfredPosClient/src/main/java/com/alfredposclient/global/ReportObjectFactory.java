@@ -3,7 +3,6 @@ package com.alfredposclient.global;
 import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
-import com.alfredbase.ParamHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.CashInOut;
 import com.alfredbase.javabean.ItemCategory;
@@ -55,6 +54,7 @@ import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
 import com.alfredbase.store.sql.ReportPluDayItemSQL;
 import com.alfredbase.store.sql.ReportPluDayModifierSQL;
 import com.alfredbase.store.sql.ReportSessionSalesSQL;
+import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
@@ -577,9 +577,7 @@ public class ReportObjectFactory {
 		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
 		reportDaySales.setTotalHour(totalHour);
 		if(TextUtils.isEmpty(reportNoStr)){
-			reportNoStr = ParamHelper.getPrintOrderBillNo(
-					App.instance.getIndexOfRevenueCenter(),
-					App.instance.getRevenueCenter().getCurrentReportNo());
+			reportNoStr = RevenueCenterSQL.getReportNoFromRevenueCenter(revenueCenter.getId());
 		}
 		reportDaySales.setReportNoStr(reportNoStr);
 		return reportDaySales;
@@ -2448,9 +2446,7 @@ public class ReportObjectFactory {
 		reportDaySales.setTotalHour(totalHour);
 		reportDaySales.setId(CommonSQL.getNextSeq(TableNames.ReportDaySales));
 		if(TextUtils.isEmpty(reportNoStr)){
-			reportNoStr = ParamHelper.getPrintOrderBillNo(
-					App.instance.getIndexOfRevenueCenter(),
-					App.instance.getRevenueCenter().getCurrentReportNo());
+			reportNoStr = RevenueCenterSQL.getReportNoFromRevenueCenter(revenueCenter.getId());
 		}
 		reportDaySales.setReportNoStr(reportNoStr);
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);

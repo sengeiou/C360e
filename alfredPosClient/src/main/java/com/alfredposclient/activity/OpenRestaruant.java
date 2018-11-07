@@ -29,7 +29,6 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
-import com.alfredbase.ParamHelper;
 import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.CoreData;
@@ -51,6 +50,7 @@ import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
@@ -80,6 +80,7 @@ import com.alfredbase.store.sql.ReportPluDayComboModifierSQL;
 import com.alfredbase.store.sql.ReportPluDayItemSQL;
 import com.alfredbase.store.sql.ReportPluDayModifierSQL;
 import com.alfredbase.store.sql.ReportSessionSalesSQL;
+import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
@@ -875,10 +876,12 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 								sessionStatus);
 					//sync X-Report to cloud
 					if (cloudSync!=null) {
+						int revenueId = App.instance.getRevenueCenter().getId();
+						RevenueCenter revenueCenter = RevenueCenterSQL.getRevenueCenterById(revenueId);
 						cloudSync.syncXReport(xReportInfo,
-								App.instance.getRevenueCenter().getId(),
+								revenueId,
 								bizDate,
-								sessionStatus);
+								sessionStatus, revenueCenter.getCurrentReportNo());
 						cloudSync.syncOpenOrCloseSessionAndRestaurant(App.instance
 										.getRevenueCenter().getId(), bizDate,
 								sessionStatus, CloudSyncJobManager.CLOSE_SESSION);
@@ -932,10 +935,12 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
 						map.put("sessionStatus", sessionStatus);
 						map.put("userOpenDrawerRecords", userOpenDrawerRecords);
+						int revenueId = App.instance.getRevenueCenter().getId();
+						RevenueCenter revenueCenter = RevenueCenterSQL.getRevenueCenterById(revenueId);
 						cloudSync.syncXReport(map,
-								App.instance.getRevenueCenter().getId(),
+								revenueId,
 								bizDate,
-								sessionStatus);
+								sessionStatus, revenueCenter.getCurrentReportNo());
 						multiReportRelation.setSyncStatus(1);
 						MultiReportRelationSQL.updateMultiReportRelation(multiReportRelation);
 					}
@@ -1131,10 +1136,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		PrinterTitle title = ObjectFactory.getInstance()
 				.getPrinterTitleForReport(
 						App.instance.getRevenueCenter().getId(),
-						"X"
-								+ ParamHelper.getPrintOrderBillNo(
-										App.instance.getIndexOfRevenueCenter(),
-										reportDaySales.getId()),
+						"X"+reportDaySales.getReportNoStr(),
 						App.instance.getUser().getFirstName()
 								+ App.instance.getUser().getLastName(), null,bizDate);
 
@@ -1227,10 +1229,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		PrinterTitle title = ObjectFactory.getInstance()
 				.getPrinterTitleForReport(
 						App.instance.getRevenueCenter().getId(),
-						"Z"
-								+ ParamHelper.getPrintOrderBillNo(
-										App.instance.getIndexOfRevenueCenter(),
-										0),
+						"Z"+reportDaySales.getReportNoStr(),
 						App.instance.getUser().getFirstName()
 								+ App.instance.getUser().getLastName(), null,bizDate);
 

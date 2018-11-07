@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
-import com.alfredbase.ParamHelper;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
@@ -842,10 +841,7 @@ public class XZReportActivity extends BaseActivity {
         PrinterTitle title = ObjectFactory.getInstance()
                 .getPrinterTitleForReport(
                         App.instance.getRevenueCenter().getId(),
-                        label
-                                + ParamHelper.getPrintOrderBillNo(
-                                App.instance.getIndexOfRevenueCenter(),
-                                0),
+                        label+reportDaySales.getReportNoStr(),
                         App.instance.getUser().getFirstName()
                                 + App.instance.getUser().getLastName(), null,
                         bizDate);

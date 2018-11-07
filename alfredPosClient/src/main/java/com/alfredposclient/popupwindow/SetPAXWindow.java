@@ -198,53 +198,58 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 		} else if ("Enter".equals(key)) {
 			if (TextUtils.isEmpty(tv_pax.getText().toString())) {
 				UIHelp.showToast(parent, parent.getResources().getString(R.string.enter_people));
-			}else if (type == MAX_ORDER_NO){
-				Message msg = handler.obtainMessage();
-				msg.what = SystemSetting.SET_MAX_ORDER_NO;
-				msg.obj = tv_pax.getText().toString();
-				handler.sendMessage(msg);
-				dismiss();
-			}else if (type == APP_ORDER) {
-				Message msg = handler.obtainMessage();
-				msg.what = MainPage.VIEW_EVENT_SET_APPORDER_TABLE_PACKS;
-				msg.obj = tv_pax.getText().toString();
-				handler.sendMessage(msg);
-				dismiss();
-			}else if(type == TRANSFER_ITEM){
-				if (transferItemTable != null) {
-					transferItemTable.setPacks(Integer.parseInt(tv_pax.getText().toString()));
-					handler.sendMessage(handler
-							.obtainMessage(
-									MainPage.ACTION_TRANSFER_ITEM,
-									transferItemTable));
+			}else {
+				int num = 4;
+				try {
+					String paxNum = tv_pax.getText().toString().trim().replace(":","");
+					paxNum = paxNum.replace("Pax","");
+					paxNum = paxNum.replace("pax","");
+					num = Integer.parseInt(paxNum);
+				}catch (Exception e){
+					LogUtil.e("ERROR", e.getMessage());
 				}
-				dismiss();
-			} else if(type == SPLITE_BY_PAX) {
-				handler.sendMessage(handler.obtainMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX, tv_pax.getText().toString()));
-				dismiss();
-			} else if(type == TRANSFER_ITEM_SPLIT){
-				handler.sendMessage(handler.obtainMessage(MainPage.ACTION_TRANSFER_SPLIT_BY_NUM, tv_pax.getText().toString()));
-				dismiss();
-			} else {
-				if(order != null){
-					int num = 4;
-					try {
-						String paxNum = tv_pax.getText().toString().trim().replace(":","");
-						paxNum = paxNum.replace("Pax","");
-						paxNum = paxNum.replace("pax","");
-						num = Integer.parseInt(paxNum);
-					}catch (Exception e){
-						LogUtil.e("ERROR", e.getMessage());
+				if(num <= 0){
+					return;
+				}
+				if (type == MAX_ORDER_NO) {
+					Message msg = handler.obtainMessage();
+					msg.what = SystemSetting.SET_MAX_ORDER_NO;
+					msg.obj = tv_pax.getText().toString();
+					handler.sendMessage(msg);
+					dismiss();
+				} else if (type == APP_ORDER) {
+					Message msg = handler.obtainMessage();
+					msg.what = MainPage.VIEW_EVENT_SET_APPORDER_TABLE_PACKS;
+					msg.obj = tv_pax.getText().toString();
+					handler.sendMessage(msg);
+					dismiss();
+				} else if (type == TRANSFER_ITEM) {
+					if (transferItemTable != null) {
+						transferItemTable.setPacks(Integer.parseInt(tv_pax.getText().toString()));
+						handler.sendMessage(handler
+								.obtainMessage(
+										MainPage.ACTION_TRANSFER_ITEM,
+										transferItemTable));
 					}
-					order.setPersons(num);
-					OrderSQL.updateOrderPersions(num,order.getId());
-				}
-				Message msg = handler.obtainMessage();
-				msg.what = MainPage.VIEW_EVENT_SET_TABLE_PACKS;
-				msg.obj = tv_pax.getText().toString();
-				handler.sendMessage(msg);
+					dismiss();
+				} else if (type == SPLITE_BY_PAX) {
+					handler.sendMessage(handler.obtainMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX, tv_pax.getText().toString()));
+					dismiss();
+				} else if (type == TRANSFER_ITEM_SPLIT) {
+					handler.sendMessage(handler.obtainMessage(MainPage.ACTION_TRANSFER_SPLIT_BY_NUM, tv_pax.getText().toString()));
+					dismiss();
+				} else {
+					if (order != null) {
+						order.setPersons(num);
+						OrderSQL.updateOrderPersions(num, order.getId());
+					}
+					Message msg = handler.obtainMessage();
+					msg.what = MainPage.VIEW_EVENT_SET_TABLE_PACKS;
+					msg.obj = tv_pax.getText().toString();
+					handler.sendMessage(msg);
 
-				dismiss();
+					dismiss();
+				}
 			}
 		} else if ("C".equals(key)) {
 			tv_pax.setText("");
@@ -268,6 +273,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 					flag = !flag;
 				}
 			}
+
 		}
 	}
 

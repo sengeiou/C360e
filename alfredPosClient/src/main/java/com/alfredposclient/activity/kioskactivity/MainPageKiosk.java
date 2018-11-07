@@ -22,7 +22,6 @@ import android.widget.LinearLayout.LayoutParams;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
-import com.alfredbase.ParamHelper;
 import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.CoreData;
@@ -2262,10 +2261,7 @@ public class MainPageKiosk extends BaseActivity {
                 PrinterTitle title = ObjectFactory.getInstance()
                         .getPrinterTitleForReport(
                                 App.instance.getRevenueCenter().getId(),
-                                "X"
-                                        + ParamHelper.getPrintOrderBillNo(
-                                        App.instance.getIndexOfRevenueCenter(),
-                                        reportDaySales.getId()),
+                                "X"+reportDaySales.getReportNoStr(),
                                 App.instance.getUser().getFirstName()
                                         + App.instance.getUser().getLastName(), null, bizDate);
 

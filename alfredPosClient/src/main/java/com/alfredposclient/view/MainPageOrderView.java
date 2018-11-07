@@ -1138,6 +1138,10 @@ public class MainPageOrderView extends LinearLayout {
 						UIHelp.showShortToast(parent, "Orders from Diner App Cannot be Transferred");
 						return;
 					}
+					if(orderDetail.getGroupId() != null && orderDetail.getGroupId().intValue() > 0){
+						UIHelp.showShortToast(parent, "Please assign group to ?.");
+						return;
+					}
 					handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_ITEM, orderDetail));
 				}
 					break;

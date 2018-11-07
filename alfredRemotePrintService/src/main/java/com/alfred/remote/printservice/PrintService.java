@@ -193,7 +193,7 @@ public class PrintService extends Service {
 
     public boolean isTM88(String model) {
         if (model != null && model.length() > 0) {
-            if (model.toLowerCase().contains("tm-t88"))
+            if (model.toLowerCase().contains("t88"))
                 return true;
         }
         return false;
