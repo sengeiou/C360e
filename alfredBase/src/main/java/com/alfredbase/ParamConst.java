@@ -198,11 +198,17 @@ public class ParamConst {
 	public static final int SETTLEMENT_TYPE_FOODPANDA = 3003;
 	public static final int SETTLEMENT_TYPE_VOUCHER = 4001;
 
-	public static final int SETTLEMENT_TYPE_PART = 5001;
-	public static final int SETTLEMENT_TYPE_NOT_PART = 5002;
-	public static final int SETTLEMENT_TYPE_NOT_PART_NUM = 5003;
 
-	public static final int SETTLEMENT_TYPE_PART_PAYMENT = 5000;
+	/**
+	 * 自定义支付选项，只用于页面展示 不做为数据存
+	 */
+	// 主
+	public static final int SETTLEMENT_CUSTOM_PAYMENT = 5000;
+	// 副
+	public static final int SETTLEMENT_CUSTOM_ALL = 5001;
+	public static final int SETTLEMENT_CUSTOM_PART = 5002;
+	public static final int SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE = 5003;
+
 
 	
 

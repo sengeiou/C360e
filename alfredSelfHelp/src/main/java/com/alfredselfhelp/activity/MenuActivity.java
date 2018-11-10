@@ -32,9 +32,11 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Payment;
+import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.ItemCategorySQL;
+import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
@@ -92,6 +94,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     public static final int VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED = 1113;
     public static final int VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED = 1114;
     public static final int VIEW_CC_PAYMENT_FAILED = -1113;
+
+    private static final String CUSTOM_PAYMENT_VISA = "Visa Kiosk";
+    private static final String CUSTOM_PAYMENT_MC = "MC Kiosk";
+    private static final String CUSTOM_PAYMENT_EZ = "EZlink Kiosk";
+    private static final String CUSTOM_PAYMENT_OTHER = "Kiosk";
 
     private RecyclerView re_main_category;
     private List<ItemMainCategory> itemMainCategories;
@@ -349,9 +356,33 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             if (paymentDialog != null && paymentDialog.isShowing()) {
                                 paymentDialog.dismiss();
                             }
+
                             OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
                             Payment payment = ObjectFactory.getInstance().getPayment(nurOrder, orderBill);
-                            PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, paymentType, nurOrder.getTotal());
+                            PaymentSettlement paymentSettlement;
+                            int paymentTypeId = paymentType;
+                            if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_VISA){
+                                PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_VISA);
+                                if(paymentMethod != null){
+                                    paymentTypeId = paymentMethod.getPayType();
+                                }
+                            }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_MASTERCARD){
+                                PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_MC);
+                                if(paymentMethod != null){
+                                    paymentTypeId = paymentMethod.getPayType();
+                                }
+                            }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK){
+                                PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_EZ);
+                                if(paymentMethod != null){
+                                    paymentTypeId = paymentMethod.getPayType();
+                                }
+                            }else {
+                                PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_OTHER);
+                                if(paymentMethod != null){
+                                    paymentTypeId = paymentMethod.getPayType();
+                                }
+                            }
+                            paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, paymentTypeId, nurOrder.getTotal());
                             commitOrder(orderBill, payment, paymentSettlement, cardNum);
                         }
                     }, 5000);
@@ -373,7 +404,30 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             }
                             OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
                             Payment payment = ObjectFactory.getInstance().getPayment(nurOrder, orderBill);
-                            PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, paymentType, nurOrder.getTotal());
+                            PaymentSettlement paymentSettlement;
+                            int paymentTypeId = paymentType;
+                            if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_VISA){
+                                PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_VISA);
+                                if(paymentMethod != null){
+                                    paymentTypeId = paymentMethod.getPayType();
+                                }
+                            }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_MASTERCARD){
+                                PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_MC);
+                                if(paymentMethod != null){
+                                    paymentTypeId = paymentMethod.getPayType();
+                                }
+                            }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK){
+                                PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_EZ);
+                                if(paymentMethod != null){
+                                    paymentTypeId = paymentMethod.getPayType();
+                                }
+                            }else {
+                                PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_OTHER);
+                                if(paymentMethod != null){
+                                    paymentTypeId = paymentMethod.getPayType();
+                                }
+                            }
+                            paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, paymentTypeId, nurOrder.getTotal());
                             commitOrder(orderBill, payment, paymentSettlement, "");
                         }
                     }, 5000);

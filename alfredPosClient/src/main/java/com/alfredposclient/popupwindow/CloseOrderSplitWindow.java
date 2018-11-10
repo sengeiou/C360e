@@ -2171,7 +2171,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 break;
 
 
-            case ParamConst.SETTLEMENT_TYPE_PART_PAYMENT:
+            case ParamConst.SETTLEMENT_CUSTOM_PAYMENT:
                 initPayment();
                 break;
             default:
@@ -2250,7 +2250,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         View.INVISIBLE);
                 break;
 
-            case ParamConst.SETTLEMENT_TYPE_NOT_PART:
+            case ParamConst.SETTLEMENT_CUSTOM_PART:
                 contentView.findViewById(R.id.ll_part_settlement).setVisibility(
                         View.INVISIBLE);
                 break;
@@ -2414,12 +2414,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             break;
 
             // 部分支付（未固定金额）
-            case ParamConst.SETTLEMENT_TYPE_NOT_PART:
+            case ParamConst.SETTLEMENT_CUSTOM_PART:
                 //固定金额
-            case ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM: {
+            case ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE: {
 
                 BigDecimal paidBD = BH.getBD(paymentMethod.getPartAcount());
-                if (viewTag == ParamConst.SETTLEMENT_TYPE_NOT_PART) {
+                if (viewTag == ParamConst.SETTLEMENT_CUSTOM_PART) {
                     paidBD = BH.getBD(tv_part_total_amount_num.getText().toString());
                 }
                 if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
@@ -2458,7 +2458,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 }
             }
             break;
-            case ParamConst.SETTLEMENT_TYPE_PART: {
+            case ParamConst.SETTLEMENT_CUSTOM_ALL: {
                 PaymentSettlement paymentSettlement = null;
                 if (paymentMethod.getIsPart() == 0) {
                     //不计税
@@ -3115,7 +3115,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
             break;
 
-            case ParamConst.SETTLEMENT_TYPE_NOT_PART:
+            case ParamConst.SETTLEMENT_CUSTOM_PART:
 
                 if (isFirstClickPart) {
                     if (show.length() > 0)
@@ -3190,7 +3190,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         .setText("");
             }
             break;
-            case ParamConst.SETTLEMENT_TYPE_NOT_PART:
+            case ParamConst.SETTLEMENT_CUSTOM_PART:
                 tv_part_total_amount_num.setText(BH.getBD(0).toString());
                 break;
             default:
@@ -3306,8 +3306,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
     private void initPayment() {
         paymentTypeId = new Long(paymentMethod.getPaymentTypeId()).intValue();
         if (paymentMethod.getIsPart() == 1) {
-            viewTag = ParamConst.SETTLEMENT_TYPE_NOT_PART;
-            //  paymentTypeId = ParamConst.SETTLEMENT_TYPE_NOT_PART;
+            viewTag = ParamConst.SETTLEMENT_CUSTOM_PART;
+            //  paymentTypeId = ParamConst.SETTLEMENT_CUSTOM_PART;
 
             if (paymentMethod.getPartAcount() == 0.0) {
                 initPartSettlement(order);
@@ -3346,7 +3346,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 animSet.start();
 
             } else {
-                viewTag = ParamConst.SETTLEMENT_TYPE_NOT_PART_NUM;
+                viewTag = ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE;
                 //备注
                 if (paymentMethod.getIsMsg() == 1) {
                     tv_special_settlement_title.setText("CUSTOM");
@@ -3393,7 +3393,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             if (remainTotal.compareTo(BH.getBD(orderSplit.getTotal())) != 0) {
                 return;
             }
-            viewTag = ParamConst.SETTLEMENT_TYPE_PART;
+            viewTag = ParamConst.SETTLEMENT_CUSTOM_ALL;
             if (paymentMethod.getIsMsg() == 1) {
                 tv_special_settlement_title.setText("CUSTOM");
                 rl_special_settlement_person.setVisibility(View.GONE);

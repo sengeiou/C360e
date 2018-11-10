@@ -157,6 +157,8 @@ public class Store {
 
 	public static final String KPMG_PAYMENT_TYPE = "kpmg_payment_type";
 
+	public static final String REPORT_NO_SPLIT_VALUE = "report_no_split_value";
+
 
 	private Store() {
 	};

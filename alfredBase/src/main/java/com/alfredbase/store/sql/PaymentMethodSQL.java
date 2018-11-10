@@ -222,6 +222,47 @@ public class PaymentMethodSQL {
         }
         return result;
     }
+    public static PaymentMethod getPaymentMethodByNameOt(String nameOt) {
+        PaymentMethod result = null;
+        String sql = "select * from " + TableNames.PaymentMethod+ " where nameOt = ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,new String[] {nameOt});
+            if (cursor.moveToFirst()) {
+                result = new PaymentMethod();
+                result.setId(cursor.getInt(0));
+                result.setNameCh(cursor.getString(1));
+                result.setNameEn(cursor.getString(2));
+                result.setNameOt(cursor.getString(3));
+                result.setLogoMd(cursor.getString(4));
+                result.setLogoSm(cursor.getString(5));
+                result.setPayType(cursor.getInt(6));
+                result.setRestaurantId(cursor.getInt(7));
+                result.setIsTax(cursor.getInt(8));
+                result.setIsDiscount(cursor.getInt(9));
+                result.setIsAdmin(cursor.getInt(10));
+                result.setIsMsgRequire(cursor.getInt(11));
+                result.setIsMsgRequire(cursor.getInt(12));
+                result.setIsPart(cursor.getInt(13));
+                result.setPartAcount(cursor.getDouble(14));
+                result.setStatus(cursor.getInt(15));
+                result.setDescription(cursor.getString(16));
+                result.setCreateTime(cursor.getLong(17));
+                result.setUpdateTime(cursor.getLong(18));
+                result.setPaymentTypeId(cursor.getLong(19));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
 
 
     public static void deletePaymentMethod(PaymentMethod pamentMethod) {

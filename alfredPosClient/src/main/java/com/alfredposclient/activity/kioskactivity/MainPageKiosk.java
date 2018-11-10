@@ -1357,11 +1357,11 @@ public class MainPageKiosk extends BaseActivity {
                         if (closeOrderWindow.isShowing()) {
                             closeOrderWindow.setUser(user);
                             closeOrderWindow.openMoneyKeyboard(View.GONE,
-                                    ParamConst.SETTLEMENT_TYPE_PART_PAYMENT);
+                                    ParamConst.SETTLEMENT_CUSTOM_PAYMENT);
                         } else if (closeOrderSplitWindow.isShowing()) {
                             closeOrderSplitWindow.setUser(user);
                             closeOrderSplitWindow.openMoneyKeyboard(View.GONE,
-                                    ParamConst.SETTLEMENT_TYPE_PART_PAYMENT);
+                                    ParamConst.SETTLEMENT_CUSTOM_PAYMENT);
                         }
                     } else if (result.get("MsgObject").equals(
                             HANDLER_MSG_OBJECT_BILL_ON_HOLD)) {
