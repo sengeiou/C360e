@@ -8,8 +8,8 @@
     <LinearLayout
         android:layout_width="500dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:background="@drawable/shape"
@@ -43,15 +43,15 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:gravity="center"
-            android:hint="192.168.100.100"
+            android:hint=""
             android:minHeight="60dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
             android:layout_marginTop="15dp"
+            android:layout_marginBottom="20dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
