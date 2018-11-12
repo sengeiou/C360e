@@ -229,7 +229,7 @@ public class MainPage extends BaseActivity {
     private static final String HANDLER_MSG_OBJECT_VOID_OR_FREE = "VOID_OR_FREE";
     public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
     public static final String HANDLER_MSG_OBJECT_CANCEL_ITEM = "CANCEL_ITEM";
-    private static final String PAMENT_METHOD= "PAMENTMETHOD";
+    private static final String PAMENT_METHOD = "PAMENTMETHOD";
 
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
@@ -546,7 +546,7 @@ public class MainPage extends BaseActivity {
         Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate());
         List<OrderDetail> orderDetails = OrderDetailSQL
                 .getUnFreeOrderDetails(oldOrder);
-        KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(),oldOrder.getNumTag());
+        KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
         if (!orderDetails.isEmpty()) {
             for (OrderDetail orderDetail : orderDetails) {
                 OrderDetail newOrderDetail = ObjectFactory.getInstance()
@@ -554,7 +554,7 @@ public class MainPage extends BaseActivity {
                 OrderDetailSQL.addOrderDetailETC(newOrderDetail);
                 List<OrderModifier> orderModifiers = OrderModifierSQL
                         .getOrderModifiers(orderDetail);
-                if(kotSummary != null) {
+                if (kotSummary != null) {
                     KotItemDetailSQL.updateKotItemDetailId(newOrderDetail.getId().intValue(), orderDetail.getId().intValue(), kotSummary.getId().intValue());
                 }
                 if (orderModifiers.isEmpty()) {
@@ -794,12 +794,12 @@ public class MainPage extends BaseActivity {
                         KotSummarySQL.update(kotSummary);
                     }
 
-                  //  if (App.instance.getSystemSettings().isCashClosePrint()) {
-                        PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                                context);
-                        printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
-                        printerLoadingDialog.showByTime(3000);
-             //       }
+                    //  if (App.instance.getSystemSettings().isCashClosePrint()) {
+                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                            context);
+                    printerLoadingDialog.setTitle(context.getResources().getString(R.string.receipt_printing));
+                    printerLoadingDialog.showByTime(3000);
+                    //       }
 
                     changeNum = paymentMap.get("changeNum");
                     if (!TextUtils.isEmpty(changeNum)) {
@@ -839,10 +839,10 @@ public class MainPage extends BaseActivity {
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
                     if (orderItems.size() > 0 && printer != null) {
 
-                      //  if (App.instance.getSystemSettings().isCashClosePrint()) {
+                        //  if (App.instance.getSystemSettings().isCashClosePrint()) {
 
-                            App.instance.remoteBillPrint(printer, title, paidOrder,
-                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                        App.instance.remoteBillPrint(printer, title, paidOrder,
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 //                        } else {
 //                            App.instance.kickOutCashDrawer(printer);
 //                        }
@@ -1299,7 +1299,7 @@ public class MainPage extends BaseActivity {
                                 }
 
                                 if (transfItemOrderDetail.getOrderDetailStatus().intValue() > ParamConst.ORDERDETAIL_STATUS_ADDED) {
-                                    OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(currentOrder,App.instance.getRevenueCenter());
+                                    OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(currentOrder, App.instance.getRevenueCenter());
                                     KotSummary toKotSummary = KotSummarySQL
                                             .getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                                     if (toKotSummary == null) {
@@ -1316,7 +1316,7 @@ public class MainPage extends BaseActivity {
                                     }
                                     KotSummary fromKotSummary = KotSummarySQL
                                             .getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
-                                    KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(fromKotSummary.getId(),transfItemOrderDetail.getTransferFromDetailId());
+                                    KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(fromKotSummary.getId(), transfItemOrderDetail.getTransferFromDetailId());
                                     if (idNull) {
                                         kotItemDetail = ObjectFactory.getInstance().cpKotItemDetail(kotItemDetail, transfItemOrderDetail);
                                     }
@@ -1334,7 +1334,7 @@ public class MainPage extends BaseActivity {
                                     kotItemDetail.setOrderId(toKotSummary.getOrderId().intValue());
                                     KotItemDetailSQL.update(kotItemDetail);
                                     int surplusCount = OrderDetailSQL.getNoVoidCountByOrderId(oldOrder.getId());
-                                    if(surplusCount == 0){
+                                    if (surplusCount == 0) {
                                         OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
                                         KotSummarySQL.deleteKotSummaryByOrder(oldOrder);
                                         OrderBillSQL.deleteOrderBillByOrder(oldOrder);
@@ -2063,7 +2063,7 @@ public class MainPage extends BaseActivity {
         if (selectOrderSplitDialog != null && selectOrderSplitDialog.isShowing()) {
             selectOrderSplitDialog.dismiss();
         }
-        if(closeOrderSplitWindow != null && closeOrderSplitWindow.isShowing()){
+        if (closeOrderSplitWindow != null && closeOrderSplitWindow.isShowing()) {
             closeOrderSplitWindow.backLikeClose();
             return;
         }
@@ -2476,7 +2476,7 @@ public class MainPage extends BaseActivity {
                         public void onClick(View arg0) {
                             OrderDetailSQL.deleteOrderDetail(tag);
                             OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
-                            ModifierCheckSql.deleteModifierCheck(tag.getId(),tag.getOrderId());
+                            ModifierCheckSql.deleteModifierCheck(tag.getId(), tag.getOrderId());
                             try {
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("orderId", tag.getOrderId().intValue());
