@@ -200,7 +200,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     loadingDialog.dismiss();
                     if (currentOrder != null) {
                         currentOrder = OrderSQL.getOrder(currentOrder.getId());
-                        currentOrder .setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
+                        currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
                         OrderSQL.update(currentOrder);
                     }
                     // if(orderDetails != null && !orderDetails.isEmpty()){
@@ -419,12 +419,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     boolean needCheck = false;
                     if (orderDetails != null && orderDetails.size() > 0) {
                         for (OrderDetail orderDetail : orderDetails) {
-                                if (orderDetail.getId().intValue() == modifierCheck.getOrderDetailId()) {
+                            if (orderDetail.getId().intValue() == modifierCheck.getOrderDetailId()) {
                                 needCheck = true;
                             }
                         }
                     }
-                    if (modifierCheck.getNum() > 0&&needCheck) {
+                    if (modifierCheck.getNum() > 0 && needCheck) {
                         //  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
                         if (checkMap.containsKey(modifierCheck.getItemName())) {
 //                                 if(checkMap.get(modifierCheck.getItemName()) !=null)
@@ -728,12 +728,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                             .getResources().getColor(
                                                     R.color.white));
                                     updateOrderDetail(tag, num);
-                                    if(num==0)
-                                    {
+                                    if (num == 0) {
 
                                         final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
                                                 orderDetail.getItemId());
-                                        ModifierCheckSql.deleteModifierCheck(orderDetail.getId(),currentOrder.getId());
+                                        ModifierCheckSql.deleteModifierCheck(orderDetail.getId(), currentOrder.getId());
                                     }
                                     refreshList();
                                 }
@@ -748,7 +747,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 holder.ll_title.setBackgroundColor(context.getResources()
                         .getColor(R.color.gray));
             }
-            holder.name.setText(itemDetail.getItemName());
+            holder.name.setText(orderDetail.getItemName());
             holder.price.setText(App.instance.getCurrencySymbol()
                     + BH.getBD(orderDetail.getItemPrice()).toString());
             holder.tv_qty.setText(orderDetail.getItemNum() + "");
@@ -764,7 +763,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                             modifierIds.add(orderModifier.getModifierId().intValue());
                         }
                         selectedOrderDetail = orderDetail;
-                        modifierWindow.show(itemDetail, modifierIds, currentOrder, orderDetail.getSpecialInstractions() == null ? "" : orderDetail.getSpecialInstractions(),orderDetail);
+                        modifierWindow.show(itemDetail, modifierIds, currentOrder, orderDetail.getSpecialInstractions() == null ? "" : orderDetail.getSpecialInstractions(), orderDetail);
                     }
                 }
             });

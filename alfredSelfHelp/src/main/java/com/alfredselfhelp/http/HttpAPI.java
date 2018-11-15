@@ -101,6 +101,50 @@ public class HttpAPI {
 		}
 	}
 
+
+
+	public static void updateStoredCardValue(Context context, String url, AsyncHttpClient httpClient,
+											 final Map<String, Object> parameters, final Handler handler) {
+		try {
+			httpClient.post(context, url,
+					HttpAssembling.encapsulateBaseInfo(parameters),
+					HttpAssembling.CONTENT_TYPE,
+					new AsyncHttpResponseHandlerEx() {
+						@Override
+						public void onSuccess(final int statusCode,
+											  final Header[] headers,
+											  final byte[] responseBody) {
+							super.onSuccess(statusCode, headers, responseBody);
+							if (resultCode == ResultCode.SUCCESS) {
+								int payTypeId = -1;
+								if (parameters.containsKey("payTypeId")) {
+									payTypeId = (Integer) parameters.get("payTypeId");
+								}
+								HttpAnalysis.updateStoredCardValue(responseBody, payTypeId);
+								handler.sendEmptyMessage(MenuActivity.VIEW_PAYMENT_STORED_CARDNUM_SUCCEED);
+							} else {
+								handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_PAYMENT_STORED_CARDNUM_SUCCEED, resultCode));
+							}
+						}
+
+						@Override
+						public void onFailure(int statusCode, Header[] headers,
+											  byte[] responseBody, Throwable error) {
+							if (handler != null)
+								handler.sendMessage(handler.obtainMessage(
+										ResultCode.CONNECTION_FAILED, error));
+							super.onFailure(statusCode, headers, responseBody,
+									error);
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+
 	public static void commitOrder(Context context, Map<String, Object> map, String url,
 								   AsyncHttpClient httpClient, final Handler handler,
 								   final PaymentSettlement paymentSettlement, final String cardNum) {

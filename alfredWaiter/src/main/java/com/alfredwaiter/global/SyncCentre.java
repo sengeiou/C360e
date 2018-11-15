@@ -79,8 +79,12 @@ public class SyncCentre {
 		HttpAPI.getHappyHour(context,
 				getAbsolutePOSUrlByIp(ip, APIName.HAPPYHOUR_GETHAPPYHOUR), parameters,
 				httpClient, handler);
+
+		HttpAPI.getPrinters(context,
+				getAbsolutePOSUrlByIp(ip, APIName.GET_PRINTER), parameters,
+				httpClient, handler);
 	}
-	
+
 	public void pairingComplete(Context context, String ip,
 			Map<String, Object> parameters, Handler handler){
 		HttpAPI.pairingComplete(context, parameters, getAbsolutePOSUrlByIp(ip, APIName.PAIRING_COMPLETE), httpClient, handler);
@@ -96,7 +100,7 @@ public class SyncCentre {
 		HttpAPI.selectTables(context, parameters,
 				getAbsoluteUrl(APIName.SELECT_TABLES), httpClient, handler);
 	}
-	
+
     /*
      * Get bill print */
 	public void getBillPrint(Context context, Map<String, Object> parameters,
@@ -113,6 +117,12 @@ public class SyncCentre {
 				getAbsoluteUrl(APIName.PRINT_BILL), httpClient, handler);
 	}
 
+       //临时菜
+	public void getTemporaryDish(Context context, Map<String, Object> parameters,
+							 Handler handler) {
+		HttpAPI.getTemporaryDish(context, parameters,
+				getAbsoluteUrl(APIName.TEMPORARY_DISH), httpClient, handler);
+	}
 	// get OrderDetail Un Waiter Create
 	public void handlerGetOrderDetails(Context context, Map<String, Object> parameters,
 			Handler handler) {
@@ -123,12 +133,12 @@ public class SyncCentre {
 		return "http://" + getIp() + ":" + APPConfig.HTTP_SERVER_PORT + "/"
 				+ url;
 	}
-	
+
 	private String getAbsolutePOSUrlByIp(String ip, String url) {
 		return "http://" + ip + ":" + APPConfig.HTTP_SERVER_PORT + "/"
 				+ url;
 	}
-	
+
 	public void commitOrderAndOrderDetails(Context context, Map<String, Object> parameters,
 			Handler handler){
 		HttpAPI.commitOrderAndOrderDetails(context, parameters, getAbsoluteUrl(APIName.COMMIT_ORDER), httpClient, handler);
@@ -138,17 +148,17 @@ public class SyncCentre {
 			Handler handler){
 		HttpAPI.getKotNotification(context, parameters, getAbsoluteUrl(APIName.GET_KOT_NOTIFICATION), httpClient, handler);
 	}
-	
+
 	public void handlerCollectKotItem(Context context, Map<String, Object> parameters,
 			Handler handler){
 		HttpAPI.handlerCollectKotItem(context, parameters, getAbsoluteUrl(APIName.COLLECT_KOT_ITEM), httpClient, handler);
 	}
-	
+
 	public void logout(Context context, Map<String, Object> parameters,
 			Handler handler){
 		HttpAPI.logout(context, parameters, getAbsoluteUrl(APIName.LOGIN_LOGOUT), httpClient, handler);
 	}
-	
+
 	public String getIp() {
 		if (ip == null) {
 			ip = App.instance.getMainPosInfo().getIP();

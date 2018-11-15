@@ -378,7 +378,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
         popupWindow.setOutsideTouchable(false);
-        popupWindow.setFocusable(false);
+        popupWindow.setFocusable(true);
 //        popupWindow.setFocusable(true);
 //        ColorDrawable dw = new ColorDrawable(0x00ffffff);
 //        popupWindow.setBackgroundDrawable(dw);

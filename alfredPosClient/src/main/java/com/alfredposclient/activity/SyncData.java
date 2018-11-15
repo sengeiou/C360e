@@ -171,7 +171,6 @@ public class SyncData extends BaseActivity {
 			case HANDLER_LOGIN: {
 				SyncCentre.getInstance().getRestaurantInfo(context, null,
 						handler);
-				
 				break;
 			}
 			case HANDLER_GET_RESTAURANT_INFO: {

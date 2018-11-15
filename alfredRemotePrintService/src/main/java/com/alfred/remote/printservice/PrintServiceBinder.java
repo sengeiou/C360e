@@ -1990,7 +1990,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
                     String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
                     String grandTotal = BH.getBD(theOrder.getTotal()).toString();
-
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);

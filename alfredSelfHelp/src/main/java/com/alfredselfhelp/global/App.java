@@ -23,6 +23,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.PaymentMethod;
@@ -205,6 +206,28 @@ public class App extends BaseApplication {
 
     }
 
+
+    public void remoteStoredCard(PrinterDevice printer, ConsumingRecords consumingRecords, String balance) {
+        if (mRemoteService == null) {
+            printerDialog();
+            return;
+        }
+        String action = "Top-up";
+        if (consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_TOP_UP) {
+            action = "Top-up";
+        } else if (consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_PAY) {
+            action = "Pay";
+        } else if (consumingRecords.getConsumingType().intValue() == ParamConst.STORED_CARD_ACTION_REFUND) {
+            action = "Refund";
+        }
+        try {
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            mRemoteService.printStoredCardConsume(prtStr, "StoredCard Amount", TimeUtil.getTimeFormat(consumingRecords.getConsumingTime()), consumingRecords.getCardId() + "", action, consumingRecords.getConsumingAmount(), balance);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
     /* Print service */
     public void connectRemotePrintService() {
         if (mRemoteService == null) {

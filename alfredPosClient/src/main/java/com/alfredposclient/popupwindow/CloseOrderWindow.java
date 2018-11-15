@@ -139,7 +139,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private TextView tv_discount_num;
     private TextView tv_taxes_num;
     private TextView tv_total_bill_num;
-    private TextView tv_rounding_num, tv_cards_rounding_num,tv_nets_rounding_num;
+    private TextView tv_rounding_num, tv_cards_rounding_num, tv_nets_rounding_num;
     //	private TextView tv_grand_total_bill_num;
     private TextView tv_amount_due_num;
 
@@ -214,27 +214,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 return false;
             }
         });
-
-        et_special_settlement_person_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){//获得焦点
-//                    InputMethodManager inputMethodManager =(InputMethodManager)parent.getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-                  //  parent.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-//                InputMethodManager inputManager =
-//                            (InputMethodManager)parent.getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    if (inputManager != null) {
-//                        inputManager.showSoftInput(et_special_settlement_person_name, 0);
-//                    }
-                }else{//失去焦点
-
-                }
-            }
-        });
-
-
 //		rl_pay_panel = (RelativeLayout) contentView
 //				.findViewById(R.id.rl_pay_panel);
 //		web_alipay = (AlipayWebView) contentView.findViewById(R.id.web_alipay);
@@ -385,7 +364,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 RelativeLayout.LayoutParams.MATCH_PARENT, true);
         popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         popupWindow.setOutsideTouchable(false);
-        popupWindow.setFocusable(false);
+        popupWindow.setFocusable(true);
 //		popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
 //		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 //		popupWindow.setBackgroundDrawable(new BitmapDrawable());
@@ -1078,9 +1057,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         initBillSummary();
         ll_subtotal_layout.setVisibility(
                 View.INVISIBLE);
-       // tv_nets_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+        // tv_nets_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
         tv_nets_ref_num.setText("");
-      //  tv_nets_amount_paid_num.setText(BH.getBD(remainTotal).toString());
+        //  tv_nets_amount_paid_num.setText(BH.getBD(remainTotal).toString());
 
         if (!App.instance.getSystemSettings().isCardRounding()) {
 
@@ -2444,7 +2423,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //				UIHelp.showToast(parent, parent.getResources().getString(R.string.ref_id_not_empty));
 //				return;
 //			}else{
-                BigDecimal paidBD ;
+                BigDecimal paidBD;
 //                if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
 //                    PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
 //                            .getPaymentSettlementForCard(
@@ -2503,26 +2482,26 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 }
 
 
-                    PaymentSQL.addPayment(payment);
-                    PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
-                    Integer cardNum = TextUtils.isEmpty(cardNo) ? 0 : Integer.parseInt(cardNo);
-                    NetsSettlement netsSettlement = ObjectFactory.getInstance()
-                            .getNetsSettlementByPayment(
-                                    payment,
-                                    paymentSettlement,
-                                    cardNum,
-                                    paidBD.toString());
-                    NetsSettlementSQL.addNetsSettlement(netsSettlement);
+                PaymentSQL.addPayment(payment);
+                PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+                Integer cardNum = TextUtils.isEmpty(cardNo) ? 0 : Integer.parseInt(cardNo);
+                NetsSettlement netsSettlement = ObjectFactory.getInstance()
+                        .getNetsSettlementByPayment(
+                                payment,
+                                paymentSettlement,
+                                cardNum,
+                                paidBD.toString());
+                NetsSettlementSQL.addNetsSettlement(netsSettlement);
 
-                    payment_amount = remainTotal;
-                    paymentType = viewTag;
-                    if (newPaymentMapList != null) {
-                        Map<String, Object> paymentMap = new HashMap<String, Object>();
-                        paymentMap.put("newPaymentSettlement", paymentSettlement);
-                        paymentMap.put("newSubPaymentSettlement", netsSettlement);
-                        newPaymentMapList.add(paymentMap);
-                    }
+                payment_amount = remainTotal;
+                paymentType = viewTag;
+                if (newPaymentMapList != null) {
+                    Map<String, Object> paymentMap = new HashMap<String, Object>();
+                    paymentMap.put("newPaymentSettlement", paymentSettlement);
+                    paymentMap.put("newSubPaymentSettlement", netsSettlement);
+                    newPaymentMapList.add(paymentMap);
                 }
+            }
 
 //		}
             break;

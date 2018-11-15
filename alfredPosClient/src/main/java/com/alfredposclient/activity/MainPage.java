@@ -2273,7 +2273,6 @@ public class MainPage extends BaseActivity {
     private void setData() {
         initOrder(currentTable);
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
-
         //update tabels orders
         currentTable.setOrders(orderDetails.size());
         TableInfoSQL.updateTables(currentTable);
@@ -2312,8 +2311,6 @@ public class MainPage extends BaseActivity {
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         setData();
         if (itemModifiers.size() > 0) {
-
-
             for (ItemModifier itemModifier : itemModifiers) {
 
                 final Modifier modifier_type = CoreData.getInstance().getModifier(

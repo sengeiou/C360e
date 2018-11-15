@@ -152,7 +152,7 @@ public class HttpAnalysis {
 			CoreData.getInstance().setPrinters(printers);
 			PrinterSQL.deleteAllPrinter();
 			PrinterSQL.addPrinters(printers);
-			
+
 			Restaurant restaurant = gson.fromJson(
 					object.getString("restaurant"), Restaurant.class);
 			CoreData.getInstance().setRestaurant(restaurant);
@@ -175,7 +175,7 @@ public class HttpAnalysis {
 			CoreData.getInstance().setUsers(result);
 			UserSQL.deleteAllUser();
 			UserSQL.addUsers(result);
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -234,14 +234,14 @@ public class HttpAnalysis {
 				CoreData.getInstance().setItemDetails(ItemDetailSQL.getAllItemDetail());
 			}
 			if(object.has("orderDetails")){
-				List<OrderDetail> orderDetails = gson.fromJson(object.getString("orderDetails"), 
+				List<OrderDetail> orderDetails = gson.fromJson(object.getString("orderDetails"),
 						new TypeToken<ArrayList<OrderDetail>>() {}.getType());
 				if(!orderDetails.isEmpty()){
 					OrderDetailSQL.addOrderDetailList(orderDetails);
 				}
-				
+
 			}
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -374,6 +374,27 @@ public class HttpAnalysis {
 			CoreData.getInstance().setHappyHours(happyHours);
 			HappyHourSQL.deleteAllHappyHour();
 			HappyHourSQL.addHappyHourList(happyHours);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static void getPrinter(int statusCode, Header[] headers,
+									byte[] responseBody) {
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<Printer> printers = gson.fromJson(
+					object.getString("printers"),
+					new TypeToken<ArrayList<Printer>>() {
+					}.getType());
+            int restaurantId=object.getInt("restaurantId");
+             Store.getInt(App.instance,
+					Store.RESTAURANT_ID,restaurantId);
+			CoreData.getInstance().setPrinters(printers);
+			PrinterSQL.deleteAllPrinter();
+			PrinterSQL.addPrinters(printers);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

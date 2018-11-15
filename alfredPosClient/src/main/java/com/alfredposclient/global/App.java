@@ -1883,14 +1883,14 @@ public class App extends BaseApplication {
                 if (countryCode == ParamConst.CHINA)
                     mRemoteService.printAppOrderBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
-                            this.systemSettings.isDoubleBillPrint(),
+                            false,
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
                             true, BH.IsDouble(), info, apporders);
                 else
                     mRemoteService.printAppOrderBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
-                            this.systemSettings.isDoubleBillPrint(),
+                            false,
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             null, getLocalRestaurantConfig().getCurrencySymbol(),
                             openDrawer, BH.IsDouble(), info, apporders);
