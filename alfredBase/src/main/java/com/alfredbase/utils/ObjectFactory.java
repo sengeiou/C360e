@@ -236,6 +236,8 @@ public class ObjectFactory {
                 subOrder.setId(CommonSQL.getNextSeq(TableNames.Order));
                 subOrder.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                 subOrder.setOrderNo(OrderHelper.calculateOrderNo(subOrder.getBusinessDate()));
+                subOrder.setCreateTime(System.currentTimeMillis());
+                subOrder.setUpdateTime(System.currentTimeMillis());
                 OrderSQL.update(subOrder);
             }
 
@@ -244,6 +246,8 @@ public class ObjectFactory {
                 int oldId = orderSplit.getId();
                 orderSplit.setId(CommonSQL.getNextSeq(TableNames.OrderSplit));
                 orderSplit.setOrderId(subOrder.getId());
+                orderSplit.setCreateTime(System.currentTimeMillis());
+                orderSplit.setUpdateTime(System.currentTimeMillis());
                 OrderSplitSQL.update(orderSplit);
                 orderSplitMap.put(oldId, orderSplit.getId());
             }
@@ -253,6 +257,8 @@ public class ObjectFactory {
                 int oldId = payment.getId();
                 payment.setId(CommonSQL.getNextSeq(TableNames.Payment));
                 payment.setOrderId(subOrder.getId());
+                payment.setCreateTime(System.currentTimeMillis());
+                payment.setUpdateTime(System.currentTimeMillis());
                 Integer orderSplitId = payment.getOrderSplitId();
                 if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
                     payment.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
@@ -264,6 +270,8 @@ public class ObjectFactory {
             for (RoundAmount roundAmount : roundAmounts) {
                 roundAmount.setId(CommonSQL.getNextSeq(TableNames.RoundAmount));
                 roundAmount.setOrderId(subOrder.getId());
+                roundAmount.setCreateTime(System.currentTimeMillis());
+                roundAmount.setUpdateTime(System.currentTimeMillis());
                 Integer orderSplitId = roundAmount.getOrderSplitId();
                 if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
                     roundAmount.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
@@ -274,6 +282,8 @@ public class ObjectFactory {
             for (OrderBill orderBill : orderBills) {
                 orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
                 orderBill.setOrderId(subOrder.getId());
+                orderBill.setCreateTime(System.currentTimeMillis());
+                orderBill.setUpdateTime(System.currentTimeMillis());
                 orderBill.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(subOrder.getRevenueId()));
                 Integer orderSplitId = orderBill.getOrderSplitId();
                 if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
@@ -287,6 +297,8 @@ public class ObjectFactory {
                 int oldId = orderDetail.getId();
                 orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
                 orderDetail.setOrderId(subOrder.getId());
+                orderDetail.setCreateTime(System.currentTimeMillis());
+                orderDetail.setUpdateTime(System.currentTimeMillis());
                 Integer orderSplitId = orderDetail.getOrderSplitId();
                 if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
                     orderDetail.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
@@ -297,6 +309,8 @@ public class ObjectFactory {
 
             for (OrderModifier orderModifier : orderModifiers) {
                 orderModifier.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+                orderModifier.setCreateTime(System.currentTimeMillis());
+                orderModifier.setUpdateTime(System.currentTimeMillis());
                 Integer orderDetailId = orderModifier.getOrderDetailId();
                 if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
                     orderModifier.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
@@ -306,6 +320,8 @@ public class ObjectFactory {
             }
             for (OrderDetailTax orderDetailTax : orderDetailTaxs) {
                 orderDetailTax.setId(CommonSQL.getNextSeq(TableNames.OrderDetailTax));
+                orderDetailTax.setCreateTime(System.currentTimeMillis());
+                orderDetailTax.setUpdateTime(System.currentTimeMillis());
                 Integer orderDetailId = orderDetailTax.getOrderDetailId();
                 if (orderDetailId != null && orderDetailMap.containsKey(orderDetailId.intValue())) {
                     orderDetailTax.setOrderDetailId(orderDetailMap.get(orderDetailId.intValue()));
@@ -316,6 +332,8 @@ public class ObjectFactory {
 
             for (PaymentSettlement paymentSettlement : paymentSettlements) {
                 paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.PaymentSettlement));
+                paymentSettlement.setCreateTime(System.currentTimeMillis());
+                paymentSettlement.setUpdateTime(System.currentTimeMillis());
                 Integer paymentId = paymentSettlement.getPaymentId();
                 if (paymentId != null && paymentMap.containsKey(paymentId.intValue())) {
                     paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));

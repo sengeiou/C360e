@@ -3,6 +3,7 @@ package com.alfredselfhelp.global;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.LogUtil;
@@ -109,71 +110,89 @@ public class CCCentre {
 
         @Override
         public void run() {
-
-            try {
-                if(out != null){
-                    socket.setSoTimeout(timeOut);
-                    out.write(this.msg.getBytes());
-                    out.flush();
-                    bff = new BufferedReader(new InputStreamReader(
-                            socket.getInputStream()));
-                    String line;
-                    StringBuffer buffer= new StringBuffer();
-                    while ((line = bff.readLine()) != null) {
-                        buffer.append(line);
-                    }
-                    lastRespont = buffer.toString();
-                    lastRespont = lastRespont.toUpperCase();
-                    if(lastRespont.contains("R200")
-                            && lastRespont.contains("390200")){
-                        int paymentType = ParamConst.SETTLEMENT_TYPE_VISA;
-                        if(lastRespont.contains("VISA")){
-                            paymentType = ParamConst.SETTLEMENT_TYPE_VISA;
+            if(BaseApplication.isOpenLog){
+                Map<String, Object> cardInfoMap = new HashMap<>();
+                int a =  (int)(1+Math.random()*(10-1+1));
+                int paymentType = ParamConst.SETTLEMENT_TYPE_VISA;
+                switch (a%3){
+                    case 0 :
+                        paymentType = ParamConst.SETTLEMENT_TYPE_VISA;
+                        break;
+                    case 1:
+                        paymentType = ParamConst.SETTLEMENT_TYPE_MASTERCARD;
+                        break;
+                    case 2:
+                        paymentType = ParamConst.SETTLEMENT_TYPE_EZLINK;
+                        break;
+                }
+                cardInfoMap.put("paymentType", paymentType);
+                cardInfoMap.put("cardNum", "22223");
+                handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED, cardInfoMap));
+            }else {
+                try {
+                    if (out != null) {
+                        socket.setSoTimeout(timeOut);
+                        out.write(this.msg.getBytes());
+                        out.flush();
+                        bff = new BufferedReader(new InputStreamReader(
+                                socket.getInputStream()));
+                        String line;
+                        StringBuffer buffer = new StringBuffer();
+                        while ((line = bff.readLine()) != null) {
+                            buffer.append(line);
                         }
-                        if(lastRespont.contains("MASTERCARD")){
-                            paymentType = ParamConst.SETTLEMENT_TYPE_MASTERCARD;
-                        }
-                        if(lastRespont.contains("AMERICAN EXPRESS")){
-                            paymentType = ParamConst.SETTLEMENT_TYPE_AMEX;
-                        }
-                        if(lastRespont.contains("JCB")){
-                            paymentType = ParamConst.SETTLEMENT_TYPE_JCB;
-                        }
-                        if(lastRespont.contains("DINERS")){
-                            paymentType = ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL;
-                        }
-                        if(lastRespont.contains("UNIONPAY")){
-                            paymentType = ParamConst.SETTLEMENT_TYPE_UNIPAY;
-                        }
+                        lastRespont = buffer.toString();
+                        lastRespont = lastRespont.toUpperCase();
+                        if (lastRespont.contains("R200")
+                                && lastRespont.contains("390200")) {
+                            int paymentType = ParamConst.SETTLEMENT_TYPE_VISA;
+                            if (lastRespont.contains("VISA")) {
+                                paymentType = ParamConst.SETTLEMENT_TYPE_VISA;
+                            }
+                            if (lastRespont.contains("MASTERCARD")) {
+                                paymentType = ParamConst.SETTLEMENT_TYPE_MASTERCARD;
+                            }
+                            if (lastRespont.contains("AMERICAN EXPRESS")) {
+                                paymentType = ParamConst.SETTLEMENT_TYPE_AMEX;
+                            }
+                            if (lastRespont.contains("JCB")) {
+                                paymentType = ParamConst.SETTLEMENT_TYPE_JCB;
+                            }
+                            if (lastRespont.contains("DINERS")) {
+                                paymentType = ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL;
+                            }
+                            if (lastRespont.contains("UNIONPAY")) {
+                                paymentType = ParamConst.SETTLEMENT_TYPE_UNIPAY;
+                            }
 //                        if(lastRespont.contains("NETS")){
 //                            paymentType = ParamConst.SETTLEMENT_TYPE_NETS;
 //                        }
-                        String x = "XXXXXXXXXXXX";
-                        String cardNum = "";
-                        if(lastRespont.contains(x)){
-                            try{
-                                String[] strings = lastRespont.split(x);
-                                String last = strings[1];
-                                cardNum = last.substring(0,4);
-                            }catch (Exception e){
-                                e.printStackTrace();
+                            String x = "XXXXXXXXXXXX";
+                            String cardNum = "";
+                            if (lastRespont.contains(x)) {
+                                try {
+                                    String[] strings = lastRespont.split(x);
+                                    String last = strings[1];
+                                    cardNum = last.substring(0, 4);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                        Map<String, Object> cardInfoMap = new HashMap<>();
-                        cardInfoMap.put("paymentType", paymentType);
-                        cardInfoMap.put("cardNum", cardNum);
-                        
-                        handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED, cardInfoMap));
-                    } else if(lastRespont.contains("R610")
-                            ){
-                        if(lastRespont.contains("390200")) {
-                            handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED, ParamConst.SETTLEMENT_TYPE_EZLINK));
-                        }else{
+                            Map<String, Object> cardInfoMap = new HashMap<>();
+                            cardInfoMap.put("paymentType", paymentType);
+                            cardInfoMap.put("cardNum", cardNum);
+
+                            handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED, cardInfoMap));
+                        } else if (lastRespont.contains("R610")
+                                ) {
+                            if (lastRespont.contains("390200")) {
+                                handler.sendMessage(handler.obtainMessage(MenuActivity.VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED, ParamConst.SETTLEMENT_TYPE_EZLINK));
+                            } else {
+                                handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
+                            }
+                        } else {
                             handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
                         }
-                    }else{
-                        handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
-                    }
 //
 //                    App.getTopActivity().runOnUiThread(new Runnable() {
 //                        @Override
@@ -183,10 +202,10 @@ public class CCCentre {
 //                            UIHelp.showToast(App.instance, "Response:" + lastRespont);
 //                        }
 //                    });
-                }else{
-                    handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
-                }
-            } catch (final Exception e) {
+                    } else {
+                        handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
+                    }
+                } catch (final Exception e) {
 //                App.getTopActivity().runOnUiThread(new Runnable() {
 //                        @Override
 //                        public void run() {
@@ -195,8 +214,9 @@ public class CCCentre {
 ////                            UIHelp.showToast(App.instance, "Response:" + lastRespont);
 //                        }
 //                    });
-                LogUtil.e(TAG, ("connectService:" + e.getMessage()));
-                handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
+                    LogUtil.e(TAG, ("connectService:" + e.getMessage()));
+                    handler.sendEmptyMessage(MenuActivity.VIEW_CC_PAYMENT_FAILED);
+                }
             }
         }
     }
@@ -218,13 +238,15 @@ public class CCCentre {
         @Override
         public void run() {
             try {
-                InetAddress inetAddress = InetAddress.getByName(CommonUtil.getLocalIpAddress());
-                socket = new Socket(HOST, PORT, inetAddress, LOCAL_PORT);
+                if(!BaseApplication.isOpenLog){
+                    InetAddress inetAddress = InetAddress.getByName(CommonUtil.getLocalIpAddress());
+                    socket = new Socket(HOST, PORT, inetAddress, LOCAL_PORT);
 //                socket.setSoTimeout(10*1000);
-                socket.setKeepAlive(true);
-                socket.setReuseAddress(true);
-                socket.setTcpNoDelay(true);
-                out = socket.getOutputStream();
+                    socket.setKeepAlive(true);
+                    socket.setReuseAddress(true);
+                    socket.setTcpNoDelay(true);
+                    out = socket.getOutputStream();
+                }
                 handler.sendEmptyMessage(MenuActivity.VIEW_CC_CONNECT_SUCCEED);
 //                App.getTopActivity().runOnUiThread(new Runnable() {
 //                    @Override

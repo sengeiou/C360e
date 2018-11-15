@@ -64,4 +64,31 @@ public class ButtonClickTimer {
 			return false;
 		}
 	}
+
+
+	public static boolean canClickShort() {
+		long currentTimeMillis = System.currentTimeMillis();
+		if (currentTimeMillis - lastClickTime > 300) {
+			lastClickTime = currentTimeMillis;
+			return true;
+		} else {
+			lastClickTime = currentTimeMillis;
+			return false;
+		}
+	}
+
+	public static boolean canClickShort(View view) {
+		if(lastView !=view){
+			lastView = view;
+			return true;
+		}
+		long currentTimeMillis = System.currentTimeMillis();
+		if (currentTimeMillis - lastClickTime > 300) {
+			lastClickTime = currentTimeMillis;
+			return true;
+		} else {
+			lastClickTime = currentTimeMillis;
+			return false;
+		}
+	}
 }
