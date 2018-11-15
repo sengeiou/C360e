@@ -364,22 +364,22 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_VISA){
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_VISA);
                                 if(paymentMethod != null){
-                                    paymentTypeId = paymentMethod.getPayType();
+                                    paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_MASTERCARD){
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_MC);
                                 if(paymentMethod != null){
-                                    paymentTypeId = paymentMethod.getPayType();
+                                    paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK){
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_EZ);
                                 if(paymentMethod != null){
-                                    paymentTypeId = paymentMethod.getPayType();
+                                    paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }else {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_OTHER);
                                 if(paymentMethod != null){
-                                    paymentTypeId = paymentMethod.getPayType();
+                                    paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }
                             paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, paymentTypeId, nurOrder.getTotal());
@@ -409,22 +409,22 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_VISA){
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_VISA);
                                 if(paymentMethod != null){
-                                    paymentTypeId = paymentMethod.getPayType();
+                                    paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_MASTERCARD){
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_MC);
                                 if(paymentMethod != null){
-                                    paymentTypeId = paymentMethod.getPayType();
+                                    paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK){
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_EZ);
                                 if(paymentMethod != null){
-                                    paymentTypeId = paymentMethod.getPayType();
+                                    paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }else {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_OTHER);
                                 if(paymentMethod != null){
-                                    paymentTypeId = paymentMethod.getPayType();
+                                    paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }
                             paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, paymentTypeId, nurOrder.getTotal());
