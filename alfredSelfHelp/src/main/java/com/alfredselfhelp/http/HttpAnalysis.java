@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Base64;
 
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.HappyHour;
 import com.alfredbase.javabean.HappyHourWeek;
 import com.alfredbase.javabean.ItemCategory;
@@ -41,6 +42,7 @@ import com.alfredbase.javabean.model.TableAndKotNotificationList;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.ConsumingRecordsSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
@@ -387,6 +389,23 @@ public class HttpAnalysis {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+
+	public static void updateStoredCardValue(byte[] responseBody, int payTypeId){
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			String balance = object.getString("balance");
+			String consuming = object.getString("records");
+			ConsumingRecords consumingRecords = gson.fromJson(consuming, ConsumingRecords.class);
+			consumingRecords.setBusinessDate(App.instance.getBusinessDate());
+			consumingRecords.setPayTypeId(payTypeId);
+			ConsumingRecordsSQL.addConsumingRecords(consumingRecords);
+			App.instance.remoteStoredCard(App.instance.getCahierPrinter(), consumingRecords, balance);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void getRestaurantInfo(int statusCode, Header[] headers,

@@ -48,6 +48,9 @@ public class App extends BaseApplication {
 	private static final String DATABASE_NAME = "com.alfredwaiter";
 	public static App instance;
 	private RevenueCenter revenueCenter;
+
+
+	private int  restaurantId;
 	private User user;
 	private WaiterDevice waiterdev;
 	private MainPosInfo mainPosInfo;
@@ -156,6 +159,18 @@ public class App extends BaseApplication {
 		if (this.httpServer!=null)
 			this.httpServer.stop();
 	}
+
+
+	public int getRestaurantId() {
+			restaurantId = Store.getInt(this,
+					Store.RESTAURANT_ID);
+
+		return restaurantId;
+	}
+
+	public void setRestaurantId(int restaurantId) {
+		this.restaurantId = restaurantId;
+	}
 	public RevenueCenter getRevenueCenter() {
 		if (revenueCenter == null)
 			revenueCenter = Store.getObject(this,
@@ -166,6 +181,8 @@ public class App extends BaseApplication {
 	public void setRevenueCenter(RevenueCenter revenueCenter) {
 		this.revenueCenter = revenueCenter;
 	}
+
+
 
 	public User getUser() {
 		if (user == null) {

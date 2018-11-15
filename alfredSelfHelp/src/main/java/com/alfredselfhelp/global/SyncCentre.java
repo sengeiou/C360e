@@ -63,6 +63,9 @@ public class SyncCentre {
         HttpAPI.updateAllData(context, getAbsoluteUrl(APIName.KPMG_UPDATE_DATA), httpClient, handler);
     }
 
+    public void updateStoredCardValue(Context context, Map<String, Object> parameters, Handler handler) {
+        HttpAPI.updateStoredCardValue(context, getAbsoluteUrl(APIName.MEMBERSHIP_OPERATEBALANCE), httpClient, parameters, handler);
+    }
 
     public void commitOrder(Context context, Order order, OrderBill orderBill,  List<OrderDetail> orderDetails,
                             Payment payment,  PaymentSettlement paymentSettlement,  Handler handler, String cardNum){

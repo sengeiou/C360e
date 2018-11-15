@@ -58,10 +58,9 @@ public class Store {
 	public static final String LAST_BUSINESSDATE = "LAST_BUSINESSDATE";
 	// print setting
 	public static final String PRINT_SETTING_KOT_MODE_TOGETHER = "PRINT_SETTING_KOT_MODE_TOGETHER"; // 0:
-																									// whole
-																									// print,
-																									// 1:
-																									// seperate
+	public static final String	RESTAURANT_ID="RESTAURANT_ID";																						// whole
+																					// print,
+																									// 1:// seperate
 																									// print
 	public static final String PRINT_SETTING_KOT_MODE_DOUBLE = "PRINT_SETTING_KOT_MODE_DOUBLE"; // 0:
 																								// 1

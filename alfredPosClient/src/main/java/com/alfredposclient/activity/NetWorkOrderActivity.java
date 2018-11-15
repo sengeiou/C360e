@@ -2,7 +2,6 @@ package com.alfredposclient.activity;
 
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -48,10 +47,7 @@ import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.view.dialog.DeliveryDialog;
-import com.alfredposclient.view.dialog.MediaDialog;
-import com.test.alfred.taskqueue.MainActivity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -162,12 +158,12 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
             }
             appOrderId = 0;
         }
-
-        if (!App.instance.isRevenueKiosk()) {
+        try {
             FragmentManager fragmentManager = this.getSupportFragmentManager();
             f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
             closeTables();
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -193,9 +189,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
     private void closeTables() {
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (!App.instance.isRevenueKiosk()) {
-            transaction.hide(f_tables);
-        }
+        transaction.hide(f_tables);
         transaction.commitAllowingStateLoss();
     }
 
@@ -203,9 +197,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_bottom_out);
-        if (!App.instance.isRevenueKiosk()) {
-            transaction.show(f_tables);
-        }
+        transaction.show(f_tables);
         transaction.commitAllowingStateLoss();
         App.instance.showWelcomeToSecondScreen();
     }

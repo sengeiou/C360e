@@ -19,6 +19,7 @@ import com.alfredwaiter.R;
 import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.activity.KOTNotification;
 import com.alfredwaiter.activity.MainPage;
+import com.alfredwaiter.activity.Setting;
 import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.UIHelp;
 import com.google.gson.Gson;
@@ -195,6 +196,8 @@ public class WaiterHttpServer extends AlfredHttpServer {
 		Response resp = this.getJsonResponse(new Gson().toJson(result));
 		return resp;
 	}
+
+
 	
 	private Response dummyResponse() {
 		Map<String, Object> result = new HashMap<String, Object>();

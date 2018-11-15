@@ -147,7 +147,7 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 				}
 				break;
 				case SYNC_DATA_TAG:
-					if(syncDataCount == 5){
+					if(syncDataCount == 6){
 						handler.sendEmptyMessage(TablesPage.HANDLER_GET_PLACE_INFO);
 					}else{
 						syncDataCount++;

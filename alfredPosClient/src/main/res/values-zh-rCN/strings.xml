@@ -81,7 +81,7 @@
     <string name="hold_bill">挂单</string>
     <string name="kiosk_hold">取单</string>
     <string name="delete_order">删除</string>
-    <string name="open_item">零时菜</string>
+    <string name="open_item">临时菜</string>
     <string name="edit_kot">编辑KOT</string>
     <string name="take_away">打包</string>
     <string name="open_drawer">开钱箱</string>

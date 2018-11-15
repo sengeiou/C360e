@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentMethodSQL {
-
-
-
     public static void addPaymentMethod(List<PaymentMethod> paymentMethods) {
         if (paymentMethods == null) {
             return;
@@ -87,13 +84,14 @@ public class PaymentMethodSQL {
 
         }
     }
+
     public static ArrayList<PaymentMethod> getAllPaymentMethod() {
         ArrayList<PaymentMethod> result = new ArrayList<PaymentMethod>();
         String sql = "select * from " + TableNames.PaymentMethod;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[] {});
+            cursor = db.rawQuery(sql, new String[]{});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -138,11 +136,11 @@ public class PaymentMethodSQL {
 
     public static PaymentMethod getPaymentMethod(int paid) {
         PaymentMethod result = null;
-        String sql = "select * from " + TableNames.PaymentMethod+ " where id = ?";
+        String sql = "select * from " + TableNames.PaymentMethod + " where id = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql,new String[] {paid+""});
+            cursor = db.rawQuery(sql, new String[]{paid + ""});
 //            int count = cursor.getCount();
 //            if (count < 1) {
 //                return result;
@@ -181,13 +179,14 @@ public class PaymentMethodSQL {
         }
         return result;
     }
+
     public static PaymentMethod getPaymentMethodByPaymentTypeId(int paymentTypeId) {
         PaymentMethod result = null;
-        String sql = "select * from " + TableNames.PaymentMethod+ " where paymentTypeId = ?";
+        String sql = "select * from " + TableNames.PaymentMethod + " where paymentTypeId = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql,new String[] {paymentTypeId+""});
+            cursor = db.rawQuery(sql, new String[]{paymentTypeId + ""});
             if (cursor.moveToFirst()) {
                 result = new PaymentMethod();
                 result.setId(cursor.getInt(0));
@@ -268,7 +267,7 @@ public class PaymentMethodSQL {
     public static void deletePaymentMethod(PaymentMethod pamentMethod) {
         String sql = "delete from " + TableNames.PaymentMethod + " where id = ?";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] { pamentMethod.getId() });
+            SQLExe.getDB().execSQL(sql, new Object[]{pamentMethod.getId()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -277,7 +276,7 @@ public class PaymentMethodSQL {
     public static void deleteAllPaymentMethod() {
         String sql = "delete from " + TableNames.PaymentMethod;
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] {});
+            SQLExe.getDB().execSQL(sql, new Object[]{});
         } catch (Exception e) {
             e.printStackTrace();
         }

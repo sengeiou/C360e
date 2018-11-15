@@ -93,8 +93,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     public static final int VIEW_CC_PAYMENT_HAS_CARDNUM_SUCCEED = 1113;
     public static final int VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED = 1114;
+    public static final int VIEW_PAYMENT_STORED_CARDNUM_SUCCEED = 1115;
+    public static final int VIEW_PAYMENT_STORED_CARDNUM_FAILED = -1115;
     public static final int VIEW_CC_PAYMENT_FAILED = -1113;
-
+    public static final int SETTLEMENT_TYPE_STORED_CARD = 1004;// 储值卡
     private static final String CUSTOM_PAYMENT_VISA = "Visa Kiosk";
     private static final String CUSTOM_PAYMENT_MC = "MC Kiosk";
     private static final String CUSTOM_PAYMENT_EZ = "EZlink Kiosk";
@@ -432,6 +434,32 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         }
                     }, 5000);
                 }
+                    break;
+
+                case VIEW_PAYMENT_STORED_CARDNUM_SUCCEED: {
+
+                    if (paymentDialog != null && paymentDialog.isShowing()) {
+                        paymentDialog.dismiss();
+                    }
+                    paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
+                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
+                    CCCentre.getInstance().disconnect();
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (paymentDialog != null && paymentDialog.isShowing()) {
+                                paymentDialog.dismiss();
+                            }
+                            OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
+                            Payment payment = ObjectFactory.getInstance().getPayment(nurOrder, orderBill);
+                            PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, SETTLEMENT_TYPE_STORED_CARD, nurOrder.getTotal());
+                            commitOrder(orderBill, payment, paymentSettlement, "");
+                        }
+                    }, 5000);
+                }
+                break;
+                case VIEW_PAYMENT_STORED_CARDNUM_FAILED:
+
                     break;
             }
 
@@ -1045,6 +1073,17 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             }
                 break;
 
+
+            case R.id.ll_view_order_qc: {
+
+                Map<String, Object> map = new HashMap<String, Object>();
+//                map.put("qrCode", getIntent().getStringExtra("qrCode"));
+//                map.put("revenueId", getIntent().getIntExtra("revenueId", 0));
+//                map.put("consumeAmount", getIntent().getStringExtra("consumeAmount"));
+//                map.put("operateType", getIntent().getIntExtra("operateType", -1));
+            //  SyncCentre.getInstance().updateStoredCardValue(MenuActivity.this,map,handler);
+            }
+            break;
             case R.id.tv_dialog_ok:
                 yesDialog = KpmDialogFactory.kpmVideoViewDialog(context, R.raw.grabplace, new View.OnClickListener() {
                     @Override

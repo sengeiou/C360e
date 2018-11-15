@@ -758,7 +758,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             case R.id.iv_refresh:
                 HashMap<String, Object> map = new HashMap<String, Object>();
                 map.put("visibilityMap", View.VISIBLE);
-                UIHelp.startSetting(context, map);
+                UIHelp.startSetting(context, map,currentOrder);
                 break;
             case R.id.tv_more_detail: {
                 OrderDetail orderDetail = (OrderDetail) v.getTag();
