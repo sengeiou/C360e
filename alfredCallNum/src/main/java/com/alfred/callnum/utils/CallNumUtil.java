@@ -28,12 +28,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.tencent.bugly.crashreport.crash.c.m;
 
 public class CallNumUtil {
     /*
@@ -1008,14 +1004,14 @@ public class CallNumUtil {
 
     private static void playNumMp3() {
 
-        if (mbHasBluetoothAudio) {// 蓝牙音箱
-            long silenceTime = System.currentTimeMillis() - s_EndPlayTime;// 静默时间
-            if (silenceTime > 6000) {
-                for (int i = 0; i < 3; i++) {
-                   // audioTrack.write(silence, 0, silence.length);// 200ms
-                }
-            }
-        }
+//        if (mbHasBluetoothAudio) {// 蓝牙音箱
+//            long silenceTime = System.currentTimeMillis() - s_EndPlayTime;// 静默时间
+//            if (silenceTime > 6000) {
+//                for (int i = 0; i < 3; i++) {
+//                   // audioTrack.write(silence, 0, silence.length);// 200ms
+//                }
+//            }
+//        }
         boolean bFirst = true;
         final int MAX_NUM = 2;
         CallNumQueueUtil[] num_played = new CallNumQueueUtil[MAX_NUM];
@@ -1026,12 +1022,7 @@ public class CallNumUtil {
                     num_played[call_count] = mCurTask;
                 }
                 call_count++;
-                if (!bFirst) {
-                  //  audioTrack.write(silence, 0, silence.length);// 与前一个号间隔
-                }
                 String playstring = mCurTask.quenamevoice + mCurTask.value;// 桌名+号码
-//				LogFile.i(String.format("playstring=%s,callidx=%d", playstring,
-//						mCurTask.custcallwav));
                 byte[] chars = playstring.toUpperCase().getBytes(); // 全部大写
                    mchars.clear();
                 for (byte c : chars) {
@@ -1048,34 +1039,6 @@ public class CallNumUtil {
                         }else {
                             int pos = c - '0';
                             mchars.add(nums_resid[pos]);
-                        }
-//                        int pos = c - 'A';
-//                        if (pos < chars_list.size()) {
-//                            if (mCurTask.callInEn) {
-//                                //data = chars2_list.get(pos);// 优先查询配置的语音
-//
-//                                AssetFileDescriptor file = mCxt.getResources().openRawResourceFd(R.raw.c);
-//                                try {
-//                                    mediaPlayer.reset();
-//                                    mediaPlayer.setDataSource(file.getFileDescriptor(), file.getStartOffset(), file.getLength());
-//                                    mediaPlayer.prepare();
-//                                    file.close();
-//                                } catch (IOException e) {
-//                                    e.printStackTrace();
-//                                }
-//                                mediaPlayer.setVolume(0.5f, 0.5f); mediaPlayer.setLooping(false);
-//                                mediaPlayer.start();
-//
-//
-//                            }
-//                            if (data == null) {
-//                                //data = chars_list.get(pos);
-//                            }
-//                        }
-                        if (data == null) {
-//                            mMsgHdr.obtainMessage(1,
-//                                    String.format("字母语音%c.wav错误或缺失，请联系客服！", c))
-//                                    .sendToTarget();
                         }
                     } else if (c >= '0' && c <= '9') {
                         int pos = c - '0';
@@ -1447,6 +1410,7 @@ public class CallNumUtil {
         mediaPlayer.setVolume(1f, 1f); mediaPlayer.setLooping(false);
         mediaPlayer.start();
     }
+
     private static Runnable mRunnable = new Runnable() {
         @Override
         public void run() {

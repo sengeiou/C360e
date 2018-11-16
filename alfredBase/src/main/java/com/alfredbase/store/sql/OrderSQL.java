@@ -1419,6 +1419,8 @@ public class OrderSQL {
 				+ ParamConst.ORDER_STATUS_KIOSK
 				+ " or orderStatus = "
 				+ ParamConst.ORDER_STATUS_HOLD
+				+ " or orderStatus = "
+				+ ParamConst.ORDER_STATUS_HOLD_KITCHEN
 				+ " )";
 		Cursor cursor = null;
 		try {

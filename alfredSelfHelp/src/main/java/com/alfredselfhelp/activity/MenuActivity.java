@@ -38,6 +38,7 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
@@ -854,6 +855,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
+                if(!ButtonClickTimer.canClickShort()){
+                    return;
+                }
                 ItemDetail itemDetail = itemDetails.get(position);
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("itemDetail", itemDetail);

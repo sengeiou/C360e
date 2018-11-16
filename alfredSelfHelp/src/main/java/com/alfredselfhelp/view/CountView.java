@@ -80,7 +80,7 @@ public class CountView extends LinearLayout implements OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (!ButtonClickTimer.canClick(v)) {
+        if(!ButtonClickTimer.canClickShort(v)){
             return;
         }
         switch (v.getId()) {
