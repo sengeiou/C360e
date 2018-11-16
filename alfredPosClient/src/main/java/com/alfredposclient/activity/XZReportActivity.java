@@ -2,6 +2,7 @@ package com.alfredposclient.activity;
 
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -28,6 +29,8 @@ import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
+import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.CashInOutSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
@@ -703,8 +706,29 @@ public class XZReportActivity extends BaseActivity {
             // Start Drawer
             ReportDaySalesItem startDrawer = new ReportDaySalesItem(context);
             startDrawer.setTitle("-----DRAWER-----");
+            SessionStatus sessionStatus = Store.getObject(context,
+                    Store.SESSION_STATUS, SessionStatus.class);
+            String start;
+            String startNum = CashInOutSQL.getStartDrawerSUMBySession(App.instance.getBusinessDate(), sessionStatus);
+            if (reportDaySales.getBusinessDate().equals(App.instance.getBusinessDate())) {
+                if (reportDaySales.getStartDrawerAmount().equals("0.00")) {
+                    if (!TextUtils.isEmpty(startNum)) {
+                        start = startNum;
+                    } else {
+                        start = "0.00";
+                    }
+                } else {
+                    if (!TextUtils.isEmpty(startNum)) {
+                        start = (Float.parseFloat(startNum) + Float.parseFloat(reportDaySales.getStartDrawerAmount())) + "";
+                    } else {
+                        start = reportDaySales.getStartDrawerAmount();
+                    }
+                }
+            } else {
+                start = reportDaySales.getStartDrawerAmount();
+            }
             startDrawer.setData("Start DRAWER", "",
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getStartDrawerAmount(), true);
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + start, true);
             ll_sales_total.addView(startDrawer);
             // TOTAL CASH
             ReportDaySalesItem totalCASHView = new ReportDaySalesItem(context);
@@ -909,7 +933,7 @@ public class XZReportActivity extends BaseActivity {
         PrinterTitle title = ObjectFactory.getInstance()
                 .getPrinterTitleForReport(
                         App.instance.getRevenueCenter().getId(),
-                        label+reportDaySales.getReportNoStr(),
+                        label + reportDaySales.getReportNoStr(),
                         App.instance.getUser().getFirstName()
                                 + App.instance.getUser().getLastName(), null,
                         bizDate);
