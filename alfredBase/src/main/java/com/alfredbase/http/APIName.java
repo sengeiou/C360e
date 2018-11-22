@@ -40,7 +40,9 @@ public class APIName {
     public static final String SOFTWARE_GETVERSION = "software/getVersion";
     public static final String CLOCK_CLOCKINOUT = "clock/clockInOut";
     public static final String CLOCK_GETUSERTIMESHEET = "clock/getUserTimeSheet";
-
+    public static final String UPDATE_REAMINING_STOCK = "/remainingStock/updateReaminingStock";
+    public static final String RESET_RESTAURANT_ITEM_NUM = "remainingStock/resetRestaurantItemNum";
+    public static final String GET_REMAINING_STOCK = "/item/getRemainingStock";
     //3rd-party Serivce
     public static final String REQUEST_ALIPAY = "alipay/getAlipayUrl";
     /**

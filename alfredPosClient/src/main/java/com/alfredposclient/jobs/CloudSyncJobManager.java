@@ -151,6 +151,12 @@ public class CloudSyncJobManager {
     	}
     }
 
+    public void updateRemainingStock(int orderId){
+    	String uuid = UUID.randomUUID().toString();
+		SyncMsgJob syncOrderJob = new SyncMsgJob(uuid, orderId);
+		this.syncJobManager.addJobInBackground(syncOrderJob);
+	}
+
 	//Sync Sub Pos Order Info
 	public void syncSubPosOrderInfo(Integer orderId, int revenueCenterId, Long bizDate) {
 		SyncMsgJob syncOrderJob = null;

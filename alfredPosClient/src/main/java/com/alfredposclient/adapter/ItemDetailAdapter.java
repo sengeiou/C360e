@@ -14,7 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.ColorSelectedUtils;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
@@ -120,7 +122,8 @@ public class ItemDetailAdapter extends BaseAdapter {
 //					layoutParams.setMargins(0, 10, 0, 3);
                 }
                 holder = new ViewHolder();
-
+                holder.rl_item_num=(RelativeLayout)arg1.findViewById(R.id.rl_item_num);
+                holder.tv_item_num=(TextView)arg1.findViewById(R.id.tv_item_num);
                 holder.tv_text = (TextView) arg1.findViewById(R.id.tv_item_name);
                 if (Store.getInt(App.instance, Store.TEXT_SIZE, 0) == 0) {
                     textTypeFace.setTrajanProBlod(holder.tv_text);
@@ -144,6 +147,14 @@ public class ItemDetailAdapter extends BaseAdapter {
                 holder.tv_text.setTextColor(ColorSelectedUtils.createColorStateList(color1, color));
                 holder.tv_text.setBackgroundDrawable(ColorSelectedUtils.newSelector(color, color1));
             }
+            RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetails.get(arg0).getItemTemplateId());
+            if(remainingStock!=null&&remainingStock.getDisplayQty()>=remainingStock.getQty()){
+                holder.rl_item_num.setVisibility(View.VISIBLE);
+                holder.tv_item_num.setText(remainingStock.getDisplayQty()+"");
+            }else {
+                holder.rl_item_num.setVisibility(View.GONE);
+            }
+
             holder.tv_text.setText(itemDetails.get(arg0).getItemName());
         } else {
             if (arg1 == null) {
@@ -168,14 +179,16 @@ public class ItemDetailAdapter extends BaseAdapter {
     int i = 0;
 
     class ViewHolder {
-        public TextView tv_text;
+        public TextView tv_text,tv_item_num;
 
         public RelativeLayout re;
+        public RelativeLayout rl_item_num;
     }
 
     class ImageViewHolder {
         public TextView item_name_tv;
         public ImageView item_name_img;
+
     }
 
 }

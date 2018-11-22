@@ -338,6 +338,13 @@ public class MainPageMenuView extends LinearLayout {
 						LogUtil.e("TEST", "宽===" + gv_menu_detail.getWidth() + "高====" + gv_menu_detail.getHeight());
 					}
 				});
+				gv_menu_detail.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+					@Override
+					public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+						return true;
+					}
+				});
 				gv_menu_detail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View arg1,

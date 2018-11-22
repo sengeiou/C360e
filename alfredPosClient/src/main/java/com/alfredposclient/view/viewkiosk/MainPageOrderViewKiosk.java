@@ -34,6 +34,7 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -44,6 +45,7 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
@@ -62,6 +64,7 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.view.RingTextView;
@@ -93,6 +96,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 	private String kotCommitStatus;
 	private TextTypeFace textTypeFace;
 	private TextView tv_page_order_mask;
+	final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 
 	public MainPageOrderViewKiosk(Context context) {
 		super(context);
@@ -156,7 +160,6 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
 
 				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
-
 				Map<Integer, String> categorMap = new HashMap<Integer, String>();
 				Map<String, Map<Integer, String>> checkMap = new HashMap<String, Map<Integer, String>>();
 				for (int i = 0; i < allModifierCheck.size(); i++) {
@@ -202,6 +205,19 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
 					UIHelp.showToast((BaseActivity) context, checkbuf.toString());
 				} else {
+
+					List<OrderDetail> orderDetailList = OrderDetailSQL.getOrderDetails(order.getId());
+
+					for(OrderDetail orderDetail: orderDetailList) {
+						int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+						RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+
+						if (remainingStock != null) {
+							RemainingStockSQL.updateRemainingById(orderDetail.getItemNum(), itemTempId);
+						}
+					}
+
+					cloudSync.updateRemainingStock(order.getId());
 					//DON'T use reference
 					Order placedOrder = OrderSQL.getOrder(order.getId());
 

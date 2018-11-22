@@ -12,6 +12,7 @@ import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
@@ -124,9 +125,29 @@ public class SyncCentre {
                 httpClient, handler, MODE_FIRST_SYNC);
 
         HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX), httpClient, handler, MODE_FIRST_SYNC);
-
         HttpAPI.getHappyHour(context,
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
+
+    }
+
+
+
+    public void updateReaminingStock(Context context, Map<String, Object> parameters
+                        ) {
+
+        HttpAPI.updateReaminingStock(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK), bigSyncHttpClient, parameters);
+    }
+       // 获取菜的数量
+    public void getRemainingStock(Context context, Map<String, Object> parameters,
+                                          Handler handler,int mode) {
+
+        HttpAPI.getRemainingStock(context, getAbsoluteUrl(APIName.GET_REMAINING_STOCK), httpClient, parameters, handler,mode);
+    }
+
+    public void getResetRestaurantItemNum(Context context, Map<String, Object> parameters,
+                           Handler handler) {
+
+        HttpAPI.getResetRestaurantItemNum(context, getAbsoluteUrl(APIName.RESET_RESTAURANT_ITEM_NUM), httpClient, parameters, handler);
     }
 
     public void getPlaceInfo(Context context, Map<String, Object> parameters,
@@ -234,6 +255,12 @@ public class SyncCentre {
 
     //设置中同步后台数据
     public void pushCommonData(Context context, String type, Handler handler) {
+
+        if(type.equals(PushMessage.STOCK)){
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("restaurantId", App.instance.getRevenueCenter().getRestaurantId());
+            getRemainingStock(context,param,handler,MODE_PUSH_SYNC);
+        }
 
         if (type.equals(PushMessage.PAYMENT_METHOD)) {
             HttpAPI.mediaSync(context,
@@ -358,12 +385,11 @@ public class SyncCentre {
         if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
+            return "http://192.168.20.101:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
-
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
             return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
         }

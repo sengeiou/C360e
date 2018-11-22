@@ -1540,6 +1540,157 @@ public class HttpAPI {
         }
     }
 
+
+    public static void updateReaminingStock(Context context, String url, AsyncHttpClient httpClient,
+                                     Map<String, Object> parameters) {
+        try {
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+
+                            if (resultCode == ResultCode.SUCCESS) {
+
+                            } else {
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getResetRestaurantItemNum(Context context, String url, AsyncHttpClient httpClient,
+                                     Map<String, Object> parameters, final Handler handler) {
+        try {
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+
+                            if (resultCode == ResultCode.SUCCESS) {
+                                new Thread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        HttpAnalysis.getRestaurantItemNum(responseBody);
+                                    }
+                                }).start();
+                            } else {
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+//
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void getRemainingStock(Context context, String url, AsyncHttpClient httpClient,
+                                         Map<String, Object> parameters, final Handler handler, final int mode) {
+        try {
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+
+                            if (resultCode == 1) {
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        Map<String, Integer> map = App.instance
+                                                .getPushMsgMap();
+                                        if (!map.isEmpty()) {
+                                            map.remove(PushMessage.STOCK);
+                                            Store.saveObject(App.instance,
+                                                    Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
+                                        }
+                                        Log.e("TAG", "-------------------progress");
+                                        HttpAnalysis.getRemainingStock(responseBody);
+                                        if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(
+                                                            SyncData.SYNC_DATA_TAG,
+                                                            SyncData.SYNC_SUCCEED));
+
+                                        } else {
+                                            handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                        }
+
+                                    }
+                                }).start();
+                            } else {
+                                if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                            }
+
+//                            if (resultCode == ResultCode.SUCCESS) {
+//
+//                                        HttpAnalysis.getRemainingStock(responseBody);
+//                                    }
+//
+//                             else {
+//
+//                            }
+
+                        }
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+
+                            if (mode == SyncCentre.MODE_PUSH_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        SyncData.SYNC_DATA_TAG,
+                                        SyncData.SYNC_FAILURE));
+                            }
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void getPlaceTable(Context context, String url, AsyncHttpClient httpClient,
                                      Map<String, Object> parameters, final Handler handler) {
         try {

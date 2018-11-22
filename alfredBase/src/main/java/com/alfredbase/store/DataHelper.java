@@ -1406,7 +1406,10 @@ public class DataHelper {
             db.execSQL("ALTER TABLE " + TableNames.SyncMsg
                     + " ADD COLUMN reportNo INTEGER");
 
-
+            db.execSQL("CREATE TABLE "
+                    + TableNames.RemainingStock
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, itemId INTEGER, qty INTEGER, defultQty INTEGER, "
+                    + "minQty INTEGER,isActive INTEGER,displayQty INTEGER,createTime LONG,updateTime LONG,resetTime LONG)");
         }
     }
 

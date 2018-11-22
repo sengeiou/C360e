@@ -24,6 +24,7 @@ import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
@@ -65,6 +66,7 @@ import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportDayTaxSQL;
 import com.alfredbase.store.sql.ReportHourlySQL;
@@ -729,6 +731,32 @@ public class HttpAnalysis {
 //				App.instance.appOrderShowDialog(false, appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
 			}
 			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static void getRestaurantItemNum(byte[] responseBody){
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<RemainingStock> remainingStockList = gson.fromJson(object.getString("remainingStockList"), new TypeToken<ArrayList<RemainingStock>>(){}.getType());
+			RemainingStockSQL.deleteAllRemainingStock();
+			RemainingStockSQL.addRemainingStock(remainingStockList);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void getRemainingStock(byte[] responseBody){
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<RemainingStock> remainingStockList = gson.fromJson(object.getString("remainingStockList"), new TypeToken<ArrayList<RemainingStock>>(){}.getType());
+			RemainingStockSQL.deleteAllRemainingStock();
+			RemainingStockSQL.addRemainingStock(remainingStockList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

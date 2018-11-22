@@ -709,7 +709,7 @@ public class XZReportActivity extends BaseActivity {
             SessionStatus sessionStatus = Store.getObject(context,
                     Store.SESSION_STATUS, SessionStatus.class);
             String start;
-            String startNum = CashInOutSQL.getStartDrawerSUMBySession(App.instance.getBusinessDate(), sessionStatus);
+            String startNum = BH.getBD(CashInOutSQL.getStartDrawerSUMBySession(App.instance.getBusinessDate(), sessionStatus))+"";
             if (reportDaySales.getBusinessDate().equals(App.instance.getBusinessDate())) {
                 if (reportDaySales.getStartDrawerAmount().equals("0.00")) {
                     if (!TextUtils.isEmpty(startNum)) {
