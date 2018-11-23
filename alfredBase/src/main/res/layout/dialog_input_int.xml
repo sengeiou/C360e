@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:text="Enter amount of cash in drawer"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_m" />
 

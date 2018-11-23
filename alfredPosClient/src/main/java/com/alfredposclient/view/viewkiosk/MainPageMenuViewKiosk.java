@@ -614,23 +614,17 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                 gv_menu_detail.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> arg0, View view, int position, long id) {
-
+                    //   hintKeyBoard();
                         final ItemDetail itemDetail = (ItemDetail) arg0
                                 .getItemAtPosition(position);
                         RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                         if (remainingStock != null) {
-                            DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "Enter amount of cash in drawer", "CANCEL", "DONE",
+                            DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "", "CANCEL", "DONE",
+                                    null,
                                     new OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            hintKeyBoard();
-//
-                                        }
-                                    },
-                                    new OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            hintKeyBoard();
+                                        //    hintKeyBoard();
                                             EditText editText = (EditText) view;
                                             String num = editText.getText().toString();
                                             if (!TextUtils.isEmpty(num)) {
@@ -1289,5 +1283,6 @@ public class MainPageMenuViewKiosk extends LinearLayout {
             { //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
                 imm.hideSoftInputFromWindow(parent.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
-        }}
+        }
+    }
 }

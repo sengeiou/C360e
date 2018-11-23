@@ -15,12 +15,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,9 +55,12 @@ import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.adapter.ItemDetailAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SyncCentre;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //import android.support.v7.widget.LinearSnapHelper;
 
@@ -87,6 +92,7 @@ public class MainPageMenuView extends LinearLayout {
 	private boolean isFirst = false;
 	private int touchRecyclerView = 0;
 	private PagerSnapHelper pagerSnapHelper;
+	ItemDetailAdapter itemAdp;
 	private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
 			.getItemMainCategories();
 	int size,tsize,color,textcolor;
@@ -310,7 +316,7 @@ public class MainPageMenuView extends LinearLayout {
 					currentItemDetails.add(itemDetail);
 				}
 			}
-			ItemDetailAdapter itemAdp = new ItemDetailAdapter(parent,
+			 itemAdp = new ItemDetailAdapter(parent,
 					currentItemDetails);
 			holder.gv_menu_detail.setAdapter(itemAdp);
 		}
@@ -346,26 +352,33 @@ public class MainPageMenuView extends LinearLayout {
 					@Override
 					public boolean onItemLongClick(AdapterView<?> arg0, View view, int position, long id) {
 
-						ItemDetail itemDetail = (ItemDetail) arg0
+						final ItemDetail itemDetail = (ItemDetail) arg0
 								.getItemAtPosition(position);
 						RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 						if(remainingStock!=null)
 						{
-							DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "Enter amount of cash in drawer", "CANCEL", "DONE",
+							DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "", "CANCEL", "DONE",
 									new OnClickListener() {
 										@Override
 										public void onClick(View view) {
-//											close(msgView, "0.00");
-//											isShowingActualDialog = false;
+
+//
 										}
 									},
 									new OnClickListener() {
 										@Override
 										public void onClick(View view) {
+
 											EditText editText = (EditText) view;
-											String actual = editText.getText().toString();
-//											close(msgView, actual);
-//											isShowingActualDialog = false;
+											String num = editText.getText().toString();
+											if (!TextUtils.isEmpty(num)) {
+												Map<String, Object> reMap = new HashMap<String, Object>();
+												reMap.put("itemId", itemDetail.getItemTemplateId());
+												reMap.put("num", Integer.valueOf(num).intValue());
+												RemainingStockSQL.updateRemainingNum(Integer.valueOf(num).intValue(), itemDetail.getItemTemplateId());
+												SyncCentre.getInstance().updateReaminingStockByItemId(context, reMap, null);
+												itemAdp.notifyDataSetChanged();
+											}
 										}
 									});
 						}
@@ -713,4 +726,14 @@ public class MainPageMenuView extends LinearLayout {
 		});
 	}
 
+	public void hintKeyBoard () {
+		//拿到 InputMethodManager
+		InputMethodManager imm = (InputMethodManager)parent.getSystemService(Context.INPUT_METHOD_SERVICE); //如果window上view获取焦点 && view不为空
+		if(imm.isActive()&&parent.getCurrentFocus()!=null){
+			//拿到view的token 不为空
+			if (parent.getCurrentFocus().getWindowToken()!=null)
+			{ //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
+				imm.hideSoftInputFromWindow(parent.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+		}}
 }
