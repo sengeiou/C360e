@@ -149,8 +149,14 @@ public class ItemDetailAdapter extends BaseAdapter {
             }
             RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetails.get(arg0).getItemTemplateId());
             if(remainingStock!=null&&remainingStock.getDisplayQty()>=remainingStock.getQty()){
+                int qty= remainingStock.getQty().intValue();
                 holder.rl_item_num.setVisibility(View.VISIBLE);
-                holder.tv_item_num.setText(remainingStock.getDisplayQty()+"");
+                if(qty<=0){
+                    holder.tv_item_num.setText(0+"");
+                }else {
+                    holder.tv_item_num.setText(remainingStock.getQty()+"");
+                }
+
             }else {
                 holder.rl_item_num.setVisibility(View.GONE);
             }
@@ -162,6 +168,8 @@ public class ItemDetailAdapter extends BaseAdapter {
                 imageViewHolder = new ImageViewHolder();
                 imageViewHolder.item_name_img = (ImageView) arg1.findViewById(R.id.item_name_img);
                 imageViewHolder.item_name_tv = (TextView) arg1.findViewById(R.id.item_name_tv);
+                imageViewHolder.tv_item_img_num=(TextView)arg1.findViewById(R.id.tv_item_img_num);
+                imageViewHolder.rl_item_img_num=(RelativeLayout)arg1.findViewById(R.id.rl_item_img_num);
                 textTypeFace.setTrajanProBlod(imageViewHolder.item_name_tv);
                 arg1.setTag(imageViewHolder);
             } else {
@@ -170,6 +178,19 @@ public class ItemDetailAdapter extends BaseAdapter {
             imageViewHolder.item_name_tv.setText(itemDetails.get(arg0).getItemName());
             String url = itemDetails.get(arg0).getImgUrl();
             ImageLoader.getInstance().displayImage(url, imageViewHolder.item_name_img, options);
+            RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetails.get(arg0).getItemTemplateId());
+            if(remainingStock!=null&&remainingStock.getDisplayQty()>=remainingStock.getQty()){
+                int qty= remainingStock.getQty().intValue();
+                imageViewHolder.rl_item_img_num.setVisibility(View.VISIBLE);
+                if(qty<=0){
+                    imageViewHolder.tv_item_img_num.setText(0+"");
+                }else {
+                    imageViewHolder.tv_item_img_num.setText(remainingStock.getQty()+"");
+                }
+
+            }else {
+                imageViewHolder.rl_item_img_num.setVisibility(View.GONE);
+            }
         }
         System.out.println("=====111111" + i++);
 
@@ -186,8 +207,9 @@ public class ItemDetailAdapter extends BaseAdapter {
     }
 
     class ImageViewHolder {
-        public TextView item_name_tv;
+        public TextView item_name_tv,tv_item_img_num;
         public ImageView item_name_img;
+        public RelativeLayout rl_item_img_num;
 
     }
 

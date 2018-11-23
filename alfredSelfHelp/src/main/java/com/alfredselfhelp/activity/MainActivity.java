@@ -3,6 +3,7 @@ package com.alfredselfhelp.activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.Message;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -21,11 +22,14 @@ import android.widget.VideoView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.KpmDialogFactory;
 import com.alfredselfhelp.global.RfidApiCentre;
+import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.utils.FileDialog;
 import com.alfredselfhelp.utils.KpmTextTypeFace;
 import com.alfredselfhelp.utils.PictureSwitch;
@@ -52,6 +56,9 @@ public class MainActivity extends BaseActivity {
     final int VIDEO_STATE_QR = 3;
     final int VIDEO_STATE_ONE_COMPLETE = 4;
 
+
+    public static final int REMAINING_STOCK_SUCCESS = 100;
+    public static final int REMAINING_STOCK_FAILURE = -100;
     private int mVideoState = VIDEO_STATE_NONE;
     int mnVideoWidth = 0;
     int mnVideoHeight = 0;
@@ -86,7 +93,7 @@ public class MainActivity extends BaseActivity {
         super.initView();
         setContentView(R.layout.activity_main);
         KpmTextTypeFace.getInstance().init(context);
-
+        loadingDialog = new LoadingDialog(context);
         btn_start = (Button) findViewById(R.id.btn_start);
         btn_cc_ez = (Button) findViewById(R.id.btn_cc_ez);
         ll_main = (LinearLayout) findViewById(R.id.ll_main);
@@ -166,6 +173,39 @@ public class MainActivity extends BaseActivity {
 //        VtintApiCentre.getInstance().SearchUsb();
     }
 
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+//                case ResultCode.SUCCESS: {
+////					if (needSync) {
+//                    dismissLoadingDialog();
+//                    loadingDialog.setTitle("update all data");
+//                    loadingDialog.show();
+//                    SyncCentre.getInstance().updateAllData(context, handler);
+////					}else{
+////						App.instance.setSessionStatus(Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
+////						//TODO startMainPage();
+////					}
+//                }
+//                break;
+                case REMAINING_STOCK_SUCCESS:
+                    dismissLoadingDialog();
+                    // TODO startMainPage();
+                    UIHelp.startMenu(context);
+
+                    break;
+                case REMAINING_STOCK_FAILURE:
+                    dismissLoadingDialog();
+                    //  tv_error.setVisibility(View.VISIBLE);
+                    break;
+
+
+            }
+        }
+    };
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
@@ -268,7 +308,11 @@ public class MainActivity extends BaseActivity {
 
                 break;
             case R.id.btn_start:
-                UIHelp.startMenu(context);
+              //  dismissLoadingDialog();
+                    loadingDialog.setTitle("loding..");
+                    loadingDialog.show();
+                SyncCentre.getInstance().getRemainingStock(context,handler);
+//
                 break;
 
             case R.id.btn_picture:

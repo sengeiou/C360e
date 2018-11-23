@@ -13,7 +13,7 @@
         android:right="10dp"
         android:top="1dp" />
 
-    <solid  android:color="@color/green" />
+    <solid  android:color="@color/gray8" />
     <!--<gradient-->
         <!--android:angle="0"-->
         <!--android:centerX="0.7"-->

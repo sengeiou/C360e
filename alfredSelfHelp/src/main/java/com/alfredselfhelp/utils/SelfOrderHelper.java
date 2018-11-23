@@ -6,12 +6,15 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.OrderHelper;
@@ -224,6 +227,7 @@ public class SelfOrderHelper {
         OrderHelper.setOrderInclusiveTaxPrice(order);
     }
 
+
     public void updateOrderDetailAndOrderForWaiter(Order order, List<OrderDetail> orderDetails,
                                                    OrderDetail orderDetail) {
         if (orderDetail == null) {
@@ -395,5 +399,19 @@ public class SelfOrderHelper {
             }
         }
         return sum.toString();
+    }
+    //修改RemainingStock数量
+    public void updateRemainingStockNum(Order order){
+
+        List<OrderDetail> orderDetailList = OrderDetailSQL.getOrderDetails(order.getId());
+
+        for(OrderDetail orderDetail: orderDetailList) {
+            int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+            RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+
+            if (remainingStock != null) {
+                RemainingStockSQL.updateRemainingById(orderDetail.getItemNum(), itemTempId);
+            }
+        }
     }
 }

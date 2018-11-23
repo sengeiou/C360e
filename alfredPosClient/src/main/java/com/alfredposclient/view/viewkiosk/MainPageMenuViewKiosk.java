@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,8 +25,10 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -44,11 +47,14 @@ import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -59,13 +65,16 @@ import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.ItemDetailAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.view.CustomNoteView;
 import com.alfredposclient.view.ModifierView;
 import com.alfredposclient.view.MyGridView;
 import com.alfredposclient.view.SubMenuView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainPageMenuViewKiosk extends LinearLayout {
     private static final int WIDTH = (int) (ScreenSizeUtil.width * (1 - (700 + 300) / ScreenSizeUtil.WIDTH_POS));
@@ -101,6 +110,8 @@ public class MainPageMenuViewKiosk extends LinearLayout {
     int size, tsize, color, textcolor;
     private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
             .getItemMainCategories();
+
+    ItemDetailAdapter itemAdp;
 
 
     public MainPageMenuViewKiosk(Context context) {
@@ -160,9 +171,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
         textTypeFace.setTrajanProBlod((TextView) findViewById(R.id.tv_item_name));
     }
 
-//	public void refreshItemOrderDetail(){
-//		itemAdp.notifyDataSetChanged();
-//	}
+
 //
 //	private void initItemDetail() {
 //		List<View> itemDetailViews = new ArrayList<View>();
@@ -569,7 +578,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                     currentItemDetails.add(itemDetail);
                 }
             }
-            ItemDetailAdapter itemAdp = new ItemDetailAdapter(parent,
+            itemAdp = new ItemDetailAdapter(parent,
                     currentItemDetails);
             holder.gv_menu_detail.setAdapter(itemAdp);
         }
@@ -601,19 +610,71 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                         LogUtil.e("TEST", "å®½===" + gv_menu_detail.getWidth() + "==é«====" + gv_menu_detail.getHeight());
                     }
                 });
+
+                gv_menu_detail.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> arg0, View view, int position, long id) {
+
+                        final ItemDetail itemDetail = (ItemDetail) arg0
+                                .getItemAtPosition(position);
+                        RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+                        if (remainingStock != null) {
+                            DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "Enter amount of cash in drawer", "CANCEL", "DONE",
+                                    new OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            hintKeyBoard();
+//
+                                        }
+                                    },
+                                    new OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            hintKeyBoard();
+                                            EditText editText = (EditText) view;
+                                            String num = editText.getText().toString();
+                                            if (!TextUtils.isEmpty(num)) {
+                                            Map<String, Object> reMap = new HashMap<String, Object>();
+                                            reMap.put("itemId", itemDetail.getItemTemplateId());
+                                            reMap.put("num", Integer.valueOf(num).intValue());
+                                            RemainingStockSQL.updateRemainingNum(Integer.valueOf(num).intValue(), itemDetail.getItemTemplateId());
+                                            SyncCentre.getInstance().updateReaminingStockByItemId(context, reMap, null);
+                                            itemAdp.notifyDataSetChanged();
+                                            }
+                                        }
+                                    });
+                        }
+
+                        return true;
+                    }
+                });
+
+
+
+
+
                 gv_menu_detail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View arg1,
                                             int arg2, long arg3) {
                         ItemDetail itemDetail = (ItemDetail) arg0
                                 .getItemAtPosition(arg2);
-                        LogUtil.e("itemDetail", "å®½===" + itemDetail.getItemName() + "é«====" + itemDetail.getPrice());
+                        RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                         OrderDetail orderDetail = ObjectFactory.getInstance()
                                 .getOrderDetail(order, itemDetail, 0);
-                        Message msg = handler.obtainMessage();
-                        msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
-                        msg.obj = orderDetail;
-                        handler.sendMessage(msg);
+                        if (remainingStock != null) {
+                            if (remainingStock.getQty() > 0) {
+                                Message msg = handler.obtainMessage();
+                                msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+                                msg.obj = orderDetail;
+                                handler.sendMessage(msg);
+                            }
+                        } else {
+                            Message msg = handler.obtainMessage();
+                            msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+                            msg.obj = orderDetail;
+                            handler.sendMessage(msg);
+                        }
                     }
                 });
             }
@@ -808,7 +869,6 @@ public class MainPageMenuViewKiosk extends LinearLayout {
         ll_item_detail.removeAllViews();
 
 
-
         for (ItemModifier itemModifier : itemModifiers) {
             ModifierView modifierView = new ModifierView(parent);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -818,7 +878,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
             if (itemModifiers.indexOf(itemModifier) % 2 == 1) {//判断为奇数时，背景色改变
                 modifierView.setBackgroundResource(R.color.modifier_odd);
             }
-           // add ModifierCheck
+            // add ModifierCheck
 
 
 //            final Modifier modifier_type = CoreData.getInstance().getModifier(
@@ -827,7 +887,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //                ModifierCheck modifierCheck=null;
 //                modifierCheck =ObjectFactory.getInstance().getModifierCheck(order, orderDetail, modifier_type,itemModifier);
 //                ModifierCheckSql.addModifierCheck(modifierCheck);
-          //  }
+            //  }
             modifierView.setParams(order, orderDetail, itemModifier, handler, height);
             ll_item_detail.addView(modifierView);
         }
@@ -878,7 +938,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
     }
 
     public void openModifiers(Order order, OrderDetail orderDetail,
-                              List<ItemModifier> itemModifiers ) {
+                              List<ItemModifier> itemModifiers) {
         initMenuDetail(order, orderDetail, itemModifiers);
         if (AnimatorListenerImpl.isRunning) {
             return;
@@ -1218,4 +1278,16 @@ public class MainPageMenuViewKiosk extends LinearLayout {
         }
         customNoteView.setValue(parent, order, handler, WIDTH - 50);
     }
+
+
+    public void hintKeyBoard () {
+        //拿到 InputMethodManager
+        InputMethodManager imm = (InputMethodManager)parent.getSystemService(Context.INPUT_METHOD_SERVICE); //如果window上view获取焦点 && view不为空
+        if(imm.isActive()&&parent.getCurrentFocus()!=null){
+            //拿到view的token 不为空
+            if (parent.getCurrentFocus().getWindowToken()!=null)
+            { //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
+                imm.hideSoftInputFromWindow(parent.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }}
 }

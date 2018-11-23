@@ -28,6 +28,7 @@ import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -61,6 +62,7 @@ import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
@@ -141,6 +143,23 @@ public class KpmgResponseUtil {
         return resp;
     }
 
+
+    public NanoHTTPD.Response kpmgReaminingStock() {
+        NanoHTTPD.Response resp = null;
+        try {
+
+            List<RemainingStock> remainingStocks = RemainingStockSQL.getAllRemainingStock();
+            Map<String, Object> map = new HashMap<>();
+
+            map.put("remainingStockList", remainingStocks);
+            map.put("resultCode", ResultCode.SUCCESS);
+            resp = mainPosHttpServer.getJsonResponse(gson.toJson(map));
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = mainPosHttpServer.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
+        }
+        return resp;
+    }
 
     public NanoHTTPD.Response updateAllData() {
         NanoHTTPD.Response resp = null;

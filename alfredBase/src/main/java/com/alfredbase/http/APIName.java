@@ -41,6 +41,8 @@ public class APIName {
     public static final String CLOCK_CLOCKINOUT = "clock/clockInOut";
     public static final String CLOCK_GETUSERTIMESHEET = "clock/getUserTimeSheet";
     public static final String UPDATE_REAMINING_STOCK = "/remainingStock/updateReaminingStock";
+    public static final String UPDATE_REAMINING_STOCK_ITEMID = "/remainingStock/updateReaminingStockByItemId";
+
     public static final String RESET_RESTAURANT_ITEM_NUM = "remainingStock/resetRestaurantItemNum";
     public static final String GET_REMAINING_STOCK = "/item/getRemainingStock";
     //3rd-party Serivce
@@ -61,8 +63,9 @@ public class APIName {
     public static final String PRINT_BILL = "print_bill";
     public static final String UNSEAT_TABLE = "unseat_table";
     public static final String VOID_ITEM = "void_item";
-    public static final String TEMPORARY_DISH = "TEMPORARY_DISH";
-    public static final String GET_PRINTER = "GET_PRINTER";
+    public static final String TEMPORARY_DISH = "temporary_dish";
+    public static final String GET_PRINTER = "get_printer";
+
     // 以下是KDS专用
     public static final String GET_PRINTERS = "get_printers";
     public static final String KDS_IP_CHANGE = "kds_ip_change";
@@ -102,8 +105,7 @@ public class APIName {
     public static final String KPMG_LOGIN = "kpmg/login";
     public static final String KPMG_UPDATE_DATA = "kpmg/updateData";
     public static final String KPMG_COMMIT_ORDER = "kpmg/commitOrder";
-
-
+    public static final String GET_REMAINING_STOCK_KPMG = "kpmg/getRemainingStock";
     // CallNum
     public static final String CALLNUM_ASSIGNREVENUE = "desktop/callNumassignRevenue";
 

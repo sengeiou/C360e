@@ -55,8 +55,8 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@id/img_modifier"
                             android:layout_marginLeft="30dp"
-                            android:layout_marginRight="30dp"
                             android:layout_marginTop="25dp"
+                            android:layout_marginRight="30dp"
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="aaaaaaa"
@@ -72,8 +72,8 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@id/tv_modifier_name"
                             android:layout_marginLeft="30dp"
-                            android:layout_marginRight="60dp"
                             android:layout_marginTop="3dp"
+                            android:layout_marginRight="60dp"
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text=""
@@ -100,16 +100,14 @@
                             android:id="@+id/tv_modifier_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
                             android:layout_below="@id/tv_modifier_de"
+                            android:layout_alignParentRight="true"
                             android:layout_centerHorizontal="true"
-                            android:layout_marginBottom="20dp"
-                            android:layout_marginRight="20dp"
                             android:layout_marginTop="20dp"
+                            android:layout_marginRight="20dp"
+                            android:layout_marginBottom="20dp"
                             android:background="@drawable/style_price_btn"
 
-                            android:paddingLeft="15dp"
-                            android:paddingRight="15dp"
                             android:text="S$50.00"
                             android:textColor="@color/white1"
                             android:textSize="20sp"
@@ -122,6 +120,28 @@
                 </RelativeLayout>
             </LinearLayout>
 
+            <RelativeLayout
+                android:id="@+id/rl_remain_num"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/mod_num" />
+
+                <TextView
+                    android:id="@+id/tv_remin_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text=""
+
+                    android:textColor="@color/white" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -162,6 +182,31 @@
                 <!--</RelativeLayout>-->
 
             </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/re_out_of"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#80ffffff"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="OUT OF STOCK"
+                android:textStyle="bold"
+                android:textColor="@color/red2"
+                android:textSize="20sp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                />
+
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 

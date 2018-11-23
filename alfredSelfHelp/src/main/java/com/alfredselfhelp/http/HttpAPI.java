@@ -29,6 +29,43 @@ import java.util.Map;
 public class HttpAPI {
 	public static final String EOF = "\r\nEOF\r\n";
 	private static final String CONTENT_TYPE = "text/plain;charset=UTF-8";
+	public static void getRemainingStock(final Context context,
+									 String url, AsyncHttpClient httpClient, final Handler handler) {
+		Map<String, Object> parameters = new HashMap<>();
+		if (parameters != null) {
+			parameters.put("appVersion", App.instance.VERSION);
+		}
+		try {
+			httpClient.post(context, url,
+					new StringEntity(new Gson().toJson(parameters) + EOF,
+							"UTF-8"), CONTENT_TYPE,
+					new AsyncHttpResponseHandlerEx() {
+						@Override
+						public void onSuccess(int statusCode, Header[] headers,
+											  byte[] responseBody) {
+							super.onSuccess(statusCode, headers, responseBody);
+							String body = new String(responseBody);
+							if (resultCode == ResultCode.SUCCESS) {
+								HttpAnalysis.remainingStock(responseBody,handler);
+
+							} else {
+								elseResultCodeAction(resultCode, body);
+							}
+						}
+						@Override
+						public void onFailure(final int statusCode, final Header[] headers,
+											  final byte[] responseBody, final Throwable error) {
+							errorAction(error);
+							super.onFailure(statusCode, headers, responseBody, error);
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
 	public static void updateAllData(final Context context,
 									 String url, AsyncHttpClient httpClient, final Handler handler) {
 		Map<String, Object> parameters = new HashMap<>();
@@ -63,7 +100,6 @@ public class HttpAPI {
 			e.printStackTrace();
 		}
 	}
-
 	public static void login(final Context context, Map<String, Object> parameters,
 							 String url, AsyncHttpClient httpClient, final Handler handler) {
 		if (parameters != null) {

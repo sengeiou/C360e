@@ -44,7 +44,7 @@
     </LinearLayout>
 </RelativeLayout>
     <RelativeLayout
-        android:id="@+id/rl_item_num"
+        android:id="@+id/rl_item_img_num"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
@@ -57,7 +57,7 @@
             android:src="@drawable/circle_shape" />
 
         <TextView
-            android:id="@+id/tv_item_num"
+            android:id="@+id/tv_item_img_num"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerInParent="true"

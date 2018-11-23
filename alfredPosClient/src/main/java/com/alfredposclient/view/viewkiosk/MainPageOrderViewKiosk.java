@@ -206,16 +206,16 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 					UIHelp.showToast((BaseActivity) context, checkbuf.toString());
 				} else {
 
-					List<OrderDetail> orderDetailList = OrderDetailSQL.getOrderDetails(order.getId());
-
-					for(OrderDetail orderDetail: orderDetailList) {
-						int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
-						RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
-
-						if (remainingStock != null) {
-							RemainingStockSQL.updateRemainingById(orderDetail.getItemNum(), itemTempId);
-						}
-					}
+//					List<OrderDetail> orderDetailList = OrderDetailSQL.getOrderDetails(order.getId());
+//
+//					for(OrderDetail orderDetail: orderDetailList) {
+//						int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+//						RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+//
+//						if (remainingStock != null) {
+//							RemainingStockSQL.updateRemainingById(orderDetail.getItemNum(), itemTempId);
+//						}
+//					}
 
 					cloudSync.updateRemainingStock(order.getId());
 					//DON'T use reference

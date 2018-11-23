@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -37,10 +38,13 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -340,7 +344,31 @@ public class MainPageMenuView extends LinearLayout {
 				});
 				gv_menu_detail.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					@Override
-					public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+					public boolean onItemLongClick(AdapterView<?> arg0, View view, int position, long id) {
+
+						ItemDetail itemDetail = (ItemDetail) arg0
+								.getItemAtPosition(position);
+						RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+						if(remainingStock!=null)
+						{
+							DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "Enter amount of cash in drawer", "CANCEL", "DONE",
+									new OnClickListener() {
+										@Override
+										public void onClick(View view) {
+//											close(msgView, "0.00");
+//											isShowingActualDialog = false;
+										}
+									},
+									new OnClickListener() {
+										@Override
+										public void onClick(View view) {
+											EditText editText = (EditText) view;
+											String actual = editText.getText().toString();
+//											close(msgView, actual);
+//											isShowingActualDialog = false;
+										}
+									});
+						}
 
 						return true;
 					}
@@ -351,12 +379,21 @@ public class MainPageMenuView extends LinearLayout {
 											int arg2, long arg3) {
 						ItemDetail itemDetail = (ItemDetail) arg0
 								.getItemAtPosition(arg2);
+						RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 						OrderDetail orderDetail = ObjectFactory.getInstance()
 								.getOrderDetail(order, itemDetail, 0);
-						Message msg = handler.obtainMessage();
-						msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
-						msg.obj = orderDetail;
-						handler.sendMessage(msg);
+						if(remainingStock!=null&&remainingStock.getQty()>0)
+						{
+							Message msg = handler.obtainMessage();
+							msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+							msg.obj = orderDetail;
+							handler.sendMessage(msg);
+						}else {
+							Message msg = handler.obtainMessage();
+							msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+							msg.obj = orderDetail;
+							handler.sendMessage(msg);
+						}
 					}
 				});
 			}

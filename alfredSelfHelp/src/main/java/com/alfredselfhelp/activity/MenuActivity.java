@@ -34,9 +34,11 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.IntegerUtils;
@@ -226,10 +228,23 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 case MODIFY_ITEM_COUNT:
 
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
-                    updateitemOrderDetail((ItemDetail) map.get("itemDetail"),
-                            1);
-                    refreshTotal();
-                    refreshList();
+                    ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
+                    RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+                    if (remainingStock != null) {
+                        OrderDetail orderDetail = getItemOrderDetail(itemDetail);
+                        if (remainingStock.getQty() > orderDetail.getItemNum()) {
+                            updateitemOrderDetail(itemDetail,
+                                    1);
+                            refreshTotal();
+                            refreshList();
+                        }
+                    } else {
+                        updateitemOrderDetail(itemDetail,
+                                1);
+                        refreshTotal();
+                        refreshList();
+                    }
+
 
                     break;
                 case App.HANDLER_REFRESH_TIME:
@@ -767,6 +782,18 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
 
+
+    private OrderDetail getItemOrderDetail(ItemDetail itemDetail) {
+        OrderDetail orderDetail = SelfOrderHelper.getInstance().getOrderDetailFromList(itemDetail, orderDetails);
+
+        if (orderDetail == null) {
+            orderDetail = SelfOrderHelper.getInstance()
+                    .createOrderDetailForWaiter(nurOrder, itemDetail,
+                            0, App.instance.getUser());
+        }
+
+      return orderDetail;
+    }
     private void updateitemOrderDetail(ItemDetail itemDetail, int count) {
         OrderDetail orderDetail = SelfOrderHelper.getInstance().getOrderDetailFromList(itemDetail, orderDetails);
         if (orderDetail != null) {

@@ -382,6 +382,94 @@ public class DialogFactory {
 
     }
 
+
+
+    /**
+     * 输入框的dialog(整数)
+     *
+     * @param activity
+     * @param title
+     * @param content
+     * @param leftText
+     * @param rightText
+     * @param leftListener
+     * @param rghtListener
+     */
+    public static void commonTwoBtnInputIntDialog(final BaseActivity activity, final Boolean balance,
+                                               final String title, final String content, final String leftText, final String rightText,
+                                               final OnClickListener leftListener,
+                                               final OnClickListener rghtListener) {
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                final Dialog dialog = new Dialog(activity, R.style.base_dialog);
+                final View view = LayoutInflater.from(activity).inflate(
+                        R.layout.dialog_input_int, null);
+                ((TextView) view.findViewById(R.id.tv_title)).setText(title);
+                ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+                ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+                ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+                final EditText editText = (EditText) view.findViewById(R.id.et_input);
+
+
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setContentView(view);
+                view.findViewById(R.id.tv_left).setOnClickListener(
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(final View v) {
+                                dialog.dismiss();
+                                CommonUtil.hideSoftkeyBoard(activity);
+                                BaseApplication.postHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (leftListener != null)
+                                            leftListener.onClick(v);
+                                    }
+                                }, 500);
+                            }
+                        });
+                view.findViewById(R.id.tv_right).setOnClickListener(
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+
+                                String num = editText.getText().toString();
+
+                                if (balance) {
+                                    if (TextUtils.isEmpty(num)) {
+                                        Store.remove(activity, Store.OPEN_BALANCE);
+                                    } else {
+                                        Store.putString(activity, Store.OPEN_BALANCE, num);
+                                    }
+                                }
+                                try {
+
+                                } catch (Exception e) {
+                                    return;
+                                }
+                                dialog.dismiss();
+                                CommonUtil.hideSoftkeyBoard(activity);
+                                BaseApplication.postHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (rghtListener != null)
+                                            rghtListener.onClick(editText);
+                                    }
+                                }, 500);
+                            }
+                        });
+                if (activity == null || activity.isFinishing())
+                    return;
+                dialog.show();
+            }
+        });
+
+    }
     /**
      * 输入框的dialog
      *

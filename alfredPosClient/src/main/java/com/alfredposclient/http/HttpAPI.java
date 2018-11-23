@@ -1541,8 +1541,41 @@ public class HttpAPI {
     }
 
 
+    public static void updateReaminingStockByItemId(Context context, String url, AsyncHttpClient httpClient,
+                                            Map<String, Object> parameters, final Handler handler) {
+        try {
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+
+                            if (resultCode == ResultCode.SUCCESS) {
+
+                            } else {
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void updateReaminingStock(Context context, String url, AsyncHttpClient httpClient,
-                                     Map<String, Object> parameters) {
+                                     Map<String, Object> parameters, final Handler handler) {
         try {
             httpClient.post(context, url,
                     HttpAssembling.encapsulateBaseInfo(parameters),
@@ -1615,10 +1648,10 @@ public class HttpAPI {
 
 
     public static void getRemainingStock(Context context, String url, AsyncHttpClient httpClient,
-                                         Map<String, Object> parameters, final Handler handler, final int mode) {
+                                          final Handler handler, final int mode) {
         try {
             httpClient.post(context, url,
-                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.getTokenParam(),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override

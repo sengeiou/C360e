@@ -13,6 +13,8 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredselfhelp.R;
@@ -28,17 +30,19 @@ import java.util.List;
 
 public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
 
-//    CountViewMod.OnCountChange onCountChange;
+    //    CountViewMod.OnCountChange onCountChange;
     private List<OrderDetail> orderDetails = new ArrayList<>();
     private int currentGroupId;
     private Order currentOrder;
     private int WIDTH;
+    private Context context;
 
     private KpmTextTypeFace textTypeFace = KpmTextTypeFace.getInstance();
 
     public MenuDetailAdapter(Context context, List<ItemDetail> list, RvListener listener) {
         super(context, list, listener);
 //        this.onCountChange = countViewMod;
+        this.context=context;
         WIDTH = (int) (ScreenSizeUtil.width - ScreenSizeUtil.dip2px((Activity) context, 265));
     }
 
@@ -68,9 +72,9 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
     public class DetailHolder extends RvHolder<ItemDetail> {
         TextView tvPrice;
         ImageView img;
-        TextView tvName, num;
+        TextView tvName, num, tv_remin_num;
         CountViewMod count_view;
-        RelativeLayout re_modifier_num;
+        RelativeLayout re_modifier_num,rl_remain_num,re_out_of;
         TextView de;
         private View mView;
 
@@ -89,7 +93,9 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
             //    re_modifier_num=(RelativeLayout)itemView.findViewById(R.id.re_modifier_num);
             num = (TextView) itemView.findViewById(R.id.tv_modifier_num);
             de = (TextView) itemView.findViewById(R.id.tv_modifier_de);
-
+            tv_remin_num = (TextView) itemView.findViewById(R.id.tv_remin_num);
+            rl_remain_num=(RelativeLayout) itemView.findViewById(R.id.rl_remain_num);
+            re_out_of=(RelativeLayout)itemView.findViewById(R.id.re_out_of);
 
         }
 
@@ -110,6 +116,32 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
             textTypeFace.setUbuntuBold(tvPrice);
             de.setText(itemDetail.getItemDesc());
             textTypeFace.setUbuntuRegular(de);
+
+            RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+            if(remainingStock!=null){
+                rl_remain_num.setVisibility(View.GONE);
+                re_out_of.setVisibility(View.GONE);
+                int reNum=remainingStock.getQty()-getItemNum(itemDetail);
+                if(reNum>0){
+                    tv_remin_num.setText(reNum+"");
+                    tvPrice.setBackgroundResource(R.drawable.style_price_btn);
+                    tvPrice.setTextColor(context.getResources().getColor(R.color.white1));
+                    count_view.setVisibility(View.VISIBLE);
+                }else {
+                    re_out_of.setVisibility(View.VISIBLE);
+                    tvPrice.setBackgroundResource(R.drawable.style_price_btn_grad);
+                    tvPrice.setTextColor(context.getResources().getColor(R.color.gray8));
+                    count_view.setVisibility(View.GONE
+                    );
+                   // tv_remin_num.setText(0+"");
+                }
+            }else {
+                re_out_of.setVisibility(View.GONE);
+                rl_remain_num.setVisibility(View.GONE);
+                tvPrice.setBackgroundResource(R.drawable.style_price_btn);
+                tvPrice.setTextColor(context.getResources().getColor(R.color.white1));
+                count_view.setVisibility(View.VISIBLE);
+            }
 
             count_view.setIsCanClick(getOrderDetailStatus(itemDetail));
             count_view.setInitCount(getItemNum(itemDetail));

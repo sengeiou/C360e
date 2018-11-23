@@ -127,21 +127,28 @@ public class SyncCentre {
         HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getHappyHour(context,
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
+     getRemainingStock(context,handler,MODE_FIRST_SYNC);
 
     }
 
 
 
-    public void updateReaminingStock(Context context, Map<String, Object> parameters
+
+    public void updateReaminingStockByItemId(Context context, Map<String, Object> parameters,Handler handler
+    ) {
+
+        HttpAPI.updateReaminingStockByItemId(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK_ITEMID), httpClient, parameters,handler);
+    }
+    public void updateReaminingStock(Context context, Map<String, Object> parameters,Handler handler
                         ) {
 
-        HttpAPI.updateReaminingStock(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK), bigSyncHttpClient, parameters);
+        HttpAPI.updateReaminingStock(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK), bigSyncHttpClient, parameters,handler);
     }
        // 获取菜的数量
-    public void getRemainingStock(Context context, Map<String, Object> parameters,
+    public void getRemainingStock(Context context,
                                           Handler handler,int mode) {
 
-        HttpAPI.getRemainingStock(context, getAbsoluteUrl(APIName.GET_REMAINING_STOCK), httpClient, parameters, handler,mode);
+        HttpAPI.getRemainingStock(context, getAbsoluteUrl(APIName.GET_REMAINING_STOCK), httpClient,  handler,mode);
     }
 
     public void getResetRestaurantItemNum(Context context, Map<String, Object> parameters,
@@ -256,10 +263,8 @@ public class SyncCentre {
     //设置中同步后台数据
     public void pushCommonData(Context context, String type, Handler handler) {
 
-        if(type.equals(PushMessage.STOCK)){
-            Map<String, Object> param = new HashMap<String, Object>();
-            param.put("restaurantId", App.instance.getRevenueCenter().getRestaurantId());
-            getRemainingStock(context,param,handler,MODE_PUSH_SYNC);
+        if (type.equals(PushMessage.STOCK)) {
+            getRemainingStock(context, handler, MODE_PUSH_SYNC);
         }
 
         if (type.equals(PushMessage.PAYMENT_METHOD)) {
@@ -385,7 +390,7 @@ public class SyncCentre {
         if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://192.168.20.101:8083/alfred-api/" + relativeUrl;
+            return "http://192.168.20.103:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
             return "http://139.224.17.126/alfred-api/" + relativeUrl;

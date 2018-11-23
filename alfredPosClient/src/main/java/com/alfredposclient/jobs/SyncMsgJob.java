@@ -104,7 +104,7 @@ public class SyncMsgJob extends Job {
                 }
                 Map<String,Object> reMap=new HashMap<String,Object>();
                 reMap.put("remainingStockVoList",remainingStockVoList);
-               SyncCentre.getInstance().updateReaminingStock(context,reMap);
+               SyncCentre.getInstance().updateReaminingStock(context,reMap,null);
 
             }else {
                 if (this.msgType == HttpAPI.NETWORK_ORDER_STATUS_UPDATE) {
