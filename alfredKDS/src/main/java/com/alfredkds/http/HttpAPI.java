@@ -184,7 +184,43 @@ public class HttpAPI {
 			e.printStackTrace();
 		}
 	}
-	
+
+
+	public static void updateRemainingStock(final Context context,
+								   final Map<String, Object> parameters, String url,
+								   AsyncHttpClient httpClient, final Handler handler) {
+		if (parameters != null) {
+			parameters.put("userKey", CoreData.getInstance().getUserKey());
+			parameters.put("appVersion", App.instance.VERSION);
+		}
+		try {
+			httpClient.post(context, url,
+					new StringEntity(new Gson().toJson(parameters) + EOF,
+							"UTF-8"), CONTENT_TYPE,
+					new AsyncHttpResponseHandlerEx() {
+						@Override
+						public void onSuccess(int statusCode, Header[] headers,
+											  byte[] responseBody) {
+							super.onSuccess(statusCode, headers, responseBody);
+							if (resultCode == ResultCode.SUCCESS) {
+
+							} else {
+								elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+							}
+						}
+						@SuppressWarnings("unchecked")
+						@Override
+						public void onFailure(int statusCode, Header[] headers,
+											  byte[] responseBody, Throwable error) {
+							error.printStackTrace();
+
+							super.onFailure(statusCode, headers, responseBody, error);
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	/*Complete items in KOT*/
 	public static void KotComplete(final Context context,
 								   final Map<String, Object> parameters, String url,

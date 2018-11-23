@@ -361,7 +361,6 @@ public class MainPageMenuView extends LinearLayout {
 									new OnClickListener() {
 										@Override
 										public void onClick(View view) {
-
 //
 										}
 									},

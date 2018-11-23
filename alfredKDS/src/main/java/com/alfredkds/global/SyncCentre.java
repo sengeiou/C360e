@@ -75,6 +75,12 @@ public class SyncCentre {
 		}
 	}
 
+	public void updateRemainingStock(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
+							Handler handler) {
+		HttpAPI.updateRemainingStock(context, parameters,
+				getAbsoluteUrl(mainPosInfo, APIName.KOT_OUT_OF_STOCK), httpClient, handler);
+	}
+
 	/* Send KOT Complete to main POS*/
 	public void kotComplete(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
 			Handler handler,int id) {

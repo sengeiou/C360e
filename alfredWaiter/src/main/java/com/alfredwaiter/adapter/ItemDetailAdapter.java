@@ -6,15 +6,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
@@ -89,7 +92,7 @@ public class ItemDetailAdapter extends RvCateAdapter<ItemDetail> {
         ImageView avatar;
         TextView tvTitle;
         TextView title;
-        TextView tv_name;
+        TextView tv_name,tv_remain_num,tv_out_of;
 
         TextView tv_price;
         ImageView img_icon;
@@ -97,6 +100,7 @@ public class ItemDetailAdapter extends RvCateAdapter<ItemDetail> {
 
         LinearLayout add, minus;
         TextView tv_count;
+        RelativeLayout rl_remain_num;
 
         public ItemHolder(View itemView, int type, RvListener listener) {
             super(itemView, type, listener);
@@ -115,6 +119,9 @@ public class ItemDetailAdapter extends RvCateAdapter<ItemDetail> {
                     tv_price = (TextView) itemView.findViewById(R.id.tv_price);
                     img_icon = (ImageView) itemView.findViewById(R.id.img_icon);
                     add = (LinearLayout) itemView.findViewById(R.id.ll_add);
+                    tv_remain_num=(TextView)itemView.findViewById(R.id.tv_remain_num);
+                    rl_remain_num=(RelativeLayout) itemView.findViewById(R.id.rl_remain_num);
+                    tv_out_of=(TextView)itemView.findViewById(R.id.tv_out_of);
                     minus = (LinearLayout) itemView.findViewById(R.id.ll_minus);
                     tv_count = (TextView) itemView.findViewById(R.id.tv_count);
                     count_view = (CountView) itemView
@@ -138,9 +145,29 @@ public class ItemDetailAdapter extends RvCateAdapter<ItemDetail> {
                 case 3:
                     tv_name.setText(itemDetail.getItemName());
                     textTypeFace.setTrajanProRegular(tv_name);
-
                     tv_price.setText(App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
                     textTypeFace.setTrajanProRegular(tv_price);
+                    RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+                    if(remainingStock!=null){
+                        rl_remain_num.setVisibility(View.VISIBLE);
+
+                        int reNum=remainingStock.getQty()-getItemNum(itemDetail);
+                        if(reNum>0){
+                            tv_out_of.setVisibility(View.GONE);
+                            tv_remain_num.setText(reNum+"");
+                            count_view.setVisibility(View.VISIBLE);
+                        }else {
+                            tv_remain_num.setText(0+"");
+                            tv_out_of.setVisibility(View.VISIBLE);
+                          count_view.setVisibility(View.GONE
+                            );
+                            // tv_remin_num.setText(0+"");
+                        }
+                    }else {
+                        tv_out_of.setVisibility(View.GONE);
+                        rl_remain_num.setVisibility(View.GONE);
+                        count_view.setVisibility(View.VISIBLE);
+                    }
 
                     String url = itemDetail.getImgUrl();
                //     System.out.println("数量--->");
