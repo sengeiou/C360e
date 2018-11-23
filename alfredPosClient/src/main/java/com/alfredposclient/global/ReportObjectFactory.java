@@ -1937,7 +1937,8 @@ public class ReportObjectFactory {
 	public ReportDaySales loadXReportDaySales(long businessDate,
 			SessionStatus sessionStatus, String actualAmount) {
 		ReportDaySales reportDaySales = null;
-		List<Order> orderList = OrderSQL.getAllOrderByTime(businessDate, sessionStatus);
+		long nowTime = System.currentTimeMillis();
+		List<Order> orderList = OrderSQL.getAllOrderByTime(businessDate, sessionStatus, nowTime);
 		if (orderList.isEmpty()) {
 			return null;
 		}

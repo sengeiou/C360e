@@ -234,7 +234,8 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     }
 
     private boolean canDelete(){
-        List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate());
+        long nowTime = System.currentTimeMillis();
+        List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate(), nowTime);
         if(!orderList.isEmpty()){
             for (Order order : orderList) {
                 List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
@@ -577,7 +578,8 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 if (canEdit) {
                     saveTable();
                 } else {
-                    List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate());
+                    long nowTime = System.currentTimeMillis();
+                    List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(), App.instance.getBusinessDate(), nowTime);
                     if (!orderList.isEmpty()) {
                         for (Order order : orderList) {
                             List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL

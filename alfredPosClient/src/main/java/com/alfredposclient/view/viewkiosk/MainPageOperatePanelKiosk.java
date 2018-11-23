@@ -275,7 +275,8 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 							public void onClick(View v) {
 								order.setOrderStatus(ParamConst.ORDER_STATUS_HOLD);
 								OrderSQL.updateOrder(order);
-								int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+								long nowTime = System.currentTimeMillis();
+								int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
 								App.instance.setKioskHoldNum(count);
 								handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
 							}
@@ -467,7 +468,8 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 								 */
 								//end KOT print
 								OrderSQL.updateOrder(order);
-								int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+								long nowTime = System.currentTimeMillis();
+								int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
 								App.instance.setKioskHoldNum(count);
 								handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
 							}

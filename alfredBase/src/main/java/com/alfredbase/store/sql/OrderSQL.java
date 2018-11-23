@@ -520,13 +520,13 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	public static ArrayList<Order> getUnpaidOrdersBySession(SessionStatus sessionStatus, long businessDate) {
+	public static ArrayList<Order> getUnpaidOrdersBySession(SessionStatus sessionStatus, long businessDate, long nowTime) {
 		ArrayList<Order> result = new ArrayList<Order>();
-		String sql = "select * from " + TableNames.Order  + " where sessionStatus = ? and createTime > ? and businessDate = ? and orderStatus < "+ParamConst.ORDER_STATUS_HOLD+" ";
+		String sql = "select * from " + TableNames.Order  + " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? and orderStatus < "+ParamConst.ORDER_STATUS_HOLD+" ";
 		SQLiteDatabase db = SQLExe.getDB();
 		Cursor cursor = null;
 		try {
-			cursor = db.rawQuery(sql, new String[] {String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(businessDate)});
+			cursor = db.rawQuery(sql, new String[] {String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime), String.valueOf(businessDate)});
 			int count = cursor.getCount();
 			if (count < 1) {
 				return result;
@@ -579,13 +579,18 @@ public class OrderSQL {
 		return result;
 	}	
 	
-	public static ArrayList<Order> getFinishedOrdersBySession(SessionStatus sessionStatus, long businessDate) {
+	public static ArrayList<Order> getFinishedOrdersBySession(SessionStatus sessionStatus, long businessDate, long closeTime) {
 		ArrayList<Order> result = new ArrayList<Order>();
-		String sql = "select * from " + TableNames.Order  + " where sessionStatus = ? and businessDate = ? and orderStatus = "+ParamConst.ORDER_STATUS_FINISHED+" ";
+		String sql = "select * from "
+				+ TableNames.Order
+				+ " where sessionStatus = ? and businessDate = ? and orderStatus = "
+				+ ParamConst.ORDER_STATUS_FINISHED
+				+ " and updateTime < ? and createTime > ?";
 		SQLiteDatabase db = SQLExe.getDB();
 		Cursor cursor = null;
 		try {
-			cursor = db.rawQuery(sql, new String[] {String.valueOf(sessionStatus.getSession_status()), String.valueOf(businessDate)});
+			cursor = db.rawQuery(sql, new String[] {String.valueOf(sessionStatus.getSession_status()), String.valueOf(businessDate),
+													String.valueOf(closeTime), String.valueOf(sessionStatus.getTime())});
 			int count = cursor.getCount();
 			if (count < 1) {
 				return result;
@@ -699,14 +704,14 @@ public class OrderSQL {
 		return result;
 	}
 	
-	public static ArrayList<Order> getAllOrderByTime(long businessDate,SessionStatus sessionStatus) {
+	public static ArrayList<Order> getAllOrderByTime(long businessDate,SessionStatus sessionStatus, long nowTime) {
 		ArrayList<Order> result = new ArrayList<Order>();
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
 			cursor = db.query(TableNames.Order,
-					new String[] { " * " }, "businessDate = ? and sessionStatus = ? and createTime > ? and orderStatus = " + ParamConst.ORDER_STATUS_FINISHED,
-					new String[] { String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime() )}, "", "", "",
+					new String[] { " * " }, "businessDate = ? and sessionStatus = ? and createTime > ? and updateTime < ? and orderStatus = " + ParamConst.ORDER_STATUS_FINISHED,
+					new String[] { String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime)}, "", "", "",
 					"");
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -1168,15 +1173,15 @@ public class OrderSQL {
 		return order;
 	}
 
-	public static List<Order> getOrderByStatus(Integer orderStatus, SessionStatus sessionStatus) {
-		String sql = "select * from " + TableNames.Order + " where orderStatus = ? and sessionStatus = ? and createTime > ? ";
+	public static List<Order> getOrderByStatus(Integer orderStatus, SessionStatus sessionStatus, long nowTime) {
+		String sql = "select * from " + TableNames.Order + " where orderStatus = ? and sessionStatus = ? and createTime > ? and updateTime < ?";
 		ArrayList<Order> result = new ArrayList<Order>();
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(
 					sql,
 					new String[] {String.valueOf(orderStatus), String.valueOf(sessionStatus.getSession_status()),
-							String.valueOf(sessionStatus.getTime()) });
+							String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime) });
 			int count = cursor.getCount();
 			if (count < 1) {
 				return result;
@@ -1413,9 +1418,9 @@ public class OrderSQL {
 	}
 
 
-	public static int getKioskHoldCount(long businessDate, SessionStatus sessionStatus){
+	public static int getKioskHoldCount(long businessDate, SessionStatus sessionStatus, long nowTime){
 		int sumCount = 0;
-		String sql = "select count(0) from "+ TableNames.Order + " where sessionStatus = ? and createTime > ? and businessDate = ? and (orderStatus = "
+		String sql = "select count(0) from "+ TableNames.Order + " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? and (orderStatus = "
 				+ ParamConst.ORDER_STATUS_KIOSK
 				+ " or orderStatus = "
 				+ ParamConst.ORDER_STATUS_HOLD
@@ -1424,7 +1429,7 @@ public class OrderSQL {
 				+ " )";
 		Cursor cursor = null;
 		try {
-			cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(businessDate)});
+			cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime), String.valueOf(businessDate)});
 			if (cursor.moveToFirst()) {
 				sumCount = cursor.getInt(0);
 			}

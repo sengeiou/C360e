@@ -835,7 +835,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		
 		//generate XReport data
 
-
+		final long closeTime = System.currentTimeMillis();
 		new Thread(new Runnable() {
 
 			@Override
@@ -853,9 +853,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				//sync finished Order info in current session to cloud
 				LogUtil.e("测试", "11");
 				List<Order> orders = OrderSQL.getFinishedOrdersBySession(
-						sessionStatus, bizDate);
+						sessionStatus, bizDate, closeTime);
 				List<Order> subPosOrders = CPOrderSQL.getFinishedOrdersBySession(
-						sessionStatus, bizDate);
+						sessionStatus, bizDate, closeTime);
 				LogUtil.e("测试", "22");
 				if (!orders.isEmpty()) {
 					for (Order order : orders) {
@@ -1041,7 +1041,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							return;
 						}
 						if (App.instance.isRevenueKiosk()) {
-							List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate());
+							long nowTime = System.currentTimeMillis();
+							List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate(), nowTime);
 							if(!orderList.isEmpty()){
 								for (Order order : orderList) {
 									List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL

@@ -370,7 +370,8 @@ public class MainPageKiosk extends BaseActivity {
             }
         });
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
-        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+        long nowTime = System.currentTimeMillis();
+        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
         App.instance.setKioskHoldNum(count);
         XMPP.getInstance().setCanCheckAppOrder(true);
 
