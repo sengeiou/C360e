@@ -233,7 +233,8 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                 tv_kiosk_order.setTextColor(getResources().getColor(R.color.white));
                 break;
         }
-        orderList = OrderSQL.getOrderByStatus(orderStatus, App.instance.getSessionStatus());
+        long nowTime = System.currentTimeMillis();
+        orderList = OrderSQL.getOrderByStatus(orderStatus, App.instance.getSessionStatus(), nowTime);
         orderCache = orderList;
         if(orderList != null && orderList.size() > 0){
             if(selectOrderItem >= orderList.size() || selectOrderItem < 0){
@@ -292,7 +293,8 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                             OrderSQL.deleteOrder(currentOrder);
                         }
                         OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS, order.getId().intValue());
-                        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+                        long nowTime = System.currentTimeMillis();
+                        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
                         App.instance.setKioskHoldNum(count);
                         this.finish();
                     }
@@ -416,7 +418,8 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                         Intent intent = new Intent();
                         intent.putExtra("map", map);
                         setResult(CHECK_RESULT_CODE, intent);
-                        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+                        long nowTime = System.currentTimeMillis();
+                        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
                         App.instance.setKioskHoldNum(count);
                         KioskHoldActivity.this.finish();
                     }

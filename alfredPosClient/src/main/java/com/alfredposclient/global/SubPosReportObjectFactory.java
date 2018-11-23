@@ -2121,8 +2121,8 @@ public class SubPosReportObjectFactory {
 		String voucher = BH.getBD(voucherMap
 				.get("sumAmount")).toString();
 		String voucherQty = voucherMap.get("count");
-
-		orderList = OrderSQL.getAllOrderByTime(businessDate, sessionStatus);
+		long nowTime = System.currentTimeMillis();
+		orderList = OrderSQL.getAllOrderByTime(businessDate, sessionStatus, nowTime);
 		int orderQty = 0;
 		int billNoQty = 0;
 		int personQty = 0;
