@@ -1470,6 +1470,4 @@ public class DataHelper {
             }
         }
     }
-
-
 }
