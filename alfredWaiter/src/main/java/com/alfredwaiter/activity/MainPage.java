@@ -28,15 +28,19 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.OrderHelper;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
 import com.alfredwaiter.adapter.ItemDetailAdapter;
@@ -327,12 +331,29 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 }
                 case VIEW_EVENT_MODIFY_ITEM_COUNT: {
                     LogUtil.d("444444444444--->", "4444444444444");
+
+//                    Map<String, Object> map = (Map<String, Object>) msg.obj;
+//                    ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
+//                    RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+//                    if (remainingStock != null) {
+//                        OrderDetail orderDetail = getItemOrderDetail(itemDetail);
+//                        if (remainingStock.getQty() > orderDetail.getItemNum()) {
+//                            updateOrderDetail(itemDetail,
+//                                    (Integer) map.get("count"));
+//                            refreshTotal();
+//                            refreshList();
+//                        }
+//                    } else {
+//                        updateOrderDetail(itemDetail,
+//                                (Integer) map.get("count"));
+//                        refreshTotal();
+//                        refreshList();
+//                    }
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
                     updateOrderDetail((ItemDetail) map.get("itemDetail"),
                             (Integer) map.get("count"));
                     refreshTotal();
                     refreshList();
-
                     boolean isadd = (boolean) map.get("isAdd");
                     if (isadd) {
                         isShow((ItemDetail) map.get("itemDetail"));
@@ -500,6 +521,19 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             ll_last_detail.setVisibility(View.GONE);
             tv_more_detail.setTag(null);
         }
+    }
+
+    private OrderDetail getItemOrderDetail(ItemDetail itemDetail) {
+        OrderDetail orderDetail = OrderDetailSQL.getUnFreeOrderDetail(
+                currentOrder, itemDetail, currentGroupId,
+                ParamConst.ORDERDETAIL_STATUS_WAITER_ADD);
+        if (orderDetail == null) {
+            orderDetail = ObjectFactory.getInstance()
+                    .createOrderDetailForWaiter(currentOrder, itemDetail,
+                            currentGroupId, App.instance.getUser());
+        }
+
+        return orderDetail;
     }
 
     private void updateOrderDetail(ItemDetail itemDetail, int count) {
@@ -776,6 +810,8 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         for (OrderDetail orderDetail : orderDetails) {
             OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getId().intValue());
         }
+
+       RemainingStockHelper.updateRemainingStockNum(currentOrder);
         UIHelp.startOrderDetailsTotal(context, currentOrder);
 //		this.finish();
     }

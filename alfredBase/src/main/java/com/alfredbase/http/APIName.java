@@ -78,6 +78,7 @@ public class APIName {
     public static final String CANCEL_COMPLETE = "cancel_complete";
     public static final String SUMMARY_COMPLETE = "summary_complete";
     public static final String CALL_SPECIFY_THE_NUMBER = "call_specify_the_number";
+    public static final String KOT_OUT_OF_STOCK = "kot_out_of_stock";
 
     // 以下是桌面设备专用
 

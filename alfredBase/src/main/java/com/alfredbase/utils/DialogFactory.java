@@ -15,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -411,8 +412,6 @@ public class DialogFactory {
                 ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
                 ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
                 final EditText editText = (EditText) view.findViewById(R.id.et_input);
-
-
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.setContentView(view);
@@ -422,12 +421,14 @@ public class DialogFactory {
                             @Override
                             public void onClick(final View v) {
                                 dialog.dismiss();
-                                CommonUtil.hideSoftkeyBoard(activity);
+                              //  CommonUtil.hideSoftkeyBoard(activity);
+                             //   hintKeyBoard(activity);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         if (leftListener != null)
                                             leftListener.onClick(v);
+                                        CommonUtil.hideSoftkeyBoard(activity);
                                     }
                                 }, 500);
                             }
@@ -454,11 +455,14 @@ public class DialogFactory {
                                 }
                                 dialog.dismiss();
                                 CommonUtil.hideSoftkeyBoard(activity);
+                             //   hintKeyBoard(activity);
+
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         if (rghtListener != null)
                                             rghtListener.onClick(editText);
+                                        CommonUtil.hideSoftkeyBoard(activity);
                                     }
                                 }, 500);
                             }
@@ -917,4 +921,15 @@ public class DialogFactory {
         }
     }
 
+    public static void hintKeyBoard(BaseActivity parent) {
+        //拿到 InputMethodManager
+        InputMethodManager imm = (InputMethodManager)parent.getSystemService(Context.INPUT_METHOD_SERVICE); //如果window上view获取焦点 && view不为空
+        if(imm.isActive()&&parent.getCurrentFocus()!=null){
+            //拿到view的token 不为空
+            if (parent.getCurrentFocus().getWindowToken()!=null)
+            { //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
+                imm.hideSoftInputFromWindow(parent.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
+    }
 }

@@ -13,6 +13,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -23,9 +24,11 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.DialogFactory;
@@ -604,7 +607,7 @@ public class KitchenOrder extends BaseActivity {
     private PopItemAdapter popItemAdapter;
 
     public void showOrderItem(final KotSummary kotSummary) {
-        Kot kot = App.instance.getKot(kotSummary);
+        final Kot kot = App.instance.getKot(kotSummary);
         this.kotSummary = kotSummary;
         View view = getLayoutInflater().inflate(R.layout.kitche_order_item_popupwindow, null);
         ImageView iv_back = (ImageView) view.findViewById(R.id.iv_back);
@@ -664,6 +667,31 @@ public class KitchenOrder extends BaseActivity {
         popItemAdapter = new PopItemAdapter(context);
         popItemAdapter.setKot(kot);
         popItemListView.setAdapter(popItemAdapter);
+        popItemListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                DialogFactory.commonTwoBtnDialog(context, "Waring", "Out of stock ?",
+                        getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        },
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int   orderDetailId =   kot.getKotItemDetails().get(position).getOrderDetailId();
+                                Map<String, Object> parameters = new HashMap<String, Object>();
+                                parameters.put("orderDetailId",orderDetailId);
+
+                                SyncCentre.getInstance().updateRemainingStock(context,
+                                        App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                            }
+                        });
+                return true;
+            }
+        });
         popItemListView.setRemoveListener(new RemoveListener() {
             @Override
             public void removeItem(RemoveDirection direction, int position) {
@@ -702,6 +730,8 @@ public class KitchenOrder extends BaseActivity {
                         }
 
                         break;
+
+
                     default:
                         break;
                 }

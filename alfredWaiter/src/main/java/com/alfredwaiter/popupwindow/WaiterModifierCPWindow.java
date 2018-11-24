@@ -30,6 +30,7 @@ import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.MainPage;
 import com.alfredwaiter.adapter.ItemHeaderDecoration;
@@ -141,6 +142,7 @@ public class WaiterModifierCPWindow {
 //                map.put("itemDetail", itemDetail);
                 map.put("variances", variances);
                 map.put("description", remark_et.getText().toString());
+                RemainingStockHelper.updateRemainingStockNum(order);
                 handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER, map));
                 popupWindow.dismiss();
 //                } else {

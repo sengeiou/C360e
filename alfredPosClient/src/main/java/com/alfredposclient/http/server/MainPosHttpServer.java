@@ -41,6 +41,7 @@ import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -98,6 +99,7 @@ import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.SettlementRestaurantSQL;
@@ -118,6 +120,7 @@ import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -1334,7 +1337,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return this.handlerKDSIpChange(body);
             } else if (apiName.equals(APIName.KOT_ITEM_COMPLETE)) { // 厨房提交item做完数据
                 return handlerKOTItemComplete(body);
-            } else if (apiName.equals(APIName.CANCEL_COMPLETE)) {// 厨房取消做完的菜
+            }else if (apiName.equals(APIName.KOT_OUT_OF_STOCK)){ //厨房out of stock
+                return handlerKOTOutOfStock(body);
+            }else if (apiName.equals(APIName.CANCEL_COMPLETE)) {// 厨房取消做完的菜
                 return cancelComplete(body);
             } else if (apiName.equals(APIName.COLLECT_KOT_ITEM)) { // waiter
                 // 点击取菜
@@ -1802,7 +1807,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
         // send404();
         // return;
         // }
+        List<RemainingStock> remainingStocks = RemainingStockSQL.getAllRemainingStock();
         Map<String, Object> result = new HashMap<String, Object>();
+        result.put("remainingStockList", remainingStocks);
         result.put("itemList", CoreData.getInstance().getItemDetails());
         result.put("resultCode", ResultCode.SUCCESS);
         resp = this.getJsonResponse(new Gson().toJson(result));
@@ -2402,6 +2409,36 @@ public class MainPosHttpServer extends AlfredHttpServer {
     // }
     // return resp;
     // }
+
+    private Response handlerKOTOutOfStock(String params) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        Response resp;
+        try {
+            JSONObject jsonObject ;
+            jsonObject = new JSONObject(params);
+            int orderDetailId = jsonObject.getInt("orderDetailId");
+            OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(orderDetailId);
+            ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
+            RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+            if(remainingStock!=null){
+                Map<String, Object> reMap = new HashMap<String, Object>();
+                reMap.put("itemId", itemDetail.getItemTemplateId());
+                reMap.put("num", 0);
+                RemainingStockSQL.updateRemainingNum(0, itemDetail.getItemTemplateId());
+                SyncCentre.getInstance().updateReaminingStockByItemId(App.instance, reMap, null);
+            }
+
+//				}
+//			});
+            result.put("resultCode", ResultCode.SUCCESS);
+            resp = this.getJsonResponse(new Gson().toJson(result));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            resp = this.getInternalErrorResponse("");
+        }
+        return resp;
+    }
+
 
     private Response handlerKOTItemComplete(String params) {
         Map<String, Object> result = new HashMap<String, Object>();

@@ -18,6 +18,7 @@ import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.TableInfo;
@@ -43,6 +44,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
@@ -283,6 +285,13 @@ public class HttpAnalysis {
 					object.getString("itemList"),
 					new TypeToken<ArrayList<ItemDetail>>() {
 					}.getType());
+
+			List<RemainingStock> RemainingStockList = gson.fromJson(
+					object.getString("remainingStockList"),
+					new TypeToken<ArrayList<RemainingStock>>() {
+					}.getType());
+			RemainingStockSQL.deleteAllRemainingStock();
+			RemainingStockSQL.addRemainingStock(RemainingStockList);
 			ItemDetailSQL.deleteAllItemDetail();
 			ItemDetailSQL.addItemDetailList(itemDetailList);
 			CoreData.getInstance().setItemDetails(

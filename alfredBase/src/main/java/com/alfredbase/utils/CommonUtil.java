@@ -213,7 +213,9 @@ public class CommonUtil {
 		if (imm != null) {
 			imm.hideSoftInputFromWindow(parent.getCurrentFocus().getWindowToken()
 					,InputMethodManager.HIDE_NOT_ALWAYS); 
-		}		
+		}
+
+
 	}
 
 	/**
