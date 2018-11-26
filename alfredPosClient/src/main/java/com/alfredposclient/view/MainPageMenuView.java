@@ -42,6 +42,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
@@ -56,6 +57,7 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.adapter.ItemDetailAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.global.UIHelp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +94,7 @@ public class MainPageMenuView extends LinearLayout {
 	private boolean isFirst = false;
 	private int touchRecyclerView = 0;
 	private PagerSnapHelper pagerSnapHelper;
-	ItemDetailAdapter itemAdp;
+//	ItemDetailAdapter itemAdp;
 	private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
 			.getItemMainCategories();
 	int size,tsize,color,textcolor;
@@ -139,9 +141,23 @@ public class MainPageMenuView extends LinearLayout {
 			oneLevelMenu.setAdapter(new OneLevelMenuAdapter());
 			twoLevelMenu.setAdapter(new TwoLevelMenuAdapter());
 			isFirst = false;
+		}else{
+			notifyItemStockNum(current_index);
 		}
 		listMainCategorys = CoreData.getInstance()
 				.getItemMainCategories();
+	}
+
+	private void notifyItemStockNum(int position){
+		if(twoLevelMenu != null){
+			TwoLevelMenuAdapter.MenuViewHolder viewHolder = (TwoLevelMenuAdapter.MenuViewHolder) twoLevelMenu.findViewHolderForAdapterPosition(position);
+			if(viewHolder != null) {
+				ItemDetailAdapter itemDetailAdapter = (ItemDetailAdapter) viewHolder.gv_menu_detail.getAdapter();
+				if (itemDetailAdapter != null) {
+					itemDetailAdapter.notifyDataSetChanged();
+				}
+			}
+		}
 	}
 
 	private void initTextTypeFace(){
@@ -316,7 +332,7 @@ public class MainPageMenuView extends LinearLayout {
 					currentItemDetails.add(itemDetail);
 				}
 			}
-			 itemAdp = new ItemDetailAdapter(parent,
+			ItemDetailAdapter itemAdp = new ItemDetailAdapter(parent,
 					currentItemDetails);
 			holder.gv_menu_detail.setAdapter(itemAdp);
 		}
@@ -350,13 +366,12 @@ public class MainPageMenuView extends LinearLayout {
 				});
 				gv_menu_detail.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					@Override
-					public boolean onItemLongClick(AdapterView<?> arg0, View view, int position, long id) {
+					public boolean onItemLongClick(AdapterView<?> arg0, View view, final int position, long id) {
 
 						final ItemDetail itemDetail = (ItemDetail) arg0
 								.getItemAtPosition(position);
 						RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
-						if(remainingStock!=null)
-						{
+						if(remainingStock!=null) {
 							DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "", "CANCEL", "DONE",
 									new OnClickListener() {
 										@Override
@@ -376,7 +391,7 @@ public class MainPageMenuView extends LinearLayout {
 												reMap.put("num", Integer.valueOf(num).intValue());
 												RemainingStockSQL.updateRemainingNum(Integer.valueOf(num).intValue(), itemDetail.getItemTemplateId());
 												SyncCentre.getInstance().updateReaminingStockByItemId(context, reMap, null);
-												itemAdp.notifyDataSetChanged();
+												notifyItemStockNum(current_index);
 											}
 										}
 									});
@@ -394,12 +409,17 @@ public class MainPageMenuView extends LinearLayout {
 						RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 						OrderDetail orderDetail = ObjectFactory.getInstance()
 								.getOrderDetail(order, itemDetail, 0);
-						if(remainingStock!=null&&remainingStock.getQty()>0)
-						{
-							Message msg = handler.obtainMessage();
-							msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
-							msg.obj = orderDetail;
-							handler.sendMessage(msg);
+						if(remainingStock!=null) {
+							int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+							existedOrderDetailNum += orderDetail.getItemNum();
+							if (remainingStock.getQty() > 0 && remainingStock.getQty() >= existedOrderDetailNum ) {
+								Message msg = handler.obtainMessage();
+								msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+								msg.obj = orderDetail;
+								handler.sendMessage(msg);
+							}else{
+								UIHelp.showShortToast(parent, "Out Of Stock!");
+							}
 						}else {
 							Message msg = handler.obtainMessage();
 							msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;

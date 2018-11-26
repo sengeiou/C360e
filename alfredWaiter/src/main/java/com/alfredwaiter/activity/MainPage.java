@@ -28,19 +28,17 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
-import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
-import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.R;
 import com.alfredwaiter.adapter.ItemDetailAdapter;
@@ -68,6 +66,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
 public class MainPage extends BaseActivity implements CheckListener, CallBackMove {
     public static final int VIEW_EVENT_CLICK_MAIN_CATEGORY = 0;
     public static final int VIEW_EVENT_CLICK_SUB_CATEGORY = 9;
@@ -93,7 +95,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
     public static final int VIEW_EVENT_SLIDE = 204;
     public static final int VIEW_EVENT_SLIDE_CLICK = 205;
     public static final int VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER = 206;
-
+    private Observable<String> observable;
     //	public static final int VIEW_EVENT_SET_ITEM_NUM = 103;
     private ExpandableListView expandableListView;
     private OrderAdapter adapter;
@@ -214,7 +216,26 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         SyncCentre.getInstance().handlerGetOrderDetails(context, parameters,
                 handler);
         createAdapter();
+        observable = RxBus.getInstance().register(RxBus.RX_REFRESH_STOCK);
+        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String data) {
+                try {
+                    if(detailAdapter != null){
+                        refreshList();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
+    @Override
+    protected void onDestroy() {
+        if(observable != null)
+            RxBus.getInstance().unregister(RxBus.RX_REFRESH_STOCK, observable);
+        super.onDestroy();
     }
 
     public static void setListener(CheckListener listener) {
@@ -811,7 +832,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getId().intValue());
         }
 
-       RemainingStockHelper.updateRemainingStockNum(currentOrder);
+       RemainingStockHelper.updateRemainingStockNumByOrder(currentOrder);
         UIHelp.startOrderDetailsTotal(context, currentOrder);
 //		this.finish();
     }

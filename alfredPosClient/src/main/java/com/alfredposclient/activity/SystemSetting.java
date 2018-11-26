@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -26,7 +24,6 @@ import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.ChangePasswordDialog;
-
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
@@ -419,6 +416,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 //									map.put(PushMessage.PLACE_TABLE, 1);
 									map.put(PushMessage.TAX, 1);
 									map.put(PushMessage.PAYMENT_METHOD, 1);
+									map.put(PushMessage.STOCK, 1);
 									syncDataAction(map);
 								}
 							});

@@ -300,6 +300,22 @@ public class HttpAnalysis {
 			e.printStackTrace();
 		}
 	}
+	public static void getStock(int statusCode, Header[] headers,
+			byte[] responseBody) {
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+
+			List<RemainingStock> RemainingStockList = gson.fromJson(
+					object.getString("remainingStockList"),
+					new TypeToken<ArrayList<RemainingStock>>() {
+					}.getType());
+			RemainingStockSQL.deleteAllRemainingStock();
+			RemainingStockSQL.addRemainingStock(RemainingStockList);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void getAllModifier(int statusCode, Header[] headers,
 			byte[] responseBody) {

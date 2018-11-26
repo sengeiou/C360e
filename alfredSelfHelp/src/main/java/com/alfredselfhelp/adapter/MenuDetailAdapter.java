@@ -2,6 +2,8 @@ package com.alfredselfhelp.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -127,12 +129,24 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
                     tvPrice.setBackgroundResource(R.drawable.style_price_btn);
                     tvPrice.setTextColor(context.getResources().getColor(R.color.white1));
                     count_view.setVisibility(View.VISIBLE);
+                    ColorMatrix matrix = new ColorMatrix();
+                    float[] colorMatrix = {
+                            1, 0, 0, 0, 0,
+                            0, 1, 0, 0, 0,
+                            0, 0, 1, 0, 0,
+                            0, 0, 0, 1, 0};
+                    matrix.set(colorMatrix);//饱和度 0灰色 100过度彩色，50正常
+                    ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                    img.setColorFilter(filter);
                 }else {
                     re_out_of.setVisibility(View.VISIBLE);
                     tvPrice.setBackgroundResource(R.drawable.style_price_btn_grad);
                     tvPrice.setTextColor(context.getResources().getColor(R.color.gray8));
-                    count_view.setVisibility(View.GONE
-                    );
+                    count_view.setVisibility(View.GONE);
+                    ColorMatrix matrix = new ColorMatrix();
+                    matrix.setSaturation(0);//饱和度 0灰色 100过度彩色，50正常
+                    ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                    img.setColorFilter(filter);
                    // tv_remin_num.setText(0+"");
                 }
             }else {
@@ -141,6 +155,15 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
                 tvPrice.setBackgroundResource(R.drawable.style_price_btn);
                 tvPrice.setTextColor(context.getResources().getColor(R.color.white1));
                 count_view.setVisibility(View.VISIBLE);
+                ColorMatrix matrix = new ColorMatrix();
+                float[] colorMatrix = {
+                        1, 0, 0, 0, 0,
+                        0, 1, 0, 0, 0,
+                        0, 0, 1, 0, 0,
+                        0, 0, 0, 1, 0};
+                matrix.set(colorMatrix);//饱和度 0灰色 100过度彩色，50正常
+                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                img.setColorFilter(filter);
             }
 
             count_view.setIsCanClick(getOrderDetailStatus(itemDetail));

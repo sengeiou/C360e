@@ -197,6 +197,7 @@ public class ItemDetailAdapter extends BaseAdapter {
         return arg1;
     }
 
+
     int i = 0;
 
     class ViewHolder {

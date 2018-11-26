@@ -225,14 +225,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                }
 //                break;
 
-                case MODIFY_ITEM_COUNT:
+                case MODIFY_ITEM_COUNT: {
 
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
                     ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                     if (remainingStock != null) {
                         OrderDetail orderDetail = getItemOrderDetail(itemDetail);
-                        if (remainingStock.getQty() > orderDetail.getItemNum()) {
+                        if (remainingStock.getQty() >= orderDetail.getItemNum()) {
                             updateitemOrderDetail(itemDetail,
                                     1);
                             refreshTotal();
@@ -245,7 +245,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         refreshList();
                     }
 
-
+                }
                     break;
                 case App.HANDLER_REFRESH_TIME:
                     Intent intent = new Intent();
@@ -256,19 +256,29 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     break;
 
 
-                case VIEW_ORDER_DETAIL_MODIFY_ITEM_COUNT:
+                case VIEW_ORDER_DETAIL_MODIFY_ITEM_COUNT: {
 
-                    map = (Map<String, Object>) msg.obj;
+                    Map<String, Object> map = (Map<String, Object>) msg.obj;
                     int count = (int) map.get("count");
-
+                    OrderDetail orderDetail = (OrderDetail) map.get("orderDetail");
 //                    if (count == 0) {
 //
 //                    } else {
-                    updateCartOrderDetail((OrderDetail) map.get("orderDetail"),
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId());
+                    RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+                    if (remainingStock != null) {
+                        if(remainingStock.getQty() < orderDetail.getItemNum() + count){
+                            UIHelp.showSoShortToast(MenuActivity.this, "Out Of Stock");
+                            cartAdater.notifyDataSetChanged();
+                            return;
+                        }
+                    }
+                    updateCartOrderDetail(orderDetail,
                             count);
 //                    }
                     tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
+                }
                     break;
 
                 case VIEW_COMMIT_ORDER_SUCCEED: {
@@ -618,6 +628,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if(TextUtils.isEmpty(ip)){
                     UIHelp.showToast(context, "Please contact Staff for IP Address");
                 }else {
+                    loadingDialog.setTitle("Checking  stock");
+
                     paymentAction(ip);
                 }
             }

@@ -506,7 +506,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 //        builder.setOnCancelListener(new FinishListener(getActivity()));
 //        builder.show();
         DialogFactory.commonTwoBtnDialog(mainPage, mainPage.getResources().getString(R.string.warning),
-                "Sorry, your crame has some problem,\n you shoud restart app",
+                "Sorry, your camera has some problems,\n you should restart app",
                 mainPage.getResources().getString(R.string.cancel),
                 mainPage.getResources().getString(R.string.ok),
                 null,

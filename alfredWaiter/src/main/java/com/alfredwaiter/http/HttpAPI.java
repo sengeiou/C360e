@@ -16,6 +16,7 @@ import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.RxBus;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.activity.KOTNotification;
@@ -278,6 +279,36 @@ public class HttpAPI {
                                 }).start();
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void getStock(Context context, String url,
+                               Map<String, Object> parameters, AsyncHttpClient httpClient) {
+        // 除了登录接口，其他接口都要加这个
+        // if (parameters != null) {
+        // parameters.put("userKey", CoreData.getInstance().getUserKey());
+        // }
+        if (parameters != null) {
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters),
+                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.getStock(statusCode,
+                                        headers, responseBody);
+                                RxBus.getInstance().post(RxBus.RX_REFRESH_STOCK, null);
                             }
                         }
                     });

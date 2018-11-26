@@ -21,6 +21,7 @@ import com.SlideExpandable.SlideExpandableListView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
@@ -32,6 +33,7 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
@@ -44,6 +46,7 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
@@ -591,6 +594,7 @@ public class MainPageOrderView extends LinearLayout {
 					if(!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())){
 						return;
 					}
+
 					final TextView textView = (TextView) arg0;
 					textView.setBackgroundColor(context.getResources()
 							.getColor(R.color.gray));
@@ -621,6 +625,19 @@ public class MainPageOrderView extends LinearLayout {
 //									OrderModifierSQL.updateOrderModifierNum(tag, 999);
 									OrderHelper.setOrderModifierPirceAndNum(tag, 999);
 								} else {
+									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									RemainingStock remainingStock = null;
+									if(itemDetail != null) {
+										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+									}
+									if(remainingStock != null){
+										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+										existedOrderDetailNum += num;
+										if(remainingStock.getQty() < existedOrderDetailNum){
+											UIHelp.showShortToast(parent, "Out Of Stock");
+											return;
+										}
+									}
 									tag.setItemNum(num);
 									OrderDetailSQL
 											.updateOrderDetailAndOrder(tag);

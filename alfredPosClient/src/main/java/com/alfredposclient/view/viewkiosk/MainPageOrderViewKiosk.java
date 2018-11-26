@@ -64,7 +64,6 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
-import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.view.RingTextView;
@@ -96,7 +95,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 	private String kotCommitStatus;
 	private TextTypeFace textTypeFace;
 	private TextView tv_page_order_mask;
-	final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+//	final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 
 	public MainPageOrderViewKiosk(Context context) {
 		super(context);
@@ -217,7 +216,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 //						}
 //					}
 
-					cloudSync.updateRemainingStock(order.getId());
+//					cloudSync.updateRemainingStock(order.getId());
 					//DON'T use reference
 					Order placedOrder = OrderSQL.getOrder(order.getId());
 
@@ -667,6 +666,19 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 									// kotCommitStatus, null);
 
 								} else {
+									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									RemainingStock remainingStock = null;
+									if(itemDetail != null) {
+										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+									}
+									if(remainingStock != null){
+										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+										existedOrderDetailNum += num;
+										if(remainingStock.getQty() < existedOrderDetailNum){
+											UIHelp.showShortToast(parent, "Out Of Stock");
+											return;
+										}
+									}
 									tag.setItemNum(num);
 									tag.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
 									OrderDetailSQL

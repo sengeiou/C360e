@@ -64,6 +64,7 @@ public class App extends BaseApplication {
 	private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<Integer, PrinterDevice>();
 	private Observable<Object> observable;
 	private Observable<String> observable1;
+	private Observable<String> observable2;
 
 	private String currencySymbol = "$";
 	public static boolean isleftMoved;
@@ -121,6 +122,13 @@ public class App extends BaseApplication {
 						}
 					});
 				}
+			}
+		});
+		observable2 = RxBus.getInstance().register(RxBus.RX_GET_STOCK);
+		observable2.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+			@Override
+			public void call(String object) {
+				SyncCentre.getInstance().getStock(instance);
 			}
 		});
 		wifiPolicyNever();

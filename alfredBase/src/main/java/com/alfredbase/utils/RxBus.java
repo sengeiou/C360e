@@ -19,6 +19,8 @@ public class RxBus {
     public static final String RX_MSG_3 = "RX_MSG_3";
     public static final String RECEIVE_IP_ACTION = "RECEIVE_IP_ACTION";
     public static final String RX_REFRESH_TABLE = "RX_REFRESH_TABLE";
+    public static final String RX_REFRESH_STOCK = "RX_REFRESH_STOCK";
+    public static final String RX_GET_STOCK = "RX_GET_STOCK";
     public static final String RX_REFRESH_ORDER = "RX_REFRESH_ORDER";
     public static final String RX_WIFI_STORE = "RX_WIFI_STORE";
     private static RxBus instance;

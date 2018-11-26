@@ -737,7 +737,7 @@ public class HttpAnalysis {
 	}
 
 
-	public static void getRestaurantItemNum(byte[] responseBody){
+	public static void resetItemDetailStockNum(byte[] responseBody){
 		try {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();

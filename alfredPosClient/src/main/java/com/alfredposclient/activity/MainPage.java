@@ -143,7 +143,7 @@ public class MainPage extends BaseActivity {
     public static final int CHECK_REQUEST_CODE = 98;
 
     public static final int REFRESH_UNSEAT_TABLE_VIEW = 97;
-    public static final int REFRESH_ORDER_STATUS = 101;
+    public static final int REFRESH_STOCK_NUM = 101;
     public static final int REFRESH_TABLES_STATUS = 102;
     public static final int VIEW_EVENT_DISMISS_TABLES = 103;
     public static final int VIEW_EVENT_SET_TABLE_PACKS = 104;
@@ -586,6 +586,11 @@ public class MainPage extends BaseActivity {
 //			case VIEW_EVENT_CLOSE_PAY_WINDOW:
 //				closeCloseOrderWindow();
 //				break;
+                case REFRESH_STOCK_NUM:
+                    if(mainPageMenuView != null){
+                        mainPageMenuView.setParam(currentOrder,handler);
+                    }
+                    break;
                 case StoredCardActivity.VIEW_EVENT_STORED_CARD_PAY: {
                     String amount = (String) msg.obj;
                     Intent intent = new Intent(context, StoredCardActivity.class);
@@ -2454,7 +2459,8 @@ public class MainPage extends BaseActivity {
                         tables));
             }
             break;
-            case REFRESH_ORDER_STATUS:
+            case REFRESH_STOCK_NUM:
+                handler.sendEmptyMessage(action);
                 break;
             default:
                 break;

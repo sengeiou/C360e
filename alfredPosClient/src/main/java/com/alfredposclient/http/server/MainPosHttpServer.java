@@ -120,7 +120,6 @@ import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
-import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -1300,6 +1299,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             return handlerGetPrinters();
         } else if (apiName.equals(APIName.ITEM_GETITEM)) {// 菜的信息
             return handlerItemInfo(body);
+        } else if (apiName.equals(APIName.GET_REMAINING_STOCK)) {// 菜的信息
+            return handlerStock(body);
         } else if (apiName.equals(APIName.ITEM_GETITEMCATEGORY)) {// 菜分类信息
             return handlerItemCategoryInfo(body);
         } else if (apiName.equals(APIName.ITEM_GETMODIFIER)) {// 配料信息
@@ -1811,6 +1812,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("remainingStockList", remainingStocks);
         result.put("itemList", CoreData.getInstance().getItemDetails());
+        result.put("resultCode", ResultCode.SUCCESS);
+        resp = this.getJsonResponse(new Gson().toJson(result));
+        return resp;
+    }
+    private Response handlerStock(String params) {
+        Response resp;
+        List<RemainingStock> remainingStocks = RemainingStockSQL.getAllRemainingStock();
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("remainingStockList", remainingStocks);
         result.put("resultCode", ResultCode.SUCCESS);
         resp = this.getJsonResponse(new Gson().toJson(result));
         return resp;

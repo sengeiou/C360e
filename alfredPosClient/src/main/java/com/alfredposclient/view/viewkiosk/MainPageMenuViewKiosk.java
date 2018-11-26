@@ -16,7 +16,6 @@ import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,21 +35,17 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.BaseApplication;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
-import com.alfredbase.javabean.Modifier;
-import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
-import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -61,11 +56,11 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
-import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.ItemDetailAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
+import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.view.CustomNoteView;
 import com.alfredposclient.view.ModifierView;
 import com.alfredposclient.view.MyGridView;
@@ -111,7 +106,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
     private List<ItemMainCategory> listMainCategorys = CoreData.getInstance()
             .getItemMainCategories();
 
-    ItemDetailAdapter itemAdp;
+//    ItemDetailAdapter itemAdp;
 
 
     public MainPageMenuViewKiosk(Context context) {
@@ -159,11 +154,28 @@ public class MainPageMenuViewKiosk extends LinearLayout {
             oneLevelMenu.setAdapter(new OneLevelMenuAdapter());
             twoLevelMenu.setAdapter(new TwoLevelMenuAdapter());
             isFirst = false;
+        }else{
+            notifyItemStockNum(current_index);
+
         }
         listMainCategorys = CoreData.getInstance()
                 .getItemMainCategories();
         // ll_menu.setVisibility(View.VISIBLE);
 
+    }
+
+    private void notifyItemStockNum(int position){
+        if(twoLevelMenu != null){
+            TwoLevelMenuAdapter.MenuViewHolder viewHolder = (TwoLevelMenuAdapter.MenuViewHolder) twoLevelMenu.findViewHolderForAdapterPosition(position);
+            if(viewHolder != null) {
+                ItemDetailAdapter itemDetailAdapter = (ItemDetailAdapter) viewHolder.gv_menu_detail.getAdapter();
+                if (itemDetailAdapter != null) {
+                    itemDetailAdapter.notifyDataSetChanged();
+                }
+            }
+
+
+        }
     }
 
     private void initTextTypeFace() {
@@ -556,7 +568,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 
     class TwoLevelMenuAdapter extends RecyclerView.Adapter<TwoLevelMenuAdapter.MenuViewHolder> {
         private List<ItemMainCategory> itemMainCategoryList = CoreData.getInstance().getItemMainCategories();
-        ;
+
 
         @Override
         public MenuViewHolder onCreateViewHolder(ViewGroup arg1, int viewType) {
@@ -578,11 +590,10 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                     currentItemDetails.add(itemDetail);
                 }
             }
-            itemAdp = new ItemDetailAdapter(parent,
+            ItemDetailAdapter itemAdp = new ItemDetailAdapter(parent,
                     currentItemDetails);
             holder.gv_menu_detail.setAdapter(itemAdp);
         }
-
         @Override
         public int getItemCount() {
             return itemMainCategoryList.size();
@@ -613,7 +624,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 
                 gv_menu_detail.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> arg0, View view, int position, long id) {
+                    public boolean onItemLongClick(AdapterView<?> arg0, View view, final int position, long id) {
                     //   hintKeyBoard();
                         final ItemDetail itemDetail = (ItemDetail) arg0
                                 .getItemAtPosition(position);
@@ -624,16 +635,16 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                                     new OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                        //    hintKeyBoard();
+                                            //    hintKeyBoard();
                                             EditText editText = (EditText) view;
                                             String num = editText.getText().toString();
                                             if (!TextUtils.isEmpty(num)) {
-                                            Map<String, Object> reMap = new HashMap<String, Object>();
-                                            reMap.put("itemId", itemDetail.getItemTemplateId());
-                                            reMap.put("num", Integer.valueOf(num).intValue());
-                                            RemainingStockSQL.updateRemainingNum(Integer.valueOf(num).intValue(), itemDetail.getItemTemplateId());
-                                            SyncCentre.getInstance().updateReaminingStockByItemId(context, reMap, null);
-                                            itemAdp.notifyDataSetChanged();
+                                                Map<String, Object> reMap = new HashMap<String, Object>();
+                                                reMap.put("itemId", itemDetail.getItemTemplateId());
+                                                reMap.put("num", Integer.valueOf(num).intValue());
+                                                RemainingStockSQL.updateRemainingNum(Integer.valueOf(num).intValue(), itemDetail.getItemTemplateId());
+                                                SyncCentre.getInstance().updateReaminingStockByItemId(context, reMap, null);
+                                                notifyItemStockNum(current_index);
                                             }
                                         }
                                     });
@@ -657,11 +668,15 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                         OrderDetail orderDetail = ObjectFactory.getInstance()
                                 .getOrderDetail(order, itemDetail, 0);
                         if (remainingStock != null) {
-                            if (remainingStock.getQty() > 0) {
+                            int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+                            existedOrderDetailNum += orderDetail.getItemNum();
+                            if (remainingStock.getQty() > 0 && remainingStock.getQty() >= existedOrderDetailNum) {
                                 Message msg = handler.obtainMessage();
                                 msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
                                 msg.obj = orderDetail;
                                 handler.sendMessage(msg);
+                            }else{
+                                UIHelp.showShortToast(parent, "Out Of Stock!");
                             }
                         } else {
                             Message msg = handler.obtainMessage();

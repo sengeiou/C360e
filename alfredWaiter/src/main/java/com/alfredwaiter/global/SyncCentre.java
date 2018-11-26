@@ -8,6 +8,7 @@ import com.alfredbase.http.APIName;
 import com.alfredwaiter.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SyncCentre {
@@ -60,6 +61,10 @@ public class SyncCentre {
 //				getAbsoluteUrl(APIName.RESTAURANT_GETRESTAURANTINFO),
 //				httpClient, handler);
 //	}
+
+	public void getStock(Context context){
+		HttpAPI.getStock(context, APIName.GET_REMAINING_STOCK, new HashMap<String, Object>(), httpClient);
+	}
 
 	public void syncCommonData(Context context, String ip, Map<String, Object> parameters, Handler handler) {
 

@@ -149,7 +149,7 @@ public class MainPageKiosk extends BaseActivity {
     private String TAG = MainPageKiosk.class.getSimpleName();
     private static final int GET_TABLESTATUSINFO_DATA = 100;
 
-    public static final int REFRESH_ORDER_STATUS = 101;
+    public static final int REFRESH_STOCK_NUM = 101;
     public static final int REFRESH_TABLES_STATUS = 102;
     public static final int VIEW_EVENT_DISMISS_TABLES = 103;
     public static final int VIEW_EVENT_SET_TABLE_PACKS = 104;
@@ -517,6 +517,11 @@ public class MainPageKiosk extends BaseActivity {
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
+                case REFRESH_STOCK_NUM:
+                    if(mainPageMenuView != null){
+                        mainPageMenuView.setParam(currentOrder,handler);
+                    }
+                    break;
 //			case REFRESH_TABLES_STATUS:
 //				Tables table = (Tables) msg.obj;
 //				web_tables
@@ -2010,7 +2015,8 @@ public class MainPageKiosk extends BaseActivity {
                         tables));
             }
             break;
-            case REFRESH_ORDER_STATUS:
+            case REFRESH_STOCK_NUM:
+                handler.sendEmptyMessage(action);
                 break;
             default:
                 break;

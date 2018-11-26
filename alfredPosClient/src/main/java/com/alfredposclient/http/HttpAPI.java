@@ -1607,9 +1607,9 @@ public class HttpAPI {
         }
     }
 
-    public static void getResetRestaurantItemNum(Context context, String url, AsyncHttpClient httpClient,
-                                     Map<String, Object> parameters, final Handler handler) {
+    public static void resetItemDetailStockNum(Context context, String url, AsyncHttpClient httpClient) {
         try {
+            Map<String, Object> parameters = new HashMap<>();
             httpClient.post(context, url,
                     HttpAssembling.encapsulateBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
@@ -1625,7 +1625,7 @@ public class HttpAPI {
 
                                     @Override
                                     public void run() {
-                                        HttpAnalysis.getRestaurantItemNum(responseBody);
+                                        HttpAnalysis.resetItemDetailStockNum(responseBody);
                                     }
                                 }).start();
                             } else {

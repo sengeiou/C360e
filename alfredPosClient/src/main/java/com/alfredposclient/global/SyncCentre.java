@@ -12,7 +12,6 @@ import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
-import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
@@ -151,10 +150,9 @@ public class SyncCentre {
         HttpAPI.getRemainingStock(context, getAbsoluteUrl(APIName.GET_REMAINING_STOCK), httpClient,  handler,mode);
     }
 
-    public void getResetRestaurantItemNum(Context context, Map<String, Object> parameters,
-                           Handler handler) {
+    public void resetItemDetailStockNum(Context context) {
 
-        HttpAPI.getResetRestaurantItemNum(context, getAbsoluteUrl(APIName.RESET_RESTAURANT_ITEM_NUM), httpClient, parameters, handler);
+        HttpAPI.resetItemDetailStockNum(context, getAbsoluteUrl(APIName.RESET_RESTAURANT_ITEM_NUM), httpClient);
     }
 
     public void getPlaceInfo(Context context, Map<String, Object> parameters,

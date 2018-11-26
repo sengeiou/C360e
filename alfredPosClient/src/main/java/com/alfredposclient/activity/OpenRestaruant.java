@@ -1479,7 +1479,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 												null,
 												CloudSyncJobManager.CLOSE_RESTAURANT);
 									}
-									
+									SyncCentre.getInstance().resetItemDetailStockNum(context);
 								}
 							}).start();
 						}

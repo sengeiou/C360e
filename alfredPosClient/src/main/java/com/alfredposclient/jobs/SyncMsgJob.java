@@ -35,8 +35,7 @@ public class SyncMsgJob extends Job {
     private int orderStatus;
     private boolean isNoSave = false;
     private int orderId;
-    private List<RemainingStockVo> remainingStockVoList=new ArrayList<>();
-    
+
     public SyncMsgJob(int revenueId, int msgType, String uuid,
     		int msgId, Long bizDate, Long created) {
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("sync_"+bizDate.toString()));
@@ -87,24 +86,29 @@ public class SyncMsgJob extends Job {
     	BaseActivity context = App.getTopActivity();
     	try {
     	    if(isNoSave){
-    	        remainingStockVoList.clear();
+                List<RemainingStockVo> remainingStockVoList=new ArrayList<>();
                 List<OrderDetail> orderDetailList = OrderDetailSQL.getOrderDetails(orderId);
 
                 for(OrderDetail orderDetail: orderDetailList){
                     RemainingStockVo remainingStockVo=new RemainingStockVo();
                     int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
-                    int qty = RemainingStockSQL.getRemainingStockByitemId(itemTempId).getQty();
-                    remainingStockVo.setItemId(itemTempId);
-                    remainingStockVo.setNum(qty);
-                    remainingStockVoList.add(remainingStockVo);
+                    RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                    if(remainingStock != null) {
+                        int qty = remainingStock.getQty();
+                        remainingStockVo.setItemId(itemTempId);
+                        remainingStockVo.setNum(qty);
+                        remainingStockVoList.add(remainingStockVo);
+                    }
 //                    if(!map.containsKey(itemTempId)) {
 //                        int qty = RemainingStockSQL.getRemainingStockByitemId(itemTempId).getQty();
 //                        map.put(itemTempId,qty);
 //                    }
                 }
-                Map<String,Object> reMap=new HashMap<String,Object>();
-                reMap.put("remainingStockVoList",remainingStockVoList);
-               SyncCentre.getInstance().updateReaminingStock(context,reMap,null);
+                if(remainingStockVoList.size() > 0) {
+                    Map<String, Object> reMap = new HashMap<String, Object>();
+                    reMap.put("remainingStockVoList", remainingStockVoList);
+                    SyncCentre.getInstance().updateReaminingStock(context, reMap, null);
+                }
 
             }else {
                 if (this.msgType == HttpAPI.NETWORK_ORDER_STATUS_UPDATE) {

@@ -19,6 +19,7 @@ import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
@@ -142,6 +143,7 @@ public class KotJobManager {
                         if (printed) {
                             List<Integer> orderDetailIds = (List<Integer>) orderMap
                                     .get("orderDetailIds");
+                            boolean refreshStock = false;
                             if (orderDetailIds != null && orderDetailIds.size() != 0) {
                                 ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
                                 synchronized (orderDetails) {
@@ -152,12 +154,17 @@ public class KotJobManager {
                                         orderDetail
                                                 .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
                                         orderDetails.add(orderDetail);
+                                        refreshStock = RemainingStockHelper.updateRemainingStockNumByOrderDetail(orderDetail);
                                     }
                                 }
                                 OrderDetailSQL.addOrderDetailList(orderDetails);
                                 LogUtil.e("成功时间", "时间");
                                 context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED,
                                         orderMap.get("orderId"));
+                                App.instance.getSyncJob().updateRemainingStock((Integer) orderMap.get("orderId"));
+                                if(refreshStock){
+                                    App.getTopActivity().httpRequestAction(MainPage.REFRESH_STOCK_NUM, null);
+                                }
                             }
                         } else {
                             context.kotPrintStatus(MainPage.KOT_PRINT_FAILED,

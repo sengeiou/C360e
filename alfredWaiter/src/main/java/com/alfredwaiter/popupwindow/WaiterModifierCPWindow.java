@@ -13,7 +13,6 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.alfredbase.BaseActivity;
-import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemModifier;
@@ -21,15 +20,9 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
-import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
-import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
-import com.alfredbase.utils.IntegerUtils;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredwaiter.R;
 import com.alfredwaiter.activity.MainPage;
@@ -41,10 +34,8 @@ import com.alfredwaiter.listener.RvItemClickListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Alex on 2017/4/8.
@@ -142,7 +133,7 @@ public class WaiterModifierCPWindow {
 //                map.put("itemDetail", itemDetail);
                 map.put("variances", variances);
                 map.put("description", remark_et.getText().toString());
-                RemainingStockHelper.updateRemainingStockNum(order);
+                RemainingStockHelper.updateRemainingStockNumByOrder(order);
                 handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER, map));
                 popupWindow.dismiss();
 //                } else {
