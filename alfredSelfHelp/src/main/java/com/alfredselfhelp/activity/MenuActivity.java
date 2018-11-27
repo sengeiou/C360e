@@ -234,7 +234,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                     if (remainingStock != null) {
                         OrderDetail orderDetail = getItemOrderDetail(itemDetail);
-                        if (remainingStock.getQty() >= orderDetail.getItemNum()) {
+                        if (remainingStock.getQty() > orderDetail.getItemNum()) {
                             updateitemOrderDetail(itemDetail,
                                     1);
                             refreshTotal();

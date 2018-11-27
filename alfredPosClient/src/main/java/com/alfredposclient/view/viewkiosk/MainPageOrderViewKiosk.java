@@ -626,6 +626,19 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 //									OrderModifierSQL.updateOrderModifierNum(tag, 999);
 									OrderHelper.setOrderModifierPirceAndNum(tag, 999);
 								} else {
+									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									RemainingStock remainingStock = null;
+									if(itemDetail != null) {
+										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+									}
+									if(remainingStock != null){
+										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+										existedOrderDetailNum += num - tag.getItemNum();
+										if(remainingStock.getQty() < existedOrderDetailNum){
+											UIHelp.showShortToast(parent, "Out Of Stock");
+											return;
+										}
+									}
 									tag.setItemNum(num);
 									OrderDetailSQL
 											.updateOrderDetailAndOrder(tag);
@@ -673,7 +686,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 									}
 									if(remainingStock != null){
 										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
-										existedOrderDetailNum += num;
+										existedOrderDetailNum += num - tag.getItemNum();
 										if(remainingStock.getQty() < existedOrderDetailNum){
 											UIHelp.showShortToast(parent, "Out Of Stock");
 											return;

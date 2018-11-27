@@ -632,7 +632,7 @@ public class MainPageOrderView extends LinearLayout {
 									}
 									if(remainingStock != null){
 										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
-										existedOrderDetailNum += num;
+                                        existedOrderDetailNum += num - tag.getItemNum();
 										if(remainingStock.getQty() < existedOrderDetailNum){
 											UIHelp.showShortToast(parent, "Out Of Stock");
 											return;
@@ -678,6 +678,19 @@ public class MainPageOrderView extends LinearLayout {
 									// kotCommitStatus, null);
 
 								} else {
+									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									RemainingStock remainingStock = null;
+									if(itemDetail != null) {
+										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+									}
+									if(remainingStock != null){
+										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+                                        existedOrderDetailNum += num - tag.getItemNum();
+										if(remainingStock.getQty() < existedOrderDetailNum){
+											UIHelp.showShortToast(parent, "Out Of Stock");
+											return;
+										}
+									}
 									tag.setItemNum(num);
 									tag.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
 									OrderDetailSQL
