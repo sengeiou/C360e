@@ -46,7 +46,4 @@ public class RemainingStockHelper {
         }
     }
 
-    private static void sendRemainingToWaiter(){
-
-    }
 }

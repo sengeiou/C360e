@@ -111,7 +111,7 @@ public class KotJobManager {
             KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId().intValue());
         }
 
-
+        List<Integer> doStockMap = new ArrayList<>();
         // add job to send it to KDS
         for (Integer prgid : printerGrougIds) {
             ArrayList<Printer> printers = CoreData.getInstance()
@@ -154,7 +154,14 @@ public class KotJobManager {
                                         orderDetail
                                                 .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
                                         orderDetails.add(orderDetail);
-                                        refreshStock = RemainingStockHelper.updateRemainingStockNumByOrderDetail(orderDetail);
+
+                                        if(!doStockMap.contains(orderDetail.getId())){
+                                            boolean refresh = RemainingStockHelper.updateRemainingStockNumByOrderDetail(orderDetail);
+                                            if(!refreshStock) {
+                                                refreshStock = refresh;
+                                            }
+                                            doStockMap.add(orderDetail.getId());
+                                        }
                                     }
                                 }
                                 OrderDetailSQL.addOrderDetailList(orderDetails);
