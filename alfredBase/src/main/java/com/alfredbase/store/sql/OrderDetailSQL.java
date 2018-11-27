@@ -860,7 +860,7 @@ public class OrderDetailSQL {
 
 
     public static int getOrderDetailCountByOrderIdAndItemDetailId(int orderId, int itemDetailId) {
-        String sql = "select count(*) from " + TableNames.OrderDetail + " where orderId = ? and itemId = ? and orderDetailStatus <="
+        String sql = "select sum(itemNum) from " + TableNames.OrderDetail + " where orderId = ? and itemId = ? and orderDetailStatus <="
                 + ParamConst.ORDERDETAIL_STATUS_ADDED;
         int result = 0;
         Cursor cursor = null;
