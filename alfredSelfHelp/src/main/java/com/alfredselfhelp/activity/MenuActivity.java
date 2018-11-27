@@ -269,7 +269,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId());
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                     if (remainingStock != null) {
-                        if(remainingStock.getQty() < orderDetail.getItemNum() + count){
+                        if(remainingStock.getQty() < count){
                             UIHelp.showSoShortToast(MenuActivity.this, "Out Of Stock");
                             cartAdater.notifyDataSetChanged();
                             return;
