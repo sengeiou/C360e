@@ -98,6 +98,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     public static final int VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED = 1114;
     public static final int VIEW_PAYMENT_STORED_CARDNUM_SUCCEED = 1115;
     public static final int VIEW_PAYMENT_STORED_CARDNUM_FAILED = -1115;
+    public static final int VIEW_CHECK_SOTCK_NUM_SUCCEED = 1116;
+    public static final int VIEW_CHECK_SOTCK_NUM_FAILED = -1116;
     public static final int VIEW_CC_PAYMENT_FAILED = -1113;
     public static final int SETTLEMENT_TYPE_STORED_CARD = 1004;// 储值卡
     private static final String CUSTOM_PAYMENT_VISA = "Visa Kiosk";
@@ -628,8 +630,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 if(TextUtils.isEmpty(ip)){
                     UIHelp.showToast(context, "Please contact Staff for IP Address");
                 }else {
+                    //TODO
                     loadingDialog.setTitle("Checking  stock");
-
                     paymentAction(ip);
                 }
             }
