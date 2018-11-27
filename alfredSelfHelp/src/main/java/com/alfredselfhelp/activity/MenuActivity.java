@@ -539,7 +539,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     }
                     break;
                 case MainActivity.REMAINING_STOCK_FAILURE:
-
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+                    }
                     break;
             }
 
