@@ -107,6 +107,8 @@ public class APIName {
     public static final String KPMG_UPDATE_DATA = "kpmg/updateData";
     public static final String KPMG_COMMIT_ORDER = "kpmg/commitOrder";
     public static final String GET_REMAINING_STOCK_KPMG = "kpmg/getRemainingStock";
+    public static final String KPMG_CHECK_SOTCK_NUM= "kpmg/checkSotckNum";
+
     // CallNum
     public static final String CALLNUM_ASSIGNREVENUE = "desktop/callNumassignRevenue";
 

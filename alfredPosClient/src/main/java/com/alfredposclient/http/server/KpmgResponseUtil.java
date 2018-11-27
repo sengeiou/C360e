@@ -29,6 +29,7 @@ import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.javabean.RemainingStockVo;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -152,6 +153,35 @@ public class KpmgResponseUtil {
             Map<String, Object> map = new HashMap<>();
 
             map.put("remainingStockList", remainingStocks);
+            map.put("resultCode", ResultCode.SUCCESS);
+            resp = mainPosHttpServer.getJsonResponse(gson.toJson(map));
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = mainPosHttpServer.getInternalErrorResponse(App.instance.getResources().getString(R.string.sync_data_failed));
+        }
+        return resp;
+    }
+    public NanoHTTPD.Response kpmgCheckSotckNum(String params) {
+        NanoHTTPD.Response resp = null;
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            List<RemainingStockVo> remainingStockVos = gson.fromJson(jsonObject.getString("remainingStockList"),
+                    new TypeToken<List<RemainingStockVo>>() {
+                    }.getType());
+            List<RemainingStock> remainingStocks = RemainingStockSQL.getAllRemainingStock();
+            List<RemainingStockVo> remainingStockList=new  ArrayList<RemainingStockVo>();
+            for (int i = 0; i <remainingStockVos.size() ; i++) {
+                ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(remainingStockVos.get(i).getItemId());
+                RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+                if(remainingStockVos.get(i).getNum()>remainingStock.getQty()){
+                    RemainingStockVo remainingStockVo=new RemainingStockVo();
+                    remainingStockVo.setItemId(remainingStockVos.get(i).getItemId());
+                    remainingStockVo.setNum(remainingStock.getQty());
+                    remainingStockList.add(remainingStockVo);
+                }
+            }
+            Map<String, Object> map = new HashMap<>();
+            map.put("remainingStockList", remainingStockList);
             map.put("resultCode", ResultCode.SUCCESS);
             resp = mainPosHttpServer.getJsonResponse(gson.toJson(map));
         } catch (Exception e) {

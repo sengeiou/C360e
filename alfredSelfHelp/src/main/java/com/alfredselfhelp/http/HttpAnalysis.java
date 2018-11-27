@@ -23,6 +23,7 @@ import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.javabean.RemainingStockVo;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -78,6 +79,7 @@ import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredselfhelp.activity.EmployeeID;
 import com.alfredselfhelp.activity.MainActivity;
+import com.alfredselfhelp.activity.MenuActivity;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.SyncCentre;
 import com.alfredselfhelp.utils.UIHelp;
@@ -379,6 +381,32 @@ public class HttpAnalysis {
         }
         handler.sendEmptyMessage(MainActivity.REMAINING_STOCK_FAILURE);
     }
+
+
+    public static void getCheckStock(
+            byte[] responseBody, Handler handler) {
+        try {
+            Gson gson = new Gson();
+            JSONObject object = new JSONObject(new String(responseBody));
+            List<RemainingStockVo> remainingStockList = gson.fromJson(object.getString("remainingStockList"),
+                    new TypeToken<ArrayList<RemainingStockVo>>() {
+                    }.getType());
+//            RemainingStockSQL.deleteAllRemainingStock();
+//            RemainingStockSQL.addRemainingStock(remainingStocks);
+            if(remainingStockList!=null&&remainingStockList.size()>0)
+            {
+                handler.sendEmptyMessage(MenuActivity.VIEW_CHECK_SOTCK_NUM_FAILED);
+            }else {
+                handler.sendEmptyMessage(MenuActivity.VIEW_CHECK_SOTCK_NUM_SUCCEED);
+            }
+
+            return;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        handler.sendEmptyMessage(MenuActivity.VIEW_CHECK_SOTCK_NUM_FAILED);
+    }
+
 
     public static String login(int statusCode, Header[] headers,
                                byte[] responseBody) {

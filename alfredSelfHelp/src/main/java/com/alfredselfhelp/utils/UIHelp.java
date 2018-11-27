@@ -116,7 +116,7 @@ public class UIHelp {
         }
     }
 
-    public static void showToastTransparent(BaseApplication context, String text) {
+    public static void showToastTransparentForKPMG(BaseApplication context, String text) {
         Toast toast = new Toast(context);
         LayoutInflater inflater = context.getTopActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.toast_view_kpm, null);

@@ -37,6 +37,7 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.ItemCategorySQL;
+import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.BH;
@@ -145,7 +146,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private KpmTextTypeFace textTypeFace;
     private VideoView mVideoView;
     Dialog yesDialog;
-    private Dialog paymentDialog;
+    private Dialog paymentDialog,stockDialog;
     private int CCPaymentType = CC_TYPE_CC;
     private OrderSelfDialog dialog;
 
@@ -234,7 +235,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                     if (remainingStock != null) {
                         OrderDetail orderDetail = getItemOrderDetail(itemDetail);
-                        if (remainingStock.getQty() >= orderDetail.getItemNum()) {
+                        if (remainingStock.getQty() > orderDetail.getItemNum()) {
                             updateitemOrderDetail(itemDetail,
                                     1);
                             refreshTotal();
@@ -269,8 +270,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId());
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                     if (remainingStock != null) {
-                        if(remainingStock.getQty() < count){
-                            UIHelp.showSoShortToast(MenuActivity.this, "Out Of Stock");
+                        if(remainingStock.getQty() < orderDetail.getItemNum() + count){
+                            UIHelp.showToastTransparentForKPMG(App.instance, "Item has run out of stock");
                             cartAdater.notifyDataSetChanged();
                             return;
                         }
@@ -294,9 +295,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     }
                     rl_cart_num.setVisibility(View.GONE);
                     if(paymentSettlement != null) {
-                        UIHelp.showToast(App.instance, "Success");
+                        UIHelp.showToastTransparentForKPMG(App.instance, "Success");
                     }else{
-                        UIHelp.showToast(App.instance, "Please go to counter");
+                        UIHelp.showToastTransparentForKPMG(App.instance, "Please go to counter");
                     }
                     MenuActivity.this.finish();
                 }
@@ -489,6 +490,57 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 case VIEW_PAYMENT_STORED_CARDNUM_FAILED:
 
                     break;
+                case VIEW_CHECK_SOTCK_NUM_SUCCEED:
+
+                        if (loadingDialog != null && loadingDialog.isShowing()) {
+                            loadingDialog.dismiss();
+                        }
+//                    String ip = Store.getString(App.instance, Store.KPM_CC_IP);
+//                    paymentAction(ip);
+
+                    break;
+                case VIEW_CHECK_SOTCK_NUM_FAILED:
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+                    }
+
+
+                    break;
+
+                case MainActivity.REMAINING_STOCK_SUCCESS:
+                    boolean isStock = false;
+                    for (int i = 0; i < orderDetails.size(); i++) {
+                        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetails.get(i).getItemId());
+                        RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+                        int num = orderDetails.get(i).getItemNum();
+                        if (num > remainingStock.getQty()) {
+                            isStock=true;
+                            updateCartOrderDetail(orderDetails.get(i),
+                                    remainingStock.getQty());
+                        }
+                    }
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+                    }
+                    if (isStock) {
+                        stockDialog = KpmDialogFactory.kpmOutStockDialog(context, "Out of stock",
+                                "Sorry the item you have selected is no longer available. Please re-confirm your order.", R.drawable.credit_card,
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        //       updateCartOrderDetail()
+                                    }
+                                }, false);
+
+                    }else {
+                        String ip = Store.getString(App.instance, Store.KPM_CC_IP);
+                        paymentAction(ip);
+                    }
+                    break;
+                case MainActivity.REMAINING_STOCK_FAILURE:
+
+                    break;
             }
 
         }
@@ -572,7 +624,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 videoPause();
                 getItemCategory(itemMainCategory.getId());
 
-                //     UIHelp.showToastTransparent(App.instance, "Item(s) have been added!");
+                //     UIHelp.showToastTransparentForKPMG(App.instance, "Item(s) have been added!");
                 //   getItemDetail(itemMainCategory.getMainCategoryName(), itemMainCategory.getId().intValue());
 
 
@@ -628,11 +680,22 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
                 String ip = Store.getString(App.instance, Store.KPM_CC_IP);
                 if(TextUtils.isEmpty(ip)){
-                    UIHelp.showToast(context, "Please contact Staff for IP Address");
+                    UIHelp.showToastTransparentForKPMG(App.instance, "Please contact Staff for IP Address");
                 }else {
                     //TODO
                     loadingDialog.setTitle("Checking  stock");
-                    paymentAction(ip);
+//                  List<RemainingStockVo> remainingStockList=new  ArrayList<RemainingStockVo>();
+//                  Map<String,Object>  numMap=new HashMap<>();
+//                    for (int i = 0; i <orderDetails.size() ; i++) {
+//                        OrderDetail orderDetail= orderDetails.get(i);
+//                        RemainingStockVo remainingStock=new RemainingStockVo();
+//                     remainingStock.setItemId(orderDetail.getItemId());
+//                     remainingStock.setNum(orderDetail.getItemNum());
+//                     remainingStockList.add(remainingStock);
+//                    }
+//                    numMap.put("remainingStockList",remainingStockList);
+                    SyncCentre.getInstance().getRemainingStock(MenuActivity.this,handler);
+//                    paymentAction(ip);
                 }
             }
         });
@@ -714,7 +777,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
 
                 if (showToast && mVideoView.getVisibility() == View.VISIBLE && ll_view_cart.getVisibility() == View.VISIBLE) {
-                    UIHelp.showToastTransparent(App.instance, "Item(s) have been added!");
+                    UIHelp.showToastTransparentForKPMG(App.instance, "Item(s) have been added!");
                 }
 
                 if (showToast && ll_view_cart_list.getVisibility() == View.VISIBLE
@@ -1103,7 +1166,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     ll_order_dialog.setVisibility(View.GONE);
                     cartView();
                 } else {
-                    UIHelp.showToast(App.instance, "Please Choose Menu First !");
+                    UIHelp.showToastTransparentForKPMG(App.instance, "Please Choose Menu First !");
                 }
 
                 break;
@@ -1142,7 +1205,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     private void paymentCheck(){
         if (orderDetails == null || orderDetails.size() == 0) {
-            UIHelp.showToast(App.instance, "Please Choose Menu First !");
+            UIHelp.showToastTransparentForKPMG(App.instance, "Please Choose Menu First !");
             return;
         }
         dialog.setTotal(nurOrder.getTotal());
@@ -1172,7 +1235,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         if(CCCentre.getInstance().canCancel()){
 //                                CCCentre.getInstance().
                         }else{
-                            UIHelp.showToast(context, "Can not back !");
+                            UIHelp.showToastTransparentForKPMG(App.instance, "Can not back !");
                         }
                     }
                 },false);

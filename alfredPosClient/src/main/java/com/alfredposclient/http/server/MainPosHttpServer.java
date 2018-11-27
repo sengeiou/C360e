@@ -745,6 +745,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             return KpmgResponseUtil.getInstance().updateAllData();
         }else if(apiName.equals(APIName.GET_REMAINING_STOCK_KPMG)){
             return KpmgResponseUtil.getInstance().kpmgReaminingStock();
+        }else if(apiName.equals(APIName.KPMG_CHECK_SOTCK_NUM)){
+            return KpmgResponseUtil.getInstance().kpmgCheckSotckNum(body);
         }
         int userId = jsonObject.optInt("userId");
         User user = CoreData.getInstance().getUserById(userId);

@@ -588,7 +588,7 @@ public class KpmDialogFactory {
         return dialog;
     }
 
-//错误提示消息弹框（back按钮）
+       //错误提示消息弹框（back按钮）
     public static Dialog kpmTipsDialog(final BaseActivity activity,
                                        final String title, String content, int drawableId,
 
@@ -633,6 +633,52 @@ public class KpmDialogFactory {
         dialog.setContentView(view);
         return dialog;
     }
+    //out of stock弹框（back按钮）
+    public static Dialog kpmOutStockDialog(final BaseActivity activity,
+                                       final String title, String content, int drawableId,
+
+                                       final OnClickListener backListener, final boolean canBack) {
+        final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
+        Window window =  dialog.getWindow();
+        if (dialog != null && window != null) {
+            WindowManager.LayoutParams attr = window.getAttributes();
+            if (attr != null) {
+                attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+            }
+        }
+        View view = LayoutInflater.from(activity).inflate(
+                R.layout.dialog_item_kpm_tip_btns, null);
+        ((TextView) view.findViewById(R.id.tv_title)).setText(title);
+        ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+        ImageView img = (ImageView) view.findViewById(R.id.img_center);
+        TextView tv_qc_de = (TextView) view.findViewById(R.id.tv_qc_de);
+        img.setImageResource(drawableId);
+
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_title));
+        textTypeFace.setUbuntuRegular((TextView) view.findViewById(R.id.tv_content));
+
+        textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_backs));
+        view.findViewById(R.id.tv_backs).setOnClickListener(
+                new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        App.instance.startADKpm();
+                        if (backListener != null) {
+                            backListener.onClick(v);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+        dialog.show();
+        dialog.setCancelable(canBack);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(view);
+        return dialog;
+    }
+
     //支付完成弹框(不带按钮的)
     public static Dialog kpmCompleteDialog(final BaseActivity activity,
                                            final String title, final String content, int drawableId,

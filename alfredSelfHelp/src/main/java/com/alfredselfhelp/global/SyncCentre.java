@@ -59,9 +59,14 @@ public class SyncCentre {
         HttpAPI.login(context, parameters, getAbsoluteUrl(APIName.KPMG_LOGIN), httpClient, handler);
     }
 
-    public void getRemainingStock(Context context, final Handler handler) {
+    public void getRemainingStock(Context context, Handler handler) {
         HttpAPI.getRemainingStock(context, getAbsoluteUrl(APIName.GET_REMAINING_STOCK_KPMG), httpClient, handler);
     }
+
+    public void getCheckSotckNum(Context context,Map<String, Object> parameters , final Handler handler) {
+        HttpAPI.getCheckSotckNum(context,parameters, getAbsoluteUrl(APIName.KPMG_CHECK_SOTCK_NUM), httpClient, handler);
+    }
+
 
     public void updateAllData(Context context, final Handler handler) {
         HttpAPI.updateAllData(context, getAbsoluteUrl(APIName.KPMG_UPDATE_DATA), httpClient, handler);
