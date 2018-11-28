@@ -191,7 +191,7 @@ public class CallNumUtil {
                 if (mbHasCustWave) {
                     load_custom();
                 } else {
-                    load_default();
+                   // load_default();
                 }
 
             }
@@ -373,150 +373,150 @@ public class CallNumUtil {
 //		}
 //		return data;
 //	}
-    static void load_default() {
-        for (int resid : chars_resid) {
-
-//			for (byte c = 'A'; c <= 'I'; c++) {
-//				try {
+//    static void load_default() {
+//        for (int resid : chars_resid) {
 //
-//					Uri uri=Uri.parse("android.resource://" + mCxt.getPackageName() + "/" +R.raw.a);
+////			for (byte c = 'A'; c <= 'I'; c++) {
+////				try {
+////
+////					Uri uri=Uri.parse("android.resource://" + mCxt.getPackageName() + "/" +R.raw.a);
+////
+////					String	filepath ="a.wav";
+////
+//////					Uri filepath = "android.resource://" + mCxt.getPackageName() + "/" +resid;
+//////				      String	  filepath =getFilePath(mCxt,uri);
+////					//String filepath = String.format("%c.wav", c);
+////						// 得到wav数据流
+////					//chars_list.add(readPCMString(filepath));
+////
+////					InputStream in = mCxt.getResources().openRawResource(resid);
+////    				chars_list.add(input2byte(in));
+////
+////				} catch (Exception e) {
+////				}
+////			}
+//            try {
+//                // 得到资源中的Raw数据流
+//                InputStream in = mCxt.getResources().openRawResource(resid);
+//                chars_list.add(readPCM(in));
+//            } catch (Exception e) {
+//                chars_list.add(null);
+//            }
+//        }
+//        try {
+//            // 得到资源中的Raw数据流
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.v);
+//            vipdata = readPCM(in);
+//        } catch (Exception e) {
+//        }
 //
-//					String	filepath ="a.wav";
+//        try {
+//            // 得到资源中的Raw数据流
+//            //InputStream in = mCxt.getResources().openRawResource(R.raw.hao_end1);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.hao_end);
+//            enddata = readPCM(in);
+////			enddata = inputStream2byte(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "hao_end读取异常");
+//            e.printStackTrace();
+//        }
 //
-////					Uri filepath = "android.resource://" + mCxt.getPackageName() + "/" +resid;
-////				      String	  filepath =getFilePath(mCxt,uri);
-//					//String filepath = String.format("%c.wav", c);
-//						// 得到wav数据流
-//					//chars_list.add(readPCMString(filepath));
-//
-//					InputStream in = mCxt.getResources().openRawResource(resid);
-//    				chars_list.add(input2byte(in));
-//
-//				} catch (Exception e) {
-//				}
-//			}
-            try {
-                // 得到资源中的Raw数据流
-                InputStream in = mCxt.getResources().openRawResource(resid);
-                chars_list.add(readPCM(in));
-            } catch (Exception e) {
-                chars_list.add(null);
-            }
-        }
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.v);
-            vipdata = readPCM(in);
-        } catch (Exception e) {
-        }
-
-        try {
-            // 得到资源中的Raw数据流
-            //InputStream in = mCxt.getResources().openRawResource(R.raw.hao_end1);
-            InputStream in = mCxt.getResources().openRawResource(R.raw.hao_end);
-            enddata = readPCM(in);
-//			enddata = inputStream2byte(in);
-        } catch (Exception e) {
-            Log.d("LXX", "hao_end读取异常");
-            e.printStackTrace();
-        }
-
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.can);
-            can = readPCM(in);
-        } catch (Exception e) {
-            Log.d("LXX", "can读取异常");
-            e.printStackTrace();
-        }
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.chu);
-            chu = readPCM(in);
-        } catch (Exception e) {
-            Log.d("LXX", "chu读取异常");
-            e.printStackTrace();
-        }
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.kou);
-            kou = readPCM(in);
-        } catch (Exception e) {
-            Log.d("LXX", "chu读取异常");
-            e.printStackTrace();
-        }
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.please);
-            please = readPCM(in);
-        } catch (Exception e) {
-            Log.d("LXX", "chu读取异常");
-            e.printStackTrace();
-        }
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.dao);
-            dao = readPCM(in);
-        } catch (Exception e) {
-            Log.d("LXX", "chu读取异常");
-            e.printStackTrace();
-        }
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.qu);
-            qu = readPCM(in);
-        } catch (Exception e) {
-            Log.d("LXX", "chu读取异常");
-            e.printStackTrace();
-        }
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.ba);
-            ba = readPCM(in);
-        } catch (Exception e) {
-            Log.d("LXX", "chu读取异常");
-            e.printStackTrace();
-        }
-        try {
-            // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.tai);
-            tai = readPCM(in);
-        } catch (Exception e) {
-            Log.d("LXX", "chu读取异常");
-            e.printStackTrace();
-        }
-
-
-        for (int resid : nums_resid) {
-
-
-            try {
-//					Uri uri=Uri.parse("android.resource://" + mCxt.getPackageName() + "/" +resid);
-//
-//					String	filepath =getFilePath(mCxt,uri);
-//					InputStream in = mCxt.getResources().openRawResource(resid);
-//					chars_list.add(input2byte(in));
-//					String filepath = String.format("n%c.wav", c);
-                InputStream in = mCxt.getResources().openRawResource(resid);
-                nums_list.add(input2byte(in));
-            } catch (Exception e) {
-//				LogFile.e("load wav", e);
-            }
-        }
-
-
-//			try {
-//				// 得到资源中的Raw数据流
-//				InputStream in = mCxt.getResources().openRawResource(resid);
-//				nums_list.add(input2byte(in));
+//        try {
+//            // 得到资源中的Raw数据流
+////            InputStream in = mCxt.getResources().openRawResource(R.raw.can);
+////            can = readPCM(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "can读取异常");
+//            e.printStackTrace();
+//        }
+//        try {
+//            // 得到资源中的Raw数据流
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.chu);
+//            chu = readPCM(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "chu读取异常");
+//            e.printStackTrace();
+//        }
+//        try {
+//            // 得到资源中的Raw数据流
+////            InputStream in = mCxt.getResources().openRawResource(R.raw.kou);
+////            kou = readPCM(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "chu读取异常");
+//            e.printStackTrace();
+//        }
+//        try {
+//            // 得到资源中的Raw数据流
+////            InputStream in = mCxt.getResources().openRawResource(R.raw.please);
+////            please = readPCM(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "chu读取异常");
+//            e.printStackTrace();
+//        }
+//        try {
+//            // 得到资源中的Raw数据流
+////            InputStream in = mCxt.getResources().openRawResource(R.raw.dao);
+////            dao = readPCM(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "chu读取异常");
+//            e.printStackTrace();
+//        }
+//        try {
+//            // 得到资源中的Raw数据流
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.qu);
+//            qu = readPCM(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "chu读取异常");
+//            e.printStackTrace();
+//        }
+//        try {
+//            // 得到资源中的Raw数据流
+////            InputStream in = mCxt.getResources().openRawResource(R.raw.ba);
+////            ba = readPCM(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "chu读取异常");
+//            e.printStackTrace();
+//        }
+//        try {
+//            // 得到资源中的Raw数据流
+////            InputStream in = mCxt.getResources().openRawResource(R.raw.tai);
+////            tai = readPCM(in);
+//        } catch (Exception e) {
+//            Log.d("LXX", "chu读取异常");
+//            e.printStackTrace();
+//        }
 //
 //
-//			} catch (Exception e) {
-//				nums_list.add(null);
-//			}
-//		}
-
-    }
+//        for (int resid : nums_resid) {
+//
+//
+//            try {
+////					Uri uri=Uri.parse("android.resource://" + mCxt.getPackageName() + "/" +resid);
+////
+////					String	filepath =getFilePath(mCxt,uri);
+////					InputStream in = mCxt.getResources().openRawResource(resid);
+////					chars_list.add(input2byte(in));
+////					String filepath = String.format("n%c.wav", c);
+//                InputStream in = mCxt.getResources().openRawResource(resid);
+//                nums_list.add(input2byte(in));
+//            } catch (Exception e) {
+////				LogFile.e("load wav", e);
+//            }
+//        }
+//
+//
+////			try {
+////				// 得到资源中的Raw数据流
+////				InputStream in = mCxt.getResources().openRawResource(resid);
+////				nums_list.add(input2byte(in));
+////
+////
+////			} catch (Exception e) {
+////				nums_list.add(null);
+////			}
+////		}
+//
+//    }
 
     private static void initWAV(byte[] result, int res) {
         try {
@@ -750,11 +750,6 @@ public class CallNumUtil {
     final static int[] nums_resid = {R.raw.n0, R.raw.n1, R.raw.n2, R.raw.n3,
             R.raw.n4, R.raw.n5, R.raw.n6, R.raw.n7, R.raw.n8, R.raw.n9,R.raw.a, R.raw.b, R.raw.c, R.raw.d};
 
-//		final static int[] chars_resid = { R.raw.ma, R.raw.mb, R.raw.mc,R.raw.md
-//			};
-//	final static int[] nums_resid = { R.raw.m0, R.raw.m1, R.raw.m2, R.raw.m3,
-//			R.raw.m4, R.raw.m5, R.raw.m6, R.raw.m7, R.raw.m8, R.raw.m9 };
-
     final static int SILENCE_LEN = 20;// n*10ms
     final static byte[] silence = new byte[882 * SILENCE_LEN];// 静音，数据为0
     final static int TYPE_PREF = 0;
@@ -886,7 +881,7 @@ public class CallNumUtil {
                 }
                 // 个性化配置 中可以没有
             } else {
-                endf = new WavRes(R.raw.hao_end, TYPE_END); // 默认
+              //  endf = new WavRes(R.raw.hao_end, TYPE_END); // 默认
             }
         }
 		/*if (endf != null && !g_bStoping) {
@@ -1001,7 +996,7 @@ public class CallNumUtil {
     }
 
 
-
+// 播放MP3文件
     private static void playNumMp3() {
 
 //        if (mbHasBluetoothAudio) {// 蓝牙音箱
@@ -1395,7 +1390,7 @@ public class CallNumUtil {
          //   bFirst = false;
         }
     }
-
+    //播放单个字母或数字
     static void playMp3() {
         isPlay = true;
         AssetFileDescriptor file = mCxt.getResources().openRawResourceFd(mchars.get(mindex));
