@@ -233,10 +233,16 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
                     ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
-                    OrderDetail orderDetail = getItemOrderDetail(itemDetail);
-                        if(remainingStock == null
-                                || (orderDetail != null && remainingStock.getQty() > orderDetail.getItemNum())
-                                || (orderDetail == null && remainingStock.getQty() > 0)) {
+
+                        if(remainingStock != null) {
+                            int qty = remainingStock.getQty() - remainingStock.getMinQty();
+                            OrderDetail orderDetail = getItemOrderDetail(itemDetail);
+                            if ((orderDetail != null && qty > orderDetail.getItemNum())
+                                    || (orderDetail == null && qty > 0)) {
+                                updateitemOrderDetail(itemDetail,
+                                        1);
+                            }
+                        }else{
                             updateitemOrderDetail(itemDetail,
                                     1);
                         }
@@ -264,8 +270,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                    } else {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId());
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+
                     if (remainingStock != null) {
-                        if(remainingStock.getQty() < count){
+                        int qty=remainingStock.getQty()-remainingStock.getMinQty();
+                        if(qty < count){
                             UIHelp.showToastTransparentForKPMG(App.instance, "Item has run out of stock");
                             cartAdater.notifyDataSetChanged();
                             return;
@@ -503,20 +511,24 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     break;
 
                 case MainActivity.REMAINING_STOCK_SUCCESS:
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+                    }
                     boolean isStock = false;
                     for (int i = 0; i < orderDetails.size(); i++) {
                         ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetails.get(i).getItemId());
                         RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
-                        int num = orderDetails.get(i).getItemNum();
-                        if (num > remainingStock.getQty()) {
-                            isStock=true;
-                            updateCartOrderDetail(orderDetails.get(i),
-                                    remainingStock.getQty());
+                        if(remainingStock!=null) {
+                            int qty = remainingStock.getQty() - remainingStock.getMinQty();
+                            int num = orderDetails.get(i).getItemNum();
+                            if (num > qty) {
+                                isStock = true;
+                                updateCartOrderDetail(orderDetails.get(i),
+                                        qty);
+                            }
                         }
                     }
-                    if (loadingDialog != null && loadingDialog.isShowing()) {
-                        loadingDialog.dismiss();
-                    }
+
                     if (isStock) {
                         stockDialog = KpmDialogFactory.kpmOutStockDialog(context, "Out of stock",
                                 "Sorry the item you have selected is no longer available. Please re-confirm your order.", R.drawable.credit_card,

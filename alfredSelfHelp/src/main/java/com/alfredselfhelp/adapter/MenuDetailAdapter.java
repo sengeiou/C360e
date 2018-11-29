@@ -123,7 +123,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
             if(remainingStock!=null){
                 rl_remain_num.setVisibility(View.GONE);
                 re_out_of.setVisibility(View.GONE);
-                int reNum=remainingStock.getQty()-getItemNum(itemDetail);
+                int reNum=remainingStock.getQty()-remainingStock.getMinQty()-getItemNum(itemDetail);
                 if(reNum>0){
                     tv_remin_num.setText(reNum+"");
                     tvPrice.setBackgroundResource(R.drawable.style_price_btn);
