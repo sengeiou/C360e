@@ -851,7 +851,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private void updateCartOrderDetail(OrderDetail orderDetail, int count) {
 
 
-        if (count == 0) {// 删除
+        if (count <= 0) {// 删除
             orderDetails.remove(orderDetail);
             SelfOrderHelper.getInstance().calculate(nurOrder, orderDetails);
 
