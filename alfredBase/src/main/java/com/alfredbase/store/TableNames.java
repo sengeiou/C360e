@@ -93,4 +93,5 @@ public class TableNames {
 
 
 	public static final String StoreValue = "StoreValue_";
+	public static final String RemainingStock = "RemainingStock_";
 }

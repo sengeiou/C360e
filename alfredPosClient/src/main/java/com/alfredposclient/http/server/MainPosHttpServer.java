@@ -481,7 +481,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         result.put("resultCode", ResultCode.SUCCESS);
                         result.put("orderNo", order.getOrderNo());
                         resp = this.getJsonResponse(new Gson().toJson(result));
-                        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus());
+                        long nowTime = System.currentTimeMillis();
+                        int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
                         App.instance.setKioskHoldNum(count);
                         if (App.getTopActivity() != null) {
                             App.getTopActivity().runOnUiThread(new Runnable() {

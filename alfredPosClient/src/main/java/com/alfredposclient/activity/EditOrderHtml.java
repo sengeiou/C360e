@@ -141,8 +141,9 @@ public class EditOrderHtml extends BaseActivity {
 
 	private String getOrdersJsonStr() {
 		Map<String, Object> map = new HashMap<String, Object>();
+		long nowTime = System.currentTimeMillis();
 		List<Order> orders = OrderSQL.getUnpaidOrdersBySession(App.instance.getSessionStatus(),
-				App.instance.getLastBusinessDate());
+				App.instance.getLastBusinessDate(), nowTime);
 		List<EditOrderInfo> editOrders = new ArrayList<EditOrderInfo>();
 		for (Order orderitem : orders) {
 			PlaceInfo place = PlaceInfoSQL.getPlaceInfoById(orderitem.getPlaceId());

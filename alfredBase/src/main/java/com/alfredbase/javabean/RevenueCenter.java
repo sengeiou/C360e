@@ -48,7 +48,7 @@ public class RevenueCenter implements Serializable {
 	/*
 	 *	currentReportValue  销售报表的记录下标
 	 */
-	private int currentReportNo;
+	private int currentReportNo = 0;
 
 	public RevenueCenter() {
 	}

@@ -252,6 +252,22 @@ public class ObjectFactory {
                 orderSplitMap.put(oldId, orderSplit.getId());
             }
 
+            Map<Integer, Integer> orderBillMap = new HashMap<>();
+            for (OrderBill orderBill : orderBills) {
+                int oldBilNo = orderBill.getBillNo();
+                orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
+                orderBill.setOrderId(subOrder.getId());
+                orderBill.setCreateTime(System.currentTimeMillis());
+                orderBill.setUpdateTime(System.currentTimeMillis());
+                orderBill.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(subOrder.getRevenueId()));
+                Integer orderSplitId = orderBill.getOrderSplitId();
+                if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
+                    orderBill.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
+                }
+                OrderBillSQL.add(orderBill);
+                orderBillMap.put(oldBilNo, orderBill.getBillNo());
+            }
+
             Map<Integer, Integer> paymentMap = new HashMap<>();
             for (Payment payment : payments) {
                 int oldId = payment.getId();
@@ -259,6 +275,9 @@ public class ObjectFactory {
                 payment.setOrderId(subOrder.getId());
                 payment.setCreateTime(System.currentTimeMillis());
                 payment.setUpdateTime(System.currentTimeMillis());
+                if(orderBillMap.containsKey(payment.getBillNo())){
+                    payment.setBillNo(orderBillMap.get(payment.getBillNo()));
+                }
                 Integer orderSplitId = payment.getOrderSplitId();
                 if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
                     payment.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
@@ -277,19 +296,6 @@ public class ObjectFactory {
                     roundAmount.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
                 }
                 RoundAmountSQL.update(roundAmount);
-            }
-
-            for (OrderBill orderBill : orderBills) {
-                orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
-                orderBill.setOrderId(subOrder.getId());
-                orderBill.setCreateTime(System.currentTimeMillis());
-                orderBill.setUpdateTime(System.currentTimeMillis());
-                orderBill.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(subOrder.getRevenueId()));
-                Integer orderSplitId = orderBill.getOrderSplitId();
-                if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
-                    orderBill.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));
-                }
-                OrderBillSQL.add(orderBill);
             }
 
             Map<Integer, Integer> orderDetailMap = new HashMap<>();
@@ -334,6 +340,9 @@ public class ObjectFactory {
                 paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.PaymentSettlement));
                 paymentSettlement.setCreateTime(System.currentTimeMillis());
                 paymentSettlement.setUpdateTime(System.currentTimeMillis());
+                if(orderBillMap.containsKey(paymentSettlement.getBillNo())){
+                    paymentSettlement.setBillNo(orderBillMap.get(paymentSettlement.getBillNo()));
+                }
                 Integer paymentId = paymentSettlement.getPaymentId();
                 if (paymentId != null && paymentMap.containsKey(paymentId.intValue())) {
                     paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));
