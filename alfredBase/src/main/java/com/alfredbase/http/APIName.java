@@ -40,6 +40,7 @@ public class APIName {
     public static final String SOFTWARE_GETVERSION = "software/getVersion";
     public static final String CLOCK_CLOCKINOUT = "clock/clockInOut";
     public static final String CLOCK_GETUSERTIMESHEET = "clock/getUserTimeSheet";
+    public static final String QC_DOWNLOAD = "download/apk/alfred";
 
     //3rd-party Serivce
     public static final String REQUEST_ALIPAY = "alipay/getAlipayUrl";

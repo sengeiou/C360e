@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -34,7 +35,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 
 	private BaseActivity context;
 	private DrawerLayout mDrawerLayout;
-
+	final static String[] letters= {"a","b", "c","d","e","f","g","h","i","j"};
 	public SettingView(Context context) {
 		super(context);
 		init(context);
@@ -221,14 +222,20 @@ public class SettingView extends LinearLayout implements OnClickListener {
 				UIHelp.startMonthlyPLUReport(context);
 				break;
 			case R.id.ll_printer_qr_code: {
-				Map<String, String> map = new HashMap<String, String>();
-				map.put("companyId", CoreData.getInstance().getRestaurant().getCompanyId().intValue() + "");
-				map.put("restaurantId", CoreData.getInstance().getRestaurant().getId().intValue() + "");
-				map.put("tableId", "0");
-				map.put("tableName", "");
-				map.put("type", "2");
-				mDrawerLayout.closeDrawer(Gravity.END);
-				final String content = new Gson().toJson(map);
+//				Map<String, String> map = new HashMap<String, String>();
+//				map.put("companyId", CoreData.getInstance().getRestaurant().getCompanyId().intValue() + "");
+//				map.put("restaurantId", CoreData.getInstance().getRestaurant().getId().intValue() + "");
+//				map.put("tableId", "0");
+//				map.put("tableName", "");
+//				map.put("type", "2");
+		        String restaurantId=getStringByInt( CoreData.getInstance().getRestaurant().getId().intValue()+"");
+		        String tableId="a";
+		        StringBuffer sb=new StringBuffer();
+		        sb.append(getAbsoluteUrl(APIName.QC_DOWNLOAD)+"&"+restaurantId+"&"+tableId);
+
+//				mDrawerLayout.closeDrawer(Gravity.END);
+//				final String content = new Gson().toJson(map);
+				final String content = sb.toString();
 				DialogFactory.showQrCodeDialog(context, content, "",
 						new View.OnClickListener() {
 							@Override
@@ -261,6 +268,32 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		}
 	}
 
+	private String getStringByInt(String id) {
+		final String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
+		StringBuffer sbf = new StringBuffer();
+		char[] c = id.toCharArray();
+		for (char ch : c) {
+			int intNum = ch - '0';
+			sbf.append(letters[intNum]);
+		}
+		return sbf.toString();
+	}
+
+
+	private String getAbsoluteUrl(String relativeUrl) {
+		if (App.instance.isDebug) {
+//			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
+			//  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
+			return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
+		} else if (App.instance.isOpenLog) {
+
+			return "http://139.224.17.126/alfred-api/" + relativeUrl;
+		} else {
+
+//			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
+			return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+		}
+	}
 	public void openDrawer(){
 		App.instance.kickOutCashDrawer(App.instance.getCahierPrinter());
 	}

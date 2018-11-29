@@ -405,16 +405,16 @@ public class CallNumUtil {
         }
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.v);
-            vipdata = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.v);
+//            vipdata = readPCM(in);
         } catch (Exception e) {
         }
 
         try {
             // 得到资源中的Raw数据流
             //InputStream in = mCxt.getResources().openRawResource(R.raw.hao_end1);
-            InputStream in = mCxt.getResources().openRawResource(R.raw.hao_end);
-            enddata = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.hao_end);
+//            enddata = readPCM(in);
 //			enddata = inputStream2byte(in);
         } catch (Exception e) {
             Log.d("LXX", "hao_end读取异常");
@@ -423,64 +423,64 @@ public class CallNumUtil {
 
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.can);
-            can = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.can);
+//            can = readPCM(in);
         } catch (Exception e) {
             Log.d("LXX", "can读取异常");
             e.printStackTrace();
         }
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.chu);
-            chu = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.chu);
+//            chu = readPCM(in);
         } catch (Exception e) {
             Log.d("LXX", "chu读取异常");
             e.printStackTrace();
         }
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.kou);
-            kou = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.kou);
+//            kou = readPCM(in);
         } catch (Exception e) {
             Log.d("LXX", "chu读取异常");
             e.printStackTrace();
         }
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.please);
-            please = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.please);
+//            please = readPCM(in);
         } catch (Exception e) {
             Log.d("LXX", "chu读取异常");
             e.printStackTrace();
         }
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.dao);
-            dao = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.dao);
+//            dao = readPCM(in);
         } catch (Exception e) {
             Log.d("LXX", "chu读取异常");
             e.printStackTrace();
         }
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.qu);
-            qu = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.qu);
+//            qu = readPCM(in);
         } catch (Exception e) {
             Log.d("LXX", "chu读取异常");
             e.printStackTrace();
         }
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.ba);
-            ba = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.ba);
+//            ba = readPCM(in);
         } catch (Exception e) {
             Log.d("LXX", "chu读取异常");
             e.printStackTrace();
         }
         try {
             // 得到资源中的Raw数据流
-            InputStream in = mCxt.getResources().openRawResource(R.raw.tai);
-            tai = readPCM(in);
+//            InputStream in = mCxt.getResources().openRawResource(R.raw.tai);
+//            tai = readPCM(in);
         } catch (Exception e) {
             Log.d("LXX", "chu读取异常");
             e.printStackTrace();
@@ -886,7 +886,7 @@ public class CallNumUtil {
                 }
                 // 个性化配置 中可以没有
             } else {
-                endf = new WavRes(R.raw.hao_end, TYPE_END); // 默认
+               // endf = new WavRes(R.raw.hao_end, TYPE_END); // 默认
             }
         }
 		/*if (endf != null && !g_bStoping) {
