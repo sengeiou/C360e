@@ -229,7 +229,7 @@ public class ObjectFactory {
     public Order cpOrderInfoForKPMG(Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
                                     List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
                                     List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements,
-                                    List<RoundAmount> roundAmounts, String cardNum) throws Exception {
+                                    List<RoundAmount> roundAmounts, String cardNum, long business, int sessionStatus) throws Exception {
 
         synchronized (lock_order) {
             if (subOrder != null) {
@@ -238,6 +238,8 @@ public class ObjectFactory {
                 subOrder.setOrderNo(OrderHelper.calculateOrderNo(subOrder.getBusinessDate()));
                 subOrder.setCreateTime(System.currentTimeMillis());
                 subOrder.setUpdateTime(System.currentTimeMillis());
+                subOrder.setSessionStatus(sessionStatus);
+                subOrder.setBusinessDate(business);
                 OrderSQL.update(subOrder);
             }
 
@@ -275,6 +277,7 @@ public class ObjectFactory {
                 payment.setOrderId(subOrder.getId());
                 payment.setCreateTime(System.currentTimeMillis());
                 payment.setUpdateTime(System.currentTimeMillis());
+                payment.setBusinessDate(business);
                 if(orderBillMap.containsKey(payment.getBillNo())){
                     payment.setBillNo(orderBillMap.get(payment.getBillNo()));
                 }
@@ -291,6 +294,7 @@ public class ObjectFactory {
                 roundAmount.setOrderId(subOrder.getId());
                 roundAmount.setCreateTime(System.currentTimeMillis());
                 roundAmount.setUpdateTime(System.currentTimeMillis());
+                roundAmount.setBusinessDate(business);
                 Integer orderSplitId = roundAmount.getOrderSplitId();
                 if (orderSplitId != null && orderSplitMap.containsKey(orderSplitId.intValue())) {
                     roundAmount.setOrderSplitId(orderSplitMap.get(orderSplitId.intValue()));

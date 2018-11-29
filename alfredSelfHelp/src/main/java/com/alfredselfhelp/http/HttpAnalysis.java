@@ -374,6 +374,13 @@ public class HttpAnalysis {
                     }.getType());
             RemainingStockSQL.deleteAllRemainingStock();
             RemainingStockSQL.addRemainingStock(remainingStocks);
+            if(object.has("businessDate")) {
+                Long businessDate = object.optLong("businessDate");
+                Store.putLong(App.instance, Store.BUSINESS_DATE, businessDate);
+                Store.putLong(App.instance, Store.LAST_BUSINESSDATE, businessDate);
+                App.instance.setBusinessDate(businessDate);
+                App.instance.setLastBusinessDate(businessDate);
+            }
             handler.sendEmptyMessage(MainActivity.REMAINING_STOCK_SUCCESS);
             return;
         } catch (JSONException e) {

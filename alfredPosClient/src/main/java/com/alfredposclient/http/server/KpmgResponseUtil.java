@@ -151,7 +151,7 @@ public class KpmgResponseUtil {
 
             List<RemainingStock> remainingStocks = RemainingStockSQL.getAllRemainingStock();
             Map<String, Object> map = new HashMap<>();
-
+            map.put("businessDate", App.instance.getBusinessDate());
             map.put("remainingStockList", remainingStocks);
             map.put("resultCode", ResultCode.SUCCESS);
             resp = mainPosHttpServer.getJsonResponse(gson.toJson(map));
@@ -281,7 +281,7 @@ public class KpmgResponseUtil {
                 jsonObject.getString("cardNum");
             }
             final int orderId = SubPosCommitSQL.commitOrderForKPMG(order, orderSplits, orderBills, payments, orderDetails,
-                    orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts, cardNum);
+                    orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts, cardNum, App.instance.getBusinessDate(), App.instance.getSessionStatus().getSession_status());
             map.put("resultCode", ResultCode.SUCCESS);
             if (orderId != 0) {
                 new Thread(new Runnable() {

@@ -233,20 +233,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
                     ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
-                    if (remainingStock != null) {
-                        OrderDetail orderDetail = getItemOrderDetail(itemDetail);
-                        if (remainingStock.getQty() > orderDetail.getItemNum()) {
+                    OrderDetail orderDetail = getItemOrderDetail(itemDetail);
+                        if(remainingStock == null
+                                || (orderDetail != null && remainingStock.getQty() > orderDetail.getItemNum())
+                                || remainingStock.getQty() > 0) {
                             updateitemOrderDetail(itemDetail,
                                     1);
-                            refreshTotal();
-                            refreshList();
                         }
-                    } else {
-                        updateitemOrderDetail(itemDetail,
-                                1);
-                        refreshTotal();
-                        refreshList();
-                    }
+                    refreshTotal();
+                    refreshList();
 
                 }
                     break;
@@ -668,6 +663,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             @Override
             public void onNoClick() {
                 if (dialog != null && dialog.isShowing()) {
+                    if(ButtonClickTimer.canClick()) {
+                        startTimer(3000);
+                    }
                     dialog.dismiss();
                 }
 
@@ -865,11 +863,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private OrderDetail getItemOrderDetail(ItemDetail itemDetail) {
         OrderDetail orderDetail = SelfOrderHelper.getInstance().getOrderDetailFromList(itemDetail, orderDetails);
 
-        if (orderDetail == null) {
-            orderDetail = SelfOrderHelper.getInstance()
-                    .createOrderDetailForWaiter(nurOrder, itemDetail,
-                            0, App.instance.getUser());
-        }
+//        if (orderDetail == null) {
+//            orderDetail = SelfOrderHelper.getInstance()
+//                    .createOrderDetailForWaiter(nurOrder, itemDetail,
+//                            0, App.instance.getUser());
+//        }
 
       return orderDetail;
     }
@@ -1210,6 +1208,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             UIHelp.showToastTransparentForKPMG(App.instance, "Please Choose Menu First !");
             return;
         }
+        cancelTimer();
         dialog.setTotal(nurOrder.getTotal());
         dialog.setList(orderDetails);
         dialog.notifyAdapter();
@@ -1217,7 +1216,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
     private void paymentAction(String ip) {
-        cancelTimer();
         App.instance.stopADKpm();
         ll_view_cart.setVisibility(View.GONE);
         ll_view_pay.setVisibility(View.VISIBLE);

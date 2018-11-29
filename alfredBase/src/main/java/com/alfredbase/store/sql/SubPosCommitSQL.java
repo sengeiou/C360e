@@ -50,13 +50,13 @@ public class SubPosCommitSQL {
     public static int commitOrderForKPMG(Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
                                       List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
                                       List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements,
-                                        List<RoundAmount> roundAmounts, String cardNum){
+                                        List<RoundAmount> roundAmounts, String cardNum, long business, int sessionStatus){
         int orderId = 0;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             db.beginTransaction();
             orderId = ObjectFactory.getInstance().cpOrderInfoForKPMG(subOrder, orderSplits, orderBills, payments, orderDetails,
-                    orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts, cardNum).getId();
+                    orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts, cardNum, business, sessionStatus).getId();
 
             db.setTransactionSuccessful();
         }catch (Exception e){
