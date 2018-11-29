@@ -236,7 +236,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     OrderDetail orderDetail = getItemOrderDetail(itemDetail);
                         if(remainingStock == null
                                 || (orderDetail != null && remainingStock.getQty() > orderDetail.getItemNum())
-                                || remainingStock.getQty() > 0) {
+                                || (orderDetail == null && remainingStock.getQty() > 0)) {
                             updateitemOrderDetail(itemDetail,
                                     1);
                         }
