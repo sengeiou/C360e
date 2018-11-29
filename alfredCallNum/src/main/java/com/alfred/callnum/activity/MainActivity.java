@@ -199,7 +199,11 @@ public class MainActivity extends BaseActivity {
 
         CallNumUtil.initVideo(context);
         CallNumUtil.init(context, handler);
-
+        for (int i = 0; i <2; i++) {
+            CallBean c=new CallBean();
+            c.setCallNumber("a102"+i);
+            queue.enQueue(c);
+        }
         timer.schedule(new MyTimertask(), 1000);
     }
 
