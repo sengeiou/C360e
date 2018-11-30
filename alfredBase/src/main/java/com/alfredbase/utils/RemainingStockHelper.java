@@ -46,4 +46,29 @@ public class RemainingStockHelper {
         }
     }
 
+
+
+    public static boolean updateRemainingStockNumByDeleteOrderDetail(OrderDetail orderDetail){
+        int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+        RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+        if (remainingStock != null) {
+            RemainingStockSQL.addRemainingById(orderDetail.getItemNum(), itemTempId);
+            try {
+                RemainingStock remainingStockVO = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                if(remainingStockVO.getQty() <= remainingStockVO.getDisplayQty()) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("RX", RxBus.RX_GET_STOCK);
+                    TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+                    TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+                    return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }else{
+            return true;
+        }
+    }
+
 }

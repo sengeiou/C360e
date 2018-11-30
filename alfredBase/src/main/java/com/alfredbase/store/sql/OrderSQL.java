@@ -1467,6 +1467,28 @@ public class OrderSQL {
 	
 	}
 
+	/*计算流水*/
+//	public static int getMaxOrderNoByBizDate(long bizDate){
+//		int sumCount = 0;
+//		String sql = "select max(orderNo) from "+ TableNames.Order + " where  businessDate = ?";
+//		Cursor cursor = null;
+//		try {
+//			cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(bizDate)});
+//			if (cursor.moveToFirst()) {
+//				sumCount = cursor.getInt(0);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//
+//		} finally {
+//			if (cursor != null && !cursor.isClosed()) {
+//				cursor.close();
+//			}
+//		}
+//		return sumCount;
+//
+//	}
+
 	/**
 	 * 获取所有已被占用的牌号
 	 *

@@ -142,6 +142,19 @@ public class RemainingStockSQL {
 
     }
 
+    public static void addRemainingById(int num,
+                                           int itemId) {
+        try {
+            String sql = "update " + TableNames.RemainingStock
+                    + " set qty=(qty+?) where itemId = ?";
+            SQLExe.getDB().execSQL(sql,
+                    new Object[]{num,itemId});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static void updateRemainingNum(int num,
                                            int itemId) {
         try {
