@@ -529,6 +529,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         }
                     }
 
+                    tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+                    tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
+
                     if (isStock) {
                         stockDialog = KpmDialogFactory.kpmOutStockDialog(context, "Out of stock",
                                 "Sorry the item you have selected is no longer available. Please re-confirm your order.", R.drawable.credit_card,
