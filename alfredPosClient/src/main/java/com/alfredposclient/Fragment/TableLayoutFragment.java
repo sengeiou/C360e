@@ -34,6 +34,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.APIName;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
@@ -522,13 +523,18 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             @Override
             public boolean onLongClick(View v) {
                 if(!canEdit){
-                    Map<String, String> map = new HashMap<String, String>();
-                    map.put("companyId", CoreData.getInstance().getRestaurant().getCompanyId().intValue() + "");
-                    map.put("restaurantId", CoreData.getInstance().getRestaurant().getId().intValue() + "");
-                    map.put("tableId", newTable.getPosId().intValue() + "");
-                    map.put("tableName", newTable.getName());
-                    map.put("type", "1");
-                    final String content = new Gson().toJson(map);
+//                    Map<String, String> map = new HashMap<String, String>();
+//                    map.put("companyId", CoreData.getInstance().getRestaurant().getCompanyId().intValue() + "");
+//                    map.put("restaurantId", CoreData.getInstance().getRestaurant().getId().intValue() + "");
+//                    map.put("tableId", newTable.getPosId().intValue() + "");
+//                    map.put("tableName", newTable.getName());
+//                    map.put("type", "1");
+//                    final String content = new Gson().toJson(map);
+                    String restaurantId=getStringByInt( CoreData.getInstance().getRestaurant().getId().intValue()+"");
+                    String tableId=getStringByInt(  newTable.getPosId()+"");
+                    StringBuffer sb=new StringBuffer();
+                    sb.append(getAbsoluteUrl(APIName.QC_DOWNLOAD)+"&"+restaurantId+"&"+tableId);
+                    final String content = sb.toString();
                     DialogFactory.showQrCodeDialog(mainPage,content,newTable.getName(),
                             new View.OnClickListener() {
                                 @Override
@@ -924,6 +930,33 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     }
 
 
+
+    private String getStringByInt(String id) {
+        final String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
+        StringBuffer sbf = new StringBuffer();
+        char[] c = id.toCharArray();
+        for (char ch : c) {
+            int intNum = ch - '0';
+            sbf.append(letters[intNum]);
+        }
+        return sbf.toString();
+    }
+
+
+    private String getAbsoluteUrl(String relativeUrl) {
+        if (App.instance.isDebug) {
+//			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
+            //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
+            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
+        } else if (App.instance.isOpenLog) {
+
+            return "http://139.224.17.126/alfred-api/" + relativeUrl;
+        } else {
+
+//			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
+            return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+        }
+    }
     class TableAdapter extends BaseAdapter{
         LayoutInflater inflater;
         public TableAdapter(){

@@ -42,7 +42,7 @@ public class APIName {
     public static final String CLOCK_GETUSERTIMESHEET = "clock/getUserTimeSheet";
     public static final String UPDATE_REAMINING_STOCK = "/remainingStock/updateReaminingStock";
     public static final String UPDATE_REAMINING_STOCK_ITEMID = "/remainingStock/updateReaminingStockByItemId";
-
+    public static final String QC_DOWNLOAD = "download/apk/alfred";
     public static final String RESET_RESTAURANT_ITEM_NUM = "remainingStock/resetRestaurantItemNum";
     public static final String GET_REMAINING_STOCK = "/item/getRemainingStock";
     //3rd-party Serivce
