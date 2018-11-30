@@ -26,10 +26,6 @@ import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.utils.AlertToDeviceSetting;
-import com.google.gson.Gson;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SettingView extends LinearLayout implements OnClickListener {
 
@@ -287,11 +283,11 @@ public class SettingView extends LinearLayout implements OnClickListener {
 			return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
 		} else if (App.instance.isOpenLog) {
 
-			return "http://139.224.17.126/alfred-api/" + relativeUrl;
+			return "http://139.224.17.126/" + relativeUrl;
 		} else {
 
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-			return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+			return "http://www.servedbyalfred.biz/" + relativeUrl;
 		}
 	}
 	public void openDrawer(){

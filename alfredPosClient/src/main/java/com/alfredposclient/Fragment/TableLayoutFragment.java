@@ -60,7 +60,6 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.utils.ImageUtils;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -950,11 +949,11 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
-            return "http://139.224.17.126/alfred-api/" + relativeUrl;
+            return "http://139.224.17.126/" + relativeUrl;
         } else {
 
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-            return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+            return "http://www.servedbyalfred.biz/" + relativeUrl;
         }
     }
     class TableAdapter extends BaseAdapter{
