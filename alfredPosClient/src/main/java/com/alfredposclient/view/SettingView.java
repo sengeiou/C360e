@@ -232,7 +232,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 //				mDrawerLayout.closeDrawer(Gravity.END);
 //				final String content = new Gson().toJson(map);
 				final String content = sb.toString();
-				DialogFactory.showQrCodeDialog(context, content, "",
+				DialogFactory.showQrCodeDialog(context, content, "", false,
 						new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {

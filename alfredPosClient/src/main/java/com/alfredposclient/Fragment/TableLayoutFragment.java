@@ -534,7 +534,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     StringBuffer sb=new StringBuffer();
                     sb.append(getAbsoluteUrl(APIName.QC_DOWNLOAD)+"&"+restaurantId+"&"+tableId);
                     final String content = sb.toString();
-                    DialogFactory.showQrCodeDialog(mainPage,content,newTable.getName(),
+                    DialogFactory.showQrCodeDialog(mainPage,content,newTable.getName(), false,
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

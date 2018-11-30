@@ -570,9 +570,12 @@ public class DialogFactory {
 
     }
 
-    public static void showQrCodeDialog(final BaseActivity activity, String qrCodeText, final String tableName, final OnClickListener printOnClickListener) {
+    public static void showQrCodeDialog(final BaseActivity activity, String qrCodeText, final String tableName, boolean isEnCoding, final OnClickListener printOnClickListener) {
         try {
-            String content = URLEncoder.encode(qrCodeText, "UTF-8");
+            String content = qrCodeText;
+            if(isEnCoding) {
+                content = URLEncoder.encode(qrCodeText, "UTF-8");
+            }
             QRCodeWriter writer = new QRCodeWriter();
             Map<EncodeHintType, ErrorCorrectionLevel> map = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
             map.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
