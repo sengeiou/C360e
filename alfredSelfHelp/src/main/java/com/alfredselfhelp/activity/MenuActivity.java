@@ -514,19 +514,27 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     if (loadingDialog != null && loadingDialog.isShowing()) {
                         loadingDialog.dismiss();
                     }
+                    List<OrderDetail> removeOrderDetails = new ArrayList<>();
                     boolean isStock = false;
                     for (int i = 0; i < orderDetails.size(); i++) {
-                        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetails.get(i).getItemId());
+                        OrderDetail orderDetail = orderDetails.get(i);
+                        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
                         RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                         if(remainingStock!=null) {
                             int qty = remainingStock.getQty() - remainingStock.getMinQty();
-                            int num = orderDetails.get(i).getItemNum();
-                            if (num > qty) {
+                            int num = orderDetail.getItemNum();
+                            if(qty <= 0){
+                                removeOrderDetails.add(orderDetail);
+                            }else if (num > qty) {
                                 isStock = true;
-                                updateCartOrderDetail(orderDetails.get(i),
+                                updateCartOrderDetail(orderDetail,
                                         qty);
                             }
                         }
+                    }
+                    for(OrderDetail orderDetail : removeOrderDetails){
+                        updateCartOrderDetail(orderDetail,
+                                0);
                     }
                     tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
