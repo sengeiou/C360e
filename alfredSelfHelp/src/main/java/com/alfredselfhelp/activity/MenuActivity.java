@@ -524,6 +524,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             int qty = remainingStock.getQty() - remainingStock.getMinQty();
                             int num = orderDetail.getItemNum();
                             if(qty <= 0){
+                                isStock = true;
                                 removeOrderDetails.add(orderDetail);
                             }else if (num > qty) {
                                 isStock = true;
@@ -540,12 +541,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                     if (isStock) {
                         stockDialog = KpmDialogFactory.kpmOutStockDialog(context, "Out of stock",
-                                "Sorry the item you have selected is no longer available. Please re-confirm your order.", R.drawable.credit_card,
+                                "Sorry the item you have selected is no longer available. Please re-confirm your order.", R.drawable.out_of_stock,
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-
-                                        //       updateCartOrderDetail()
+                                        startTimer(2000);
                                     }
                                 }, false);
 
