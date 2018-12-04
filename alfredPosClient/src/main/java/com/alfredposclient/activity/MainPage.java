@@ -45,6 +45,7 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
@@ -68,6 +69,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
@@ -83,6 +85,7 @@ import com.alfredbase.utils.JSONUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TimeUtil;
@@ -2477,6 +2480,16 @@ public class MainPage extends BaseActivity {
 
                         @Override
                         public void onClick(View arg0) {
+                            int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
+                            RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                            if(remainingStock!=null){
+                                int num=tag.getItemNum();
+                                RemainingStockHelper.updateRemainingStockNum(remainingStock,num,true);
+                                App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                            }
+
+//
+//                            RemainingStockSQL.updateRemainingNum(num,itemTempId);
                             OrderDetailSQL.deleteOrderDetail(tag);
                             OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
                             ModifierCheckSql.deleteModifierCheck(tag.getId(), tag.getOrderId());

@@ -34,7 +34,7 @@ public class SyncMsgJob extends Job {
     private int appOrderId;
     private int orderStatus;
     private boolean isNoSave = false;
-    private int orderId;
+    private int orderId,itemTemplateId;
 
     public SyncMsgJob(int revenueId, int msgType, String uuid,
     		int msgId, Long bizDate, Long created) {
@@ -48,11 +48,11 @@ public class SyncMsgJob extends Job {
         this.created = created;
     }
      // 修改菜的数量
-    public SyncMsgJob(String uuid,int orderId) {
-        super(new Params(Priority.MID).requireNetwork().persist().groupBy("sync_no_save"+orderId));
+    public SyncMsgJob(String uuid,int itemTemplateId) {
+        super(new Params(Priority.MID).requireNetwork().persist().groupBy("sync_no_save"+itemTemplateId));
         localId = -System.currentTimeMillis();
         this.isNoSave = true;
-        this.orderId = orderId;
+        this.itemTemplateId = itemTemplateId;
     }
 
     // 用作网络订单修改状态
@@ -86,29 +86,29 @@ public class SyncMsgJob extends Job {
     	BaseActivity context = App.getTopActivity();
     	try {
     	    if(isNoSave){
-                List<RemainingStockVo> remainingStockVoList=new ArrayList<>();
-                List<OrderDetail> orderDetailList = OrderDetailSQL.getOrderDetails(orderId);
-
-                for(OrderDetail orderDetail: orderDetailList){
-                    RemainingStockVo remainingStockVo=new RemainingStockVo();
-                    int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
-                    RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+//                List<RemainingStockVo> remainingStockVoList=new ArrayList<>();
+//                List<OrderDetail> orderDetailList = OrderDetailSQL.getOrderDetails(orderId);
+        //        for(OrderDetail orderDetail: orderDetailList){
+                    RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTemplateId);
                     if(remainingStock != null) {
                         int qty = remainingStock.getQty();
-                        remainingStockVo.setItemId(itemTempId);
-                        remainingStockVo.setNum(qty);
-                        remainingStockVoList.add(remainingStockVo);
+                        Map<String, Object> reMap = new HashMap<String, Object>();
+                        reMap.put("itemId", itemTemplateId);
+                        reMap.put("num", qty);
+                        SyncCentre.getInstance().updateReaminingStockByItemId(context, reMap, null);
                     }
 //                    if(!map.containsKey(itemTempId)) {
 //                        int qty = RemainingStockSQL.getRemainingStockByitemId(itemTempId).getQty();
 //                        map.put(itemTempId,qty);
 //                    }
-                }
-                if(remainingStockVoList.size() > 0) {
-                    Map<String, Object> reMap = new HashMap<String, Object>();
-                    reMap.put("remainingStockVoList", remainingStockVoList);
-                    SyncCentre.getInstance().updateReaminingStock(context, reMap, null);
-                }
+            //    }
+//                if(remainingStockVoList.size() > 0) {
+//                    Map<String, Object> reMap = new HashMap<String, Object>();
+//                    reMap.put("itemId", itemDetail.getItemTemplateId());
+//                    reMap.put("num", Integer.valueOf(num).intValue());
+//                    reMap.put("remainingStockVoList", remainingStockVoList);
+//                    SyncCentre.getInstance().updateReaminingStockByItemId(context, reMap, null);
+//                }
 
             }else {
                 if (this.msgType == HttpAPI.NETWORK_ORDER_STATUS_UPDATE) {

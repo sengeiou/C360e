@@ -57,6 +57,7 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.SystemUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
@@ -611,6 +612,16 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 						public void call(String key, int num) {
 							if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 								if (num < 1) {
+
+									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									RemainingStock remainingStock = null;
+									if(itemDetail != null) {
+										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+									}
+									if(remainingStock!=null) {
+										RemainingStockHelper.updateRemainingStockNum(remainingStock, tag.getItemNum(), true);
+										App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+									}
 									OrderDetailSQL.deleteOrderDetail(tag);
 									OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
 									if(!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && ! IntegerUtils.isEmptyOrZero(tag.getGroupId())){
@@ -632,11 +643,26 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 									}
 									if(remainingStock != null){
-										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
-										existedOrderDetailNum += num - tag.getItemNum();
-										if(remainingStock.getQty() < existedOrderDetailNum){
-											UIHelp.showShortToast(parent, "Out Of Stock");
-											return;
+//										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+//										existedOrderDetailNum += num - tag.getItemNum();
+//										if(remainingStock.getQty() < existedOrderDetailNum){
+//											UIHelp.showShortToast(parent, "Out Of Stock");
+//											return;
+//										}
+                                        int newNum;
+                                        Boolean isChange;
+                                        if(num>=tag.getItemNum()){
+                                            newNum=num-tag.getItemNum();
+                                            isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,false);
+                                        }else {
+                                            newNum=tag.getItemNum()-num;
+                                            isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,true);
+                                        }
+                                        if(!isChange){
+                                            UIHelp.showShortToast(parent, "Out Of Stock");
+                                            return;
+                                        }else {
+											App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
 										}
 									}
 									tag.setItemNum(num);
@@ -685,11 +711,20 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 									}
 									if(remainingStock != null){
-										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
-										existedOrderDetailNum += num - tag.getItemNum();
-										if(remainingStock.getQty() < existedOrderDetailNum){
+										int newNum;
+										Boolean isChange;
+										if(num>=tag.getItemNum()){
+											newNum=num-tag.getItemNum();
+											isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,false);
+										}else {
+											newNum=tag.getItemNum()-num;
+											isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,true);
+										}
+										if(!isChange){
 											UIHelp.showShortToast(parent, "Out Of Stock");
 											return;
+										}else {
+											App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
 										}
 									}
 									tag.setItemNum(num);
@@ -1055,6 +1090,14 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
 									@Override
 									public void onClick(View arg0) {
+										int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
+										RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+										if(remainingStock!=null){
+											int num=tag.getItemNum();
+											RemainingStockHelper.updateRemainingStockNum(remainingStock,num,true);
+											App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+										}
+
 										OrderDetailSQL.deleteOrderDetail(tag);
 										KotSummary kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
 										if(kotSummary != null) {

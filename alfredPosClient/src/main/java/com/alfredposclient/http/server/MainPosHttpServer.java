@@ -120,6 +120,7 @@ import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -2100,6 +2101,19 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
             LogUtil.i(TAG, "------11111");
+            if(waiterOrderDetails!=null){
+                for (int i = 0; i <waiterOrderDetails.size() ; i++) {
+                    OrderDetail orderDetail=waiterOrderDetails.get(i);
+                    int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+                    RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                    if(remainingStock!=null) {
+                        int num = orderDetail.getItemNum();
+                        RemainingStockHelper.updateRemainingStockNum(remainingStock, num, false);
+                        App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                    }
+                }
+
+            }
             // waiter 过来的数据 存到 pos的DB中 不带Id存储
             for (OrderDetail orderDetail : waiterOrderDetails) {
                 synchronized (lockObject) {

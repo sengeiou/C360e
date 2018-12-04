@@ -74,6 +74,7 @@ import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
@@ -276,6 +277,23 @@ public class KpmgResponseUtil {
             List<RoundAmount> roundAmounts = gson.fromJson(jsonObject.getString("roundAmounts"),
                     new TypeToken<List<RoundAmount>>() {
                     }.getType());
+
+            if(orderDetails!=null){
+                for (int i = 0; i <orderDetails.size() ; i++) {
+                    OrderDetail orderDetail=orderDetails.get(i);
+                    int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+                    RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                    if(remainingStock!=null){
+                        int num=orderDetail.getItemNum();
+                        RemainingStockHelper.updateRemainingStockNum(remainingStock,num,false);
+                        App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                    }
+
+
+
+                }
+
+            }
             String cardNum ="";
             if(jsonObject.has("cardNum")) {
                 jsonObject.getString("cardNum");

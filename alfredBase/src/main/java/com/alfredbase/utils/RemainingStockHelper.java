@@ -46,7 +46,26 @@ public class RemainingStockHelper {
         }
     }
 
+    //菜RemainingStock数量加减
+    public static boolean updateRemainingStockNum(RemainingStock  remainingStock,int num,boolean isAdd){
 
+            if (isAdd) {
+                num = remainingStock.getQty() + num;
+                RemainingStockSQL.updateRemainingNum(num, remainingStock.getItemId());
+                return true;
+            } else {
+                if (remainingStock.getQty() > 0 && remainingStock.getQty() >= num) {
+                    num = remainingStock.getQty() - num;
+                    synchronized (remainingStock.getItemId()) {
+                        RemainingStockSQL.updateRemainingNum(num, remainingStock.getItemId());
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+    }
 
     public static boolean updateRemainingStockNumByDeleteOrderDetail(OrderDetail orderDetail){
         int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();

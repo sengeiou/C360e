@@ -50,6 +50,7 @@ import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
@@ -410,13 +411,17 @@ public class MainPageMenuView extends LinearLayout {
 						OrderDetail orderDetail = ObjectFactory.getInstance()
 								.getOrderDetail(order, itemDetail, 0);
 						if(remainingStock!=null) {
-							int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
-							existedOrderDetailNum += orderDetail.getItemNum();
-							if (remainingStock.getQty() > 0 && remainingStock.getQty() >= existedOrderDetailNum ) {
+							int num =orderDetail.getItemNum();
+//                            int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+//                            existedOrderDetailNum += orderDetail.getItemNum();
+							boolean isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,num,false);
+							if (isChange) {
+								App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
 								Message msg = handler.obtainMessage();
 								msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
 								msg.obj = orderDetail;
 								handler.sendMessage(msg);
+
 							}else{
 								UIHelp.showShortToast(parent, "Out Of Stock!");
 							}

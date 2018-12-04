@@ -132,12 +132,14 @@ public class SyncCentre {
 
 
 
-
+//修改单个菜数量
     public void updateReaminingStockByItemId(Context context, Map<String, Object> parameters,Handler handler
     ) {
 
         HttpAPI.updateReaminingStockByItemId(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK_ITEMID), httpClient, parameters,handler);
     }
+
+    // 下单时修改数量
     public void updateReaminingStock(Context context, Map<String, Object> parameters,Handler handler
                         ) {
 

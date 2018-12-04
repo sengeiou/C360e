@@ -58,6 +58,7 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
+import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -609,6 +610,15 @@ public class MainPageOrderView extends LinearLayout {
 
 							if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 								if (num < 1) {
+									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									RemainingStock remainingStock = null;
+									if(itemDetail != null) {
+										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+									}
+									if(remainingStock!=null) {
+										RemainingStockHelper.updateRemainingStockNum(remainingStock, tag.getItemNum(), true);
+                                        App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+									}
 									OrderDetailSQL.deleteOrderDetail(tag);
 									OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
 									if(!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && ! IntegerUtils.isEmptyOrZero(tag.getGroupId())){
@@ -631,12 +641,23 @@ public class MainPageOrderView extends LinearLayout {
 										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 									}
 									if(remainingStock != null){
-										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
-                                        existedOrderDetailNum += num - tag.getItemNum();
-										if(remainingStock.getQty() < existedOrderDetailNum){
+//										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
+//                                        existedOrderDetailNum += num - tag.getItemNum();
+										int newNum;
+										Boolean isChange;
+										if(num>=tag.getItemNum()){
+											 newNum=num-tag.getItemNum();
+											 isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,false);
+										}else {
+											newNum=tag.getItemNum()-num;
+											isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,true);
+										}
+										if(!isChange){
 											UIHelp.showShortToast(parent, "Out Of Stock");
 											return;
-										}
+										}else {
+                                            App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+                                        }
 									}
 									tag.setItemNum(num);
 									OrderDetailSQL
@@ -684,12 +705,22 @@ public class MainPageOrderView extends LinearLayout {
 										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 									}
 									if(remainingStock != null){
-										int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
-                                        existedOrderDetailNum += num - tag.getItemNum();
-										if(remainingStock.getQty() < existedOrderDetailNum){
+										int newNum;
+										Boolean isChange;
+										if(num>=tag.getItemNum()){
+											newNum=num-tag.getItemNum();
+											isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,false);
+
+										}else {
+											newNum=tag.getItemNum()-num;
+											isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,true);
+										}
+										if(!isChange){
 											UIHelp.showShortToast(parent, "Out Of Stock");
 											return;
-										}
+										}else {
+                                            App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+                                        }
 									}
 									tag.setItemNum(num);
 									tag.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
