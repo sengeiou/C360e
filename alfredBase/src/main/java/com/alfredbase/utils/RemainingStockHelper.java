@@ -47,21 +47,25 @@ public class RemainingStockHelper {
     }
 
     //菜RemainingStock数量加减
-    public static boolean updateRemainingStockNum(RemainingStock  remainingStock,int num,boolean isAdd){
+    public static void updateRemainingStockNum(RemainingStock  remainingStock,int num,boolean isAdd,StockCallBack callBack){
 
             if (isAdd) {
                 num = remainingStock.getQty() + num;
                 RemainingStockSQL.updateRemainingNum(num, remainingStock.getItemId());
-                return true;
+                callBack.onSuccess(true);
+               // return true;
             } else {
                 if (remainingStock.getQty() > 0 && remainingStock.getQty() >= num) {
                     num = remainingStock.getQty() - num;
                     synchronized (remainingStock.getItemId()) {
                         RemainingStockSQL.updateRemainingNum(num, remainingStock.getItemId());
                     }
-                    return true;
+                    callBack.onSuccess(true);
+                  //  return true;
                 } else {
-                    return false;
+                    //out of stock
+                    callBack.onSuccess(false);
+                   // return false;
                 }
             }
 

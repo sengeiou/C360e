@@ -122,6 +122,7 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.RxBus;
+import com.alfredbase.utils.StockCallBack;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
@@ -141,6 +142,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -2101,19 +2103,90 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
             LogUtil.i(TAG, "------11111");
+            final StringBuffer stringBuffer=new StringBuffer();
+
             if(waiterOrderDetails!=null){
-                for (int i = 0; i <waiterOrderDetails.size() ; i++) {
-                    OrderDetail orderDetail=waiterOrderDetails.get(i);
-                    int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
-                    RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+
+                Map<String ,String> map=new HashMap<String,String>();
+                Map<Integer,Object> mapNum=new HashMap<Integer, Object>();
+                    for (int i = 0; i <waiterOrderDetails.size() ; i++) {
+                         OrderDetail orderDetail=waiterOrderDetails.get(i);
+                         int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+                         RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                        if(mapNum.containsKey(itemTempId)){
+                          //  int num=mapNum.get(orderDetail.getItemId()).intValue()+orderDetail.getItemNum();
+                            OrderDetail orderDetail1=(OrderDetail)mapNum.get(itemTempId);
+                            OrderDetail orderDetail1New= new OrderDetail();
+                            orderDetail1New.setItemName(orderDetail1.getItemName());
+                            int num=orderDetail1.getItemNum().intValue()+orderDetail.getItemNum().intValue();
+                            orderDetail1New.setItemNum(num);
+                            mapNum.put(itemTempId,orderDetail1New);
+
+                        }else {
+                            mapNum.put(itemTempId,orderDetail);
+                        }
+//                        if(remainingStock!=null) {
+//                            int num = orderDetail.getItemNum();
+//                            if(num>remainingStock.getQty()){
+//                                map.put(orderDetail.getItemName(),orderDetail.getItemName() + "：alone" + remainingStock.getQty() + " ");
+////                                    stringBuffer.append(orderDetail.getItemName() + "：alone" + remainingStock.getQty() + " ");
+//                            }
+//                        }
+                    }
+
+
+
+                Iterator<Map.Entry<Integer, Object>> entries = mapNum.entrySet().iterator();
+                while (entries.hasNext()) {
+                    Map.Entry<Integer, Object> entry = entries.next();
+                    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+
+                    final RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(entry.getKey());
+
                     if(remainingStock!=null) {
-                        int num = orderDetail.getItemNum();
-                        RemainingStockHelper.updateRemainingStockNum(remainingStock, num, false);
-                        App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                          OrderDetail orderDetailStock= (OrderDetail) entry.getValue();
+                            if(orderDetailStock.getItemNum()>remainingStock.getQty()){
+                                map.put(orderDetailStock.getItemName(),orderDetailStock.getItemName() + "：alone" + remainingStock.getQty() + " ");
+//                                    stringBuffer.append(orderDetail.getItemName() + "：alone" + remainingStock.getQty() + " ");
+                            }
+                        }
+
+                }
+//                for (int value : mapNum.values()) {
+//                    System.out.println("Value = " + value);
+//                    stringBuffer.append(value);
+//                }
+                if(map!=null&&map.size()>0){
+                    for (String value : map.values()) {
+                        System.out.println("Value = " + value);
+                        stringBuffer.append(value);
+                    }
+                    result.put("resultCode", ResultCode.WAITER_OUT_OF_STOCK);
+                    result.put("stockNum", stringBuffer.toString());
+                    resp = this.getJsonResponse(new Gson().toJson(result));
+                    return resp;
+                }else {
+                    for (int i = 0; i < waiterOrderDetails.size(); i++) {
+                        final OrderDetail orderDetail = waiterOrderDetails.get(i);
+                        final int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+                        final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                        if (remainingStock != null) {
+                            int num = orderDetail.getItemNum();
+                            RemainingStockHelper.updateRemainingStockNum(remainingStock, num, false, new StockCallBack() {
+                                @Override
+                                public void onSuccess(Boolean isStock) {
+                                    if (isStock) {
+                                        App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                                    }
+                                }
+                            });
+
+                        }
                     }
                 }
-
             }
+
+
             // waiter 过来的数据 存到 pos的DB中 不带Id存储
             for (OrderDetail orderDetail : waiterOrderDetails) {
                 synchronized (lockObject) {

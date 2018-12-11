@@ -88,6 +88,7 @@ import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
+import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
@@ -2480,12 +2481,20 @@ public class MainPage extends BaseActivity {
 
                         @Override
                         public void onClick(View arg0) {
-                            int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
+                            final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
                             RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                             if(remainingStock!=null){
                                 int num=tag.getItemNum();
-                                RemainingStockHelper.updateRemainingStockNum(remainingStock,num,true);
-                                App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                                RemainingStockHelper.updateRemainingStockNum(remainingStock, num, true, new StockCallBack() {
+                                    @Override
+                                    public void onSuccess(Boolean isStock) {
+                                        if(isStock){
+                                            App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                                        }
+
+                                    }
+                                });
+
                             }
 
 //

@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -133,6 +136,8 @@ public class SetItemCountWindow implements OnClickListener, KeyBoardClickListene
 						Map<String, Object> result = new HashMap<String, Object>();
 						result.put("itemDetail", itemDetail);
 						result.put("count", newCount);
+
+
 						if(newCount>oldCount) {
 							result.put("isAdd", true);
 						}else {

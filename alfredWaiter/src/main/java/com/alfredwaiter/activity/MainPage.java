@@ -28,11 +28,13 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.LogUtil;
@@ -371,8 +373,27 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 //                        refreshList();
 //                    }
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
-                    updateOrderDetail((ItemDetail) map.get("itemDetail"),
-                            (Integer) map.get("count"));
+                    ItemDetail itemDetail=(ItemDetail) map.get("itemDetail");
+
+                    int num = (int) map.get("count");
+                    RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+                    if(remainingStock!=null) {
+
+                        int existedOrderDetailNum = OrderDetailSQL.getOrderAddDetailCountByOrderIdAndItemDetailId(currentOrder.getId(), itemDetail.getId());
+                        int reNum = remainingStock.getQty() - existedOrderDetailNum-num;
+                        if(reNum>=0){
+                            updateOrderDetail(itemDetail,
+                                    num);
+                        }else {
+                            UIHelp.showToast(MainPage.this,"out of stock");
+                          //  return;
+                        }
+
+                    }else {
+                        updateOrderDetail(itemDetail,
+                                num);
+                    }
+
                     refreshTotal();
                     refreshList();
                     boolean isadd = (boolean) map.get("isAdd");
@@ -832,7 +853,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getId().intValue());
         }
 
-       RemainingStockHelper.updateRemainingStockNumByOrder(currentOrder);
+ //       RemainingStockHelper.updateRemainingStockNumByOrder(currentOrder);
         UIHelp.startOrderDetailsTotal(context, currentOrder);
 //		this.finish();
     }

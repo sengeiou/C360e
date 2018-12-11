@@ -215,6 +215,11 @@ public class ResultCode {
 	public static final int VOID_ITEM_FAIL= -1996;
 	public static final int SPLIT_ORDER_FINISHED = -1995;
 
+	/**
+	 * waiter提交的在POS机上out of stock
+	 */
+	public static final int WAITER_OUT_OF_STOCK = -1999;
+
 	/*
 	 * POS to KDS response Error
 	 * */

@@ -52,6 +52,7 @@ import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.ScreenSizeUtil;
+import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -405,26 +406,31 @@ public class MainPageMenuView extends LinearLayout {
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View arg1,
 											int arg2, long arg3) {
-						ItemDetail itemDetail = (ItemDetail) arg0
+						final ItemDetail itemDetail = (ItemDetail) arg0
 								.getItemAtPosition(arg2);
 						RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
-						OrderDetail orderDetail = ObjectFactory.getInstance()
+						final OrderDetail orderDetail = ObjectFactory.getInstance()
 								.getOrderDetail(order, itemDetail, 0);
 						if(remainingStock!=null) {
 							int num =orderDetail.getItemNum();
 //                            int existedOrderDetailNum = OrderDetailSQL.getOrderDetailCountByOrderIdAndItemDetailId(order.getId(), itemDetail.getId());
 //                            existedOrderDetailNum += orderDetail.getItemNum();
-							boolean isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,num,false);
-							if (isChange) {
-								App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
-								Message msg = handler.obtainMessage();
-								msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
-								msg.obj = orderDetail;
-								handler.sendMessage(msg);
+						     RemainingStockHelper.updateRemainingStockNum(remainingStock, num, false, new StockCallBack() {
+								@Override
+								public void onSuccess(Boolean isStock) {
+									if (isStock) {
+										App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+										Message msg = handler.obtainMessage();
+										msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+										msg.obj = orderDetail;
+										handler.sendMessage(msg);
 
-							}else{
-								UIHelp.showShortToast(parent, "Out Of Stock!");
-							}
+									}else{
+										UIHelp.showShortToast(parent, "Out Of Stock!");
+									}
+								}
+							});
+
 						}else {
 							Message msg = handler.obtainMessage();
 							msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;

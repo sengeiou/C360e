@@ -59,6 +59,7 @@ import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
+import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -610,14 +611,21 @@ public class MainPageOrderView extends LinearLayout {
 
 							if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
 								if (num < 1) {
-									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
 									RemainingStock remainingStock = null;
 									if(itemDetail != null) {
 										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 									}
 									if(remainingStock!=null) {
-										RemainingStockHelper.updateRemainingStockNum(remainingStock, tag.getItemNum(), true);
-                                        App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+										RemainingStockHelper.updateRemainingStockNum(remainingStock, tag.getItemNum(), true, new StockCallBack() {
+											@Override
+											public void onSuccess(Boolean isStock) {
+												if(isStock) {
+													App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+												}
+											}
+										});
+
 									}
 									OrderDetailSQL.deleteOrderDetail(tag);
 									OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
@@ -635,7 +643,7 @@ public class MainPageOrderView extends LinearLayout {
 //									OrderModifierSQL.updateOrderModifierNum(tag, 999);
 									OrderHelper.setOrderModifierPirceAndNum(tag, 999);
 								} else {
-									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
 									RemainingStock remainingStock = null;
 									if(itemDetail != null) {
 										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -647,17 +655,33 @@ public class MainPageOrderView extends LinearLayout {
 										Boolean isChange;
 										if(num>=tag.getItemNum()){
 											 newNum=num-tag.getItemNum();
-											 isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,false);
+											RemainingStockHelper.updateRemainingStockNum(remainingStock, newNum, false, new StockCallBack() {
+												 @Override
+												 public void onSuccess(Boolean isStock) {
+													 if(!isStock){
+														 UIHelp.showShortToast(parent, "Out Of Stock");
+														 return;
+													 }else {
+														 App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+													 }
+
+												 }
+											 });
 										}else {
 											newNum=tag.getItemNum()-num;
-											isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,true);
+											RemainingStockHelper.updateRemainingStockNum(remainingStock, newNum, true, new StockCallBack() {
+												@Override
+												public void onSuccess(Boolean isStock) {
+													if(!isStock){
+														UIHelp.showShortToast(parent, "Out Of Stock");
+														return;
+													}else {
+														App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+													}
+												}
+											});
 										}
-										if(!isChange){
-											UIHelp.showShortToast(parent, "Out Of Stock");
-											return;
-										}else {
-                                            App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
-                                        }
+
 									}
 									tag.setItemNum(num);
 									OrderDetailSQL
@@ -699,7 +723,7 @@ public class MainPageOrderView extends LinearLayout {
 									// kotCommitStatus, null);
 
 								} else {
-									ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+									final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
 									RemainingStock remainingStock = null;
 									if(itemDetail != null) {
 										remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -709,18 +733,34 @@ public class MainPageOrderView extends LinearLayout {
 										Boolean isChange;
 										if(num>=tag.getItemNum()){
 											newNum=num-tag.getItemNum();
-											isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,false);
+										RemainingStockHelper.updateRemainingStockNum(remainingStock, newNum, false, new StockCallBack() {
+												@Override
+												public void onSuccess(Boolean isStock) {
+													if(!isStock){
+														UIHelp.showShortToast(parent, "Out Of Stock");
+														return;
+													}else {
+														App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+													}
+
+												}
+											});
 
 										}else {
 											newNum=tag.getItemNum()-num;
-											isChange=RemainingStockHelper.updateRemainingStockNum(remainingStock,newNum,true);
+											RemainingStockHelper.updateRemainingStockNum(remainingStock, newNum, true, new StockCallBack() {
+												@Override
+												public void onSuccess(Boolean isStock) {
+													if(!isStock){
+														UIHelp.showShortToast(parent, "Out Of Stock");
+														return;
+													}else {
+														App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
+													}
+												}
+											});
 										}
-										if(!isChange){
-											UIHelp.showShortToast(parent, "Out Of Stock");
-											return;
-										}else {
-                                            App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
-                                        }
+
 									}
 									tag.setItemNum(num);
 									tag.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);

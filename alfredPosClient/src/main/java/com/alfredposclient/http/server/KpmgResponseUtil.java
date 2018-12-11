@@ -75,8 +75,10 @@ import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RemainingStockHelper;
+import com.alfredbase.utils.StockCallBack;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.UIHelp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -281,12 +283,21 @@ public class KpmgResponseUtil {
             if(orderDetails!=null){
                 for (int i = 0; i <orderDetails.size() ; i++) {
                     OrderDetail orderDetail=orderDetails.get(i);
-                    int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+                    final int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
                     RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                     if(remainingStock!=null){
                         int num=orderDetail.getItemNum();
-                        RemainingStockHelper.updateRemainingStockNum(remainingStock,num,false);
-                        App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                        RemainingStockHelper.updateRemainingStockNum(remainingStock, num, false, new StockCallBack() {
+                            @Override
+                            public void onSuccess( Boolean isStock) {
+                                if(isStock){
+                                    App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                                }
+
+                            }
+
+                        });
+
                     }
 
 

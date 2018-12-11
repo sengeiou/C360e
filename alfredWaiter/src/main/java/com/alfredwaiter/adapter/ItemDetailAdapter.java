@@ -150,8 +150,9 @@ public class ItemDetailAdapter extends RvCateAdapter<ItemDetail> {
                     RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                     if(remainingStock!=null){
                         rl_remain_num.setVisibility(View.VISIBLE);
-
-                        int reNum=remainingStock.getQty()-getItemNum(itemDetail);
+                        int existedOrderDetailNum = OrderDetailSQL.getOrderAddDetailCountByOrderIdAndItemDetailId(currentOrder.getId(), itemDetail.getId());
+//
+                        int reNum=remainingStock.getQty()-existedOrderDetailNum-getItemNum(itemDetail);
                         if(reNum>0){
                             tv_out_of.setVisibility(View.GONE);
                             tv_remain_num.setText(reNum+"");
@@ -159,7 +160,7 @@ public class ItemDetailAdapter extends RvCateAdapter<ItemDetail> {
                         }else {
                             tv_remain_num.setText(0+"");
                             tv_out_of.setVisibility(View.VISIBLE);
-                          count_view.setVisibility(View.GONE
+                          count_view.setVisibility(View.INVISIBLE
                             );
                             // tv_remin_num.setText(0+"");
                         }

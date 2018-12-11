@@ -12,9 +12,11 @@ import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredwaiter.R;
@@ -26,8 +28,10 @@ import com.alfredwaiter.activity.Setting;
 import com.alfredwaiter.activity.TablesPage;
 import com.alfredwaiter.activity.Welcome;
 import com.alfredwaiter.global.App;
+import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 
 import org.apache.http.Header;
@@ -35,6 +39,8 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class HttpAPI {
@@ -583,7 +589,7 @@ public class HttpAPI {
         }
     }
 
-    public static void commitOrderAndOrderDetails(Context context,
+    public static void commitOrderAndOrderDetails(final Context context,
                                                   Map<String, Object> parameters, String url,
                                                   AsyncHttpClient httpClient, final Handler handler) {
         // 除了登录接口，其他接口都要加这个
@@ -602,6 +608,7 @@ public class HttpAPI {
                                               final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                SyncCentre.getInstance().getStock(context);
                                 HttpAnalysis.commitOrderAndOrderDetails(statusCode, headers, responseBody, handler);
                             } else if (resultCode == ResultCode.ORDER_FINISHED) {
                                 handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
@@ -619,7 +626,20 @@ public class HttpAPI {
                                     e.printStackTrace();
                                 }
                                 handler.sendMessage(handler.obtainMessage(ResultCode.ORDER_SPLIT_IS_SETTLED, groupId));
-                            } else {
+                            }else if(resultCode == ResultCode.WAITER_OUT_OF_STOCK){
+                                String stockNum = null;
+                                try {
+                                    JSONObject jsonObject = new JSONObject(new String(responseBody));
+                                    stockNum = jsonObject.getString("stockNum");
+                                           Gson gson=new Gson();
+                                    SyncCentre.getInstance().getStock(context);
+                                } catch (JSONException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+                                handler.sendMessage(handler.obtainMessage(ResultCode.WAITER_OUT_OF_STOCK, stockNum));
+                            }
+                            else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }

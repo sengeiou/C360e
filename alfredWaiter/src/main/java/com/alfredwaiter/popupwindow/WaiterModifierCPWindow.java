@@ -133,7 +133,7 @@ public class WaiterModifierCPWindow {
 //                map.put("itemDetail", itemDetail);
                 map.put("variances", variances);
                 map.put("description", remark_et.getText().toString());
-                RemainingStockHelper.updateRemainingStockNumByOrder(order);
+           //     RemainingStockHelper.updateRemainingStockNumByOrder(order);
                 handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER, map));
                 popupWindow.dismiss();
 //                } else {

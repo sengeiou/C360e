@@ -31,6 +31,7 @@ import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
@@ -41,6 +42,7 @@ import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
@@ -156,6 +158,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         moneyKeyboard.setKeyBoardClickListener(this);
         refreshOrderTotal();
         refreshOrder();
+
         observable = RxBus.getInstance().register(RxBus.RX_REFRESH_ORDER);
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
             @Override
@@ -260,6 +263,13 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                 context.getResources().getString(R.string.order_split) + groupId +
                                         context.getResources().getString(R.string.settled), null);
                     }
+
+                    break;
+
+                case ResultCode.WAITER_OUT_OF_STOCK:
+                    loadingDialog.dismiss();
+                    String stockNum = (String) msg.obj;
+                    UIHelp.showToast(OrderDetailsTotal.this,stockNum);
 
                     break;
                 case VIEW_EVENT_PRINT_BILL:
@@ -727,9 +737,23 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     textView.setBackgroundColor(context
                                             .getResources().getColor(
                                                     R.color.white));
-                                    updateOrderDetail(tag, num);
-                                    if (num == 0) {
+                                    final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
+                                    final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                                    int  detailNum=OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(),tag.getItemId());
 
+                                    if(remainingStock.getQty()>=detailNum){
+                                    int newNum=remainingStock.getQty()-detailNum+tag.getItemNum();
+                                    if(num<=newNum){
+                                        updateOrderDetail(tag, num);
+                                    }else {
+                                        UIHelp.showToast(OrderDetailsTotal.this,"out of stock");
+                                    }
+                                    }else {
+                                        textView.setText(tag.getItemName() + "");
+                                    }
+
+                                    if (num == 0) {
+                                        updateOrderDetail(tag, num);
                                         final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
                                                 orderDetail.getItemId());
                                         ModifierCheckSql.deleteModifierCheck(orderDetail.getId(), currentOrder.getId());
