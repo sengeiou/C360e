@@ -631,7 +631,6 @@ public class HttpAPI {
                                 try {
                                     JSONObject jsonObject = new JSONObject(new String(responseBody));
                                     stockNum = jsonObject.getString("stockNum");
-                                           Gson gson=new Gson();
                                     SyncCentre.getInstance().getStock(context);
                                 } catch (JSONException e) {
                                     // TODO Auto-generated catch block

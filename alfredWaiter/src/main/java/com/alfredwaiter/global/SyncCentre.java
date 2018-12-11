@@ -63,7 +63,7 @@ public class SyncCentre {
 //	}
 
 	public void getStock(Context context){
-		HttpAPI.getStock(context, APIName.GET_REMAINING_STOCK, new HashMap<String, Object>(), httpClient);
+		HttpAPI.getStock(context,getAbsolutePOSUrlByIp(getIp(),  APIName.GET_REMAINING_STOCK), new HashMap<String, Object>(), httpClient);
 	}
 
 	public void syncCommonData(Context context, String ip, Map<String, Object> parameters, Handler handler) {
