@@ -157,7 +157,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         init();
         startTimer(3000);
          App.instance.startADKpm();
-    }
+
+ }
 
     private void initVideo() {
         mVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/aaa"));
@@ -382,7 +383,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         paymentDialog.dismiss();
                     }
                     paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
+                            "Please remember to take your receipt.", R.drawable.paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
@@ -428,7 +429,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         paymentDialog.dismiss();
                     }
                     paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
+                            "Please remember to take your receipt.", R.drawable.paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
@@ -474,7 +475,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         paymentDialog.dismiss();
                     }
                     paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
+                            "Please remember to take your receipt.", R.drawable.paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override

@@ -188,7 +188,7 @@
             android:id="@+id/re_out_of"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:visibility="visible"
             >
             <TextView
                 android:layout_width="match_parent"
@@ -205,8 +205,8 @@
                  android:layout_width="match_parent"
                  android:layout_height="0dp"
                  android:gravity="center"
-                  android:layout_weight="1"
-                 android:text="OUT OF STOCK"
+                 android:layout_weight="1"
+                 android:text=""
                  android:textStyle="bold"
                  android:textColor="@color/red2"
                  android:textSize="20sp"
