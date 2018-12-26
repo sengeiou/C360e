@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -138,7 +140,7 @@ import rx.functions.Action1;
 //import com.alfredposclient.popupwindow.OrderDetailFireWindow;
 
 
-public class MainPage extends BaseActivity {
+public class MainPage extends PosBaseActivity {
 
     private String TAG = MainPage.class.getSimpleName();
     public static final int VIEW_EVENT_CLOSE_PAY_WINDOW = 99;
@@ -399,6 +401,14 @@ public class MainPage extends BaseActivity {
         XMPP.getInstance().setCanCheckAppOrder(true);
     }
 
+    @Override
+    protected void getDiff() {
+        super.getDiff();
+
+
+
+
+    }
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {
@@ -2269,6 +2279,7 @@ public class MainPage extends BaseActivity {
         transaction.hide(f_tables);
         transaction.commitAllowingStateLoss();
         isShowTables = false;
+
     }
 
 //	private void dismissTables() {
@@ -2287,6 +2298,10 @@ public class MainPage extends BaseActivity {
         TableInfoSQL.updateTables(currentTable);
         mainPageMenuView.setParam(currentOrder, handler);
         orderView.setParam(this, currentOrder, orderDetails, handler);
+
+//        DiffData data = new DiffData(this);//实例化data类
+//        data.updateData(orderDetails);//启动发送
+        DifferentDislay.setParam(orderDetails,currentOrder);
         operatePanel.setParams(this, currentOrder, orderDetails,
                 handler);
         loadingDialog.dismiss();

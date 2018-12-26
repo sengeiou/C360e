@@ -11,6 +11,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -19,8 +20,10 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 
 import com.alfred.remote.printservice.IAlfredRemotePrintService;
 import com.alfred.remote.printservice.RemotePrintServiceCallback;
@@ -115,6 +118,7 @@ import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.ClockInOROut;
+import com.alfredposclient.activity.DifferentDislay;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.OpenRestaruant;
@@ -479,6 +483,22 @@ public class App extends BaseApplication {
         }
         wifiPolicyNever();
         update15to16();
+
+
+
+        DisplayManager mDisplayManager;// 屏幕管理类
+        mDisplayManager = (DisplayManager) this
+                .getSystemService(Context.DISPLAY_SERVICE);
+        Display[] displays = mDisplayManager.getDisplays();
+        DifferentDislay mPresentation = null;
+        if (mPresentation == null) {
+            mPresentation = new DifferentDislay(this, displays[displays.length - 1]);// displays[1]是副屏
+
+            mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            mPresentation.show();
+        }
+
+
     }
 
     public XmppThread getXmppThread() {
