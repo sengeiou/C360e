@@ -401,14 +401,7 @@ public class MainPage extends PosBaseActivity {
         XMPP.getInstance().setCanCheckAppOrder(true);
     }
 
-    @Override
-    protected void getDiff() {
-        super.getDiff();
-
-
-
-
-    }
+ 
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {

@@ -23,11 +23,11 @@ import java.util.List;
 public class DifferentAdapter  extends RecyclerView.Adapter<DifferentAdapter.VH>{
     static TextTypeFace  textTypeFace;
     public static class VH extends RecyclerView.ViewHolder{
-        public final TextView title,name,price,tv_qty,subtotal,discount,total,modifier,specialInstract,tv_instruction;
+        public final TextView name,price,tv_qty,subtotal,discount,total,modifier,specialInstract,tv_instruction;
 
         public VH(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.title);
+
             name = (TextView)v.findViewById(R.id.name);
             price = (TextView) v.findViewById(R.id.price);
             tv_qty = (TextView) v.findViewById(R.id.tv_qty);
@@ -44,7 +44,7 @@ public class DifferentAdapter  extends RecyclerView.Adapter<DifferentAdapter.VH>
         }
     }
 
-    private List<OrderDetail>  mDatas;
+    private List<OrderDetail>  mDatas=new ArrayList<OrderDetail>();
     public DifferentAdapter(List<OrderDetail>  data) {
         this.mDatas = data;
     }
@@ -91,6 +91,7 @@ public class DifferentAdapter  extends RecyclerView.Adapter<DifferentAdapter.VH>
 
     @Override
     public int getItemCount() {
+
         return mDatas.size();
     }
 

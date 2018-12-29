@@ -31,7 +31,7 @@ import java.util.List;
 
 public class DifferentDislay extends Presentation {
 
-    private static List<OrderDetail> orderDetails;
+    //private static List<OrderDetail> orderDetails;
     private static Order order;
 
     private TextView tv_diff;
@@ -45,7 +45,7 @@ public class DifferentDislay extends Presentation {
     private static TextView tv_grand_total,tv_table_name_ontop,tv_different;
     private Button btn_place_order;
 
-  //  private List<OrderDetail> orderDetails = Collections.emptyList();
+    private static List<OrderDetail> orderDetails = Collections.emptyList();
 
     private static DifferentAdapter  differentAdapter;
     private static LinearLayout ll_order_list;
@@ -56,7 +56,7 @@ public class DifferentDislay extends Presentation {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_different);
+        setContentView(R.layout.dialog_different);
         init();
         initTextTypeFace();
     }
