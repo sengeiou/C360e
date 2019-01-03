@@ -871,7 +871,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
                 result.put("subPosBean", subPosBean);
                 result.put("businessDate", App.instance.getBusinessDate());
-                if (sessionStatusTime != 0l && sessionStatusTime != App.instance.getSessionStatus().getTime()) {
+                if (sessionStatusTime != 0l && sessionStatusTime <= App.instance.getSessionStatus().getTime()) {
                     result.put("resultCode", ResultCode.SESSION_HAS_CHANGE);
                 } else {
                     result.put("resultCode", ResultCode.SUCCESS);

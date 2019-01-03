@@ -165,10 +165,17 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 			switch (msg.what){
 				case ResultCode.SUCCESS: {
 					if (needSync) {
-						dismissLoadingDialog();
-						loadingDialog.setTitle("update all data");
-						loadingDialog.show();
-						SubPosSyncCentre.getInstance().updateAllData(context, handler);
+						if(App.instance.getSessionStatus() != null){
+//							startMainPage();
+							UIHelp.startMainPageKiosk(context);
+							dismissLoadingDialog();
+						}else {
+							dismissLoadingDialog();
+							loadingDialog.setTitle("update all data");
+							loadingDialog.show();
+							SubPosSyncCentre.getInstance().updateAllData(context, handler);
+						}
+
 					}else{
 						App.instance.setSessionStatus(Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
 						startMainPage();
