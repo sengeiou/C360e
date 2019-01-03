@@ -29,6 +29,7 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.CashInOut;
 import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.ItemCategory;
@@ -190,7 +191,7 @@ public class App extends BaseApplication {
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
     private static final String DATABASE_NAME = "com.alfredposclient";
-
+    private static final String DATABASE_NAME_TRAIN= "com.alfredposclient.train";
     private String callAppIp;
 
     private int appOrderNum;
@@ -345,8 +346,13 @@ public class App extends BaseApplication {
         super.onCreate();
 
         instance = this;
+        int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
+        if(train==1){
+            SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
+        }else {
+            SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+        }
 
-        SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
 
         systemSettings = new SystemSettings(this);
 

@@ -9,7 +9,7 @@ import com.alfredbase.store.sql.StoreValueSQL;
 
 public class SharedPreferencesHelper {
 
-    private static final String Training_mode = Store.class.getSimpleName();
+    public static final String TRAINING_MODE = "train_key";
     private static final String TAG = Store.class.getSimpleName();
     private static final String PACK_NAME = SharedPreferencesHelper.class.getPackage().getName();
 
