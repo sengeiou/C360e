@@ -32,6 +32,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
@@ -1488,6 +1489,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			
 		}
 			break;
+		    //开店
 		case R.id.rl_openbg:{
 			String value = MobclickAgent.getConfigParams(context, "updateVersion");
 			if(App.isOpenLog){
@@ -1500,7 +1502,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					DialogFactory.showUpdateVersionDialog(context, updateInfo, new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-//								SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
+          //		SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
 							downloadPos(updateInfo);
 						}
 					}, null);
@@ -1511,6 +1513,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			final Long businessDate = TimeUtil.getNewBusinessDate();
 			App.instance.deleteOldPrinterMsg(businessDate);
 			String bizYmd = TimeUtil.getYMD(businessDate);
+         //   SharedPreferencesHelper.putInt();
 			DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant), 
 					context.getResources().getString(R.string.operation_on) + bizYmd + 
 					context.getResources().getString(R.string.is_going_to_start), 
