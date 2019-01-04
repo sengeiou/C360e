@@ -383,7 +383,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         paymentDialog.dismiss();
                     }
                     paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.paid, false);
+                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
@@ -429,7 +429,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         paymentDialog.dismiss();
                     }
                     paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.paid, false);
+                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
@@ -475,7 +475,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         paymentDialog.dismiss();
                     }
                     paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.paid, false);
+                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
