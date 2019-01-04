@@ -1,6 +1,11 @@
 package com.alfredposclient.activity;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,6 +21,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PushMessage;
@@ -32,6 +38,7 @@ import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.SelectPrintWindow;
 import com.alfredposclient.popupwindow.SetPAXWindow;
+import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.view.ColorPickerDialog;
 import com.alfredposclient.view.MyToggleButton;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
@@ -88,13 +95,14 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	MyToggleButton mt_print_lable;
 	MyToggleButton mt_print_bill,mt_credit_card_rounding;
 	private int textsize,textcolor;
-	private TextView tv_lable_upOrdown,tv_callnum_style,tv_callnum_header,tv_callnum_footer;
-
+	private TextView tv_lable_upOrdown,tv_callnum_style,tv_callnum_header,tv_callnum_footer,tv_pos_mode_type,tv_pos_mode;
+	int	trainType;
 
 	@Override
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_system_setting);
+		trainType= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_print_lable).setVisibility(View.VISIBLE);
@@ -124,6 +132,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_kot_print_together = (MyToggleButton) findViewById(R.id.mt_kot_print_together);
 		mt_kot_double_print = (MyToggleButton) findViewById(R.id.mt_kot_double_print);
 		tv_callnum = (TextView)findViewById(R.id.tv_callnum);
+		tv_pos_mode = (TextView)findViewById(R.id.tv_pos_mode);
 		mt_double_print_bill = (MyToggleButton) findViewById(R.id.mt_double_print_bill);
 		mt_double_close_bill_print = (MyToggleButton)findViewById(R.id.mt_double_close_bill_print);
 		mt_order_summary_print = (MyToggleButton)findViewById(R.id.mt_order_summary_print);
@@ -144,8 +153,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
 		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
 		tv_callnum_style=(TextView)findViewById(R.id.tv_callnum_style);
+		tv_pos_mode_type=(TextView)findViewById(R.id.tv_pos_mode_type);
 
-
+           if(trainType==1){
+           	tv_pos_mode_type.setText("培训");
+		   }else {
+           	tv_pos_mode_type.setText("正常");
+		   }
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
 			tv_syncdata_warn.setVisibility(View.GONE);
@@ -194,6 +208,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_of_pax.setOnStateChangeListeren(this);
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
+		findViewById(R.id.ll_set_pos_mode).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
 		findViewById(R.id.ll_set_lock_time).setOnClickListener(this);
 		findViewById(R.id.ll_set_color).setOnClickListener(this);
@@ -508,6 +523,69 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		//	selectPrintWindow.show("");
 			break;
 
+
+			case R.id.ll_set_pos_mode:
+			{
+
+
+				// 0  正常模式， 1 培训模式
+				DialogFactory.commonTwoBtnDialog(context, "",
+						"切换模式？",
+						context.getResources().getString(R.string.cancel),
+						context.getResources().getString(R.string.ok),
+						new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								//SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+							}
+						},
+						new OnClickListener() {
+
+							@Override
+							public void onClick(View arg0) {
+
+
+								if(trainType!=1) {
+
+									SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
+									try {
+										AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
+										tv_pos_mode_type.setText("培训");
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								}else {
+									SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+									tv_pos_mode_type.setText("正常");
+								}
+
+								runOnUiThread(new Runnable() {
+
+									@Override
+									public void run() {
+										Intent intent = new Intent(App.instance, Welcome.class);
+										@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+												App.instance
+														.getApplicationContext(),
+												0, intent,
+												Intent.FLAG_ACTIVITY_NEW_TASK);
+										// 退出程序
+										AlarmManager mgr = (AlarmManager) App.instance
+												.getSystemService(Context.ALARM_SERVICE);
+										mgr.set(AlarmManager.RTC,
+												System.currentTimeMillis() + 1000,
+												restartIntent); // 1秒钟后重启应用
+										ActivityManager am = (ActivityManager) App.instance
+												.getSystemService(Context.ACTIVITY_SERVICE);
+										am.killBackgroundProcesses(getPackageName());
+										App.instance.finishAllActivity();
+									}
+								});
+							}
+						});
+			}
+				break;
+
 			case R.id.ll_callnum_footer:
                input(2);
 				break;
@@ -687,6 +765,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 		textTypeFace.setTrajanProRegular(tv_lable_upOrdown);
 		textTypeFace.setTrajanProRegular(tv_callnum_style);
+		textTypeFace.setTrajanProRegular(tv_pos_mode_type);
+		textTypeFace.setTrajanProRegular(tv_pos_mode);
 		textTypeFace.setTrajanProRegular(tv_callnum);
 		textTypeFace.setTrajanProRegular(tv_callnum_header);
 		textTypeFace.setTrajanProRegular(tv_callnum_footer);

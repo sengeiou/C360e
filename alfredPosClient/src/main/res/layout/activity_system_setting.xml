@@ -993,6 +993,54 @@
                             android:orientation="vertical">
 
                             <RelativeLayout
+                                android:id="@+id/ll_set_pos_mode"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:layout_gravity="center_horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_pos_mode"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:paddingLeft="10dp"
+
+                                    android:text="pos mode : "
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <TextView
+                                    android:id="@+id/tv_pos_mode_type"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+
+                                    android:layout_marginLeft="30dp"
+                                    android:layout_toRightOf="@id/tv_pos_mode"
+                                    android:text="style"
+                                    android:textColor="@color/black"
+
+                                    android:textSize="20dp"
+
+
+                                    />
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_marginRight="10dp"
+                                    android:padding="15dp"
+                                    android:src="@drawable/setting_icon"
+                                    android:visibility="invisible" />
+
+                            </RelativeLayout>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
                                 android:id="@+id/ll_set_callnum"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
@@ -1004,8 +1052,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:paddingLeft="10dp"
-
-                                android:text="Number Calling Setting"
+                                android:text="Number Calling Settingsss"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
