@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 
- * @author 冯小卫 2014-3-18
+ * @author
  * 
  *         线程池配置类
  */

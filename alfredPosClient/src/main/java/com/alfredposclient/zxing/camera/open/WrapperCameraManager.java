@@ -16,7 +16,7 @@ package com.alfredposclient.zxing.camera.open;//package com.example.zun.zunzxing
 //import java.io.IOException;
 //
 ///**
-// * Created by Zun on 2016/9/29.
+// * Created by
 // *
 // */
 //

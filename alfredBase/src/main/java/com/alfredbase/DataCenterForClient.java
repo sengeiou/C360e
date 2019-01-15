@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 /**
  * 
- * @author 冯小卫 2014-3-7
+ * @author
  * 
  *         1.客户端进行网络数据交互的数据中心，提供网络交互能力
  * 

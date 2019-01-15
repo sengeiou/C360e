@@ -49,7 +49,7 @@ import java.util.Map;
 /**
  * 有多少桌点同样的菜，筛选出来
  * 
- * @author XieJF, 2014-8-14
+ * @author
  */
 public class Summary extends BaseActivity {
 	private static final int HANDLER_REFRESH = 30;

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +24,8 @@ import cn.finalteam.galleryfinal.widget.GFImageView;
 
 /**
  * Desction:imageloader抽象类，外部需要实现这个类去加载图片， GalleryFinal尽力减少对第三方库的依赖，所以这么干了
- * Author:pengjianbo
- * Date:15/10/10 下午5:27
+ * Author:
+ * Date:
  */
 public interface ImageLoader extends Serializable{
     void displayImage(Activity activity, String path, GFImageView imageView, Drawable defaultDrawable, int width, int height);

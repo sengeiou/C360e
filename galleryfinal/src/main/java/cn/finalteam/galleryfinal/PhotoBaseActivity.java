@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +44,8 @@ import cn.finalteam.toolsfinal.io.FileUtils;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:15/10/10 下午5:46
+ * Author:
+ * Date:
  */
 public abstract class PhotoBaseActivity extends Activity implements EasyPermissions.PermissionCallbacks{
 

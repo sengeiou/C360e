@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +56,8 @@ import cn.finalteam.toolsfinal.io.FilenameUtils;
 
 /**
  * Desction:图片裁剪
- * Author:pengjianbo
- * Date:15/10/10 下午5:40
+ * Author:
+ * Date:
  */
 public class PhotoEditActivity extends CropImageActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 

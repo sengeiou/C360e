@@ -132,6 +132,7 @@
                         android:text="20/04/2014"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_s" />
+
                 </LinearLayout>
 
                 <LinearLayout

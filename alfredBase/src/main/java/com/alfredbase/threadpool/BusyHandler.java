@@ -7,7 +7,7 @@ import com.alfredbase.utils.LogUtil;
 
 /**
  * 
- * @author 冯小卫 2014-3-18
+ * @author
  * 
  *         线程池异常处理类
  * 

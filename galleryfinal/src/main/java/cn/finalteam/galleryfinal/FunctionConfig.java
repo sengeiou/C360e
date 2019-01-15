@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +24,8 @@ import cn.finalteam.galleryfinal.model.PhotoInfo;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:15/12/2 上午10:45
+ * Author:
+ * Date:
  */
 public class FunctionConfig implements Cloneable{
 

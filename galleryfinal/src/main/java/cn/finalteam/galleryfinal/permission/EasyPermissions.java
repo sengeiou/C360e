@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +34,8 @@ import cn.finalteam.galleryfinal.utils.ILogger;
 
 /**
  * Desction:Utility to request and check System permissions for apps targeting Android M (API >= 23).
- * Author:pengjianbo
- * Date:16/1/24 下午11:31
+ * Author:
+ * Date:
  */
 public class EasyPermissions {
 

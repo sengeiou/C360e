@@ -143,7 +143,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                         }
                         int ods = orderDetail.getOrderDetailStatus();
 
-                        //Bob: 零时阻止编辑已经发送到厨房的modifier
+                        //: 零时阻止编辑已经发送到厨房的modifier
                         if (ods == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                             return;
                         }

@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:2016/1/20 0020 20:22
+ * Author:
+ *
  */
 public class PhotoTempModel implements Serializable{
     private int orientation;

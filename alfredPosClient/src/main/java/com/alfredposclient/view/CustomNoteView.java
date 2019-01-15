@@ -40,8 +40,8 @@ import java.util.List;
 
 /**
  * 
- * @author 刘秀秀
- * @time 2015-12-23 下午2:15:42
+ * @author
+ * @time
  * @tags 订单的用户自定义部分：牌号；人数；折扣、备注等等
  * @version 1
  */

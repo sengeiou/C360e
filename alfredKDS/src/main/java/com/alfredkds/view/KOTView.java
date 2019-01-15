@@ -47,7 +47,7 @@ import java.util.List;
 /**
  * KOT信息，每桌菜品展示ScrollView
  * 
- * @author XieJF, 2014-7-17
+ * @author
  */
 public class KOTView extends LinearLayout implements AnimationListener,
 		OnClickListener {

@@ -312,7 +312,7 @@ public class App extends BaseApplication {
 	/**
 	 * 查询出所有的kot信息
 	 * 
-	 * added by XieJF, 2014-8-14
+	 * added by
 	 * @return
 	 */
 	public List<Kot> getAllKots(){
@@ -338,7 +338,7 @@ public class App extends BaseApplication {
 	/**
 	 * 数据库取数据，初始化KotHistory及refresh页面
 	 * 
-	 * added by XieJF, 2014-8-14
+	 * added by
 	 * @return
 	 */
 	public List<Object[]> getKotHistoryData(){
@@ -371,7 +371,7 @@ public class App extends BaseApplication {
 	/**
 	 * Summary ：菜名初始化
 	 * 
-	 * added by XieJF, 2014-8-14
+	 * added by
 	 * @return
 	 */
 	public List<String> getDishNames(){

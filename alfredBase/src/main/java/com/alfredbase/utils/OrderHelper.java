@@ -643,7 +643,7 @@ public class OrderHelper {
 	}
 	
 	
-	/*Bob:加入流水号 */
+	/*:加入流水号 */
 	public static int calculateOrderNo(long bizDate) {
 		int maxOrderNo = Store.getInt(BaseApplication.instance, Store.MAX_ORDER_NO, 0);
 		int sid = 0;

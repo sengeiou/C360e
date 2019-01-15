@@ -167,7 +167,7 @@ public class ItemMainCategorySQL {
         return result;
     }
 
-    //Bob Add: revenue center menu has own menu
+    // Add: revenue center menu has own menu
     public static ArrayList<ItemMainCategory> getAllAvaiableItemMainCategoryInRevenueCenter() {
         ArrayList<ItemMainCategory> result = new ArrayList<ItemMainCategory>();
         String sql = "select * from " + TableNames.ItemMainCategory + " where isActive = 1 and id IN (select distinct itemMainCategoryId from " + TableNames.ItemDetail + " where isActive = 1) order by indexId";

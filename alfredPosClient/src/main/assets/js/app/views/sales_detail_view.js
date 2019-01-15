@@ -179,7 +179,6 @@ function returnMouthDate(data){
         var myDate = new Date();
         myDate.setTime(t.getTime() - dateOffset);
         var time = myDate.getTime();
-        //{"time":"02/10/2014","breakfastAmount":"101.00","lunchAmount":"200.00","dinnerAmount":"300.00"},
         var obj=getSaleData(reportData,time);
         
         if (i==0) {

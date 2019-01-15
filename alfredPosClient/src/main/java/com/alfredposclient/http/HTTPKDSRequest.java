@@ -86,7 +86,7 @@ public class HTTPKDSRequest {
 									if (resultCode == ResultCode.SUCCESS) {
 										LogUtil.i("sendSessionClose", "SUCCESS");
 									}else if(resultCode==ResultCode.INVALID_DEVICE) {
-										//Bob: if waiter device is invadate, POS need remove it.
+										//: if waiter device is invadate, POS need remove it.
 										App.instance.removeKDSDevice(kds.getDevice_id());
 									}
 								}
