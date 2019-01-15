@@ -2527,7 +2527,7 @@ public class MainPage extends BaseActivity {
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
             case KOT_PRINT_FAILED:
-                handler.sendMessage(handler.obtainMessage(action, obj));
+               handler.sendMessage(handler.obtainMessage(action, obj));
                 break;
             case KOT_PRINT_SUCCEED:
                 handler.sendMessage(handler.obtainMessage(action, obj));

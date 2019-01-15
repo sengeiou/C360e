@@ -197,7 +197,7 @@ public class MainPageKiosk extends BaseActivity {
     public static final int KIOSK_VIEW_EVENT_DELETE_ORDER = 1045;
 
     // KOT PRINT
-    public static final int KOT_PRINT_FAILED = 200;
+    public static final int KOT_PRINT_FAILED = 204;
     public static final int KOT_PRINT_SUCCEED = 201;
     public static final int KOT_PRINT_NULL = 202;
     public static final int KOT_ITEM_PRINT_NULL = 203;
@@ -2028,7 +2028,7 @@ public class MainPageKiosk extends BaseActivity {
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
             case KOT_PRINT_FAILED:
-                handler.sendMessage(handler.obtainMessage(action));
+               handler.sendMessage(handler.obtainMessage(action));
                 break;
             case KOT_PRINT_SUCCEED:
                 handler.sendMessage(handler.obtainMessage(action, obj));
