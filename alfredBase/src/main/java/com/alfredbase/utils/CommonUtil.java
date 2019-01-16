@@ -77,8 +77,10 @@ public class CommonUtil {
 					.getSystemService(Context.WIFI_SERVICE);
 			WifiInfo wifiInfo = wifi.getConnectionInfo();
 			LogUtil.d("LocalMacAddress", wifiInfo.getMacAddress().toString());
+		//	return "98:3b:16:18:5a:94";
 			return wifiInfo.getMacAddress().toString();
 		}else{
+			//return	"98:3b:16:18:5a:94";
 			return getLocalMacAddress1(context);
 		}
 	}
