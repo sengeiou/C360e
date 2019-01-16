@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 public class BH {
 	private static final DecimalFormat doubleFormat = new DecimalFormat("0.00");
 	private static final DecimalFormat threeFormat = new DecimalFormat("0.000");
+	private static final DecimalFormat fourFormat = new DecimalFormat("0.0000");// 运算工程中使用。
 	public static final DecimalFormat intFormat = new DecimalFormat("0");
 	private static DecimalFormat format = doubleFormat;
 	private static boolean isDouble = true;

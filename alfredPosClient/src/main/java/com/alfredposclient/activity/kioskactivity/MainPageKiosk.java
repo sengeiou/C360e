@@ -781,9 +781,9 @@ public class MainPageKiosk extends BaseActivity {
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
 //
 
-                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
-
-                            } else {
+//                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
+//
+//                            } else {
                                 if (!App.instance.isRevenueKiosk()) {
                                     App.instance.remoteBillPrint(printer, title, paidOrder,
                                             orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
@@ -793,7 +793,7 @@ public class MainPageKiosk extends BaseActivity {
                                                 orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
                                     }
                                 }
-                            }
+//                            }
                         }
 //
 
@@ -991,10 +991,10 @@ public class MainPageKiosk extends BaseActivity {
 
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
-                        if (App.instance.getSystemSettings().isPrintBill()) {
+//                        if (App.instance.getSystemSettings().isPrintBill()) {
                             App.instance.remoteBillPrint(printer, title, temporaryOrder,
                                     orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        }
+//                        }
                     }
 //
 //				if (orderItems.size() > 0 && printer != null) {

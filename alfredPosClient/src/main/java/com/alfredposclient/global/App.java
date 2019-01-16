@@ -1924,10 +1924,7 @@ public class App extends BaseApplication {
                                 List<PaymentSettlement> settlement, RoundAmount roundAmount,
                                 boolean openDrawer) {
 
-        if (mRemoteService == null) {
-            printerDialog();
-            return;
-        }
+        boolean isCashSettlement = false;
         List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
         if (settlement != null) {
             for (PaymentSettlement paymentSettlement : settlement) {
@@ -1940,6 +1937,7 @@ public class App extends BaseApplication {
                     case ParamConst.SETTLEMENT_TYPE_CASH:
                         printReceiptInfo.setCashChange(paymentSettlement
                                 .getCashChange());
+                        isCashSettlement = true;
                         break;
                     case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
                     case ParamConst.SETTLEMENT_TYPE_UNIPAY:
@@ -1978,55 +1976,64 @@ public class App extends BaseApplication {
                 printReceiptInfos.add(printReceiptInfo);
             }
         }
-        try {
-            Map<String, String> roundingMap = new HashMap<String, String>();
-            String total = order.getTotal();
-            String rounding = "0.00";
-            if (roundAmount != null) {
-                total = BH.sub(BH.getBD(order.getTotal()),
-                        BH.getBD(roundAmount.getRoundBalancePrice()), true)
-                        .toString();
-                rounding = BH.getBD(roundAmount.getRoundBalancePrice())
-                        .toString();
+        if(getSystemSettings().isPrintBill()) {
+            if (mRemoteService == null) {
+                printerDialog();
+                return;
             }
-            roundingMap.put("Total", total);
-            roundingMap.put("Rounding", rounding);
-            Gson gson = new Gson();
-            String prtStr = gson.toJson(printer);
-            String prtTitle = gson.toJson(title);
-            String orderStr = gson.toJson(order);
-            String details = gson.toJson(orderItems);
-            String mods = gson.toJson(orderModifiers);
-            String tax = gson.toJson(taxes);
-            String payment = gson.toJson(printReceiptInfos);
-            String roundStr = gson.toJson(roundingMap);
-            // gson.toJson(roundingMap);
-            if (isRevenueKiosk()) {
-                if (countryCode == ParamConst.CHINA)
-                    mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
-                            details, mods, tax, payment,
-                            this.systemSettings.isDoubleBillPrint(),
-                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                            getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-                            true, BH.IsDouble());
-                else
-                    mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
-                            details, mods, tax, payment,
-                            this.systemSettings.isDoubleBillPrint(),
-                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                            null, getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble());
+            try {
+                Map<String, String> roundingMap = new HashMap<String, String>();
+                String total = order.getTotal();
+                String rounding = "0.00";
+                if (roundAmount != null) {
+                    total = BH.sub(BH.getBD(order.getTotal()),
+                            BH.getBD(roundAmount.getRoundBalancePrice()), true)
+                            .toString();
+                    rounding = BH.getBD(roundAmount.getRoundBalancePrice())
+                            .toString();
+                }
+                roundingMap.put("Total", total);
+                roundingMap.put("Rounding", rounding);
+                Gson gson = new Gson();
+                String prtStr = gson.toJson(printer);
+                String prtTitle = gson.toJson(title);
+                String orderStr = gson.toJson(order);
+                String details = gson.toJson(orderItems);
+                String mods = gson.toJson(orderModifiers);
+                String tax = gson.toJson(taxes);
+                String payment = gson.toJson(printReceiptInfos);
+                String roundStr = gson.toJson(roundingMap);
+                // gson.toJson(roundingMap);
+                if (isRevenueKiosk()) {
+                    if (countryCode == ParamConst.CHINA)
+                        mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                                details, mods, tax, payment,
+                                this.systemSettings.isDoubleBillPrint(),
+                                this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                                getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
+                                true, BH.IsDouble());
+                    else
+                        mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                                details, mods, tax, payment,
+                                this.systemSettings.isDoubleBillPrint(),
+                                this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                                null, getLocalRestaurantConfig().getCurrencySymbol(),
+                                openDrawer, BH.IsDouble());
 
-            } else {
-                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-                        mods, tax, payment,
-                        this.systemSettings.isDoubleBillPrint(),
-                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                        getLocalRestaurantConfig().getCurrencySymbol(),
-                        openDrawer, BH.IsDouble());
+                } else {
+                    mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                            mods, tax, payment,
+                            this.systemSettings.isDoubleBillPrint(),
+                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                            getLocalRestaurantConfig().getCurrencySymbol(),
+                            openDrawer, BH.IsDouble());
+                }
+
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        }else if(isCashSettlement){
+            kickOutCashDrawer(printer);
         }
     }
 
