@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
+ * Copyright (C) (pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import android.net.Uri;
 
 /**
  * Desction:相册扫描
- * Author:pengjianbo
- * Date:15/7/31 下午11:27
+ * Author:
+ * Date:
  */
 public class MediaScanner {
 

@@ -42,7 +42,6 @@ import java.util.TimeZone;
  * <p/>
  * <p/>
  * NanoHTTPD
- * <p></p>Copyright (c) 2012-2013 by Paul S. Hawke, 2001,2005-2013 by Jarno Elonen, 2010 by Konstantinos Togias</p>
  * <p/>
  * <p/>
  * <b>Features + limitations: </b>

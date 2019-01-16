@@ -1455,7 +1455,7 @@ public class MainPageKiosk extends BaseActivity {
                                         kotItemDetails.add(freeKotItemDetail);
                                     }
 
-                                    //Bob: fix issue: kot print no modifier showup
+                                    // fix issue: kot print no modifier showup
                                     // look for kot modifiers
                                     Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
                                     ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();

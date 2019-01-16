@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 /**
  * BigDecimal 辅助类
  * 
- * @author 冯小卫 2014-5-26
+ * @author
  *
  */
 public class BH {

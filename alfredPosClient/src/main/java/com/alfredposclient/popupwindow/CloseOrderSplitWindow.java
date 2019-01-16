@@ -435,7 +435,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 BH.getBD(sumPaidamount), true);
         settlementNum = BH.getBD(sumPaidamount);
 
-        // Bob fix bug: If order amount is 0, we restrict it to use CASH
+        //fix bug: If order amount is 0, we restrict it to use CASH
         // settlement
         if (settlementNum.compareTo(BigDecimal.ZERO) == 0) {
             paymentType = ParamConst.SETTLEMENT_TYPE_CASH;

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 餐厅开店时间，是哪一餐
  * 
- * @author 冯小卫 2014-6-16
+ * @author
  * 
  */
 public class SessionStatus implements Serializable {

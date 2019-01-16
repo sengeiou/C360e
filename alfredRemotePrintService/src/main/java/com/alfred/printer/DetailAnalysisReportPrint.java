@@ -395,7 +395,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 				ReportPluDayItem reportPluDayItem = reportPluDayItems.get(j);
 				if (amontReportPluDayItem.getItemMainCategoryId().intValue() == reportPluDayItem.getItemMainCategoryId().intValue()) {
-					//Bob: Print comb modifier
+					// Print comb modifier
 					int itmId = reportPluDayItem.getItemDetailId().intValue();
 					ArrayList<ReportPluDayComboModifier> comItems = combMap.get(itmId);
 					if (comItems != null && comItems.size() > 0) {
@@ -511,7 +511,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 	}
 
 	/*
-	 * Bob: get code from Comb*/
+	 *  get code from Comb*/
 //	private void GetCombDetailAnalysisText() {
 //		//StringBuffer sbr = new StringBuffer();
 //		int allQty = 0;

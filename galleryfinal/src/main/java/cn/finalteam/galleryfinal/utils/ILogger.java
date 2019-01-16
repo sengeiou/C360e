@@ -8,8 +8,8 @@ import cn.finalteam.toolsfinal.logger.Settings;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:2016/1/29 0029 17:51
+ * Author:
+ *
  */
 public final class ILogger {
 

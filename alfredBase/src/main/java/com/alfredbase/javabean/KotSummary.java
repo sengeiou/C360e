@@ -97,7 +97,7 @@ public class KotSummary implements Serializable{
 		this.status = status;
 	}
 	
-	//Bob: not use it for print
+	//: not use it for print
 	public String getOrderIdString() {
 		return String.valueOf(this.orderId);
 	}

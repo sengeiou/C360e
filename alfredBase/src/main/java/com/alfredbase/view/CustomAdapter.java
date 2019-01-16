@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 /**
  * 
- * @author 刘秀秀
- * @time 2015-12-1 上午11:37:39
+ * @author
+ * @time
  * @tags 自动换行布局Adapter
  * @todo FROM网络下载
  */

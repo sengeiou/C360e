@@ -11,7 +11,7 @@ import com.alfredbase.utils.LogUtil;
 
 /**
  * 
- * @author 冯小卫 2014-3-21
+ * @author
  * 
  *         组播IP地址就是D类IP地址，即224.0.0.0至239.255.255.255之间的IP地址
  * 

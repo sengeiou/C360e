@@ -2559,7 +2559,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 resp = this.getJsonResponse(new Gson().toJson(result));
                 return resp;
             }
-            // Bob: fix bug: filter out old data that may be in KDS
+            // : fix bug: filter out old data that may be in KDS
             ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
             for (int i = 0; i < kotItemDetails.size(); i++) {
                 KotItemDetail kotItemDetail = kotItemDetails.get(i);
@@ -3094,7 +3094,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     kotItemDetails.add(freeKotItemDetail);
                 }
 
-                //Bob: fix issue: kot print no modifier showup
+                //: fix issue: kot print no modifier showup
                 // look for kot modifiers
                 Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
                 ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
+ * Copyright (C) pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import java.util.List;
 
 /**
  * Desction:图片文件夹
- * Author:pengjianbo
- * Date:15/7/30 上午11:28
+ * Author:
+ * Date:
  */
 public class PhotoFolderInfo implements Serializable {
     private int folderId;
