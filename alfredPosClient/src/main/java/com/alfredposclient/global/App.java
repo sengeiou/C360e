@@ -486,17 +486,17 @@ public class App extends BaseApplication {
 
 //
 ////
-//        DisplayManager mDisplayManager;// 屏幕管理类
-//        mDisplayManager = (DisplayManager) this
-//                .getSystemService(Context.DISPLAY_SERVICE);
-//        Display[] displays = mDisplayManager.getDisplays();
-//        DifferentDislay mPresentation = null;
-//        if (mPresentation == null) {
-//            mPresentation = new DifferentDislay(this, displays[displays.length - 1]);// displays[1]是副屏
-//
-//            mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-//            mPresentation.show();
-//        }
+        DisplayManager mDisplayManager;// 屏幕管理类
+        mDisplayManager = (DisplayManager) this
+                .getSystemService(Context.DISPLAY_SERVICE);
+        Display[] displays = mDisplayManager.getDisplays();
+        DifferentDislay mPresentation = null;
+        if (mPresentation == null) {
+            mPresentation = new DifferentDislay(this, displays[displays.length - 1]);// displays[1]是副屏
+
+            mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            mPresentation.show();
+        }
 
 
     }
