@@ -14,4 +14,12 @@ public class MachineUtil {
         }
         return false;
     }
+    public static boolean isHisense() {
+        String model = Build.MODEL;
+        LogUtil.d(TAG, model + "**************" + model);
+        if ("HK716".equals(model.toUpperCase())) {
+            return true;
+        }
+        return false;
+    }
 }

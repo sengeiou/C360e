@@ -55,7 +55,7 @@ public class WifiCommunication {
 
     private boolean clientStart() {
         Log.d("WifiCommunication", "printer (" + ipAddress + ")");
-        if(localIPAddress.equals(ipAddress) && !MachineUtil.isSUNMIShow()){
+        if(localIPAddress.equals(ipAddress) && MachineUtil.isHisense()){
             return clientStartSerialSocket();
         }else if (ipAddress.contains(":")||localIPAddress.equals(ipAddress)) {
             return clientStartBluetooth(ipAddress);
@@ -258,7 +258,7 @@ public class WifiCommunication {
     }
 
     public boolean sndByte(byte[] data) {
-            if(localIPAddress.equals(ipAddress) && !MachineUtil.isSUNMIShow()){
+            if(localIPAddress.equals(ipAddress) && MachineUtil.isHisense()){
                 return sndByteSerialSocket(data);
             }else if (ipAddress.contains(":")||localIPAddress.equals(ipAddress))
                 return sndByteBluetooth(data);
@@ -331,7 +331,7 @@ public class WifiCommunication {
     }
 
     public boolean isConnected() {
-        if (localIPAddress.equals(ipAddress) && !MachineUtil.isSUNMIShow()){
+        if (localIPAddress.equals(ipAddress) && MachineUtil.isHisense()){
             return isConnectedSerialSocket();
         }else if (ipAddress.contains(":") || localIPAddress.equals(ipAddress)) {
             return isConnectedBluetooth();
