@@ -21,7 +21,7 @@ import com.alfredbase.utils.NetUtil;
 
 /**
  * 
- * @author 冯小卫 2014-3-7
+ * @author
  * 
  *         1.Mina长连接的一个封装，完成长连接的初始化，启动，关闭
  * 

@@ -978,7 +978,7 @@ public class ObjectFactory {
 
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_free_order_detail = new Object();
 
     public OrderDetail getFreeOrderDetail(Order order,
@@ -1033,7 +1033,7 @@ public class ObjectFactory {
         return orderDetail;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_free_order_detail_for_waiter = new Object();
 
     public OrderDetail getFreeOrderDetailForWaiter(Order order,
@@ -1093,7 +1093,7 @@ public class ObjectFactory {
 
     Object lock_order_modifier_check = new Object();
 
-    //bob: only call from main POS. not need threadsafe
+    //: only call from main POS. not need threadsafe
     public ModifierCheck getModifierCheck(Order order, OrderDetail orderDetail,
                                           Modifier modifier, ItemModifier itemModifier) {
         ModifierCheck modifierCheck = new ModifierCheck();
@@ -1115,7 +1115,7 @@ public class ObjectFactory {
 
     Object lock_order_modifier = new Object();
 
-    //bob: only call from main POS. not need threadsafe
+    //: only call from main POS. not need threadsafe
     public OrderModifier getOrderModifier(Order order, OrderDetail orderDetail,
                                           Modifier modifier, int printerId) {
         OrderModifier orderModifier = new OrderModifier();
@@ -1171,7 +1171,7 @@ public class ObjectFactory {
         return orderModifier;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_get_order_bill = new Object();
 
     public OrderBill getOrderBill(Order order, RevenueCenter revenueCenter) {
@@ -1227,7 +1227,7 @@ public class ObjectFactory {
         return orderBill;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_get_order_detail_tax = new Object();
 
     public OrderDetailTax getOrderDetailTax(Order order,
@@ -1303,7 +1303,7 @@ public class ObjectFactory {
      * @param order, orderBill 给不拆单的使用
      * @return
      */
-    //bob add:thread safe
+    // add:thread safe
     Object lock_get_payment = new Object();
 
     public Payment getPayment(Order order, OrderBill orderBill) {
@@ -1374,7 +1374,7 @@ public class ObjectFactory {
         return payment;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_get_payment_settlement = new Object();
 
     public PaymentSettlement getPaymentSettlement(Payment payment,
@@ -1461,7 +1461,7 @@ public class ObjectFactory {
         return paymentSettlement;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_get_getBohHoldSettlementByPaymentSettlement = new Object();
 
     public BohHoldSettlement getBohHoldSettlementByPaymentSettlement(
@@ -1502,7 +1502,7 @@ public class ObjectFactory {
         return bohHoldSettlement;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_get_getNonChargableSettlementByPaymentSettlement = new Object();
 
     public NonChargableSettlement getNonChargableSettlementByPaymentSettlement(
@@ -1547,7 +1547,7 @@ public class ObjectFactory {
         return nonChargableSettlement;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_getVoidSettlementByPayment = new Object();
 
     public VoidSettlement getVoidSettlementByPayment(Payment payment,
@@ -1584,7 +1584,7 @@ public class ObjectFactory {
         return voidSettlement;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_getNetsSettlementByPayment = new Object();
 
     public NetsSettlement getNetsSettlementByPayment(Payment payment,
@@ -1720,8 +1720,8 @@ public class ObjectFactory {
             List<OrderDetail> orderDetails) {
         ArrayList<PrintOrderItem> list = new ArrayList<PrintOrderItem>();
         for (OrderDetail orderDetail : orderDetails) {
-            ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-                    orderDetail.getItemId());
+//            ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
+//                    orderDetail.getItemId());
             // Double amount = Double.parseDouble(orderDetail.getItemPrice())
             // * orderDetail.getItemNum();
             String price = orderDetail.getItemPrice();
@@ -1732,8 +1732,8 @@ public class ObjectFactory {
 //					BH.getBD(orderDetail.getItemNum()), true);
             else
                 amountBH = BH.getBD(orderDetail.getRealPrice());
-            list.add(new PrintOrderItem(orderDetail.getId(), orderDetail.getIsTakeAway(), itemDetail.getId(),
-                    itemDetail.getItemName(), BH.getBD(orderDetail.getItemPrice())
+            list.add(new PrintOrderItem(orderDetail.getId(), orderDetail.getIsTakeAway(),  orderDetail.getItemId(),
+                    orderDetail.getItemName(), BH.getBD(orderDetail.getItemPrice())
                     .toString(), orderDetail.getItemNum() + "", amountBH
                     .toString(), orderDetail.getWeight()));
         }
@@ -1896,7 +1896,7 @@ public class ObjectFactory {
         return kotSummary;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_getKotItemDetail = new Object();
 
     public KotItemDetail getKotItemDetail(Order order, OrderDetail orderDetail,
@@ -2001,7 +2001,7 @@ public class ObjectFactory {
         return kotItemDetail;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_getKotItemModifier = new Object();
 
     public KotItemModifier getKotItemModifier(KotItemDetail kotItemDetail,
@@ -2027,7 +2027,7 @@ public class ObjectFactory {
         return kotItemModifier;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_getKotNotification = new Object();
 
     public KotNotification getKotNotification(SessionStatus sessionStatus,
@@ -2078,7 +2078,7 @@ public class ObjectFactory {
         return userTimeSheet;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_getReportDiscount = new Object();
 
     public ReportDiscount getReportDiscount(TableInfo tables, Order order,
@@ -2160,7 +2160,7 @@ public class ObjectFactory {
         return localDevice;
     }
 
-    //bob add:thread safe
+    // add:thread safe
     Object lock_getCardsSettlement = new Object();
 
     public CardsSettlement getCardsSettlement(Payment payment,

@@ -340,7 +340,7 @@ public class CoreData {
 		return null;
 	}
 
-	/*Bob: This function CANNNOT be used for Open Item coz all open items have no template ID*/
+	/*: This function CANNNOT be used for Open Item coz all open items have no template ID*/
 	public ItemDetail getItemDetailByTemplateId(Integer id) {
 		if (id == null || id.intValue() == 0)
 			return null;

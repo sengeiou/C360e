@@ -197,7 +197,7 @@ public class MainPageKiosk extends BaseActivity {
     public static final int KIOSK_VIEW_EVENT_DELETE_ORDER = 1045;
 
     // KOT PRINT
-    public static final int KOT_PRINT_FAILED = 200;
+    public static final int KOT_PRINT_FAILED = 204;
     public static final int KOT_PRINT_SUCCEED = 201;
     public static final int KOT_PRINT_NULL = 202;
     public static final int KOT_ITEM_PRINT_NULL = 203;
@@ -781,9 +781,9 @@ public class MainPageKiosk extends BaseActivity {
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
 //
 
-                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
-
-                            } else {
+//                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
+//
+//                            } else {
                                 if (!App.instance.isRevenueKiosk()) {
                                     App.instance.remoteBillPrint(printer, title, paidOrder,
                                             orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
@@ -793,7 +793,7 @@ public class MainPageKiosk extends BaseActivity {
                                                 orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
                                     }
                                 }
-                            }
+//                            }
                         }
 //
 
@@ -991,10 +991,10 @@ public class MainPageKiosk extends BaseActivity {
 
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
-                        if (App.instance.getSystemSettings().isPrintBill()) {
+//                        if (App.instance.getSystemSettings().isPrintBill()) {
                             App.instance.remoteBillPrint(printer, title, temporaryOrder,
                                     orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        }
+//                        }
                     }
 //
 //				if (orderItems.size() > 0 && printer != null) {
@@ -1455,7 +1455,7 @@ public class MainPageKiosk extends BaseActivity {
                                         kotItemDetails.add(freeKotItemDetail);
                                     }
 
-                                    //Bob: fix issue: kot print no modifier showup
+                                    // fix issue: kot print no modifier showup
                                     // look for kot modifiers
                                     Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
                                     ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
@@ -2028,7 +2028,7 @@ public class MainPageKiosk extends BaseActivity {
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
             case KOT_PRINT_FAILED:
-                handler.sendMessage(handler.obtainMessage(action));
+               handler.sendMessage(handler.obtainMessage(action));
                 break;
             case KOT_PRINT_SUCCEED:
                 handler.sendMessage(handler.obtainMessage(action, obj));

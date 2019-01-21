@@ -142,7 +142,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 
     /**
      * 服务器得到数据，非主线程
-     * added by XieJF, 2014-7-23
+     * added by
      *
      * @param action
      * @param obj

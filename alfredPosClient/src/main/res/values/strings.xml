@@ -93,7 +93,7 @@
     <string name="take_away_">Takeaway</string>
     <string name="app_delivery">Delivery</string>
 
-    <string name="app_de">Take Away</string>
+    <string name="app_take_away">Take Away</string>
     <string name="app_dine_in">Dine In</string>
     <string name="transfer">Transfer</string>
     <string name="weight">Weight</string>

@@ -125,7 +125,7 @@ public class PrintJob extends Job  {
     }
 
 
-    //Bob: for Print Queue
+    // for Print Queue
     public PrintQueueMsg getJobForQueue() {
         PrintQueueMsg msg = new PrintQueueMsg();
         Gson gson = new Gson();

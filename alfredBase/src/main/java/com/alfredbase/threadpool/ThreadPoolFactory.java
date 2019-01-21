@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 
- * @author 冯小卫 2014-3-18
+ * @author
  * 
  *         线程池工厂方法
  * 

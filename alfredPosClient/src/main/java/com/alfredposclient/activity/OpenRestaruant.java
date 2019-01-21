@@ -252,7 +252,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			if(tableInfo == null){
 				tableInfo = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480,800);
 				tableInfo.setIsKiosk(1);
-				tableInfo.setPosId(0);
 				TableInfoSQL.addTables(tableInfo);
 			}
 		}
@@ -1120,7 +1119,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		ArrayList<ReportDayTax> reportDayTaxs = (ArrayList<ReportDayTax>) xReport.get("reportDayTaxs");
 		List<ReportDayPayment> reportDayPayments = (List<ReportDayPayment>) xReport.get("reportDayPayments");
 		ArrayList<ReportPluDayItem> reportPluDayItems = (ArrayList<ReportPluDayItem>) xReport.get("reportPluDayItems");
-		//bob add to filter ENT and VOID item in PLU items
+		//add to filter ENT and VOID item in PLU items
 //		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
 //			.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
 

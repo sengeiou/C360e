@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
  * 
  * http://www.eoeandroid.com/thread-319592-1-1.html
  * 
- * @author 冯小卫 2014-4-23
+ * @author
  * 
  */
 public class ConnectPOS extends BaseActivity implements Callback,

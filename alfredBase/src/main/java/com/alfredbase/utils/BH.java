@@ -8,12 +8,13 @@ import java.text.DecimalFormat;
 /**
  * BigDecimal 辅助类
  * 
- * @author 冯小卫 2014-5-26
+ * @author
  *
  */
 public class BH {
 	private static final DecimalFormat doubleFormat = new DecimalFormat("0.00");
 	private static final DecimalFormat threeFormat = new DecimalFormat("0.000");
+	private static final DecimalFormat fourFormat = new DecimalFormat("0.0000");// 运算工程中使用。
 	public static final DecimalFormat intFormat = new DecimalFormat("0");
 	private static DecimalFormat format = doubleFormat;
 	private static boolean isDouble = true;

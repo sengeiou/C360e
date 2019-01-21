@@ -50,7 +50,7 @@ public class BaseApplication extends Application {
      */
 
     public static boolean isDebug = false;    //	Debug开关 release的时候设置为false
-    public static boolean isOpenLog = true;    //	release 时设置为false
+    public static boolean isOpenLog = false;    //	release 时设置为false
 
     protected String APPPATH = "sunmi";// sunmi or google or alibaba;
 
@@ -430,7 +430,7 @@ public class BaseApplication extends Application {
 
     /**
      * 关闭 ActivityList用 慎用（必须确定目标activity在栈里） 且用，且珍惜！！
-     * added by Alex, 2014-8-25
+     * added by
      *
      * @param cls 关闭到当前activity为止(从栈顶)
      */
@@ -450,7 +450,7 @@ public class BaseApplication extends Application {
 
     /**
      * 关闭 ActivityList用 慎用（必须确定目标activity在栈里） 且用，且珍惜！！
-     * added by Alex, 2014-8-25
+     * added by
      *
      * @param cls 关闭到当前activity为止(从栈底)
      */

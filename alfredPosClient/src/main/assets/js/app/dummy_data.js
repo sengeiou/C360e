@@ -325,7 +325,7 @@ var params = {
 
 
 
-var settlementListJson=[{"totalAmount":"286.30","placeName":"kk","paymentCreateTime":"2014-07-03 18:10:43","paymentId":0,"orderId":1,"tableId":37,"billNo":1,'userName':''}];
+var settlementListJson=[{"totalAmount":"286.30","placeName":"kk","paymentCreateTime":"2017-07-03 18:10:43","paymentId":0,"orderId":1,"tableId":37,"billNo":1,'userName':''}];
 
 
 

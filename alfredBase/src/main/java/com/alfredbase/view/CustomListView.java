@@ -12,8 +12,8 @@ import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 /**
  * 
- * @author 刘秀秀
- * @time 2015-12-1 上午11:36:46
+ * @author
+ * @time
  * @tags 自动换行布局
  * @todo FROM网上下载
  */

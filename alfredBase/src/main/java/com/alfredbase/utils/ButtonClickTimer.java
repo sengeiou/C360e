@@ -4,7 +4,7 @@ import android.view.View;
 
 /**
  * 
- * @author 冯小卫 2014-3-10
+ * @author
  * 
  *         按钮点击控制类，在500毫秒之类，任何按钮不能点击两次
  */

@@ -297,7 +297,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.detail_analysis));
             daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
             if (App.instance.countryCode == ParamConst.CHINA && reportData != null) {
-                //Bob: Print Sales summary
+                // Print Sales summary
                 daPrint.addSalesSummary(reportData);
             }
             daPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.plu_name),

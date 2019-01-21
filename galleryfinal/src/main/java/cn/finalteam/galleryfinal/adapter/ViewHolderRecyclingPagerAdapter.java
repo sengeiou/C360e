@@ -11,8 +11,8 @@ import cn.finalteam.toolsfinal.adapter.RecyclingPagerAdapter;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:2015/12/29 0029 16:09
+ * Author:
+ * Date:
  */
 public abstract class ViewHolderRecyclingPagerAdapter<VH extends ViewHolderRecyclingPagerAdapter.ViewHolder, T> extends RecyclingPagerAdapter {
     private Context mContext;

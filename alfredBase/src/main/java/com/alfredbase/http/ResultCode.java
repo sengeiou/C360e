@@ -9,8 +9,8 @@ import java.net.SocketTimeoutException;
 
 /**
  * 
- * @author 冯小卫 2014-5-15
- * @author Alex 2014-10-12
+ * @author
+ * @author
  * 
  */
 public class ResultCode {

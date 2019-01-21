@@ -15,8 +15,8 @@ import cn.finalteam.toolsfinal.DeviceUtils;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:2015/12/29 0029 15:53
+ * Author:
+ *
  */
 public class PhotoPreviewAdapter extends ViewHolderRecyclingPagerAdapter<PhotoPreviewAdapter.PreviewViewHolder, PhotoInfo> {
 

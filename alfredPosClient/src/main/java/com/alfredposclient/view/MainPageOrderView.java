@@ -373,7 +373,7 @@ public class MainPageOrderView extends LinearLayout {
 				itemCount += orderDetail.getItemNum();
 			}
 		} else {
-			// bob add:
+			//  add:
 			// if there is no order detail, complete all KOT if the order has
 			// KotSummary kotSummary =
 			// KotSummarySQL.getKotSummary(order.getId());
@@ -561,7 +561,7 @@ public class MainPageOrderView extends LinearLayout {
 
 //			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
 //					orderDetail.getItemId());
-			// bob: itemDetails will be null in case that wait app keep old
+			// : itemDetails will be null in case that wait app keep old
 			// wrong menu
 			// if (itemDetail == null) {
 			// return arg1;

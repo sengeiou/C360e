@@ -23,7 +23,7 @@ public class HTTPWaiterRequest {
 	public static void sendKotNotification(Context context, Map<String, Object> parameters, String url,
 			final WaiterDevice waiter, SyncHttpClient httpClient){
 		    try {
-		    	//Bob: add main POS Info. 
+		    	//: add main POS Info.
 		    	//Waiter APP can filter out messages from unconnected main pos, because waiter app might change ip
 		    	parameters.put("mainpos", App.instance.getMainPosInfo());
 				httpClient.post(context,url, 
@@ -36,7 +36,7 @@ public class HTTPWaiterRequest {
 									if (resultCode == ResultCode.SUCCESS) {
 										LogUtil.i("sendKotNotification", "SUCCESS");
 									}else if(resultCode==ResultCode.INVALID_DEVICE) {
-										//Bob: if waiter device is invadate, POS need remove it.
+										//: if waiter device is invadate, POS need remove it.
 										App.instance.removeWaiterDevice(waiter);
 									}
 								}
@@ -56,7 +56,7 @@ public class HTTPWaiterRequest {
 	public static void sendSessionClose(Context context, Map<String, Object> parameters, String url, final WaiterDevice waiter,
 			AsyncHttpClient httpClient){
 		    try {
-		    	//Bob: add main POS Info. 
+		    	//: add main POS Info.
 		    	//Waiter APP can filter out messages from unconnected main pos, because waiter app might change ip
 		    	parameters.put("mainpos", App.instance.getMainPosInfo());
 		    	httpClient.post(context,url, 
@@ -69,7 +69,7 @@ public class HTTPWaiterRequest {
 									if (resultCode == ResultCode.SUCCESS) {
 										LogUtil.i("sendSessionClose", "SUCCESS");
 									}else if(resultCode==ResultCode.INVALID_DEVICE) {
-										//Bob: if waiter device is invadate, POS need remove it.
+										//: if waiter device is invadate, POS need remove it.
 										App.instance.removeWaiterDevice(waiter);
 									}
 								}
@@ -87,7 +87,7 @@ public class HTTPWaiterRequest {
 	public static void transferTable(Context context, Map<String, Object> parameters, String url, WaiterDevice device,
 			AsyncHttpClient httpClient){
 	    try {
-	    	//Bob: add main POS Info. 
+	    	//: add main POS Info.
 	    	//Waiter APP can filter out messages from unconnected main pos, because waiter app might change ip
 	    	parameters.put("mainpos", App.instance.getMainPosInfo());
 	    	httpClient.post(context,url, 

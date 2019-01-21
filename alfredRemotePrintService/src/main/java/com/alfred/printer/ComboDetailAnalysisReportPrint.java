@@ -188,7 +188,7 @@ public class ComboDetailAnalysisReportPrint extends ReportBasePrint{
 						showMainCategory = false;
 					}
 					
-					//Bob: 把void的去除
+					// 把void的去除
 					int count = pluModifier.getModifierCount().intValue() - pluModifier.getVoidModifierCount().intValue() - pluModifier.getBillVoidCount().intValue();
 					if (count>0) {
 						BigDecimal modifierAmount = BH.getBD(pluModifier.getModifierPrice());
