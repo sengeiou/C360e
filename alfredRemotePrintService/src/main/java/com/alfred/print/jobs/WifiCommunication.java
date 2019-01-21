@@ -68,7 +68,7 @@ public class WifiCommunication {
     private boolean clientStartSerialSocket() {
         boolean isStart;
         try {
-            serialPort = new SerialPort(new File("/dev/ttyS1"), 115200, 0,
+            serialPort = new SerialPort(new File("/dev/ttySAC1"), 115200, 0,
                     true);
             out = serialPort.getOutputStream();
             isStart = true;

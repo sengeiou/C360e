@@ -108,6 +108,19 @@ public class SerialPortFinder
 		return devices.toArray(new String[devices.size()]);
 	}
 
+	public String getHisensePrinterDevice(){
+		String device = "ttySAC1";
+		String[] devices = getAllDevices();
+		if(devices != null && devices.length > 0){
+			for(int i = 0; i < devices.length; i++){
+				if(devices[i].startsWith(device)){
+					return device;
+				}
+			}
+		}
+		return null;
+	}
+
 	public String[] getAllDevicesPath()
 	{
 		Vector<String> devices = new Vector<String>();

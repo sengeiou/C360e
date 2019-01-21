@@ -1144,7 +1144,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         mFilterOption = new FilterOption();
         mFilterOption.setDeviceType(Discovery.TYPE_PRINTER);
         mFilterOption.setEpsonFilter(Discovery.FILTER_NAME);
-        mFilterOption.setPortType(Discovery.PORTTYPE_ALL);
+//        mFilterOption.setPortType(Discovery.PORTTYPE_BLUETOOTH);
         try {
 
             Discovery.start(App.instance, mFilterOption, mDiscoveryListener);
@@ -1164,7 +1164,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         ////
         Map<String, String> ret = new HashMap<String, String>();
         if(MachineUtil.isHisense()){
-            ret.put("127.0.0.1", "Local Print");
+//            SerialPortFinder serialPortFinder = new SerialPortFinder();
+//            String device = serialPortFinder.getHisensePrinterDevice();
+//            if(!TextUtils.isEmpty(device)) {
+                ret.put("127.0.0.1", "Local Print");
+//            }
         }else if (mBluetoothAdapter != null) {
             String innerprinter_address = "00:11:22:33:44:55";
             BluetoothDevice innerprinter_device = null;
