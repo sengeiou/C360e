@@ -115,9 +115,9 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 									BH.getBD(order.getDiscountRate()),
 									BH.getBD(100), true)));
 
-					tv_discount_count.setText(BH.mul(
+					tv_discount_count.setText(BH.formatMoney(BH.mul(
 							BH.getBD(order.getDiscountRate()),
-							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString());
+							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString()).toString());
 				} else {
 					if (BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))) {
 						tv_discount_percent
