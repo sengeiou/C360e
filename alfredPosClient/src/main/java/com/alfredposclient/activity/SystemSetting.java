@@ -132,7 +132,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_kot_print_together = (MyToggleButton) findViewById(R.id.mt_kot_print_together);
 		mt_kot_double_print = (MyToggleButton) findViewById(R.id.mt_kot_double_print);
 		tv_callnum = (TextView)findViewById(R.id.tv_callnum);
-		tv_pos_mode = (TextView)findViewById(R.id.tv_pos_mode);
+		//tv_pos_mode = (TextView)findViewById(R.id.tv_pos_mode);
 		mt_double_print_bill = (MyToggleButton) findViewById(R.id.mt_double_print_bill);
 		mt_double_close_bill_print = (MyToggleButton)findViewById(R.id.mt_double_close_bill_print);
 		mt_order_summary_print = (MyToggleButton)findViewById(R.id.mt_order_summary_print);
@@ -153,13 +153,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
 		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
 		tv_callnum_style=(TextView)findViewById(R.id.tv_callnum_style);
-		tv_pos_mode_type=(TextView)findViewById(R.id.tv_pos_mode_type);
+	//	tv_pos_mode_type=(TextView)findViewById(R.id.tv_pos_mode_type);
 
-           if(trainType==1){
-           	tv_pos_mode_type.setText("培训");
-		   }else {
-           	tv_pos_mode_type.setText("正常");
-		   }
+//           if(trainType==1){
+//           	tv_pos_mode_type.setText("培训");
+//		   }else {
+//           	tv_pos_mode_type.setText("正常");
+//		   }
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
 			tv_syncdata_warn.setVisibility(View.GONE);
@@ -208,7 +208,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_of_pax.setOnStateChangeListeren(this);
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
-		findViewById(R.id.ll_set_pos_mode).setOnClickListener(this);
+	//	findViewById(R.id.ll_set_pos_mode).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
 		findViewById(R.id.ll_set_lock_time).setOnClickListener(this);
 		findViewById(R.id.ll_set_color).setOnClickListener(this);
@@ -524,67 +524,67 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			break;
 
 
-			case R.id.ll_set_pos_mode:
-			{
-
-
-				// 0  正常模式， 1 培训模式
-				DialogFactory.commonTwoBtnDialog(context, "",
-						"切换模式？",
-						context.getResources().getString(R.string.cancel),
-						context.getResources().getString(R.string.ok),
-						new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								//SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
-							}
-						},
-						new OnClickListener() {
-
-							@Override
-							public void onClick(View arg0) {
-
-
-								if(trainType!=1) {
-
-									SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
-									try {
-										AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
-										tv_pos_mode_type.setText("培训");
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
-								}else {
-									SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
-									tv_pos_mode_type.setText("正常");
-								}
-
-								runOnUiThread(new Runnable() {
-
-									@Override
-									public void run() {
-										Intent intent = new Intent(App.instance, Welcome.class);
-										@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
-												App.instance
-														.getApplicationContext(),
-												0, intent,
-												Intent.FLAG_ACTIVITY_NEW_TASK);
-										// 退出程序
-										AlarmManager mgr = (AlarmManager) App.instance
-												.getSystemService(Context.ALARM_SERVICE);
-										mgr.set(AlarmManager.RTC,
-												System.currentTimeMillis() + 1000,
-												restartIntent); // 1秒钟后重启应用
-										ActivityManager am = (ActivityManager) App.instance
-												.getSystemService(Context.ACTIVITY_SERVICE);
-										am.killBackgroundProcesses(getPackageName());
-										App.instance.finishAllActivity();
-									}
-								});
-							}
-						});
-			}
-				break;
+//			case R.id.ll_set_pos_mode:
+//			{
+//
+//
+//				// 0  正常模式， 1 培训模式
+//				DialogFactory.commonTwoBtnDialog(context, "",
+//						"切换模式？",
+//						context.getResources().getString(R.string.cancel),
+//						context.getResources().getString(R.string.ok),
+//						new OnClickListener() {
+//							@Override
+//							public void onClick(View v) {
+//								//SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+//							}
+//						},
+//						new OnClickListener() {
+//
+//							@Override
+//							public void onClick(View arg0) {
+//
+//
+//								if(trainType!=1) {
+//
+//									SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
+//									try {
+//										AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
+//										tv_pos_mode_type.setText("培训");
+//									} catch (Exception e) {
+//										e.printStackTrace();
+//									}
+//								}else {
+//									SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+//									tv_pos_mode_type.setText("正常");
+//								}
+//
+//								runOnUiThread(new Runnable() {
+//
+//									@Override
+//									public void run() {
+//										Intent intent = new Intent(App.instance, Welcome.class);
+//										@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+//												App.instance
+//														.getApplicationContext(),
+//												0, intent,
+//												Intent.FLAG_ACTIVITY_NEW_TASK);
+//										// 退出程序
+//										AlarmManager mgr = (AlarmManager) App.instance
+//												.getSystemService(Context.ALARM_SERVICE);
+//										mgr.set(AlarmManager.RTC,
+//												System.currentTimeMillis() + 1000,
+//												restartIntent); // 1秒钟后重启应用
+//										ActivityManager am = (ActivityManager) App.instance
+//												.getSystemService(Context.ACTIVITY_SERVICE);
+//										am.killBackgroundProcesses(getPackageName());
+//										App.instance.finishAllActivity();
+//									}
+//								});
+//							}
+//						});
+//			}
+//				break;
 
 			case R.id.ll_callnum_footer:
                input(2);

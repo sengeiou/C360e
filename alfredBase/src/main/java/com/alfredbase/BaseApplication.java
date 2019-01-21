@@ -54,6 +54,7 @@ public class BaseApplication extends Application {
 
     protected String APPPATH = "sunmi";// sunmi or google or alibaba;
 
+
     public static int UDP_INDEX_POS = 1;
     public static int UDP_INDEX_WAITER = 2;
     public static int UDP_INDEX_KDS = 3;

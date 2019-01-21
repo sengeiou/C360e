@@ -111,7 +111,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 		holder.tv_bill_no.setText(billNo);
 		holder.tv_place_name.setText(editSettlementInfo.getPlaceName());
 		holder.tv_table_name.setText(editSettlementInfo.getTableName());
-		holder.tv_total.setText(BH.getBD(editSettlementInfo.getTotalAmount()).toString());
+		holder.tv_total.setText(BH.formatMoney(editSettlementInfo.getTotalAmount()).toString());
 		holder.tv_poeple.setText(editSettlementInfo.getUserName());
 		holder.tv_time.setText(editSettlementInfo.getPaymentCreateTime());
 		if(App.instance.isRevenueKiosk()){
