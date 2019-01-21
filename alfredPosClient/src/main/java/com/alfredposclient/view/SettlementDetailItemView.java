@@ -50,7 +50,7 @@ public class SettlementDetailItemView extends LinearLayout implements OnClickLis
 
 	
 	public void setParams(final PaymentSettlement paymentSettlement, final ViewResultCall viewResultCall) {
-		tv_settlement_num.setText(BH.getBD(paymentSettlement.getPaidAmount()).toString());
+		tv_settlement_num.setText(BH.formatMoney(paymentSettlement.getPaidAmount()).toString());
 		int paymentTypeId = paymentSettlement.getPaymentTypeId()
 				.intValue();
 		PaymentMethod paymentMethod = CoreData.getInstance().getPamentMethodByPaymentTypeId(paymentSettlement.getId().intValue());

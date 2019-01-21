@@ -769,11 +769,11 @@ public class XZReportActivity extends BaseActivity {
             ((TextView) findViewById(R.id.tv_total_bill)).setText(reportDaySales.getTotalBills().toString());
             ((TextView) findViewById(R.id.tv_total_temp_menu)).setText(reportDaySales.getOpenCount().toString());
             ((TextView) findViewById(R.id.tv_detail_total_num)).setText(detailTotalQty + "");
-            ((TextView) findViewById(R.id.tv_detail_total)).setText(detailTotalAmount.toString());
+            ((TextView) findViewById(R.id.tv_detail_total)).setText(BH.formatMoney(detailTotalAmount.toString()).toString());
             ((TextView) findViewById(R.id.tv_summary_total_num)).setText(detailTotalQty + "");
-            ((TextView) findViewById(R.id.tv_summary_total)).setText(detailTotalAmount.toString());
+            ((TextView) findViewById(R.id.tv_summary_total)).setText(BH.formatMoney(detailTotalAmount.toString()).toString());
             ((TextView) findViewById(R.id.tv_hourly_total_num)).setText(hourlyTotalQty + "");
-            ((TextView) findViewById(R.id.tv_hourly_total)).setText(hourlyTotalAmount.toString());
+            ((TextView) findViewById(R.id.tv_hourly_total)).setText(BH.formatMoney(hourlyTotalAmount.toString()).toString());
             if (reportHourlys != null && reportHourlys.size() > 0) {
                 XZReportHourlyAdapter hourlyAdapter = new XZReportHourlyAdapter(reportHourlys, XZReportActivity.this);
                 lv_hourly_analsis.setAdapter(hourlyAdapter);
