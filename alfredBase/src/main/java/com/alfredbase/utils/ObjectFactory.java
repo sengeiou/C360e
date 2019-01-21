@@ -1720,8 +1720,8 @@ public class ObjectFactory {
             List<OrderDetail> orderDetails) {
         ArrayList<PrintOrderItem> list = new ArrayList<PrintOrderItem>();
         for (OrderDetail orderDetail : orderDetails) {
-            ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-                    orderDetail.getItemId());
+//            ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
+//                    orderDetail.getItemId());
             // Double amount = Double.parseDouble(orderDetail.getItemPrice())
             // * orderDetail.getItemNum();
             String price = orderDetail.getItemPrice();
@@ -1732,8 +1732,8 @@ public class ObjectFactory {
 //					BH.getBD(orderDetail.getItemNum()), true);
             else
                 amountBH = BH.getBD(orderDetail.getRealPrice());
-            list.add(new PrintOrderItem(orderDetail.getId(), orderDetail.getIsTakeAway(), itemDetail.getId(),
-                    itemDetail.getItemName(), BH.getBD(orderDetail.getItemPrice())
+            list.add(new PrintOrderItem(orderDetail.getId(), orderDetail.getIsTakeAway(),  orderDetail.getItemId(),
+                    orderDetail.getItemName(), BH.getBD(orderDetail.getItemPrice())
                     .toString(), orderDetail.getItemNum() + "", amountBH
                     .toString(), orderDetail.getWeight()));
         }
