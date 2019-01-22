@@ -58,6 +58,7 @@ import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.JobManager;
 import com.epson.epos2.discovery.DeviceInfo;
@@ -1143,6 +1144,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         mFilterOption = new FilterOption();
         mFilterOption.setDeviceType(Discovery.TYPE_PRINTER);
         mFilterOption.setEpsonFilter(Discovery.FILTER_NAME);
+//        mFilterOption.setPortType(Discovery.PORTTYPE_BLUETOOTH);
         try {
 
             Discovery.start(App.instance, mFilterOption, mDiscoveryListener);
@@ -1161,7 +1163,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //
         ////
         Map<String, String> ret = new HashMap<String, String>();
-        if (mBluetoothAdapter != null) {
+        if(MachineUtil.isHisense()){
+//            SerialPortFinder serialPortFinder = new SerialPortFinder();
+//            String device = serialPortFinder.getHisensePrinterDevice();
+//            if(!TextUtils.isEmpty(device)) {
+                ret.put("127.0.0.1", "Local Print");
+//            }
+        }else if (mBluetoothAdapter != null) {
             String innerprinter_address = "00:11:22:33:44:55";
             BluetoothDevice innerprinter_device = null;
             Set<BluetoothDevice> bluetoothDevices = mBluetoothAdapter.getBondedDevices();
