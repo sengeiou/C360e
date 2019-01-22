@@ -157,7 +157,17 @@ public class Store {
 	public static final String KPMG_PAYMENT_TYPE = "kpmg_payment_type";
 
 	public static final String REPORT_NO_SPLIT_VALUE = "report_no_split_value";
+//  副屏显示
+public static final String PATH_IMAGE = "IMAGE_PATH";
+	public static final String SHOW_STYLE = "SHOW_STYLE";
 
+	public static final String LOCK_PASSWORD = "LOCK_PASSWORD";
+
+	public static final String ISFIRDT = "ISFIRDT";
+	public static final String WELCOME_PATH = "WELCOME_PATH";
+	public static final String VIDEO_IMAGE = "VIDEO_IMAGE";
+	public static final String TEXTSIZE = "TEXTSIZE";
+	public static final String SCREENSIZE = "SCREENSIZE";
 
 	private Store() {
 	};

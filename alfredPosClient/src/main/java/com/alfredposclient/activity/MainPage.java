@@ -2294,7 +2294,7 @@ public class MainPage extends PosBaseActivity {
 
 //        DiffData data = new DiffData(this);//实例化data类
 //        data.updateData(orderDetails);//启动发送
-        DifferentDislay.setParam(orderDetails,currentOrder);
+      //  DifferentDislay.setParam(orderDetails,currentOrder);
         operatePanel.setParams(this, currentOrder, orderDetails,
                 handler);
         loadingDialog.dismiss();

@@ -323,6 +323,6 @@ public class SettingView extends LinearLayout implements OnClickListener {
 	}
 
 	public void SUNMIGone(){
-		findViewById(R.id.ll_sunmi).setVisibility(GONE);
+		findViewById(R.id.ll_sunmi).setVisibility(VISIBLE);
 	}
 }

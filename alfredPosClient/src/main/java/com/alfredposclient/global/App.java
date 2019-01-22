@@ -775,6 +775,7 @@ public class App extends BaseApplication {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("type", 1);
                 map.put("orderModel", orderModel);
+                RxBus.getInstance().post(RxBus.showOrder, map);
                 TcpUdpFactory.tcpSend(5, new Gson().toJson(map), new TcpSendCallBack() {
                     @Override
                     public void call(boolean isSucceed) {
