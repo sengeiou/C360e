@@ -31,7 +31,6 @@ public class PosBaseActivity extends BaseActivity {
         }else {
             DifferentDislay.setVisibility(false);
         }
-
     }
 
     @Override

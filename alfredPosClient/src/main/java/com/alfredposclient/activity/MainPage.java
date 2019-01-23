@@ -85,6 +85,7 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.JSONUtil;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
@@ -140,7 +141,7 @@ import rx.functions.Action1;
 //import com.alfredposclient.popupwindow.OrderDetailFireWindow;
 
 
-public class MainPage extends PosBaseActivity {
+public class MainPage extends BaseActivity {
 
     private String TAG = MainPage.class.getSimpleName();
     public static final int VIEW_EVENT_CLOSE_PAY_WINDOW = 99;
@@ -305,7 +306,14 @@ public class MainPage extends PosBaseActivity {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    //关闭手势滑动
         settingView = (SettingView) findViewById(R.id.settingView);
         settingView.setParams(this, mDrawerLayout);
-        if (App.instance.isSUNMIShow()) {
+        if (MachineUtil.isHisense()) {
+            if (MachineUtil.isSunmiModel()) {
+                settingView.SUNMIVisible();
+            } else {
+                settingView.SUNMIGone();
+            }
+
+        } else if (MachineUtil.isHisense()) {
             settingView.SUNMIVisible();
         } else {
             settingView.SUNMIGone();

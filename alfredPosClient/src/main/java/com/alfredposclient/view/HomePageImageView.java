@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredposclient.R;
+import com.alfredposclient.global.App;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -112,7 +113,8 @@ public class HomePageImageView extends LinearLayout {
     int index = 0;
     private void refreshUI(){
         boolean flag = Store.getBoolean(context, Store.VIDEO_IMAGE, true);
-        if (flag) {
+
+        if (Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE)!=Store.SUNMI_VIDEO_TEXT) {
             home_page_img.setVisibility(VISIBLE);
             home_page_sv.setVisibility(GONE);
             if (list != null && list.size() > 0) {
@@ -122,7 +124,7 @@ public class HomePageImageView extends LinearLayout {
             } else {
                 home_page_img.setBackgroundResource(R.drawable.picture);
             }
-        }else {
+        }else   if (Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE)!=Store.SUNMI_VIDEO_TEXT) {
             home_page_img.setVisibility(GONE);
             home_page_sv.setVisibility(VISIBLE);
             if (!CommonUtil.isNull(list.get(0))){

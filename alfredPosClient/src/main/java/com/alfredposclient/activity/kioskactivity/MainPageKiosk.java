@@ -92,6 +92,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.JSONUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RxBus;
@@ -281,7 +282,14 @@ public class MainPageKiosk extends BaseActivity {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    //关闭手势滑动
         settingView = (SettingView) findViewById(R.id.settingView);
         settingView.setParams(this, mDrawerLayout);
-        if (App.instance.isSUNMIShow()) {
+        if (MachineUtil.isHisense()) {
+            if (MachineUtil.isSunmiModel()) {
+                settingView.SUNMIVisible();
+            } else {
+                settingView.SUNMIGone();
+            }
+
+        } else if (MachineUtil.isHisense()) {
             settingView.SUNMIVisible();
         } else {
             settingView.SUNMIGone();

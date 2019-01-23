@@ -91,7 +91,7 @@ private ImageView homePageWelcomeImg;
         init();
 
 
-        list = Store.getObject(App.instance, Store.SEND_TABLE_NAME_LIST, new TypeToken<List<String>>(){}.getType());
+        list = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
 
         text = Store.getInt(App.instance, Store.TEXTSIZE, 50);
 

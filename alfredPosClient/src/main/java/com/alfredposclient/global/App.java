@@ -113,6 +113,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
@@ -486,17 +487,22 @@ public class App extends BaseApplication {
 
 //
 ////
-        DisplayManager mDisplayManager;// 屏幕管理类
-        mDisplayManager = (DisplayManager) this
-                .getSystemService(Context.DISPLAY_SERVICE);
-        Display[] displays = mDisplayManager.getDisplays();
-        DifferentDislay mPresentation = null;
-        if (mPresentation == null) {
-            mPresentation = new DifferentDislay(this, displays[displays.length - 1]);// displays[1]是副屏
 
-            mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-            mPresentation.show();
+        if (MachineUtil.isHisense()||(MachineUtil.isSUNMIShow()&&MachineUtil.isSunmiT2())) {
+
+            DisplayManager mDisplayManager;// 屏幕管理类
+            mDisplayManager = (DisplayManager) this
+                    .getSystemService(Context.DISPLAY_SERVICE);
+            Display[] displays = mDisplayManager.getDisplays();
+            DifferentDislay mPresentation = null;
+            if (mPresentation == null) {
+                mPresentation = new DifferentDislay(this, displays[displays.length - 1]);// displays[1]是副屏
+
+                mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                mPresentation.show();
+            }
         }
+
 
 
     }
@@ -709,6 +715,7 @@ public class App extends BaseApplication {
         map.put("type", 0);
         Gson gson = new Gson();
         String json = gson.toJson(map);
+        RxBus.getInstance().post(RxBus.showOrder, map);
         TcpUdpFactory.tcpSend(5, json, new TcpSendCallBack() {
             @Override
             public void call(boolean isSucceed) {
@@ -3171,6 +3178,8 @@ public class App extends BaseApplication {
         this.kioskHoldNum = kioskHoldNum;
         RxBus.getInstance().post(RxBus.RX_MSG_1, 3);
     }
+
+
 
     /**
      * 判断是否使用的是商米设备  商米副屏设置是否展示

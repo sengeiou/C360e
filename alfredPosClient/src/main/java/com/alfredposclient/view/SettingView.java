@@ -18,6 +18,7 @@ import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
@@ -125,9 +126,15 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		findViewById(R.id.ll_edit_settlement).setVisibility(
 				View.GONE);
 		findViewById(R.id.ll_close).setVisibility(View.GONE);
-		if (App.instance.isSUNMIShow()){
-			findViewById(R.id.linear_sunmi).setVisibility(VISIBLE);
-			SUNMIGone();
+		if (MachineUtil.isSUNMIShow()||MachineUtil.isHisense()){
+			if(MachineUtil.isSunmiModel()){
+				findViewById(R.id.linear_sunmi).setVisibility(VISIBLE);
+				SUNMIVisible();
+			}else {
+				findViewById(R.id.linear_sunmi).setVisibility(VISIBLE);
+				SUNMIGone();
+			}
+
 		}else {
 			findViewById(R.id.linear_sunmi).setVisibility(INVISIBLE);
 			SUNMIGone();
@@ -323,6 +330,6 @@ public class SettingView extends LinearLayout implements OnClickListener {
 	}
 
 	public void SUNMIGone(){
-		findViewById(R.id.ll_sunmi).setVisibility(VISIBLE);
+		findViewById(R.id.ll_sunmi).setVisibility(GONE);
 	}
 }
