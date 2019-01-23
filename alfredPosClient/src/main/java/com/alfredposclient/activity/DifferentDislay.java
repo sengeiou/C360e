@@ -125,7 +125,9 @@ private ImageView homePageWelcomeImg;
                         refreshUI();
                         LogUtil.e(TAG, "刷新welcom");
                     }else if(type == 1 && stringObjectMap.containsKey("orderModel")){
+                        list = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
 
+                        text = Store.getInt(App.instance, Store.TEXTSIZE, 50);
                         homePageWelcomeImg.setVisibility(View.INVISIBLE);
                         activityHomePage.setVisibility(View.VISIBLE);
                         homePageImageView = new HomePageImageView(App.instance, list);
@@ -339,4 +341,11 @@ private ImageView homePageWelcomeImg;
 //                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
 //        }
 //    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        homePageImageView.releasePlayer();
+    }
 }

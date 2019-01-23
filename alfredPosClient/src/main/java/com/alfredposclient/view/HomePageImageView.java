@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.VideoView;
 
 
 import com.alfredbase.store.Store;
@@ -20,6 +22,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +46,11 @@ public class HomePageImageView extends LinearLayout {
     private SurfaceHolder surfaceHolder;
     private int curPosition = 0;
     private boolean isSurfaceCreated = false; //surface是否已经创建好  
-    private File file;
+ //   private File file;
+ private String  file;
+    private SurfaceHolder holder;
+    private VideoView mVideoView;
+    Uri uri = null;
 
     public HomePageImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -71,6 +78,8 @@ public class HomePageImageView extends LinearLayout {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+
+     //   stopPlaybackVideo();
     }
 
     public void restart(){
@@ -93,8 +102,8 @@ public class HomePageImageView extends LinearLayout {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (file != null) {
-                    playMedia(file, curPosition);
+                if (!TextUtils.isEmpty(file)) {
+                    playMedia(uri, curPosition);
                 }
             }
         }, 10);
@@ -104,8 +113,9 @@ public class HomePageImageView extends LinearLayout {
         View view = inflate(context, R.layout.home_page_img, this);
         home_page_img = (ImageView) view.findViewById(R.id.home_page_img);
         home_page_sv = (RelativeLayout) view.findViewById(R.id.home_page_sv);
-        sv = (SurfaceView) findViewById(R.id.sv);
+       sv = (SurfaceView) findViewById(R.id.sv);
         mediaPlayer = new MediaPlayer();
+        mVideoView=(VideoView)view.findViewById(R.id.vvideo);
         timeTask();
         refreshUI();
     }
@@ -113,8 +123,9 @@ public class HomePageImageView extends LinearLayout {
     int index = 0;
     private void refreshUI(){
         boolean flag = Store.getBoolean(context, Store.VIDEO_IMAGE, true);
+        int style= Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE);
 
-        if (Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE)!=Store.SUNMI_VIDEO_TEXT) {
+        if (style!=Store.SUNMI_VIDEO_TEXT&&style!=Store.SUNMI_VIDEO) {
             home_page_img.setVisibility(VISIBLE);
             home_page_sv.setVisibility(GONE);
             if (list != null && list.size() > 0) {
@@ -124,16 +135,111 @@ public class HomePageImageView extends LinearLayout {
             } else {
                 home_page_img.setBackgroundResource(R.drawable.picture);
             }
-        }else   if (Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE)!=Store.SUNMI_VIDEO_TEXT) {
+        }else
             home_page_img.setVisibility(GONE);
             home_page_sv.setVisibility(VISIBLE);
+           //  setupVideo();
             if (!CommonUtil.isNull(list.get(0))){
-                file = new File(list.get(0));
-                if (file.exists()) {
+                file = list.get(0);
+                 uri=Uri.parse(file);
+                if (!TextUtils.isEmpty(file)) {
                     CreateSurface();
-                    playMedia(file, curPosition);
+                    playMedia(uri, curPosition);
                 }
+
+        }
+//        try {
+//            String uri="http://video.dispatch.tc.qq.com/77613075/x0021o8d3g3.mp4?sdtfrom=v1001&type=mp4&vkey=23289E4B8D0F4B6CF18703222DFD0038845D8F56A75EEC20D5D4FDE678093D9AB211EFD7F4C99E5A612A96A04F46CEEB483628CFFBEA493D3AADBFCB81A540F7A92193874192FA0F70D1099DF330B2B419D45736554CB9BB3435019C985F530C5960E4B20FEBD5FAED17DC9F1FCE1C73&platform=10902&fmt=auto&sp=350&guid=1175defd049d3301e047ce50d93e9c7a";
+//            mediaPlayer.setDataSource(context, Uri.parse(list.get(0)));
+//            holder=sv.getHolder();
+//            holder.addCallback(new MyCallBack());
+//            mediaPlayer.prepare();
+//            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                @Override
+//                public void onPrepared(MediaPlayer mp) {
+//
+//                    mediaPlayer.start();
+//                    mediaPlayer.setLooping(true);
+//                }
+//            });
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+
+
+    private void setupVideo() {
+
+        try {
+           //  uri = Uri.parse("android.resource://" + context.getPackageName() + "/raw/" + R.raw.aaa);
+            uri = Uri.parse(list.get(0));
+            mVideoView.setVideoURI(uri);
+            mVideoView.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mp) {
+//                mVideoView.start();
+//            }
+//        });
+
+
+
+
+
+        mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+
+                mp.start();
+                mp.setLooping(true);
+              //  stopPlaybackVideo();
             }
+        });
+
+//        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mp) {
+//                mp.start();
+//                mp.setLooping(true);
+//            }
+//        });
+//        mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+//            @Override
+//            public boolean onError(MediaPlayer mp, int what, int extra) {
+//                stopPlaybackVideo();
+//                return true;
+//            }
+//        });
+
+
+    }
+
+    private void stopPlaybackVideo() {
+        try {
+            mVideoView.stopPlayback();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class MyCallBack implements SurfaceHolder.Callback {
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            mediaPlayer.setDisplay(holder);
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+
         }
     }
 
@@ -171,13 +277,14 @@ public class HomePageImageView extends LinearLayout {
     /**
      * mediaPlayer播放
      */
-    private void playMedia(File file, final int currentPosition){
+    private void playMedia(Uri file, final int currentPosition){
         try {
             mediaPlayer.reset();
-            mediaPlayer.setDataSource(file.getAbsolutePath());
+           //   uri = Uri.parse("android.resource://" + context.getPackageName() + "/raw/" + R.raw.aaa);
+            mediaPlayer.setDataSource(context,uri);
 //            mediaPlayer.setDisplay(sv.getHolder());
-            mediaPlayer.setLooping(true);
-            mediaPlayer.prepare();
+          //  mediaPlayer.setLooping(true);
+            mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
@@ -189,9 +296,28 @@ public class HomePageImageView extends LinearLayout {
                     }
                     mediaPlayer.seekTo(currentPosition);
                     mediaPlayer.start();
+                 //   mediaPlayer.setLooping(true);
                 }
             });
 
+
+//            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer arg0) {
+////                    if (mediaPlayer != null) {
+////                        mediaPlayer.stop();
+////                        mediaPlayer.release();
+////                        mediaPlayer = null;
+////                    }
+////                    if (!isSurfaceCreated){
+////                        CreateSurface();
+////                    }
+////                //    CreateSurface();
+////                    playMedia(uri, curPosition);
+//                    mediaPlayer.start();
+//                    mediaPlayer.setLooping(true);
+//                }
+//            });
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -223,5 +349,7 @@ public class HomePageImageView extends LinearLayout {
             timeTask();
         }
     };
+
+
 
 }

@@ -3,6 +3,7 @@ package com.alfredposclient.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,10 +101,12 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
                 welcome();
                 break;
             case R.id.style_video_btn:
-                Intent intent = new Intent();
-                intent.setType("video/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                Intent intent = new Intent();
+//                intent.setType("video/*");
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, 1);
+             //   startActivityForResult(intent, 1);
                 break;
         }
     }
@@ -115,6 +119,7 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
             Log.d("***************" , uri.toString());
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             cursor.moveToFirst();
+            String videoPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
             String path = cursor.getString(1);
             String size = cursor.getString(2);
             String name = cursor.getString(3);
@@ -122,7 +127,11 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
             Log.d("++++++++++++++", size);
             Log.d("++++++++++++++", name);
             imgsPath.clear();
-            imgsPath.add(path);
+           // imgsPath.add(path);
+
+
+
+            imgsPath.add(videoPath.toString());
             Store.putStrListValue(SunmiActivity.this, Store.SUNMI_DATA, imgsPath);
             Store.putInt(SunmiActivity.this, Store.SUNMI_STYLE, styleType);
         }
@@ -157,6 +166,7 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
+
     /**
      * 修改欢迎页面
      */
@@ -170,6 +180,7 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
 //                    Store.putString(SunmiActivity.this, Store.SUNMI_WELCOME, welcomeURL);
                     Store.putInt(SunmiActivity.this, Store.SUNMI_STYLE, styleType);
                     App.instance.setWelcomeToSecondScreen(welcomeURL);
+                    Store.putString(App.instance, Store.WELCOME_PATH, welcomeURL);
                 }
             }
 
