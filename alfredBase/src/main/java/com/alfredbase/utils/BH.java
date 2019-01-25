@@ -72,17 +72,17 @@ public class BH {
 	}
 
 
-	public static BigDecimal formatMoney(Integer string
+	public static BigDecimal formatMoney(Integer integer
 	) {
 		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
 		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
-		if (CommonUtil.isNull(string))
+		if (CommonUtil.isNull(integer))
 			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
 		BigDecimal value2 = null;
 		int money;
 		if (type == FORMAT_FRONT) {
-			if (string.toString().contains(".")) {
-				money = Integer.valueOf(string.toString().substring(0, string.toString().indexOf(".")));
+			if (integer.toString().contains(".")) {
+				money = Integer.valueOf(integer.toString().substring(0, integer.toString().indexOf(".")));
 			} else {
 				return value2;
 			}
@@ -95,7 +95,7 @@ public class BH {
 
 			return new BigDecimal(money);
 		} else {
-			value2 = new BigDecimal(string);
+			value2 = new BigDecimal(integer);
 			return value2.setScale(1, BigDecimal.ROUND_HALF_UP);
 		}
 	}

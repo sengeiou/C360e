@@ -145,7 +145,7 @@ public class ItemDetailAdapter extends RvCateAdapter<ItemDetail> {
                 case 3:
                     tv_name.setText(itemDetail.getItemName());
                     textTypeFace.setTrajanProRegular(tv_name);
-                    tv_price.setText(App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
+                    tv_price.setText(App.instance.getCurrencySymbol() + BH.formatMoney(itemDetail.getPrice()).toString());
                     textTypeFace.setTrajanProRegular(tv_price);
                     RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                     if(remainingStock!=null){

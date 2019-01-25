@@ -744,18 +744,18 @@ public class App extends BaseApplication {
                     GoodsModel goodsModel = new GoodsModel();
                     goodsModel.setIndex((orderDetails.size() - i) + "");
                     goodsModel.setName(orderDetail.getItemName());
-                    goodsModel.setPrice(getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString());
+                    goodsModel.setPrice(getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getItemPrice()).toString());
                     goodsModel.setQty(orderDetail.getItemNum() + "");
-                    goodsModel.setTotal(getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()).toString());
+                    goodsModel.setTotal(getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getRealPrice()).toString());
                     goodsModels.add(goodsModel);
                 }
 
                 OrderModel orderModel = new OrderModel();
                 orderModel.setRestaurantName("Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName());
-                orderModel.setSubTotal(App.instance.getResources().getString(R.string.sub_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString());
-                orderModel.setDiscount(App.instance.getResources().getString(R.string.discount) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString());
-                orderModel.setTaxes(App.instance.getResources().getString(R.string.taxes) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString());
-                orderModel.setGrandTotal(App.instance.getResources().getString(R.string.grand_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
+                orderModel.setSubTotal(App.instance.getResources().getString(R.string.sub_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
+                orderModel.setDiscount(App.instance.getResources().getString(R.string.discount) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString());
+                orderModel.setTaxes(App.instance.getResources().getString(R.string.taxes) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString());
+                orderModel.setGrandTotal(App.instance.getResources().getString(R.string.grand_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString());
                 orderModel.setGoodsModel(goodsModelTitle);
                 orderModel.setGoodsModelList(goodsModels);
                 Map<String, Object> map = new HashMap<String, Object>();
@@ -971,15 +971,15 @@ public class App extends BaseApplication {
                     new SecondScreenBean(
                             type == 1 ? (i + 1) + "" : null,
                             orderDetail.getItemName(),
-                            getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString(),
+                            getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getItemPrice()).toString(),
                             orderDetail.getItemNum() + "",
-                            getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()).toString()));
+                            getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getRealPrice()).toString()));
         }
         List<SecondScreenTotal> secondScreenTotals = new ArrayList<SecondScreenTotal>();
-        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.sub_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString()));
-        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.discount), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString()));
-        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.taxes), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString()));
-        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.grand_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.sub_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.discount), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.taxes), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.grand_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString()));
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("KVPList", secondScreenTotals);
@@ -1863,14 +1863,14 @@ public class App extends BaseApplication {
             String total = order.getTotal();
             String rounding = "0.00";
             if (roundAmount != null) {
-                total = BH.sub(BH.getBD(order.getTotal()),
+                total = BH.sub(BH.formatMoney(order.getTotal()),
                         BH.getBD(roundAmount.getRoundBalancePrice()), true)
                         .toString();
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
-            roundingMap.put("Total", total);
-            roundingMap.put("Rounding", rounding);
+            roundingMap.put("Total", BH.formatMoney(total).toEngineeringString());
+            roundingMap.put("Rounding", BH.formatMoney(rounding).toString());
             Gson gson = new Gson();
             String prtStr = gson.toJson(printer);
             String prtTitle = gson.toJson(title);
