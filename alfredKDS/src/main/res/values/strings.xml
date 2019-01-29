@@ -31,6 +31,7 @@
     <string name="order_id_">Order No : </string>
     <string name="table_">Table -  </string>
     <string name="take_away">Take away</string>
+    <string name="app_delivery">delivery</string>
     <!--//0未发送、1待完成、2更新、3已完成、4已退单、-1已删除-->
 
     <string name="unfinished">Unfinished</string>

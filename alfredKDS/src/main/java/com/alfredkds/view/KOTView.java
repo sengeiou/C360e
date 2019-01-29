@@ -59,7 +59,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private TextView timer;
 	private Kot kot;
 	private Context context;
-	private TextView kotId;
+	private TextView kotId,tv_kds_delivery;
 	private TextView orderId;
 	private TextView table;
 	private TextView posName;
@@ -114,6 +114,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		kotView = View.inflate(context, R.layout.kot_view, this);
 		/*---kotTop显示---*/
 		kotId = (TextView) kotView.findViewById(R.id.tv_kotId);
+
 		orderId = (TextView) kotView.findViewById(R.id.tv_order_id);
 		table = (TextView) kotView.findViewById(R.id.tv_table);
 		posName = (TextView) kotView.findViewById(R.id.tv_pos);
@@ -227,6 +228,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemModifiers.addAll(kot.getKotItemModifiers());
 		kotId.setText(kot.getKotSummary().getId() + "");
 		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo();
+
 		if(!TextUtils.isEmpty(kot.getKotSummary().getEmpName())){
 			orderNoStr = orderNoStr + "(Emp:" + kot.getKotSummary().getEmpName() + ")";
 		}

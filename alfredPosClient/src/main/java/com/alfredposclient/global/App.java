@@ -2805,9 +2805,9 @@ public class App extends BaseApplication {
             List<OrderDetail> placedOrderDetails
                     = OrderDetailSQL.getOrderDetailsForPrint(order.getId());
             KotSummary kotSummary = ObjectFactory.getInstance()
-                    .getKotSummary(
+                    .getKotSummaryApporder(
                             TableInfoSQL.getTableById(
-                                    order.getTableId()).getName(), order,
+                                    order.getTableId()).getName(), order,appOrder,
                             App.instance.getRevenueCenter(),
                             App.instance.getBusinessDate());
             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();

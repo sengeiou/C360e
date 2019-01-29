@@ -1460,6 +1460,19 @@ public class DataHelper {
 
                 db.execSQL("ALTER TABLE " + TableNames.SyncMsg
                         + " ADD COLUMN reportNo INTEGER");
+
+                db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                        + " ADD COLUMN eatType INTEGER default 0");
+                db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                        + " ADD COLUMN address TEXT");
+                db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                        + " ADD COLUMN contact TEXT");
+                db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                        + " ADD COLUMN mobile TEXT");
+                db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                        + " ADD COLUMN deliveryTime INTEGER default 0");
+
+
             }catch (Exception e){
                 e.printStackTrace();
             }finally {

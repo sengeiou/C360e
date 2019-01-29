@@ -624,7 +624,7 @@ public class KitchenOrder extends BaseActivity {
         TextView posName = (TextView) view.findViewById(R.id.tv_pos);
         TextView date = (TextView) view.findViewById(R.id.tv_date);
         TextView time = (TextView) view.findViewById(R.id.tv_time);
-
+        TextView tv_kds_delivery=(TextView)view.findViewById(R.id.tv_kds_delivery);
         LinearLayout kitchen_ll_orderRemark = (LinearLayout) view.findViewById(R.id.kitchen_ll_orderRemark);
         TextView kitchen_tv_orderremark = (TextView) view.findViewById(R.id.kitchen_tv_orderremark);
         kitchen_tv_orderremark.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -636,6 +636,24 @@ public class KitchenOrder extends BaseActivity {
         } else {
             tv_kiosk_order_id.setVisibility(View.GONE);
             orderId.setVisibility(View.VISIBLE);
+        }
+
+        if(kot.getKotSummary().getEatType()==ParamConst.APP_ORDER_DELIVERY){
+            StringBuffer deliverys=new StringBuffer();
+            tv_kds_delivery.setVisibility(View.VISIBLE);
+            deliverys.append(context.getResources().getString(R.string.app_delivery)+"\n");
+            if(!TextUtils.isEmpty(kot.getKotSummary().getAddress())){
+                deliverys.append(kot.getKotSummary().getAddress()+"\n");
+            }
+            if(!TextUtils.isEmpty(kot.getKotSummary().getContact())){
+                deliverys.append(kot.getKotSummary().getContact()+"\n");
+            }
+            if(!TextUtils.isEmpty(kot.getKotSummary().getMobile())){
+                deliverys.append(kot.getKotSummary().getMobile());
+            }
+            tv_kds_delivery.setText(deliverys.toString());
+        }else {
+            tv_kds_delivery.setVisibility(View.GONE);
         }
         kotId.setText(kot.getKotSummary().getId() + "");
         orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo() + "");
