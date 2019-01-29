@@ -37,7 +37,7 @@ public class CloudSyncJobManager {
 	private JobManager syncJobManager;
 	private Context context;
     private ScheduledExecutorService scheduler = null;
-    int trainType; //-1 第一次打开   0正常模式  1培训模式
+    int trainType;  //-1. 第一次打开   0.正常模式  1.培训模式
     public CloudSyncJobManager(Context mContext) {
 		super();
 		this.context = mContext;
