@@ -6,6 +6,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.ObjectFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -172,9 +173,11 @@ public class ModifierDetailAnalysisReportPrint extends ReportBasePrint{
 		BigDecimal allAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
 		for (int i = 0; i < modifierCategorys.size(); i++) {
 			Modifier modifierCategory = modifierCategorys.get(i);
+			ObjectFactory.getInstance().getPrintModifier(modifierCategory);
 			boolean showMainCategory = true;
 			for (int j = 0; j < pluModifiers.size(); j++) {
 				ReportPluDayModifier pluModifier = pluModifiers.get(j);
+				ObjectFactory.getInstance().getReportPluDayModifier(pluModifier);
 				if (pluModifier.getModifierCategoryId().intValue() == modifierCategory.getId().intValue()) {
 					if (showMainCategory) {
 						this.AddItem(modifierCategory.getCategoryName(), "", "", "", 1);

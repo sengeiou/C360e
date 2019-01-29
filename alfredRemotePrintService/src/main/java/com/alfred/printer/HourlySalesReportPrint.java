@@ -1,6 +1,7 @@
 package com.alfred.printer;
 
 import com.alfredbase.javabean.ReportHourly;
+import com.alfredbase.utils.BH;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -135,9 +136,10 @@ public class HourlySalesReportPrint extends ReportBasePrint{
 	private void getHourlySalesStr() {
 		for (int i = 0; i < reportHourlys.size(); i++) {
 			ReportHourly reportHourly = reportHourlys.get(i);
+
 			this.AddItem(reportHourly.getHour() + "",
 							reportHourly.getAmountQty() + "",
-							reportHourly.getAmountPrice(),1);
+					BH.formatMoney(reportHourly.getAmountPrice()).toString(),1);
 			
 		}
 	}

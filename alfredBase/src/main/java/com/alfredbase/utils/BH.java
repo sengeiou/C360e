@@ -48,7 +48,7 @@ public class BH {
 		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
 		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+			return new BigDecimal("0.0");
 		BigDecimal value2 = null;
 		int money;
 		if (type == FORMAT_FRONT) {

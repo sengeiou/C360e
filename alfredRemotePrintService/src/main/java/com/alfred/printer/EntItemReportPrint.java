@@ -2,6 +2,7 @@ package com.alfred.printer;
 
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.model.ReportEntItem;
+import com.alfredbase.utils.BH;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -139,7 +140,7 @@ public class EntItemReportPrint extends ReportBasePrint{
 			ReportEntItem reportEntItem = reportEntItems.get(i);
 			this.AddItem(reportEntItem.getItemName() + "",
 					reportEntItem.getItemQty() + "",
-					reportEntItem.getAmount(),1);
+					BH.formatMoney(reportEntItem.getAmount()).toString(),1);
 			boolean printLine = false;
 			if(reportEntItem.getComboModifiers().size() > 0){
 				printLine = true;
@@ -150,7 +151,7 @@ public class EntItemReportPrint extends ReportBasePrint{
 			for(ReportPluDayComboModifier reportPluDayComboModifier : list){
 				this.AddItem(reportPluDayComboModifier.getModifierName() + "",
 						reportPluDayComboModifier.getModifierCount() + "",
-						reportPluDayComboModifier.getModifierPrice(),1);
+						BH.formatMoney(reportPluDayComboModifier.getModifierPrice()).toString(),1);
 			}
 			if(printLine)
 				addHortionalLine(this.charSize);
