@@ -16,6 +16,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
+import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MonthlyPLUReport;
@@ -24,6 +25,10 @@ import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.Promotion;
+import com.alfredbase.javabean.PromotionAndWeekVo;
+import com.alfredbase.javabean.PromotionOrder;
+import com.alfredbase.javabean.PromotionWeek;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -66,6 +71,10 @@ import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.PromotionItemSQL;
+import com.alfredbase.store.sql.PromotionOrderSQL;
+import com.alfredbase.store.sql.PromotionSQL;
+import com.alfredbase.store.sql.PromotionWeekSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportDayTaxSQL;
@@ -97,6 +106,7 @@ import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.Header;
+import org.jivesoftware.smackx.pubsub.provider.ItemProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -443,6 +453,70 @@ public class HttpAnalysis {
 			e.printStackTrace();
 		}
 	}
+
+	public static void getPromotionInfo(int statusCode, Header[] headers,
+									byte[] responseBody) {
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<Promotion> promotionList = gson.fromJson(
+					object.getString("promotionList"),
+					new TypeToken<ArrayList<Promotion>>() {
+					}.getType());
+			PromotionSQL.deleteAllPromotion();
+		    PromotionSQL.addPromotion(promotionList);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void getItemPromotionInfo(int statusCode, Header[] headers,
+										byte[] responseBody) {
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<PromotionWeek> promotionWeekList = gson.fromJson(
+					object.getString("promotionWeekList"),
+					new TypeToken<ArrayList<PromotionWeek>>() {
+					}.getType());
+			List<ItemPromotion> itemPromotionList = gson.fromJson(
+					object.getString("itemPromotionList"),
+					new TypeToken<ArrayList<ItemPromotion>>() {
+					}.getType());
+			List<PromotionOrder> orderPromotionList = gson.fromJson(
+					object.getString("orderPromotionList"),
+					new TypeToken<ArrayList<PromotionOrder>>() {
+					}.getType());
+
+        PromotionWeekSQL.deleteAllPromotionWeek();
+        PromotionWeekSQL.addPromotionWeek(promotionWeekList);
+			PromotionItemSQL.deleteAllPromotionItem();
+			PromotionOrderSQL.deleteAllpromotionOrder();
+			PromotionOrderSQL.addPromotionOrder(orderPromotionList);
+			PromotionItemSQL.addPromotionItem(itemPromotionList);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void getPromotionData(int statusCode, Header[] headers,
+											byte[] responseBody) {
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			PromotionAndWeekVo promotionAndWeekVo = gson.fromJson(
+					object.getString("PromotionAndOrderVo"),
+					new TypeToken<PromotionAndWeekVo>() {
+					}.getType());
+
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
 
 	public static List<BohHoldSettlement> getBOHSettlement(int statusCode, Header[] headers,
 			byte[] responseBody) {

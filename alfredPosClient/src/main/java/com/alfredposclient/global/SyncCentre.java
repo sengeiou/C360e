@@ -122,15 +122,17 @@ public class SyncCentre {
                 getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
                 httpClient, handler, MODE_FIRST_SYNC);
-
         HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getHappyHour(context,
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
-     getRemainingStock(context,handler,MODE_FIRST_SYNC);
+        HttpAPI.getPromotionInfo (context,
+                getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_FIRST_SYNC);
+//        HttpAPI.getPromotionData(context,
+//                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
+
+        getRemainingStock(context,handler,MODE_FIRST_SYNC);
 
     }
-
-
 
 //修改单个菜数量
     public void updateReaminingStockByItemId(Context context, Map<String, Object> parameters,Handler handler

@@ -486,6 +486,7 @@ public class DataHelper {
                     case 27:
                         onUpgradeForOldVersion27(db);
                         break;
+
                     default:
                         break;
                 }
@@ -1481,6 +1482,51 @@ public class DataHelper {
                         + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, itemId INTEGER, qty INTEGER, defultQty INTEGER, "
                         + "minQty INTEGER,isActive INTEGER,displayQty INTEGER,createTime LONG,updateTime LONG,resetTime LONG)");
             }
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.Promotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionName TEXT, restaurantId INTEGER, isActive INTEGER)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionWeek
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, week INTEGER, startTime TEXT,endTime TEXT,isActive INTEGER,createTime LONG,updateTime LONG)");
+
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionItem
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER, " +
+                    "itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER," +
+                    "itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT, freeItemName TEXT,createTime LONG,updateTime LONG)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionOrder
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER,  discountPrice TEXT,discountPercentage TEXT,createTime LONG,updateTime LONG)");
+
+
+        }
+
+        private void onUpgradeForOldVersion28(SQLiteDatabase db){
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.Promotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionName TEXT, restaurantId INTEGER, isActive INTEGER)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionWeek
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, week INTEGER, startTime TEXT,endTime TEXT,isActive INTEGER,createTime LONG,updateTime LONG)");
+
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionItem
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER, " +
+                    "itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER," +
+                    "itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT, freeItemName TEXT,createTime LONG,updateTime LONG)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionOrder
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER,  discountPrice TEXT,discountPercentage TEXT,createTime LONG,updateTime LONG)");
+
+
         }
     }
 }

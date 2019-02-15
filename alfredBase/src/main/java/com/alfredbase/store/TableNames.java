@@ -94,4 +94,8 @@ public class TableNames {
 
 	public static final String StoreValue = "StoreValue_";
 	public static final String RemainingStock = "RemainingStock_";
+	public static final String Promotion = "Promotion_";
+	public static final String PromotionWeek = "PromotionWeek_";
+	public static final String PromotionItem = "PromotionItem_";
+	public static final String PromotionOrder= "PromotionOrder_";
 }

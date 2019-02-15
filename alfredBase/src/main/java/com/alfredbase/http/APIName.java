@@ -10,6 +10,9 @@ public class APIName {
     public static final String ITEM_GETMODIFIER = "item/getModifier";
     public static final String TAX_GETTAX = "tax/getTax";
     public static final String HAPPYHOUR_GETHAPPYHOUR = "happyHour/getHappyHour";
+    public static final String  PROMOTIONINFO_GETPROMOTIONINFO = "promotionPossInfo/getPromotionInfo";
+    public static final String PROMOTIONPOSSINFO_GETPROMOTIONDATA = "promotionPossInfo/getPromotionData";
+
     public static final String RESTAURANT_GETPLACEINFO = "restaurant/getPlaceInfo";
     public static final String BOH_GETBOHHOLDUNPAID = "boh/getBohHoldUnpaid";
     public static final String BOH_UPDATEBOHHOLDPAID = "boh/updateBohHoldPaid";
