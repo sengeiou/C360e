@@ -112,6 +112,7 @@ public class Order implements Serializable {
 	private String orderRemark;
 
 	private String discountCategoryId;
+
 	// 在已经结账的订单上面做修改的时候 用到 临时用 不存数据库
 	@Expose(serialize = false)
 	private String oldTotal;
@@ -121,7 +122,7 @@ public class Order implements Serializable {
 	private int subPosBeanId = 0;// IF it is main Pos， subPosBeanId is  zero
 	@Expose(serialize = false)
 	private int isSplitByPax;
-	
+	private  String promotion;
 	public Order() {
 	}
 
@@ -448,6 +449,14 @@ public class Order implements Serializable {
 
 	public void setSubPosBeanId(int subPosBeanId) {
 		this.subPosBeanId = subPosBeanId;
+	}
+
+	public String getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(String promotion) {
+		this.promotion = promotion;
 	}
 
 	@Override

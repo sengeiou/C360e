@@ -11,6 +11,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
+import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
@@ -19,6 +20,8 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.Promotion;
+import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -46,6 +49,9 @@ import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.PromotionItemSQL;
+import com.alfredbase.store.sql.PromotionOrderSQL;
+import com.alfredbase.store.sql.PromotionSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
@@ -86,6 +92,9 @@ public class CoreData {
 	private List<ItemHappyHour> itemHappyHours;
 	private List<HappyHourWeek> happyHourWeeks;
 	private List<HappyHour> happyHours;
+	private List<ItemPromotion> itemPromotions;
+	private List<PromotionOrder> promotionOrders;
+	private List<Promotion> promotions;
 	private RoundRule roundRule;
 	private List<Printer> printers;
 	private List<RestaurantConfig> restaurantConfigs;
@@ -142,12 +151,16 @@ public class CoreData {
 		itemHappyHours = ItemHappyHourSQL.getAllItemHappyHour();
 		happyHourWeeks = HappyHourWeekSQL.getAllHappyHourWeek();
 		happyHours = HappyHourSQL.getAllHappyHour();
+		promotions=PromotionSQL.getAllPromotion();
+		promotionOrders=PromotionOrderSQL.getAllpromotionOrder();
+		itemPromotions=PromotionItemSQL.getAllPromotionItem();
 		userRestaurant = UserRestaurantSQL.getAll();
 		kotNotifications = KotNotificationSQL.getAllKotNotification();
 		localDevices = LocalDeviceSQL.getAllLocalDevice();
 		restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
 		settlementRestaurant= SettlementRestaurantSQL.getAllSettlementRestaurant();
 		pamentMethodList= PaymentMethodSQL.getAllPaymentMethod();
+
 	}
 
 	public PrinterDevice getDevice() {
@@ -377,6 +390,38 @@ public class CoreData {
 					if (itemHappyHour1.getItemMainCategoryId().intValue() == itemDetail
 							.getItemMainCategoryId().intValue()) {
 						return itemHappyHour1;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public ItemPromotion getItemPromotion(RevenueCenter revenueCenter,
+										  ItemDetail itemDetail) {
+		if (itemDetail == null)
+			return null;
+		List<ItemPromotion> itemPromotions = getItemPromotions();
+		for (ItemPromotion itemPromotion : itemPromotions) {
+			if (itemPromotion.getPromotionId().intValue() == revenueCenter
+					.getHappyHourId().intValue()) {
+				// 先按照菜来找
+				if (itemPromotion.getItemId().intValue() == itemDetail
+						.getItemTemplateId().intValue()) {
+					return itemPromotion;
+				}
+				// 然后按照分类来找
+				if(itemPromotion.getItemId().intValue() <= 0) {
+					if (itemPromotion.getItemCategoryId().intValue() == itemDetail
+							.getItemCategoryId().intValue()) {
+						return itemPromotion;
+					}
+				}
+				// 最后按照主分类找
+				if(itemPromotion.getItemId().intValue() <= 0 && itemPromotion.getItemCategoryId() <=0) {
+					if (itemPromotion.getItemMainCategoryId().intValue() == itemDetail
+							.getItemMainCategoryId().intValue()) {
+						return itemPromotion;
 					}
 				}
 			}
@@ -925,6 +970,30 @@ public class CoreData {
 
 	public void setTaxs(List<Tax> taxs) {
 		this.taxs = taxs;
+	}
+
+	public List<ItemPromotion> getItemPromotions() {
+		return itemPromotions;
+	}
+
+	public void setItemPromotions(List<ItemPromotion> itemPromotions) {
+		this.itemPromotions = itemPromotions;
+	}
+
+	public List<PromotionOrder> getPromotionOrders() {
+		return promotionOrders;
+	}
+
+	public void setPromotionOrders(List<PromotionOrder> promotionOrders) {
+		this.promotionOrders = promotionOrders;
+	}
+
+	public List<Promotion> getPromotions() {
+		return promotions;
+	}
+
+	public void setPromotions(List<Promotion> promotions) {
+		this.promotions = promotions;
 	}
 
 	public List<ItemHappyHour> getItemHappyHours() {
