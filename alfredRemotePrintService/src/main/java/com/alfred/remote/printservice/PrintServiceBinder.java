@@ -58,6 +58,7 @@ import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.JobManager;
 import com.epson.epos2.discovery.DeviceInfo;
@@ -209,6 +210,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         ReportDaySales reportData = gson.fromJson(report, ReportDaySales.class);
+         ObjectFactory.getInstance().getPrintReportDaySales(reportData);
         ArrayList<ReportDayTax> taxData = gson.fromJson(tax, new TypeToken<ArrayList<ReportDayTax>>() {
         }.getType());
         List<ReportDayPayment> reportDayPayments = gson.fromJson(customPayment, new TypeToken<List<ReportDayPayment>>() {
@@ -265,7 +267,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         ReportDaySales reportData = gson.fromJson(daySaleSummary, ReportDaySales.class);
-
+        if(reportData!=null) {
+            ObjectFactory.getInstance().getPrintReportDaySales(reportData);
+        }
         ArrayList<ReportPluDayItem> pluData = gson.fromJson(plu, new TypeToken<ArrayList<ReportPluDayItem>>() {
         }.getType());
         ArrayList<ItemMainCategory> categoryData = gson.fromJson(category, new TypeToken<ArrayList<ItemMainCategory>>() {
@@ -708,6 +712,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         Order theOrder = gson.fromJson(order, Order.class);
+        ObjectFactory.getInstance().getPrintOrder(theOrder);
         Log.d(TAG, prtTitle + "prinjsontBill:" + theOrder + "-----" + orderDetail);
         String name = prtDevice.getName();
 
@@ -782,9 +787,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
+                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -815,6 +822,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -910,9 +918,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
+                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -943,6 +953,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -986,6 +997,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         // String paymentType = "";
                         String cardNo = null;
                         for (PrintReceiptInfo printReceiptInfo : settlement) {
+                            ObjectFactory.getInstance().getPrintReceiptInfo(printReceiptInfo);
                             String paymentType = "";
                             LinkedHashMap<String, String> stmt = new LinkedHashMap<String, String>();
                             switch (printReceiptInfo.getPaymentTypeId()) {
@@ -1834,6 +1846,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         Order theOrder = gson.fromJson(order, Order.class);
+        ObjectFactory.getInstance().getPrintOrder(theOrder);
         String name = prtDevice.getName();
 
         ArrayList<PrintOrderItem> printOrderItemList = gson.fromJson(orderDetail,
@@ -1921,9 +1934,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
+                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -1954,6 +1969,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -2057,9 +2073,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             for (int index = 0; index < printOrderItemList.size(); index++) {
                                 boolean canMerge = true;
                                 PrintOrderItem item = printOrderItemList.get(index).clone();
+                                item=ObjectFactory.getInstance().getPrintOrderItem(item);
                                 if (orderModifiers != null) {
                                     for (int m = 0; m < orderModifiers.size(); m++) {
                                         PrintOrderModifier om = orderModifiers.get(m);
+                                        om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                         if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                             canMerge = false;
                                             break;
@@ -2090,6 +2108,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 if (orderModifiers != null) {
                                     for (int m = 0; m < orderModifiers.size(); m++) {
                                         PrintOrderModifier om = orderModifiers.get(m);
+                                        om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                         if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                             if (om.getQty() > 1) {
                                                 billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -2302,6 +2321,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         Order theOrder = gson.fromJson(order, Order.class);
+        ObjectFactory.getInstance().getPrintOrder(theOrder);
+       // theOrder=ObjectFactory.getInstance().getPrintOrder(theOrder);
         String name = prtDevice.getName();
 
         ArrayList<PrintOrderItem> printOrderItemList = gson.fromJson(orderDetail,
@@ -2385,9 +2406,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
+                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -2418,6 +2441,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -2451,9 +2475,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     ////////////// Bill Summary
-                    String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
-                    String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
-                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    String subTotal = theOrder.getSubTotal();
+                    String discount = theOrder.getDiscountAmount();
+                    String grandTotal = theOrder.getTotal();
 
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol);
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
@@ -2516,9 +2540,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
+                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -2549,6 +2575,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
+                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -2594,6 +2621,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (PrintReceiptInfo printReceiptInfo : settlement) {
                             LinkedHashMap<String, String> stmt = new LinkedHashMap<String, String>();
                             String paymentType = "";
+                            ObjectFactory.getInstance().getPrintReceiptInfo(printReceiptInfo);
                             switch (printReceiptInfo.getPaymentTypeId()) {
                                 case ParamConst.SETTLEMENT_TYPE_CASH:
                                     if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
@@ -2675,7 +2703,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             }
                             if (!TextUtils.isEmpty(paymentType)) {
                                 stmt.put(paymentType,
-                                        BH.getBD(printReceiptInfo.getPaidAmount()).toString());
+                                        BH.formatMoney(printReceiptInfo.getPaidAmount()).toString());
                             }
                             if (!TextUtils
                                     .isEmpty(printReceiptInfo.getCardNo())) {
@@ -3091,6 +3119,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             if (orderModifiers != null) {
                 for (int m = 0; m < orderModifiers.size(); m++) {
                     PrintOrderModifier om = orderModifiers.get(m);
+                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                     if (om.getOrderDetailId() == lableOrderDetail.get(i).getId()) {
 //                        if (om.getQty() > 1) {
                         if (om.getPrice().toString().equals("0")) {

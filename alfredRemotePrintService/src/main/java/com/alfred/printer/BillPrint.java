@@ -621,12 +621,12 @@ public class BillPrint extends PrintJob {
 
         //taxes
         if (taxes != null) {
-//			ArrayList<String> taxPriceSUM = taxes.get("taxPriceSum"); 
+//			ArrayList<String> taxPriceSUM = taxes.get("taxPriceSum");
 //			ArrayList<String> taxNames = taxes.get("taxNames");
 //			ArrayList<String> taxPercentages = taxes.get("taxPercentages");
             for (Map<String, String> map : taxes) {
                 PrintData taxPrint = new PrintData();
-                String taxvalue = StringUtil.padLeft(BH.getBD(map.get("taxPriceSum")).toString(), this.FIXED_COL4_TOTAL);
+                String taxvalue = StringUtil.padLeft(BH.formatMoney(map.get("taxPriceSum")).toString(), this.FIXED_COL4_TOTAL);
 
                 String padTax = map.get("taxName")
                         + "("
@@ -642,12 +642,12 @@ public class BillPrint extends PrintJob {
 //				PrintData taxPrint = new PrintData();
 //	            String taxvalue = StringUtil.padLeft(BH.doubleFormat.format(BH.getBD(taxPriceSUM
 //							.get(i))), this.FIXED_COL4_TOTAL);
-//	                
+//
 //	            String padTax = taxNames.get(i)
 //							+ "("
 //							+ (int) (Double.parseDouble(taxPercentages.get(i)) * 100)
-//							+ "%) : $" + taxvalue +"\r\n"; 
-//	                
+//							+ "%) : $" + taxvalue +"\r\n";
+//
 //	            taxPrint.setDataFormat(PrintData.FORMAT_TXT);
 //	            taxPrint.setTextAlign(PrintData.ALIGN_RIGHT);
 //	            taxPrint.setText(padTax);

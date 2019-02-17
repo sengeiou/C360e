@@ -1,6 +1,10 @@
 package com.alfredbase.utils;
 
+import android.text.TextUtils;
+
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
+import com.alfredbase.store.Store;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -12,6 +16,10 @@ import java.text.DecimalFormat;
  *
  */
 public class BH {
+
+	public static final int FORMAT_AFTER = 1;//小数点后两位四舍五入
+	public static final int FORMAT_FRONT = 2;//小数点前两位四舍五入
+
 	private static final DecimalFormat doubleFormat = new DecimalFormat("0.00");
 	private static final DecimalFormat threeFormat = new DecimalFormat("0.000");
 	private static final DecimalFormat fourFormat = new DecimalFormat("0.0000");// 运算工程中使用。
@@ -25,6 +33,72 @@ public class BH {
 			format = intFormat;
 		}
 		isDouble = isdouble;
+	}
+
+
+	/**
+	 * 格式化金额
+	 *
+	 * @param string
+	 * @param
+	 * @param
+	 * @return
+	 */
+	public static BigDecimal formatMoney(String string
+	) {
+		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
+		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
+		if (CommonUtil.isNull(string))
+			return new BigDecimal("0.0");
+		BigDecimal value2 = null;
+		int money;
+		if (type == FORMAT_FRONT) {
+			if (string.toString().contains(".")) {
+				money = Integer.valueOf(string.toString().substring(0, string.toString().indexOf(".")));
+			} else {
+				return value2;
+			}
+			int r;
+			r = money % 100;
+			money -= r;
+			if (r >= 50) {
+				money += 100;
+			}
+
+			return new BigDecimal(money);
+		} else {
+			value2 = new BigDecimal(string);
+			return value2.setScale(1, BigDecimal.ROUND_HALF_UP);
+		}
+	}
+
+
+	public static BigDecimal formatMoney(Integer integer
+	) {
+		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
+		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
+		if (CommonUtil.isNull(integer))
+			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+		BigDecimal value2 = null;
+		int money;
+		if (type == FORMAT_FRONT) {
+			if (integer.toString().contains(".")) {
+				money = Integer.valueOf(integer.toString().substring(0, integer.toString().indexOf(".")));
+			} else {
+				return value2;
+			}
+			int r;
+			r = money % 100;
+			money -= r;
+			if (r >= 50) {
+				money += 100;
+			}
+
+			return new BigDecimal(money);
+		} else {
+			value2 = new BigDecimal(integer);
+			return value2.setScale(1, BigDecimal.ROUND_HALF_UP);
+		}
 	}
 	/**
 	 * 加法
@@ -42,6 +116,8 @@ public class BH {
 			return value1.add(value2);
 		}
 	}
+
+
 
 	/**
 	 * 减法

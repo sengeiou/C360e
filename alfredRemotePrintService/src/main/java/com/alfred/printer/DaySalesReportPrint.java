@@ -13,6 +13,7 @@ import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.ObjectFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -281,6 +282,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 if (reportDayTaxs.get(i).getTaxType() != null) {
                     if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
                         ReportDayTax reportDayTax = reportDayTaxs.get(i);
+                         ObjectFactory.getInstance().getReportDayTax(reportDayTax);
                         taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
                     }else if(reportDayTaxs.get(i).getTaxType().intValue() == 2) {
 
@@ -304,6 +306,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
         BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
         if (reportDayPayments != null && reportDayPayments.size() > 0) {
             for (ReportDayPayment reportDayPayment : reportDayPayments) {
+                 ObjectFactory.getInstance().getReportDayPayment(reportDayPayment);
                 BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
             }
             if (overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
@@ -483,6 +486,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
         if (reportUserOpenDrawerList != null && reportUserOpenDrawerList.size() > 0) {
             for (int i = 0; i < reportUserOpenDrawerList.size(); i++) {
                 ReportUserOpenDrawer reportUserOpenDrawer = reportUserOpenDrawerList.get(i);
+
                 this.addItem(reportUserOpenDrawer.getUserName(), PrintService.instance.getResources().getString(R.string.open_drawer), reportUserOpenDrawer.getTimes() + "", 1);
             }
         }
@@ -521,6 +525,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
             addHortionalLine(this.charSize);
             for (int i = 0; i < reportSessionSalesList.size(); i++) {
                 ReportSessionSales reportSessionSales = reportSessionSalesList.get(i);
+                ObjectFactory.getInstance().getReportSessionSales(reportSessionSales);
                 this.addItem("Shift Detail For Shift Number", "" + (i + 1), 1);
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_cash), BH.getBD(reportSessionSales.getCash()).toString(), 1);
                 this.addItem("Stored-Card Cash Charge", BH.getBD(reportSessionSales.getCashTopup()).toString(), 1);

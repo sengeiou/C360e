@@ -114,7 +114,7 @@ public class MenuDetailAdapter extends RvAdapter<ItemDetail> {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
 
-            tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
+            tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(itemDetail.getPrice()).toString());
             textTypeFace.setUbuntuBold(tvPrice);
             de.setText(itemDetail.getItemDesc());
             textTypeFace.setUbuntuRegular(de);

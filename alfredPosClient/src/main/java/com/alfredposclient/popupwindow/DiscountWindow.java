@@ -76,6 +76,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		tv_discount_count = (TextView) contentView
 				.findViewById(R.id.tv_discount_count);
 		tv_discount_count.setOnClickListener(this);
+		tv_discount_count.setText(BH.formatMoney("").toString());
 		tv_percent_sign = (TextView) contentView.findViewById(R.id.tv_percent_sign);
 		tv_count_sign = (TextView) contentView.findViewById(R.id.tv_count_sign);
 		discount_listview = (ListView) contentView.findViewById(R.id.discount_listview);
@@ -91,14 +92,14 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 						BH.getBD(order.getDiscountRate()),
 						BH.getBD(100), true)));
-				tv_discount_count.setText(ParamConst.DOUBLE_ZERO);
+				tv_discount_count.setText(BH.formatMoney("").toString());
 				inputView = tv_discount_percent;
 				tv_count_sign.setBackgroundResource(R.color.white);
 				tv_percent_sign.setBackgroundResource(R.color.brown);
 				tv_percent_sign.setTextColor(parent.getResources().getColor(R.color.white));
 			}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY){
 				tv_discount_percent.setText(ParamConst.INT_ZERO);
-				tv_discount_count.setText(BH.getBD(order.getDiscountPrice()).toString());
+				tv_discount_count.setText(BH.formatMoney(order.getDiscountPrice()).toString());
 				inputView = tv_discount_count;
 				tv_count_sign.setBackgroundResource(R.color.brown);
 				tv_count_sign.setTextColor(parent.getResources().getColor(R.color.white));
@@ -107,16 +108,16 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
 				if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_NULL) {
 					tv_discount_percent.setText(ParamConst.INT_ZERO);
-					tv_discount_count.setText(ParamConst.DOUBLE_ZERO);
+					tv_discount_count.setText(BH.formatMoney("").toString());
 				} else if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER) {
 					tv_discount_percent
 							.setText(BH.intFormat.format(BH.mul(
 									BH.getBD(order.getDiscountRate()),
 									BH.getBD(100), true)));
 
-					tv_discount_count.setText(BH.mul(
+					tv_discount_count.setText(BH.formatMoney(BH.mul(
 							BH.getBD(order.getDiscountRate()),
-							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString());
+							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString()).toString());
 				} else {
 					if (BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))) {
 						tv_discount_percent

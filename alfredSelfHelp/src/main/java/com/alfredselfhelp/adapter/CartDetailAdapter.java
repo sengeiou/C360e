@@ -89,7 +89,7 @@ public class CartDetailAdapter extends RvAdapter<OrderDetail> {
                     .error(R.drawable.img_bg)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
-            tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()).toString());
+            tvPrice.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(orderDetail.getItemPrice()).toString());
             tv_de.setText(orderDetail.getItemDesc());
             textTypeFace.setUbuntuMedium(tvName);
             textTypeFace.setUbuntuBold(tvPrice);

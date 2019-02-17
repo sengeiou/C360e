@@ -32,7 +32,13 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.ReportDayPayment;
+import com.alfredbase.javabean.ReportDaySales;
+import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportDiscount;
+import com.alfredbase.javabean.ReportHourly;
+import com.alfredbase.javabean.ReportPluDayItem;
+import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
@@ -47,11 +53,14 @@ import com.alfredbase.javabean.WeixinSettlement;
 import com.alfredbase.javabean.model.KotNotification;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
+import com.alfredbase.javabean.model.PrintReceiptInfo;
+import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
+import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
 import com.alfredbase.store.sql.BohHoldSettlementSQL;
@@ -2420,5 +2429,138 @@ public class ObjectFactory {
         userOpenDrawerRecord.setOpenTime(System.currentTimeMillis());
         UserOpenDrawerRecordSQL.addUserOpenDrawerRecord(userOpenDrawerRecord);
         return userOpenDrawerRecord;
+    }
+
+    public void getPrintOrder(Order order ) {
+           order.setDiscountAmount(BH.formatMoney(order.getDiscountAmount()).toString());
+           order.setDiscountPrice(BH.formatMoney(order.getDiscountPrice()).toString());
+           order.setInclusiveTaxPercentage(BH.formatMoney(order.getInclusiveTaxPercentage()).toString());
+           order.setInclusiveTaxPrice(BH.formatMoney(order.getInclusiveTaxPrice()).toString());
+           order.setTotal(BH.formatMoney(order.getTotal()).toString());
+           order.setOldTotal(BH.formatMoney(order.getOldTotal()).toString());
+           order.setTaxAmount(BH.formatMoney(order.getTaxAmount()).toString());
+           order.setSubTotal(BH.formatMoney(order.getSubTotal()).toString());
+           order.setDiscountRate(BH.formatMoney(order.getDiscountRate()).toString());
+        //return order;
+    }
+
+    public PrintOrderItem getPrintOrderItem(PrintOrderItem printOrderItem ) {
+         printOrderItem.setAmount(BH.formatMoney(printOrderItem.getAmount()).toString());
+         printOrderItem.setPrice(BH.formatMoney(printOrderItem.getPrice()).toString());
+        return printOrderItem;
+    }
+
+    public PrintOrderModifier getPrintOrderModifier(PrintOrderModifier printOrderModifier ) {
+        printOrderModifier.setAmount(BH.formatMoney(printOrderModifier.getAmount()).toString());
+        printOrderModifier.setPrice(BH.formatMoney(printOrderModifier.getPrice()).toString());
+        return printOrderModifier;
+    }
+    public void getPrintModifier(Modifier modifier ) {
+        modifier.setPrice(BH.formatMoney(modifier.getPrice()).toString());
+
+    }
+
+
+    public void getReportDayTax(ReportDayTax reportDayTax ) {
+        reportDayTax.setTaxAmount(BH.formatMoney(reportDayTax.getTaxAmount()).toString());
+        reportDayTax.setTaxPercentage(BH.formatMoney(reportDayTax.getTaxPercentage()).toString());
+
+    }
+    public void getPrintReceiptInfo(PrintReceiptInfo printReceiptInfo ) {
+        printReceiptInfo.setCashChange(BH.formatMoney(printReceiptInfo.getCashChange()).toString());
+        printReceiptInfo.setPaidAmount(BH.formatMoney(printReceiptInfo.getPaidAmount()).toString());
+
+    }
+
+    public void getReportDayPayment(ReportDayPayment reportDayPayment ) {
+        reportDayPayment.setOverPaymentAmount(BH.formatMoney(reportDayPayment.getOverPaymentAmount()).toString());
+        reportDayPayment.setPaymentAmount(BH.formatMoney(reportDayPayment.getPaymentAmount()).toString());
+        }
+
+    public void getReportSessionSales(ReportSessionSales reportSessionSales ) {
+        reportSessionSales.setActualAmount(BH.formatMoney(reportSessionSales.getActualAmount()).toString());
+        reportSessionSales.setCash(BH.formatMoney(reportSessionSales.getCash()).toString());
+        reportSessionSales.setDifference(BH.formatMoney(reportSessionSales.getDifference()).toString());
+        reportSessionSales.setExpectedAmount(BH.formatMoney(reportSessionSales.getExpectedAmount()).toString());
+        reportSessionSales.setCashTopup(BH.formatMoney(reportSessionSales.getCashTopup()).toString());
+    }
+
+    public void getReportPluDayItem(ReportPluDayItem reportPluDayItem ) {
+        reportPluDayItem.setBillFocPrice(BH.formatMoney(reportPluDayItem.getBillFocPrice()).toString());
+        reportPluDayItem.setBillVoidPrice(BH.formatMoney(reportPluDayItem.getBillVoidPrice()).toString());
+        reportPluDayItem.setItemAmount(BH.formatMoney(reportPluDayItem.getItemAmount()).toString());
+
+        reportPluDayItem.setItemFocPrice(BH.formatMoney(reportPluDayItem.getItemFocPrice()).toString());
+        reportPluDayItem.setItemHoldPrice(BH.formatMoney(reportPluDayItem.getItemHoldPrice()).toString());
+        reportPluDayItem.setItemPrice(BH.formatMoney(reportPluDayItem.getItemPrice()).toString());
+        reportPluDayItem.setItemVoidPrice(BH.formatMoney(reportPluDayItem.getItemVoidPrice()).toString());
+
+    }
+
+    public void getReportPluDayModifier(ReportPluDayModifier reportPluDayModifier ) {
+        reportPluDayModifier.setBillFocPrice(BH.formatMoney(reportPluDayModifier.getBillFocPrice()).toString());
+        reportPluDayModifier.setBillVoidPrice(BH.formatMoney(reportPluDayModifier.getBillVoidPrice()).toString());
+        reportPluDayModifier.setBohModifierPrice(BH.formatMoney(reportPluDayModifier.getBohModifierPrice()).toString());
+
+        reportPluDayModifier.setFocModifierPrice(BH.formatMoney(reportPluDayModifier.getFocModifierPrice()).toString());
+        reportPluDayModifier.setModifierItemPrice(BH.formatMoney(reportPluDayModifier.getModifierItemPrice()).toString());
+        reportPluDayModifier.setModifierPrice(BH.formatMoney(reportPluDayModifier.getModifierPrice()).toString());
+        reportPluDayModifier.setRealPrice(BH.formatMoney(reportPluDayModifier.getRealPrice()).toString());
+        reportPluDayModifier.setVoidModifierPrice(BH.formatMoney(reportPluDayModifier.getVoidModifierPrice()).toString());
+
+    }
+
+
+    public void getReportHourly(ReportHourly reportHourly ) {
+        reportHourly.setAmountPrice(BH.formatMoney(reportHourly.getAmountPrice()).toString());
+    }
+
+
+    public void getPrintReportDaySales(ReportDaySales reportDaySales ) {
+        reportDaySales.setAlipay(BH.formatMoney(reportDaySales.getAlipay()).toString());
+        reportDaySales.setAmex(BH.formatMoney(reportDaySales.getAmex()).toString());
+        reportDaySales.setBillRefund(BH.formatMoney(reportDaySales.getBillRefund()).toString());
+        reportDaySales.setBillVoid(BH.formatMoney(reportDaySales.getBillVoid()).toString());
+        reportDaySales.setCash(BH.formatMoney(reportDaySales.getCash()).toString());
+        reportDaySales.setCashInAmt(BH.formatMoney(reportDaySales.getCashInAmt()).toString());
+        reportDaySales.setCashOutAmt(BH.formatMoney(reportDaySales.getCashOutAmt()).toString());
+        reportDaySales.setDeliveroo(BH.formatMoney(reportDaySales.getDeliveroo()).toString());
+        reportDaySales.setDiner(BH.formatMoney(reportDaySales.getDiner()).toString());
+        reportDaySales.setDiscountAmt(BH.formatMoney(reportDaySales.getDiscountAmt()).toString());
+        reportDaySales.setDiscount(BH.formatMoney(reportDaySales.getDiscount()).toString());
+        reportDaySales.setDiscountPer(BH.formatMoney(reportDaySales.getDiscountPer()).toString());
+        reportDaySales.setExpectedAmount(BH.formatMoney(reportDaySales.getExpectedAmount()).toString());
+        reportDaySales.setFocBill(BH.formatMoney(reportDaySales.getFocBill()).toString());
+        reportDaySales.setFoodpanda(BH.formatMoney(reportDaySales.getFoodpanda()).toString());
+        reportDaySales.setInclusiveTaxAmt(BH.formatMoney(reportDaySales.getInclusiveTaxAmt()).toString());
+        reportDaySales.setItemSales(BH.formatMoney(reportDaySales.getItemSales()).toString());
+        reportDaySales.setItemVoid(BH.formatMoney(reportDaySales.getItemVoid()).toString());
+        reportDaySales.setDifference(BH.formatMoney(reportDaySales.getDifference()).toString());
+        reportDaySales.setJbl(BH.formatMoney(reportDaySales.getJbl()).toString());
+        reportDaySales.setMc(BH.formatMoney(reportDaySales.getMc()).toString());
+        reportDaySales.setFocItem(BH.formatMoney(reportDaySales.getFocItem()).toString());
+        reportDaySales.setNets(BH.formatMoney(reportDaySales.getNets()).toString());
+        reportDaySales.setNettSales(BH.formatMoney(reportDaySales.getNettSales()).toString());
+        reportDaySales.setRefundTax(BH.formatMoney(reportDaySales.getRefundTax()).toString());
+        reportDaySales.setStartDrawerAmount(BH.formatMoney(reportDaySales.getStartDrawerAmount()).toString());
+        reportDaySales.setStoredCard(BH.formatMoney(reportDaySales.getStoredCard()).toString());
+        reportDaySales.setPaypalpay(BH.formatMoney(reportDaySales.getPaypalpay()).toString());
+        reportDaySales.setTakeawaySales(BH.formatMoney(reportDaySales.getTakeawaySales()).toString());
+        reportDaySales.setTakeawayTax(BH.formatMoney(reportDaySales.getTakeawayTax()).toString());
+        reportDaySales.setThirdParty(BH.formatMoney(reportDaySales.getThirdParty()).toString());
+        reportDaySales.setTopUps(BH.formatMoney(reportDaySales.getTopUps()).toString());
+        reportDaySales.setTotalBalancePrice(BH.formatMoney(reportDaySales.getTotalBalancePrice()).toString());
+        reportDaySales.setTotalCard(BH.formatMoney(reportDaySales.getTotalCard()).toString());
+        reportDaySales.setTotalCash(BH.formatMoney(reportDaySales.getTotalCash()).toString());
+        reportDaySales.setTotalHour(BH.formatMoney(reportDaySales.getTotalHour()).toString());
+        reportDaySales.setTotalSales(BH.formatMoney(reportDaySales.getTotalSales()).toString());
+        reportDaySales.setTotalTax(BH.formatMoney(reportDaySales.getTotalTax()).toString());
+        reportDaySales.setUbereats(BH.formatMoney(reportDaySales.getUbereats()).toString());
+        reportDaySales.setUnionPay(BH.formatMoney(reportDaySales.getUnionPay()).toString());
+        reportDaySales.setVarianceAmt(BH.formatMoney(reportDaySales.getVarianceAmt()).toString());
+        reportDaySales.setVisa(BH.formatMoney(reportDaySales.getVisa()).toString());
+        reportDaySales.setVoucher(BH.formatMoney(reportDaySales.getVoucher()).toString());
+        reportDaySales.setWaiterAmount(BH.formatMoney(reportDaySales.getWaiterAmount()).toString());
+        reportDaySales.setWeixinpay(BH.formatMoney(reportDaySales.getWaiterAmount()).toString());
     }
 }

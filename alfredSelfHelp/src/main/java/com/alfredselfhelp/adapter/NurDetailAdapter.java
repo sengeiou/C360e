@@ -71,7 +71,7 @@ public class NurDetailAdapter extends RvAdapter<OrderDetail> {
             int itemViewType = NurDetailAdapter.this.getItemViewType(position);
 
             tvName.setText(itemDetail.getItemName());
-            tvPrice.setText("S$" + BH.getBD(itemDetail.getItemPrice()).toString());
+            tvPrice.setText("S$" + BH.formatMoney(itemDetail.getItemPrice()).toString());
             if (TextUtils.isEmpty(itemDetail.getBarCode())) {
                 code.setVisibility(View.GONE);
             } else {

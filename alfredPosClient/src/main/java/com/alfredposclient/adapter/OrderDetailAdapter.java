@@ -76,9 +76,9 @@ public class OrderDetailAdapter extends BaseAdapter{
 		final OrderDetail orderDetail = this.orderDetailList
 				.get(position);
 		holder.tv_item_name.setText(orderDetail.getItemName());
-		holder.tv_item_price.setText(BH.getBD(orderDetail.getItemPrice()).toString());
+		holder.tv_item_price.setText(BH.formatMoney(orderDetail.getItemPrice()).toString());
 		holder.tv_item_qty.setText(String.valueOf(orderDetail.getItemNum().intValue()));
-		holder.tv_item_total.setText(BH.getBD(orderDetail.getRealPrice()).toString());
+		holder.tv_item_total.setText(BH.formatMoney(orderDetail.getRealPrice()).toString());
 		if(isShowCheckBox){
 			holder.btn_void_item.setVisibility(View.VISIBLE);
 		}else{

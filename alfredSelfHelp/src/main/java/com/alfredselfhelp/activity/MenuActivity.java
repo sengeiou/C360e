@@ -283,7 +283,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     updateCartOrderDetail(orderDetail,
                             count);
 //                    }
-                    tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+                    tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(nurOrder.getTotal()));
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                 }
                     break;
@@ -538,7 +538,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         updateCartOrderDetail(orderDetail,
                                 0);
                     }
-                    tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+                    tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(nurOrder.getTotal()));
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                     if (isStock) {
                         stockDialog = KpmDialogFactory.kpmOutStockDialog(context, "Out of stock",
@@ -1301,7 +1301,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
 
         re_view_cart.setAdapter(cartAdater);
-        tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+        tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(nurOrder.getTotal()));
         tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
 
 
@@ -1381,7 +1381,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private void refreshViewCart() {
         if (cartAdater != null) {
             cartAdater.notifyDataSetChanged();
-            tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(nurOrder.getTotal()));
+            tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(nurOrder.getTotal()));
         }
     }
 

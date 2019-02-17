@@ -3,7 +3,10 @@ package com.alfredposclient.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.DownloadManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +35,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemCategory;
@@ -104,6 +108,7 @@ import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.utils.AlertToDeviceSetting;
+import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
 import com.google.gson.Gson;
@@ -1487,6 +1492,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			
 		}
 			break;
+		    //开店
 		case R.id.rl_openbg:{
 			String value = MobclickAgent.getConfigParams(context, "updateVersion");
 			if(App.isOpenLog){
@@ -1499,7 +1505,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					DialogFactory.showUpdateVersionDialog(context, updateInfo, new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-//								SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
+          //		SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
 							downloadPos(updateInfo);
 						}
 					}, null);
@@ -1510,20 +1516,73 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			final Long businessDate = TimeUtil.getNewBusinessDate();
 			App.instance.deleteOldPrinterMsg(businessDate);
 			String bizYmd = TimeUtil.getYMD(businessDate);
-			DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant), 
-					context.getResources().getString(R.string.operation_on) + bizYmd + 
-					context.getResources().getString(R.string.is_going_to_start), 
-					context.getResources().getString(R.string.cancel), 
-					context.getResources().getString(R.string.ok), 
-					null,
-					new OnClickListener(){
-	
-					@Override
-					public void onClick(View arg0) {
-						vv.setVisibility(View.GONE);
-						handler.sendMessage(handler.obtainMessage(OPEN_RESTAURANT, null));
-						
-					}});
+			int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+           if(train==-1){
+          // 0  正常模式， 1 培训模式
+			   DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
+					   "开启培训模式？",
+					   context.getResources().getString(R.string.cancel),
+					   context.getResources().getString(R.string.ok),
+					   new OnClickListener() {
+						   @Override
+						   public void onClick(View v) {
+							   SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+						   }
+					   },
+					   new OnClickListener() {
+
+						   @Override
+						   public void onClick(View arg0) {
+
+							   SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,1);
+							   try {
+								   AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
+							   } catch (Exception e) {
+								   e.printStackTrace();
+							   }
+
+							   runOnUiThread(new Runnable() {
+
+								   @Override
+								   public void run() {
+									   Intent intent = new Intent(App.instance, Welcome.class);
+									   PendingIntent restartIntent = PendingIntent.getActivity(
+											   App.instance
+													   .getApplicationContext(),
+											   0, intent,
+											   Intent.FLAG_ACTIVITY_NEW_TASK);
+									   // 退出程序
+									   AlarmManager mgr = (AlarmManager) App.instance
+											   .getSystemService(Context.ALARM_SERVICE);
+									   mgr.set(AlarmManager.RTC,
+											   System.currentTimeMillis() + 1000,
+											   restartIntent); // 1秒钟后重启应用
+									   ActivityManager am = (ActivityManager) App.instance
+											   .getSystemService(Context.ACTIVITY_SERVICE);
+									   am.killBackgroundProcesses(getPackageName());
+									   App.instance.finishAllActivity();
+								   }
+							   });
+						   }
+					   });
+		   }else {
+
+			   DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
+					   context.getResources().getString(R.string.operation_on) + bizYmd +
+							   context.getResources().getString(R.string.is_going_to_start),
+					   context.getResources().getString(R.string.cancel),
+					   context.getResources().getString(R.string.ok),
+					   null,
+					   new OnClickListener() {
+
+						   @Override
+						   public void onClick(View arg0) {
+							   vv.setVisibility(View.GONE);
+							   handler.sendMessage(handler.obtainMessage(OPEN_RESTAURANT, null));
+
+						   }
+					   });
+		   }
 		}
 			break;
 		case R.id.iv_setting:
