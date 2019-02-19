@@ -13,6 +13,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -46,6 +47,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.ReportDayPaymentSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportDayTaxSQL;
@@ -1678,6 +1680,22 @@ public class ReportObjectFactory {
 //		return reportHourlys;
 	}
 
+	public ArrayList<PromotionData> loadReportItemPromotions(long businessDate) {
+		ArrayList<PromotionData> itemPromotions = new ArrayList<PromotionData>();
+		itemPromotions = PromotionDataSQL.getItemPromotionData(businessDate,ParamConst.ITEM_PROMOTION);
+
+		return itemPromotions;
+
+	}
+
+	public ArrayList<PromotionData> loadReportOrderPromotions(long businessDate) {
+		ArrayList<PromotionData> orderPromotions = new ArrayList<PromotionData>();
+		orderPromotions = PromotionDataSQL.getOrderPromotionData(businessDate,ParamConst.ITEM_PROMOTION);
+
+		return orderPromotions;
+
+	}
+
 	/*
 	 * For report sync
 	 * */
@@ -2347,6 +2365,7 @@ public class ReportObjectFactory {
 
 		BigDecimal difference = BH.sub(BH.getBD(actualAmount), expected, false);
 		String reportNoStr = ReportDaySalesSQL.getReportNoStrByBusiness(businessDate);
+		String promotionTotal= PromotionDataSQL.getPromotionDataXSum(businessDate,sessionStatus,nowTime);
 
 		reportDaySales.setRestaurantId(restaurant.getId());
 		reportDaySales.setRestaurantName(restaurant.getRestaurantName());
@@ -2450,6 +2469,7 @@ public class ReportObjectFactory {
 			reportNoStr = RevenueCenterSQL.getReportNoFromRevenueCenter(revenueCenter.getId());
 		}
 		reportDaySales.setReportNoStr(reportNoStr);
+		reportDaySales.setPromotionTotal(promotionTotal);
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 
 		//-----------------------分割线----------------------------
@@ -3074,7 +3094,7 @@ public class ReportObjectFactory {
 	}
 
 	public ArrayList<ReportHourly> loadXReportHourlys(long businessDate,
-			SessionStatus sessionStatus) {
+														   SessionStatus sessionStatus) {
 		ArrayList<ReportHourly> reportHourlys = new ArrayList<ReportHourly>();
 		// if (App.instance.getBusinessDate() != businessDate) {
 		// reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
@@ -3115,6 +3135,61 @@ public class ReportObjectFactory {
 		return reportHourlys;
 	}
 
+	public ArrayList<PromotionData> loadXReportOrderPromotions(long businessDate,
+													  SessionStatus sessionStatus) {
+		ArrayList<PromotionData> reportPromotions = new ArrayList<PromotionData>();
+		// if (App.instance.getBusinessDate() != businessDate) {
+		// reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
+		// return reportHourlys;
+		// }
+		// ReportHourlySQL.deleteReportHourlyByBusinessDate(businessDate);
+		// Calendar nextPoint = TimeUtil.getCalendarNextPoint();
+		// Calendar zeroPoint = TimeUtil.getCalendarByZero(0);
+		long nowTime = System.currentTimeMillis();
+		reportPromotions=	PromotionDataSQL.getOrderPromotionData(businessDate,sessionStatus,nowTime,ParamConst.ORDER_PROMOTION);
+//		for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
+//				.getCalendarNextPoint(i)) {
+//			// Calendar hourCal = Calendar.getInstance();
+//			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
+//			// hourCal.set(Calendar.HOUR_OF_DAY, i);
+//			// Calendar netHourCal = Calendar.getInstance();
+//			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
+//			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
+//				reportPromotions.add(reportHourly);
+//			}
+//
+//		}
+	//	ReportHourlySQL.addReportHourly(reportPromotions);
+		return reportPromotions;
+	}
+
+	public ArrayList<PromotionData> loadXReportItemPromotions(long businessDate,
+															   SessionStatus sessionStatus) {
+		ArrayList<PromotionData> reportPromotions = new ArrayList<PromotionData>();
+		// if (App.instance.getBusinessDate() != businessDate) {
+		// reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
+		// return reportHourlys;
+		// }
+		// ReportHourlySQL.deleteReportHourlyByBusinessDate(businessDate);
+		// Calendar nextPoint = TimeUtil.getCalendarNextPoint();
+		// Calendar zeroPoint = TimeUtil.getCalendarByZero(0);
+		long nowTime = System.currentTimeMillis();
+		reportPromotions=	PromotionDataSQL.getItemPromotionData(businessDate,sessionStatus,nowTime,ParamConst.ITEM_PROMOTION);
+//		for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
+//				.getCalendarNextPoint(i)) {
+//			// Calendar hourCal = Calendar.getInstance();
+//			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
+//			// hourCal.set(Calendar.HOUR_OF_DAY, i);
+//			// Calendar netHourCal = Calendar.getInstance();
+//			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
+//			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
+//				reportPromotions.add(reportHourly);
+//			}
+//
+//		}
+		//	ReportHourlySQL.addReportHourly(reportPromotions);
+		return reportPromotions;
+	}
 	public List<ReportUserOpenDrawer> loadXReportUserOpenDrawerbySessionStatus(long businessDate, SessionStatus sessionStatus){
 			return UserOpenDrawerRecordSQL.getReportUserOpenDrawer(sessionStatus.getSession_status(), businessDate);
 	}
@@ -3143,6 +3218,8 @@ public class ReportObjectFactory {
 		ArrayList<ReportPluDayComboModifier>reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) modifierInfoMap.get("reportPluDayComboModifiers");
 		// plu hourly payment report
 		ArrayList<ReportHourly> reportHourlys = loadXReportHourlys(businessDate, sessionStatus);
+		ArrayList<PromotionData> reportOrderPromotions = loadXReportOrderPromotions(businessDate, sessionStatus);
+		ArrayList<PromotionData> reportItemPromotions = loadXReportItemPromotions(businessDate, sessionStatus);
 		map.put("reportDaySales", reportDaySales);
 		map.put("reportDayTaxs", reportDayTaxs);
 		map.put("reportDayPayments", reportDayPayments);
@@ -3152,6 +3229,8 @@ public class ReportObjectFactory {
 		map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
 		map.put("sessionStatus", sessionStatus);
 		map.put("userOpenDrawerRecords", userOpenDrawerRecords);
+		map.put("reportOrderPromotions", reportOrderPromotions);
+		map.put("reportItemPromotions", reportItemPromotions);
 		return map;
 	}
 

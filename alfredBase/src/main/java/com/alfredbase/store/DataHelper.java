@@ -1487,7 +1487,7 @@ public class DataHelper {
                     + TableNames.PromotionData
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
                     "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
-                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT)");
+                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG)");
 
             db.execSQL("CREATE TABLE "
                     + TableNames.Promotion
@@ -1511,6 +1511,8 @@ public class DataHelper {
             db.execSQL("ALTER TABLE "
                     + TableNames.Order
                     + " ADD COLUMN  promotion TEXT default ''");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN promotionTotal TEXT");
 
         }
 

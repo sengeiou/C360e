@@ -52,6 +52,8 @@ import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.Promotion;
+import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -2238,6 +2240,29 @@ public class App extends BaseApplication {
 
     }
 
+
+    public void remotePrintPromotionReport(String xzType, PrinterDevice printer,
+                                        PrinterTitle title, List<PromotionData> itemPromotion, List<PromotionData> orderPromotion, List<Promotion> promotions) {
+        if (mRemoteService == null) {
+            // Toast.makeText(this, "Printer service is not started yet",
+            // 1000).show();
+            printerDialog();
+            return;
+        }
+        try {
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            String prtTitle = gson.toJson(title);
+            String itemPromotionStr = gson.toJson(itemPromotion);
+            String orderPromotionStr = gson.toJson(orderPromotion);
+            String promotionsStr = gson.toJson(promotions);
+            mRemoteService.printPromotionAnalysisReport(xzType, prtStr, prtTitle,
+                 orderPromotionStr,itemPromotionStr,promotionsStr);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+    }
     public void remotePrintVoidItemReport(String xzType, PrinterDevice printer,
                                           PrinterTitle title, ArrayList<ReportVoidItem> reportVoidItems) {
         if (mRemoteService == null) {

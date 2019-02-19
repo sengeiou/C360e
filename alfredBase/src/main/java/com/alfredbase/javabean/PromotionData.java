@@ -29,6 +29,8 @@ public class PromotionData implements Serializable {
      private Integer orderId;
      private Integer orderDetailId;
     private String discountPrice;
+    private long businessDate;
+    private Integer itemNum;
 
     public Integer getId() {
         return id;
@@ -156,6 +158,22 @@ public class PromotionData implements Serializable {
 
     public void setDiscountPrice(String discountPrice) {
         this.discountPrice = discountPrice;
+    }
+
+    public long getBusinessDate() {
+        return businessDate;
+    }
+
+    public void setBusinessDate(long businessDate) {
+        this.businessDate = businessDate;
+    }
+
+    public Integer getItemNum() {
+        return itemNum;
+    }
+
+    public void setItemNum(Integer itemNum) {
+        this.itemNum = itemNum;
     }
 
     @Override

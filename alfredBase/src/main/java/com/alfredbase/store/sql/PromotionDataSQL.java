@@ -5,8 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PromotionData;
+import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
@@ -26,8 +28,8 @@ public class PromotionDataSQL {
                     + TableNames.PromotionData
                     + "(id, promotionId, promotionName, promotionType, promotionAmount,discountPercentage," +
                     "itemId,itemName,freeNum," +
-                    "freeItemId,freeItemName,createTime,updateTime,orderId,orderDetailId,discountPrice)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    "freeItemId,freeItemName,createTime,updateTime,orderId,orderDetailId,discountPrice,businessDate)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
          
             SQLExe.getDB().execSQL(
@@ -38,13 +40,44 @@ public class PromotionDataSQL {
                             promotionData.getItemId(), promotionData.getItemName(),
                             promotionData.getFreeNum(), promotionData.getFreeItemId(),
                             promotionData.getFreeItemName(), promotionData.getCreateTime(), promotionData.getUpdateTime(),
-                            promotionData.getOrderId(),promotionData.getOrderDetailId(),promotionData.getDiscountPrice()
+                            promotionData.getOrderId(),promotionData.getOrderDetailId(),promotionData.getDiscountPrice(),
+                            promotionData.getBusinessDate()
                     });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
+    public static void updatePromotionData(PromotionData promotionData) {
+        if (promotionData == null) {
+            return;
+        }
+
+        try {
+            String sql = "replace into "
+                    + TableNames.PromotionData
+                    + "(id, promotionId, promotionName, promotionType, promotionAmount,discountPercentage," +
+                    "itemId,itemName,freeNum," +
+                    "freeItemId,freeItemName,createTime,updateTime,orderId,orderDetailId,discountPrice,businessDate)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+
+            SQLExe.getDB().execSQL(
+                    sql,
+                    new Object[] { promotionData.getId(), promotionData.getPromotionId(),
+                            promotionData.getPromotionName(), promotionData.getPromotionType(),
+                            promotionData.getPromotionAmount(), promotionData.getDiscountPercentage(),
+                            promotionData.getItemId(), promotionData.getItemName(),
+                            promotionData.getFreeNum(), promotionData.getFreeItemId(),
+                            promotionData.getFreeItemName(), promotionData.getCreateTime(), promotionData.getUpdateTime(),
+                            promotionData.getOrderId(),promotionData.getOrderDetailId(),promotionData.getDiscountPrice(),
+                            promotionData.getBusinessDate()
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 //    public static void addPromotionItem(List<ItemPromotion> itemPromotions) {
 //        if (itemPromotions == null) {
 //            return;
@@ -110,8 +143,259 @@ public class PromotionDataSQL {
 //    }
 
 
-    public static ArrayList<PromotionData> getPromotionDataOrOrderid(int orderId)
+
+    public static String  getPromotionDataXSum(long businessDate,SessionStatus sessionStatus, long nowTime)
+    {
+
+        String sql = "select sum(promotionAmount) from " + TableNames.PromotionData
+                + " where businessDate=? and createTime > ? and updateTime < ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        String promotionTotal= null;
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime)});
+            int count = cursor.getCount();
+//            if (count < 1) {
+//                return result;
+//            }
+
+            if (cursor.moveToFirst()) {
+                promotionTotal=cursor.getString(0);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return promotionTotal;
+    }
+
+    public static String  getPromotionDataZSum(long businessDate)
+    {
+
+        String sql = "select sum(promotionAmount) from " + TableNames.PromotionData
+                + " where businessDate=? " ;
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        String promotionTotal= null;
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{});
+            int count = cursor.getCount();
+//            if (count < 1) {
+//                return result;
+//            }
+
+            if (cursor.moveToFirst()) {
+                promotionTotal=cursor.getString(0);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return promotionTotal;
+    }
+
+
+
+    public static ArrayList<PromotionData> getOrderPromotionData(long businessDate,SessionStatus sessionStatus, long nowTime,int type)
           {
+        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        String sql = "select * from " + TableNames.PromotionData
+                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime),String.valueOf(type)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            PromotionData promotionData = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                promotionData = new PromotionData();
+                promotionData.setId(cursor.getInt(0));
+                promotionData.setPromotionId(cursor.getInt(1));
+                promotionData.setPromotionName(cursor.getString(2));
+                promotionData.setPromotionAmount(cursor.getString(3));
+                promotionData.setDiscountPercentage(cursor.getString(4));
+                promotionData.setItemId(cursor.getInt(5));
+                promotionData.setItemName(cursor.getString(6));
+                promotionData.setFreeNum(cursor.getInt(7));
+                promotionData.setFreeItemId(cursor.getInt(8));
+                promotionData.setFreeItemName(cursor.getString(9));
+                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setCreateTime(cursor.getLong(11));
+                promotionData.setUpdateTime(cursor.getLong(12));
+                promotionData.setOrderId(cursor.getInt(13));
+                promotionData.setOrderDetailId(cursor.getInt(14));
+                promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
+                result.add(promotionData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static ArrayList<PromotionData> getItemPromotionData(long businessDate,SessionStatus sessionStatus, long nowTime,int type)
+    {
+        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        String sql = "select * from " + TableNames.PromotionData
+                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime),String.valueOf(type)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            PromotionData promotionData = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                promotionData = new PromotionData();
+                promotionData.setId(cursor.getInt(0));
+                promotionData.setPromotionId(cursor.getInt(1));
+                promotionData.setPromotionName(cursor.getString(2));
+                promotionData.setPromotionAmount(cursor.getString(3));
+                promotionData.setDiscountPercentage(cursor.getString(4));
+                promotionData.setItemId(cursor.getInt(5));
+                promotionData.setItemName(cursor.getString(6));
+                promotionData.setFreeNum(cursor.getInt(7));
+                promotionData.setFreeItemId(cursor.getInt(8));
+                promotionData.setFreeItemName(cursor.getString(9));
+                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setCreateTime(cursor.getLong(11));
+                promotionData.setUpdateTime(cursor.getLong(12));
+                promotionData.setOrderId(cursor.getInt(13));
+                promotionData.setOrderDetailId(cursor.getInt(14));
+                promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
+                result.add(promotionData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+
+    public static ArrayList<PromotionData> getOrderPromotionData(long businessDate,int type)
+    {
+        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        String sql = "select * from " + TableNames.PromotionData
+                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(businessDate),String.valueOf(type)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            PromotionData promotionData = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                promotionData = new PromotionData();
+                promotionData.setId(cursor.getInt(0));
+                promotionData.setPromotionId(cursor.getInt(1));
+                promotionData.setPromotionName(cursor.getString(2));
+                promotionData.setPromotionAmount(cursor.getString(3));
+                promotionData.setDiscountPercentage(cursor.getString(4));
+                promotionData.setItemId(cursor.getInt(5));
+                promotionData.setItemName(cursor.getString(6));
+                promotionData.setFreeNum(cursor.getInt(7));
+                promotionData.setFreeItemId(cursor.getInt(8));
+                promotionData.setFreeItemName(cursor.getString(9));
+                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setCreateTime(cursor.getLong(11));
+                promotionData.setUpdateTime(cursor.getLong(12));
+                promotionData.setOrderId(cursor.getInt(13));
+                promotionData.setOrderDetailId(cursor.getInt(14));
+                promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
+                result.add(promotionData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static ArrayList<PromotionData> getItemPromotionData(long businessDate, int type)
+    {
+        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        String sql = "select * from " + TableNames.PromotionData
+                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(businessDate),String.valueOf(type)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            PromotionData promotionData = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                promotionData = new PromotionData();
+                promotionData.setId(cursor.getInt(0));
+                promotionData.setPromotionId(cursor.getInt(1));
+                promotionData.setPromotionName(cursor.getString(2));
+                promotionData.setPromotionAmount(cursor.getString(3));
+                promotionData.setDiscountPercentage(cursor.getString(4));
+                promotionData.setItemId(cursor.getInt(5));
+                promotionData.setItemName(cursor.getString(6));
+                promotionData.setFreeNum(cursor.getInt(7));
+                promotionData.setFreeItemId(cursor.getInt(8));
+                promotionData.setFreeItemName(cursor.getString(9));
+                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setCreateTime(cursor.getLong(11));
+                promotionData.setUpdateTime(cursor.getLong(12));
+                promotionData.setOrderId(cursor.getInt(13));
+                promotionData.setOrderDetailId(cursor.getInt(14));
+                promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
+                result.add(promotionData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+    public static ArrayList<PromotionData> getPromotionDataOrOrderid(int orderId)
+    {
         ArrayList<PromotionData> result = new ArrayList<PromotionData>();
         String sql = "select * from " + TableNames.PromotionData
                 + " where orderId = ? ";
@@ -155,6 +439,54 @@ public class PromotionDataSQL {
         }
         return result;
     }
+
+    public static PromotionData getPromotionData(int orderId,int orderDetailId)
+    {
+       PromotionData promotionData = null;
+        String sql = "select * from " + TableNames.PromotionData
+                + " where orderId = ? and orderDetailId= ? ";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(orderId),String.valueOf(orderDetailId)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return promotionData;
+            }
+
+            if (cursor.moveToFirst()) {
+                promotionData = new PromotionData();
+                promotionData.setId(cursor.getInt(0));
+                promotionData.setPromotionId(cursor.getInt(1));
+                promotionData.setPromotionName(cursor.getString(2));
+                promotionData.setPromotionAmount(cursor.getString(3));
+                promotionData.setDiscountPercentage(cursor.getString(4));
+                promotionData.setItemId(cursor.getInt(5));
+                promotionData.setItemName(cursor.getString(6));
+                promotionData.setFreeNum(cursor.getInt(7));
+                promotionData.setFreeItemId(cursor.getInt(8));
+                promotionData.setFreeItemName(cursor.getString(9));
+                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setCreateTime(cursor.getLong(11));
+                promotionData.setUpdateTime(cursor.getLong(12));
+                promotionData.setOrderId(cursor.getInt(13));
+                promotionData.setOrderDetailId(cursor.getInt(14));
+                promotionData.setDiscountPrice(cursor.getString(15));
+                return promotionData;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return promotionData;
+    }
+
+
+
     public static ArrayList<PromotionData> getAllPromotionData() {
         ArrayList<PromotionData> result = new ArrayList<PromotionData>();
         String sql = "select * from " + TableNames.PromotionItem + " order by id desc";
@@ -186,6 +518,7 @@ public class PromotionDataSQL {
                 promotionData.setOrderId(cursor.getInt(13));
                 promotionData.setOrderDetailId(cursor.getInt(14));
                 promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
                 result.add(promotionData);
             }
         } catch (Exception e) {

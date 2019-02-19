@@ -465,4 +465,8 @@ public class ParamConst {
 
 	public static final int SUB_POS_STATUS_CLOSE = 0;
 
+	//promotion
+	public static final int ITEM_PROMOTION = 0;
+	public static final int ORDER_PROMOTION = 1;
+
 }

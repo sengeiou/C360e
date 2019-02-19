@@ -16,6 +16,7 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PromotionData;
+import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.Tax;
@@ -26,6 +27,7 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
+import com.alfredbase.store.sql.PromotionOrderSQL;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -171,6 +173,7 @@ public class OrderHelper {
 			if (BH.getBD(itemPromotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
 				price = BH.sub(BH.getBD(orderDetail.getItemPrice()),
 						BH.getBDNoFormat(itemPromotion.getDiscountPrice()), false);
+                promotionPrice=BH.add(promotionPrice,BH.getBDNoFormat(itemPromotion.getDiscountPrice()), false);
 			}
 			 if (Double.parseDouble(itemPromotion.getDiscountPercentage()) > 0) {
 				orderDetail.setDiscountRate(itemPromotion.getDiscountPercentage());
@@ -186,9 +189,9 @@ public class OrderHelper {
 									 BH.getBDNoFormat(itemPromotion.getDiscountPercentage()),
 									 false), false);
 				 }
-				promotionPrice= BH.mul(BH.getBD(orderDetail.getItemPrice()),
-								BH.getBDNoFormat(itemPromotion.getDiscountPercentage()),
-								false);
+				promotionPrice=BH.add(promotionPrice,BH.mul(BH.getBD(orderDetail.getItemPrice()),
+                        BH.getBDNoFormat(itemPromotion.getDiscountPercentage()),
+                        false),false) ;
 			}
 			if (itemPromotion.getFreeNum().intValue() > 0) {
 				promotionPrice = BH.getBD(orderDetail.getItemPrice());
@@ -199,17 +202,27 @@ public class OrderHelper {
 
 		promotionPrice = BH.mul(promotionPrice, BH.getBD(orderDetail.getItemNum()), false);
 		if(promotionPrice.compareTo(BH.getBD("0")) > 0){
-			PromotionData promotionData=new PromotionData();
-			promotionData.setPromotionType(0);
-			promotionData.setPromotionAmount(promotionPrice.toString());
-			promotionData.setItemId(orderDetail.getItemId());
-			promotionData.setItemName(orderDetail.getItemName());
-			promotionData.setFreeItemId(itemPromotion.getFreeItemId());
-			promotionData.setFreeNum(itemPromotion.getFreeNum());
-			promotionData.setFreeItemName(itemPromotion.getFreeItemName());
-			promotionData.setOrderDetailId(orderDetail.getId());
-			promotionData.setOrderId(orderDetail.getOrderId());
-			PromotionDataSQL.addPromotionData(promotionData);
+			PromotionData promotionData=PromotionDataSQL.getPromotionData(order.getId(),orderDetail.getId());
+			if(promotionData==null){
+
+				promotionData.setPromotionType(0);
+				promotionData.setPromotionAmount(promotionPrice.toString());
+				promotionData.setItemId(orderDetail.getItemId());
+				promotionData.setItemName(orderDetail.getItemName());
+				promotionData.setFreeItemId(itemPromotion.getFreeItemId());
+				promotionData.setFreeNum(itemPromotion.getFreeNum());
+				promotionData.setFreeItemName(itemPromotion.getFreeItemName());
+				promotionData.setOrderDetailId(orderDetail.getId());
+				promotionData.setOrderId(orderDetail.getOrderId());
+				promotionData.setItemNum(orderDetail.getItemNum());
+				PromotionDataSQL.addPromotionData(promotionData);
+			}else {
+				promotionData.setPromotionAmount(promotionPrice.toString());
+				promotionData.setItemNum(orderDetail.getItemNum());
+				PromotionDataSQL.updatePromotionData(promotionData);
+			}
+
+
 		}
 		price = BH.mul(price, BH.getBD(orderDetail.getItemNum()), false);
 		if(BH.getBDNoFormat(orderDetail.getWeight()).compareTo(BH.getBD("0")) > 0){
@@ -380,28 +393,71 @@ public class OrderHelper {
 
 	public static void setOrderSubTotal(Order order,
 			List<OrderDetail> orderDetails) {
-		BigDecimal subTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (orderDetails.size() > 0) {
-			for (OrderDetail orderDetail : orderDetails) {
-				subTotal = BH.add(subTotal,
-						BH.getBD(orderDetail.getRealPrice()), false);
-			}
-		}
-		order.setSubTotal(BH.getBD(subTotal).toString());
-	}
+        BigDecimal subTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
+        if (orderDetails.size() > 0) {
+            for (OrderDetail orderDetail : orderDetails) {
+                subTotal = BH.add(subTotal,
+                        BH.getBD(orderDetail.getRealPrice()), false);
+            }
+        }
+        BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
+        PromotionOrder promotionOrder = getOrderPromotion(1);
+        if (promotionOrder != null) {
+            if (subTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
+                subTotal = BH.sub(BH.getBD(subTotal),
+                        BH.getBDNoFormat(promotionOrder.getDiscountPrice()), false);
+                promotionPrice = BH.add(promotionPrice, BH.getBDNoFormat(promotionOrder.getDiscountPrice()), false);
+            }
+            if (Double.parseDouble(promotionOrder.getDiscountPercentage()) > 0) {
+
+
+                if (subTotal.compareTo(BH.getBD("0")) > 0) {
+                    subTotal = BH.sub(BH.getBD(subTotal), BH
+                            .mul(BH.getBD(subTotal),
+                                    BH.getBDNoFormat(promotionOrder.getDiscountPercentage()),
+                                    false), false);
+                }
+                promotionPrice = BH.add(promotionPrice, BH.mul(BH.getBD(subTotal),
+                        BH.getBDNoFormat(promotionOrder.getDiscountPercentage()),
+                        false), false);
+            }
+
+        }
+
+
+        if (promotionPrice.compareTo(BH.getBD("0")) > 0) {
+            PromotionData promotionData = PromotionDataSQL.getPromotionData(order.getId(), -1);
+            if (promotionData == null) {
+
+                promotionData.setPromotionType(0);
+                promotionData.setPromotionAmount(promotionPrice.toString());
+                promotionData.setOrderId(order.getId());
+                PromotionDataSQL.addPromotionData(promotionData);
+            } else {
+                promotionData.setPromotionAmount(promotionPrice.toString());
+
+                PromotionDataSQL.updatePromotionData(promotionData);
+            }
+
+            order.setSubTotal(BH.getBD(subTotal).toString());
+        }
+    }
 
 
 	public static void setPromotion(Order order) {
-		BigDecimal promotion = BH.getBD(ParamConst.DOUBLE_ZERO);
+		BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
 
 	 List<PromotionData> promotionDatas=PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 		if (promotionDatas.size() > 0) {
 			for (PromotionData promotionData : promotionDatas) {
-				promotion = BH.add(promotion,
+				promotionPrice = BH.add(promotionPrice,
 						BH.getBD(promotionData.getPromotionAmount()), false);
 			}
 		}
-		order.setPromotion(BH.getBD(promotion).toString());
+
+		order.setPromotion(BH.getBD(promotionPrice).toString());
+
+
 	}
 
 	public static void setOrderTax(Order order, List<OrderDetail> orderDetails) {
@@ -658,6 +714,12 @@ public class OrderHelper {
 		itemPromotion = CoreData.getInstance().getItemPromotion(revenueCenter,
 				itemDetail);
 		return itemPromotion;
+	}
+
+	public static PromotionOrder getOrderPromotion(int promotionId) {
+		PromotionOrder promotionOrder = null;
+		promotionOrder=PromotionOrderSQL.getPromotionOrder(promotionId);
+		return promotionOrder;
 	}
 
 	private static boolean hasHappyWeek(Integer happy_hour_id) {

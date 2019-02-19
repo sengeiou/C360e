@@ -352,6 +352,11 @@ public class XZReportActivity extends BaseActivity {
             discountB.setData("Discount on $", reportDaySales.getDiscountQty() + "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() +  BH.formatMoney(reportDaySales.getDiscount()).toString(), true);
             ll_sales_total.addView(discountB);
+            ReportDaySalesItem promotionTotal = new ReportDaySalesItem(context);
+            promotionTotal.setData("Promotion Total", "",
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(reportDaySales.getPromotionTotal()).toString(), true)
+            ;
+            ll_sales_total.addView(promotionTotal);
             double nSales = Double.parseDouble(reportDaySales.getItemSales()) + Double.parseDouble(reportDaySales.getTopUps()) - Double.parseDouble(reportDaySales.getFocItem()) - Double.parseDouble(reportDaySales.getFocBill()) - Double.parseDouble(reportDaySales.getItemVoid()) - Double.parseDouble(reportDaySales.getBillVoid()) - Double.parseDouble(reportDaySales.getBillRefund()) - Double.parseDouble(reportDaySales.getDiscount()) - Double.parseDouble(reportDaySales.getDiscountPer());
             ReportDaySalesItem nettsSales = new ReportDaySalesItem(context);
             nettsSales.setData("NETT Sales", "",

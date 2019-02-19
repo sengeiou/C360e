@@ -47,6 +47,8 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.Promotion;
+import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -76,6 +78,7 @@ import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.PromotionSQL;
 import com.alfredbase.store.sql.ReportDayPaymentSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportDayTaxSQL;
@@ -1116,7 +1119,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 								String reportType,
 								SessionStatus sessionStatus) {
 		ReportDaySales reportDaySales = (ReportDaySales) xReport.get("reportDaySales");
-		
+
+
 		if (reportDaySales == null) {
 			return;
 		}
@@ -1124,6 +1128,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		ArrayList<ReportDayTax> reportDayTaxs = (ArrayList<ReportDayTax>) xReport.get("reportDayTaxs");
 		List<ReportDayPayment> reportDayPayments = (List<ReportDayPayment>) xReport.get("reportDayPayments");
 		ArrayList<ReportPluDayItem> reportPluDayItems = (ArrayList<ReportPluDayItem>) xReport.get("reportPluDayItems");
+		ArrayList<PromotionData> reportOrderPromotions = (ArrayList<PromotionData>) xReport.get("reportOrderPromotions");
+		ArrayList<PromotionData> reportItemPromotions = (ArrayList<PromotionData>) xReport.get("reportItemPromotions");
+		ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
 		//add to filter ENT and VOID item in PLU items
 //		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
 //			.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
@@ -1154,6 +1161,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
 				title, reportDaySales, reportDayTaxs,reportDayPayments,  ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
+		App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
+				reportItemPromotions,reportOrderPromotions,promotions);
 //		try {
 //			Thread.sleep(5000);
 //		}catch (Exception e){
@@ -1215,7 +1224,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
 		
 		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
-		
+        ArrayList<PromotionData> reportOrderPromotions = ReportObjectFactory.getInstance()
+                .loadReportOrderPromotions(businessDate);
+        ArrayList<PromotionData> reportItemPromotions = ReportObjectFactory.getInstance()
+                .loadReportItemPromotions(businessDate);
+        ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
 		ArrayList<ReportHourly> reportHourlys = ReportObjectFactory
 				.getInstance().loadReportHourlys(businessDate);
 
@@ -1245,6 +1258,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				title, reportDaySales, reportDayTaxs, reportDayPayments,
 				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
 				reportSessionSalesList);
+        App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
+                reportItemPromotions,reportOrderPromotions,promotions);
 //		try {
 //			Thread.sleep(2000);
 //		}catch (Exception e){

@@ -590,12 +590,12 @@ public class BillPrint extends PrintJob {
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol) {
-        AddBillSummary(subtotal, discount, taxes, total, rounding, currencySymbol, 0);
+                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol,String promotion) {
+        AddBillSummary(subtotal, discount, taxes, total, rounding, currencySymbol, 0,promotion);
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol, int splitByPax) {
+                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol, int splitByPax,String promotion) {
         if ("¥".equals(currencySymbol)) {
             currencySymbol = "￥";
         }
@@ -679,6 +679,17 @@ public class BillPrint extends PrintJob {
         roundingPrint.setTextAlign(PrintData.ALIGN_RIGHT);
         roundingPrint.setText(padRounding);
         this.data.add(roundingPrint);
+         // promotion
+        if(!TextUtils.isEmpty(promotion)) {
+            PrintData promotionPrint = new PrintData();
+            String promotionStr = StringUtil.padLeft(BH.getBD(roundMap.get("Promotion")).toString(),
+                    this.FIXED_COL4_TOTAL);
+            String padPromotion = PrintService.instance.getResources().getString(R.string.promotion_print) + currencySymbol + roundingStr + reNext;
+            promotionPrint.setDataFormat(PrintData.FORMAT_TXT);
+            promotionPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+            promotionPrint.setText(padPromotion);
+            this.data.add(promotionPrint);
+        }
 
         //grand total
         PrintData gtPrint = new PrintData();

@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
@@ -90,6 +91,42 @@ public class PromotionOrderSQL {
         return result;
     }
 
+
+    public static PromotionOrder getPromotionOrder(int promotionId)
+    {
+        PromotionOrder promotionOrder = null;
+        String sql = "select * from " + TableNames.PromotionOrder
+                + " where promotionId = ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(promotionId)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return promotionOrder;
+            }
+
+            if (cursor.moveToFirst()) {
+                promotionOrder = new PromotionOrder();
+                promotionOrder.setId(cursor.getInt(0));
+                promotionOrder.setPromotionId(cursor.getInt(1));
+                promotionOrder.setDiscountPrice(cursor.getString(2));
+                promotionOrder.setDiscountPercentage(cursor.getString(3));
+
+                promotionOrder.setCreateTime(cursor.getLong(4));
+                promotionOrder.setUpdateTime(cursor.getLong(5));
+                return promotionOrder;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return promotionOrder;
+    }
 
 
 
