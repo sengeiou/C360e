@@ -384,6 +384,12 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                         if(reNum>=0){
                             updateOrderDetail(itemDetail,
                                     num);
+                            refreshTotal();
+                            refreshList();
+                            boolean isadd = (boolean) map.get("isAdd");
+                            if (isadd) {
+                                isShow((ItemDetail) map.get("itemDetail"));
+                            }
                         }else {
                             UIHelp.showToast(MainPage.this,"out of stock");
                           //  return;
@@ -392,14 +398,15 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                     }else {
                         updateOrderDetail(itemDetail,
                                 num);
+                        refreshTotal();
+                        refreshList();
+                        boolean isadd = (boolean) map.get("isAdd");
+                        if (isadd) {
+                            isShow((ItemDetail) map.get("itemDetail"));
+                        }
                     }
 
-                    refreshTotal();
-                    refreshList();
-                    boolean isadd = (boolean) map.get("isAdd");
-                    if (isadd) {
-                        isShow((ItemDetail) map.get("itemDetail"));
-                    }
+
 
 
                     break;

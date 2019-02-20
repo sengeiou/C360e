@@ -456,10 +456,7 @@ public class ParamConst {
 
 	public static final int APP_ORDER_EAT_IN = 1;
 	public static final int APP_ORDER_TAKE_AWAY = 2;
-
 	public static final int APP_ORDER_DELIVERY = 3;
-
-
 	public static final int POS_TYPE_MAIN = 0;
 
 	public static final int POS_TYPE_SUB = 1;

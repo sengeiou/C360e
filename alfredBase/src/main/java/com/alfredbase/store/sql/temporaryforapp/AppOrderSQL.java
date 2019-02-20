@@ -95,8 +95,8 @@ public class AppOrderSQL {
     }
 
 
-    public static List<AppOrder> getAppOrderByOrderStatus(int orderStatus, long time) {
-        String sql = "select * from " + TableNames.AppOrder + " where orderStatus = ? and createTime > ? and eatType < " + ParamConst.APP_ORDER_DELIVERY + " order by id desc ";
+    public static List<AppOrder> getAppOrderByOrderStatus(int orderStatus, long time,int eatType) {
+        String sql = "select * from " + TableNames.AppOrder + " where orderStatus = ? and createTime > ? and eatType = " + eatType + " order by id desc ";
         Cursor cursor = null;
         List<AppOrder> result = new ArrayList<AppOrder>();
         SQLiteDatabase db = SQLExe.getDB();
@@ -245,13 +245,13 @@ public class AppOrderSQL {
         return result;
     }
 
-    public static List<AppOrder> getNewAppOrder(long time) {
+    public static List<AppOrder> getNewAppOrder(long time,int eatType) {
         String sql = "select * from "
                 + TableNames.AppOrder
                 + " where (orderStatus = " + ParamConst.APP_ORDER_STATUS_PAID + " or orderStatus = "
                 + ParamConst.APP_ORDER_STATUS_ACCEPTED
-                + " and createTime > ? ) and eatType < "
-                + ParamConst.APP_ORDER_DELIVERY
+                + " and createTime > ? ) and eatType = "
+                + eatType
                 + " order by orderStatus desc, id desc ";
         Cursor cursor = null;
         List<AppOrder> result = new ArrayList<AppOrder>();
@@ -356,11 +356,11 @@ public class AppOrderSQL {
     }
 
 
-    public static List<AppOrder> getPreparAppOrder(long time) {
+    public static List<AppOrder> getPreparAppOrder(long time,int eatType) {
         String sql = " select * from " + TableNames.AppOrder
                 + " where ( orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARING
                 + " or orderStatus = " + ParamConst.APP_ORDER_STATUS_PREPARED
-                + " and createTime > ? ) and eatType < " + ParamConst.APP_ORDER_DELIVERY
+                + " and createTime > ? ) and eatType = " + eatType
                 + " order by orderStatus desc, id desc ";
         Cursor cursor = null;
         List<AppOrder> result = new ArrayList<AppOrder>();

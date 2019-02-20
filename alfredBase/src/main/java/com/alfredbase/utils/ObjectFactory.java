@@ -1850,6 +1850,48 @@ public class ObjectFactory {
                 kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
                 kotSummary.setOrderRemark(order.getOrderRemark());
                 kotSummary.setNumTag(order.getNumTag());
+
+            }
+            if (revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
+                kotSummary.setTableName(order.getTableName());
+            } else {
+                kotSummary.setTableName(tableName);
+            }
+            kotSummary.setIsTakeAway(order.getIsTakeAway());
+            KotSummarySQL.update(kotSummary);
+        }
+        return kotSummary;
+    }
+
+
+    public KotSummary getKotSummaryApporder(String tableName, Order order,AppOrder appOrder,
+                                    RevenueCenter revenueCenter, long businessDate) {
+
+        KotSummary kotSummary = null;
+        synchronized (lock_getKotSummary) {
+            kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
+            long time = System.currentTimeMillis();
+            if (kotSummary == null) {
+                kotSummary = new KotSummary();
+                kotSummary.setId(CommonSQL.getNextSeq(TableNames.KotSummary));
+                kotSummary.setOrderId(order.getId());
+                kotSummary.setOrderNo(order.getOrderNo());//流水号
+                kotSummary.setRevenueCenterId(revenueCenter.getId());
+                kotSummary.setRevenueCenterName(revenueCenter.getRevName());
+                kotSummary.setCreateTime(time);
+                kotSummary.setUpdateTime(time);
+                kotSummary.setBusinessDate(businessDate);
+                kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
+                kotSummary.setOrderRemark(order.getOrderRemark());
+                kotSummary.setNumTag(order.getNumTag());
+                kotSummary.setEatType(appOrder.getEatType());
+                if(appOrder.getEatType()==ParamConst.APP_ORDER_DELIVERY)
+                {
+                    kotSummary.setAddress(appOrder.getAddress());
+                    kotSummary.setContact(appOrder.getContact());
+                    kotSummary.setMobile(appOrder.getMobile());
+                    kotSummary.setDeliveryTime(appOrder.getDeliveryTime());
+                }
             }
             if (revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
                 kotSummary.setTableName(order.getTableName());
