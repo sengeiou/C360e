@@ -403,7 +403,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 														order,
 														App.instance.getUser().getFirstName()
 																+ App.instance.getUser().getLastName(),
-														"", 1);
+														"", 1,App.instance.getSystemSettings().getTrainType());
 
 										Map<String, Object> orderMap = new HashMap<String, Object>();
 

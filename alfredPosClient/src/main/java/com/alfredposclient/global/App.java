@@ -1,6 +1,10 @@
 package com.alfredposclient.global;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -126,6 +130,7 @@ import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
 import com.alfredposclient.jobs.SubPosCloudSyncJobManager;
+import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
@@ -337,16 +342,20 @@ public class App extends BaseApplication {
     private IntentFilter intentFilter;
 
     private Observable<Object> observable;
+    private Observable<Object> observable1;
+    private Observable<Object> observable2;
     //    private PushServer pushServer;
     private SDKHandler sdkHandler;
     private boolean isUsbScannerLink = false;
+    private boolean isTrain=true;
+    private int train;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         instance = this;
-        int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
+         train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
         if(train==1){
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
         }else {
@@ -429,8 +438,83 @@ public class App extends BaseApplication {
                         reloginDialog.show();
                     }
                 }
+
+
             }
         });
+
+
+
+        observable2 = RxBus.getInstance().register(RxBus.RX_TRAIN);
+        observable2.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object object) {
+                final BaseActivity context = App.getTopActivity();
+                train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+                if(isTrain) {
+                    isTrain=false;
+                    // 0  正常模式， 1 培训模式
+                    DialogFactory.commonTwoBtnDialog(context, "",
+                            "Switching mode？",
+                            context.getResources().getString(R.string.cancel),
+                            context.getResources().getString(R.string.ok),
+                            new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+                                    isTrain=true;
+                                }
+                            },
+                            new OnClickListener() {
+
+                                @Override
+                                public void onClick(View arg0) {
+
+                                    isTrain=true;
+                                    if (train != 1) {
+
+                                        SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
+                                        try {
+                                            AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+                                        SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
+
+                                    }
+
+                                    context.runOnUiThread(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            Intent intent = new Intent(App.instance, Welcome.class);
+                                            @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+                                                    App.instance
+                                                            .getApplicationContext(),
+                                                    0, intent,
+                                                    Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            // 退出程序
+                                            AlarmManager mgr = (AlarmManager) App.instance
+                                                    .getSystemService(Context.ALARM_SERVICE);
+                                            mgr.set(AlarmManager.RTC,
+                                                    System.currentTimeMillis() + 1000,
+                                                    restartIntent); // 1秒钟后重启应用
+                                            ActivityManager am = (ActivityManager) App.instance
+                                                    .getSystemService(Context.ACTIVITY_SERVICE);
+                                            am.killBackgroundProcesses(getPackageName());
+                                            App.instance.finishAllActivity();
+                                        }
+                                    });
+                                }
+                            });
+                }
+
+            }
+        });
+
+
 
 //        TcpUdpFactory.getServiceIp(5, new UdpSendCallBack() {
 //            @Override
@@ -2899,7 +2983,7 @@ public class App extends BaseApplication {
                                             paidOrder,
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser().getLastName(),
-                                            "", 1);
+                                            "", 1,App.instance.getSystemSettings().getTrainType());
 
                             List<OrderDetail> placedOrderDetailss
                                     = OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
@@ -2955,7 +3039,7 @@ public class App extends BaseApplication {
                     paidOrder,
                     getUser().getFirstName()
                             + getUser().getLastName(),
-                    tableInfo.getName(), 1);
+                    tableInfo.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
             ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
                     .getItemList(

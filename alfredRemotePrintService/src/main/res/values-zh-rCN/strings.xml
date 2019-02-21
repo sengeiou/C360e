@@ -6,6 +6,8 @@
     <string name="swift_no_">订单号</string>
     <string name="bill_no_">账单号</string>
     <string name="cashier">收银员</string>
+    <string name="train">培训</string>
+    <string name="mode">模式</string>
     <string name="groupnum">分单号</string>
 
     <string name="pos">收银台</string>

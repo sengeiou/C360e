@@ -156,9 +156,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		tv_pos_mode_type=(TextView)findViewById(R.id.tv_pos_mode_type);
 
            if(trainType==1){
-           	tv_pos_mode_type.setText("培训");
+           	tv_pos_mode_type.setText("train");
 		   }else {
-           	tv_pos_mode_type.setText("正常");
+           	tv_pos_mode_type.setText("business");
 		   }
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -526,11 +526,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 			case R.id.ll_set_pos_mode:
 			{
-
-
 				// 0  正常模式， 1 培训模式
 				DialogFactory.commonTwoBtnDialog(context, "",
-						"切换模式？",
+								"Switching mode？",
 						context.getResources().getString(R.string.cancel),
 						context.getResources().getString(R.string.ok),
 						new OnClickListener() {
@@ -550,13 +548,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 									SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
 									try {
 										AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
-										tv_pos_mode_type.setText("培训");
+										tv_pos_mode_type.setText("train");
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
 								}else {
 									SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
-									tv_pos_mode_type.setText("正常");
+									tv_pos_mode_type.setText("business");
 								}
 
 								runOnUiThread(new Runnable() {

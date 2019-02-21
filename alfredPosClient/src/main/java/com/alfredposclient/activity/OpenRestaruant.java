@@ -3,6 +3,7 @@ package com.alfredposclient.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.DownloadManager;
@@ -15,19 +16,24 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -110,6 +116,7 @@ import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.SessionImageUtils;
+import com.alfredposclient.view.PopupWindowHelper;
 import com.alfredposclient.view.SettingView;
 import com.google.gson.Gson;
 import com.tencent.bugly.crashreport.BuglyLog;
@@ -123,6 +130,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import floatwindow.xishuang.float_lib.FloatActionController;
+import floatwindow.xishuang.float_lib.permission.FloatPermissionManager;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -185,7 +194,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private int size;
 	private Observable<Integer> observable;
 	private Observable<Object> observable1;
+	private Observable<Object> observable2;
 	private VerifyDialog verifyDialog;
+	private static final int OVERLAY_PERMISSION_REQ_CODE = 0x001;
+	int train;
+	private Boolean isTrain=true;
 //	private RelativeLayout rl_view_bg1;
 //	private ImageView iv_view_icon1;
 //	private RelativeLayout rl_view_bg2;
@@ -245,6 +258,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_open_restaruant);
+		 train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
 		if(App.instance.isRevenueKiosk()) {
 			PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
 			if (placeInfo == null) {
@@ -520,7 +534,78 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //		if (!App.instance.getXmppThread().isAlive()) {
 //			App.instance.getXmppThread().start();
 //		}
+
+//		observable2 = RxBus.getInstance().register(RxBus.RX_TRAIN);
+//		observable2.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+//			@Override
+//			public void call(Object object) {
+//
+//				if(isTrain) {
+//					isTrain=false;
+//					// 0  正常模式， 1 培训模式
+//					DialogFactory.commonTwoBtnDialog(context, "",
+//							"Switching mode？",
+//							context.getResources().getString(R.string.cancel),
+//							context.getResources().getString(R.string.ok),
+//							new OnClickListener() {
+//								@Override
+//								public void onClick(View v) {
+//									//SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+//									isTrain=true;
+//								}
+//							},
+//							new OnClickListener() {
+//
+//								@Override
+//								public void onClick(View arg0) {
+//
+//									isTrain=true;
+//									if (train != 1) {
+//
+//										SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
+//										try {
+//											AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
+//
+//										} catch (Exception e) {
+//											e.printStackTrace();
+//										}
+//									} else {
+//										SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
+//
+//									}
+//
+//									runOnUiThread(new Runnable() {
+//
+//										@Override
+//										public void run() {
+//											Intent intent = new Intent(App.instance, Welcome.class);
+//											@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+//													App.instance
+//															.getApplicationContext(),
+//													0, intent,
+//													Intent.FLAG_ACTIVITY_NEW_TASK);
+//											// 退出程序
+//											AlarmManager mgr = (AlarmManager) App.instance
+//													.getSystemService(Context.ALARM_SERVICE);
+//											mgr.set(AlarmManager.RTC,
+//													System.currentTimeMillis() + 1000,
+//													restartIntent); // 1秒钟后重启应用
+//											ActivityManager am = (ActivityManager) App.instance
+//													.getSystemService(Context.ACTIVITY_SERVICE);
+//											am.killBackgroundProcesses(getPackageName());
+//											App.instance.finishAllActivity();
+//										}
+//									});
+//								}
+//							});
+//				}
+//
+//			}
+//		});
+
 	}
+
+
 
 	@Override
 	protected void onStart() {
@@ -623,10 +708,36 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		((TextView) findViewById(R.id.tv_now_min)).setText(preciseTimeUtil
 				.getMin());
 	}
-
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+//		 PopupWindowHelper popupWindowHelper;
+//		 View popView;
+//		popView = LayoutInflater.from(this).inflate(R.layout.popupview, null);
+//		popupWindowHelper = new PopupWindowHelper(popView);
+
+				//		TrainToast.getInstance().init(App.instance);
+//		TrainToast.getInstance().createToast("","");
+//	    TrainToast trainToast=new TrainToast(this);
+//	    trainToast.showToast();
+//
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//			if (!Settings.canDrawOverlays(this)) {
+//				Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//						Uri.parse("package:" + getPackageName()));
+//				startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+//			}
+//		}
+	//	hasPermission(this);
+
+
+//		boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
+//		//有对应权限或者系统版本小于7.0
+//		if (isPermission || Build.VERSION.SDK_INT < 24) {
+//		//	开启悬浮窗
+//			FloatActionController.getInstance().startMonkServer(this);
+	//	}
 		App.instance.showWelcomeToSecondScreen();
 		if (mDrawerLayout.isDrawerOpen(mSettingView)) {
 			mDrawerLayout.closeDrawer(Gravity.END);
@@ -651,37 +762,39 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		}
 		SessionStatus sessionStatus = Store.getObject(
 				context, Store.SESSION_STATUS, SessionStatus.class);
-		
+
 		if(sessionStatus == null){
 			mSettingView.initOptionsNoSessionOpen();
 		}else{
 			mSettingView.initOptionsSessionOpen();
 		}
 		doubleBackToExitPressedOnce = false;
-		
+
 		if (sessionStatus != null){
 				//check session data sync
 				long now = (new Date()).getTime();
 				int hh = TimeUtil.getHourDifference(now, sessionStatus.getTime());
 				if (Math.abs(hh)>=12) {
-				DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.warning), 
-						context.getResources().getString(R.string.session_time_out), 
-						context.getResources().getString(R.string.cancel), 
-						context.getResources().getString(R.string.ok), 
+				DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.warning),
+						context.getResources().getString(R.string.session_time_out),
+						context.getResources().getString(R.string.cancel),
+						context.getResources().getString(R.string.ok),
 						null,
 						new OnClickListener(){
-		
+
 							@Override
 							public void onClick(View arg0) {
 								//handler.sendMessage(handler.obtainMessage(OPEN_RESTAURANT, null));
 								//Close Session
-								
+
 							}
 						}
 					);
 				}
 		}
 	}
+
+
 
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -1144,7 +1257,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						App.instance.getRevenueCenter().getId(),
 						"X"+reportDaySales.getReportNoStr(),
 						App.instance.getUser().getFirstName()
-								+ App.instance.getUser().getLastName(), null,bizDate);
+								+ App.instance.getUser().getLastName(), null,bizDate,App.instance.getSystemSettings().getTrainType());
 
 		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
@@ -1237,7 +1350,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						App.instance.getRevenueCenter().getId(),
 						"Z"+reportDaySales.getReportNoStr(),
 						App.instance.getUser().getFirstName()
-								+ App.instance.getUser().getLastName(), null,bizDate);
+								+ App.instance.getUser().getLastName(), null,bizDate,App.instance.getSystemSettings().getTrainType());
 
 		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
@@ -1517,11 +1630,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			final Long businessDate = TimeUtil.getNewBusinessDate();
 			App.instance.deleteOldPrinterMsg(businessDate);
 			String bizYmd = TimeUtil.getYMD(businessDate);
-			int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+
            if(train==-1){
           // 0  正常模式， 1 培训模式
 			   DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
-					   "开启培训模式？",
+					   "Opening Training Mode？",
 					   context.getResources().getString(R.string.cancel),
 					   context.getResources().getString(R.string.ok),
 					   new OnClickListener() {
@@ -2172,6 +2285,20 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+				case OVERLAY_PERMISSION_REQ_CODE:
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+						if (!Settings.canDrawOverlays(this)) {
+							Toast.makeText(OpenRestaruant.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+						} else {
+							// TODO: 18/1/7 已经授权
+						}
+					}
+					break;
+			}
+		}
 		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 			@Override
@@ -2211,4 +2338,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			zPrinterLoadingDialog.dismiss();
 		}
 	}
+
+
 }

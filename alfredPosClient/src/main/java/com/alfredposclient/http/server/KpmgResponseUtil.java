@@ -408,7 +408,7 @@ public class KpmgResponseUtil {
                             placeOrder,
                             App.instance.getUser().getFirstName()
                                     + App.instance.getUser().getLastName(),
-                            "", 1);
+                            "", 1,App.instance.getSystemSettings().getTrainType());
 
             map.put("order", placeOrder);
             map.put("title", title);

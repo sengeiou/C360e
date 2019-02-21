@@ -37,6 +37,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import floatwindow.xishuang.float_lib.FloatActionController;
+
 public class BaseApplication extends Application {
 
     public static BaseApplication instance;
@@ -494,6 +496,7 @@ public class BaseApplication extends Application {
             oldActivity.finish();
             activitys.remove(oldActivity);
             android.os.Process.killProcess(android.os.Process.myPid());
+            FloatActionController.getInstance().stopMonkServer(this);
         }
     }
 

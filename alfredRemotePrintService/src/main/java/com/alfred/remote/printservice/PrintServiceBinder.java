@@ -242,7 +242,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 salesPrint.setCharSize(48);
             }
             salesPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.sales_analysis));
-            salesPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            salesPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             salesPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.type),
                     PrintService.instance.getResources().getString(R.string.qty_),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -295,7 +295,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 daPrint.setCharSize(48);
             }
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.detail_analysis));
-            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             if (App.instance.countryCode == ParamConst.CHINA && reportData != null) {
                 //Bob: Print Sales summary
                 daPrint.addSalesSummary(reportData);
@@ -348,7 +348,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             }
 
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.summary_analysis));
-            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             daPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.plu_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -387,7 +387,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 hsPrint.setCharSize(48);
             }
             hsPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.hourly_sales));
-            hsPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            hsPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             hsPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.hour),
                     PrintService.instance.getResources().getString(R.string.tran),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -427,7 +427,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             }
 
             viPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.void_plu));
-            viPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            viPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             viPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -467,7 +467,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             }
 
             eiPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.ent_plu));
-            eiPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            eiPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             eiPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -2373,7 +2373,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(),prtTitle.getTrainType());
 
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
@@ -2503,7 +2503,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(),prtTitle.getTrainType());
 
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
@@ -2819,7 +2819,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 daPrint.setCharSize(48);
             }
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.modifier_analysis));
-            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             daPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.plu_name),
                     PrintService.instance.getResources().getString(R.string.price),
                     PrintService.instance.getResources().getString(R.string.qty),
@@ -2863,7 +2863,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 daPrint.setCharSize(48);
             }
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.modifier_analysis));
-            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             daPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.plu_name),
                     PrintService.instance.getResources().getString(R.string.price),
                     PrintService.instance.getResources().getString(R.string.qty),

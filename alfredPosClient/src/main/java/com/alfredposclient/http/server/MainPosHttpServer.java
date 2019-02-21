@@ -307,7 +307,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser()
                                                     .getLastName(),
-                                            tableName, 1);
+                                            tableName, 1,App.instance.getSystemSettings().getTrainType());
                             ArrayList<PrintOrderItem> orderItems = ObjectFactory
                                     .getInstance().getItemList(
                                             OrderDetailSQL.getOrderDetails(order
@@ -2988,7 +2988,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser()
                                             .getLastName(),
-                                    tableName, 1);
+                                    tableName, 1,App.instance.getSystemSettings().getTrainType());
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
                             .getInstance().getItemList(
                                     OrderDetailSQL.getOrderDetails(order

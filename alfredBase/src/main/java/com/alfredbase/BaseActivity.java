@@ -3,24 +3,35 @@ package com.alfredbase;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
+import com.alfredbase.view.FloatViewHelper;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.umeng.analytics.MobclickAgent;
 
-public class BaseActivity extends FragmentActivity implements OnClickListener {
+import floatwindow.xishuang.float_lib.FloatActionController;
+import floatwindow.xishuang.float_lib.FloatCallBack;
+import floatwindow.xishuang.float_lib.OnTrainListener;
+import floatwindow.xishuang.float_lib.view.FloatLayout;
+
+public class BaseActivity extends FragmentActivity implements OnClickListener ,OnTrainListener {
     protected BaseActivity context;
     protected Dialog compelDialog;
     protected Dialog oneButtonCompelDialog;
@@ -70,15 +81,50 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+      //  FloatViewHelper.showFloatView(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         BaseApplication.activitys.remove(this);
-    }
+
+   }
 
     @Override
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+        int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
+        if(train==1)
+        {
+          FloatActionController.getInstance().startMonkServer(this);
+            FloatActionController.getInstance().registerOnTrainListener(new OnTrainListener() {
+                @Override
+                public void onTrainClick() {
+                    RxBus.getInstance().post(RxBus.RX_TRAIN, "");
+
+
+
+
+                 //   Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
+                }
+            });
+          //  FloatActionController.getInstance().registerOnTrainListener(this);
+//
+        }else {
+            FloatActionController.getInstance().stopMonkServer(this);
+
+        }
+
+//        boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
+//        //有对应权限或者系统版本小于7.0
+//        if (isPermission || Build.VERSION.SDK_INT < 24) {
+//            //开启悬浮窗
+//            FloatActionController.getInstance().startMonkServer(this);
+//        }
         String wifiStr = Store.getString(context, Store.WIFI_STR);
         if (!TextUtils.isEmpty(wifiStr)) {
             RxBus.getInstance().post(RxBus.RX_WIFI_STORE, wifiStr);
@@ -229,4 +275,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
         super.onBackPressed();
     }
 
+    @Override
+    public void onTrainClick() {
+           LogUtil.e("baseactivity","传值了");
+//        Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
+//        RxBus.getInstance().post(RxBus.RX_TRAIN, "");
+    }
 }

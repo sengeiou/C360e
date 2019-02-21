@@ -9,7 +9,9 @@
         android:targetSdkVersion="18" />
     <!-- 往sdcard中写入数据的权限 -->
     <!-- 在sdcard中创建/删除文件的权限 -->
+
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name=" android.permission.SYSTEM_ALERT_WINDOW" />
     <!--声明使用usb-->
     <uses-feature android:name="android.hardware.usb.host"></uses-feature>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -238,6 +240,7 @@
         <activity android:name=".activity.DeliveryDialogActivity"
             android:theme="@style/NullActivityTheme"
             />
+        <service android:name="floatwindow.xishuang.float_lib.service.FloatMonkService"/>
     </application>
 
 </manifest>

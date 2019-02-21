@@ -936,7 +936,7 @@ public class XZReportActivity extends BaseActivity {
                         label + reportDaySales.getReportNoStr(),
                         App.instance.getUser().getFirstName()
                                 + App.instance.getUser().getLastName(), null,
-                        bizDate);
+                        bizDate,App.instance.getSystemSettings().getTrainType());
 
         PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
         List<ReportUserOpenDrawer> reportUserOpenDrawers = new ArrayList<ReportUserOpenDrawer>();

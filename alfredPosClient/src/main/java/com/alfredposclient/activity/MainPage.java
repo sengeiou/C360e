@@ -764,7 +764,8 @@ public class MainPage extends BaseActivity {
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser()
                                                     .getLastName(),
-                                            currentTable.getName(), 1);
+                                            currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
+
                             currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
                             OrderSQL.update(currentOrder);
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
@@ -827,7 +828,7 @@ public class MainPage extends BaseActivity {
                                     paidOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    currentTable.getName(), 1);
+                                    currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
 
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory

@@ -127,7 +127,7 @@ public class MonthlyPLUReportHtml extends BaseActivity {
 													App.instance.getRevenueCenter().getId(),
 													"",
 													App.instance.getUser().getFirstName()
-															+ App.instance.getUser().getLastName(), null,null);
+															+ App.instance.getUser().getLastName(), null,null,App.instance.getSystemSettings().getTrainType());
 
 									PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 									String[] ym = month.split("-");

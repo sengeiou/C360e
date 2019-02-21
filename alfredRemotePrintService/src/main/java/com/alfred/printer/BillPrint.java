@@ -250,7 +250,7 @@ public class BillPrint extends PrintJob {
 
     /*Kiosk uses only*/
     public void AddKioskHeader(int isTakeAway, String table, int pax, String billNo,
-                               String posNo, String cashier, String dateTime, String orderNo, String groupNum) {
+                               String posNo, String cashier, String dateTime, String orderNo, String groupNum,int trainType) {
         if (!TextUtils.isEmpty(table)) {
             PrintData tableNamePrint = new PrintData();
             tableNamePrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -304,6 +304,16 @@ public class BillPrint extends PrintJob {
         billNoPrint.setText(padBillNo);
         this.data.add(billNoPrint);
 
+        //trainType
+        if(trainType==1){
+            PrintData trainPrint = new PrintData();
+            String trainLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.mode), this.FIXED_COL4_TOTAL);
+            String trainStr = trainLabel + ":" + PrintService.instance.getResources().getString(R.string.train) + reNext;
+            trainPrint.setDataFormat(PrintData.FORMAT_TXT);
+            trainPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            trainPrint.setText(trainStr);
+            this.data.add(trainPrint);
+        }
         //cashier
         PrintData cashierPrint = new PrintData();
         String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.cashier), this.FIXED_COL4_TOTAL);

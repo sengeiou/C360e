@@ -1620,7 +1620,7 @@ public class ObjectFactory {
     }
 
     public PrinterTitle getPrinterTitle(RevenueCenter revenue, Order order,
-                                        String userName, String tableName, int copy) {
+                                        String userName, String tableName, int copy,int trainType) {
         PrinterTitle printerTitle = new PrinterTitle();
         Restaurant restaurant = RestaurantSQL.getRestaurant();
         printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
@@ -1648,6 +1648,7 @@ public class ObjectFactory {
         } else {
             printerTitle.setOrderNo(order.getOrderNo().toString());
         }
+          printerTitle.setTrainType(trainType);
 
         return printerTitle;
     }
@@ -1687,7 +1688,7 @@ public class ObjectFactory {
     }
 
     public PrinterTitle getPrinterTitleForReport(int revenueId, String billNo,
-                                                 String userName, String tableName, String businessDate) {
+                                                 String userName, String tableName, String businessDate,int trainType) {
         PrinterTitle printerTitle = new PrinterTitle();
         Restaurant restaurant = new Restaurant();
         restaurant = RestaurantSQL.getRestaurant();
@@ -1711,6 +1712,7 @@ public class ObjectFactory {
                 restaurant.getLogoUrl()).getLogoString());
         printerTitle.setBizDate(businessDate);
         printerTitle.setOrderNo(billNo);
+        printerTitle.setTrainType(trainType);
 
         return printerTitle;
     }

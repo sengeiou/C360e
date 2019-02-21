@@ -220,7 +220,7 @@ public class ReprintBillHtml extends BaseActivity {
 							App.instance.getUser().getFirstName()
 									+ App.instance.getUser().getLastName(),
 							TableInfoSQL.getTableById(order.getTableId())
-									.getName(), 1),
+									.getName(), 1,App.instance.getSystemSettings().getTrainType()),
 					order,
 					ObjectFactory.getInstance().getItemList(
 							OrderDetailSQL.getOrderDetails(order.getId())),
