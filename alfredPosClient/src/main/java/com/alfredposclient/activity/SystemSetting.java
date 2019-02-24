@@ -27,7 +27,9 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.ChangePasswordDialog;
 import com.alfredposclient.R;
@@ -45,6 +47,7 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -544,6 +547,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 
 								if(trainType!=1) {
+								//	String path=AlfredRootCmdUtil.COPY_FILE;
 
 									SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
 									try {
@@ -557,6 +561,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 									tv_pos_mode_type.setText("business");
 								}
 
+
+
+
 								runOnUiThread(new Runnable() {
 
 									@Override
@@ -568,6 +575,17 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 												0, intent,
 												Intent.FLAG_ACTIVITY_NEW_TASK);
 										// 退出程序
+
+										File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
+										if(!file.exists()){
+											//LogUtil.e("ssss","sss");
+											SessionStatus sessionStatus = Store.getObject(
+													context, Store.SESSION_STATUS, SessionStatus.class);
+											GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
+											Store.remove(context, Store.SESSION_STATUS);
+											App.instance.setSessionStatus(null);
+										}
+
 										AlarmManager mgr = (AlarmManager) App.instance
 												.getSystemService(Context.ALARM_SERVICE);
 										mgr.set(AlarmManager.RTC,

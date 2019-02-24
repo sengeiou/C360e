@@ -122,6 +122,7 @@ import com.google.gson.Gson;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.umeng.analytics.MobclickAgent;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1630,7 +1631,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			final Long businessDate = TimeUtil.getNewBusinessDate();
 			App.instance.deleteOldPrinterMsg(businessDate);
 			String bizYmd = TimeUtil.getYMD(businessDate);
-
+			train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
            if(train==-1){
           // 0  正常模式， 1 培训模式
 			   DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
@@ -1666,6 +1667,16 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 											   0, intent,
 											   Intent.FLAG_ACTIVITY_NEW_TASK);
 									   // 退出程序
+									   File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
+//									   if(!file.exists()){
+//										   //LogUtil.e("ssss","sss");
+////										   SessionStatus sessionStatus = Store.getObject(
+////												   context, Store.SESSION_STATUS, SessionStatus.class);
+////										   GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
+////										   Store.remove(context, Store.SESSION_STATUS);
+////										   App.instance.setSessionStatus(null);
+//									   }
+
 									   AlarmManager mgr = (AlarmManager) App.instance
 											   .getSystemService(Context.ALARM_SERVICE);
 									   mgr.set(AlarmManager.RTC,

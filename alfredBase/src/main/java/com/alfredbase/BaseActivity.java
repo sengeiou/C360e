@@ -3,8 +3,11 @@ package com.alfredbase;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,6 +32,7 @@ import com.umeng.analytics.MobclickAgent;
 import floatwindow.xishuang.float_lib.FloatActionController;
 import floatwindow.xishuang.float_lib.FloatCallBack;
 import floatwindow.xishuang.float_lib.OnTrainListener;
+import floatwindow.xishuang.float_lib.permission.FloatPermissionManager;
 import floatwindow.xishuang.float_lib.view.FloatLayout;
 
 public class BaseActivity extends FragmentActivity implements OnClickListener ,OnTrainListener {
@@ -100,18 +104,50 @@ public class BaseActivity extends FragmentActivity implements OnClickListener ,O
         int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
         if(train==1)
         {
-          FloatActionController.getInstance().startMonkServer(this);
+            FloatActionController.getInstance().startMonkServer(this);
+
+           // FloatActionController.getInstance().registerOnTrainListener(this);
             FloatActionController.getInstance().registerOnTrainListener(new OnTrainListener() {
                 @Override
                 public void onTrainClick() {
                     RxBus.getInstance().post(RxBus.RX_TRAIN, "");
 
-
-
-
-                 //   Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
+                   Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
                 }
             });
+
+//            boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
+//        //有对应权限或者系统版本小于7.0
+//        if (isPermission || Build.VERSION.SDK_INT < 24) {
+//            //开启悬浮窗
+//           // FloatActionController.getInstance().startMonkServer(this);
+//        }
+//
+//            if (Build.VERSION.SDK_INT >= 23) {
+//                if(!Settings.canDrawOverlays(getApplicationContext())) {
+//                    //启动Activity让用户授权
+//                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+//                    startActivity(intent);
+//                    return;
+//                } else {
+//                    FloatActionController.getInstance().startMonkServer(this);
+//                    //执行6.0以上绘制代码
+//                }
+//            } else {
+//                FloatActionController.getInstance().startMonkServer(this);
+//                //执行6.0以下绘制代码
+//            }
+
+
+//          FloatActionController.getInstance().startMonkServer(this);
+//            FloatActionController.getInstance().registerOnTrainListener(new OnTrainListener() {
+//                @Override
+//                public void onTrainClick() {
+//                    RxBus.getInstance().post(RxBus.RX_TRAIN, "");
+//
+//                 //   Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
+//                }
+//            });
           //  FloatActionController.getInstance().registerOnTrainListener(this);
 //
         }else {
