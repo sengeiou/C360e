@@ -471,7 +471,7 @@ public class HttpAnalysis {
 		}
 	}
 
-	public static void getItemPromotionInfo(int statusCode, Header[] headers,
+	public static void getPromotionData(int statusCode, Header[] headers,
 										byte[] responseBody) {
 		try {
 			JSONObject object = new JSONObject(new String(responseBody));
@@ -499,21 +499,21 @@ public class HttpAnalysis {
 			e.printStackTrace();
 		}
 	}
-	public static void getPromotionData(int statusCode, Header[] headers,
-											byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			PromotionAndWeekVo promotionAndWeekVo = gson.fromJson(
-					object.getString("PromotionAndOrderVo"),
-					new TypeToken<PromotionAndWeekVo>() {
-					}.getType());
-
-
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void getPromotionData(int statusCode, Header[] headers,
+//											byte[] responseBody) {
+//		try {
+//			JSONObject object = new JSONObject(new String(responseBody));
+//			Gson gson = new Gson();
+//			PromotionAndWeekVo promotionAndWeekVo = gson.fromJson(
+//					object.getString("PromotionAndOrderVo"),
+//					new TypeToken<PromotionAndWeekVo>() {
+//					}.getType());
+//
+//
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 
 

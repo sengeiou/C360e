@@ -649,7 +649,7 @@ public class HttpAPI {
     public static void getPromotionInfo (Context context, String url,
                                     AsyncHttpClient httpClient, final Handler handler, final int mode) {
         try {
-            httpClient.post(context, url, HttpAssembling.getParam(10),
+            httpClient.post(context, url, HttpAssembling.getParam(),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -716,7 +716,7 @@ public class HttpAPI {
     public static void getPromotionData (Context context, String url,
                                          AsyncHttpClient httpClient, final Handler handler, final int mode) {
         try {
-            httpClient.post(context, url, HttpAssembling.getParam(20),
+            httpClient.post(context, url, HttpAssembling.getParam(),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -783,7 +783,7 @@ public class HttpAPI {
     public static void getItemPromotionInfo (Context context, String url,
                                          AsyncHttpClient httpClient, final Handler handler, final int mode) {
         try {
-            httpClient.post(context, url, HttpAssembling.getParam(0),
+            httpClient.post(context, url, HttpAssembling.getParam(),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
