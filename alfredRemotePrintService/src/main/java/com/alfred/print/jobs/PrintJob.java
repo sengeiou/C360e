@@ -14,6 +14,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PrintQueueMsg;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.NetUtil;
 import com.birbit.android.jobqueue.CancelReason;
 import com.birbit.android.jobqueue.Job;
@@ -369,16 +370,24 @@ public class PrintJob extends Job  {
 
 
     protected void AddCut() {
-        if (!WifiCommunication.localIPAddress.equals(printerIp)) {
-            PrintData cut = new PrintData();
-            cut.setDataFormat(PrintData.FORMAT_CUT);
-            this.data.add(cut);
-        } else {
-            PrintData cut = new PrintData();
-            cut.setDataFormat(PrintData.FORMAT_FEED);
-            cut.setMarginTop(2);
-            this.data.add(cut);
+        if(WifiCommunication.localIPAddress.equals(printerIp) && !MachineUtil.isHisense()){
+            sunmiCut();
+        }else{
+            defaultCut();
         }
+    }
+
+    private void defaultCut(){
+        PrintData cut = new PrintData();
+        cut.setDataFormat(PrintData.FORMAT_CUT);
+        this.data.add(cut);
+    }
+
+    private void sunmiCut(){
+        PrintData cut = new PrintData();
+        cut.setDataFormat(PrintData.FORMAT_FEED);
+        cut.setMarginTop(2);
+        this.data.add(cut);
     }
 
     protected void AddKickDrawer() {

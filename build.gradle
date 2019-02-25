@@ -9,7 +9,7 @@ ext {
     minSdkVersion = 14
     posMinSdkVersion = 19
     versionCode = 46
-    versionName = "1.0.33"
+    versionName = "1.0.34"
     javaVersion = JavaVersion.VERSION_1_7
 
     //lib
