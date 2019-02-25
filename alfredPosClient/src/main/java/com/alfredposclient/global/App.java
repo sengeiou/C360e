@@ -2944,6 +2944,18 @@ public class App extends BaseApplication {
 //			}).start();
     }
 
+
+//    public void printerAppDelivery(List<AppOrder> appOrderlist) {
+//        Gson gson = new Gson();
+//        String apporders = gson.toJson(appOrderlist);
+//        try {
+//            mRemoteService.printAppOrderDelivery(apporders);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+
     public void printerAppOrder(final AppOrder appOrder, String orderStr, List<AppOrder> appOrderlist) {
         try {
 
@@ -2990,7 +3002,7 @@ public class App extends BaseApplication {
                         //    String addr = appOrder.getAddress();
 
                         if (TextUtils.isEmpty(appOrder.getMobile())) {
-                            name = appOrder.getContact() + "\n";
+                            name = appOrder.getContact() + "\r\n";
                         } else {
                             name = "" + appOrder.getContact() + "   " + "   " + "   ";
                         }

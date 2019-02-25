@@ -2273,17 +2273,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 }
                 str.append(space + appOrder.getMobile());
             }
-            String addressNext = "";
-            if (str.length() > 0) {
-                addressNext = " ";
-            }
-            str.append(addressNext + appOrder.getAddress() + " ");
-            str.append(TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()));
+//            String addressNext = "";
+//            if (str.length() > 0) {
+//                addressNext = " ";
+//            }
+//            str.append(addressNext + appOrder.getAddress() + " ");
+//            str.append(TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()));
             ///    billPrint.addBillOrderStr(appOrder.getOrderNo().toString() + "\n");
 //                            if (TextUtils.isEmpty(str.toString())) {
 //                                billPrint.printDeliveryList(appOrder.getOrderNo().toString(), appOrder.getAddress(), 1);
 //                            } else {
-            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+appOrder.getOrderNo().toString(), str.toString(), 1);
+            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+appOrder.getId().toString(), str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()));
             //  billPrint.printDeliveryList(" ", appOrder.getAddress().toString(), 1);
 //                                billPrint.AddAddress(appOrder.getAddress());
 //                            }

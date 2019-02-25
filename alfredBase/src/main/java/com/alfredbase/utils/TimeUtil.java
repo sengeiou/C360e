@@ -51,6 +51,8 @@ public class TimeUtil {
 	
 	public static final SimpleDateFormat CLOSE_BILL_DATA_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+	public static final SimpleDateFormat PRINTER_DELIVERY_DATE_TIME = new SimpleDateFormat(
+			"dd/MM/yyyy, HH:mm");
 	public static String getPrintDate(long time) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(time);
@@ -101,7 +103,14 @@ public class TimeUtil {
 		calendar.setTimeInMillis(time);
 		return CLOSE_BILL_DATA_TIME.format(calendar.getTime());
 	}
-	
+
+	public static String getDeliveryDataTime(long time){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(time);
+		return PRINTER_DELIVERY_DATE_TIME.format(calendar.getTime());
+	}
+
+
 	public static String getTimeFormat(long time){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(time);
