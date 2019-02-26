@@ -35,7 +35,7 @@ import floatwindow.xishuang.float_lib.OnTrainListener;
 import floatwindow.xishuang.float_lib.permission.FloatPermissionManager;
 import floatwindow.xishuang.float_lib.view.FloatLayout;
 
-public class BaseActivity extends FragmentActivity implements OnClickListener ,OnTrainListener {
+public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected BaseActivity context;
     protected Dialog compelDialog;
     protected Dialog oneButtonCompelDialog;
@@ -116,11 +116,11 @@ public class BaseActivity extends FragmentActivity implements OnClickListener ,O
                 }
             });
 
-//            boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
-//        //有对应权限或者系统版本小于7.0
+//           boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
+////        //有对应权限或者系统版本小于7.0
 //        if (isPermission || Build.VERSION.SDK_INT < 24) {
 //            //开启悬浮窗
-//           // FloatActionController.getInstance().startMonkServer(this);
+//            FloatActionController.getInstance().startMonkServer(this);
 //        }
 //
 //            if (Build.VERSION.SDK_INT >= 23) {
@@ -311,10 +311,4 @@ public class BaseActivity extends FragmentActivity implements OnClickListener ,O
         super.onBackPressed();
     }
 
-    @Override
-    public void onTrainClick() {
-           LogUtil.e("baseactivity","传值了");
-//        Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
-//        RxBus.getInstance().post(RxBus.RX_TRAIN, "");
-    }
 }

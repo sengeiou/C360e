@@ -131,8 +131,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import floatwindow.xishuang.float_lib.FloatActionController;
-import floatwindow.xishuang.float_lib.permission.FloatPermissionManager;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
