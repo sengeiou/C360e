@@ -1487,11 +1487,11 @@ public class DataHelper {
                     + TableNames.PromotionData
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
                     "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
-                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG)");
+                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG,basePrice TEXT)");
 
             db.execSQL("CREATE TABLE "
                     + TableNames.Promotion
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionName TEXT, restaurantId INTEGER, isActive INTEGER)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,type INTEGER, promotionName TEXT, restaurantId INTEGER, isActive INTEGER)");
 
             db.execSQL("CREATE TABLE "
                     + TableNames.PromotionWeek
@@ -1506,7 +1506,8 @@ public class DataHelper {
 
             db.execSQL("CREATE TABLE "
                     + TableNames.PromotionOrder
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER,  discountPrice TEXT,discountPercentage TEXT,createTime LONG,updateTime LONG)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER,itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER,"+
+                    "itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT, freeItemName TEXT,createTime LONG,updateTime LONG,basePrice TEXT)");
 
             db.execSQL("ALTER TABLE "
                     + TableNames.Order

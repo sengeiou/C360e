@@ -195,6 +195,8 @@ public class PromotionData implements Serializable {
                 ", orderId=" + orderId +
                 ", orderDetailId=" + orderDetailId +
                 ", discountPrice='" + discountPrice + '\'' +
+                ", businessDate=" + businessDate +
+                ", itemNum=" + itemNum +
                 '}';
     }
 }

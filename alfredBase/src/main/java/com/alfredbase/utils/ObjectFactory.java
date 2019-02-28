@@ -13,6 +13,7 @@ import com.alfredbase.javabean.CashInOut;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemModifier;
+import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
@@ -32,6 +33,7 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -1041,6 +1043,111 @@ public class ObjectFactory {
         }
         return orderDetail;
     }
+
+
+
+    public OrderDetail getItemFreeOrderDetail(Order order,
+                                          OrderDetail fromOrderDetail, ItemDetail itemDetail,
+                                          ItemPromotion itemPromotion) {
+
+        OrderDetail orderDetail = null;
+        synchronized (lock_free_order_detail) {
+            orderDetail = OrderDetailSQL.getOrderDetail(order.getId(),
+                    fromOrderDetail);
+            if (orderDetail == null) {
+                orderDetail = new OrderDetail();
+                orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+                orderDetail.setOrderId(order.getId());
+                orderDetail.setOrderOriginId(fromOrderDetail.getOrderOriginId());
+                orderDetail.setUserId(order.getUserId());
+                orderDetail.setItemId(itemDetail.getId());
+                orderDetail.setItemName(itemDetail.getItemName());
+                orderDetail.setItemNum(itemPromotion.getFreeNum()
+                        * fromOrderDetail.getItemNum());
+                orderDetail.setOrderDetailStatus(fromOrderDetail
+                        .getOrderDetailStatus());
+                orderDetail
+                        .setOrderDetailType(fromOrderDetail.getOrderDetailType());
+                orderDetail.setReason("");
+                orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
+                orderDetail.setItemPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail
+                        .setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+                orderDetail.setDiscountRate(ParamConst.DOUBLE_ZERO);
+                long time = System.currentTimeMillis();
+                orderDetail.setCreateTime(time);
+                orderDetail.setUpdateTime(time);
+                orderDetail.setFromOrderDetailId(fromOrderDetail.getId());
+                orderDetail.setIsFree(ParamConst.FREE);
+                orderDetail.setGroupId(fromOrderDetail.getGroupId());
+
+                orderDetail.setModifierPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail.setOrderSplitId(fromOrderDetail.getOrderSplitId());
+                orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                orderDetail.setAppOrderDetailId(0);
+                orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
+            } else {
+                orderDetail.setItemNum(itemPromotion.getFreeNum()
+                        * fromOrderDetail.getItemNum());
+            }
+            OrderDetailSQL.updateOrderDetail(orderDetail);
+        }
+        return orderDetail;
+    }
+
+    public OrderDetail getOrderFreeOrderDetail(Order order,
+                                             ItemDetail itemDetail,
+                                             PromotionOrder promotionOrder) {
+
+        OrderDetail orderDetail = null;
+        synchronized (lock_free_order_detail) {
+            orderDetail = OrderDetailSQL.getPromotionOrderDetail(order.getId(),
+                    order.getId());
+            if (orderDetail == null) {
+                orderDetail = new OrderDetail();
+                orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+                orderDetail.setOrderId(order.getId());
+              //  orderDetail.setOrderOriginId(fromOrderDetail.getOrderOriginId());
+                orderDetail.setUserId(order.getUserId());
+                orderDetail.setItemId(itemDetail.getId());
+                orderDetail.setItemName(itemDetail.getItemName());
+                orderDetail.setItemNum(promotionOrder.getFreeNum());
+//                orderDetail.setOrderDetailStatus(fromOrderDetail
+//                        .getOrderDetailStatus());
+//                orderDetail
+//                        .setOrderDetailType(fromOrderDetail.getOrderDetailType());
+                orderDetail.setReason("");
+                orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
+                orderDetail.setItemPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail
+                        .setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+                orderDetail.setDiscountRate(ParamConst.DOUBLE_ZERO);
+                long time = System.currentTimeMillis();
+                orderDetail.setCreateTime(time);
+                orderDetail.setUpdateTime(time);
+                orderDetail.setFromOrderDetailId(order.getId());
+                orderDetail.setIsFree(ParamConst.FREE);
+               // orderDetail.setGroupId(fromOrderDetail.getGroupId());
+
+                orderDetail.setModifierPrice(ParamConst.DOUBLE_ZERO);
+                orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
+              //  orderDetail.setOrderSplitId(fromOrderDetail.getOrderSplitId());
+                orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                orderDetail.setAppOrderDetailId(0);
+                orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
+            } else {
+                orderDetail.setItemNum(promotionOrder.getFreeNum());
+            }
+            OrderDetailSQL.updateOrderDetail(orderDetail);
+        }
+        return orderDetail;
+    }
+
 
     // add:thread safe
     Object lock_free_order_detail_for_waiter = new Object();

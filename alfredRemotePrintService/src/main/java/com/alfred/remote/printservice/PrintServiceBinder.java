@@ -443,6 +443,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             }
             proPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.promotion_sales));
             proPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+
+            if(orderPromotions!=null&&orderPromotions.size()>0){
+
             proPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.promotion_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -466,31 +469,31 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                 }
             }
-
+            }
 //            addHortionaDoublelLine(this.charSize);
-            proPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.promotion_name),
+            proPrint.AddContentListHeader("pro",
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
             proPrint.setPrinterIp(prtDevice.getIP());
             for (int i = 0; i <promotions.size() ; i++) {
                 int id=promotions.get(i).getId();
                 int qty = 0;
-                BigDecimal amount = null;
+                String   promotionName=promotions.get(i).getPromotionName();
+                BigDecimal amount = BH.getBD(ParamConst.DOUBLE_ZERO);
                 for(int j = 0;j <itemPromotions.size();j++){
                     PromotionData promotionData=itemPromotions.get(j);
                     int promotionId=promotionData.getPromotionId();
-                    String   promotionName=promotionData.getPromotionName();
+
                     if(id==promotionId)
                     {
                         amount=BH.add(amount,BH.getBD(promotionData.getPromotionAmount()),false);
-                        qty=qty+promotionData.getItemNum();
+                        qty=qty+1;
                     }
 
-                    if(qty>0){
+                }
+                if(qty>0){
 
-                        proPrint.print(promotionName,qty,amount.toString());
-                    }
-
+                    proPrint.print(promotionName,qty,amount.toString());
                 }
             }
             proPrint.AddFooter(prtTitle.getDate() + " " + prtTitle.getTime());

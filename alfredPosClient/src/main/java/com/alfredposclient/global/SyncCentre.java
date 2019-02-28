@@ -390,7 +390,7 @@ public class SyncCentre {
     // Backend Server IP
     private String getAbsoluteUrl(String relativeUrl) {
         if (App.instance.isDebug) {
-			return "http://172.16.3.195:8083/alfred-api/" + relativeUrl;
+			return "http://172.16.3.198:8083/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
          //  return "http://192.168.20.103:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {

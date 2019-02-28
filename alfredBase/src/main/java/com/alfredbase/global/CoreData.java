@@ -403,8 +403,8 @@ public class CoreData {
 			return null;
 		List<ItemPromotion> itemPromotions = getItemPromotions();
 		for (ItemPromotion itemPromotion : itemPromotions) {
-			if (itemPromotion.getPromotionId().intValue() == revenueCenter
-					.getHappyHourId().intValue()) {
+//			if (itemPromotion.getPromotionId().intValue() == revenueCenter
+//					.getHappyHourId().intValue()) {
 				// 先按照菜来找
 				if (itemPromotion.getItemId().intValue() == itemDetail
 						.getItemTemplateId().intValue()) {
@@ -424,7 +424,7 @@ public class CoreData {
 						return itemPromotion;
 					}
 				}
-			}
+//			}
 		}
 		return null;
 	}

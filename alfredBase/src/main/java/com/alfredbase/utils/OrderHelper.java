@@ -15,6 +15,7 @@ import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.RevenueCenter;
@@ -28,6 +29,8 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.PromotionOrderSQL;
+import com.alfredbase.store.sql.PromotionSQL;
+import com.nostra13.universalimageloader.utils.L;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -175,7 +178,7 @@ public class OrderHelper {
 						BH.getBDNoFormat(itemPromotion.getDiscountPrice()), false);
                 promotionPrice=BH.add(promotionPrice,BH.getBDNoFormat(itemPromotion.getDiscountPrice()), false);
 			}
-			 if (Double.parseDouble(itemPromotion.getDiscountPercentage()) > 0) {
+			else if (Double.parseDouble(itemPromotion.getDiscountPercentage()) > 0) {
 				orderDetail.setDiscountRate(itemPromotion.getDiscountPercentage());
 
 				 if(price.compareTo(BH.getBD("0")) > 0) {
@@ -194,7 +197,7 @@ public class OrderHelper {
                         false),false) ;
 			}
 			if (itemPromotion.getFreeNum().intValue() > 0) {
-				promotionPrice = BH.getBD(orderDetail.getItemPrice());
+				//promotionPrice = BH.getBD(orderDetail.getItemPrice());
 			}
 		} else {
 			price = BH.getBD(orderDetail.getItemPrice());
@@ -202,9 +205,13 @@ public class OrderHelper {
 
 		promotionPrice = BH.mul(promotionPrice, BH.getBD(orderDetail.getItemNum()), false);
 		if(promotionPrice.compareTo(BH.getBD("0")) > 0){
+			long nowTime = System.currentTimeMillis();
+
 			PromotionData promotionData=PromotionDataSQL.getPromotionData(order.getId(),orderDetail.getId());
 			if(promotionData==null){
-
+				List<Promotion> promotionList= PromotionSQL.getAllPromotion();
+				Promotion promotion= PromotionSQL.getPromotion(itemPromotion.getPromotionId());
+                promotionData=new PromotionData();
 				promotionData.setPromotionType(0);
 				promotionData.setPromotionAmount(promotionPrice.toString());
 				promotionData.setItemId(orderDetail.getItemId());
@@ -215,10 +222,15 @@ public class OrderHelper {
 				promotionData.setOrderDetailId(orderDetail.getId());
 				promotionData.setOrderId(orderDetail.getOrderId());
 				promotionData.setItemNum(orderDetail.getItemNum());
+				promotionData.setCreateTime(nowTime);
+				promotionData.setPromotionId(itemPromotion.getPromotionId());
+				promotionData.setPromotionName(promotion.getPromotionName());
+				promotionData.setBusinessDate( order.getBusinessDate());
 				PromotionDataSQL.addPromotionData(promotionData);
 			}else {
 				promotionData.setPromotionAmount(promotionPrice.toString());
 				promotionData.setItemNum(orderDetail.getItemNum());
+				promotionData.setUpdateTime(nowTime);
 				PromotionDataSQL.updatePromotionData(promotionData);
 			}
 
@@ -400,47 +412,87 @@ public class OrderHelper {
                         BH.getBD(orderDetail.getRealPrice()), false);
             }
         }
+      //  PromotionDataSQL.deleteAllPromotionData();
         BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
-        PromotionOrder promotionOrder = getOrderPromotion(1);
-        if (promotionOrder != null) {
-            if (subTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
-                subTotal = BH.sub(BH.getBD(subTotal),
-                        BH.getBDNoFormat(promotionOrder.getDiscountPrice()), false);
-                promotionPrice = BH.add(promotionPrice, BH.getBDNoFormat(promotionOrder.getDiscountPrice()), false);
-            }
-            if (Double.parseDouble(promotionOrder.getDiscountPercentage()) > 0) {
+		BigDecimal maxPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
+        List<PromotionOrder> promotionOrders = getOrderPromotion();
+        if (promotionOrders != null) {
+
+			for (int i = 0; i < promotionOrders.size(); i++) {
+				PromotionOrder promotionOrder = promotionOrders.get(i);
+				if (subTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0&&subTotal.compareTo(BH.getBD(promotionOrder.getBasePrice())) >= 0) {
+					if (BH.getBD(promotionOrder.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
+
+						subTotal = BH.sub(BH.getBD(subTotal),
+								BH.getBDNoFormat(promotionOrder.getDiscountPrice()), false);
+
+						if (subTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) < 0) {
+							subTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
+						}
+						promotionPrice = BH.add(promotionPrice, BH.getBDNoFormat(promotionOrder.getDiscountPrice()), false);
+					}
+					else if (Double.parseDouble(promotionOrder.getDiscountPercentage()) > 0) {
 
 
-                if (subTotal.compareTo(BH.getBD("0")) > 0) {
-                    subTotal = BH.sub(BH.getBD(subTotal), BH
-                            .mul(BH.getBD(subTotal),
-                                    BH.getBDNoFormat(promotionOrder.getDiscountPercentage()),
-                                    false), false);
-                }
-                promotionPrice = BH.add(promotionPrice, BH.mul(BH.getBD(subTotal),
-                        BH.getBDNoFormat(promotionOrder.getDiscountPercentage()),
-                        false), false);
-            }
-
-        }
+						if (subTotal.compareTo(BH.getBD("0")) > 0) {
+							subTotal = BH.sub(BH.getBD(subTotal), BH
+									.mul(BH.getBD(subTotal),
+											BH.getBDNoFormat(promotionOrder.getDiscountPercentage()),
+											false), false);
+						}
+						promotionPrice = BH.add(promotionPrice, BH.mul(BH.getBD(subTotal),
+								BH.getBDNoFormat(promotionOrder.getDiscountPercentage()),
+								false), false);
+					}
 
 
-        if (promotionPrice.compareTo(BH.getBD("0")) > 0) {
-            PromotionData promotionData = PromotionDataSQL.getPromotionData(order.getId(), -1);
-            if (promotionData == null) {
+					if (subTotal.compareTo(BH.getBD(promotionOrder.getBasePrice())) >= 0) {
+						//  orderPromotion 获取basePrice进行优惠（满足多个添加多个免费菜）
 
-                promotionData.setPromotionType(0);
-                promotionData.setPromotionAmount(promotionPrice.toString());
-                promotionData.setOrderId(order.getId());
-                PromotionDataSQL.addPromotionData(promotionData);
-            } else {
-                promotionData.setPromotionAmount(promotionPrice.toString());
+						if (promotionOrder != null && promotionOrder.getFreeNum().intValue() > 0) {
+							ItemDetail itemDetail = CoreData.getInstance()
+									.getItemDetailByTemplateId(promotionOrder.getFreeItemId());
+							if (itemDetail == null) {
+								return;
+							}
+							OrderDetail freeOrderDetail = ObjectFactory.getInstance()
+									.getOrderFreeOrderDetail(order, itemDetail,
+											promotionOrder);
+							OrderDetailSQL.updateOrderDetail(freeOrderDetail);
+						}
+					}
 
-                PromotionDataSQL.updatePromotionData(promotionData);
-            }
+				}
 
-            order.setSubTotal(BH.getBD(subTotal).toString());
-        }
+			}
+  //  orderPromotion 获取最大的basePrice进行优惠（满足多个选最大的）
+			if(maxPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))>0) {
+				PromotionOrder promotionOrder = PromotionOrderSQL.getPromotionOrderOrBasePrice(maxPrice.toString());
+				if(promotionOrder!=null) {
+					long nowTime = System.currentTimeMillis();
+					PromotionData promotionData = PromotionDataSQL.getPromotionDataOrType(order.getId(), 1);
+
+					if (promotionData == null) {
+						List<Promotion> promotionList = PromotionSQL.getAllPromotion();
+						Promotion promotion = PromotionSQL.getPromotion(promotionOrder.getPromotionId());
+						promotionData = new PromotionData();
+						promotionData.setPromotionType(1);
+						promotionData.setPromotionAmount(promotionPrice.toString());
+						promotionData.setOrderId(order.getId());
+						promotionData.setCreateTime(nowTime);
+						promotionData.setPromotionId(promotionOrder.getPromotionId());
+						promotionData.setPromotionName(promotion.getPromotionName());
+						promotionData.setBusinessDate(order.getBusinessDate());
+						PromotionDataSQL.addPromotionData(promotionData);
+					} else {
+						promotionData.setPromotionAmount(promotionPrice.toString());
+						promotionData.setUpdateTime(nowTime);
+						PromotionDataSQL.updatePromotionData(promotionData);
+					}
+				}
+			}
+		}
+        order.setSubTotal(BH.getBD(subTotal).toString());
     }
 
 
@@ -448,6 +500,7 @@ public class OrderHelper {
 		BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
 
 	 List<PromotionData> promotionDatas=PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+
 		if (promotionDatas.size() > 0) {
 			for (PromotionData promotionData : promotionDatas) {
 				promotionPrice = BH.add(promotionPrice,
@@ -698,15 +751,15 @@ public class OrderHelper {
 			return itemPromotion;
 		}
 		long currentTimeMillis = System.currentTimeMillis();
-		if (currentTimeMillis < revenueCenter.getHappyStartTime()
-				|| currentTimeMillis > revenueCenter.getHappyEndTime()) {
-			return itemPromotion;
-		}
+//		if (currentTimeMillis < revenueCenter.getHappyStartTime()
+//				|| currentTimeMillis > revenueCenter.getHappyEndTime()) {
+//			return itemPromotion;
+//		}
 
 		// 再从HappyHourWeek判断，是否存在合法的HappyHourWeek，如果不存在，则认为没有ItemHappyHour
-		boolean isHappy = hasHappyWeek(revenueCenter.getHappyHourId());
-		if (!isHappy)
-			return itemPromotion;
+//		boolean isHappy = hasHappyWeek(revenueCenter.getHappyHourId());
+//		if (!isHappy)
+//			return itemPromotion;
 
 		// 最后从ItemHappyHour判断，是否存在合法的ItemHappyHour，如果不存在，则认为没有ItemHappyHour
 		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
@@ -716,10 +769,13 @@ public class OrderHelper {
 		return itemPromotion;
 	}
 
-	public static PromotionOrder getOrderPromotion(int promotionId) {
+	public static List<PromotionOrder> getOrderPromotion() {
 		PromotionOrder promotionOrder = null;
-		promotionOrder=PromotionOrderSQL.getPromotionOrder(promotionId);
-		return promotionOrder;
+	    List<PromotionOrder> promotionOrders=PromotionOrderSQL.getAllpromotionOrder();
+//	    if(promotionOrders!=null&&promotionOrders.size()>0){
+//	    	promotionOrder=promotionOrders.get(0);
+//		}
+		return promotionOrders;
 	}
 
 	private static boolean hasHappyWeek(Integer happy_hour_id) {

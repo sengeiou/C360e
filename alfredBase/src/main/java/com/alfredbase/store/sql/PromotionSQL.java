@@ -25,7 +25,7 @@ public class PromotionSQL {
             db.beginTransaction();
 
             String sql = "insert into "
-                    + TableNames.RemainingStock
+                    + TableNames.Promotion
                     + "(id, type, promotionName, restaurantId, isActive)"
                     + " values (?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
@@ -84,6 +84,39 @@ public class PromotionSQL {
             }
         }
         return result;
+    }
+
+    public static Promotion getPromotion(int proId) {
+       Promotion promotion = null;
+        String sql = "select * from " + TableNames.Promotion +  " where id = ? ";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[] {String.valueOf(proId)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return promotion;
+            }
+
+            if (cursor.moveToFirst()) {
+
+                promotion = new Promotion();
+                promotion.setId(cursor.getInt(0));
+                promotion.setType(cursor.getInt(1));
+                promotion.setPromotionName(cursor.getString(2));
+                promotion.setRestaurantId(cursor.getInt(3));
+                promotion.setIsActive(cursor.getInt(4));
+               return promotion;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return promotion;
     }
 
 

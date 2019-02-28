@@ -227,14 +227,14 @@ public class PromotionDataSQL {
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
-                promotionData.setPromotionAmount(cursor.getString(3));
-                promotionData.setDiscountPercentage(cursor.getString(4));
-                promotionData.setItemId(cursor.getInt(5));
-                promotionData.setItemName(cursor.getString(6));
-                promotionData.setFreeNum(cursor.getInt(7));
-                promotionData.setFreeItemId(cursor.getInt(8));
-                promotionData.setFreeItemName(cursor.getString(9));
-                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
                 promotionData.setCreateTime(cursor.getLong(11));
                 promotionData.setUpdateTime(cursor.getLong(12));
                 promotionData.setOrderId(cursor.getInt(13));
@@ -274,14 +274,14 @@ public class PromotionDataSQL {
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
-                promotionData.setPromotionAmount(cursor.getString(3));
-                promotionData.setDiscountPercentage(cursor.getString(4));
-                promotionData.setItemId(cursor.getInt(5));
-                promotionData.setItemName(cursor.getString(6));
-                promotionData.setFreeNum(cursor.getInt(7));
-                promotionData.setFreeItemId(cursor.getInt(8));
-                promotionData.setFreeItemName(cursor.getString(9));
-                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
                 promotionData.setCreateTime(cursor.getLong(11));
                 promotionData.setUpdateTime(cursor.getLong(12));
                 promotionData.setOrderId(cursor.getInt(13));
@@ -322,14 +322,14 @@ public class PromotionDataSQL {
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
-                promotionData.setPromotionAmount(cursor.getString(3));
-                promotionData.setDiscountPercentage(cursor.getString(4));
-                promotionData.setItemId(cursor.getInt(5));
-                promotionData.setItemName(cursor.getString(6));
-                promotionData.setFreeNum(cursor.getInt(7));
-                promotionData.setFreeItemId(cursor.getInt(8));
-                promotionData.setFreeItemName(cursor.getString(9));
-                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
                 promotionData.setCreateTime(cursor.getLong(11));
                 promotionData.setUpdateTime(cursor.getLong(12));
                 promotionData.setOrderId(cursor.getInt(13));
@@ -369,14 +369,14 @@ public class PromotionDataSQL {
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
-                promotionData.setPromotionAmount(cursor.getString(3));
-                promotionData.setDiscountPercentage(cursor.getString(4));
-                promotionData.setItemId(cursor.getInt(5));
-                promotionData.setItemName(cursor.getString(6));
-                promotionData.setFreeNum(cursor.getInt(7));
-                promotionData.setFreeItemId(cursor.getInt(8));
-                promotionData.setFreeItemName(cursor.getString(9));
-                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
                 promotionData.setCreateTime(cursor.getLong(11));
                 promotionData.setUpdateTime(cursor.getLong(12));
                 promotionData.setOrderId(cursor.getInt(13));
@@ -415,19 +415,20 @@ public class PromotionDataSQL {
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
-                promotionData.setPromotionAmount(cursor.getString(3));
-                promotionData.setDiscountPercentage(cursor.getString(4));
-                promotionData.setItemId(cursor.getInt(5));
-                promotionData.setItemName(cursor.getString(6));
-                promotionData.setFreeNum(cursor.getInt(7));
-                promotionData.setFreeItemId(cursor.getInt(8));
-                promotionData.setFreeItemName(cursor.getString(9));
-                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
                 promotionData.setCreateTime(cursor.getLong(11));
                 promotionData.setUpdateTime(cursor.getLong(12));
                 promotionData.setOrderId(cursor.getInt(13));
                 promotionData.setOrderDetailId(cursor.getInt(14));
                 promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
                 result.add(promotionData);
             }
         } catch (Exception e) {
@@ -460,19 +461,67 @@ public class PromotionDataSQL {
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
-                promotionData.setPromotionAmount(cursor.getString(3));
-                promotionData.setDiscountPercentage(cursor.getString(4));
-                promotionData.setItemId(cursor.getInt(5));
-                promotionData.setItemName(cursor.getString(6));
-                promotionData.setFreeNum(cursor.getInt(7));
-                promotionData.setFreeItemId(cursor.getInt(8));
-                promotionData.setFreeItemName(cursor.getString(9));
-                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
                 promotionData.setCreateTime(cursor.getLong(11));
                 promotionData.setUpdateTime(cursor.getLong(12));
                 promotionData.setOrderId(cursor.getInt(13));
                 promotionData.setOrderDetailId(cursor.getInt(14));
                 promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
+                return promotionData;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return promotionData;
+    }
+
+
+    public static PromotionData getPromotionDataOrType(int orderId,int type)
+    {
+        PromotionData promotionData = null;
+        String sql = "select * from " + TableNames.PromotionData
+                + " where orderId = ? and promotionType = ? ";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(orderId)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return promotionData;
+            }
+
+            if (cursor.moveToFirst()) {
+                promotionData = new PromotionData();
+                promotionData.setId(cursor.getInt(0));
+                promotionData.setPromotionId(cursor.getInt(1));
+                promotionData.setPromotionName(cursor.getString(2));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
+                promotionData.setCreateTime(cursor.getLong(11));
+                promotionData.setUpdateTime(cursor.getLong(12));
+                promotionData.setOrderId(cursor.getInt(13));
+                promotionData.setOrderDetailId(cursor.getInt(14));
+                promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
                 return promotionData;
             }
         } catch (Exception e) {
@@ -502,17 +551,20 @@ public class PromotionDataSQL {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
                 promotionData = new PromotionData();
+//                id, promotionId, promotionName, promotionType, promotionAmount,discountPercentage," +
+//                "itemId,itemName,freeNum," +
+//                        "freeItemId,freeItemName,createTime,updateTime,orderId,orderDetailId,discountPrice,businessDate
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
-                promotionData.setPromotionAmount(cursor.getString(3));
-                promotionData.setDiscountPercentage(cursor.getString(4));
-                promotionData.setItemId(cursor.getInt(5));
-                promotionData.setItemName(cursor.getString(6));
-                promotionData.setFreeNum(cursor.getInt(7));
-                promotionData.setFreeItemId(cursor.getInt(8));
-                promotionData.setFreeItemName(cursor.getString(9));
-                promotionData.setFreeItemId(cursor.getInt(10));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
                 promotionData.setCreateTime(cursor.getLong(11));
                 promotionData.setUpdateTime(cursor.getLong(12));
                 promotionData.setOrderId(cursor.getInt(13));

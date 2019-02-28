@@ -1532,7 +1532,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			App.instance.deleteOldPrinterMsg(businessDate);
 			String bizYmd = TimeUtil.getYMD(businessDate);
 			int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
-           if(train==-1){
+           if(train==-2){
           // 0  正常模式， 1 培训模式
 			   DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
 					   "开启培训模式？",

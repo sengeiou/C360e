@@ -494,6 +494,9 @@ public class Order implements Serializable {
 				", oldTotal='" + oldTotal + '\'' +
 				", numTag='" + numTag + '\'' +
 				", subPosBeanId=" + subPosBeanId +
+				", isSplitByPax=" + isSplitByPax +
+				", promotion='" + promotion + '\'' +
 				'}';
-	}
+
+}
 }

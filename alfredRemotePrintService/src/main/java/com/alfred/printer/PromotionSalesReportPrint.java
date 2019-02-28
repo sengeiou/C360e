@@ -31,10 +31,11 @@ public class PromotionSalesReportPrint extends ReportBasePrint{
 	
 	public void print(String name ,int qty ,String amount) {
 		this.AddItem(name + "",
-				qty + "",
-				amount,1);
+				String.valueOf(qty),
+				BH.formatMoney(amount).toString(),1);
 //		this.reportHourlys = hourly;
 //		getHourlySalesStr();
+
 	}
 
 

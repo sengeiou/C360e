@@ -8,6 +8,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
+import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
@@ -2289,6 +2290,67 @@ public class OrderDetailSQL {
         return orderDetail;
     }
 
+    public static OrderDetail getPromotionOrderDetail(int orderId,
+                                            int fromOrderDetailId) {
+        OrderDetail orderDetail = null;
+        String sql = "select * from " + TableNames.OrderDetail
+                + " where orderId = ? and fromOrderDetailId = ? ";
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB()
+                    .rawQuery(
+                            sql,
+                            new String[]{orderId + "",
+                                    fromOrderDetailId + ""});
+            if (cursor.moveToFirst()) {
+                orderDetail = new OrderDetail();
+                orderDetail.setId(cursor.getInt(0));
+                orderDetail.setOrderId(cursor.getInt(1));
+                orderDetail.setOrderOriginId(cursor.getInt(2));
+                orderDetail.setUserId(cursor.getInt(3));
+                orderDetail.setItemId(cursor.getInt(4));
+                orderDetail.setItemName(cursor.getString(5));
+                orderDetail.setItemNum(cursor.getInt(6));
+                orderDetail.setOrderDetailStatus(cursor.getInt(7));
+                orderDetail.setOrderDetailType(cursor.getInt(8));
+                orderDetail.setReason(cursor.getString(9));
+                orderDetail.setPrintStatus(cursor.getInt(10));
+                orderDetail.setItemPrice(cursor.getString(11));
+                orderDetail.setTaxPrice(cursor.getString(12));
+                orderDetail.setDiscountPrice(cursor.getString(13));
+                orderDetail.setModifierPrice(cursor.getString(14));
+                orderDetail.setRealPrice(cursor.getString(15));
+                orderDetail.setCreateTime(cursor.getLong(16));
+                orderDetail.setUpdateTime(cursor.getLong(17));
+                orderDetail.setDiscountRate(cursor.getString(18));
+                orderDetail.setDiscountType(cursor.getInt(19));
+                orderDetail.setFromOrderDetailId(cursor.getInt(20));
+                orderDetail.setIsFree(cursor.getInt(21));
+                orderDetail.setGroupId(cursor.getInt(22));
+                orderDetail.setIsOpenItem(cursor.getInt(23));
+                orderDetail.setSpecialInstractions(cursor.getString(24));
+                orderDetail.setOrderSplitId(cursor.getInt(25));
+                orderDetail.setIsTakeAway(cursor.getInt(26));
+                orderDetail.setWeight(cursor.getString(27));
+                orderDetail.setIsItemDiscount(cursor.getInt(28));
+                orderDetail.setIsSet(cursor.getInt(29));
+                orderDetail.setAppOrderDetailId(cursor.getInt(30));
+                orderDetail.setMainCategoryId(cursor.getInt(31));
+                orderDetail.setFireStatus(cursor.getInt(32));
+                orderDetail.setItemUrl(cursor.getString(33));
+                orderDetail.setBarCode(cursor.getString(34));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return orderDetail;
+    }
+
     public static OrderDetail getOrderDetailByAppOrderDetailId(int appOrderDeailId) {
         OrderDetail orderDetail = null;
         String sql = "select * from " + TableNames.OrderDetail
@@ -2468,17 +2530,24 @@ public class OrderDetailSQL {
 
     private static void updateFreeOrderDetail(Order order,
                                               OrderDetail orderDetail) {
-        ItemHappyHour itemHappyHour = OrderHelper.getItemHappyHour(order,
-                orderDetail);
-        if (itemHappyHour != null && itemHappyHour.getFreeNum().intValue() > 0) {
+//        ItemHappyHour itemHappyHour = OrderHelper.getItemHappyHour(order,
+//                orderDetail);
+//        if (itemHappyHour != null && itemHappyHour.getFreeNum().intValue() > 0) {
+//            ItemDetail itemDetail = CoreData.getInstance()
+//                    .getItemDetailByTemplateId(itemHappyHour.getFreeItemId());
+//            if (itemDetail == null) {
+//                return;
+//            }
+        ItemPromotion itemPromotion = OrderHelper.getItemPromotion(order, orderDetail);
+        if (itemPromotion != null && itemPromotion.getFreeNum().intValue() > 0) {
             ItemDetail itemDetail = CoreData.getInstance()
-                    .getItemDetailByTemplateId(itemHappyHour.getFreeItemId());
+                    .getItemDetailByTemplateId(itemPromotion.getFreeItemId());
             if (itemDetail == null) {
                 return;
             }
             OrderDetail freeOrderDetail = ObjectFactory.getInstance()
-                    .getFreeOrderDetail(order, orderDetail, itemDetail,
-                            itemHappyHour);
+                    .getItemFreeOrderDetail(order, orderDetail, itemDetail,
+                            itemPromotion);
             updateOrderDetail(freeOrderDetail);
         }
     }

@@ -1076,6 +1076,7 @@ public class ReportDaySales implements Serializable{
 				", updateTime=" + updateTime +
 				", totalHour='" + totalHour + '\'' +
 				", reportNoStr='" + reportNoStr + '\'' +
+				", promotionTotal='" + promotionTotal + '\'' +
 				'}';
 	}
 }

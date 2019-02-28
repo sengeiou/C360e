@@ -20,13 +20,35 @@ public class PromotionOrder implements Serializable {
 
     private Integer promotionId;
 
+    private Integer itemMainCategoryId;
+
+    private Integer itemCategoryId;
+
+    private Integer itemId;
+
+    private Integer type;
+
     private String discountPrice;
 
     private String discountPercentage;
 
+    private Integer freeNum;
+
+    private Integer freeItemId;
+
+    private String itemMainCategoryName;
+
+    private String itemCategoryName;
+
+    private String itemName;
+
+    private String freeItemName;
+
     private long createTime;
 
     private long updateTime;
+    private String  basePrice;
+
 
     public Integer getId() {
         return id;
@@ -42,6 +64,38 @@ public class PromotionOrder implements Serializable {
 
     public void setPromotionId(Integer promotionId) {
         this.promotionId = promotionId;
+    }
+
+    public Integer getItemMainCategoryId() {
+        return itemMainCategoryId;
+    }
+
+    public void setItemMainCategoryId(Integer itemMainCategoryId) {
+        this.itemMainCategoryId = itemMainCategoryId;
+    }
+
+    public Integer getItemCategoryId() {
+        return itemCategoryId;
+    }
+
+    public void setItemCategoryId(Integer itemCategoryId) {
+        this.itemCategoryId = itemCategoryId;
+    }
+
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public String getDiscountPrice() {
@@ -60,6 +114,54 @@ public class PromotionOrder implements Serializable {
         this.discountPercentage = discountPercentage;
     }
 
+    public Integer getFreeNum() {
+        return freeNum;
+    }
+
+    public void setFreeNum(Integer freeNum) {
+        this.freeNum = freeNum;
+    }
+
+    public Integer getFreeItemId() {
+        return freeItemId;
+    }
+
+    public void setFreeItemId(Integer freeItemId) {
+        this.freeItemId = freeItemId;
+    }
+
+    public String getItemMainCategoryName() {
+        return itemMainCategoryName;
+    }
+
+    public void setItemMainCategoryName(String itemMainCategoryName) {
+        this.itemMainCategoryName = itemMainCategoryName;
+    }
+
+    public String getItemCategoryName() {
+        return itemCategoryName;
+    }
+
+    public void setItemCategoryName(String itemCategoryName) {
+        this.itemCategoryName = itemCategoryName;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getFreeItemName() {
+        return freeItemName;
+    }
+
+    public void setFreeItemName(String freeItemName) {
+        this.freeItemName = freeItemName;
+    }
+
     public long getCreateTime() {
         return createTime;
     }
@@ -76,15 +178,34 @@ public class PromotionOrder implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(String basePrice) {
+        this.basePrice = basePrice;
+    }
+
     @Override
     public String toString() {
         return "PromotionOrder{" +
                 "id=" + id +
                 ", promotionId=" + promotionId +
+                ", itemMainCategoryId=" + itemMainCategoryId +
+                ", itemCategoryId=" + itemCategoryId +
+                ", itemId=" + itemId +
+                ", type=" + type +
                 ", discountPrice='" + discountPrice + '\'' +
                 ", discountPercentage='" + discountPercentage + '\'' +
+                ", freeNum=" + freeNum +
+                ", freeItemId=" + freeItemId +
+                ", itemMainCategoryName='" + itemMainCategoryName + '\'' +
+                ", itemCategoryName='" + itemCategoryName + '\'' +
+                ", itemName='" + itemName + '\'' +
+                ", freeItemName='" + freeItemName + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", basePrice='" + basePrice + '\'' +
                 '}';
     }
 }

@@ -780,7 +780,7 @@ public class HttpAPI {
 
 
 
-    public static void getItemPromotionInfo (Context context, String url,
+    public static void getItemPromotionInfos (Context context, String url,
                                          AsyncHttpClient httpClient, final Handler handler, final int mode) {
         try {
             httpClient.post(context, url, HttpAssembling.getParam(),
@@ -796,8 +796,9 @@ public class HttpAPI {
 
                                     @Override
                                     public void run() {
-                                        HttpAnalysis.getItemPromotionInfo(statusCode,
-                                                headers, responseBody);
+//                                        HttpAnalysis.getItemPromotionInfos(statusCode,
+//                                                headers, responseBody);
+
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
