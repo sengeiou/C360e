@@ -682,12 +682,12 @@ public class BillPrint extends PrintJob {
          // promotion
         if(!TextUtils.isEmpty(promotion)) {
             PrintData promotionPrint = new PrintData();
-            String promotionStr = StringUtil.padLeft(BH.getBD(roundMap.get("Promotion")).toString(),
+            String promotionStr = StringUtil.padLeft(BH.getBD(promotion).toString(),
                     this.FIXED_COL4_TOTAL);
-            String padPromotion = PrintService.instance.getResources().getString(R.string.promotion_print) + currencySymbol + roundingStr + reNext;
+            String promotiontTotal = PrintService.instance.getResources().getString(R.string.promotion_print) + currencySymbol + promotionStr + reNext;
             promotionPrint.setDataFormat(PrintData.FORMAT_TXT);
             promotionPrint.setTextAlign(PrintData.ALIGN_RIGHT);
-            promotionPrint.setText(padPromotion);
+            promotionPrint.setText(promotiontTotal);
             this.data.add(promotionPrint);
         }
 

@@ -49,7 +49,7 @@ public class BH {
 		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
 		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
 		if (CommonUtil.isNull(string))
-			return new BigDecimal("0.0");
+			return new BigDecimal("0.00");
 		BigDecimal value2 = null;
 		int money;
 		if (type == FORMAT_FRONT) {
@@ -97,7 +97,7 @@ public class BH {
 			return new BigDecimal(money);
 		} else {
 			value2 = new BigDecimal(integer);
-			return value2.setScale(1, BigDecimal.ROUND_HALF_UP);
+			return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
 		}
 	}
 	/**

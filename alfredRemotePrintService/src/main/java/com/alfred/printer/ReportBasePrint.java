@@ -105,7 +105,23 @@ public class ReportBasePrint extends PrintJob{
 		//addHortionalLine();
 		addHortionaDoublelLine(this.charSize);
 	}
-	
+
+
+	public void AddHortionaDoublelLine() {
+
+
+//		//Date
+//		PrintData datePrint = new PrintData();
+//		String dateLabel = StringUtil.padRight("Printed at", this.FIXED_COL3_TOTAL);
+//		String dateStr = dateLabel+":"+dateTime+"\r\n";
+//		datePrint.setDataFormat(PrintData.FORMAT_TXT);
+//		datePrint.setTextAlign(PrintData.ALIGN_LEFT);
+//		datePrint.setText(dateStr);
+//		this.data.add(datePrint);
+
+		//addHortionalLine();
+		addHortionaDoublelLine(this.charSize);
+	}
 	//for monthly report only
 	public void AddHeader(String op, String startDate, String endDate) {
 		

@@ -20,6 +20,7 @@ import com.alfred.printer.KickDrawerPrint;
 import com.alfred.printer.ModifierDetailAnalysisReportPrint;
 import com.alfred.printer.MonthlySalesReportPrint;
 import com.alfred.printer.PromotionSalesReportPrint;
+import com.alfred.printer.ReportBasePrint;
 import com.alfred.printer.StoredCardPrint;
 import com.alfred.printer.SummaryAnalysisReportPrint;
 import com.alfred.printer.TableQRCodePrint;
@@ -446,32 +447,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
             if(orderPromotions!=null&&orderPromotions.size()>0){
 
-            proPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.promotion_name),
-                    PrintService.instance.getResources().getString(R.string.qty),
-                    PrintService.instance.getResources().getString(R.string.amount));
-            proPrint.setPrinterIp(prtDevice.getIP());
-            for (int i = 0; i <promotions.size() ; i++) {
-                int id=promotions.get(i).getId();
-                int qty = 0;
-                BigDecimal amount = null;
-                for(int j = 0;j <orderPromotions.size();j++){
-                    PromotionData promotionData=orderPromotions.get(j);
-                    int promotionId=promotionData.getPromotionId();
-                    String   promotionName=promotionData.getPromotionName();
-                    if(id==promotionId)
-                    {
-                        amount=BH.add(amount,BH.getBD(promotionData.getPromotionAmount()),false);
-                        qty=qty++;
-                    }
-                    if(qty>0){
-                        proPrint.print(promotionName,qty,amount.toString());
-                    }
-
-                }
-            }
-            }
-//            addHortionaDoublelLine(this.charSize);
-            proPrint.AddContentListHeader("pro",
+            proPrint.AddContentListHeader("orderPromotion",
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
             proPrint.setPrinterIp(prtDevice.getIP());
@@ -479,6 +455,35 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 int id=promotions.get(i).getId();
                 int qty = 0;
                 String   promotionName=promotions.get(i).getPromotionName();
+                BigDecimal amount =  BH.getBD(ParamConst.DOUBLE_ZERO);
+                for(int j = 0;j <orderPromotions.size();j++){
+                    PromotionData promotionData=orderPromotions.get(j);
+                    int promotionId=promotionData.getPromotionId();
+
+                    if(id==promotionId)
+                    {
+                        amount=BH.add(amount,BH.getBD(promotionData.getPromotionAmount()),false);
+                        qty=qty+1;
+                    }
+
+                }
+                if(qty>0){
+                    proPrint.print(promotionName,qty,amount.toString());
+                }
+
+            }
+
+                proPrint.AddHortionaDoublelLine();
+            }
+//            addHortionaDoublelLine(this.charSize);
+            proPrint.AddContentListHeader( PrintService.instance.getResources().getString(R.string.promotion_name),
+                    PrintService.instance.getResources().getString(R.string.qty),
+                    PrintService.instance.getResources().getString(R.string.amount));
+            proPrint.setPrinterIp(prtDevice.getIP());
+            for (int i = 0; i <promotions.size() ; i++) {
+                int id=promotions.get(i).getId();
+                int qty = 0;
+               String   promotionName=promotions.get(i).getPromotionName();
                 BigDecimal amount = BH.getBD(ParamConst.DOUBLE_ZERO);
                 for(int j = 0;j <itemPromotions.size();j++){
                     PromotionData promotionData=itemPromotions.get(j);

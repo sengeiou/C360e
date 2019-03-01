@@ -175,8 +175,8 @@ public class OrderHelper {
 		if (itemPromotion != null) {
 			if (BH.getBD(itemPromotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
 				price = BH.sub(BH.getBD(orderDetail.getItemPrice()),
-						BH.getBDNoFormat(itemPromotion.getDiscountPrice()), false);
-                promotionPrice=BH.add(promotionPrice,BH.getBDNoFormat(itemPromotion.getDiscountPrice()), false);
+						BH.getBD(itemPromotion.getDiscountPrice()), false);
+                promotionPrice=BH.add(promotionPrice,BH.getBD(itemPromotion.getDiscountPrice()), true);
 			}
 			else if (Double.parseDouble(itemPromotion.getDiscountPercentage()) > 0) {
 				orderDetail.setDiscountRate(itemPromotion.getDiscountPercentage());
@@ -184,16 +184,16 @@ public class OrderHelper {
 				 if(price.compareTo(BH.getBD("0")) > 0) {
 					 price = BH.sub(BH.getBD(orderDetail.getItemPrice()), BH
 							 .mul(BH.getBD(price),
-									 BH.getBDNoFormat(itemPromotion.getDiscountPercentage()),
+									 BH.getBD(itemPromotion.getDiscountPercentage()),
 									 false), false);
 				 }else {
 					 price = BH.sub(BH.getBD(orderDetail.getItemPrice()), BH
 							 .mul(BH.getBD(orderDetail.getItemPrice()),
-									 BH.getBDNoFormat(itemPromotion.getDiscountPercentage()),
+									 BH.getBD(itemPromotion.getDiscountPercentage()),
 									 false), false);
 				 }
 				promotionPrice=BH.add(promotionPrice,BH.mul(BH.getBD(orderDetail.getItemPrice()),
-                        BH.getBDNoFormat(itemPromotion.getDiscountPercentage()),
+                        BH.getBD(itemPromotion.getDiscountPercentage()),
                         false),false) ;
 			}
 			if (itemPromotion.getFreeNum().intValue() > 0) {
@@ -204,7 +204,7 @@ public class OrderHelper {
 		}
 
 		promotionPrice = BH.mul(promotionPrice, BH.getBD(orderDetail.getItemNum()), false);
-		if(promotionPrice.compareTo(BH.getBD("0")) > 0){
+		if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0){
 			long nowTime = System.currentTimeMillis();
 
 			PromotionData promotionData=PromotionDataSQL.getPromotionData(order.getId(),orderDetail.getId());
@@ -237,7 +237,7 @@ public class OrderHelper {
 
 		}
 		price = BH.mul(price, BH.getBD(orderDetail.getItemNum()), false);
-		if(BH.getBDNoFormat(orderDetail.getWeight()).compareTo(BH.getBD("0")) > 0){
+		if(BH.getBDNoFormat(orderDetail.getWeight()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0){
 			price = BH.mul(price, BH.getBDNoFormat(orderDetail.getWeight()), false);
 		}
 		price = BH.add(price, BH.getBD(orderDetail.getModifierPrice()), true);
@@ -420,6 +420,10 @@ public class OrderHelper {
 
 			for (int i = 0; i < promotionOrders.size(); i++) {
 				PromotionOrder promotionOrder = promotionOrders.get(i);
+//				if(maxPrice.compareTo(BH.getBD(promotionOrder.getBasePrice()))>0)
+//                {
+//                    maxPrice=BH.getBD(promotionOrder.getBasePrice());
+//                }
 				if (subTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0&&subTotal.compareTo(BH.getBD(promotionOrder.getBasePrice())) >= 0) {
 					if (BH.getBD(promotionOrder.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
 
@@ -462,35 +466,44 @@ public class OrderHelper {
 						}
 					}
 
+					if(promotionOrder!=null) {
+						long nowTime = System.currentTimeMillis();
+
+						PromotionData promotionData = PromotionDataSQL.getPromotionDataOrType(order.getId(), 1);
+
+						if (promotionData == null) {
+							List<Promotion> promotionList = PromotionSQL.getAllPromotion();
+							Promotion promotion = PromotionSQL.getPromotion(promotionOrder.getPromotionId());
+							promotionData = new PromotionData();
+							promotionData.setPromotionType(1);
+							promotionData.setPromotionAmount(promotionPrice.toString());
+							promotionData.setOrderId(order.getId());
+							promotionData.setCreateTime(nowTime);
+							promotionData.setPromotionId(promotionOrder.getPromotionId());
+							promotionData.setPromotionName(promotion.getPromotionName());
+							promotionData.setBusinessDate(order.getBusinessDate());
+							promotionData.setFreeItemName(promotionOrder.getFreeItemName());
+							promotionOrder.setFreeItemId(promotionOrder.getFreeItemId());
+							promotionData.setFreeNum(promotionOrder.getFreeNum());
+							PromotionDataSQL.addPromotionData(promotionData);
+						} else {
+							promotionData.setPromotionAmount(promotionPrice.toString());
+							promotionData.setUpdateTime(nowTime);
+							PromotionDataSQL.updatePromotionData(promotionData);
+						}
+					}
 				}
+
+
 
 			}
   //  orderPromotion 获取最大的basePrice进行优惠（满足多个选最大的）
-			if(maxPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))>0) {
-				PromotionOrder promotionOrder = PromotionOrderSQL.getPromotionOrderOrBasePrice(maxPrice.toString());
-				if(promotionOrder!=null) {
-					long nowTime = System.currentTimeMillis();
-					PromotionData promotionData = PromotionDataSQL.getPromotionDataOrType(order.getId(), 1);
+//			if(maxPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))>0) {
+//				PromotionOrder promotionOrder = PromotionOrderSQL.getPromotionOrderOrBasePrice(maxPrice.toString());
+//
+//			}
 
-					if (promotionData == null) {
-						List<Promotion> promotionList = PromotionSQL.getAllPromotion();
-						Promotion promotion = PromotionSQL.getPromotion(promotionOrder.getPromotionId());
-						promotionData = new PromotionData();
-						promotionData.setPromotionType(1);
-						promotionData.setPromotionAmount(promotionPrice.toString());
-						promotionData.setOrderId(order.getId());
-						promotionData.setCreateTime(nowTime);
-						promotionData.setPromotionId(promotionOrder.getPromotionId());
-						promotionData.setPromotionName(promotion.getPromotionName());
-						promotionData.setBusinessDate(order.getBusinessDate());
-						PromotionDataSQL.addPromotionData(promotionData);
-					} else {
-						promotionData.setPromotionAmount(promotionPrice.toString());
-						promotionData.setUpdateTime(nowTime);
-						PromotionDataSQL.updatePromotionData(promotionData);
-					}
-				}
-			}
+
 		}
         order.setSubTotal(BH.getBD(subTotal).toString());
     }
@@ -509,7 +522,6 @@ public class OrderHelper {
 		}
 
 		order.setPromotion(BH.getBD(promotionPrice).toString());
-
 
 	}
 
