@@ -62,6 +62,7 @@ import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.JobManager;
@@ -215,7 +216,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         ReportDaySales reportData = gson.fromJson(report, ReportDaySales.class);
-         ObjectFactory.getInstance().getPrintReportDaySales(reportData);
         ArrayList<ReportDayTax> taxData = gson.fromJson(tax, new TypeToken<ArrayList<ReportDayTax>>() {
         }.getType());
         List<ReportDayPayment> reportDayPayments = gson.fromJson(customPayment, new TypeToken<List<ReportDayPayment>>() {
@@ -272,9 +272,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         ReportDaySales reportData = gson.fromJson(daySaleSummary, ReportDaySales.class);
-        if(reportData!=null) {
-            ObjectFactory.getInstance().getPrintReportDaySales(reportData);
-        }
+
         ArrayList<ReportPluDayItem> pluData = gson.fromJson(plu, new TypeToken<ArrayList<ReportPluDayItem>>() {
         }.getType());
         ArrayList<ItemMainCategory> categoryData = gson.fromJson(category, new TypeToken<ArrayList<ItemMainCategory>>() {
@@ -816,7 +814,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         Order theOrder = gson.fromJson(order, Order.class);
-        ObjectFactory.getInstance().getPrintOrder(theOrder);
         Log.d(TAG, prtTitle + "prinjsontBill:" + theOrder + "-----" + orderDetail);
         String name = prtDevice.getName();
 
@@ -891,11 +888,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
-                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -926,7 +921,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -1022,11 +1016,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
-                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -1057,7 +1049,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -1259,6 +1250,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         mFilterOption = new FilterOption();
         mFilterOption.setDeviceType(Discovery.TYPE_PRINTER);
         mFilterOption.setEpsonFilter(Discovery.FILTER_NAME);
+//        mFilterOption.setPortType(Discovery.PORTTYPE_BLUETOOTH);
         try {
 
             Discovery.start(App.instance, mFilterOption, mDiscoveryListener);
@@ -1277,7 +1269,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //
         ////
         Map<String, String> ret = new HashMap<String, String>();
-        if (mBluetoothAdapter != null) {
+        if(MachineUtil.isHisense()){
+//            SerialPortFinder serialPortFinder = new SerialPortFinder();
+//            String device = serialPortFinder.getHisensePrinterDevice();
+//            if(!TextUtils.isEmpty(device)) {
+                ret.put("127.0.0.1", "Local Print");
+//            }
+        }else if (mBluetoothAdapter != null) {
             String innerprinter_address = "00:11:22:33:44:55";
             BluetoothDevice innerprinter_device = null;
             Set<BluetoothDevice> bluetoothDevices = mBluetoothAdapter.getBondedDevices();
@@ -2073,7 +2071,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -2391,17 +2388,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 }
                 str.append(space + appOrder.getMobile());
             }
-            String addressNext = "";
-            if (str.length() > 0) {
-                addressNext = " ";
-            }
-            str.append(addressNext + appOrder.getAddress() + " ");
-            str.append(TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()));
+//            String addressNext = "";
+//            if (str.length() > 0) {
+//                addressNext = " ";
+//            }
+//            str.append(addressNext + appOrder.getAddress() + " ");
+//            str.append(TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()));
             ///    billPrint.addBillOrderStr(appOrder.getOrderNo().toString() + "\n");
 //                            if (TextUtils.isEmpty(str.toString())) {
 //                                billPrint.printDeliveryList(appOrder.getOrderNo().toString(), appOrder.getAddress(), 1);
 //                            } else {
-            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+appOrder.getOrderNo().toString(), str.toString(), 1);
+            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+appOrder.getId().toString(), str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()));
             //  billPrint.printDeliveryList(" ", appOrder.getAddress().toString(), 1);
 //                                billPrint.AddAddress(appOrder.getAddress());
 //                            }
@@ -2428,8 +2425,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         Order theOrder = gson.fromJson(order, Order.class);
-        ObjectFactory.getInstance().getPrintOrder(theOrder);
-       // theOrder=ObjectFactory.getInstance().getPrintOrder(theOrder);
         String name = prtDevice.getName();
 
         ArrayList<PrintOrderItem> printOrderItemList = gson.fromJson(orderDetail,

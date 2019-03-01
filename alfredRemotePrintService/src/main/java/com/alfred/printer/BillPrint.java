@@ -796,15 +796,50 @@ public class BillPrint extends PrintJob {
 
     }
 
-    public void printDeliveryList(String orderNO, String customerInfo, int scale) {
-        scale = 1;
-        PrintData kot = new PrintData();
-        kot.setDataFormat(PrintData.FORMAT_TXT);
-        kot.setFontsize(scale);
-        kot.setMarginTop(20);
-        kot.setLanguage(PrintData.LANG_CN);
-        kot.setText(this.getTwoAutoReLine(orderNO, customerInfo, scale));
-        this.data.add(kot);
+    public void printDeliveryList(String orderNO, String customerInfo, String address,String time) {
+//        scale = 1;
+//        PrintData kot = new PrintData();
+//        kot.setDataFormat(PrintData.FORMAT_TXT);
+//        kot.setFontsize(scale);
+//        kot.setMarginTop(20);
+//        kot.setLanguage(PrintData.LANG_CN);
+       // kot.setText(this.getTwoAutoReLine(orderNO, customerInfo, scale));
+//        this.data.add(kot);
+
+        //流水号 NO
+        PrintData orderNoPrint = new PrintData();
+        orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
+        orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
+		orderNoPrint.setFontsize(2);
+        orderNoPrint.setText(orderNO+reNext);
+        this.data.add(orderNoPrint);
+
+
+        PrintData custPrint = new PrintData();
+
+        String custStr = customerInfo+reNext;
+        custPrint.setDataFormat(PrintData.FORMAT_TXT);
+        custPrint.setTextAlign(PrintData.ALIGN_LEFT);
+        custPrint.setText(custStr);
+        this.data.add(custPrint);
+
+        PrintData addressPrint = new PrintData();
+
+        String addressStr = this.getTwoAutoReLine("",address,1);
+        addressPrint.setDataFormat(PrintData.FORMAT_TXT);
+        addressPrint.setTextAlign(PrintData.ALIGN_LEFT);
+        addressPrint.setText(addressStr);
+        this.data.add(addressPrint);
+
+
+        //Date
+        PrintData datePrint = new PrintData();
+        String dateStr = time + " "+reNext;
+        datePrint.setDataFormat(PrintData.FORMAT_TXT);
+        datePrint.setTextAlign(PrintData.ALIGN_LEFT);
+        datePrint.setText(dateStr);
+        this.data.add(datePrint);
+
     }
 
 
@@ -835,11 +870,8 @@ public class BillPrint extends PrintJob {
 
         int col2Lines = 1;
 
-//		int qtyLen = KOTPrint.FIXED_COL2_QTY;
-//		if(charScale > 1){
         int qtyLen = charScale * col1Content.length();
-//		}
-
+//        int qtyLen = 0;
         int addressSize = this.charSize / charScale - qtyLen / charScale - this.FIXED_COL4_SPACE;
 
         //double ln1 = col1Content.length();
@@ -854,7 +886,7 @@ public class BillPrint extends PrintJob {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        col1Lines = splitedcontents.length;
+        col1Lines = splitedcontents.length-1;
         //col1Lines = StringUtil.nearestTen(ln1);
         //String col1PadContent = StringUtil.padRight(col1Content, col1Lines*KOTPrint.COL2_ITEMNAME);
         //ArrayList<String> splittedCol1Content = StringUtil.splitEqually(col1PadContent, KOTPrint.COL2_ITEMNAME);
@@ -874,12 +906,12 @@ public class BillPrint extends PrintJob {
         for (int i = 0; i < Math.max(col1Lines, col2Lines); i++) {
             if (i < col1Lines) {
                 //result.append(splittedCol1Content.get(i));
-                result.append(StringUtil.padRight(splitedcontents[i], qtyLen));
+             //   result.append(StringUtil.padRight(splitedcontents[i], qtyLen));
             } else {
-                result.append(StringUtil.padLeft(" ", qtyLen));
+                //result.append(StringUtil.padLeft("", qtyLen));
             }
             //padding
-            result.append(StringUtil.padRight(" ", this.FIXED_COL4_SPACE));
+          //  result.append(StringUtil.padRight("", this.FIXED_COL4_SPACE));
 
             if (i < col2Lines) {
                 result.append(splittedCol2Content[i]);

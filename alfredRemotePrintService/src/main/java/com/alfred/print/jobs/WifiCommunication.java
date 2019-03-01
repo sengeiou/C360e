@@ -3,20 +3,22 @@ package com.alfred.print.jobs;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.alfred.remote.printservice.App;
+import com.alfredbase.utils.MachineUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.UUID;
+
+import android_serialport_api.SerialPort;
 
 public class WifiCommunication {
     public static final int WFPRINTER_CONNECTED = 110;
@@ -25,9 +27,9 @@ public class WifiCommunication {
     public static final int SEND_SUCCESS = 100;
     public static final int WFPRINTER_CONNECTEDERR = -111;
     public static final int DATA_EMPTY = -99;
+    private SerialPort serialPort;
     private Socket socket;
     private BluetoothSocket mSocket;
-    //	private SerialPort mSerialPort;
     public static final String localIPAddress = "127.0.0.1";
     private OutputStream out;
     //	private DataOutputStream dos;
@@ -52,22 +54,29 @@ public class WifiCommunication {
     ;
 
     private boolean clientStart() {
-
         Log.d("WifiCommunication", "printer (" + ipAddress + ")");
-        if ((ipAddress.indexOf(":") != -1)||localIPAddress.equals(ipAddress)) {
+        if(localIPAddress.equals(ipAddress) && MachineUtil.isHisense()){
+            return clientStartSerialSocket();
+        }else if (ipAddress.contains(":")||localIPAddress.equals(ipAddress)) {
             return clientStartBluetooth(ipAddress);
         }
-
         return clientStartSocket();
-//		new Thread(new Runnable() {
-//
-//			@Override
-//			public void run() {
+    }
 
-//			}
-//		}
-// ).start();
 
+
+    private boolean clientStartSerialSocket() {
+        boolean isStart;
+        try {
+            serialPort = new SerialPort(new File("/dev/ttySAC1"), 115200, 0,
+                    true);
+            out = serialPort.getOutputStream();
+            isStart = true;
+        } catch (Exception e) {
+            isStart = false;
+            e.printStackTrace();
+        }
+        return isStart;
     }
 
 
@@ -165,12 +174,6 @@ public class WifiCommunication {
     }
 
     public void close() {
-//		new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//		if (localIPAddress.equals(ipAddress)) {
-//			return;
-//		}
         try {
             if (in != null) {
                 in.close();
@@ -185,6 +188,9 @@ public class WifiCommunication {
             if (mSocket != null) {
                 mSocket.close();
             }
+            if (serialPort != null){
+                serialPort.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -192,8 +198,7 @@ public class WifiCommunication {
         out = null;
         socket = null;
         mSocket = null;
-//			}
-//		}).start();
+        serialPort = null;
     }
 
     private boolean sndByteBluetooth(byte[] data) {
@@ -233,10 +238,29 @@ public class WifiCommunication {
         }
         return result;
     }
+    private boolean sndByteSerialSocket(byte[] data) {
+        boolean result;
+        if (data == null) {
+            return false;
+        }
+        if (serialPort == null || out == null) {
+            return false;
+        }
+        try {
+            out.write(data);
+            out.flush();
+            result = true;
+        } catch (IOException e) {
+            result = false;
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     public boolean sndByte(byte[] data) {
-
-            if ((ipAddress.indexOf(":") != -1)||localIPAddress.equals(ipAddress))
+            if(localIPAddress.equals(ipAddress) && MachineUtil.isHisense()){
+                return sndByteSerialSocket(data);
+            }else if (ipAddress.contains(":")||localIPAddress.equals(ipAddress))
                 return sndByteBluetooth(data);
             else
                 return sndByteSocket(data);
@@ -298,9 +322,18 @@ public class WifiCommunication {
             return (!this.socket.isClosed()) && this.socket.isConnected();
     }
 
-    public boolean isConnected() {
+    private boolean isConnectedSerialSocket() {
+        boolean mbStatus = false;
+        if (serialPort != null) {
+            mbStatus = true;
+        }
+        return mbStatus;
+    }
 
-        if (ipAddress.indexOf(":") != -1) {
+    public boolean isConnected() {
+        if (localIPAddress.equals(ipAddress) && MachineUtil.isHisense()){
+            return isConnectedSerialSocket();
+        }else if (ipAddress.contains(":") || localIPAddress.equals(ipAddress)) {
             return isConnectedBluetooth();
         } else {
             return isConnectedSocket();
