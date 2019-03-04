@@ -18,6 +18,7 @@ import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.PromotionOrder;
+import com.alfredbase.javabean.PromotionWeek;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.Tax;
@@ -35,6 +36,8 @@ import com.nostra13.universalimageloader.utils.L;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 public class OrderHelper {
 	/**
@@ -172,7 +175,7 @@ public class OrderHelper {
 		}
 		BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
 		ItemPromotion itemPromotion = getItemPromotion(order, orderDetail);
-		if (itemPromotion != null) {
+		if (itemPromotion != null&&hasWeek(itemPromotion.getPromotionId())) {
 			if (BH.getBD(itemPromotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
 				price = BH.sub(BH.getBD(orderDetail.getItemPrice()),
 						BH.getBD(itemPromotion.getDiscountPrice()), false);
@@ -420,6 +423,9 @@ public class OrderHelper {
 
 			for (int i = 0; i < promotionOrders.size(); i++) {
 				PromotionOrder promotionOrder = promotionOrders.get(i);
+				if(!hasWeek(promotionOrder.getPromotionId())){
+                         break;
+				}
 //				if(maxPrice.compareTo(BH.getBD(promotionOrder.getBasePrice()))>0)
 //                {
 //                    maxPrice=BH.getBD(promotionOrder.getBasePrice());
@@ -449,7 +455,7 @@ public class OrderHelper {
 								false), false);
 					}
 
-
+					order.setSubTotal(BH.getBD(subTotal).toString());
 					if (subTotal.compareTo(BH.getBD(promotionOrder.getBasePrice())) >= 0) {
 						//  orderPromotion 获取basePrice进行优惠（满足多个添加多个免费菜）
 
@@ -458,6 +464,7 @@ public class OrderHelper {
 									.getItemDetailByTemplateId(promotionOrder.getFreeItemId());
 							if (itemDetail == null) {
 								return;
+
 							}
 							OrderDetail freeOrderDetail = ObjectFactory.getInstance()
 									.getOrderFreeOrderDetail(order, itemDetail,
@@ -505,8 +512,9 @@ public class OrderHelper {
 
 
 		}
-        order.setSubTotal(BH.getBD(subTotal).toString());
-    }
+		order.setSubTotal(BH.getBD(subTotal).toString());
+		}
+
 
 
 	public static void setPromotion(Order order) {
@@ -788,6 +796,35 @@ public class OrderHelper {
 //	    	promotionOrder=promotionOrders.get(0);
 //		}
 		return promotionOrders;
+	}
+
+	public static boolean hasWeek(Integer promotionId) {
+		long time = System.currentTimeMillis();
+		for (PromotionWeek promotionWeek : CoreData.getInstance()
+				.getPromotionWeeks()) {
+			if (promotionWeek.getPromotionId().intValue() == promotionId
+					.intValue()) {
+
+					if (promotionWeek.getWeek() == TimeUtil
+							.getWeek(time)) {
+
+						if(time>=getTimes(promotionWeek.getStartTime())&&getTimes(promotionWeek.getEndTime())>=time)
+						{
+							return true;
+						}
+
+
+					}
+			}
+		}
+		return false;
+	}
+
+	private static long getTimes(String time) {
+		 long hourTime = 60 * 60 * 1000;
+		String[] times = time.split(":");
+       long timeAll =TimeUtil.getTimeInMillsByZero(0)+ Integer.valueOf(times[0]).intValue()*hourTime+Integer.valueOf(times[1]).intValue()*60*1000;
+           return timeAll;
 	}
 
 	private static boolean hasHappyWeek(Integer happy_hour_id) {

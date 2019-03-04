@@ -2539,7 +2539,7 @@ public class OrderDetailSQL {
 //                return;
 //            }
         ItemPromotion itemPromotion = OrderHelper.getItemPromotion(order, orderDetail);
-        if (itemPromotion != null && itemPromotion.getFreeNum().intValue() > 0) {
+        if (itemPromotion != null && itemPromotion.getFreeNum().intValue() > 0&&OrderHelper.hasWeek(itemPromotion.getPromotionId())) {
             ItemDetail itemDetail = CoreData.getInstance()
                     .getItemDetailByTemplateId(itemPromotion.getFreeItemId());
             if (itemDetail == null) {

@@ -22,6 +22,7 @@ import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.PromotionOrder;
+import com.alfredbase.javabean.PromotionWeek;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -52,6 +53,7 @@ import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.PromotionItemSQL;
 import com.alfredbase.store.sql.PromotionOrderSQL;
 import com.alfredbase.store.sql.PromotionSQL;
+import com.alfredbase.store.sql.PromotionWeekSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
@@ -95,6 +97,7 @@ public class CoreData {
 	private List<ItemPromotion> itemPromotions;
 	private List<PromotionOrder> promotionOrders;
 	private List<Promotion> promotions;
+	private List<PromotionWeek> promotionWeeks;
 	private RoundRule roundRule;
 	private List<Printer> printers;
 	private List<RestaurantConfig> restaurantConfigs;
@@ -154,6 +157,7 @@ public class CoreData {
 		promotions=PromotionSQL.getAllPromotion();
 		promotionOrders=PromotionOrderSQL.getAllpromotionOrder();
 		itemPromotions=PromotionItemSQL.getAllPromotionItem();
+		promotionWeeks= PromotionWeekSQL.getAllPromotionWeek();
 		userRestaurant = UserRestaurantSQL.getAll();
 		kotNotifications = KotNotificationSQL.getAllKotNotification();
 		localDevices = LocalDeviceSQL.getAllLocalDevice();
@@ -978,6 +982,13 @@ public class CoreData {
 
 	public void setItemPromotions(List<ItemPromotion> itemPromotions) {
 		this.itemPromotions = itemPromotions;
+	}
+
+	public List<PromotionWeek> getPromotionWeeks() {
+		return promotionWeeks;
+	}
+	public void setPromotionWeeks(List<PromotionWeek> promotionWeeks) {
+		this.promotionWeeks = promotionWeeks;
 	}
 
 	public List<PromotionOrder> getPromotionOrders() {
