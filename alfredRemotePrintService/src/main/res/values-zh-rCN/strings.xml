@@ -2,6 +2,7 @@
 
     <string name="app_name">AlfredRemotePrintService</string>
     <string name="takeaway_print">打包</string>
+    <string name="delivery_print">外卖</string>
     <!-- BillPrint -->
     <string name="swift_no_">订单号</string>
     <string name="bill_no_">账单号</string>
@@ -136,6 +137,7 @@
     <string name="table_">台号:</string>
     <string name="kot_no_">KOT编号: </string>
     <string name="order_no_">订单号:</string>
+    <string name="order_app_no_">Online App No.:</string>
     <string name="app_delivery">外卖</string>
     <string name="date_">时间: </string>
     <string name="void_">*** 退菜 ***</string>

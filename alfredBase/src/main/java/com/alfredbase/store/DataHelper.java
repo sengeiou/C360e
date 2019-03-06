@@ -1471,6 +1471,8 @@ public class DataHelper {
                         + " ADD COLUMN mobile TEXT");
                 db.execSQL("ALTER TABLE " + TableNames.KotSummary
                         + " ADD COLUMN deliveryTime INTEGER default 0");
+                db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                        + " ADD COLUMN appOrderId INTEGER default 0");
 
 
             }catch (Exception e){
