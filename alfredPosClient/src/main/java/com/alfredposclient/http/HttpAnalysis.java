@@ -26,7 +26,6 @@ import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionAndWeekVo;
 import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.PromotionWeek;
 import com.alfredbase.javabean.RemainingStock;
@@ -106,7 +105,6 @@ import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.Header;
-import org.jivesoftware.smackx.pubsub.provider.ItemProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 

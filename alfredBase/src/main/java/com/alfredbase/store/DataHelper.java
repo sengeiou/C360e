@@ -1489,9 +1489,14 @@ public class DataHelper {
                     "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
                     "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG,basePrice TEXT)");
 
+
             db.execSQL("CREATE TABLE "
                     + TableNames.Promotion
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,type INTEGER, promotionName TEXT, restaurantId INTEGER, isActive INTEGER)");
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,type INTEGER, promotionName TEXT, restaurantId INTEGER, isActive INTEGER,promotionWeight INTEGER," +
+                    "discountPrice TEXT,discountPercentage TEXT,freeNum INTGER,freeItemId INTGER,freeItemName TEXT,itemMainCategoryId INTGER,itemCategoryId INTGER," +
+                    "itemId INTGER ,itemNum INTGER,itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT,secondItemMainCategoryId INTGER,secondItemCategoryId INTGER," +
+                    "secondItemId INTGER ,secondItemNum INTGER,secondItemMainCategoryName TEXT,secondItemCategoryName TEXT,secondItemName TEXT,createTime LONG,updateTime LONG," +
+                    "basePrice TEXT,guestNum INTGER,promotionDateInfoId INTGER)");
 
             db.execSQL("CREATE TABLE "
                     + TableNames.PromotionWeek

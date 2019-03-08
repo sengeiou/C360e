@@ -33,6 +33,7 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
@@ -1098,9 +1099,60 @@ public class ObjectFactory {
         return orderDetail;
     }
 
-    public OrderDetail getOrderFreeOrderDetail(Order order,
+    public OrderDetail getItemFreeOrderDetailMin(Order order,
+                                              OrderDetail orderDetail) {
+
+
+        synchronized (lock_free_order_detail) {
+            BigDecimal  price= BH.sub(BH.mul(BH.getBD(orderDetail.getItemPrice()),BH.getBD(orderDetail.getItemNum()),false),BH.getBD(orderDetail.getItemPrice()),false);
+//            orderDetail = OrderDetailSQL.getOrderDetail(order.getId(),
+//                    fromOrderDetail);
+//            if (orderDetail == null) {
+//                orderDetail = new OrderDetail();
+//                orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+//                orderDetail.setOrderId(order.getId());
+//                orderDetail.setOrderOriginId(fromOrderDetail.getOrderOriginId());
+//                orderDetail.setUserId(order.getUserId());
+//                orderDetail.setItemId(itemDetail.getId());
+//                orderDetail.setItemName(itemDetail.getItemName());
+//                orderDetail.setItemNum(itemPromotion.getFreeNum()
+//                        * fromOrderDetail.getItemNum());
+//                orderDetail.setOrderDetailStatus(fromOrderDetail
+//                        .getOrderDetailStatus());
+//                orderDetail
+//                        .setOrderDetailType(fromOrderDetail.getOrderDetailType());
+//                orderDetail.setReason("");
+//                orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
+//                orderDetail.setItemPrice(ParamConst.DOUBLE_ZERO);
+//                orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
+//                orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
+//                orderDetail
+//                        .setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+//                orderDetail.setDiscountRate(ParamConst.DOUBLE_ZERO);
+//                long time = System.currentTimeMillis();
+//                orderDetail.setCreateTime(time);
+//                orderDetail.setUpdateTime(time);
+//                orderDetail.setFromOrderDetailId(fromOrderDetail.getId());
+//                orderDetail.setIsFree(ParamConst.FREE);
+//                orderDetail.setGroupId(fromOrderDetail.getGroupId());
+//
+//                orderDetail.setModifierPrice(ParamConst.DOUBLE_ZERO);
+//                orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
+//                orderDetail.setOrderSplitId(fromOrderDetail.getOrderSplitId());
+//                orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+//                orderDetail.setAppOrderDetailId(0);
+//                orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
+//            } else {
+                orderDetail.setRealPrice(price.toString());
+//            }
+            OrderDetailSQL.updateOrderDetail(orderDetail);
+        }
+        return orderDetail;
+    }
+
+    public OrderDetail getPromotionFreeOrderDetail(Order order,
                                              ItemDetail itemDetail,
-                                             PromotionOrder promotionOrder) {
+                                             Promotion promotion) {
 
         OrderDetail orderDetail = null;
         synchronized (lock_free_order_detail) {
@@ -1114,7 +1166,7 @@ public class ObjectFactory {
                 orderDetail.setUserId(order.getUserId());
                 orderDetail.setItemId(itemDetail.getId());
                 orderDetail.setItemName(itemDetail.getItemName());
-                orderDetail.setItemNum(promotionOrder.getFreeNum());
+                orderDetail.setItemNum(promotion.getFreeNum());
 //                orderDetail.setOrderDetailStatus(fromOrderDetail
 //                        .getOrderDetailStatus());
 //                orderDetail
@@ -1141,7 +1193,7 @@ public class ObjectFactory {
                 orderDetail.setAppOrderDetailId(0);
                 orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
             } else {
-                orderDetail.setItemNum(promotionOrder.getFreeNum());
+                orderDetail.setItemNum(promotion.getFreeNum());
             }
             OrderDetailSQL.updateOrderDetail(orderDetail);
         }

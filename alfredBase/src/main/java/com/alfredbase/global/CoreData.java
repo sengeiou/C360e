@@ -516,6 +516,17 @@ public class CoreData {
 		return result;
 	}
 
+	public List<ItemDetail> getItemDetails(Integer itemCategoryId) {
+		List<ItemDetail> result = new ArrayList<ItemDetail>();
+		for (ItemDetail itemDetail : getItemDetails()) {
+			if (itemDetail.getItemCategoryId().intValue() == itemCategoryId.intValue())
+				result.add(itemDetail);
+		}
+		return result;
+	}
+
+
+
 	public List<ItemDetail> getItemDetails(ItemCategory itemCategory) {
 		List<ItemDetail> result = new ArrayList<ItemDetail>();
 		for (ItemDetail itemDetail : getItemDetails()) {
@@ -525,7 +536,6 @@ public class CoreData {
 		}
 		return result;
 	}
-
 	public RevenueCenter getRevenueCenter(Order order) {
 		for (RevenueCenter revenueCenter : getRevenueCenters()) {
 			if (revenueCenter.getId().intValue() == order.getRevenueId()
