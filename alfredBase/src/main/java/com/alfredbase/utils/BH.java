@@ -81,17 +81,17 @@ public class BH {
 			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
 		BigDecimal value2 = null;
 		int money;
-		if (type == FORMAT_FRONT) {
+		if (type >=10) {
 			if (integer.toString().contains(".")) {
 				money = Integer.valueOf(integer.toString().substring(0, integer.toString().indexOf(".")));
 			} else {
 				return value2;
 			}
 			int r;
-			r = money % 100;
+			r = money % type;
 			money -= r;
-			if (r >= 50) {
-				money += 100;
+			if (r >= type/2) {
+				money += type;
 			}
 
 			return new BigDecimal(money);
@@ -100,6 +100,24 @@ public class BH {
 			return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
 		}
 	}
+
+
+	/**
+	 * 获取 格式后的等差
+	 *
+	 * @param value
+	 * @param
+	 * @param
+	 * @return
+	 */
+
+	public static String formatRound(BigDecimal value
+	) {
+		value=BH.sub(BH.formatMoney(value.toString()),value,true);
+		return value.toString();
+	}
+
+
 	/**
 	 * 加法
 	 * 
