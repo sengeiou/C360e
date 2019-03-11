@@ -2502,6 +2502,7 @@ public class MainPage extends BaseActivity {
                             OrderDetailSQL.deleteOrderDetail(tag);
                             OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
                             ModifierCheckSql.deleteModifierCheck(tag.getId(), tag.getOrderId());
+
                             try {
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("orderId", tag.getOrderId().intValue());

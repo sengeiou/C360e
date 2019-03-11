@@ -1871,6 +1871,11 @@ public class App extends BaseApplication {
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
+            if(order.getPromotion()!=null){
+                total = BH.add(BH.formatMoney(order.getTotal()),
+                        BH.getBD(order.getPromotion()), true)
+                        .toString();
+            }
             roundingMap.put("Total", BH.formatMoney(total).toEngineeringString());
             roundingMap.put("Rounding", BH.formatMoney(rounding).toString());
             Gson gson = new Gson();
@@ -1998,6 +2003,11 @@ public class App extends BaseApplication {
                             BH.getBD(roundAmount.getRoundBalancePrice()), true)
                             .toString();
                     rounding = BH.getBD(roundAmount.getRoundBalancePrice())
+                            .toString();
+                }
+                if(order.getPromotion()!=null){
+                    total = BH.add(BH.formatMoney(order.getTotal()),
+                            BH.getBD(order.getPromotion()), true)
                             .toString();
                 }
                 roundingMap.put("Total", total);

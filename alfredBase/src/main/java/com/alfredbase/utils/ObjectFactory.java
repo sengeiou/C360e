@@ -1100,11 +1100,20 @@ public class ObjectFactory {
     }
 
     public OrderDetail getItemFreeOrderDetailMin(Order order,
-                                              OrderDetail orderDetail) {
+                                              OrderDetail orderDetail,Boolean isFree) {
 
 
         synchronized (lock_free_order_detail) {
-            BigDecimal  price= BH.sub(BH.mul(BH.getBD(orderDetail.getItemPrice()),BH.getBD(orderDetail.getItemNum()),false),BH.getBD(orderDetail.getItemPrice()),false);
+
+            BigDecimal  price=BH.getBD(ParamConst.DOUBLE_ZERO);
+            if(isFree){
+               price= BH.sub(BH.mul(BH.getBD(orderDetail.getItemPrice()),BH.getBD(orderDetail.getItemNum()),false),BH.getBD(orderDetail.getItemPrice()),false);
+
+            }else {
+               price= BH.mul(BH.getBD(orderDetail.getItemPrice()),BH.getBD(orderDetail.getItemNum()),false);
+
+            }
+            orderDetail.setRealPrice(price.toString());
 //            orderDetail = OrderDetailSQL.getOrderDetail(order.getId(),
 //                    fromOrderDetail);
 //            if (orderDetail == null) {
@@ -1143,7 +1152,7 @@ public class ObjectFactory {
 //                orderDetail.setAppOrderDetailId(0);
 //                orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
 //            } else {
-                orderDetail.setRealPrice(price.toString());
+
 //            }
             OrderDetailSQL.updateOrderDetail(orderDetail);
         }

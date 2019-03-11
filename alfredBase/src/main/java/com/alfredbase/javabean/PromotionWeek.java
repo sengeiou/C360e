@@ -28,6 +28,7 @@ public class PromotionWeek implements Serializable {
     private long createTime;
 
     private long updateTime;
+    private Integer  promotionDateInfoId;
 
     public Integer getId() {
         return id;
@@ -93,17 +94,26 @@ public class PromotionWeek implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public Integer getPromotionDateInfoId() {
+        return promotionDateInfoId;
+    }
+
+    public void setPromotionDateInfoId(Integer promotionDateInfoId) {
+        this.promotionDateInfoId = promotionDateInfoId;
+    }
+
     @Override
     public String toString() {
         return "PromotionWeek{" +
                 "id=" + id +
-                ", promotionId='" + promotionId + '\'' +
+                ", promotionId=" + promotionId +
                 ", week=" + week +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", isActive=" + isActive +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", promotionDateInfoId=" + promotionDateInfoId +
                 '}';
     }
 }

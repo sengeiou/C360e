@@ -458,11 +458,17 @@ public class HttpAnalysis {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
 			List<Promotion> promotionList = gson.fromJson(
-					object.getString("promotionList"),
+					object.getString("promotionInfoList"),
 					new TypeToken<ArrayList<Promotion>>() {
+					}.getType());
+			List<PromotionWeek> promotionWeekTimeList = gson.fromJson(
+					object.getString("promotionWeekTimeList"),
+					new TypeToken<ArrayList<PromotionWeek>>() {
 					}.getType());
 			PromotionSQL.deleteAllPromotion();
 		    PromotionSQL.addPromotion(promotionList);
+		    PromotionWeekSQL.deleteAllPromotionWeek();
+		    PromotionWeekSQL.addPromotionWeek(promotionWeekTimeList);
 
 		} catch (JSONException e) {
 			e.printStackTrace();

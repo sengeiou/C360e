@@ -195,12 +195,14 @@ public class OrderSQL {
 		
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		OrderHelper.setOrderSubTotal(order, orderDetails);
-		OrderHelper.setPromotion(order);
+
 		updateOrderDetail(order);
 		orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		OrderHelper.setOrderDiscount(order, orderDetails);
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);
+		OrderHelper.setPromotion(order);
+
 		OrderHelper.setOrderInclusiveTaxPrice(order);
 		List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
 		if(orderSplits != null && orderSplits.size() > 0){
@@ -217,9 +219,10 @@ public class OrderSQL {
 	private static void calculateByOrderDiscount(Order order){
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		OrderHelper.setOrderSubTotal(order, orderDetails);
-		OrderHelper.setPromotion(order);
+
 		OrderHelper.setOrderDiscount(order, orderDetails);
 		OrderHelper.setOrderTax(order, orderDetails);
+		OrderHelper.setPromotion(order);
 		OrderHelper.setOrderTotal(order, orderDetails);
 	}
 	/**

@@ -670,16 +670,7 @@ public class BillPrint extends PrintJob {
         totalPrint.setMarginTop(10);
         totalPrint.setText(totaling);
         this.data.add(totalPrint);
-        // rounding
-        PrintData roundingPrint = new PrintData();
-        String roundingStr = StringUtil.padLeft(BH.getBD(roundMap.get("Rounding")).toString(),
-                this.FIXED_COL4_TOTAL);
-        String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + currencySymbol + roundingStr + reNext;
-        roundingPrint.setDataFormat(PrintData.FORMAT_TXT);
-        roundingPrint.setTextAlign(PrintData.ALIGN_RIGHT);
-        roundingPrint.setText(padRounding);
-        this.data.add(roundingPrint);
-         // promotion
+        // promotion
         if(!TextUtils.isEmpty(promotion)) {
             PrintData promotionPrint = new PrintData();
             String promotionStr = StringUtil.padLeft(BH.getBD(promotion).toString(),
@@ -690,6 +681,16 @@ public class BillPrint extends PrintJob {
             promotionPrint.setText(promotiontTotal);
             this.data.add(promotionPrint);
         }
+        // rounding
+        PrintData roundingPrint = new PrintData();
+        String roundingStr = StringUtil.padLeft(BH.getBD(roundMap.get("Rounding")).toString(),
+                this.FIXED_COL4_TOTAL);
+        String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + currencySymbol + roundingStr + reNext;
+        roundingPrint.setDataFormat(PrintData.FORMAT_TXT);
+        roundingPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+        roundingPrint.setText(padRounding);
+        this.data.add(roundingPrint);
+
 
         //grand total
         PrintData gtPrint = new PrintData();

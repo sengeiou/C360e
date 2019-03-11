@@ -56,9 +56,9 @@ public class PromotionSQL {
                     + TableNames.Promotion
                     + "(id, type, promotionName, restaurantId, isActive,promotionWeight,discountPrice,discountPercentage,freeNum,"
                     + "freeItemId,freeItemName,itemMainCategoryId,itemCategoryId,itemId,itemNum,itemMainCategoryName,itemCategoryName,itemName," +
-                    "secondItemMainCategoryId,secondItemCategoryId,secondItemId,secondItemNum,secondItemMainCategoryName,secondItemCategoryName,secondItemName" +
-                    "createTime,updateTime,basePrice,guestNum,weekId)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    "secondItemMainCategoryId,secondItemCategoryId,secondItemId,secondItemNum,secondItemMainCategoryName,secondItemCategoryName,secondItemName," +
+                    "createTime,updateTime,basePrice,guestNum,promotionDateInfoId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (Promotion promotion : Promotions) {
@@ -140,7 +140,7 @@ public class PromotionSQL {
 
     public static ArrayList<Promotion> getAllPromotion() {
         ArrayList<Promotion> result = new ArrayList<Promotion>();
-        String sql = "select * from " + TableNames.Promotion + " order by id desc";
+        String sql = "select * from " + TableNames.Promotion + " order by promotionWeight desc";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
@@ -173,7 +173,7 @@ public class PromotionSQL {
                 promotion.setItemCategoryName(cursor.getString(16));
                 promotion.setItemName(cursor.getString(17));
 
-                promotion.setSecondItemCategoryId(cursor.getInt(18));
+                promotion.setSecondItemMainCategoryId(cursor.getInt(18));
                 promotion.setSecondItemCategoryId(cursor.getInt(19));
                 promotion.setSecondItemId(cursor.getInt(20));
                 promotion.setSecondItemNum(cursor.getInt(21));

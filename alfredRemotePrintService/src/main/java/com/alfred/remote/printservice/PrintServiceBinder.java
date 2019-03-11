@@ -443,36 +443,36 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             proPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.promotion_sales));
             proPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
 
-            if(orderPromotions!=null&&orderPromotions.size()>0){
-
-            proPrint.AddContentListHeader("orderPromotion",
-                    PrintService.instance.getResources().getString(R.string.qty),
-                    PrintService.instance.getResources().getString(R.string.amount));
-            proPrint.setPrinterIp(prtDevice.getIP());
-            for (int i = 0; i <promotions.size() ; i++) {
-                int id=promotions.get(i).getId();
-                int qty = 0;
-                String   promotionName=promotions.get(i).getPromotionName();
-                BigDecimal amount =  BH.getBD(ParamConst.DOUBLE_ZERO);
-                for(int j = 0;j <orderPromotions.size();j++){
-                    PromotionData promotionData=orderPromotions.get(j);
-                    int promotionId=promotionData.getPromotionId();
-
-                    if(id==promotionId)
-                    {
-                        amount=BH.add(amount,BH.getBD(promotionData.getPromotionAmount()),false);
-                        qty=qty+1;
-                    }
-
-                }
-                if(qty>0){
-                    proPrint.print(promotionName,qty,amount.toString());
-                }
-
-            }
-
-                proPrint.AddHortionaDoublelLine();
-            }
+//            if(orderPromotions!=null&&orderPromotions.size()>0){
+//
+//            proPrint.AddContentListHeader("orderPromotion",
+//                    PrintService.instance.getResources().getString(R.string.qty),
+//                    PrintService.instance.getResources().getString(R.string.amount));
+//            proPrint.setPrinterIp(prtDevice.getIP());
+//            for (int i = 0; i <promotions.size() ; i++) {
+//                int id=promotions.get(i).getId();
+//                int qty = 0;
+//                String   promotionName=promotions.get(i).getPromotionName();
+//                BigDecimal amount =  BH.getBD(ParamConst.DOUBLE_ZERO);
+//                for(int j = 0;j <orderPromotions.size();j++){
+//                    PromotionData promotionData=orderPromotions.get(j);
+//                    int promotionId=promotionData.getPromotionId();
+//
+//                    if(id==promotionId)
+//                    {
+//                        amount=BH.add(amount,BH.getBD(promotionData.getPromotionAmount()),false);
+//                        qty=qty+1;
+//                    }
+//
+//                }
+//                if(qty>0){
+//                    proPrint.print(promotionName,qty,amount.toString());
+//                }
+//
+//            }
+//
+//                proPrint.AddHortionaDoublelLine();
+//            }
 //            addHortionaDoublelLine(this.charSize);
             proPrint.AddContentListHeader( PrintService.instance.getResources().getString(R.string.promotion_name),
                     PrintService.instance.getResources().getString(R.string.qty),
@@ -2714,6 +2714,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
                     String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
                     String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+
+//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
