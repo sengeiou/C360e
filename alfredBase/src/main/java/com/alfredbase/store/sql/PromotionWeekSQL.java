@@ -25,9 +25,8 @@ public class PromotionWeekSQL {
 
             String sql = "insert into "
                     + TableNames.PromotionWeek
-                    + "(id, promotionId, week, startTime, endTime,isActive,createTime,updateTime)"
-                    + " values (?,?,?,?,?,?,?,?)";
-
+                    + "(id, promotionId, week, startTime, endTime,isActive,createTime,updateTime,promotionDateInfoId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (PromotionWeek promotionWeek : promotionWeeks) {
@@ -47,7 +46,8 @@ public class PromotionWeekSQL {
                         promotionWeek.getCreateTime());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
                         promotionWeek.getUpdateTime());
-
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
+                        promotionWeek.getPromotionDateInfoId());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -82,6 +82,7 @@ public class PromotionWeekSQL {
                 promotionWeek.setIsActive(cursor.getInt(5));
                 promotionWeek.setCreateTime(cursor.getLong(6));
                 promotionWeek.setUpdateTime(cursor.getLong(7));
+                promotionWeek.setPromotionDateInfoId(cursor.getInt(8));
                 result.add(promotionWeek);
             }
         } catch (Exception e) {

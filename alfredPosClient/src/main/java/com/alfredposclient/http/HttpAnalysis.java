@@ -26,7 +26,6 @@ import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionAndWeekVo;
 import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.PromotionWeek;
 import com.alfredbase.javabean.RemainingStock;
@@ -106,7 +105,6 @@ import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.Header;
-import org.jivesoftware.smackx.pubsub.provider.ItemProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -460,11 +458,17 @@ public class HttpAnalysis {
 			JSONObject object = new JSONObject(new String(responseBody));
 			Gson gson = new Gson();
 			List<Promotion> promotionList = gson.fromJson(
-					object.getString("promotionList"),
+					object.getString("promotionInfoList"),
 					new TypeToken<ArrayList<Promotion>>() {
+					}.getType());
+			List<PromotionWeek> promotionWeekTimeList = gson.fromJson(
+					object.getString("promotionWeekTimeList"),
+					new TypeToken<ArrayList<PromotionWeek>>() {
 					}.getType());
 			PromotionSQL.deleteAllPromotion();
 		    PromotionSQL.addPromotion(promotionList);
+		    PromotionWeekSQL.deleteAllPromotionWeek();
+		    PromotionWeekSQL.addPromotionWeek(promotionWeekTimeList);
 
 		} catch (JSONException e) {
 			e.printStackTrace();

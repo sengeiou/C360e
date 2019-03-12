@@ -1161,8 +1161,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
 				title, reportDaySales, reportDayTaxs,reportDayPayments,  ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
-		App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-				reportItemPromotions,reportOrderPromotions,promotions);
+        if(reportItemPromotions!=null&&reportItemPromotions.size()>0){
+            App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
+                    reportItemPromotions,reportOrderPromotions,promotions);
+        }
+
 //		try {
 //			Thread.sleep(5000);
 //		}catch (Exception e){
@@ -1183,10 +1186,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			App.instance.remotePrintSummaryAnalysisReport(reportType,
 					cashierPrinter, title, reportPluDayItems,
 					reportPluDayModifiers, itemMainCategorys, itemCategorys);
-		if(App.instance.getSystemSettings().isPrintHourlyPayment())
-			// hourly sales
-			App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
-					reportHourlys);
+//		if(App.instance.getSystemSettings().isPrintHourlyPayment())
+//			// hourly sales
+//			App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
+//					reportHourlys);
 //		if(App.countryCode == ParamConst.CHINA) {
 //		if(reportPluDayModifiers != null && reportPluDayModifiers.size() > 0)
 //		// modifier detail analysis
@@ -1258,8 +1261,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				title, reportDaySales, reportDayTaxs, reportDayPayments,
 				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
 				reportSessionSalesList);
-        App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-                reportItemPromotions,reportOrderPromotions,promotions);
+		if(reportItemPromotions!=null&&reportItemPromotions.size()>0){
+            App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
+                    reportItemPromotions,reportOrderPromotions,promotions);
+        }
+
 //		try {
 //			Thread.sleep(2000);
 //		}catch (Exception e){
@@ -1274,10 +1280,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			App.instance.remotePrintSummaryAnalysisReport(reportType,
 					cashierPrinter, title, reportPluDayItems,
 					reportPluDayModifiers, itemMainCategorys, itemCategorys);
-		if(App.instance.getSystemSettings().isPrintHourlyPayment())
-			// hourly sales
-			App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
-					reportHourlys);
+//		if(App.instance.getSystemSettings().isPrintHourlyPayment())
+//			// hourly sales
+//			App.instance.remotePrintHourlyReport(reportType, cashierPrinter, title,
+//					reportHourlys);
 		if(reportPluDayModifiers != null && reportPluDayModifiers.size() > 0){
 			if(App.instance.getSystemSettings().isPrintPluModifier())
 				App.instance.remotePrintModifierDetailAnalysisReport(reportType,

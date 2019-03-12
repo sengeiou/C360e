@@ -68,6 +68,7 @@ public class BH {
 			return new BigDecimal(money);
 		} else {
 			value2 = new BigDecimal(string);
+			//return new BigDecimal(doubleFormat.format(value2));
 			return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
 		}
 	}
@@ -97,6 +98,7 @@ public class BH {
 			return new BigDecimal(money);
 		} else {
 			value2 = new BigDecimal(integer);
+			//return new BigDecimal(doubleFormat.format(value2));
 			return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
 		}
 	}

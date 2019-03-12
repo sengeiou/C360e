@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteStatement;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
@@ -352,7 +353,7 @@ public class PromotionDataSQL {
     {
         ArrayList<PromotionData> result = new ArrayList<PromotionData>();
         String sql = "select * from " + TableNames.PromotionData
-                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+                + " where businessDate=?  and  promotionType= ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
@@ -497,7 +498,7 @@ public class PromotionDataSQL {
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,
-                    new String[]{String.valueOf(orderId)});
+                    new String[]{String.valueOf(orderId),String.valueOf(type)});
             int count = cursor.getCount();
             if (count < 1) {
                 return promotionData;
@@ -534,6 +535,52 @@ public class PromotionDataSQL {
         return promotionData;
     }
 
+
+    public static PromotionData getPromotionDataOrId(int orderId,int promotionId)
+    {
+        PromotionData promotionData = null;
+        String sql = "select * from " + TableNames.PromotionData
+                + " where orderId = ? and promotionId = ? ";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(orderId),String.valueOf(promotionId)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return promotionData;
+            }
+
+            if (cursor.moveToFirst()) {
+                promotionData = new PromotionData();
+                promotionData.setId(cursor.getInt(0));
+                promotionData.setPromotionId(cursor.getInt(1));
+                promotionData.setPromotionName(cursor.getString(2));
+                promotionData.setPromotionType(cursor.getInt(3));
+                promotionData.setPromotionAmount(cursor.getString(4));
+                promotionData.setDiscountPercentage(cursor.getString(5));
+                promotionData.setItemId(cursor.getInt(6));
+                promotionData.setItemName(cursor.getString(7));
+                promotionData.setFreeNum(cursor.getInt(8));
+                promotionData.setFreeItemId(cursor.getInt(9));
+                promotionData.setFreeItemName(cursor.getString(10));
+                promotionData.setCreateTime(cursor.getLong(11));
+                promotionData.setUpdateTime(cursor.getLong(12));
+                promotionData.setOrderId(cursor.getInt(13));
+                promotionData.setOrderDetailId(cursor.getInt(14));
+                promotionData.setDiscountPrice(cursor.getString(15));
+                promotionData.setBusinessDate(cursor.getLong(16));
+                return promotionData;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return promotionData;
+    }
 
 
     public static ArrayList<PromotionData> getAllPromotionData() {
@@ -586,6 +633,34 @@ public class PromotionDataSQL {
 
 
 
+
+
+    public static void deletePromotionAndFree(PromotionData promotionData) {
+
+        String delePromotionData = "delete from " + TableNames.PromotionData + " where id = ?";
+        // 删除免费菜的信息
+        String deleteFree = "delete from "+ TableNames.OrderDetail + " where id = ? and orderDetailStatus < ? ";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+
+        try {
+            db.beginTransaction();
+            db.execSQL(delePromotionData,
+                    new Object[] { String.valueOf(promotionData.getId())});
+            db.execSQL(deleteFree,
+                    new Object[] { String.valueOf(promotionData.getOrderDetailId()), String.valueOf(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD)});
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+            db.endTransaction();
+        }
+    }
 
     public static void deletePromotionData(PromotionData promotionData) {
         String sql = "delete from " + TableNames.PromotionData + " where id = ?";
