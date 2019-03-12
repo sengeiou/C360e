@@ -544,10 +544,14 @@ public class ObjectFactory {
                     order.setTotal(appOrder.getTotal());
                     order.setSubTotal(appOrder.getSubTotal());
                     order.setOrderRemark(appOrder.getOrderRemark());
-                    if (appOrder.getEatType() == ParamConst.APP_ORDER_TAKE_AWAY) {
+
+                 //   1 堂吃, 2 打包, 3 外卖
+                    if (appOrder.getEatType() == ParamConst.TAKE_AWAY) {
                         order.setIsTakeAway(ParamConst.TAKE_AWAY);
-                    } else {
-                        order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                    } else if(appOrder.getEatType() == ParamConst.APP_DELIVERY) {
+                        order.setIsTakeAway(ParamConst.APP_DELIVERY);
+                    }else {
+                        order.setIsTakeAway(ParamConst.DINE_IN);
                     }
                     if (inclusiveTax != null) {
                         order.setInclusiveTaxName(inclusiveTax.getTaxName());
@@ -1885,6 +1889,7 @@ public class ObjectFactory {
                 kotSummary.setOrderRemark(order.getOrderRemark());
                 kotSummary.setNumTag(order.getNumTag());
                 kotSummary.setEatType(appOrder.getEatType());
+                kotSummary.setAppOrderId(appOrder.getId());
                 if(appOrder.getEatType()==ParamConst.APP_ORDER_DELIVERY)
                 {
                     kotSummary.setAddress(appOrder.getAddress());

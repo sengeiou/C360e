@@ -1896,12 +1896,12 @@ public class App extends BaseApplication {
                             openDrawer, BH.IsDouble(), info, apporders);
 
             } else {
-//                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-//                        mods, tax, payment,
-//                        this.systemSettings.isDoubleBillPrint(),
-//                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
-//                        getLocalRestaurantConfig().getCurrencySymbol(),
-//                        openDrawer, BH.IsDouble());
+                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                        mods, tax, payment,
+                        this.systemSettings.isDoubleBillPrint(),
+                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                        getLocalRestaurantConfig().getCurrencySymbol(),
+                        openDrawer, BH.IsDouble(), info, apporders);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -2003,6 +2003,7 @@ public class App extends BaseApplication {
                 String tax = gson.toJson(taxes);
                 String payment = gson.toJson(printReceiptInfos);
                 String roundStr = gson.toJson(roundingMap);
+                String apporders = "";
                 // gson.toJson(roundingMap);
                 if (isRevenueKiosk()) {
                     if (countryCode == ParamConst.CHINA)
@@ -2026,7 +2027,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble());
+                            openDrawer, BH.IsDouble(),"",apporders);
                 }
 
             } catch (RemoteException e) {
@@ -2998,10 +2999,11 @@ public class App extends BaseApplication {
 
                 String userinfo, phone;
                 String name = null;
+                String appOrderId= "";
                 if (TextUtils.isEmpty(appOrder.getAddress())) {
                     userinfo = "";
                 } else {
-
+                        // appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
 
                     if (TextUtils.isEmpty(appOrder.getContact())) {
                         name = "";
@@ -3014,13 +3016,13 @@ public class App extends BaseApplication {
                             name = "" + appOrder.getContact() + "   " + "   " + "   ";
                         }
                     }
-                    if (TextUtils.isEmpty(appOrder.getContact())) {
+                    if (TextUtils.isEmpty(appOrder.getMobile())) {
                         phone = "";
                     } else {
                         //    String addr = appOrder.getAddress();
                         phone = "" + appOrder.getMobile() + "\n";
                     }
-                    userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                    userinfo =name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
                 }
 
 //

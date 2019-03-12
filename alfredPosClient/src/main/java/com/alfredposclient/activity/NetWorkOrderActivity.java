@@ -678,7 +678,6 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 //        Toast.makeText(NetWorkOrderActivity.this, "print !", Toast.LENGTH_SHORT)
 //                .show();
 
-
     }
 
     class AppOderAdapter extends BaseAdapter {

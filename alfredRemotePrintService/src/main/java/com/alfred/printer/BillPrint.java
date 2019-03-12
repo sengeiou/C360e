@@ -105,7 +105,45 @@ public class BillPrint extends PrintJob {
 
 
     public void AddHeader(int isTakeAway, String table, int pax, String billNo,
-                          String posNo, String cashier, String dateTime, String orderNo) {
+                          String posNo, String cashier, String dateTime, String orderNo, String info,int appOrderId) {
+
+
+
+        if (!TextUtils.isEmpty(info)) {
+            PrintData appOrderPrint = new PrintData();
+            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+            String appOrderStr = appStr+appOrderId+ reNext;
+            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            appOrderPrint.setFontsize(2);
+            appOrderPrint.setText(appOrderStr);
+            this.data.add(appOrderPrint);
+
+            PrintData addressPrint = new PrintData();
+            //   String deliveryStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.app_delivery), this.FIXED_COL4_TOTAL - 1);
+            String infoStr = info + reNext;
+//            String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL - 1);
+//            String padorderNo = orderNoStr + orderNo + reNext;
+            addressPrint.setDataFormat(PrintData.FORMAT_TXT);
+            addressPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            addressPrint.setText(infoStr);
+            this.data.add(addressPrint);
+            addHortionalLine(this.charSize);
+        }else {if(appOrderId>0){
+
+            PrintData appOrderPrint = new PrintData();
+            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+            String appOrderStr = appStr+appOrderId+ reNext;
+            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            appOrderPrint.setFontsize(2);
+            appOrderPrint.setText(appOrderStr);
+            this.data.add(appOrderPrint);
+            addHortionalLine(this.charSize);
+        }
+
+        }
+
 
         //流水号 NO
         PrintData orderNoPrint = new PrintData();
@@ -180,7 +218,17 @@ public class BillPrint extends PrintJob {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        if (isTakeAway == 1) {
+//        if (isTakeAway == 1) {
+//            PrintData takeAwayPrint = new PrintData();
+//            String str = PrintService.instance.getResources().getString(R.string.takeaway_print) + reNext;
+//            takeAwayPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            takeAwayPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            takeAwayPrint.setFontsize(2);
+//            takeAwayPrint.setText(str);
+//            this.data.add(takeAwayPrint);
+//        }
+
+        if (isTakeAway == 2) {
             PrintData takeAwayPrint = new PrintData();
             String str = PrintService.instance.getResources().getString(R.string.takeaway_print) + reNext;
             takeAwayPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -188,6 +236,32 @@ public class BillPrint extends PrintJob {
             takeAwayPrint.setFontsize(2);
             takeAwayPrint.setText(str);
             this.data.add(takeAwayPrint);
+            //PrintData appOrderPrint = new PrintData();
+//            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+//            String appOrderStr = appStr+appOrderId+ reNext;
+//            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            appOrderPrint.setFontsize(2);
+//            appOrderPrint.setText(appOrderStr);
+//            this.data.add(appOrderPrint);
+        }
+        else if(isTakeAway == 3){
+            PrintData deliveryPrint = new PrintData();
+            String str = PrintService.instance.getResources().getString(R.string.delivery_print) + reNext;
+            deliveryPrint.setDataFormat(PrintData.FORMAT_TXT);
+            deliveryPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            deliveryPrint.setFontsize(2);
+            deliveryPrint.setText(str);
+            this.data.add(deliveryPrint);
+        }else if(isTakeAway == 1){
+//            PrintData appOrderPrint = new PrintData();
+//            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+//            String appOrderStr = appStr+appOrderId+ reNext;
+//            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            appOrderPrint.setFontsize(2);
+//            appOrderPrint.setText(appOrderStr);
+//            this.data.add(appOrderPrint);
         }
         //addHortionalLine();
         addHortionaDoublelLine(this.charSize);
@@ -341,7 +415,7 @@ public class BillPrint extends PrintJob {
 
 
     public void AddKioskHeaderAddress(int isTakeAway, String table, int pax, String billNo,
-                                      String posNo, String cashier, String dateTime, String orderNo, String groupNum, String info) {
+                                      String posNo, String cashier, String dateTime, String orderNo, String groupNum, String info,int appOrderId) {
 
 
         if (!TextUtils.isEmpty(table)) {
@@ -360,15 +434,34 @@ public class BillPrint extends PrintJob {
             addHortionalLine(this.charSize);
         }
         if (!TextUtils.isEmpty(info)) {
+            PrintData appOrderPrint = new PrintData();
+              String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+              String appOrderStr = appStr+appOrderId+ reNext;
+            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            appOrderPrint.setFontsize(2);
+            appOrderPrint.setText(appOrderStr);
+            this.data.add(appOrderPrint);
+
             PrintData addressPrint = new PrintData();
-            String deliveryStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.app_delivery), this.FIXED_COL4_TOTAL - 1);
-            String infoStr = deliveryStr + ":" + info + reNext;
+         //   String deliveryStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.app_delivery), this.FIXED_COL4_TOTAL - 1);
+            String infoStr = info + reNext;
 //            String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL - 1);
 //            String padorderNo = orderNoStr + orderNo + reNext;
             addressPrint.setDataFormat(PrintData.FORMAT_TXT);
             addressPrint.setTextAlign(PrintData.ALIGN_LEFT);
             addressPrint.setText(infoStr);
             this.data.add(addressPrint);
+            addHortionalLine(this.charSize);
+        }else {
+            PrintData appOrderPrint = new PrintData();
+            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+            String appOrderStr = appStr+appOrderId+ reNext;
+            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            appOrderPrint.setFontsize(2);
+            appOrderPrint.setText(appOrderStr);
+            this.data.add(appOrderPrint);
             addHortionalLine(this.charSize);
         }
 
@@ -383,7 +476,7 @@ public class BillPrint extends PrintJob {
         this.data.add(orderNoPrint);
 
 
-        if (isTakeAway == 1) {
+        if (isTakeAway == 2) {
             PrintData takeAwayPrint = new PrintData();
             String str = PrintService.instance.getResources().getString(R.string.takeaway_print) + reNext;
             takeAwayPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -391,6 +484,32 @@ public class BillPrint extends PrintJob {
             takeAwayPrint.setFontsize(2);
             takeAwayPrint.setText(str);
             this.data.add(takeAwayPrint);
+            //PrintData appOrderPrint = new PrintData();
+//            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+//            String appOrderStr = appStr+appOrderId+ reNext;
+//            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            appOrderPrint.setFontsize(2);
+//            appOrderPrint.setText(appOrderStr);
+//            this.data.add(appOrderPrint);
+        }
+        else if(isTakeAway == 3){
+            PrintData deliveryPrint = new PrintData();
+            String str = PrintService.instance.getResources().getString(R.string.delivery_print) + reNext;
+            deliveryPrint.setDataFormat(PrintData.FORMAT_TXT);
+            deliveryPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            deliveryPrint.setFontsize(2);
+            deliveryPrint.setText(str);
+            this.data.add(deliveryPrint);
+        }else if(isTakeAway == 1){
+//            PrintData appOrderPrint = new PrintData();
+//            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+//            String appOrderStr = appStr+appOrderId+ reNext;
+//            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            appOrderPrint.setFontsize(2);
+//            appOrderPrint.setText(appOrderStr);
+//            this.data.add(appOrderPrint);
         }
         //group num
         if (!TextUtils.isEmpty(groupNum)) {
@@ -785,7 +904,7 @@ public class BillPrint extends PrintJob {
 
     }
 
-    public void printDeliveryList(String orderNO, String customerInfo, String address,String time) {
+    public void printDeliveryList(String orderNO, String appOrderNo,String customerInfo, String address,String time) {
 //        scale = 1;
 //        PrintData kot = new PrintData();
 //        kot.setDataFormat(PrintData.FORMAT_TXT);
@@ -796,13 +915,19 @@ public class BillPrint extends PrintJob {
 //        this.data.add(kot);
 
         //流水号 NO
-        PrintData orderNoPrint = new PrintData();
-        orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
-        orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
-		orderNoPrint.setFontsize(2);
-        orderNoPrint.setText(orderNO+reNext);
-        this.data.add(orderNoPrint);
-
+//        PrintData orderNoPrint = new PrintData();
+//        orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
+//        orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//		orderNoPrint.setFontsize(2);
+//        orderNoPrint.setText(orderNO+reNext);
+//        this.data.add(orderNoPrint);
+        PrintData appPrint = new PrintData();
+        String appStr = appOrderNo+reNext;
+        appPrint.setDataFormat(PrintData.FORMAT_TXT);
+        appPrint.setTextAlign(PrintData.ALIGN_LEFT);
+        appPrint.setFontsize(2);
+        appPrint.setText(appStr);
+        this.data.add(appPrint);
 
         PrintData custPrint = new PrintData();
 
@@ -850,7 +975,6 @@ public class BillPrint extends PrintJob {
         subAddress.setText(padSubtotal);
         this.data.add(subAddress);
     }
-
 
     private String getTwoAutoReLine(String col1Content, String col2Content, int charScale) {
         StringBuffer result = new StringBuffer();
