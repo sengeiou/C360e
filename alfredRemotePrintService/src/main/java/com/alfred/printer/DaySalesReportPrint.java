@@ -482,6 +482,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                     this.addItem(reportDayTax.getTaxName(), "", reportDayTax.getTaxAmount(), 1);
                     taxSvc = BH.add(taxSvc, BH.getBD(reportDayTax.getTaxAmount()), true);
                 }
+
                 this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), "", reportDaySales.getInclusiveTaxAmt(), 1);
                 taxSvc = BH.add(taxSvc, BH.getBD(reportDaySales.getInclusiveTaxAmt()), true);
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_taxsvc), "", taxSvc.toString(), 1);
