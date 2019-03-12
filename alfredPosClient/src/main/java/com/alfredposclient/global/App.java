@@ -1872,7 +1872,7 @@ public class App extends BaseApplication {
                         .toString();
             }
             if(order.getPromotion()!=null){
-                total = BH.add(BH.formatMoney(order.getTotal()),
+                total = BH.add(BH.formatMoney(total),
                         BH.getBD(order.getPromotion()), true)
                         .toString();
             }
@@ -2006,7 +2006,7 @@ public class App extends BaseApplication {
                             .toString();
                 }
                 if(order.getPromotion()!=null){
-                    total = BH.add(BH.formatMoney(order.getTotal()),
+                    total = BH.add(BH.formatMoney(total),
                             BH.getBD(order.getPromotion()), true)
                             .toString();
                 }
