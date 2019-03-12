@@ -1828,7 +1828,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     }
 
-
+    @Override
     public void printAppOrderBill(String printer, String title, String order,
                                   String orderDetail, String modifiers, String tax, String payment,
                                   boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,

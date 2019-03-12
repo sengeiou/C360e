@@ -75,8 +75,7 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
     private KioskHoldOderDetailAdapter kioskHoldOderDetailAdapter;
     private TextTypeFace textTypeFace = TextTypeFace.getInstance();
     private int selectViewId;
-    private TextView tv_hold_order, tv_hold_kitchen_order;
-    private TextView tv_kiosk_order;
+    private TextView tv_hold_order, tv_hold_kitchen_order,tv_kiosk_order;
     private TextView tv_remarks;
     private TextView tv_eat_type;
     private Button btn_get_order;
@@ -125,6 +124,7 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
         tv_remarks = (TextView) findViewById(R.id.tv_remarks);
         tv_eat_type = (TextView) findViewById(R.id.tv_eat_type);
         et_search = (SearchView) findViewById(R.id.et_search);
+
 //        et_search.setIconifiedByDefault(true);
         et_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -146,8 +146,8 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                         }
                     }
                     orderList = orders;
-                    kioskHoldOderAdapter.notifyDataSetChanged();
-                    kioskHoldOderDetailAdapter.notifyDataSetChanged();
+                    kioskHoldOderAdapter.notifyDataSetChanged(orderList);
+                    kioskHoldOderDetailAdapter.notifyDataSetChanged(orderDetails);
                 }
                 return true;
             }
@@ -186,8 +186,10 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
         });
         initData();
         kioskHoldOderAdapter = new KioskHoldOderAdapter();
+        kioskHoldOderAdapter.setSelfOrderList(orderList);
         lv_order_list.setAdapter(kioskHoldOderAdapter);
         kioskHoldOderDetailAdapter = new KioskHoldOderDetailAdapter();
+        kioskHoldOderDetailAdapter.setSelfOrderDetailList(orderDetails);
         lv_orderdetail_list.setAdapter(kioskHoldOderDetailAdapter);
         tv_hold_order.setOnClickListener(this);
         tv_hold_kitchen_order.setOnClickListener(this);
@@ -215,6 +217,31 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
         tv_hold_kitchen_order.setTextColor(getResources().getColor(R.color.black));
         tv_kiosk_order.setBackgroundColor(getResources().getColor(R.color.white));
         tv_kiosk_order.setTextColor(getResources().getColor(R.color.black));
+        //int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
+        int holdNum = OrderSQL.getKioskHoldCountByStatus(
+                App.instance.getBusinessDate(),
+                App.instance.getSessionStatus(),
+                System.currentTimeMillis(),
+                ParamConst.ORDER_STATUS_HOLD
+        );
+        int holdKitchenNum = OrderSQL.getKioskHoldCountByStatus(
+                App.instance.getBusinessDate(),
+                App.instance.getSessionStatus(),
+                System.currentTimeMillis(),
+                ParamConst.ORDER_STATUS_HOLD_KITCHEN
+        );
+        int kioskNum = OrderSQL.getKioskHoldCountByStatus(
+                App.instance.getBusinessDate(),
+                App.instance.getSessionStatus(),
+                System.currentTimeMillis(),
+                ParamConst.ORDER_STATUS_KIOSK
+        );
+        String holdOrderStr = "Hold Order";
+        String holdKitchenStr = "Hold W Kitchen";
+        String kioskOrderStr = "Kiosk Order";
+        tv_hold_order.setText(holdNum > 0 ? String.format(holdOrderStr+" (*%d)", holdNum) : holdOrderStr);
+        tv_hold_kitchen_order.setText(holdKitchenNum > 0 ? String.format(holdKitchenStr+" (*%d)", holdKitchenNum) : holdKitchenStr);
+        tv_kiosk_order.setText(kioskNum > 0 ? String.format(kioskOrderStr+" (*%d)", kioskNum):kioskOrderStr);
         int orderStatus = ParamConst.ORDER_STATUS_HOLD_KITCHEN;
         switch (selectViewId){
             case R.id.tv_hold_order:
@@ -314,8 +341,8 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
 
     private void  refreshDataView(){
         initData();
-        kioskHoldOderAdapter.notifyDataSetChanged();
-        kioskHoldOderDetailAdapter.notifyDataSetChanged();
+        kioskHoldOderAdapter.notifyDataSetChanged(orderList);
+        kioskHoldOderDetailAdapter.notifyDataSetChanged(orderDetails);
     }
 
     private void cashPay(final Order order) {
@@ -481,23 +508,35 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
     }
 
     class KioskHoldOderAdapter extends BaseAdapter {
+        private List<Order> selfOrderList = new ArrayList<>();
 
+        public void setSelfOrderList(List<Order> orderList){
+            selfOrderList.clear();
+            selfOrderList.addAll(orderList);
+        }
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return orderList.size();
+            return selfOrderList.size();
         }
 
         @Override
         public Object getItem(int arg0) {
             // TODO Auto-generated method stub
-            return orderList.get(arg0);
+            return selfOrderList.get(arg0);
         }
 
         @Override
         public long getItemId(int arg0) {
             // TODO Auto-generated method stub
             return arg0;
+        }
+
+        public void notifyDataSetChanged(List<Order> orderList) {
+            selfOrderList.clear();
+            selfOrderList.addAll(orderList);
+            super.notifyDataSetChanged();
+
         }
 
         @Override
@@ -519,7 +558,7 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                 holder = (HolderView) arg1.getTag();
             }
 
-            Order order = orderList.get(arg0);
+            Order order = selfOrderList.get(arg0);
             if(arg0 == selectOrderItem){
                 arg1.setBackgroundColor(getResources().getColor(R.color.brownness));
 //                btn_check.setTag(order);
@@ -566,23 +605,36 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
     }
 
     class KioskHoldOderDetailAdapter extends BaseAdapter{
+        private List<OrderDetail> selfOrderDetailList = new ArrayList<>();
+
+        public void setSelfOrderDetailList(List<OrderDetail> orderDetailList) {
+            selfOrderDetailList.clear();
+            selfOrderDetailList.addAll(orderDetailList);
+        }
 
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return orderDetails.size();
+            return selfOrderDetailList.size();
         }
 
         @Override
         public Object getItem(int arg0) {
             // TODO Auto-generated method stub
-            return orderDetails.get(arg0);
+            return selfOrderDetailList.get(arg0);
         }
 
         @Override
         public long getItemId(int arg0) {
             // TODO Auto-generated method stub
             return arg0;
+        }
+
+
+        public void notifyDataSetChanged(List<OrderDetail> orderDetailList) {
+            selfOrderDetailList.clear();
+            selfOrderDetailList.addAll(orderDetailList);
+            super.notifyDataSetChanged();
         }
 
         @Override
@@ -601,7 +653,7 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
             } else {
                 holder = (HolderView) arg1.getTag();
             }
-            OrderDetail orderDetail = orderDetails.get(arg0);
+            OrderDetail orderDetail = selfOrderDetailList.get(arg0);
             holder.tv_orderdetail_name.setText(orderDetail.getItemName());
             holder.tv_orderdetail_qty.setText(orderDetail.getItemNum() + "");
             List<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(orderDetail.getId().intValue());

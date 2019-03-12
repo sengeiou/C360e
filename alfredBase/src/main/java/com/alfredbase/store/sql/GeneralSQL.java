@@ -520,4 +520,38 @@ public class GeneralSQL {
 			db.endTransaction();
 		}
 	}
+
+	public static void deleteOrderAndInforByOrderId(int orderId) {
+		// 删除Order相关的信息
+		String deleteOrderModifier = "delete from " + TableNames.OrderModifier + " where orderId = ?";
+		String deleteOrderDetailTax = "delete from " + TableNames.OrderDetailTax + " where orderId = ?";
+		String deleteOrderDetail = "delete from " + TableNames.OrderDetail + " where orderId = ?";
+		String deleteOrderBill = "delete from " + TableNames.OrderBill + " where orderId  = ?";
+		String deleteOrder = "delete from "+ TableNames.Order + " where id = ?";
+		Cursor cursor = null;
+		SQLiteDatabase db = SQLExe.getDB();
+
+		try {
+			db.beginTransaction();
+			db.execSQL(deleteOrderModifier,
+					new Object[] { String.valueOf(orderId)});
+			db.execSQL(deleteOrderDetailTax,
+					new Object[] { String.valueOf(orderId) });
+			db.execSQL(deleteOrderDetail,
+					new Object[] { String.valueOf(orderId)});
+			db.execSQL(deleteOrderBill,
+					new Object[] { String.valueOf(orderId) });
+			db.execSQL(deleteOrder,
+					new Object[] { String.valueOf(orderId) });
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+			db.endTransaction();
+		}
+	}
 }

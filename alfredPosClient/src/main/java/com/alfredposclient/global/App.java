@@ -2738,6 +2738,13 @@ public class App extends BaseApplication {
 //                    }
 //                }
                 if (tables == null) {
+//                    tables = new TableInfo();
+//                    tables.setPosId(-1);
+//                    tables.setPlacesId(-1);
+//                    tables.setIsActive(1);
+//                    tables.setRestaurantId(App.instance.getRevenueCenter().getRestaurantId());
+//                    tables.setRestaurantId(App.instance.getRevenueCenter().getRestaurantId());
+//                    tables.setIsKiosk(1);
                     return;
                 }
             }

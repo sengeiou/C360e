@@ -429,7 +429,7 @@ public class ObjectFactory {
 
         Order order = null;
         synchronized (lock_order) {
-            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate);
+            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate, sessionStatus);
             if (order == null) {
 
                 order = new Order();

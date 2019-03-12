@@ -481,7 +481,7 @@ public class MainPageKiosk extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
-        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
+        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
         List<OrderDetail> orderDetails = OrderDetailSQL
                 .getUnFreeOrderDetails(oldOrder);
         if (!orderDetails.isEmpty()) {

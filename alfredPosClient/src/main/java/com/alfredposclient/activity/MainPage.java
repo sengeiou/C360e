@@ -547,7 +547,7 @@ public class MainPage extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
-        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate());
+        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
         List<OrderDetail> orderDetails = OrderDetailSQL
                 .getUnFreeOrderDetails(oldOrder);
         KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
@@ -1281,7 +1281,7 @@ public class MainPage extends BaseActivity {
                                 if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
                                     currentOrder = null;
                                 } else {
-                                    currentOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), App.instance.getBusinessDate());
+                                    currentOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), App.instance.getBusinessDate(), App.instance.getSessionStatus());
                                 }
                                 initOrder(currentTable);
                                 setTablePacks(currentTable.getPacks() + "");

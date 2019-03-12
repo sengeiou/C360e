@@ -1394,7 +1394,9 @@ public class OrderDetailSQL {
         ArrayList<OrderDetail> result = new ArrayList<OrderDetail>();
         String sql = "select * from " + TableNames.OrderDetail
                 + " where orderId = ? and orderDetailType <> " +
-                +ParamConst.ORDERDETAIL_TYPE_VOID
+                + ParamConst.ORDERDETAIL_TYPE_VOID
+                + " and orderDetailStatus < "
+                + ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD
                 + " and orderSplitId not in (select id from "
                 + TableNames.OrderSplit
                 + " where orderId = ? and orderStatus > "
