@@ -1161,8 +1161,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
 				title, reportDaySales, reportDayTaxs,reportDayPayments,  ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
-		App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-				reportItemPromotions,reportOrderPromotions,promotions);
+        if(reportItemPromotions!=null&&reportItemPromotions.size()>0){
+            App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
+                    reportItemPromotions,reportOrderPromotions,promotions);
+        }
+
 //		try {
 //			Thread.sleep(5000);
 //		}catch (Exception e){
@@ -1258,8 +1261,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				title, reportDaySales, reportDayTaxs, reportDayPayments,
 				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
 				reportSessionSalesList);
-        App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-                reportItemPromotions,reportOrderPromotions,promotions);
+		if(reportItemPromotions!=null&&reportItemPromotions.size()>0){
+            App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
+                    reportItemPromotions,reportOrderPromotions,promotions);
+        }
+
 //		try {
 //			Thread.sleep(2000);
 //		}catch (Exception e){

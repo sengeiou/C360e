@@ -315,7 +315,12 @@ public class DaySalesReportPrint extends ReportBasePrint {
         }
         this.addItem("Promotion", " ", BH.getBD(reportDaySales.getPromotionTotal()).toString(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.rounding), " ", reportDaySales.getTotalBalancePrice(), 1);
-        double grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue()-Double.parseDouble(reportDaySales.getPromotionTotal());
+        double grossTotal;
+        if(reportDaySales.getPromotionTotal()!=null) {
+            grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() - Double.parseDouble(reportDaySales.getPromotionTotal());
+        }else {
+            grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() ;
+        }
         //	this.addItem(PrintService.instance.getResources().getString(R.string.gross_total), " ", BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true).toString(), 1);
 
         this.addItem(PrintService.instance.getResources().getString(R.string.gross_total), " ", BH.getBD(grossTotal).toString(), 1);
