@@ -1,5 +1,6 @@
 package com.alfredbase.javabean;
 
+import com.alfredbase.store.DataHelper;
 import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
@@ -123,6 +124,7 @@ public class Order implements Serializable {
 	@Expose(serialize = false)
 	private int isSplitByPax;
 	private  String promotion;
+	private String  orderRound;
 	public Order() {
 	}
 
@@ -459,6 +461,14 @@ public class Order implements Serializable {
 		this.promotion = promotion;
 	}
 
+	public String getOrderRound() {
+		return orderRound;
+	}
+
+	public void setOrderRound(String orderRound) {
+		this.orderRound = orderRound;
+	}
+
 	@Override
 	public String toString() {
 		return "Order{" +
@@ -496,7 +506,7 @@ public class Order implements Serializable {
 				", subPosBeanId=" + subPosBeanId +
 				", isSplitByPax=" + isSplitByPax +
 				", promotion='" + promotion + '\'' +
+				", orderRound='" + orderRound + '\'' +
 				'}';
-
-}
+	}
 }

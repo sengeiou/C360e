@@ -37,8 +37,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
 					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime," 
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getOrderOriginId(), order.getUserId(),
@@ -55,7 +55,8 @@ public class OrderSQL {
 							order.getAppOrderId(),order.getIsTakeAway(),
 					        order.getTableName(), order.getOrderRemark(),
 							order.getDiscountCategoryId(), order.getNumTag(),
-							order.getSubPosBeanId(),order.getPromotion()
+							order.getSubPosBeanId(),order.getPromotion(),
+							order.getOrderRound()
 						});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -102,8 +103,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,promotion)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,promotion,orderRound)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -120,7 +121,9 @@ public class OrderSQL {
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
-							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion()});
+							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion(),
+					         order.getOrderRound()
+					});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,8 +137,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			db.execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -152,7 +155,9 @@ public class OrderSQL {
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
-							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion()});
+							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion(),
+					        order.getOrderRound()
+					});
 	}
 
 	public static void updateUnFinishedOrderFromWaiter(Order order) {
@@ -392,8 +397,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Order order : orderList) {
@@ -459,6 +464,8 @@ public class OrderSQL {
 							order.getSubPosBeanId());
 					SQLiteStatementHelper.bindString(sqLiteStatement, 31,
 							order.getPromotion());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 32,
+							order.getOrderRound());
 					sqLiteStatement.executeInsert();
 				}
 			db.setTransactionSuccessful();
@@ -516,6 +523,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -575,6 +583,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -640,6 +649,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -702,6 +712,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -764,6 +775,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -882,6 +894,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -941,6 +954,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1002,6 +1016,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1063,6 +1078,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1124,6 +1140,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1178,6 +1195,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1240,6 +1258,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1306,6 +1325,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1368,6 +1388,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
 				result.add(order);
 			}
 		} catch (Exception e) {

@@ -2609,6 +2609,7 @@ public class ObjectFactory {
            order.setTaxAmount(BH.formatMoney(order.getTaxAmount()).toString());
            order.setSubTotal(BH.formatMoney(order.getSubTotal()).toString());
            order.setDiscountRate(BH.formatMoney(order.getDiscountRate()).toString());
+           order.setPromotion(BH.formatMoney(order.getPromotion()).toString());
         //return order;
     }
 
@@ -2729,6 +2730,7 @@ public class ObjectFactory {
         reportDaySales.setVisa(BH.formatMoney(reportDaySales.getVisa()).toString());
         reportDaySales.setVoucher(BH.formatMoney(reportDaySales.getVoucher()).toString());
         reportDaySales.setWaiterAmount(BH.formatMoney(reportDaySales.getWaiterAmount()).toString());
-        reportDaySales.setWeixinpay(BH.formatMoney(reportDaySales.getWaiterAmount()).toString());
+        reportDaySales.setWeixinpay(BH.formatMoney(reportDaySales.getWeixinpay()).toString());
+        reportDaySales.setPromotionTotal(BH.formatMoney(reportDaySales.getPromotionTotal()).toString());
     }
 }

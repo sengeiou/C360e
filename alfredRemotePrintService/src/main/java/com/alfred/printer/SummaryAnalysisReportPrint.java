@@ -182,7 +182,7 @@ public class SummaryAnalysisReportPrint extends ReportBasePrint{
 
 				}
 				if (qty != 0) {
-					this.AddItem(name, qty+"", "" + amount.toString(), 1);
+					this.AddItem(name, qty+"", "" + BH.formatMoney(amount.toString()).toString(), 1);
 					allQty += qty;
 					allAmount = BH.add(allAmount, amount, true);
 				}
@@ -207,7 +207,7 @@ public class SummaryAnalysisReportPrint extends ReportBasePrint{
 */
 		if (allQty != 0) {
 			this.addHortionalLine(this.charSize);
-			this.AddItem(PrintService.instance.getResources().getString(R.string.total), allQty+"", "" + allAmount, 1);
+			this.AddItem(PrintService.instance.getResources().getString(R.string.total), allQty+"", "" + BH.formatMoney(allAmount.toString()).toString(), 1);
 		}		
 	}
 	

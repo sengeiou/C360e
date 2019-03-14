@@ -180,6 +180,7 @@ public class ReportDaySales implements Serializable{
 
 	private String reportNoStr;
 	private String promotionTotal;
+	private String daySalesRound;
 
 //	private String cashGstDiscount;
 //	private String netsGstDiscount;
@@ -981,6 +982,14 @@ public class ReportDaySales implements Serializable{
 		this.promotionTotal = promotionTotal;
 	}
 
+	public String getDaySalesRound() {
+		return daySalesRound;
+	}
+
+	public void setDaySalesRound(String daySalesRound) {
+		this.daySalesRound = daySalesRound;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -1077,6 +1086,7 @@ public class ReportDaySales implements Serializable{
 				", totalHour='" + totalHour + '\'' +
 				", reportNoStr='" + reportNoStr + '\'' +
 				", promotionTotal='" + promotionTotal + '\'' +
+				", daySalesRound='" + daySalesRound + '\'' +
 				'}';
 	}
 }

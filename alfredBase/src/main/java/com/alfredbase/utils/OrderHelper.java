@@ -365,6 +365,8 @@ public class OrderHelper {
 					}
 				}
 			}
+
+			order.setOrderRound(BH.formatRound(BH.getBD(discount)).toString());
 			order.setDiscountAmount(BH.getBD(discount).toString());
 	}
 	// 只有修改orderDiscount的时候才能调用这个方法
@@ -848,6 +850,8 @@ public class OrderHelper {
 				}
 			}
 		}
+
+		order.setOrderRound(BH.add(BH.getBD(order.getOrderRound()),BH.formatRound(BH.getBD(tax)),false).toString());
 		order.setTaxAmount(BH.getBD(tax).toString());
 	}
 

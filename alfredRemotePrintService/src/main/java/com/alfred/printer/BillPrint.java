@@ -662,7 +662,7 @@ public class BillPrint extends PrintJob {
                 new TypeToken<Map<String, String>>() {
                 }.getType());
         PrintData totalPrint = new PrintData();
-        String totalStr = StringUtil.padLeft(BH.getBD(roundMap.get("Total")).toString(),
+        String totalStr = StringUtil.padLeft(BH.formatMoney(BH.getBD(roundMap.get("Total")).toString()).toString(),
                 this.FIXED_COL4_TOTAL);
         String totaling = PrintService.instance.getResources().getString(R.string.total_) + currencySymbol + totalStr + reNext;
         totalPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -673,7 +673,7 @@ public class BillPrint extends PrintJob {
         // promotion
         if(!TextUtils.isEmpty(promotion)) {
             PrintData promotionPrint = new PrintData();
-            String promotionStr = StringUtil.padLeft(BH.getBD(promotion).toString(),
+            String promotionStr = StringUtil.padLeft(promotion,
                     this.FIXED_COL4_TOTAL);
             String promotiontTotal = PrintService.instance.getResources().getString(R.string.promotion_print) + currencySymbol + promotionStr + reNext;
             promotionPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -683,7 +683,7 @@ public class BillPrint extends PrintJob {
         }
         // rounding
         PrintData roundingPrint = new PrintData();
-        String roundingStr = StringUtil.padLeft(BH.getBD(roundMap.get("Rounding")).toString(),
+        String roundingStr = StringUtil.padLeft(BH.formatMoney(BH.getBD(roundMap.get("Rounding")).toString()).toString(),
                 this.FIXED_COL4_TOTAL);
         String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + currencySymbol + roundingStr + reNext;
         roundingPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -724,7 +724,7 @@ public class BillPrint extends PrintJob {
                     lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
                     toPrintStr = entry.getKey() + " : " + lable + reNext;
                 } else {
-                    lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
+                    lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
                     toPrintStr = entry.getKey() + " : " + currencySymbol + lable + reNext;
                 }
                 toPrint.setDataFormat(PrintData.FORMAT_TXT);

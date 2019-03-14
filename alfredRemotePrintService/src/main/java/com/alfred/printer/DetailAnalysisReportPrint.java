@@ -391,7 +391,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 			}
 			isFirst = false;
 			ReportPluDayItem amontReportPluDayItem = entry.getValue();
-			this.AddItem(amontReportPluDayItem.getItemMainCategoryName(), "", "", amontReportPluDayItem.getItemAmount(), 1);
+			this.AddItem(amontReportPluDayItem.getItemMainCategoryName(), "", "", BH.formatMoney(amontReportPluDayItem.getItemAmount()).toString(), 1);
 			this.addHortionalLine(this.charSize);
 			for (int j = 0; j < reportPluDayItems.size(); j++) {
 
@@ -506,7 +506,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 //			}
 		if (allQty != 0) {
 			this.addHortionalLine(this.charSize);
-			this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "", "" + allAmount, 1);
+			this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "",  BH.formatMoney(allAmount.toString()).toString(), 1);
 		}
 
 

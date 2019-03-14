@@ -1587,10 +1587,20 @@ public class DataHelper {
 
             db.execSQL("ALTER TABLE "
                     + TableNames.Order
-                    + " ADD COLUMN  promotion TEXT default ''");
+                    + " ADD COLUMN  promotion TEXT");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN promotionTotal TEXT");
 
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Order
+                    + " ADD COLUMN  orderRound TEXT");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.OrderDetail
+                    + " ADD COLUMN  orderDetailRound TEXT");
+
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN daySalesRound TEXT");
         }
     }
 }

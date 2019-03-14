@@ -7,6 +7,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.store.Store;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
@@ -24,15 +25,22 @@ public class BH {
 	private static final DecimalFormat threeFormat = new DecimalFormat("0.000");
 	private static final DecimalFormat fourFormat = new DecimalFormat("0.0000");// 运算工程中使用。
 	public static final DecimalFormat intFormat = new DecimalFormat("0");
-	private static DecimalFormat format = doubleFormat;
+	//private static DecimalFormat format = doubleFormat;
+	static DecimalFormat format;
 	private static boolean isDouble = true;
+	private static int type=2;
+//	private static int operatingType=100;
+
 	public static void initFormart(boolean isdouble){
-		if(isdouble){
-			format = doubleFormat;
-		}else{
-			format = intFormat;
-		}
-		isDouble = isdouble;
+//		if(isdouble){
+//			format = doubleFormat;
+//		}else{
+//			format = intFormat;
+//		}
+//		isDouble = isdouble;
+//		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 2);
+//		type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
+		format = new DecimalFormat(formatZero()+"");
 	}
 
 
@@ -46,38 +54,38 @@ public class BH {
 	 */
 	public static BigDecimal formatMoney(String string
 	) {
-		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
-		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
+		//Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
+	//	int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
 		if (CommonUtil.isNull(string))
 			return new BigDecimal("0.00");
 		BigDecimal value2 = null;
 		int money;
-		if (type == FORMAT_FRONT) {
+		if (type >=10) {
 			if (string.toString().contains(".")) {
 				money = Integer.valueOf(string.toString().substring(0, string.toString().indexOf(".")));
 			} else {
-				return value2;
+				money=Integer.valueOf(string.toString());
 			}
 			int r;
-			r = money % 100;
+			r = money % type;
 			money -= r;
-			if (r >= 50) {
-				money += 100;
+			if (r >= type/2) {
+				money += type;
 			}
 
 			return new BigDecimal(money);
 		} else {
 			value2 = new BigDecimal(string);
 			//return new BigDecimal(doubleFormat.format(value2));
-			return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return value2.setScale(type, BigDecimal.ROUND_HALF_UP);
 		}
 	}
 
 
 	public static BigDecimal formatMoney(Integer integer
 	) {
-		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
-		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
+//		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
+//		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
 		if (CommonUtil.isNull(integer))
 			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
 		BigDecimal value2 = null;
@@ -86,7 +94,7 @@ public class BH {
 			if (integer.toString().contains(".")) {
 				money = Integer.valueOf(integer.toString().substring(0, integer.toString().indexOf(".")));
 			} else {
-				return value2;
+				money= integer.intValue();
 			}
 			int r;
 			r = money % type;
@@ -99,10 +107,23 @@ public class BH {
 		} else {
 			value2 = new BigDecimal(integer);
 			//return new BigDecimal(doubleFormat.format(value2));
-			return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return value2.setScale(type, BigDecimal.ROUND_HALF_UP);
 		}
 	}
 
+
+	public static BigDecimal formatZero(
+	) {
+		BigDecimal newZero = BigDecimal.ZERO;
+		if (type<10){
+		BigDecimal zero = new BigDecimal(ParamConst.INT_ZERO);
+
+		newZero = newZero.add(zero.setScale(type+2, RoundingMode.HALF_UP));
+	}else {
+			newZero= new BigDecimal(ParamConst.DOUBLE_ZERO) ;
+		}
+		return newZero;
+	}
 
 	/**
 	 * 获取 格式后的等差
@@ -113,12 +134,24 @@ public class BH {
 	 * @return
 	 */
 
-	public static String formatRound(BigDecimal value
+	public static BigDecimal formatRound(BigDecimal value
 	) {
 		value=BH.sub(BH.formatMoney(value.toString()),value,true);
-		return value.toString();
+		return value;
 	}
 
+
+	public static BigDecimal formatOperation(BigDecimal value
+	) {
+		int money;
+		if(type<10){
+		value=	new BigDecimal(format.format(value));
+		}else {
+		format=	new DecimalFormat("0.00");
+		value=	new BigDecimal(format.format(value));
+		}
+		return value;
+	}
 
 	/**
 	 * 加法
@@ -128,17 +161,15 @@ public class BH {
 	 * @param needFormat
 	 * @return
 	 */
+
 	public static BigDecimal add(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
-		if (needFormat) {
+//		if (needFormat) {
 			return new BigDecimal(format.format(value1.add(value2)));
-		} else {
-			return value1.add(value2);
-		}
+//		} else {
+//			return value1.add(value2);
+//		}
 	}
-
-
-
 	/**
 	 * 减法
 	 * 
@@ -149,11 +180,11 @@ public class BH {
 	 */
 	public static BigDecimal sub(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
-		if (needFormat) {
+		//if (needFormat) {
 			return new BigDecimal(format.format(value1.subtract(value2)));
-		} else {
-			return value1.subtract(value2);
-		}
+//		} else {
+//			return value1.subtract(value2);
+//		}
 	}
 
 	/**
@@ -164,13 +195,14 @@ public class BH {
 	 * @param needFormat
 	 * @return
 	 */
+
 	public static BigDecimal mul(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
-		if (needFormat) {
+	//	if (needFormat) {
 			return new BigDecimal(format.format(value1.multiply(value2)));
-		} else {
-			return value1.multiply(value2);
-		}
+//		} else {
+//			return value1.multiply(value2);
+//		}
 	}
 
 	/**
@@ -183,11 +215,11 @@ public class BH {
 	 */
 	public static BigDecimal div(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
-		if (needFormat) {
+	//	if (needFormat) {
 			return new BigDecimal(format.format(value1.divide(value2,5)));
-		} else {
-			return value1.divide(value2, 5, BigDecimal.ROUND_HALF_UP);
-		}
+//		} else {
+//			return value1.divide(value2, 5, BigDecimal.ROUND_HALF_UP);
+//		}
 	}
 	/**
 	 * 除法
@@ -199,46 +231,82 @@ public class BH {
 	 */
 	public static BigDecimal divThirdFormat(BigDecimal value1, BigDecimal value2,
 			boolean needFormat) {
-		if (needFormat) {
+//		if (needFormat) {
 			return value1.divide(value2, 3, BigDecimal.ROUND_HALF_UP);
-		} else {
-			return value1.divide(value2, 5, BigDecimal.ROUND_HALF_UP);
-		}
+//		} else {
+//			return value1.divide(value2, 5, BigDecimal.ROUND_HALF_UP);
+//		}
 	}
+//
+//	public static BigDecimal getBD(Integer integer) {
+//		if (CommonUtil.isNull(integer))
+//			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+//		return new BigDecimal(format.format(new BigDecimal(integer)));
+//	}
+//
+//	public static BigDecimal getBD(String string) {
+//		if (CommonUtil.isNull(string))
+//			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+//		return new BigDecimal(format.format(new BigDecimal(string)));
+//	}
+//
+//	public static BigDecimal getBDNoFormat(String string){
+//		if (CommonUtil.isNull(string))
+//			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+//		return new BigDecimal(string);
+//	}
+//
+//	public static BigDecimal getBDThirdFormat(String string){
+//		if (CommonUtil.isNull(string))
+//			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+//		return new BigDecimal(threeFormat.format(new BigDecimal(string)));
+//	}
+//
+//	public static BigDecimal getBD(Double string) {
+//		if (CommonUtil.isNull(string))
+//			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+//		return new BigDecimal(format.format(new BigDecimal(string)));
+//	}
+//	public static BigDecimal getBD(BigDecimal bigDecimal) {
+//		if (CommonUtil.isNull(bigDecimal))
+//			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+//		return new BigDecimal(format.format(bigDecimal));
+//	}
+
 
 	public static BigDecimal getBD(Integer integer) {
 		if (CommonUtil.isNull(integer))
-			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
-		return new BigDecimal(format.format(new BigDecimal(integer)));
+			return formatZero();
+		return new BigDecimal(integer);
 	}
 
 	public static BigDecimal getBD(String string) {
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
-		return new BigDecimal(format.format(new BigDecimal(string)));
+			return formatZero();
+		return formatOperation(new BigDecimal(string));
 	}
-	
+
 	public static BigDecimal getBDNoFormat(String string){
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+			return formatZero();
 		return new BigDecimal(string);
 	}
-	
+
 	public static BigDecimal getBDThirdFormat(String string){
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
-		return new BigDecimal(threeFormat.format(new BigDecimal(string)));
+			return formatZero();
+		return formatOperation(new BigDecimal(string));
 	}
-	
+
 	public static BigDecimal getBD(Double string) {
 		if (CommonUtil.isNull(string))
-			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
-		return new BigDecimal(format.format(new BigDecimal(string)));
+			return formatZero();
+		return formatOperation(new BigDecimal(string));
 	}
 	public static BigDecimal getBD(BigDecimal bigDecimal) {
 		if (CommonUtil.isNull(bigDecimal))
-			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
-		return new BigDecimal(format.format(bigDecimal));
+			return formatZero();
+		return formatOperation(bigDecimal);
 	}
 
 	/**
@@ -249,11 +317,11 @@ public class BH {
 	 * @return
 	 */
 	public static BigDecimal abs(BigDecimal value1,boolean needFormat) {
-		if (needFormat) {
+//		if (needFormat) {
 			return new BigDecimal(format.format(value1.abs()));
-		} else {
-			return value1.abs();
-		}
+//		} else {
+//			return value1.abs();
+//		}
 	}
 	/**
 	 * 比较大小

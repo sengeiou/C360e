@@ -2166,9 +2166,11 @@ public class ReportObjectFactory {
 		BigDecimal inclusiveTaxAmt = BH.getBD(ParamConst.DOUBLE_ZERO);
 		BigDecimal takeawaySales = BH.getBD(ParamConst.DOUBLE_ZERO);
 		BigDecimal takeawayTax = BH.getBD(ParamConst.DOUBLE_ZERO);
+		BigDecimal daySalesRound = BH.getBD(ParamConst.DOUBLE_ZERO);
 		int takeawayQty = 0;
 		for (int orderIndex = 0; orderIndex < orderList.size(); orderIndex++) {
 			Order order = orderList.get(orderIndex);
+			daySalesRound=BH.add(daySalesRound,BH.getBD(order.getOrderRound()),true);
 			// itemSalesDicimal = BH.add(itemSalesDicimal,
 			// BH.getBD(order.getSubTotal()), true);
 			orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(order);
@@ -2470,6 +2472,7 @@ public class ReportObjectFactory {
 		}
 		reportDaySales.setReportNoStr(reportNoStr);
 		reportDaySales.setPromotionTotal(promotionTotal);
+		reportDaySales.setDaySalesRound(daySalesRound.toString());
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 
 		//-----------------------分割线----------------------------

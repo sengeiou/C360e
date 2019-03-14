@@ -216,6 +216,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         ReportDaySales reportData = gson.fromJson(report, ReportDaySales.class);
+        ObjectFactory.getInstance().getPrintReportDaySales(reportData);
         ArrayList<ReportDayTax> taxData = gson.fromJson(tax, new TypeToken<ArrayList<ReportDayTax>>() {
         }.getType());
         List<ReportDayPayment> reportDayPayments = gson.fromJson(customPayment, new TypeToken<List<ReportDayPayment>>() {
@@ -954,10 +955,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     ////////////// Bill Summary
-                    String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
-                    String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
-                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
-                   String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                    String subTotal = theOrder.getSubTotal().toString();
+                    String discount = theOrder.getDiscountAmount().toString();
+                    String grandTotal = theOrder.getTotal().toString();
+
+//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
+                    String promotionTotal = theOrder.getPromotion().toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
@@ -1082,10 +1085,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     ////////////// Bill Summary
-                    String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
-                    String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
-                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
-                    String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                    String subTotal = theOrder.getSubTotal().toString();
+                    String discount = theOrder.getDiscountAmount().toString();
+                    String grandTotal = theOrder.getTotal().toString();
+
+//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
+                    String promotionTotal = theOrder.getPromotion().toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
@@ -1098,8 +1103,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             switch (printReceiptInfo.getPaymentTypeId()) {
                                 case ParamConst.SETTLEMENT_TYPE_CASH:
                                     if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.cash_), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.getBD(printReceiptInfo.getCashChange()).toString());
+                                        stmt.put(PrintService.instance.getResources().getString(R.string.cash_), BH.formatMoney(BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString()).toString());
+                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), printReceiptInfo.getCashChange().toString());
                                         isCashSettlement = true;
                                     }
                                     if (isCashSettlement && i == 0) {
@@ -2104,10 +2109,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     ////////////// Bill Summary
-                    String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
-                    String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
-                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
-                    String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                    String subTotal = theOrder.getSubTotal().toString();
+                    String discount = theOrder.getDiscountAmount().toString();
+                    String grandTotal = theOrder.getTotal().toString();
+
+//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
+                    String promotionTotal = theOrder.getPromotion().toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
 
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
@@ -2261,8 +2268,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 switch (printReceiptInfo.getPaymentTypeId()) {
                                     case ParamConst.SETTLEMENT_TYPE_CASH:
                                         if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-                                            stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
-                                            stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.getBD(printReceiptInfo.getCashChange()).toString());
+                                            stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.formatMoney(BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString()).toString());
+                                            stmt.put(PrintService.instance.getResources().getString(R.string.changes), printReceiptInfo.getCashChange().toString());
                                             isCashSettlement = true;
                                         }
                                         if (isCashSettlement && i == 0) {
@@ -2402,6 +2409,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             //  billPrint.printDeliveryList(" ", appOrder.getAddress().toString(), 1);
 //                                billPrint.AddAddress(appOrder.getAddress());
 //                            }
+
             if (j != size - 1) {
                 billPrint.addHor();
             }
@@ -2425,6 +2433,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         Order theOrder = gson.fromJson(order, Order.class);
+        ObjectFactory.getInstance().getPrintOrder(theOrder);
         String name = prtDevice.getName();
 
         ArrayList<PrintOrderItem> printOrderItemList = gson.fromJson(orderDetail,
@@ -2711,12 +2720,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //						}
                     }
                     ////////////// Bill Summary
-                    String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
-                    String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
-                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    String subTotal = theOrder.getSubTotal().toString();
+                    String discount = theOrder.getDiscountAmount().toString();
+                    String grandTotal = theOrder.getTotal().toString();
 
 //                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
-                    String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                    String promotionTotal = theOrder.getPromotion().toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
@@ -2730,8 +2739,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             switch (printReceiptInfo.getPaymentTypeId()) {
                                 case ParamConst.SETTLEMENT_TYPE_CASH:
                                     if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.getBD(printReceiptInfo.getCashChange()).toString());
+                                        stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.formatMoney(BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString()).toString());
+                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), printReceiptInfo.getCashChange().toString());
                                         isCashSettlement = true;
                                     }
                                     if (isCashSettlement && i == 0) {
