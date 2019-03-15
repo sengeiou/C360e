@@ -815,6 +815,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
         Order theOrder = gson.fromJson(order, Order.class);
+        ObjectFactory.getInstance().getPrintOrder(theOrder);
         Log.d(TAG, prtTitle + "prinjsontBill:" + theOrder + "-----" + orderDetail);
         String name = prtDevice.getName();
 
@@ -915,8 +916,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
 
                         for (PrintOrderItem item : map.values()) {
-                            billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
+                                    item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight());
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -953,7 +954,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //							}
 //						}
                     }
-
                     ////////////// Bill Summary
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
@@ -1045,8 +1045,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
 
                         for (PrintOrderItem item : map.values()) {
-                            billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
+                                    item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight());
+
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -2069,8 +2070,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
 
                         for (PrintOrderItem item : map.values()) {
-                            billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
+                                    item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight());
+
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -2211,8 +2213,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             }
 
                             for (PrintOrderItem item : map.values()) {
-                                billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                        item.getQty(), item.getAmount(), 1, item.getWeight());
+                                billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
+                                        item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight());
                                 //getModifiersByDetailId()
                                 ////
                                 if (orderModifiers != null) {
@@ -2346,7 +2348,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 }
                                 if (!TextUtils.isEmpty(paymentType)) {
                                     stmt.put(paymentType,
-                                            BH.getBD(printReceiptInfo.getPaidAmount()).toString());
+                                            BH.formatMoney(BH.getBD(printReceiptInfo.getPaidAmount()).toString()).toString());
                                 }
                                 if (!TextUtils
                                         .isEmpty(printReceiptInfo.getCardNo())) {
@@ -2545,8 +2547,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
 
                         for (PrintOrderItem item : map.values()) {
-                            billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
+                                    item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight());
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -2680,8 +2682,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
 
                         for (PrintOrderItem item : map.values()) {
-                            billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
+                                    item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight());
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {

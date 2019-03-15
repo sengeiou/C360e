@@ -112,7 +112,7 @@ public class PamentMethodAdapter extends BaseAdapter{
             if(p.getPartAcount()>0) {
                 holder.symbol.setVisibility(View.VISIBLE);
                 holder.money.setVisibility(View.VISIBLE);
-                holder.money.setText(p.getPartAcount() + "");
+                holder.money.setText(BH.formatMoney(String.valueOf(p.getPartAcount())).toString());
             }else {
                 holder.symbol.setVisibility(View.GONE);
                 holder.money.setVisibility(View.GONE);
@@ -121,7 +121,6 @@ public class PamentMethodAdapter extends BaseAdapter{
             holder.pay.setText("All-pay");
             holder.symbol.setVisibility(View.GONE);
             holder.money.setVisibility(View.GONE);
-
 
 
         }

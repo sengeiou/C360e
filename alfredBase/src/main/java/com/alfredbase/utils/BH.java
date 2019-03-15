@@ -28,7 +28,7 @@ public class BH {
 	//private static DecimalFormat format = doubleFormat;
 	static DecimalFormat format;
 	private static boolean isDouble = true;
-	private static int type=2;
+	private static int type=100;
 //	private static int operatingType=100;
 
 	public static void initFormart(boolean isdouble){
@@ -119,8 +119,10 @@ public class BH {
 		BigDecimal zero = new BigDecimal(ParamConst.INT_ZERO);
 
 		newZero = newZero.add(zero.setScale(type+2, RoundingMode.HALF_UP));
-	}else {
-			newZero= new BigDecimal(ParamConst.DOUBLE_ZERO) ;
+	}else if(type==10){
+			newZero= new BigDecimal("0.0") ;
+		}else {
+			newZero= new BigDecimal("0") ;
 		}
 		return newZero;
 	}
@@ -146,10 +148,15 @@ public class BH {
 		int money;
 		if(type<10){
 		value=	new BigDecimal(format.format(value));
+		}else
+		if(type==10){
+			format=	new DecimalFormat("0.0");
+			value=	new BigDecimal(format.format(value));
 		}else {
-		format=	new DecimalFormat("0.00");
-		value=	new BigDecimal(format.format(value));
+			format=	new DecimalFormat("0");
+			value=	new BigDecimal(format.format(value));
 		}
+
 		return value;
 	}
 
