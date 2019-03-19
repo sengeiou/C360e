@@ -634,7 +634,7 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
         public void notifyDataSetChanged(List<OrderDetail> orderDetailList) {
             selfOrderDetailList.clear();
             selfOrderDetailList.addAll(orderDetailList);
-            super.notifyDataSetChanged();
+            notifyDataSetChanged();
         }
 
         @Override

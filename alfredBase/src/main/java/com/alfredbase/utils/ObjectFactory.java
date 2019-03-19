@@ -229,7 +229,8 @@ public class ObjectFactory {
     public Order cpOrderInfoForKPMG(Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
                                     List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
                                     List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements,
-                                    List<RoundAmount> roundAmounts, String cardNum, long business, int sessionStatus) throws Exception {
+                                    List<RoundAmount> roundAmounts, String cardNum, long business, int sessionStatus,
+                                    int tableId) throws Exception {
 
         synchronized (lock_order) {
             if (subOrder != null) {
@@ -240,6 +241,7 @@ public class ObjectFactory {
                 subOrder.setUpdateTime(System.currentTimeMillis());
                 subOrder.setSessionStatus(sessionStatus);
                 subOrder.setBusinessDate(business);
+                subOrder.setTableId(tableId);
                 OrderSQL.update(subOrder);
             }
 
@@ -250,6 +252,7 @@ public class ObjectFactory {
                 orderSplit.setOrderId(subOrder.getId());
                 orderSplit.setCreateTime(System.currentTimeMillis());
                 orderSplit.setUpdateTime(System.currentTimeMillis());
+                orderSplit.setTableId(tableId);
                 OrderSplitSQL.update(orderSplit);
                 orderSplitMap.put(oldId, orderSplit.getId());
             }
