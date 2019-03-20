@@ -27,8 +27,9 @@ public class BH {
 	public static final DecimalFormat intFormat = new DecimalFormat("0");
 	//private static DecimalFormat format = doubleFormat;
 	static DecimalFormat format;
+    static DecimalFormat format1;
 	private static boolean isDouble = true;
-	private static int type=100;
+	private static String  type="100" ;
 //	private static int operatingType=100;
 
 	public static void initFormart(boolean isdouble){
@@ -60,24 +61,25 @@ public class BH {
 			return new BigDecimal("0.00");
 		BigDecimal value2 = null;
 		int money;
-		if (type >=10) {
-			if (string.toString().contains(".")) {
-				money = Integer.valueOf(string.toString().substring(0, string.toString().indexOf(".")));
-			} else {
-				money=Integer.valueOf(string.toString());
-			}
+		if (Double.valueOf(type) >=10) {
+            if (string.contains(".")) {
+                money = Integer.valueOf(string.substring(0, string.indexOf(".")));
+            } else {
+                money=Integer.valueOf(string);
+            }
 			int r;
-			r = money % type;
+			r = (int) (money % Double.valueOf(type));
 			money -= r;
-			if (r >= type/2) {
-				money += type;
+			if (r >= Double.valueOf(type)/2) {
+				money += Double.valueOf(type);
 			}
 
 			return new BigDecimal(money);
 		} else {
-			value2 = new BigDecimal(string);
-			//return new BigDecimal(doubleFormat.format(value2));
-			return value2.setScale(type, BigDecimal.ROUND_HALF_UP);
+            format1=   new DecimalFormat(type);
+            //value2 = new BigDecimal(string);
+            //return new BigDecimal(doubleFormat.format(value2));
+            return  new BigDecimal(format1.format(new BigDecimal(string)));
 		}
 	}
 
@@ -90,44 +92,51 @@ public class BH {
 			return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
 		BigDecimal value2 = null;
 		int money;
-		if (type >=10) {
+		if (Double.valueOf(type) >=10) {
 			if (integer.toString().contains(".")) {
 				money = Integer.valueOf(integer.toString().substring(0, integer.toString().indexOf(".")));
 			} else {
 				money= integer.intValue();
 			}
 			int r;
-			r = money % type;
+			r = (int) (money % Double.valueOf(type));
 			money -= r;
-			if (r >= type/2) {
-				money += type;
+			if (r >= Double.valueOf(type)/2) {
+				money += Double.valueOf(type);
 			}
 
 			return new BigDecimal(money);
 		} else {
-			value2 = new BigDecimal(integer);
-			//return new BigDecimal(doubleFormat.format(value2));
-			return value2.setScale(type, BigDecimal.ROUND_HALF_UP);
+//			value2 = new BigDecimal(integer);
+//			//return new BigDecimal(doubleFormat.format(value2));
+//			return value2.setScale(type, BigDecimal.ROUND_HALF_UP);
+            format1=   new DecimalFormat(type);
+            return  new BigDecimal(format1.format(new BigDecimal(integer)));
 		}
 	}
 
 
-	public static BigDecimal formatZero(
-	) {
-		BigDecimal newZero = BigDecimal.ZERO;
-		if (type<10){
-		BigDecimal zero = new BigDecimal(ParamConst.INT_ZERO);
+    public static BigDecimal formatZero(
+    ) {
+        BigDecimal newZero = BigDecimal.ZERO;
+        if (Double.valueOf(type)<10){
+            String typeString=String.valueOf(type);
+            if(typeString.contains(".")){
+                newZero=new BigDecimal(typeString+"00");
+            }else {
+                newZero=new BigDecimal(typeString+".00");
+            }
+//			//	newZero = newZero.add(zero.setScale(type+2, RoundingMode.HALF_UP));
+        }else if(Double.valueOf(type)==10){
+            newZero= new BigDecimal("0.0") ;
+        }else {
+            newZero= new BigDecimal("0") ;
+        }
+        return newZero;
+    }
 
-		newZero = newZero.add(zero.setScale(type+2, RoundingMode.HALF_UP));
-	}else if(type==10){
-			newZero= new BigDecimal("0.0") ;
-		}else {
-			newZero= new BigDecimal("0") ;
-		}
-		return newZero;
-	}
 
-	/**
+    /**
 	 * 获取 格式后的等差
 	 *
 	 * @param value
@@ -145,18 +154,16 @@ public class BH {
 
 	public static BigDecimal formatOperation(BigDecimal value
 	) {
-		int money;
-		if(type<10){
+		if(Double.valueOf(type)<10){
 		value=	new BigDecimal(format.format(value));
 		}else
-		if(type==10){
+		if(Double.valueOf(type)==10){
 			format=	new DecimalFormat("0.0");
 			value=	new BigDecimal(format.format(value));
 		}else {
 			format=	new DecimalFormat("0");
 			value=	new BigDecimal(format.format(value));
 		}
-
 		return value;
 	}
 

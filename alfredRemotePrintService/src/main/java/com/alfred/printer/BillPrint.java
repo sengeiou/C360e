@@ -579,7 +579,7 @@ public class BillPrint extends PrintJob {
 
 
     public void addOrderModifier(String itemName, int scale, String price) {
-        BigDecimal bigDecimal = BH.getBD(price);
+        BigDecimal bigDecimal = BH.formatMoney(price);
         PrintData orderMod = new PrintData();
         orderMod.setDataFormat(PrintData.FORMAT_TXT);
         orderMod.setFontsize(scale);

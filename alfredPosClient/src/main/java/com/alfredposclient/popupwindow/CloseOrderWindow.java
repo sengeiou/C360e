@@ -2017,9 +2017,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         tv_part_total_amount_num
                 .setText(BH.formatMoney(num).toString());
         BigDecimal cashNum = BH.getBD(num);
-      //  BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+        BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
 
-        BigDecimal remainTotalAfterRound=BH.formatMoney(remainTotal.toString());
+         remainTotalAfterRound=BH.formatMoney(remainTotalAfterRound.toString());
         int change = cashNum.compareTo(remainTotalAfterRound);
         if (change >= 0) {
             BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
@@ -2055,8 +2055,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             case ParamConst.SETTLEMENT_TYPE_CASH: {
                 String showStr = tv_total_amount_num.getText().toString();
                 BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
-              //  BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
-                BigDecimal remainTotalAfterRound=BH.formatMoney(remainTotal.toString());
+                BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+               remainTotalAfterRound=BH.formatMoney(remainTotalAfterRound.toString());
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
                     showStr = remainTotalAfterRound.toString();
                 } else {

@@ -337,7 +337,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
         if (App.countryCode != ParamConst.CHINA) {
             if (BH.getBD(reportDaySales.getPaypalpay()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.paypal), reportDaySales.getPaypalpayQty() == null ? "0" : reportDaySales.getPaypalpayQty().toString(),
-                        BH.getBD(reportDaySales.getPaypalpay()).toString(), 1);
+                        BH.formatMoney(reportDaySales.getPaypalpay()).toString(), 1);
             if (BH.getBD(reportDaySales.getStoredCard()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.stored_card_use), reportDaySales.getStoredCardQty() == null ? "0" : reportDaySales.getStoredCardQty().toString(),
                         BH.formatMoney(BH.getBD(reportDaySales.getStoredCard()).toString()).toString(), 1);

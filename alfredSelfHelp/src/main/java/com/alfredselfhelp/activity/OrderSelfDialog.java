@@ -227,7 +227,7 @@ public class OrderSelfDialog extends Dialog{
 
     public void notifyAdapter(){
         if (totalStr != null && total != null) {
-            total.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(totalStr));
+            total.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(totalStr));
         }
         if(adapter != null) {
             adapter.notifyDataSetChanged();
