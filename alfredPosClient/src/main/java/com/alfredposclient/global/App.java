@@ -2942,7 +2942,7 @@ public class App extends BaseApplication {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
+                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
             }
         }).start();
         if (getTopActivity() instanceof MainPage) {
