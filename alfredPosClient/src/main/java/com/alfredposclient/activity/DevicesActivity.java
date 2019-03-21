@@ -22,6 +22,7 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.sql.PrinterSQL;
@@ -577,7 +578,10 @@ public class DevicesActivity extends BaseActivity {
 
         devices_revenueCenter_tv = (TextView) findViewById(R.id.devices_revenueCenter_tv);
         if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
-            devices_revenueCenter_tv.setText(App.instance.getMainPosInfo().getName());
+            MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
+            if(mainPosInfo != null) {
+                devices_revenueCenter_tv.setText(mainPosInfo.getName());
+            }
         } else {
             devices_revenueCenter_tv.setText("");
         }

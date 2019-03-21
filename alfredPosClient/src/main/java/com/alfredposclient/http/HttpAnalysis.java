@@ -391,7 +391,7 @@ public class HttpAnalysis {
 					object.getString("pamentMethodList"),
 					new TypeToken<ArrayList<PaymentMethod>>() {
 					}.getType());
-			CoreData.getInstance().setPamentMethodList(pamentMethodList);
+			CoreData.getInstance().setPamentMethodList(pamentMethodList == null ? new ArrayList<PaymentMethod> () : pamentMethodList);
 			PaymentMethodSQL.deleteAllPaymentMethod();
 			PaymentMethodSQL.addPaymentMethod(pamentMethodList);
 
