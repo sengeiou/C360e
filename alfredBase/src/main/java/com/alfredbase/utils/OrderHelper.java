@@ -31,6 +31,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.PromotionOrderSQL;
 import com.alfredbase.store.sql.PromotionSQL;
+import com.alfredbase.store.sql.PromotionWeekSQL;
 import com.nostra13.universalimageloader.utils.L;
 
 import java.math.BigDecimal;
@@ -520,11 +521,9 @@ public class OrderHelper {
             {
 
                 case  1:
-
                subTotal=  promotionAndItemPrice(order,orderDetails,promotion,subTotal);
                     break;
                 case  2:
-
                  subTotal=promotionAndItemFree(order,orderDetails,promotion,subTotal);
                  break;
                 case  3:
@@ -1098,8 +1097,8 @@ public class OrderHelper {
 
 	public static boolean hasWeek(Integer id) {
 		long time = System.currentTimeMillis();
-		for (PromotionWeek promotionWeek : CoreData.getInstance()
-				.getPromotionWeeks()) {
+		List<PromotionWeek>	promotionWeeks= PromotionWeekSQL.getAllPromotionWeek();
+		for (PromotionWeek promotionWeek : promotionWeeks) {
 			if (promotionWeek.getPromotionDateInfoId().intValue() == id
 					.intValue()) {
 

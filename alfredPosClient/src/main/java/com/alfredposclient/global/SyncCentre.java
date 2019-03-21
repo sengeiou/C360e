@@ -268,6 +268,10 @@ public class SyncCentre {
         if (type.equals(PushMessage.STOCK)) {
             getRemainingStock(context, handler, MODE_PUSH_SYNC);
         }
+        if (type.equals(PushMessage.PROMOTION)) {
+            HttpAPI.getPromotionInfo (context,
+                    getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_FIRST_SYNC);
+        }
 
         if (type.equals(PushMessage.PAYMENT_METHOD)) {
             HttpAPI.mediaSync(context,
@@ -390,7 +394,7 @@ public class SyncCentre {
     // Backend Server IP
     private String getAbsoluteUrl(String relativeUrl) {
         if (App.instance.isDebug) {
-			return "http://172.16.3.196:8083/alfred-api/" + relativeUrl;
+			return "http://172.16.3.234:8086/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
          //  return "http://192.168.20.103:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
