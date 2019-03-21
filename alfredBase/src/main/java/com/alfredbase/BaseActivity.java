@@ -104,7 +104,22 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
         if(train==1)
         {
-            FloatActionController.getInstance().startMonkServer(this);
+         //   FloatActionController.getInstance().startMonkServer(this);
+
+            if (Build.VERSION.SDK_INT >= 23) {
+                if(!Settings.canDrawOverlays(getApplicationContext())) {
+                    //启动Activity让用户授权
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                    startActivity(intent);
+                    return;
+                } else {
+                    FloatActionController.getInstance().startMonkServer(this);
+                    //执行6.0以上绘制代码
+                }
+            } else {
+                FloatActionController.getInstance().startMonkServer(this);
+                //执行6.0以下绘制代码
+            }
 
            // FloatActionController.getInstance().registerOnTrainListener(this);
             FloatActionController.getInstance().registerOnTrainListener(new OnTrainListener() {

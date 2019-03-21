@@ -1633,7 +1633,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
            if(train==-1){
           // 0  正常模式， 1 培训模式
-			   DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
+			   DialogFactory.commonTwoBtnDialog(context, "",
 					   "Opening Training Mode？",
 					   context.getResources().getString(R.string.cancel),
 					   context.getResources().getString(R.string.ok),
