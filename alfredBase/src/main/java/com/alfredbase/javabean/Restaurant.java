@@ -60,7 +60,8 @@ public class Restaurant implements Serializable{
 	
 	private String options; // customized fields shown at receipt header
 	
-	private String footerOptions; //customized fields shown at receipt footer 
+	private String footerOptions; //customized fields shown at receipt footer
+
 
 	public Restaurant() {
 	}

@@ -667,7 +667,7 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(PushMessage.HAPPY_HOURS);
+                                            map.remove(PushMessage.PROMOTION);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
                                             App.instance.setPushMsgMap(map);

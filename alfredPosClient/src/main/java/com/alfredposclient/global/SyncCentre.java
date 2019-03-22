@@ -270,7 +270,7 @@ public class SyncCentre {
         }
         if (type.equals(PushMessage.PROMOTION)) {
             HttpAPI.getPromotionInfo (context,
-                    getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_FIRST_SYNC);
+                    getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_PUSH_SYNC);
         }
 
         if (type.equals(PushMessage.PAYMENT_METHOD)) {
