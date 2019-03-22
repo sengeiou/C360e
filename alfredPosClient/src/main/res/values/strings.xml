@@ -399,7 +399,7 @@
     <string name="time">Time</string>
     <string name="paid">Paid</string>
     <string name="making">MAKING</string>
-    <string name="confirmed"> ACCEPTED</string>
+    <string name="confirmed">ACCEPTED</string>
 
     <string name="prepared">Prepared</string>
     <string name="preparing">In progress</string>
