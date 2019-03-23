@@ -730,7 +730,7 @@ public class HttpAnalysis {
 				}
 //				App.instance.appOrderShowDialog(false, appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
 			}
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
