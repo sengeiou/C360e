@@ -384,6 +384,7 @@
     <string name="check">下单</string>
     <string name="paid">已支付</string>
     <string name="making">备餐中</string>
+    <string name="confirmed"> 已确认</string>
     <string name="prepared">已备餐</string>
     <string name="preparing">备餐中</string>
     <string name="finish">已完成</string>
