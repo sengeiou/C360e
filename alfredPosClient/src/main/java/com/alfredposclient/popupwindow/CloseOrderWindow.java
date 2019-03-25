@@ -176,7 +176,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     VerifyDialog verifyDialog;
 
     boolean isFirstClickPart;
-
+    private String referenceNum;
 
     PaymentMethod paymentMethod = new PaymentMethod();
 
@@ -320,7 +320,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         contentView.findViewById(R.id.iv_JCB).setOnClickListener(this);
         contentView.findViewById(R.id.iv_AMERICAN).setOnClickListener(this);
         contentView.findViewById(R.id.iv_dinersclub).setOnClickListener(this);
-
+        contentView.findViewById(R.id.tv_halal).setOnClickListener(this);
 
         contentView.findViewById(R.id.tv_BILL_on_HOLD).setOnClickListener(this);
         contentView.findViewById(R.id.tv_VOID).setOnClickListener(this);
@@ -1124,7 +1124,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         if (isShowing()) {
             return;
         }
-
+        referenceNum = "";
         App.instance.setClosingOrderId(order.getId());
         this.orderBill = orderBill;
         this.startX = startX;
@@ -1503,6 +1503,24 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                     mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
                     mediaDialog.setPaymentClickListener(this);
+                    break;
+                case R.id.tv_halal: {
+                    if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+                        showPaymentReminder();
+                        return;
+                    }
+                    String payHalalOrderId = order.getRestId()+""+order.getRevenueId()+""+orderBill.getBillNo();
+                    String url = String.format("https://my.payhalal.my/qr.php?txt=%s|%s|%s","1001",order.getTotal(),payHalalOrderId);
+                    DialogFactory.commonTwoBtnQRDialog(parent, url, "Back", "Paied", null, new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            referenceNum = (String) v.getTag();
+                            viewTag = ParamConst.SETTLEMENT_TYPE_HALAL;
+                            paymentTypeId = ParamConst.SETTLEMENT_TYPE_HALAL;
+                            clickEnterAction();
+                        }
+                    });
+                }
                     break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
@@ -2562,6 +2580,25 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 }
             }
             break;
+            case ParamConst.SETTLEMENT_TYPE_HALAL: {
+                PaymentSQL.addPayment(payment);
+                PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+                        .getPaymentSettlement(payment, paymentTypeId,
+                                order.getTotal());
+                PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+                payment_amount = remainTotal;
+                paymentType = viewTag;
+                order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                OrderSQL.update(order);
+                AlipaySettlement alipaySettlement = ObjectFactory.getInstance().getAlipaySettlement(payment, paymentSettlement, referenceNum, "");
+                if (newPaymentMapList != null) {
+                    Map<String, Object> paymentMap = new HashMap<String, Object>();
+                    paymentMap.put("newPaymentSettlement", paymentSettlement);
+                    paymentMap.put("newSubPaymentSettlement", alipaySettlement);
+                    newPaymentMapList.add(paymentMap);
+                }
+            }
+                break;
             default:
                 break;
         }

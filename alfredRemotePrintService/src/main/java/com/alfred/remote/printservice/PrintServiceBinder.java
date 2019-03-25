@@ -1061,6 +1061,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                case ParamConst.SETTLEMENT_TYPE_EZLINK:
                                    paymentType = "EZ-Link";
                                    break;
+                               case ParamConst.SETTLEMENT_TYPE_HALAL:
+                                   paymentType = "Pay Halal";
+                                   break;
                                case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                    paymentType = PrintService.instance.getResources().getString(R.string.paypal);
                                    break;
@@ -2234,6 +2237,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     case ParamConst.SETTLEMENT_TYPE_EZLINK:
                                         paymentType = "EZ-Link";
                                         break;
+                                    case ParamConst.SETTLEMENT_TYPE_HALAL:
+                                        paymentType = "Pay Halal";
+                                        break;
                                     case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                         paymentType = PrintService.instance.getResources().getString(R.string.paypal);
                                         break;
@@ -2697,6 +2703,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_EZLINK:
                                     paymentType = "EZ-Link";
+                                    break;
+                                case ParamConst.SETTLEMENT_TYPE_HALAL:
+                                    paymentType = "Pay Halal";
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                     paymentType = PrintService.instance.getResources().getString(R.string.paypal);

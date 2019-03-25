@@ -1,7 +1,5 @@
 package com.alfred.printer;
 
-import android.text.TextUtils;
-
 import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
@@ -11,7 +9,6 @@ import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
-import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.utils.BH;
 
 import java.io.UnsupportedEncodingException;
@@ -383,6 +380,10 @@ public class DaySalesReportPrint extends ReportBasePrint {
         if (BH.getBD(reportDaySales.getVoucher()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
             this.addItem(PrintService.instance.getResources().getString(R.string.voucher), reportDaySales.getVoucherQty().toString(),
                     BH.getBD(reportDaySales.getVoucher()).toString(), 1);
+        }
+        if(BH.getBD(reportDaySales.getPayHalal()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
+            this.addItem("Pay Halal", reportDaySales.getPayHalalQty().toString(),
+                    BH.getBD(reportDaySales.getPayHalal()).toString(), 1);
         }
 
         BigDecimal totalCustomPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
