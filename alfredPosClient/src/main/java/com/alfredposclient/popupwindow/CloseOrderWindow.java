@@ -1511,7 +1511,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     }
                     String payHalalOrderId = order.getRestId()+""+order.getRevenueId()+""+orderBill.getBillNo();
                     String url = String.format("https://my.payhalal.my/qr.php?txt=%s|%s|%s","1001",order.getTotal(),payHalalOrderId);
-                    DialogFactory.commonTwoBtnQRDialog(parent, url, "Back", "Paied", null, new OnClickListener() {
+                    DialogFactory.commonTwoBtnQRDialog(parent, url, "Back", "Paid", null, new OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             referenceNum = (String) v.getTag();
