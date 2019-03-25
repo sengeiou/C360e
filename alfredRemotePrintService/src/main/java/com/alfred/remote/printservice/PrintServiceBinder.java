@@ -1062,7 +1062,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                    paymentType = "EZ-Link";
                                    break;
                                case ParamConst.SETTLEMENT_TYPE_HALAL:
-                                   paymentType = "Pay Halal";
+                                   paymentType = "PayHalal";
                                    break;
                                case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                    paymentType = PrintService.instance.getResources().getString(R.string.paypal);
@@ -2238,7 +2238,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                         paymentType = "EZ-Link";
                                         break;
                                     case ParamConst.SETTLEMENT_TYPE_HALAL:
-                                        paymentType = "Pay Halal";
+                                        paymentType = "PayHalal";
                                         break;
                                     case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                         paymentType = PrintService.instance.getResources().getString(R.string.paypal);
@@ -2705,7 +2705,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     paymentType = "EZ-Link";
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_HALAL:
-                                    paymentType = "Pay Halal";
+                                    paymentType = "PayHalal";
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                     paymentType = PrintService.instance.getResources().getString(R.string.paypal);

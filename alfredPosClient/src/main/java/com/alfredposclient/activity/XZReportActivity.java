@@ -538,7 +538,7 @@ public class XZReportActivity extends BaseActivity {
 
             if(BH.getBD(reportDaySales.getPayHalal()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
                 ReportDaySalesItem payhalal = new ReportDaySalesItem(context);
-                payhalal.setData("Pay Halal", reportDaySales.getPayHalalQty() + "",
+                payhalal.setData("PayHalal", reportDaySales.getPayHalalQty() + "",
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getPayHalal(),true);
                 ll_sales_total.addView(payhalal);
             }

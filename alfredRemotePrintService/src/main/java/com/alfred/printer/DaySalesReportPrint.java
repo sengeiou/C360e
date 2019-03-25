@@ -382,7 +382,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                     BH.getBD(reportDaySales.getVoucher()).toString(), 1);
         }
         if(BH.getBD(reportDaySales.getPayHalal()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
-            this.addItem("Pay Halal", reportDaySales.getPayHalalQty().toString(),
+            this.addItem("PayHalal", reportDaySales.getPayHalalQty().toString(),
                     BH.getBD(reportDaySales.getPayHalal()).toString(), 1);
         }
 
