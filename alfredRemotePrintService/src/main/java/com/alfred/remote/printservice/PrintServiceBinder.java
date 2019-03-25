@@ -782,7 +782,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     billPrint.AddHeader(theOrder.getIsTakeAway(), tableName, theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(),info,theOrder.getAppOrderId());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(),info,theOrder.getAppOrderId() == null ? 0:theOrder.getAppOrderId());
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
                             PrintService.instance.getResources().getString(R.string.qty),
@@ -916,7 +916,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                    billPrint.AddHeader(theOrder.getIsTakeAway(), tableName,
                            theOrder.getPersons(),
                            theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                           prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId());
+                           prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
                    billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                            PrintService.instance.getResources().getString(R.string.price),
                            PrintService.instance.getResources().getString(R.string.qty),
@@ -1951,7 +1951,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
 
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
@@ -2089,7 +2089,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             billPrint.AddOrderNo(orderNo);
                         billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                                 theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                                prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId());
+                                prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
 
                         billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                                 PrintService.instance.getResources().getString(R.string.price),
