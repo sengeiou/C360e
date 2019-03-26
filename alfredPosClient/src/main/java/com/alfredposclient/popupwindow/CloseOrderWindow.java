@@ -320,7 +320,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         contentView.findViewById(R.id.iv_JCB).setOnClickListener(this);
         contentView.findViewById(R.id.iv_AMERICAN).setOnClickListener(this);
         contentView.findViewById(R.id.iv_dinersclub).setOnClickListener(this);
-        contentView.findViewById(R.id.tv_halal).setOnClickListener(this);
+        contentView.findViewById(R.id.iv_halal).setOnClickListener(this);
 
         contentView.findViewById(R.id.tv_BILL_on_HOLD).setOnClickListener(this);
         contentView.findViewById(R.id.tv_VOID).setOnClickListener(this);
@@ -1504,13 +1504,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
                     mediaDialog.setPaymentClickListener(this);
                     break;
-                case R.id.tv_halal: {
+                case R.id.iv_halal: {
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
                         showPaymentReminder();
                         return;
                     }
                     String payHalalOrderId = order.getRestId()+""+order.getRevenueId()+""+orderBill.getBillNo();
-                    String url = String.format("https://my.payhalal.my/qr.php?txt=%s|%s|%s","1001",order.getTotal(),payHalalOrderId);
+                    String url = String.format("https://payhalal.me/qr/%s/%s/%s","1001",BH.getBD(order.getTotal()).toString(),payHalalOrderId);
                     DialogFactory.commonTwoBtnQRDialog(parent, url, "Back", "Paid", null, new OnClickListener() {
                         @Override
                         public void onClick(View v) {

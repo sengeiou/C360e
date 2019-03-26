@@ -150,17 +150,18 @@
             <!--android:scaleType="centerInside"-->
             <!--android:src="@drawable/alipay_selector" -->
             <!--android:visibility="invisible"/>-->
-        <TextView
-            android:id="@+id/tv_halal"
+
+        <ImageView
+            android:id="@+id/iv_halal"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/box_number_selector"
-            android:gravity="center"
-            android:text="PayHalal"
-            android:visibility="invisible"
-            android:textColor="@color/text_color_selector"
-            android:textSize="@dimen/text_size_big" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/payhalal_selector"
+            />
     </LinearLayout>
 
 </LinearLayout>
