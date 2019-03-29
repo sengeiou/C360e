@@ -62,15 +62,15 @@ public class SyncCentre {
             instance = new SyncCentre();
 
             httpClient = new AsyncHttpClient();
-            httpClient.addHeader("Connection", "close");
             httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
+            httpClient.addHeader("Keep-Alive", "30");
             httpClient.setTimeout(20 * 1000);
             syncHttpClient = new SyncHttpClient();
-            syncHttpClient.addHeader("Connection", "close");
+            syncHttpClient.addHeader("Keep-Alive", "30");
             syncHttpClient.setTimeout(20 * 1000);
             syncHttpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
             bigSyncHttpClient = new SyncHttpClient();
-            bigSyncHttpClient.addHeader("Connection", "close");
+            bigSyncHttpClient.addHeader("Keep-Alive", "30");
             bigSyncHttpClient.setTimeout(100 * 1000);
             bigSyncHttpClient.setMaxRetriesAndTimeout(0, 1 * 1000);
         }
@@ -393,9 +393,10 @@ public class SyncCentre {
         if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://192.168.20.103:8083/alfred-api/" + relativeUrl;
+            return "http://172.16.3.163:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
+//            return "http://172.16.3.163:8083/alfred-api/" + relativeUrl;
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125

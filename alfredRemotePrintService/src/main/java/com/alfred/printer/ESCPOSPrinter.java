@@ -254,6 +254,16 @@ public class ESCPOSPrinter {
 		out.write(tcmd);
 	}
 
+	public  void kickDrawerForHisense()  throws Exception {
+		byte[] tcmd = new byte[5];
+		tcmd[0] = ESCPOSPrinter.ESC;
+		tcmd[1] = 0x70;
+		tcmd[2] = 0x00;
+		tcmd[3] = (byte) 0x80;
+		tcmd[4] = (byte) 0x80;
+		out.write(tcmd);
+	}
+
 	public ByteArrayOutputStream getOut() {
 		return out;
 	}
