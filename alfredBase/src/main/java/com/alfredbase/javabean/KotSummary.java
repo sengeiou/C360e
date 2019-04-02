@@ -40,6 +40,7 @@ public class KotSummary implements Serializable{
 	private String contact;
 	private String mobile;  //收货人电话
 	private long deliveryTime;
+	private int appOrderId;
 	private int isSubPos;
 
 	public static long getSerialVersionUID() {
@@ -48,6 +49,14 @@ public class KotSummary implements Serializable{
 
 	public int getEatType() {
 		return eatType;
+	}
+
+	public int getAppOrderId() {
+		return appOrderId;
+	}
+
+	public void setAppOrderId(int appOrderId) {
+		this.appOrderId = appOrderId;
 	}
 
 	public void setEatType(int eatType) {
@@ -250,12 +259,13 @@ public class KotSummary implements Serializable{
 				", orderRemark='" + orderRemark + '\'' +
 				", empName='" + empName + '\'' +
 				", numTag='" + numTag + '\'' +
-				", isSubPos=" + isSubPos +
 				", eatType=" + eatType +
 				", address='" + address + '\'' +
 				", contact='" + contact + '\'' +
 				", mobile='" + mobile + '\'' +
 				", deliveryTime=" + deliveryTime +
+				", appOrderId=" + appOrderId +
+				", isSubPos=" + isSubPos +
 				'}';
 	}
 }

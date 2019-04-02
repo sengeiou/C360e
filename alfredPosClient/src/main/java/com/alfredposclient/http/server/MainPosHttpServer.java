@@ -3157,7 +3157,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             int tableId = jsonObject.getInt("tableId");
             TableInfo tableInfo = TableInfoSQL.getTableById(tableId);
             if (tableInfo != null && tableInfo.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
-                Order order = OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), App.instance.getBusinessDate());
+                Order order = OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), App.instance.getBusinessDate(), App.instance.getSessionStatus());
                 int placeOrderCount = OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(order);
                 if (placeOrderCount > 0) {
                     result.put("resultCode", ResultCode.CONNOT_UNSEAT_TABLE);

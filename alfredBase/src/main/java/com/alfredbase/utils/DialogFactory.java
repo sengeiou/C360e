@@ -114,6 +114,65 @@ public class DialogFactory {
 
     }
 
+
+    /**
+     * 通用的，两按钮Dialog
+     *
+     * @param activity
+     * @param title
+     * @param content
+     * @param leftText
+     * @param rightText
+     * @param leftListener
+     * @param rghtListener
+     */
+    public static void commonTwoBtnTimeDialog(final BaseActivity activity,
+                                          final String title,final String time, final String content, final String leftText, final String rightText,
+                                          final OnClickListener leftListener,
+                                          final OnClickListener rghtListener, final boolean canBack) {
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                final Dialog dialog = new Dialog(activity, R.style.base_dialog);
+                View view = LayoutInflater.from(activity).inflate(
+                        R.layout.dialog_item_common_two_time_btn, null);
+                ((TextView) view.findViewById(R.id.tv_title)).setText(title);
+                ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+                ((TextView) view.findViewById(R.id.tv_content_time)).setText(time);
+                ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+                ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+                dialog.setCancelable(canBack);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setContentView(view);
+                view.findViewById(R.id.tv_left).setOnClickListener(
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                if (leftListener != null)
+                                    leftListener.onClick(v);
+                            }
+                        });
+                view.findViewById(R.id.tv_right).setOnClickListener(
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                if (rghtListener != null)
+                                    rghtListener.onClick(v);
+                            }
+                        });
+                if (activity == null || activity.isFinishing())
+                    return;
+                dialog.show();
+            }
+        });
+
+    }
+
     public static Dialog qcDialog(final BaseActivity activity,
                                   final String title, final String content, int drawableId, final Boolean isqc,
 
@@ -873,6 +932,8 @@ public class DialogFactory {
             e.printStackTrace();
         }
     }
+
+
 
     public interface DialogCallBack {
         void callBack(PrinterDevice printerDevice);

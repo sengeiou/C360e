@@ -8,6 +8,7 @@ import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.Params;
 
 import java.io.UnsupportedEncodingException;
@@ -50,12 +51,18 @@ public class KOTPrint extends PrintJob{
 
 	public void AddHeader(KotSummary kotsummary) {
 		StringBuilder sbr = new StringBuilder();
-		if (kotsummary.getIsTakeAway()==1) {
-			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
-					.append(PrintService.instance.getResources().getString(R.string.order_no_))
+		if (kotsummary.getIsTakeAway()==2) {
+			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
 					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
-					.append(reNext);
+					.append(reNext)
+					.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext);
+		}else if(kotsummary.getIsTakeAway()==3){
+			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
+					.append("\t")
+					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
+					.append(reNext)
+					.append(PrintService.instance.getResources().getString(R.string.delivery_print)).append(reNext);
 		}else{
 			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
@@ -91,8 +98,62 @@ public class KOTPrint extends PrintJob{
 		addHortionalLine(this.charSize);
 	}
 
+
+	public void AddDelivery(KotSummary kotSummary) {
+
+//		String userinfo, phone;
+//		String name = null;
+//		String appOrderId= "";
+//		if (TextUtils.isEmpty(kotSummary.getAddress())) {
+//			userinfo = "";
+//		} else {
+//			// appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
+//
+//			if (TextUtils.isEmpty(kotSummary.getContact())) {
+//				name = "";
+//			} else {
+//				//    String addr = appOrder.getAddress();
+//
+//				if (TextUtils.isEmpty(kotSummary.getMobile())) {
+//					name = kotSummary.getContact() + "\r\n";
+//				} else {
+//					name = "" + kotSummary.getContact() + "   " + "   " + "   ";
+//				}
+//			}
+//			if (TextUtils.isEmpty(kotSummary.getMobile())) {
+//				phone = "";
+//			} else {
+//				//    String addr = appOrder.getAddress();
+//				phone = "" + kotSummary.getMobile() + "\n";
+//			}
+//			userinfo =name + phone + "" + kotSummary.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(kotSummary.getDeliveryTime()) + ")";
+//		}
+
+
+			PrintData appOrderPrint = new PrintData();
+			String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), 1);
+			String appOrderStr = appStr+kotSummary.getAppOrderId()+ reNext;
+			appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+			appOrderPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+			appOrderPrint.setFontsize(2);
+			appOrderPrint.setText(appOrderStr);
+			this.data.add(appOrderPrint);
+//			PrintData addressPrint = new PrintData();
+//			//   String deliveryStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.app_delivery), this.FIXED_COL4_TOTAL - 1);
+//			String infoStr = userinfo + reNext;
+////            String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL - 1);
+////            String padorderNo = orderNoStr + orderNo + reNext;
+//			addressPrint.setDataFormat(PrintData.FORMAT_TXT);
+//			addressPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//			addressPrint.setText(infoStr);
+//			this.data.add(addressPrint);
+			//addHortionalLine(this.charSize);
+
+		addHortionalLine(this.charSize);
+	}
 	public void AddKioskHeader(KotSummary kotSummary, String orderId) {
-		addFeed();
+//		addFeed();
+
 		StringBuilder sbr = new StringBuilder();
 		int revenueIndex = kotSummary.getRevenueCenterIndex();
 		int isTakeAway = kotSummary.getIsTakeAway();
@@ -105,14 +166,27 @@ public class KOTPrint extends PrintJob{
 			sbr.append(tableName)
 					.append(reNext);
 		}
-		if (isTakeAway==1) {
-			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
-					.append(orderNo)
-					.append(reNext);
-		}else{
+		if (isTakeAway==2) {
+			sbr.append(orderNo)
+					.append(reNext)
+                    .append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
+            ;
+		}else if(isTakeAway==3){
+			sbr.append(orderNo)
+					.append(reNext)
+                    .append(PrintService.instance.getResources().getString(R.string.delivery_print)).append(reNext)
+                    ;
+		}else if(isTakeAway==1){
 			sbr.append( "  ")
 					.append(orderNo)
-					.append(reNext);
+					.append(reNext)
+
+            ;
+		}else {
+			sbr.append( "  ")
+					.append(orderNo)
+					.append(reNext)
+				;
 		}
 		if(!TextUtils.isEmpty(kotSummary.getEmpName())){
 			sbr.append("emp:"+kotSummary.getEmpName())

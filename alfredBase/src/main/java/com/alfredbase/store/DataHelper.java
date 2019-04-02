@@ -514,10 +514,13 @@ public class DataHelper {
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
                         break;
+                    case 28:
+                        onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion28(db);
+                        break;
                     case  28:
                         onUpgradeForOldVersion28(db);
                         break;
-
                     default:
                         break;
                 }
@@ -1493,6 +1496,32 @@ public class DataHelper {
                 db.execSQL("ALTER TABLE " + TableNames.SyncMsg
                         + " ADD COLUMN reportNo INTEGER");
 
+
+
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                db.execSQL("CREATE TABLE "
+                        + TableNames.RemainingStock
+                        + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, itemId INTEGER, qty INTEGER, defultQty INTEGER, "
+                        + "minQty INTEGER,isActive INTEGER,displayQty INTEGER,createTime LONG,updateTime LONG,resetTime LONG)");
+            }
+        }
+
+        private void onUpgradeForOldVersion28(SQLiteDatabase db){
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN eatType INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN address TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN contact TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN mobile TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN deliveryTime INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN appOrderId INTEGER default 0");
                 db.execSQL("ALTER TABLE " + TableNames.KotSummary
                         + " ADD COLUMN eatType INTEGER default 0");
                 db.execSQL("ALTER TABLE " + TableNames.KotSummary

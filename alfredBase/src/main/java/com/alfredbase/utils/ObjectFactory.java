@@ -241,7 +241,8 @@ public class ObjectFactory {
     public Order cpOrderInfoForKPMG(Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
                                     List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
                                     List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements,
-                                    List<RoundAmount> roundAmounts, String cardNum, long business, int sessionStatus) throws Exception {
+                                    List<RoundAmount> roundAmounts, String cardNum, long business, int sessionStatus,
+                                    int tableId) throws Exception {
 
         synchronized (lock_order) {
             if (subOrder != null) {
@@ -252,6 +253,7 @@ public class ObjectFactory {
                 subOrder.setUpdateTime(System.currentTimeMillis());
                 subOrder.setSessionStatus(sessionStatus);
                 subOrder.setBusinessDate(business);
+                subOrder.setTableId(tableId);
                 OrderSQL.update(subOrder);
             }
 
@@ -262,6 +264,7 @@ public class ObjectFactory {
                 orderSplit.setOrderId(subOrder.getId());
                 orderSplit.setCreateTime(System.currentTimeMillis());
                 orderSplit.setUpdateTime(System.currentTimeMillis());
+                orderSplit.setTableId(tableId);
                 OrderSplitSQL.update(orderSplit);
                 orderSplitMap.put(oldId, orderSplit.getId());
             }
@@ -441,7 +444,7 @@ public class ObjectFactory {
 
         Order order = null;
         synchronized (lock_order) {
-            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate);
+            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate, sessionStatus);
             if (order == null) {
 
                 order = new Order();
@@ -556,10 +559,14 @@ public class ObjectFactory {
                     order.setTotal(appOrder.getTotal());
                     order.setSubTotal(appOrder.getSubTotal());
                     order.setOrderRemark(appOrder.getOrderRemark());
-                    if (appOrder.getEatType() == ParamConst.APP_ORDER_TAKE_AWAY) {
+
+                 //   1 堂吃, 2 打包, 3 外卖
+                    if (appOrder.getEatType() == ParamConst.TAKE_AWAY) {
                         order.setIsTakeAway(ParamConst.TAKE_AWAY);
-                    } else {
-                        order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                    } else if(appOrder.getEatType() == ParamConst.APP_DELIVERY) {
+                        order.setIsTakeAway(ParamConst.APP_DELIVERY);
+                    }else {
+                        order.setIsTakeAway(ParamConst.DINE_IN);
                     }
                     if (inclusiveTax != null) {
                         order.setInclusiveTaxName(inclusiveTax.getTaxName());
@@ -2062,6 +2069,7 @@ public class ObjectFactory {
                 kotSummary.setOrderRemark(order.getOrderRemark());
                 kotSummary.setNumTag(order.getNumTag());
                 kotSummary.setEatType(appOrder.getEatType());
+                kotSummary.setAppOrderId(appOrder.getId());
                 if(appOrder.getEatType()==ParamConst.APP_ORDER_DELIVERY)
                 {
                     kotSummary.setAddress(appOrder.getAddress());

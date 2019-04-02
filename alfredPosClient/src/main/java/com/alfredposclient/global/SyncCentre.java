@@ -347,6 +347,9 @@ public class SyncCentre {
     public void recevingAppOrderStatus(Context context, int appOrderId, Handler handler) {
         HttpAPI.recevingAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
     }
+    public void readyAppOrderStatus(Context context, int appOrderId, Handler handler) {
+        HttpAPI.readyAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
+    }
 
     public void updatePlaceTable(Context context, Map<String, Object> parameters, Handler handler) {
         HttpAPI.updatePlaceTable(context, getAbsoluteUrl(APIName.RESTAURANT_CHANGEPLACE), httpClient, parameters, handler);
