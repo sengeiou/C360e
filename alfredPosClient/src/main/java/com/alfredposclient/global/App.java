@@ -2669,6 +2669,8 @@ public class App extends BaseApplication {
                 case ParamConst.CURRENCY_TYPE:
                     this.localRestaurantConfig.setCurrencySymbol(restaurantConfig);
                     this.localRestaurantConfig.setCurrencySymbolType(restaurantConfig);
+                    this.localRestaurantConfig.setFormatType(restaurantConfig);
+
                     break;
                 case ParamConst.DEF_DISCOUNT_TYPE:
                     this.localRestaurantConfig.setDiscountOption(restaurantConfig);

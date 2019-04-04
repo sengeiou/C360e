@@ -1601,6 +1601,11 @@ public class DataHelper {
 
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN daySalesRound TEXT");
+
+            db.execSQL("ALTER TABLE " + TableNames.RestaurantConfig
+                    + " ADD COLUMN paraValue3 TEXT");
+
+
         }
     }
 }

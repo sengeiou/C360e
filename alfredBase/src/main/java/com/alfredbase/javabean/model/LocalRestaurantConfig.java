@@ -33,6 +33,7 @@ public class LocalRestaurantConfig {
 	private String[] discountOption = new String[] { "5", "10", "15", "20" };
 
 	private List<String> sendFoodCardNumList;
+	private  String formatType;
 
 	public static LocalRestaurantConfig getInstance() {
 		if (instance == null)
@@ -47,6 +48,7 @@ public class LocalRestaurantConfig {
 				ParamConst.SESSION_STATUS_DINNER });
 		this.currencySymbol = "$";
 		this.currencySymbolType = 100206;
+		this.formatType="0.01";
 		this.roundType = ParamConst.ROUND_NONE;
 		this.includedTax = new IncludedTax();
 		this.sendFoodCardNumList = new ArrayList<String>();
@@ -111,6 +113,15 @@ public class LocalRestaurantConfig {
 		this.currencySymbol = restaurantConfig.getParaValue1();
 	}
 
+	public String getFormatType() {
+		return formatType;
+	}
+
+	public void setFormatType(RestaurantConfig restaurantConfig) {
+		this.formatType = restaurantConfig.getParaValue3();
+		BH.initFormart(formatType);
+	}
+
 	public int getCurrencySymbolType() {
 		return currencySymbolType;
 	}
@@ -121,7 +132,7 @@ public class LocalRestaurantConfig {
 		}else{
 			this.currencySymbolType = 0;
 		}
-		BH.initFormart(this.currencySymbolType >= 0);
+		//BH.initFormart(this.currencySymbolType >= 0);
 	}
 
 	public IncludedTax getIncludedTax() {

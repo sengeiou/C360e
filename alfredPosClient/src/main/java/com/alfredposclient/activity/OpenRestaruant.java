@@ -522,6 +522,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //		if (!App.instance.getXmppThread().isAlive()) {
 //			App.instance.getXmppThread().start();
 //		}
+
+		//BH.initFormart(getL);
 	}
 
 	@Override
