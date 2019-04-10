@@ -139,15 +139,18 @@ public class HomePageImageView extends LinearLayout {
             home_page_img.setVisibility(GONE);
             home_page_sv.setVisibility(VISIBLE);
            //  setupVideo();
+        if(list.size()!=0){
             if (!CommonUtil.isNull(list.get(0))){
                 file = list.get(0);
-                 uri=Uri.parse(file);
+                uri=Uri.parse(file);
                 if (!TextUtils.isEmpty(file)) {
                     CreateSurface();
                     playMedia(uri, curPosition);
                 }
 
+            }
         }
+
 //        try {
 //            String uri="http://video.dispatch.tc.qq.com/77613075/x0021o8d3g3.mp4?sdtfrom=v1001&type=mp4&vkey=23289E4B8D0F4B6CF18703222DFD0038845D8F56A75EEC20D5D4FDE678093D9AB211EFD7F4C99E5A612A96A04F46CEEB483628CFFBEA493D3AADBFCB81A540F7A92193874192FA0F70D1099DF330B2B419D45736554CB9BB3435019C985F530C5960E4B20FEBD5FAED17DC9F1FCE1C73&platform=10902&fmt=auto&sp=350&guid=1175defd049d3301e047ce50d93e9c7a";
 //            mediaPlayer.setDataSource(context, Uri.parse(list.get(0)));
