@@ -740,17 +740,20 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
                                     final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                                     int  detailNum=OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(),tag.getItemId());
-
-                                    if(remainingStock.getQty()>=detailNum){
-                                    int newNum=remainingStock.getQty()-detailNum+tag.getItemNum();
-                                    if(num<=newNum){
-                                        updateOrderDetail(tag, num);
-                                    }else {
-                                        UIHelp.showToast(OrderDetailsTotal.this,"out of stock");
-                                    }
-                                    }else {
+                                if(remainingStock!=null) {
+                                    if (remainingStock.getQty() >= detailNum) {
+                                        int newNum = remainingStock.getQty() - detailNum + tag.getItemNum();
+                                        if (num <= newNum) {
+                                            updateOrderDetail(tag, num);
+                                        } else {
+                                            UIHelp.showToast(OrderDetailsTotal.this, "out of stock");
+                                        }
+                                    } else {
                                         textView.setText(tag.getItemName() + "");
                                     }
+                                }else {
+                                    updateOrderDetail(tag, num);
+                                }
 
                                     if (num == 0) {
                                         updateOrderDetail(tag, num);

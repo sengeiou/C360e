@@ -2,6 +2,7 @@
 
     <string name="app_name">AlfredRemotePrintService</string>
     <string name="takeaway_print">Take Away</string>
+    <string name="delivery_print">Delivery</string>
     
     <!-- BillPrint -->
     <string name="swift_no_">Order No.</string>
@@ -138,6 +139,7 @@
     <string name="table_">Table:</string>
     <string name="kot_no_">KOT No: </string>
     <string name="order_no_">Order No.:</string>
+    <string name="order_app_no_">Online App No.:</string>
     <string name="app_delivery">Delivery</string>
     <string name="date_">Date: </string>
     <string name="void_">*** VOID ***</string>

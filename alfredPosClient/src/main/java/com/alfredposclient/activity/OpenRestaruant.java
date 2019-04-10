@@ -1043,7 +1043,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 							long nowTime = System.currentTimeMillis();
 							List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate(), nowTime);
 							if(!orderList.isEmpty()){
-								for (Order order : orderList) {
+								for (final Order order : orderList) {
 									List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
 											.getOrderDetails(order.getId());
 									if (!orderDetailsUnIncludeVoid.isEmpty()){
@@ -1051,7 +1051,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 										break;
 									} else {
 //										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
-										OrderSQL.deleteOrder(order);
+//										OrderSQL.deleteOrder(order);
+										GeneralSQL.deleteOrderAndInforByOrderId(order.getId());
 									}
 								}
 							}

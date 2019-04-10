@@ -1924,12 +1924,12 @@ public class App extends BaseApplication {
                             openDrawer, BH.IsDouble(), info, apporders);
 
             } else {
-//                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-//                        mods, tax, payment,
-//                        this.systemSettings.isDoubleBillPrint(),
-//                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
-//                        getLocalRestaurantConfig().getCurrencySymbol(),
-//                        openDrawer, BH.IsDouble());
+                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                        mods, tax, payment,
+                        this.systemSettings.isDoubleBillPrint(),
+                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                        getLocalRestaurantConfig().getCurrencySymbol(),
+                        openDrawer, BH.IsDouble(), info, apporders);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -2031,6 +2031,7 @@ public class App extends BaseApplication {
                 String tax = gson.toJson(taxes);
                 String payment = gson.toJson(printReceiptInfos);
                 String roundStr = gson.toJson(roundingMap);
+                String apporders = "";
                 // gson.toJson(roundingMap);
                 if (isRevenueKiosk()) {
                     if (countryCode == ParamConst.CHINA)
@@ -2054,7 +2055,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble());
+                            openDrawer, BH.IsDouble(),"",apporders);
                 }
 
             } catch (RemoteException e) {
@@ -2063,6 +2064,123 @@ public class App extends BaseApplication {
         }else if(isCashSettlement){
             kickOutCashDrawer(printer);
         }
+    }
+
+    public void remoteBillRePrint(PrinterDevice printer, PrinterTitle title,
+                                   Order order, ArrayList<PrintOrderItem> orderItems,
+                                   ArrayList<PrintOrderModifier> orderModifiers,
+                                   List<Map<String, String>> taxes,
+                                   List<PaymentSettlement> settlement, RoundAmount roundAmount,
+                                   boolean openDrawer){
+
+        boolean isCashSettlement = false;
+        List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
+        if (settlement != null) {
+            for (PaymentSettlement paymentSettlement : settlement) {
+                PrintReceiptInfo printReceiptInfo = new PrintReceiptInfo();
+                printReceiptInfo.setPaidAmount(paymentSettlement
+                        .getPaidAmount());
+                printReceiptInfo.setPaymentTypeId(paymentSettlement
+                        .getPaymentTypeId());
+                switch (paymentSettlement.getPaymentTypeId().intValue()) {
+                    case ParamConst.SETTLEMENT_TYPE_CASH:
+                        printReceiptInfo.setCashChange(paymentSettlement
+                                .getCashChange());
+                        isCashSettlement = true;
+                        break;
+                    case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
+                    case ParamConst.SETTLEMENT_TYPE_UNIPAY:
+                    case ParamConst.SETTLEMENT_TYPE_VISA:
+                    case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
+                    case ParamConst.SETTLEMENT_TYPE_AMEX:
+                    case ParamConst.SETTLEMENT_TYPE_JCB:
+                        printReceiptInfo
+                                .setCardNo(CardsSettlementSQL
+                                        .getCardNoByPaymentIdAndPaymentSettlementId(
+                                                paymentSettlement.getPaymentId()
+                                                        .intValue(),
+                                                paymentSettlement.getId()
+                                                        .intValue()));
+                        break;
+                    case ParamConst.SETTLEMENT_TYPE_NETS:
+                        printReceiptInfo
+                                .setCardNo(NetsSettlementSQL
+                                        .getNetsSettlementByPament(
+                                                paymentSettlement.getPaymentId()
+                                                        .intValue(),
+                                                paymentSettlement.getId()
+                                                        .intValue())
+                                        .getReferenceNo()
+                                        + "");
+                        break;
+
+                    default: {
+                        PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethodByPaymentTypeId(paymentSettlement.getPaymentTypeId().intValue());
+                        if (pamentMethod != null && !TextUtils.isEmpty(pamentMethod.getNameOt())) {
+                            printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
+                        }
+                    }
+                    break;
+                }
+                printReceiptInfos.add(printReceiptInfo);
+            }
+        }
+            if (mRemoteService == null) {
+                printerDialog();
+                return;
+            }
+            try {
+                Map<String, String> roundingMap = new HashMap<String, String>();
+                String total = order.getTotal();
+                String rounding = "0.00";
+                if (roundAmount != null) {
+                    total = BH.sub(BH.getBD(order.getTotal()),
+                            BH.getBD(roundAmount.getRoundBalancePrice()), true)
+                            .toString();
+                    rounding = BH.getBD(roundAmount.getRoundBalancePrice())
+                            .toString();
+                }
+                roundingMap.put("Total", total);
+                roundingMap.put("Rounding", rounding);
+                Gson gson = new Gson();
+                String prtStr = gson.toJson(printer);
+                String prtTitle = gson.toJson(title);
+                String orderStr = gson.toJson(order);
+                String details = gson.toJson(orderItems);
+                String mods = gson.toJson(orderModifiers);
+                String tax = gson.toJson(taxes);
+                String payment = gson.toJson(printReceiptInfos);
+                String roundStr = gson.toJson(roundingMap);
+                String apporders = "";
+                // gson.toJson(roundingMap);
+                if (isRevenueKiosk()) {
+                    if (countryCode == ParamConst.CHINA)
+                        mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                                details, mods, tax, payment,
+                                this.systemSettings.isDoubleBillPrint(),
+                                this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                                getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
+                                true, BH.IsDouble());
+                    else
+                        mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                                details, mods, tax, payment,
+                                this.systemSettings.isDoubleBillPrint(),
+                                this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                                null, getLocalRestaurantConfig().getCurrencySymbol(),
+                                openDrawer, BH.IsDouble());
+
+                } else {
+                    mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                            mods, tax, payment,
+                            this.systemSettings.isDoubleBillPrint(),
+                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                            getLocalRestaurantConfig().getCurrencySymbol(),
+                            openDrawer, BH.IsDouble(),"",apporders);
+                }
+
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
     }
 
     public void kickOutCashDrawer(PrinterDevice printer) {
@@ -2766,6 +2884,13 @@ public class App extends BaseApplication {
 //                    }
 //                }
                 if (tables == null) {
+//                    tables = new TableInfo();
+//                    tables.setPosId(-1);
+//                    tables.setPlacesId(-1);
+//                    tables.setIsActive(1);
+//                    tables.setRestaurantId(App.instance.getRevenueCenter().getRestaurantId());
+//                    tables.setRestaurantId(App.instance.getRevenueCenter().getRestaurantId());
+//                    tables.setIsKiosk(1);
                     return;
                 }
             }
@@ -2833,9 +2958,9 @@ public class App extends BaseApplication {
             List<OrderDetail> placedOrderDetails
                     = OrderDetailSQL.getOrderDetailsForPrint(order.getId());
             KotSummary kotSummary = ObjectFactory.getInstance()
-                    .getKotSummary(
+                    .getKotSummaryApporder(
                             TableInfoSQL.getTableById(
-                                    order.getTableId()).getName(), order,
+                                    order.getTableId()).getName(), order,appOrder,
                             App.instance.getRevenueCenter(),
                             App.instance.getBusinessDate());
             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
@@ -2962,7 +3087,7 @@ public class App extends BaseApplication {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
+                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
             }
         }).start();
         if (getTopActivity() instanceof MainPage) {
@@ -2971,6 +3096,18 @@ public class App extends BaseApplication {
 //				}
 //			}).start();
     }
+
+
+//    public void printerAppDelivery(List<AppOrder> appOrderlist) {
+//        Gson gson = new Gson();
+//        String apporders = gson.toJson(appOrderlist);
+//        try {
+//            mRemoteService.printAppOrderDelivery(apporders);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
 
     public void printerAppOrder(final AppOrder appOrder, String orderStr, List<AppOrder> appOrderlist) {
         try {
@@ -3007,10 +3144,11 @@ public class App extends BaseApplication {
 
                 String userinfo, phone;
                 String name = null;
+                String appOrderId= "";
                 if (TextUtils.isEmpty(appOrder.getAddress())) {
                     userinfo = "";
                 } else {
-
+                        // appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
 
                     if (TextUtils.isEmpty(appOrder.getContact())) {
                         name = "";
@@ -3018,18 +3156,18 @@ public class App extends BaseApplication {
                         //    String addr = appOrder.getAddress();
 
                         if (TextUtils.isEmpty(appOrder.getMobile())) {
-                            name = appOrder.getContact() + "\n";
+                            name = appOrder.getContact() + "\r\n";
                         } else {
                             name = "" + appOrder.getContact() + "   " + "   " + "   ";
                         }
                     }
-                    if (TextUtils.isEmpty(appOrder.getContact())) {
+                    if (TextUtils.isEmpty(appOrder.getMobile())) {
                         phone = "";
                     } else {
                         //    String addr = appOrder.getAddress();
                         phone = "" + appOrder.getMobile() + "\n";
                     }
-                    userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                    userinfo =name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
                 }
 
 //

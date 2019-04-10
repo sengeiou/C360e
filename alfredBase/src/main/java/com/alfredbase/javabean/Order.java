@@ -102,7 +102,7 @@ public class Order implements Serializable {
 	private Integer appOrderId;
 
 	//默认不是takeaway
-	private Integer isTakeAway = 0;
+	private Integer isTakeAway = 0; //0 堂吃, 1 打包, 2外卖
 
 	private String tableName;
 

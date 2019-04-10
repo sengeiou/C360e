@@ -134,13 +134,23 @@
                         android:textSize="@dimen/text_size_s" />
 
                 </LinearLayout>
-
+                <TextView
+                    android:id="@+id/tv_kds_delivery"
+                    android:layout_below="@+id/ll_pos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_s"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="5dp"
+                    />
                 <LinearLayout
                     android:id="@+id/kitchen_ll_orderRemark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_below="@+id/ll_pos"
+                    android:layout_below="@+id/tv_kds_delivery"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingBottom="5dp">

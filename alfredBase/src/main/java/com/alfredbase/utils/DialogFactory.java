@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -113,6 +114,160 @@ public class DialogFactory {
         });
 
     }
+
+
+    /**
+     * 通用的，两按钮Dialog
+     *
+     * @param activity
+     * @param title
+     * @param content
+     * @param leftText
+     * @param rightText
+     * @param leftListener
+     * @param rghtListener
+     */
+    public static void commonTwoBtnTimeDialog(final BaseActivity activity,
+                                          final String title,final String time, final String content, final String leftText, final String rightText,
+                                          final OnClickListener leftListener,
+                                          final OnClickListener rghtListener, final boolean canBack) {
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                final Dialog dialog = new Dialog(activity, R.style.base_dialog);
+                View view = LayoutInflater.from(activity).inflate(
+                        R.layout.dialog_item_common_two_time_btn, null);
+                ((TextView) view.findViewById(R.id.tv_title)).setText(title);
+                ((TextView) view.findViewById(R.id.tv_content)).setText(content);
+                ((TextView) view.findViewById(R.id.tv_content_time)).setText(time);
+                ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+                ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+                dialog.setCancelable(canBack);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setContentView(view);
+                view.findViewById(R.id.tv_left).setOnClickListener(
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                if (leftListener != null)
+                                    leftListener.onClick(v);
+                            }
+                        });
+                view.findViewById(R.id.tv_right).setOnClickListener(
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                if (rghtListener != null)
+                                    rghtListener.onClick(v);
+                            }
+                        });
+                if (activity == null || activity.isFinishing())
+                    return;
+                dialog.show();
+            }
+        });
+
+    }
+
+
+    /**
+     * 通用的，两按钮Dialog 显示二维码
+     *
+     * @param activity
+     * @param leftText
+     * @param rightText
+     * @param leftListener
+     * @param rghtListener
+     */
+    public static void commonTwoBtnQRDialog(final BaseActivity activity,
+                                          final String url, final String leftText, final String rightText,
+                                          final OnClickListener leftListener,
+                                          final OnClickListener rghtListener) {
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                final Dialog dialog = new Dialog(activity, R.style.base_dialog);
+                View view = LayoutInflater.from(activity).inflate(
+                        R.layout.dialog_item_common_qr_two_btn, null);
+                QRCodeWriter writer = new QRCodeWriter();
+                Map<EncodeHintType, Object> map = new HashMap<>();
+                map.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+                map.put(EncodeHintType.MARGIN, 1);
+                BitMatrix matrix = null;
+                try {
+                    matrix = writer.encode(url, BarcodeFormat.QR_CODE, 200, 200, map);
+                    final Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
+                    ((ImageView) view.findViewById(R.id.iv_content)).setImageBitmap(bitmap);
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
+                ((TextView) view.findViewById(R.id.tv_left)).setText(leftText);
+                ((TextView) view.findViewById(R.id.tv_right)).setText(rightText);
+                final EditText editText = (EditText) view.findViewById(R.id.et_reference_num);
+                editText.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editText.setFocusable(true);
+                        editText.setFocusableInTouchMode(true);
+                        editText.requestFocus();
+                        CommonUtil.inputMethodSet(activity);
+                    }
+                });
+
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setContentView(view);
+                view.findViewById(R.id.tv_left).setOnClickListener(
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                if (leftListener != null)
+                                    leftListener.onClick(v);
+                            }
+                        });
+                view.findViewById(R.id.tv_right).setOnClickListener(
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                String num = editText.getText().toString();
+                                if(TextUtils.isEmpty(num)){
+                                    Toast toast = new Toast(activity);
+                                    LayoutInflater inflater = activity.getLayoutInflater();
+                                    View view = inflater.inflate(R.layout.toast_view, null);
+                                    TextView tv_toast_view = (TextView) view.findViewById(R.id.tv_toast_view);
+                                    tv_toast_view.setText("Please key in Reference number");
+                                    TextTypeFace textTypeFace = TextTypeFace.getInstance();
+                                    textTypeFace.setTrajanProRegular(tv_toast_view);
+                                    toast.setGravity(Gravity.CENTER, 0, 10);
+                                    toast.setDuration(Toast.LENGTH_LONG);
+                                    toast.setView(view);
+                                    toast.show();
+                                    return;
+                                }else{
+                                    v.setTag(num);
+                                }
+                                dialog.dismiss();
+                                if (rghtListener != null)
+                                    rghtListener.onClick(v);
+                            }
+                        });
+                if (activity == null || activity.isFinishing())
+                    return;
+                dialog.show();
+            }
+        });
+
+    }
+
 
     public static Dialog qcDialog(final BaseActivity activity,
                                   final String title, final String content, int drawableId, final Boolean isqc,
@@ -873,6 +1028,8 @@ public class DialogFactory {
             e.printStackTrace();
         }
     }
+
+
 
     public interface DialogCallBack {
         void callBack(PrinterDevice printerDevice);

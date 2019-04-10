@@ -59,16 +59,16 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private TextView timer;
 	private Kot kot;
 	private Context context;
-	private TextView kotId;
+	private TextView kotId,tv_kds_delivery;
 	private TextView orderId;
 	private TextView table;
 	private TextView posName;
 	private TextView date;
 	private TextView time;
-	private TextView tv_kiosk_order_id;
+	private TextView tv_kiosk_order_id,tv_kiosk_app_order_id,tv_order_type;
 	private TextView tv_orderremark;
 	private TextView tv_remark;
-	private LinearLayout ll_orderRemark;
+	private LinearLayout ll_orderRemark,ll_type;
 	private View kotView;
 	public Chronometer tv_progress;
 
@@ -114,6 +114,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		kotView = View.inflate(context, R.layout.kot_view, this);
 		/*---kotTop显示---*/
 		kotId = (TextView) kotView.findViewById(R.id.tv_kotId);
+
 		orderId = (TextView) kotView.findViewById(R.id.tv_order_id);
 		table = (TextView) kotView.findViewById(R.id.tv_table);
 		posName = (TextView) kotView.findViewById(R.id.tv_pos);
@@ -122,8 +123,11 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		tv_progress = (Chronometer) kotView.findViewById(R.id.tv_progress);
 		lv_dishes = (ListView) kotView.findViewById(R.id.lv_dishes);
 		tv_kiosk_order_id = (TextView) kotView.findViewById(R.id.tv_kiosk_order_id);
+		tv_kiosk_app_order_id=(TextView)kotView.findViewById(R.id.tv_kiosk_app_order_id) ;
+		tv_order_type=(TextView)kotView.findViewById(R.id.tv_order_type);
 		tv_orderremark = (TextView) kotView.findViewById(R.id.tv_orderremark);
 		ll_orderRemark = (LinearLayout) kotView.findViewById(R.id.ll_orderRemark);
+		ll_type = (LinearLayout) kotView.findViewById(R.id.ll_type);
 		call_num_tv = (TextView) kotView.findViewById(R.id.call_num_tv);
 		complete_all_tv = (TextView) kotView.findViewById(R.id.complete_all_tv);
 
@@ -227,6 +231,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemModifiers.addAll(kot.getKotItemModifiers());
 		kotId.setText(kot.getKotSummary().getId() + "");
 		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo();
+
 		if(!TextUtils.isEmpty(kot.getKotSummary().getEmpName())){
 			orderNoStr = orderNoStr + "(Emp:" + kot.getKotSummary().getEmpName() + ")";
 		}
@@ -235,11 +240,51 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}
-		orderId.setText(orderNoStr);
-		tv_kiosk_order_id.setText(kioskOrderNoStr);
-		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
+		if(kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.DINE_IN){
+			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.dine_in)+ ")";
+			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.dine_in)+ ")";
+		}else if(kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.APP_DELIVERY){
+			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.app_delivery)+ ")";
+			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.app_delivery)+ ")";
+		}
+
+		if(TextUtils.isEmpty(kot.getKotSummary().getTableName())){
+            table.setText(kioskOrderNoStr);
+			if(kot.getKotSummary().getAppOrderId()>0) {
+				orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
+				tv_kiosk_order_id.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
+			}else {
+				orderId.setText("");
+				tv_kiosk_order_id.setText("");
+			}
+            ll_type.setVisibility(GONE);
+        }else {
+            table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
+            orderId.setText(orderNoStr);
+            tv_kiosk_order_id.setText(kioskOrderNoStr);
+            if(kot.getKotSummary().getAppOrderId()>0){
+                ll_type.setVisibility(VISIBLE);
+                tv_kiosk_app_order_id.setText("Online App No:"+kot.getKotSummary().getAppOrderId());
+            }else {
+                ll_type.setVisibility(GONE);
+            }
+        }
 	//	posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
 
+
+
+//		if(kot.getKotSummary().getEatType()==2)
+//		{
+//			ll_type.setVisibility(GONE);
+//		}else {
+//			ll_type.setVisibility(VISIBLE);
+//			tv_kiosk_app_order_id.setText("Online App No:"+kot.getKotSummary().getAppOrderId());
+//			if(kot.getKotSummary().getEatType()==3){
+//				//tv_order_type.setText("delivery");
+//			}else {
+//				//tv_order_type.setText("dine in");
+//			}
+//		}
 		String remark = kot.getKotSummary().getOrderRemark();
 		if (TextUtils.isEmpty(remark)){
 			ll_orderRemark.setVisibility(GONE);

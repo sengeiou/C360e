@@ -884,9 +884,11 @@ public class CoreData {
 	public PaymentMethod getPamentMethodByPaymentTypeId(Integer paymentTypeId) {
 		if (paymentTypeId == null)
 			return null;
-		for (PaymentMethod pamentMethod : getPamentMethodList()) {
-			if (pamentMethod.getPaymentTypeId().intValue() == paymentTypeId.intValue()) {
-				return pamentMethod;
+		if(pamentMethodList != null && pamentMethodList.size() > 0) {
+			for (PaymentMethod pamentMethod : pamentMethodList) {
+				if (pamentMethod.getPaymentTypeId().intValue() == paymentTypeId.intValue()) {
+					return pamentMethod;
+				}
 			}
 		}
 		return null;

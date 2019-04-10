@@ -167,6 +167,11 @@ public class ReportObjectFactory {
 						ParamConst.SETTLEMENT_TYPE_EZLINK, businessDate);
 		String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
 		String ezPayQty = ezPayMap.get("count");
+		Map<String, String> halalMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_HALAL, businessDate);
+		String halalPay = BH.getBD(halalMap.get("sumAmount")).toString();
+		String halalPayQty = halalMap.get("count");
 
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -580,6 +585,8 @@ public class ReportObjectFactory {
 			reportNoStr = RevenueCenterSQL.getReportNoFromRevenueCenter(revenueCenter.getId());
 		}
 		reportDaySales.setReportNoStr(reportNoStr);
+		reportDaySales.setPayHalal(BH.getBD(halalPay).toString());
+		reportDaySales.setPayHalalQty(Integer.parseInt(halalPayQty));
 		return reportDaySales;
 	}
 
@@ -2022,6 +2029,13 @@ public class ReportObjectFactory {
 		String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
 		String ezPayQty = ezPayMap.get("count");
 
+		Map<String, String> halalMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_HALAL, businessDate,
+						sessionStatus);
+		String halalPay = BH.getBD(halalMap.get("sumAmount")).toString();
+		String halalPayQty = halalMap.get("count");
+
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_PAYPAL, businessDate,
@@ -2450,6 +2464,8 @@ public class ReportObjectFactory {
 			reportNoStr = RevenueCenterSQL.getReportNoFromRevenueCenter(revenueCenter.getId());
 		}
 		reportDaySales.setReportNoStr(reportNoStr);
+        reportDaySales.setPayHalal(BH.getBD(halalPay).toString());
+        reportDaySales.setPayHalalQty(Integer.parseInt(halalPayQty));
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 
 		//-----------------------分割线----------------------------

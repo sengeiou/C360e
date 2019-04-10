@@ -83,6 +83,7 @@ import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
@@ -381,6 +382,7 @@ public class MainPageKiosk extends BaseActivity {
         long nowTime = System.currentTimeMillis();
         int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
         App.instance.setKioskHoldNum(count);
+        App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
         XMPP.getInstance().setCanCheckAppOrder(true);
 
 
@@ -489,7 +491,7 @@ public class MainPageKiosk extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
-        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
+        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
         List<OrderDetail> orderDetails = OrderDetailSQL
                 .getUnFreeOrderDetails(oldOrder);
         if (!orderDetails.isEmpty()) {

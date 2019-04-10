@@ -229,7 +229,8 @@ public class ObjectFactory {
     public Order cpOrderInfoForKPMG(Order subOrder, List<OrderSplit> orderSplits, List<OrderBill> orderBills,
                                     List<Payment> payments, List<OrderDetail> orderDetails, List<OrderModifier> orderModifiers,
                                     List<OrderDetailTax> orderDetailTaxs, List<PaymentSettlement> paymentSettlements,
-                                    List<RoundAmount> roundAmounts, String cardNum, long business, int sessionStatus) throws Exception {
+                                    List<RoundAmount> roundAmounts, String cardNum, long business, int sessionStatus,
+                                    int tableId) throws Exception {
 
         synchronized (lock_order) {
             if (subOrder != null) {
@@ -240,6 +241,7 @@ public class ObjectFactory {
                 subOrder.setUpdateTime(System.currentTimeMillis());
                 subOrder.setSessionStatus(sessionStatus);
                 subOrder.setBusinessDate(business);
+                subOrder.setTableId(tableId);
                 OrderSQL.update(subOrder);
             }
 
@@ -250,6 +252,7 @@ public class ObjectFactory {
                 orderSplit.setOrderId(subOrder.getId());
                 orderSplit.setCreateTime(System.currentTimeMillis());
                 orderSplit.setUpdateTime(System.currentTimeMillis());
+                orderSplit.setTableId(tableId);
                 OrderSplitSQL.update(orderSplit);
                 orderSplitMap.put(oldId, orderSplit.getId());
             }
@@ -429,7 +432,7 @@ public class ObjectFactory {
 
         Order order = null;
         synchronized (lock_order) {
-            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate);
+            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate, sessionStatus);
             if (order == null) {
 
                 order = new Order();
@@ -544,10 +547,14 @@ public class ObjectFactory {
                     order.setTotal(appOrder.getTotal());
                     order.setSubTotal(appOrder.getSubTotal());
                     order.setOrderRemark(appOrder.getOrderRemark());
-                    if (appOrder.getEatType() == ParamConst.APP_ORDER_TAKE_AWAY) {
+
+                 //   1 堂吃, 2 打包, 3 外卖
+                    if (appOrder.getEatType() == ParamConst.TAKE_AWAY) {
                         order.setIsTakeAway(ParamConst.TAKE_AWAY);
-                    } else {
-                        order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                    } else if(appOrder.getEatType() == ParamConst.APP_DELIVERY) {
+                        order.setIsTakeAway(ParamConst.APP_DELIVERY);
+                    }else {
+                        order.setIsTakeAway(ParamConst.DINE_IN);
                     }
                     if (inclusiveTax != null) {
                         order.setInclusiveTaxName(inclusiveTax.getTaxName());
@@ -1850,6 +1857,49 @@ public class ObjectFactory {
                 kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
                 kotSummary.setOrderRemark(order.getOrderRemark());
                 kotSummary.setNumTag(order.getNumTag());
+
+            }
+            if (revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
+                kotSummary.setTableName(order.getTableName());
+            } else {
+                kotSummary.setTableName(tableName);
+            }
+            kotSummary.setIsTakeAway(order.getIsTakeAway());
+            KotSummarySQL.update(kotSummary);
+        }
+        return kotSummary;
+    }
+
+
+    public KotSummary getKotSummaryApporder(String tableName, Order order,AppOrder appOrder,
+                                    RevenueCenter revenueCenter, long businessDate) {
+
+        KotSummary kotSummary = null;
+        synchronized (lock_getKotSummary) {
+            kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
+            long time = System.currentTimeMillis();
+            if (kotSummary == null) {
+                kotSummary = new KotSummary();
+                kotSummary.setId(CommonSQL.getNextSeq(TableNames.KotSummary));
+                kotSummary.setOrderId(order.getId());
+                kotSummary.setOrderNo(order.getOrderNo());//流水号
+                kotSummary.setRevenueCenterId(revenueCenter.getId());
+                kotSummary.setRevenueCenterName(revenueCenter.getRevName());
+                kotSummary.setCreateTime(time);
+                kotSummary.setUpdateTime(time);
+                kotSummary.setBusinessDate(businessDate);
+                kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
+                kotSummary.setOrderRemark(order.getOrderRemark());
+                kotSummary.setNumTag(order.getNumTag());
+                kotSummary.setEatType(appOrder.getEatType());
+                kotSummary.setAppOrderId(appOrder.getId());
+                if(appOrder.getEatType()==ParamConst.APP_ORDER_DELIVERY)
+                {
+                    kotSummary.setAddress(appOrder.getAddress());
+                    kotSummary.setContact(appOrder.getContact());
+                    kotSummary.setMobile(appOrder.getMobile());
+                    kotSummary.setDeliveryTime(appOrder.getDeliveryTime());
+                }
             }
             if (revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
                 kotSummary.setTableName(order.getTableName());
