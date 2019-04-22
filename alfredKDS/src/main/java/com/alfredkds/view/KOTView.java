@@ -251,9 +251,16 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		if(TextUtils.isEmpty(kot.getKotSummary().getTableName())){
             table.setText(kioskOrderNoStr);
 			if(kot.getKotSummary().getAppOrderId()>0) {
-				orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
-				tv_kiosk_order_id.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
-			}else {
+                   if(kot.getKotSummary().getEatType()==3){
+					   orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId()+"\n" +TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
+					   tv_kiosk_order_id.setText("Online App No:" + kot.getKotSummary().getAppOrderId()+"\n" +TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
+
+				   }else {
+					   orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
+					   tv_kiosk_order_id.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
+
+				   }
+		}else {
 				orderId.setText("");
 				tv_kiosk_order_id.setText("");
 			}
@@ -264,7 +271,12 @@ public class KOTView extends LinearLayout implements AnimationListener,
             tv_kiosk_order_id.setText(kioskOrderNoStr);
             if(kot.getKotSummary().getAppOrderId()>0){
                 ll_type.setVisibility(VISIBLE);
-                tv_kiosk_app_order_id.setText("Online App No:"+kot.getKotSummary().getAppOrderId());
+                if(kot.getKotSummary().getEatType()==3){
+					tv_kiosk_app_order_id.setText("Online App No:"+kot.getKotSummary().getAppOrderId()+"\n" +TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
+				}else {
+					tv_kiosk_app_order_id.setText("Online App No:"+kot.getKotSummary().getAppOrderId());
+				}
+
             }else {
                 ll_type.setVisibility(GONE);
             }

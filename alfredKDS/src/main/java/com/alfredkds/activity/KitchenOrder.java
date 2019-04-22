@@ -649,7 +649,10 @@ public class KitchenOrder extends BaseActivity {
                 deliverys.append(kot.getKotSummary().getContact()+"\n");
             }
             if(!TextUtils.isEmpty(kot.getKotSummary().getMobile())){
-                deliverys.append(kot.getKotSummary().getMobile());
+                deliverys.append(kot.getKotSummary().getMobile()+"\n");
+            }
+            if(!TextUtils.isEmpty(kot.getKotSummary().getDeliveryTime()+"")){
+                deliverys.append(TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
             }
             tv_kds_delivery.setText(deliverys.toString());
         }else {

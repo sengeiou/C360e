@@ -63,6 +63,8 @@ public class KOTPrint extends PrintJob{
 					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
 					.append(reNext)
 					.append(PrintService.instance.getResources().getString(R.string.delivery_print)).append(reNext);
+
+
 		}else{
 			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
@@ -80,6 +82,27 @@ public class KOTPrint extends PrintJob{
 		header.setFontsize(2);
 		header.setText(sbr.toString());
 		this.data.add(header);
+		if(kotsummary.getIsTakeAway()==3){
+
+			PrintData sPrint = new PrintData();
+			String sStr =kotsummary.getContact()+kotsummary.getMobile()+ reNext;
+			sPrint.setDataFormat(PrintData.FORMAT_TXT);
+			sPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+			sPrint.setText(sStr);
+			this.data.add(sPrint);
+			PrintData addressPrint = new PrintData();
+			String addressStr =kotsummary.getAddress()+ reNext;
+			addressPrint.setDataFormat(PrintData.FORMAT_TXT);
+			addressPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+			addressPrint.setText(addressStr);
+			this.data.add(addressPrint);
+			PrintData timePrint = new PrintData();
+			String timeStr =TimeUtil.getDeliveryDataTime(kotsummary.getDeliveryTime())+ reNext ;
+			timePrint.setDataFormat(PrintData.FORMAT_TXT);
+			timePrint.setTextAlign(PrintData.ALIGN_RIGHT);
+			timePrint.setText(timeStr);
+			this.data.add(timePrint);
+		}
 
 		addHortionalLine(this.charSize);
 	}
@@ -198,6 +221,29 @@ public class KOTPrint extends PrintJob{
 		header.setFontsize(2);
 		header.setText(sbr.toString());
 		this.data.add(header);
+
+
+		if(isTakeAway==3){
+
+			PrintData sPrint = new PrintData();
+			String sStr =kotSummary.getContact()+kotSummary.getMobile()+ reNext;
+			sPrint.setDataFormat(PrintData.FORMAT_TXT);
+			sPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+			sPrint.setText(sStr);
+			this.data.add(sPrint);
+			PrintData addressPrint = new PrintData();
+			String addressStr =kotSummary.getAddress()+ reNext;
+			addressPrint.setDataFormat(PrintData.FORMAT_TXT);
+			addressPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+			addressPrint.setText(addressStr);
+			this.data.add(addressPrint);
+			PrintData timePrint = new PrintData();
+			String timeStr =TimeUtil.getDeliveryDataTime(kotSummary.getDeliveryTime())+ reNext ;
+			timePrint.setDataFormat(PrintData.FORMAT_TXT);
+			timePrint.setTextAlign(PrintData.ALIGN_RIGHT);
+			timePrint.setText(timeStr);
+			this.data.add(timePrint);
+		}
 
 		addHortionalLine(this.charSize);
 	}
