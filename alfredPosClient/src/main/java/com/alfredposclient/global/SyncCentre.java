@@ -393,7 +393,7 @@ public class SyncCentre {
         if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://172.16.3.163:8083/alfred-api/" + relativeUrl;
+            return "http://172.16.3.239:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
 //            return "http://172.16.3.163:8083/alfred-api/" + relativeUrl;
