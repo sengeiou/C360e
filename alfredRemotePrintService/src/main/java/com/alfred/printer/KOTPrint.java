@@ -83,13 +83,14 @@ public class KOTPrint extends PrintJob{
 		header.setText(sbr.toString());
 		this.data.add(header);
 		if(kotsummary.getIsTakeAway()==3){
-
-			PrintData sPrint = new PrintData();
-			String sStr =kotsummary.getContact()+kotsummary.getMobile()+ reNext;
-			sPrint.setDataFormat(PrintData.FORMAT_TXT);
-			sPrint.setTextAlign(PrintData.ALIGN_RIGHT);
-			sPrint.setText(sStr);
-			this.data.add(sPrint);
+             if( !TextUtils.isEmpty(kotsummary.getContact())||!TextUtils.isEmpty(kotsummary.getMobile())) {
+				 PrintData sPrint = new PrintData();
+				 String sStr = kotsummary.getContact() + kotsummary.getMobile() + reNext;
+				 sPrint.setDataFormat(PrintData.FORMAT_TXT);
+				 sPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+				 sPrint.setText(sStr);
+				 this.data.add(sPrint);
+			 }
 			PrintData addressPrint = new PrintData();
 			String addressStr =kotsummary.getAddress()+ reNext;
 			addressPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -224,13 +225,14 @@ public class KOTPrint extends PrintJob{
 
 
 		if(isTakeAway==3){
-
-			PrintData sPrint = new PrintData();
-			String sStr =kotSummary.getContact()+kotSummary.getMobile()+ reNext;
-			sPrint.setDataFormat(PrintData.FORMAT_TXT);
-			sPrint.setTextAlign(PrintData.ALIGN_RIGHT);
-			sPrint.setText(sStr);
-			this.data.add(sPrint);
+			if( !TextUtils.isEmpty(kotSummary.getContact())||!TextUtils.isEmpty(kotSummary.getMobile())) {
+				PrintData sPrint = new PrintData();
+				String sStr = kotSummary.getContact() +"   "+ kotSummary.getMobile() + reNext;
+				sPrint.setDataFormat(PrintData.FORMAT_TXT);
+				sPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+				sPrint.setText(sStr);
+				this.data.add(sPrint);
+			}
 			PrintData addressPrint = new PrintData();
 			String addressStr =kotSummary.getAddress()+ reNext;
 			addressPrint.setDataFormat(PrintData.FORMAT_TXT);
