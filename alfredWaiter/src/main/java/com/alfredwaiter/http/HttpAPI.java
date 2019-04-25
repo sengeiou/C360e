@@ -951,7 +951,10 @@ public class HttpAPI {
                                 handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_BILL);
                             } else if (resultCode == ResultCode.ORDER_FINISHED) {
                                 handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
-                            } else {
+                            }
+                            else if (resultCode == ResultCode.ORDER_PRINT) {
+                                handler.sendEmptyMessage(ResultCode.ORDER_PRINT);
+                            }else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }

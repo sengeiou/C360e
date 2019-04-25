@@ -86,7 +86,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private View v_print_lable;
 	private int maxOrderNo;
 	MyToggleButton mt_print_lable;
-	MyToggleButton mt_print_bill,mt_credit_card_rounding;
+	MyToggleButton mt_print_bill,mt_credit_card_rounding,mt_print_instructions;
 	private int textsize,textcolor;
 	private TextView tv_lable_upOrdown,tv_callnum_style,tv_callnum_header,tv_callnum_footer;
 
@@ -142,6 +142,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_auto_table = (MyToggleButton)findViewById(R.id.mt_auto_table);
 		mt_of_pax=(MyToggleButton)findViewById(R.id.mt_of_pax);
 		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
+		mt_print_instructions=(MyToggleButton)findViewById(R.id.mt_print_instructions) ;
 		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
 		tv_callnum_style=(TextView)findViewById(R.id.tv_callnum_style);
 
@@ -168,6 +169,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 		ll_callnum_footer.setOnClickListener(this);
 		mt_credit_card_rounding.setOnStateChangeListeren(this);
+		mt_print_instructions.setOnStateChangeListeren(this);
 		mt_print_lable_direction.setOnStateChangeListeren(this);
 		mt_print_lable.setOnStateChangeListeren(this);
 		findViewById(R.id.iv_back).setOnClickListener(this);
@@ -358,6 +360,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		}else{
 
 			mt_credit_card_rounding.setChecked(false);
+		}
+		if(settings.isPrintInstructions()){
+
+			mt_print_instructions.setChecked(true);
+		}else{
+
+			mt_print_instructions.setChecked(false);
 		}
 
 		if(settings.isPrintBill()){
@@ -906,6 +915,19 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 					mt_credit_card_rounding.setChecked(false);
 					settings.setCardRounding(ParamConst.DEFAULT_FALSE);
+				}
+				break;
+
+			case R.id.mt_print_instructions:
+
+				if(checkState){
+
+					mt_print_instructions.setChecked(true);
+					settings.setPrintInstructions(ParamConst.DEFAULT_TRUE);
+				}else{
+
+					mt_print_instructions.setChecked(false);
+					settings.setPrintInstructions(ParamConst.DEFAULT_FALSE);
 				}
 				break;
 

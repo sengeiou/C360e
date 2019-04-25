@@ -121,6 +121,7 @@ public class Order implements Serializable {
 	private int subPosBeanId = 0;// IF it is main Pos， subPosBeanId is  zero
 
     private String waiterInformation;
+    private int isWaiterPrint; //0 未打印， 1 已打印
 	@Expose(serialize = false)
 	private int isSplitByPax;
 	
@@ -460,43 +461,52 @@ public class Order implements Serializable {
         this.waiterInformation = waiterInformation;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", orderOriginId=" + orderOriginId +
-                ", userId=" + userId +
-                ", persons=" + persons +
-                ", orderStatus=" + orderStatus +
-                ", subTotal='" + subTotal + '\'' +
-                ", taxAmount='" + taxAmount + '\'' +
-                ", discountAmount='" + discountAmount + '\'' +
-                ", discountPrice='" + discountPrice + '\'' +
-                ", discountRate='" + discountRate + '\'' +
-                ", discountType=" + discountType +
-                ", total='" + total + '\'' +
-                ", sessionStatus=" + sessionStatus +
-                ", restId=" + restId +
-                ", revenueId=" + revenueId +
-                ", placeId=" + placeId +
-                ", tableId=" + tableId +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", businessDate=" + businessDate +
-                ", orderNo=" + orderNo +
-                ", inclusiveTaxName='" + inclusiveTaxName + '\'' +
-                ", inclusiveTaxPrice='" + inclusiveTaxPrice + '\'' +
-                ", inclusiveTaxPercentage='" + inclusiveTaxPercentage + '\'' +
-                ", appOrderId=" + appOrderId +
-                ", isTakeAway=" + isTakeAway +
-                ", tableName='" + tableName + '\'' +
-                ", orderRemark='" + orderRemark + '\'' +
-                ", discountCategoryId='" + discountCategoryId + '\'' +
-                ", oldTotal='" + oldTotal + '\'' +
-                ", numTag='" + numTag + '\'' +
-                ", subPosBeanId=" + subPosBeanId +
-                ", WaiterInformation='" + waiterInformation + '\'' +
-                ", isSplitByPax=" + isSplitByPax +
-                '}';
-    }
+	public int getIsWaiterPrint() {
+		return isWaiterPrint;
+	}
+
+	public void setIsWaiterPrint(int isWaiterPrint) {
+		this.isWaiterPrint = isWaiterPrint;
+	}
+
+	@Override
+	public String toString() {
+		return "Order{" +
+				"id=" + id +
+				", orderOriginId=" + orderOriginId +
+				", userId=" + userId +
+				", persons=" + persons +
+				", orderStatus=" + orderStatus +
+				", subTotal='" + subTotal + '\'' +
+				", taxAmount='" + taxAmount + '\'' +
+				", discountAmount='" + discountAmount + '\'' +
+				", discountPrice='" + discountPrice + '\'' +
+				", discountRate='" + discountRate + '\'' +
+				", discountType=" + discountType +
+				", total='" + total + '\'' +
+				", sessionStatus=" + sessionStatus +
+				", restId=" + restId +
+				", revenueId=" + revenueId +
+				", placeId=" + placeId +
+				", tableId=" + tableId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", businessDate=" + businessDate +
+				", orderNo=" + orderNo +
+				", inclusiveTaxName='" + inclusiveTaxName + '\'' +
+				", inclusiveTaxPrice='" + inclusiveTaxPrice + '\'' +
+				", inclusiveTaxPercentage='" + inclusiveTaxPercentage + '\'' +
+				", appOrderId=" + appOrderId +
+				", isTakeAway=" + isTakeAway +
+				", tableName='" + tableName + '\'' +
+				", orderRemark='" + orderRemark + '\'' +
+				", discountCategoryId='" + discountCategoryId + '\'' +
+				", oldTotal='" + oldTotal + '\'' +
+				", numTag='" + numTag + '\'' +
+				", subPosBeanId=" + subPosBeanId +
+				", waiterInformation='" + waiterInformation + '\'' +
+				", isWaiterPrint=" + isWaiterPrint +
+				", isSplitByPax=" + isSplitByPax +
+				'}';
+	}
 }

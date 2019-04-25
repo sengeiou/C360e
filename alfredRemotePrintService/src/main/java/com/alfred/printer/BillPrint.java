@@ -105,7 +105,7 @@ public class BillPrint extends PrintJob {
 
 
     public void AddHeader(int isTakeAway, String table, int pax, String billNo,
-                          String posNo, String cashier, String dateTime, String orderNo, String info,int appOrderId) {
+                          String posNo, String cashier, String dateTime, String orderNo, String info,int appOrderId,String waiterName) {
 
 
 
@@ -155,6 +155,17 @@ public class BillPrint extends PrintJob {
         orderNoPrint.setText(padorderNo);
         this.data.add(orderNoPrint);
 
+        //waiterName
+        if (!TextUtils.isEmpty(waiterName)) {
+            PrintData waiterNamePrint = new PrintData();
+            String waiterNameStr = StringUtil.padRight("waiter: ", this.FIXED_COL4_TOTAL - 1);
+            String padWaiterName = waiterNameStr + waiterName + reNext;
+            waiterNamePrint.setDataFormat(PrintData.FORMAT_TXT);
+            waiterNamePrint.setTextAlign(PrintData.ALIGN_LEFT);
+//		orderNoPrint.setFontsize(2);
+            waiterNamePrint.setText(padWaiterName);
+            this.data.add(waiterNamePrint);
+        }
 
         //cashier
         PrintData cashierPrint = new PrintData();

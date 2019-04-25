@@ -37,8 +37,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
 					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime," 
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,WaiterInformation)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getOrderOriginId(), order.getUserId(),
@@ -55,7 +55,8 @@ public class OrderSQL {
 							order.getAppOrderId(),order.getIsTakeAway(),
 					        order.getTableName(), order.getOrderRemark(),
 							order.getDiscountCategoryId(), order.getNumTag(),
-							order.getSubPosBeanId(),order.getWaiterInformation()
+							order.getSubPosBeanId(),order.getWaiterInformation(),
+							order.getIsWaiterPrint()
 						});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -102,8 +103,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,waiterInformation)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,waiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -120,7 +121,7 @@ public class OrderSQL {
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
-							order.getNumTag(), order.getSubPosBeanId(),order.getWaiterInformation()});
+							order.getNumTag(), order.getSubPosBeanId(),order.getWaiterInformation(),order.getIsWaiterPrint()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,8 +135,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,waiterInformation)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,waiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			db.execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -152,7 +153,7 @@ public class OrderSQL {
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
-							order.getNumTag(), order.getSubPosBeanId(),order.getWaiterInformation()});
+							order.getNumTag(), order.getSubPosBeanId(),order.getWaiterInformation(),order.getIsWaiterPrint()});
 	}
 
 	public static void updateUnFinishedOrderFromWaiter(Order order) {
@@ -387,8 +388,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,waiterInformation)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,waiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Order order : orderList) {
@@ -454,6 +455,8 @@ public class OrderSQL {
 							order.getSubPosBeanId());
 					SQLiteStatementHelper.bindString(sqLiteStatement, 31,
 							order.getWaiterInformation());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 32,
+							order.getIsWaiterPrint());
 					sqLiteStatement.executeInsert();
 				}
 			db.setTransactionSuccessful();
@@ -511,6 +514,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -581,6 +585,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -646,6 +651,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -708,6 +714,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -770,6 +777,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -888,6 +896,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -947,6 +956,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1013,6 +1023,7 @@ public class OrderSQL {
 					order.setNumTag(cursor.getString(29));
 					order.setSubPosBeanId(cursor.getInt(30));
 					order.setWaiterInformation(cursor.getString(31));
+					order.setIsWaiterPrint(cursor.getInt(32));
 					return order;
 				}
 			} catch (Exception e) {
@@ -1073,6 +1084,7 @@ public class OrderSQL {
 					order.setNumTag(cursor.getString(29));
 					order.setSubPosBeanId(cursor.getInt(30));
 					order.setWaiterInformation(cursor.getString(31));
+					order.setIsWaiterPrint(cursor.getInt(32));
 					return order;
 				}
 			} catch (Exception e) {
@@ -1135,6 +1147,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1196,6 +1209,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1250,6 +1264,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1312,6 +1327,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1378,6 +1394,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1440,6 +1457,7 @@ public class OrderSQL {
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setWaiterInformation(cursor.getString(31));
+				order.setIsWaiterPrint(cursor.getInt(32));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1647,7 +1665,18 @@ public class OrderSQL {
 		}
 	
 	}
-	
+
+	public static void updateWaiterPrint( int isWaiterPrint, int id){
+
+		String sql = "update " + TableNames.Order + " set isWaiterPrint = ? where id = ?" ;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {isWaiterPrint, id});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public static void updateOrderPersions( int persons, int id){
 
 		String sql = "update " + TableNames.Order + " set persons = ? where id = ?" ;

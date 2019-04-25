@@ -401,7 +401,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                 App.instance.getIndexOfRevenueCenter(),
                                 ParamConst.ORDER_STATUS_OPEN_IN_WAITER,
                                 App.instance.getLocalRestaurantConfig()
-                                        .getIncludedTax().getTax());
+                                        .getIncludedTax().getTax(),"");
                         List<OrderDetail> orderDetailListR = OrderDetailSQL.getAllOrderDetailsByOrder(order);
                         List<OrderModifier> orderModifierListR = OrderModifierSQL.getAllOrderModifier(order);
                         result.put("resultCode", ResultCode.SUCCESS);
@@ -1930,6 +1930,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             TableInfo tables = gson.fromJson(jsonObject.optJSONObject("tables")
                     .toString(), TableInfo.class);
             String userKey = jsonObject.optString("userKey");
+            String waitterName = jsonObject.optString("waitterName");
+
             result.put("tempItems", ItemDetailSQL.getAllTempItemDetail());
             if (TableInfoSQL.getTableById(tables.getPosId())
                     .getStatus() == ParamConst.TABLE_STATUS_IDLE) {
@@ -1958,7 +1960,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         App.instance.getIndexOfRevenueCenter(),
                         ParamConst.ORDER_STATUS_OPEN_IN_WAITER,
                         App.instance.getLocalRestaurantConfig()
-                                .getIncludedTax().getTax());
+                                .getIncludedTax().getTax(),waitterName);
                 // ArrayList<OrderDetail> orderDetails = OrderDetailSQL
                 // .getOrderDetailByOrderIdAndOrderOriginId(order.getId(),
                 // ParamConst.ORDER_ORIGIN_WAITER);
@@ -1993,7 +1995,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         App.instance.getIndexOfRevenueCenter(),
                         ParamConst.ORDER_STATUS_OPEN_IN_WAITER,
                         App.instance.getLocalRestaurantConfig()
-                                .getIncludedTax().getTax());
+                                .getIncludedTax().getTax(),waitterName);
                 ArrayList<OrderDetail> orderDetails = OrderDetailSQL
                         .getAllOrderDetailsByOrder(order);
                 result.put("order", order);
@@ -2230,7 +2232,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             }
             LogUtil.i(TAG, "=====11111");
             order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
-
+            order.setIsWaiterPrint(0);
+            OrderSQL.updateWaiterPrint(0,order.getId());
             //	当前Order未完成时更新状态
             OrderSQL.updateUnFinishedOrderFromWaiter(order);
             //	这边重新从数据中获取OrderDetail 不依赖于waiter过来的数据
@@ -2902,6 +2905,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 resp = this.getJsonResponse(new Gson().toJson(result));
                 return resp;
             }
+//            if(loadOrder.getIsWaiterPrint()==1){
+//                result.put("resultCode", ResultCode.ORDER_PRINT);
+//                resp = this.getJsonResponse(new Gson().toJson(result));
+//                return resp;
+//            }
             String tableName = jsonObject.getString("tableName");
             int deviceId = 0;
             if (jsonObject.has("deviceId")) {
@@ -2911,6 +2919,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 Order order = OrderSQL.getOrder(orderId);
                 if (order == null) {
                     result.put("resultCode", ResultCode.ORDER_NO_PLACE);
+                    resp = this.getJsonResponse(new Gson().toJson(result));
+                    return resp;
+                }
+                if(order.getIsWaiterPrint()==1){
+                    result.put("resultCode", ResultCode.ORDER_PRINT);
                     resp = this.getJsonResponse(new Gson().toJson(result));
                     return resp;
                 }
@@ -3007,6 +3020,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
                 }
             }
+            OrderSQL.updateWaiterPrint(1, orderId);
             result.put("resultCode", ResultCode.SUCCESS);
             resp = this.getJsonResponse(new Gson().toJson(result));
 

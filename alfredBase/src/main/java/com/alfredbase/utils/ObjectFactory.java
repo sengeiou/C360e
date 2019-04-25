@@ -121,8 +121,8 @@ public class ObjectFactory {
     public Order getOrder(Integer orderOriginId, int subPosBeanId, TableInfo tables,
                           RevenueCenter revenueCenter, User user,
                           SessionStatus sessionStatus, long businessDate, int orderNOTitle,
-                          int orderStatus, Tax inclusiveTax) {
-        return getOrder(orderOriginId, subPosBeanId, tables, revenueCenter, user, sessionStatus, businessDate, orderNOTitle, orderStatus, inclusiveTax, 0);
+                          int orderStatus, Tax inclusiveTax,String waiterName) {
+        return getOrder(orderOriginId, subPosBeanId, tables, revenueCenter, user, sessionStatus, businessDate, orderNOTitle, orderStatus, inclusiveTax, 0,waiterName);
     }
 
     Object lock_cpOrderInfo = new Object();
@@ -428,7 +428,7 @@ public class ObjectFactory {
     public Order getOrder(Integer orderOriginId, int subPosBeanId, TableInfo tables,
                           RevenueCenter revenueCenter, User user,
                           SessionStatus sessionStatus, long businessDate, int orderNOTitle,
-                          int orderStatus, Tax inclusiveTax, int appOrderId) {
+                          int orderStatus, Tax inclusiveTax, int appOrderId,String waiterName) {
 
         Order order = null;
         synchronized (lock_order) {
@@ -464,6 +464,8 @@ public class ObjectFactory {
                     order.setNumTag(subPosBean.getNumTag());
                 }
                 order.setSubPosBeanId(subPosBeanId);
+                order.setWaiterInformation(waiterName);
+                order.setIsWaiterPrint(0);
                 OrderSQL.addOrder(order);
             }
         }
@@ -1796,7 +1798,7 @@ public class ObjectFactory {
         }
         for (OrderDetail orderDetail : orderDetails) {
             if (!TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                list.add(new PrintOrderModifier(orderDetail.getId(), orderDetail.getSpecialInstractions(), "0.00", 1, "0.00"));
+                    list.add(new PrintOrderModifier(orderDetail.getId(), orderDetail.getSpecialInstractions(), "0.00", 1, "0.00",1));
             }
         }
         return list;

@@ -1594,6 +1594,8 @@ public class DataHelper {
         private void onUpgradeForOldVersion30(SQLiteDatabase db){
             db.execSQL("ALTER TABLE " + TableNames.Order
                     + " ADD COLUMN waiterInformation TEXT ");
+            db.execSQL("ALTER TABLE " + TableNames.Order
+                    + " ADD COLUMN isWaiterPrint INTEGER default 0 ");
 
         }
     }

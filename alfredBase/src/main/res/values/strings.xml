@@ -9,6 +9,7 @@
     <string name="name_pwd_error">The user name or password is wrong</string>
     <string name="permission_insuff">Insufficient permissions</string>
     <string name="manager_id">Manager ID</string>
+    <string name="manager_pwd">Manager Password</string>
     <string name="password_">Password</string>
     <string name="authorization">Authorization</string>
     <string name="changepwd">Change User Password</string>

@@ -31,6 +31,7 @@ public class SystemSettings {
     private boolean removeToVoid = false;
     private boolean isTransferPrint = true;
     private boolean isAutoToTable = false;
+    private  boolean isInstructions=true;
 
     private int callStyle = 1;// 叫号端默认布局
 
@@ -490,6 +491,8 @@ public class SystemSettings {
     }
 
 
+
+
     public void setCardRounding(Integer cardRound) {
         Store.putInt(this.context, Store.CREDIT_CARD_ROUNDING,
                 cardRound.intValue());
@@ -497,6 +500,29 @@ public class SystemSettings {
             this.cardRounding = true;
         else
             this.cardRounding = false;
+    }
+    //order备注
+    public void setPrintInstructions(Integer printInstructions) {
+        Store.putInt(this.context, Store.PRINT_INSTRUCTIONS,
+                printInstructions.intValue());
+        if (printInstructions.intValue() == 1)
+            this.isInstructions = true;
+        else
+            this.isInstructions = false;
+    }
+
+
+    public boolean isPrintInstructions() {
+        Integer value = Store.getInt(context,
+                Store.PRINT_INSTRUCTIONS);
+        if (value != null && value != Store.DEFAULT_INT_TYPE) {
+            if (value.intValue() == 1) {
+                this.isInstructions = true;
+            } else {
+                this.isInstructions = false;
+            }
+        }
+        return isInstructions;
     }
 
 

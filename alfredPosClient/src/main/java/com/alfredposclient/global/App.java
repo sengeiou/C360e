@@ -1929,7 +1929,7 @@ public class App extends BaseApplication {
                         this.systemSettings.isDoubleBillPrint(),
                         this.systemSettings.isDoubleReceiptPrint(), roundStr,
                         getLocalRestaurantConfig().getCurrencySymbol(),
-                        openDrawer, BH.IsDouble(), info, apporders);
+                        openDrawer, BH.IsDouble(), info, apporders,App.instance.systemSettings.isPrintInstructions());
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -2055,7 +2055,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders);
+                            openDrawer, BH.IsDouble(),"",apporders,App.instance.systemSettings.isPrintInstructions());
                 }
 
             } catch (RemoteException e) {
@@ -2175,7 +2175,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders);
+                            openDrawer, BH.IsDouble(),"",apporders,App.instance.systemSettings.isPrintInstructions());
                 }
 
             } catch (RemoteException e) {
