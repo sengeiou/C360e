@@ -207,7 +207,7 @@ public class SyncCentre {
 
     public void syncMedia(Context context,
                           Handler handler) {
-        //orderDataMsg
+        //orderDataMsgS
 
         HttpAPI.mediaSync(context,
                 getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), bigSyncHttpClient, handler, MODE_FIRST_SYNC);
