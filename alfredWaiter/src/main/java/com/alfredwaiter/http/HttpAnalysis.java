@@ -231,7 +231,7 @@ public class HttpAnalysis {
 			Gson gson = new Gson();
 			order = gson.fromJson(object.getJSONObject("order").toString(),
 					Order.class);
-			Map<String, String> waiterMap = new LinkedHashMap<String, String>();
+			Map<String, String> waiterMap = new LinkedHashMap<String, String>(16, 0.75f, true);
 			if(!TextUtils.isEmpty(order.getWaiterInformation())){
 				waiterMap=CommonUtil.getStringToMap(order.getWaiterInformation());
 				waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());

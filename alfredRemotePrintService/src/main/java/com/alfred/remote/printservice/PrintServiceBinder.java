@@ -961,7 +961,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                            }
                        }
                    }
-                   billPrint.AddHeader(theOrder.getIsTakeAway(), tableName,
+                   billPrint.AddHeaderWaiter(theOrder.getIsTakeAway(), tableName,
                            theOrder.getPersons(),
                            theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId(),waiterName);

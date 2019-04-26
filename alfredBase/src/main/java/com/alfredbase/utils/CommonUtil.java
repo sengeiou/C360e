@@ -33,6 +33,7 @@ import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -409,7 +410,7 @@ public class CommonUtil {
 			mapLength = mapLength+1;
 		}
 
-		Map<String,String> map = new HashMap<>(mapLength);
+		Map<String,String> map = new LinkedHashMap<>(mapLength);
 		//循环加入map集合
 		for (int i = 0; i < strings.length; i++) {
 			//截取一组字符串

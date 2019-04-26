@@ -702,6 +702,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 	//	textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_credit_card_rounding));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_instructions));
 
 
 	}

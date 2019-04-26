@@ -143,6 +143,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -2234,8 +2235,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
             order.setIsWaiterPrint(0);
             OrderSQL.updateWaiterPrint(0,order.getId());
+
             //	当前Order未完成时更新状态
             OrderSQL.updateUnFinishedOrderFromWaiter(order);
+            OrderSQL.updateFromWaiterName(order);
             //	这边重新从数据中获取OrderDetail 不依赖于waiter过来的数据
             List<OrderDetail> orderDetails = OrderDetailSQL
                     .getOrderDetails(order.getId());
@@ -2259,9 +2262,27 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     order, App.instance.getRevenueCenter(), App.instance.getBusinessDate());
             User user = UserSQL.getUserById(order.getUserId());
             if (user != null) {
-                String empName = user.getFirstName() + user.getLastName();
-                kotSummary.setEmpName(empName);
-                KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId().intValue());
+                if(!TextUtils.isEmpty(order.getWaiterInformation())){
+                    Map<String, String> waiterMap = new LinkedHashMap<String, String>();
+                    waiterMap=CommonUtil.getStringToMap(order.getWaiterInformation());
+                    String waiterName="";
+                    if(waiterMap!=null&&waiterMap.size()>0){
+
+                        for(Iterator it = waiterMap.entrySet().iterator(); it.hasNext();){
+                            Map.Entry<String, String> entry = (Map.Entry<String, String>)it.next();
+                            if(!"".equals(entry.getValue())){
+                                waiterName=entry.getValue();
+                            }
+                        }
+                        kotSummary.setEmpName(waiterName);
+                        KotSummarySQL.updateKotSummaryEmpById(waiterName, kotSummary.getId().intValue());
+                    }
+                }else {
+                    String empName = user.getFirstName() + user.getLastName();
+                    kotSummary.setEmpName(empName);
+                    KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId().intValue());
+                }
+
             }
             List<Integer> orderDetailIds = new ArrayList<Integer>();
             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();

@@ -3,6 +3,7 @@ package com.alfredposclient.view;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,6 +75,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -214,6 +216,7 @@ public class MainPageOrderView extends LinearLayout {
 										App.instance.getBusinessDate());
 						User user = App.instance.getUser();
 						if (user != null) {
+
 							String empName = user.getFirstName() + user.getLastName();
 							kotSummary.setEmpName(empName);
 							KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId().intValue());

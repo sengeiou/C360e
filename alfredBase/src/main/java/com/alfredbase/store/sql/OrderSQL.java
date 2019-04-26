@@ -169,7 +169,20 @@ public class OrderSQL {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static void updateFromWaiterName(Order order) {
+		if (order == null) {
+			return;
+		}
+		try {
+			String sql = "update " + TableNames.Order + " set waiterInformation = ?  where id = ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
+			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] {order.getWaiterInformation(),  order.getId()});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void updateOrderIsTakeAway(Order order, int isTakeAway) {
 		try {
 			String sql = "update " + TableNames.Order + " set isTakeAway = ?  where id = ? ";
