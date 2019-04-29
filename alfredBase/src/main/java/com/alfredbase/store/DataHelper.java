@@ -1557,6 +1557,11 @@ public class DataHelper {
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN payHalalQty INTEGER default 0");
 
+        }
+
+        private void onUpgradeForOldVersion30(SQLiteDatabase db){
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN remarks TEXT");
 
         }
     }

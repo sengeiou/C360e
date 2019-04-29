@@ -40,6 +40,7 @@ public class KotSummary implements Serializable{
 	private String contact;
 	private String mobile;  //收货人电话
 	private long deliveryTime;
+	private String remarks;
 	private int appOrderId;
 	private int isSubPos;
 
