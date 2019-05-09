@@ -1592,8 +1592,6 @@ public class DataHelper {
         }
 
         private void onUpgradeForOldVersion30(SQLiteDatabase db){
-            db.execSQL("ALTER TABLE " + TableNames.KotSummary
-                    + " ADD COLUMN remarks TEXT");
 
         }
     }

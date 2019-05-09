@@ -3167,7 +3167,11 @@ public class App extends BaseApplication {
                         //    String addr = appOrder.getAddress();
                         phone = "" + appOrder.getMobile() + "\n";
                     }
-                    userinfo =name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                    if(TextUtils.isEmpty(appOrder.getOrderRemark())){
+                        userinfo =name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                    }else {
+                        userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")" + "\n" + appOrder.getOrderRemark();
+                    }
                 }
 
 //

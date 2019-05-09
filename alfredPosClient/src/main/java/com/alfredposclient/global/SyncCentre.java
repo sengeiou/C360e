@@ -328,7 +328,7 @@ public class SyncCentre {
 
     public void updateTableStatusForApp(Context context, int tableId, Handler handler) {
         HttpAPI.updateTableStatusForApp(context, getAbsoluteUrl(APIName.TABLE_UPDATETABLESTATUS), httpClient, tableId, handler);
-    }
+}
 
     public void getAllAppOrder(Context context, Map<String, Object> parameters, Handler handler) {
         HttpAPI.getAllAppOrder(context, getAbsoluteUrl(APIName.POSORDER_GETALLPAIEDAPPORDER), httpClient, parameters, handler);

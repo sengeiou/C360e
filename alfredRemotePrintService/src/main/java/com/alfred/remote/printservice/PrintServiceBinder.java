@@ -2328,7 +2328,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //                            if (TextUtils.isEmpty(str.toString())) {
 //                                billPrint.printDeliveryList(appOrder.getOrderNo().toString(), appOrder.getAddress(), 1);
 
-            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+orderNo, PrintService.instance.getResources().getString(R.string.order_app_no_)+appOrder.getId().toString(),str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()));
+            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+orderNo, PrintService.instance.getResources().getString(R.string.order_app_no_)+appOrder.getId().toString(),str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()),appOrder.getOrderRemark());
             //  billPrint.printDeliveryList(" ", appOrder.getAddress().toString(), 1);
 //                                billPrint.AddAddress(appOrder.getAddress());
 //                            }

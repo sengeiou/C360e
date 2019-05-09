@@ -652,8 +652,11 @@ public class KitchenOrder extends BaseActivity {
                 deliverys.append(kot.getKotSummary().getMobile()+"\n");
             }
             if(!TextUtils.isEmpty(kot.getKotSummary().getDeliveryTime()+"")){
-                deliverys.append(TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
+                deliverys.append(TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime())+"");
             }
+//            if(!TextUtils.isEmpty(kot.getKotSummary().getOrderRemark()+"")){
+//                deliverys.append(kot.getKotSummary().getOrderRemark());
+//            }
             tv_kds_delivery.setText(deliverys.toString());
         }else {
             tv_kds_delivery.setVisibility(View.GONE);
@@ -671,7 +674,7 @@ public class KitchenOrder extends BaseActivity {
             kitchen_ll_orderRemark.setVisibility(View.GONE);
         } else {
             kitchen_ll_orderRemark.setVisibility(View.VISIBLE);
-            kitchen_tv_orderremark.setText("Remark:" + " " + remark);
+            kitchen_tv_orderremark.setText(remark);
         }
 
 //		textTypeFace.setTrajanProBlod(kotId);

@@ -103,6 +103,16 @@ public class KOTPrint extends PrintJob{
 			timePrint.setTextAlign(PrintData.ALIGN_RIGHT);
 			timePrint.setText(timeStr);
 			this.data.add(timePrint);
+
+			if(!TextUtils.isEmpty(kotsummary.getOrderRemark())){
+
+			PrintData remarksPrint = new PrintData();
+			String reStr =kotsummary.getOrderRemark()+ reNext ;
+			remarksPrint.setDataFormat(PrintData.FORMAT_TXT);
+			remarksPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+			remarksPrint.setText(reStr);
+			this.data.add(remarksPrint);
+			}
 		}
 
 		addHortionalLine(this.charSize);
@@ -245,6 +255,14 @@ public class KOTPrint extends PrintJob{
 			timePrint.setTextAlign(PrintData.ALIGN_RIGHT);
 			timePrint.setText(timeStr);
 			this.data.add(timePrint);
+			if(!TextUtils.isEmpty(kotSummary.getOrderRemark())) {
+				PrintData remarksPrint = new PrintData();
+				String reStr = kotSummary.getOrderRemark() + reNext;
+				remarksPrint.setDataFormat(PrintData.FORMAT_TXT);
+				remarksPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+				remarksPrint.setText(reStr);
+				this.data.add(remarksPrint);
+			}
 		}
 
 		addHortionalLine(this.charSize);

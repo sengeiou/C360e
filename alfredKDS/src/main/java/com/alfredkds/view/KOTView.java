@@ -301,8 +301,13 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		if (TextUtils.isEmpty(remark)){
 			ll_orderRemark.setVisibility(GONE);
 		}else {
-			ll_orderRemark.setVisibility(VISIBLE);
-			tv_orderremark.setText("Remark:" + " " + remark);
+			if(kot.getKotSummary().getEatType()==3){
+				ll_orderRemark.setVisibility(GONE);
+			}else {
+				ll_orderRemark.setVisibility(VISIBLE);
+				tv_orderremark.setText("Remark:" + " " + remark);
+			}
+
 		}
 
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
