@@ -301,7 +301,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
         BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
         if (reportDayPayments != null && reportDayPayments.size() > 0) {
             for (ReportDayPayment reportDayPayment : reportDayPayments) {
-                BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
+                overPaymentAmount=   BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
             }
             if (overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
                 this.addItem("Custom Payment Change", " ", overPaymentAmount.toString(), 1);
@@ -395,7 +395,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 this.addItem(reportDayPayment.getPaymentName(), reportDayPayment.getPaymentQty().toString(),
                         BH.getBD(reportDayPayment.getPaymentAmount()).toString(), 1);
             }
-            this.addItem("TOTAL Custom Payment", totalCustomPaymentQty + "",
+            this.addItem("TOTAL CUSTOM PAYMENT", totalCustomPaymentQty + "",
                     totalCustomPaymentAmount.toString(), 1);
         }
 
