@@ -232,6 +232,11 @@ public class HttpAnalysis {
 				}).start();
 
 			}
+
+			if(restaurant!=null)
+			{
+				Store.putInt(App.instance, Store.REPORT_ORDER_TIMELY, restaurant.getReportOrderTimely());
+			}
 			CoreData.getInstance().setRestaurant(restaurant);
 			RestaurantSQL.deleteAllRestaurant();
 			RestaurantSQL.addRestaurant(restaurant);

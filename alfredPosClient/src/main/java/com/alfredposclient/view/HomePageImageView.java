@@ -1,6 +1,7 @@
 package com.alfredposclient.view;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -130,6 +131,7 @@ public class HomePageImageView extends LinearLayout {
             home_page_sv.setVisibility(GONE);
             if (list != null && list.size() > 0) {
                 if (list.size() == 1) {
+                    ((BitmapDrawable)home_page_img.getDrawable()).getBitmap().recycle();
                     home_page_img.setImageURI(Uri.parse(list.get(0)));
                 }
             } else {

@@ -17,7 +17,9 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.WaiterDevice;
+import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.http.HTTPKDSRequest;
 import com.alfredposclient.http.HTTPWaiterRequest;
 import com.alfredposclient.http.HttpAPI;
@@ -217,8 +219,15 @@ public class SyncCentre {
     public void cloudSyncUploadOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
-        HttpAPI.cloudSync(context, syncMsg,
-                getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+        if(timely==0) {
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+        }else {
+
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/orderRealDateDataMsg"), bigSyncHttpClient);
+        }
     }
 
     /*
@@ -227,8 +236,17 @@ public class SyncCentre {
     public void cloudSyncUploadReportInfo(BaseActivity context,
                                           SyncMsg syncMsg, Handler handler) {
         //reportDataMsg
-        HttpAPI.cloudSync(context, syncMsg,
-                getAbsoluteUrl("receive/reportDataMsg"), bigSyncHttpClient);
+
+        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+        if(timely==0) {
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/reportDataMsg"), bigSyncHttpClient);
+        }else {
+
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/reportRealDateDataMsg"), bigSyncHttpClient);
+        }
+
     }
 
     /*load day sales report from cloud */
@@ -393,7 +411,7 @@ public class SyncCentre {
         if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://172.16.3.238:8083/alfred-api/" + relativeUrl;
+            return "http://172.16.3.166:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
 //            return "http://172.16.3.163:8083/alfred-api/" + relativeUrl;

@@ -145,6 +145,7 @@
     <string name="item_complete">该项已经完成</string>
     <string name="sure_take_away">你确定将该订单打包?</string>
     <string name="no_order_detail">不能下空订单</string>
+    <string name="network_connected">互联网连接不可用。请连接以进行云同步。</string>
 
     <!-- setting-window -->
     <string name="setting">设置</string>

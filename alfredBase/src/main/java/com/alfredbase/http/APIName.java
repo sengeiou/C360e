@@ -50,7 +50,7 @@ public class APIName {
     /**
      * 以pos作为服务器
      */
-    // 以下是Waiter专用的api
+    // 以下是Waiter专用的apiInternet connection not available. Please connect for cloud sync.
     public static final String EMPLOYEE_ID = "employee_id";
     public static final String SELECT_TABLES = "select_tables";
     public static final String COMMIT_ORDER = "commit_Order";

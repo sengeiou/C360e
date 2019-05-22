@@ -104,6 +104,7 @@ import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.utils.AlertToDeviceSetting;
+import com.alfredposclient.utils.NetworkUtils;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
 import com.google.gson.Gson;
@@ -803,6 +804,12 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private void close(View v, final String actual) {
 		if(!ButtonClickTimer.canClick(v))
 			return;
+
+		if(!NetworkUtils.isNetworkAvailable(context)){
+
+			UIHelp.showShortToast(context, context.getResources().getString(R.string.network_connected));
+
+		}
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		final SessionStatus sessionStatus = Store.getObject(
 				context, Store.SESSION_STATUS, SessionStatus.class);
@@ -877,6 +884,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 					if (cloudSync!=null) {
 						int revenueId = App.instance.getRevenueCenter().getId();
 						RevenueCenter revenueCenter = RevenueCenterSQL.getRevenueCenterById(revenueId);
+
+
 						cloudSync.syncXReport(xReportInfo,
 								revenueId,
 								bizDate,
@@ -936,6 +945,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						map.put("userOpenDrawerRecords", userOpenDrawerRecords);
 						int revenueId = App.instance.getRevenueCenter().getId();
 						RevenueCenter revenueCenter = RevenueCenterSQL.getRevenueCenterById(revenueId);
+
 						cloudSync.syncXReport(map,
 								revenueId,
 								bizDate,
