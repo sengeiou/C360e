@@ -330,6 +330,25 @@ public class ParamConst {
 	 * 精确到小数点前一位四舍五入
 	 */
 	public static final String ROUND_1DOLLAR = "ROUND_1DOLLAR";
+
+	/**
+	 * 精确到小数点前一位四舍五入
+	 */
+	public static final String ROUND_50DOLLAR = "ROUND_50DOLLAR";
+
+	/**
+	 * 精确到小数点前一位四舍五入
+	 */
+	public static final String ROUND_100DOLLAR = "ROUND_100DOLLAR";
+
+	/**
+	 * 精确到小数点前一位四舍五入
+	 */
+	public static final String ROUND_500DOLLAR = "ROUND_500DOLLAR";
+	/**
+	 * 精确到小数点前一位四舍五入
+	 */
+	public static final String ROUND_1000DOLLAR = "ROUND_1000DOLLAR";
 	/**
 	 * 精确小数点后两位,向上四舍五入
 	 */
