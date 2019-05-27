@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
@@ -83,7 +84,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private Handler handler;
 	private int hour;
 	private MainPosInfo mainPosInfo;
-	
+
 	public KOTView(Context context) {
 		super(context);
 		this.parent = (KitchenOrder) context;
@@ -251,9 +252,16 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		if(TextUtils.isEmpty(kot.getKotSummary().getTableName())){
             table.setText(kioskOrderNoStr);
 			if(kot.getKotSummary().getAppOrderId()>0) {
-				orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
-				tv_kiosk_order_id.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
-			}else {
+                   if(kot.getKotSummary().getEatType()==3){
+					   orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId()+"\n" +TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
+					   tv_kiosk_order_id.setText("Online App No:" + kot.getKotSummary().getAppOrderId()+"\n" +TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
+
+				   }else {
+					   orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
+					   tv_kiosk_order_id.setText("Online App No:" + kot.getKotSummary().getAppOrderId());
+
+				   }
+		}else {
 				orderId.setText("");
 				tv_kiosk_order_id.setText("");
 			}
@@ -264,7 +272,12 @@ public class KOTView extends LinearLayout implements AnimationListener,
             tv_kiosk_order_id.setText(kioskOrderNoStr);
             if(kot.getKotSummary().getAppOrderId()>0){
                 ll_type.setVisibility(VISIBLE);
-                tv_kiosk_app_order_id.setText("Online App No:"+kot.getKotSummary().getAppOrderId());
+                if(kot.getKotSummary().getEatType()==3){
+					tv_kiosk_app_order_id.setText("Online App No:"+kot.getKotSummary().getAppOrderId()+"\n" +TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
+				}else {
+					tv_kiosk_app_order_id.setText("Online App No:"+kot.getKotSummary().getAppOrderId());
+				}
+
             }else {
                 ll_type.setVisibility(GONE);
             }
@@ -289,8 +302,13 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		if (TextUtils.isEmpty(remark)){
 			ll_orderRemark.setVisibility(GONE);
 		}else {
-			ll_orderRemark.setVisibility(VISIBLE);
-			tv_orderremark.setText("Remark:" + " " + remark);
+			if(kot.getKotSummary().getEatType()==3){
+				ll_orderRemark.setVisibility(GONE);
+			}else {
+				ll_orderRemark.setVisibility(VISIBLE);
+				tv_orderremark.setText("Remark:" + " " + remark);
+			}
+
 		}
 
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));

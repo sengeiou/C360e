@@ -298,15 +298,19 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 
                 if (TextUtils.isEmpty(appOrder.getContact())) {
                     tv_app_address_name.setText("");
+                    tv_app_address_name.setVisibility(View.GONE);
                 } else {
                     //    String addr = appOrder.getAddress();
+                    tv_app_address_name.setVisibility(View.VISIBLE);
                     tv_app_address_name.setText("name: "+appOrder.getContact());
                 }
 
-                if (TextUtils.isEmpty(appOrder.getContact())) {
+                if (TextUtils.isEmpty(appOrder.getMobile())) {
                     tv_app_address_phone.setText("");
+                    tv_app_address_phone.setVisibility(View.GONE);
                 } else {
                     //    String addr = appOrder.getAddress();
+                    tv_app_address_phone.setVisibility(View.VISIBLE);
                     tv_app_address_phone.setText("phone :"+appOrder.getMobile());
                 }
                 if (appOrder.getDeliveryTime()==0) {

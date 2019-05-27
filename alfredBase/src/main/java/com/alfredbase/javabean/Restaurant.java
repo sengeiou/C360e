@@ -61,7 +61,7 @@ public class Restaurant implements Serializable{
 	private String options; // customized fields shown at receipt header
 	
 	private String footerOptions; //customized fields shown at receipt footer
-
+	private Integer reportOrderTimely;
 
 	public Restaurant() {
 	}
@@ -312,20 +312,42 @@ public class Restaurant implements Serializable{
 		this.restaurantPrint = restaurantPrint;
 	}
 
+	public Integer getReportOrderTimely() {
+		return reportOrderTimely;
+	}
+
+	public void setReportOrderTimely(Integer reportOrderTimely) {
+		this.reportOrderTimely = reportOrderTimely;
+	}
+
 	@Override
 	public String toString() {
-		return "Restaurant [id=" + id + ", companyId=" + companyId
-				+ ", restaurantName=" + restaurantName + ", type=" + type
-				+ ", status=" + status + ", description=" + description
-				+ ", email=" + email + ", address1=" + address1 + ", address2="
-				+ address2 + ", telNo=" + telNo + ", country=" + country
-				+ ", state=" + state + ", city=" + city + ", postalCode="
-				+ postalCode + ", createTime=" + createTime + ", updateTime="
-				+ updateTime + ", website=" + website + ", addressPrint="
-				+ addressPrint + ", logoUrl=" + logoUrl + ", qrPayment="
-				+ qrPayment + ", restaurantPrint=" + restaurantPrint
-				+ ", options=" + options + ", footerOptions=" + footerOptions
-				+ "]";
+		return "Restaurant{" +
+				"id=" + id +
+				", companyId=" + companyId +
+				", restaurantName='" + restaurantName + '\'' +
+				", type=" + type +
+				", status=" + status +
+				", description='" + description + '\'' +
+				", email='" + email + '\'' +
+				", address1='" + address1 + '\'' +
+				", address2='" + address2 + '\'' +
+				", telNo='" + telNo + '\'' +
+				", country='" + country + '\'' +
+				", state='" + state + '\'' +
+				", city='" + city + '\'' +
+				", postalCode='" + postalCode + '\'' +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", website='" + website + '\'' +
+				", addressPrint='" + addressPrint + '\'' +
+				", logoUrl='" + logoUrl + '\'' +
+				", qrPayment=" + qrPayment +
+				", restaurantPrint='" + restaurantPrint + '\'' +
+				", options='" + options + '\'' +
+				", footerOptions='" + footerOptions + '\'' +
+				", reportOrderTimely='" + reportOrderTimely + '\'' +
+				'}';
 	}
 
 	public String getOptions() {

@@ -240,6 +240,11 @@ public class HttpAnalysis {
 				}).start();
 
 			}
+
+			if(restaurant!=null)
+			{
+				Store.putInt(App.instance, Store.REPORT_ORDER_TIMELY, restaurant.getReportOrderTimely());
+			}
 			CoreData.getInstance().setRestaurant(restaurant);
 			RestaurantSQL.deleteAllRestaurant();
 			RestaurantSQL.addRestaurant(restaurant);
@@ -808,7 +813,7 @@ public class HttpAnalysis {
 				}
 //				App.instance.appOrderShowDialog(false, appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
 			}
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

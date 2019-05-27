@@ -181,6 +181,10 @@ public class ReportDaySales implements Serializable{
 	private String reportNoStr;
 	private String promotionTotal;
 
+	private String payHalal;
+
+	private Integer payHalalQty;
+
 //	private String cashGstDiscount;
 //	private String netsGstDiscount;
 //	private String visaGstDiscount;
@@ -981,6 +985,22 @@ public class ReportDaySales implements Serializable{
 		this.promotionTotal = promotionTotal;
 	}
 
+	public String getPayHalal() {
+		return payHalal;
+	}
+
+	public void setPayHalal(String payHalal) {
+		this.payHalal = payHalal;
+	}
+
+	public Integer getPayHalalQty() {
+		return payHalalQty;
+	}
+
+	public void setPayHalalQty(Integer payHalalQty) {
+		this.payHalalQty = payHalalQty;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -1076,6 +1096,8 @@ public class ReportDaySales implements Serializable{
 				", updateTime=" + updateTime +
 				", totalHour='" + totalHour + '\'' +
 				", reportNoStr='" + reportNoStr + '\'' +
+				", payHalal='" + payHalal + '\'' +
+				", payHalalQty=" + payHalalQty +
 				", promotionTotal='" + promotionTotal + '\'' +
 				'}';
 	}

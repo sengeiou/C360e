@@ -11,6 +11,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -19,8 +20,10 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 
 import com.alfred.remote.printservice.IAlfredRemotePrintService;
 import com.alfred.remote.printservice.RemotePrintServiceCallback;
@@ -113,11 +116,13 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.ClockInOROut;
+import com.alfredposclient.activity.DifferentDislay;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.OpenRestaruant;
@@ -487,6 +492,27 @@ public class App extends BaseApplication {
         }
         wifiPolicyNever();
         update15to16();
+
+//
+////
+
+        if (MachineUtil.isHisense()||(MachineUtil.isSUNMIShow()&&MachineUtil.isSunmiT2())) {
+
+            DisplayManager mDisplayManager;// 屏幕管理类
+            mDisplayManager = (DisplayManager) this
+                    .getSystemService(Context.DISPLAY_SERVICE);
+            Display[] displays = mDisplayManager.getDisplays();
+            DifferentDislay mPresentation = null;
+            if (mPresentation == null) {
+                mPresentation = new DifferentDislay(this, displays[displays.length - 1]);// displays[1]是副屏
+
+                mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                mPresentation.show();
+            }
+        }
+
+
+
     }
 
     public XmppThread getXmppThread() {
@@ -697,6 +723,7 @@ public class App extends BaseApplication {
         map.put("type", 0);
         Gson gson = new Gson();
         String json = gson.toJson(map);
+        RxBus.getInstance().post(RxBus.showOrder, map);
         TcpUdpFactory.tcpSend(5, json, new TcpSendCallBack() {
             @Override
             public void call(boolean isSucceed) {
@@ -763,6 +790,7 @@ public class App extends BaseApplication {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("type", 1);
                 map.put("orderModel", orderModel);
+                RxBus.getInstance().post(RxBus.showOrder, map);
                 TcpUdpFactory.tcpSend(5, new Gson().toJson(map), new TcpSendCallBack() {
                     @Override
                     public void call(boolean isSucceed) {
@@ -2056,6 +2084,123 @@ public class App extends BaseApplication {
         }
     }
 
+    public void remoteBillRePrint(PrinterDevice printer, PrinterTitle title,
+                                   Order order, ArrayList<PrintOrderItem> orderItems,
+                                   ArrayList<PrintOrderModifier> orderModifiers,
+                                   List<Map<String, String>> taxes,
+                                   List<PaymentSettlement> settlement, RoundAmount roundAmount,
+                                   boolean openDrawer){
+
+        boolean isCashSettlement = false;
+        List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
+        if (settlement != null) {
+            for (PaymentSettlement paymentSettlement : settlement) {
+                PrintReceiptInfo printReceiptInfo = new PrintReceiptInfo();
+                printReceiptInfo.setPaidAmount(paymentSettlement
+                        .getPaidAmount());
+                printReceiptInfo.setPaymentTypeId(paymentSettlement
+                        .getPaymentTypeId());
+                switch (paymentSettlement.getPaymentTypeId().intValue()) {
+                    case ParamConst.SETTLEMENT_TYPE_CASH:
+                        printReceiptInfo.setCashChange(paymentSettlement
+                                .getCashChange());
+                        isCashSettlement = true;
+                        break;
+                    case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
+                    case ParamConst.SETTLEMENT_TYPE_UNIPAY:
+                    case ParamConst.SETTLEMENT_TYPE_VISA:
+                    case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
+                    case ParamConst.SETTLEMENT_TYPE_AMEX:
+                    case ParamConst.SETTLEMENT_TYPE_JCB:
+                        printReceiptInfo
+                                .setCardNo(CardsSettlementSQL
+                                        .getCardNoByPaymentIdAndPaymentSettlementId(
+                                                paymentSettlement.getPaymentId()
+                                                        .intValue(),
+                                                paymentSettlement.getId()
+                                                        .intValue()));
+                        break;
+                    case ParamConst.SETTLEMENT_TYPE_NETS:
+                        printReceiptInfo
+                                .setCardNo(NetsSettlementSQL
+                                        .getNetsSettlementByPament(
+                                                paymentSettlement.getPaymentId()
+                                                        .intValue(),
+                                                paymentSettlement.getId()
+                                                        .intValue())
+                                        .getReferenceNo()
+                                        + "");
+                        break;
+
+                    default: {
+                        PaymentMethod pamentMethod = PaymentMethodSQL.getPaymentMethodByPaymentTypeId(paymentSettlement.getPaymentTypeId().intValue());
+                        if (pamentMethod != null && !TextUtils.isEmpty(pamentMethod.getNameOt())) {
+                            printReceiptInfo.setPaymentTypeName(pamentMethod.getNameOt());
+                        }
+                    }
+                    break;
+                }
+                printReceiptInfos.add(printReceiptInfo);
+            }
+        }
+            if (mRemoteService == null) {
+                printerDialog();
+                return;
+            }
+            try {
+                Map<String, String> roundingMap = new HashMap<String, String>();
+                String total = order.getTotal();
+                String rounding = "0.00";
+                if (roundAmount != null) {
+                    total = BH.sub(BH.getBD(order.getTotal()),
+                            BH.getBD(roundAmount.getRoundBalancePrice()), true)
+                            .toString();
+                    rounding = BH.getBD(roundAmount.getRoundBalancePrice())
+                            .toString();
+                }
+                roundingMap.put("Total", total);
+                roundingMap.put("Rounding", rounding);
+                Gson gson = new Gson();
+                String prtStr = gson.toJson(printer);
+                String prtTitle = gson.toJson(title);
+                String orderStr = gson.toJson(order);
+                String details = gson.toJson(orderItems);
+                String mods = gson.toJson(orderModifiers);
+                String tax = gson.toJson(taxes);
+                String payment = gson.toJson(printReceiptInfos);
+                String roundStr = gson.toJson(roundingMap);
+                String apporders = "";
+                // gson.toJson(roundingMap);
+                if (isRevenueKiosk()) {
+                    if (countryCode == ParamConst.CHINA)
+                        mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                                details, mods, tax, payment,
+                                this.systemSettings.isDoubleBillPrint(),
+                                this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                                getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
+                                true, BH.IsDouble());
+                    else
+                        mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                                details, mods, tax, payment,
+                                this.systemSettings.isDoubleBillPrint(),
+                                this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                                null, getLocalRestaurantConfig().getCurrencySymbol(),
+                                openDrawer, BH.IsDouble());
+
+                } else {
+                    mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                            mods, tax, payment,
+                            this.systemSettings.isDoubleBillPrint(),
+                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                            getLocalRestaurantConfig().getCurrencySymbol(),
+                            openDrawer, BH.IsDouble(),"",apporders);
+                }
+
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+    }
+
     public void kickOutCashDrawer(PrinterDevice printer) {
         Gson gson = new Gson();
         String prtStr = gson.toJson(printer);
@@ -2224,7 +2369,7 @@ public class App extends BaseApplication {
             String itmStr = gson.toJson(items);
             String modStr = gson.toJson(modifier);
             mRemoteService.printSummaryAnalysisReport(xzType, prtStr, prtTitle,
-                    pluStr, modStr, catStr, itmStr);
+                    pluStr, modStr, catStr, itmStr,App.instance.systemSettings.isPluVoid());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -3063,7 +3208,11 @@ public class App extends BaseApplication {
                         //    String addr = appOrder.getAddress();
                         phone = "" + appOrder.getMobile() + "\n";
                     }
-                    userinfo =name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                    if(TextUtils.isEmpty(appOrder.getOrderRemark())){
+                        userinfo =name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                    }else {
+                        userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")" + "\n" + appOrder.getOrderRemark();
+                    }
                 }
 
 //
@@ -3212,6 +3361,8 @@ public class App extends BaseApplication {
         this.kioskHoldNum = kioskHoldNum;
         RxBus.getInstance().post(RxBus.RX_MSG_1, 3);
     }
+
+
 
     /**
      * 判断是否使用的是商米设备  商米副屏设置是否展示

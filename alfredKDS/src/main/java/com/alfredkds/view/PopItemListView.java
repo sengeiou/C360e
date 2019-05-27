@@ -145,14 +145,33 @@ public class PopItemListView extends ListView {
 	}
 
 	/**
+	 * 向左滑动，根据上面我们知道向左滑动为正值
+	 */
+	private void scrollRight() {
+		removeDirection = RemoveDirection.RIGHT;
+		// 调用startScroll方法来设置一些滚动的参数，我们在computeScroll()方法中调用scrollTo来滚动item
+		scroller.startScroll(0, 0, 0, 0,
+				Math.abs(itemView.getScrollX()));
+		postInvalidate(); // 刷新itemView
+	}
+
+	/**
 	 * 根据手指滚动itemView的距离来判断是滚动到开始位置还是向左或者向右滚动
 	 */
 	private void scrollByDistanceX() {
 		// 如果向左滚动的距离大于屏幕的三分之一，就让其删除
 		if (itemView.getScrollX() >= itemView.getWidth() / 3) {
 			isChange = true;
-		} 
-		scrollLeft();
+			scrollLeft();
+		}
+
+		// 如果向左滚动的距离大于屏幕的三分之一，就让其删除
+		if (itemView.getScrollX() <= -itemView.getWidth() / 3) {
+			isChange = true;
+			scrollRight();
+		}
+
+		//scrollRight();
 	}
 
 	/**
@@ -174,7 +193,7 @@ public class PopItemListView extends ListView {
 			case MotionEvent.ACTION_MOVE:
 				int deltaX = downX - x;
 				downX = x;
-				if(deltaX > 0 && kot.getKotItemDetails().get(slidePosition).getKotStatus()<ParamConst.KOT_STATUS_DONE){
+				if(kot.getKotItemDetails().get(slidePosition).getKotStatus()<ParamConst.KOT_STATUS_DONE){
 				// 手指拖动itemView滚动, deltaX大于0向左滚动
 					itemView.scrollBy(deltaX, 0);
 				}
@@ -201,7 +220,7 @@ public class PopItemListView extends ListView {
 			postInvalidate();
 
 			// 滚动动画结束的时候调用回调接口
-			if (scroller.isFinished() && RemoveDirection.LEFT == removeDirection ) {
+			if (scroller.isFinished()  ) {
 				if (mRemoveListener == null) {
 					throw new NullPointerException("RemoveListener is null, we should called setRemoveListener()");
 				}

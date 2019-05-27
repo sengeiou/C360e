@@ -617,7 +617,7 @@ public class ObjectFactory {
             }
             orderDetail.setGroupId(groupId);
             orderDetail.setOrderSplitId(0);
-            orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+            orderDetail.setIsTakeAway(order.getIsTakeAway());
             orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
             if (itemDetail.getItemType() == 3)
                 orderDetail.setIsSet(1);
@@ -2076,6 +2076,7 @@ public class ObjectFactory {
                     kotSummary.setContact(appOrder.getContact());
                     kotSummary.setMobile(appOrder.getMobile());
                     kotSummary.setDeliveryTime(appOrder.getDeliveryTime());
+                  kotSummary.setOrderRemark(appOrder.getOrderRemark());
                 }
             }
             if (revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {

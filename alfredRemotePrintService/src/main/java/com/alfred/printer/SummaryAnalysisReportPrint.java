@@ -25,7 +25,8 @@ public class SummaryAnalysisReportPrint extends ReportBasePrint{
 	private ArrayList<ReportPluDayItem> reportPluDayItems;
 	private ArrayList<ItemCategory> itemCategorys;
 	private ArrayList<ItemMainCategory> itemMainCategorys;
-	private ArrayList<ReportPluDayModifier> pluModifiers;	
+	private ArrayList<ReportPluDayModifier> pluModifiers;
+	private  boolean isPluVoid;
 	
 	
 	public SummaryAnalysisReportPrint(String uuid, Long bizDate) {
@@ -37,11 +38,12 @@ public class SummaryAnalysisReportPrint extends ReportBasePrint{
 	}
 	
 	public void print(ArrayList<ReportPluDayItem> plu, ArrayList<ReportPluDayModifier> modifier,
-			ArrayList<ItemMainCategory> category, ArrayList<ItemCategory>items ) {
+			ArrayList<ItemMainCategory> category, ArrayList<ItemCategory>items ,boolean isPluVoid) {
 		this.reportPluDayItems = plu;
 		this.itemMainCategorys = category;
 		this.itemCategorys = items;
 		this.pluModifiers = modifier;
+		this.isPluVoid=isPluVoid;
 		getSummaryAnalysis();
 	}
 
@@ -172,11 +174,20 @@ public class SummaryAnalysisReportPrint extends ReportBasePrint{
 						}
 						if (itemCategory.getId().equals(
 								reportPluDayItem.getItemCategoryId())) {
-							name = reportPluDayItem.getItemCategoryName();
-							qty += reportPluDayItem.getItemCount();
-							amount = BH.add(amount,
-									BH.getBD(reportPluDayItem.getItemAmount()),
-									true);
+							if(isPluVoid) {
+								name = reportPluDayItem.getItemCategoryName();
+								qty += reportPluDayItem.getItemCount();
+								amount = BH.add(amount,
+										BH.getBD(reportPluDayItem.getItemAmount()),
+										true);
+							}else {
+
+								name = reportPluDayItem.getItemCategoryName();
+								qty += reportPluDayItem.getItemCount();
+								amount = BH.add(amount,
+										BH.getBD(reportPluDayItem.getItemAmount()),
+										true);
+							}
 						}
 					}
 

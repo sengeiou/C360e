@@ -2,17 +2,22 @@ package com.alfredkds.activity;
 
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.LayoutRes;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -50,7 +55,9 @@ import com.alfredkds.view.PopItemAdapter;
 import com.alfredkds.view.PopItemListView;
 import com.alfredkds.view.PopItemListView.RemoveDirection;
 import com.alfredkds.view.PopItemListView.RemoveListener;
+import com.alfredkds.view.SwipeItemLayout;
 import com.alfredkds.view.TopBarView;
+import com.alfredkds.view.Type;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -82,6 +89,8 @@ public class KitchenOrder extends BaseActivity {
     private List<KotItem> kotItems = new ArrayList<KotItem>();
 
     private LinearLayout li_title;
+     Kot kot;
+    KotAdapter kadapter;
 
     @Override
     protected void initView() {
@@ -91,6 +100,7 @@ public class KitchenOrder extends BaseActivity {
         loadingDialog.setTitle(context.getResources().getString(R.string.loading));
         mainPosInfo = App.instance.getCurrentConnectedMainPos();
         App.instance.setRing();
+
 //		filter = new IntentFilter();
 //		filter.addAction(Intent.ACTION_TIME_TICK);
 //		registerReceiver(receiver, filter);
@@ -129,8 +139,8 @@ public class KitchenOrder extends BaseActivity {
                     }
 
                     if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-                        popItemAdapter.setKot(App.instance.getKot(kotSummary));
-                        popItemAdapter.notifyDataSetChanged();
+                        kadapter.setKot(App.instance.getKot(kotSummary));
+                        kadapter.notifyDataSetChanged();
                     }
                     break;
                 case App.HANDLER_UPDATE_KOT:
@@ -146,8 +156,8 @@ public class KitchenOrder extends BaseActivity {
                     }
 
                     if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-                        popItemAdapter.setKot(App.instance.getKot(kotSummary));
-                        popItemAdapter.notifyDataSetChanged();
+                        kadapter.setKot(App.instance.getKot(kotSummary));
+                        kadapter.notifyDataSetChanged();
                     }
                     break;
                 case App.HANDLER_DELETE_KOT:
@@ -364,8 +374,8 @@ public class KitchenOrder extends BaseActivity {
         }
         if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
             Kot kot = App.instance.getKot(kotSummary);
-            popItemAdapter.setKot(App.instance.getKot(kotSummary));
-            popItemAdapter.notifyDataSetChanged();
+            kadapter.setKot(App.instance.getKot(kotSummary));
+            kadapter.notifyDataSetChanged();
             ArrayList<KotItemDetail> list = new ArrayList<KotItemDetail>();
             if (list != null && list.size() != 0) {
                 list.clear();
@@ -429,8 +439,8 @@ public class KitchenOrder extends BaseActivity {
 //		}
 
         if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-            popItemAdapter.setKot(App.instance.getKot(kotSummary));
-            popItemAdapter.notifyDataSetChanged();
+            kadapter.setKot(App.instance.getKot(kotSummary));
+            kadapter.notifyDataSetChanged();
         }
         super.onResume();
     }
@@ -605,9 +615,10 @@ public class KitchenOrder extends BaseActivity {
     private PopupWindow itemPopupWindow;
     private PopItemListView popItemListView;
     private PopItemAdapter popItemAdapter;
+    private RecyclerView  reKot;
 
     public void showOrderItem(final KotSummary kotSummary) {
-        final Kot kot = App.instance.getKot(kotSummary);
+        kot = App.instance.getKot(kotSummary);
         this.kotSummary = kotSummary;
         View view = getLayoutInflater().inflate(R.layout.kitche_order_item_popupwindow, null);
         ImageView iv_back = (ImageView) view.findViewById(R.id.iv_back);
@@ -649,8 +660,14 @@ public class KitchenOrder extends BaseActivity {
                 deliverys.append(kot.getKotSummary().getContact()+"\n");
             }
             if(!TextUtils.isEmpty(kot.getKotSummary().getMobile())){
-                deliverys.append(kot.getKotSummary().getMobile());
+                deliverys.append(kot.getKotSummary().getMobile()+"\n");
             }
+            if(!TextUtils.isEmpty(kot.getKotSummary().getDeliveryTime()+"")){
+                deliverys.append(TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime())+"");
+            }
+//            if(!TextUtils.isEmpty(kot.getKotSummary().getOrderRemark()+"")){
+//                deliverys.append(kot.getKotSummary().getOrderRemark());
+//            }
             tv_kds_delivery.setText(deliverys.toString());
         }else {
             tv_kds_delivery.setVisibility(View.GONE);
@@ -668,7 +685,7 @@ public class KitchenOrder extends BaseActivity {
             kitchen_ll_orderRemark.setVisibility(View.GONE);
         } else {
             kitchen_ll_orderRemark.setVisibility(View.VISIBLE);
-            kitchen_tv_orderremark.setText("Remark:" + " " + remark);
+            kitchen_tv_orderremark.setText(remark);
         }
 
 //		textTypeFace.setTrajanProBlod(kotId);
@@ -685,34 +702,44 @@ public class KitchenOrder extends BaseActivity {
         popItemAdapter = new PopItemAdapter(context);
         popItemAdapter.setKot(kot);
         popItemListView.setAdapter(popItemAdapter);
-        popItemListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        reKot=(RecyclerView)view.findViewById(R.id.re_kot);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        reKot.setLayoutManager(linearLayoutManager);
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        reKot.addItemDecoration(dividerItemDecoration);
 
-                DialogFactory.commonTwoBtnDialog(context, "Waring", "Out of stock ?",
-                        getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        },
-                        new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                int   orderDetailId =   kot.getKotItemDetails().get(position).getOrderDetailId();
-                                Map<String, Object> parameters = new HashMap<String, Object>();
-                                parameters.put("orderDetailId",orderDetailId);
-
-                                SyncCentre.getInstance().updateRemainingStock(context,
-                                        App.instance.getCurrentConnectedMainPos(), parameters, handler);
-                            }
-                        });
-                return true;
-            }
-        });
+         kadapter = new KotAdapter( mItemTouchListener);
+        kadapter.setKot(kot);
+        reKot.setAdapter(kadapter);
+//        popItemListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+//
+//                DialogFactory.commonTwoBtnDialog(context, "Waring", "Out of stock ?",
+//                        getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//
+//                            }
+//                        },
+//                        new OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                int   orderDetailId =   kot.getKotItemDetails().get(position).getOrderDetailId();
+//                                Map<String, Object> parameters = new HashMap<String, Object>();
+//                                parameters.put("orderDetailId",orderDetailId);
+//
+//                                SyncCentre.getInstance().updateRemainingStock(context,
+//                                        App.instance.getCurrentConnectedMainPos(), parameters, handler);
+//                            }
+//                        });
+//                return true;
+//            }
+//        });
         popItemListView.setRemoveListener(new RemoveListener() {
             @Override
-            public void removeItem(RemoveDirection direction, int position) {
+            public void removeItem(RemoveDirection direction, final int position) {
                 PopItemAdapter currentPopItems = (PopItemAdapter) popItemListView.getAdapter();
                 Kot popKot = currentPopItems.getKot();
 				/*
@@ -748,7 +775,27 @@ public class KitchenOrder extends BaseActivity {
                         }
 
                         break;
+                    case RIGHT:
 
+                        DialogFactory.commonTwoBtnDialog(context, "Waring", "Out of stock ?",
+                        getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        },
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int   orderDetailId =   kot.getKotItemDetails().get(position).getOrderDetailId();
+                                Map<String, Object> parameters = new HashMap<String, Object>();
+                                parameters.put("orderDetailId",orderDetailId);
+
+                                SyncCentre.getInstance().updateRemainingStock(context,
+                                        App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                            }
+                        });
+                        break;
 
                     default:
                         break;
@@ -826,5 +873,235 @@ public class KitchenOrder extends BaseActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+
+
+    ItemTouchListener mItemTouchListener = new ItemTouchListener() {
+        @Override
+        public void onItemClick(String str) {
+
+        }
+
+        @Override
+        public void onLeftMenuClick(String str) {
+            final int position=Integer.valueOf(str).intValue();
+
+
+            DialogFactory.commonTwoBtnDialog(context, "Waring", "Out of stock ?",
+                    getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    },
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int   orderDetailId =  kot.getKotItemDetails().get(position).getOrderDetailId();
+                            Map<String, Object> parameters = new HashMap<String, Object>();
+                            parameters.put("orderDetailId",orderDetailId);
+
+                            SyncCentre.getInstance().updateRemainingStock(context,
+                                    App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                        }
+                    });
+
+
+        }
+
+        @Override
+        public void onRightMenuClick(String str){
+            int position=Integer.valueOf(str).intValue();
+            KotAdapter currentPopItems = (KotAdapter) reKot.getAdapter();
+            Kot popKot = currentPopItems.getKot();
+
+            if (position >= popKot.getKotItemDetails().size()) {
+//						return;
+            }
+            if (popKot.getKotItemDetails().get(position).getKotStatus() < ParamConst.KOT_STATUS_DONE
+                    && popKot.getKotItemDetails().get(position).getCategoryId() == ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN) {
+                KotItemDetail kotItemDetail = popKot.getKotItemDetails().get(position);
+                if (kotItemDetail.getUnFinishQty() > 1) {
+                    finishQtyPop.show(kotItemDetail.getUnFinishQty() + "", kotSummary, kotItemDetail, loadingDialog);
+                    return;
+                }
+                loadingDialog.show();
+                kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+                kotItemDetail.setUnFinishQty(0);
+                kotItemDetail.setFinishQty(1);
+                KotItemDetailSQL.update(kotItemDetail);
+                List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
+                itemDetails.add(kotItemDetail);
+                Map<String, Object> parameters = new HashMap<String, Object>();
+                parameters.put("kotSummary", popKot.getKotSummary());
+                parameters.put("kotItemDetails", itemDetails);
+                SyncCentre.getInstance().kotComplete(context,
+                        App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+            }
+        }
+    };
+
+    private static class KotAdapter extends RecyclerView.Adapter<SimpleViewHolder> {
+
+        private ItemTouchListener mItemTouchListener;
+      //  private List<Data> mData;
+        public Kot kot;
+
+        KotAdapter( ItemTouchListener itemTouchListener) {
+           // this.kot = data;
+            this.mItemTouchListener = itemTouchListener;
+        }
+
+
+        public Kot getKot() {
+            return kot;
+        }
+
+        public void setKot(Kot kot) {
+            this.kot = kot;
+        }
+        @Override
+        public int getItemViewType(int position) {
+            return 0;
+        }
+
+        @Override
+        public int getItemCount() {
+            return  kot.getKotItemDetails().size();
+        }
+
+        @Override
+        public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            @LayoutRes
+            int layout;
+            layout = R.layout.item_left_and_right_menu;
+
+//            switch (viewType) {
+////                case Type.LEFT_MENU:
+////                    layout = R.layout.item_left_menu;
+////                    break;
+////                case Type.RIGHT_MENU:
+////                    layout = R.layout.item_right_menu;
+////                    break;
+//                case Type.LEFT_AND_RIGHT_MENU:
+//                    layout = R.layout.item_left_and_right_menu;
+//                    break;
+////                case Type.LEFT_LONG_MENU:
+////                    layout = R.layout.item_left_long_menu;
+////                    break;
+////                case Type.RIGHT_LONG_MENU:
+////                    layout = R.layout.item_right_long_menu;
+////                    break;
+////                case Type.LEFT_AND_RIGHT_LONG_MENU:
+////                    layout = R.layout.item_left_and_right_long_menu;
+////                    break;
+////                case Type.DISABLE_SWIPE_MENU:
+////                    layout = R.layout.item_disable_swipe_menu;
+////                    break;
+////                default:
+////                    layout = R.layout.item_left_menu;
+////                    break;
+//            }
+            View rootView = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+            return new SimpleViewHolder(rootView);
+        }
+
+        @Override
+        public void onBindViewHolder(final SimpleViewHolder holder, int position) {
+            KotItemDetail kotItemDetail = kot.getKotItemDetails().get(position);
+            holder.mContent.setText(kotItemDetail.getItemName()+"");
+            holder.num.setText(kotItemDetail.getUnFinishQty()+"");
+            //holder.itemName.setText(kotItemDetail.getItemName());
+           // holder.mContent.setText(mData.get(position).content.concat(" " + position));
+            holder.mSwipeItemLayout.setSwipeEnable(getItemViewType(position) != Type.DISABLE_SWIPE_MENU);
+            if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE) {
+                holder.itemView.setBackgroundResource(R.color.bg_complete_item);
+                holder.mContent.getPaint().setFlags(0);
+            } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
+                holder.itemView.setBackgroundResource(R.color.white);
+                holder.mContent.setPaintFlags(holder.mContent.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else if (kotItemDetail.getFireStatus() == 1) {
+                holder.itemView.setBackgroundResource(R.color.viewfinder_laser);
+            } else {
+                if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
+                    holder.itemView.setBackgroundResource(R.color.bg_update_item);
+                    holder.mContent.getPaint().setFlags(0);
+                } else {
+                    holder.itemView.setBackgroundResource(R.color.white);
+                    holder.mContent.getPaint().setFlags(0);
+                }
+            }
+            /*---kotModifier显示---*/
+            StringBuffer sBuffer = new StringBuffer();;
+            for (int j = 0; j < kot.getKotItemModifiers().size(); j++) {
+                KotItemModifier kotItemModifier = kot.getKotItemModifiers().get(j) ;
+                if (kotItemModifier != null
+                        && kotItemDetail.getId().intValue() == kotItemModifier.getKotItemDetailId().intValue()) {
+                    sBuffer.append("--" + kotItemModifier.getModifierName() + "\n");
+                }
+            }
+            /* show special instructions */
+            if (!TextUtils.isEmpty(kotItemDetail.getSpecialInstractions())) {
+                sBuffer.append("*"+kotItemDetail.getSpecialInstractions()
+                        + "*");
+            }
+            if (sBuffer !=null && !sBuffer.equals("")) {
+                holder.modifiers.setText(sBuffer+"");
+            }else {
+                holder.modifiers.setText("");
+            }
+
+            if (mItemTouchListener != null) {
+              //  holder.itemView.setOnClickListener(v -> mItemTouchListener.onItemClick(holder.mContent.getText().toString()));
+holder.itemView.setOnClickListener(new OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        mItemTouchListener.onItemClick(holder.mContent.getText().toString());
+
+    }
+});
+                if (holder.mLeftMenu != null) {
+                   holder.mLeftMenu.setOnClickListener(new OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+                           mItemTouchListener.onLeftMenuClick("" + holder.getAdapterPosition());
+                           holder.mSwipeItemLayout.close();
+                       }
+                   });
+                }
+
+                if (holder.mRightMenu != null) {
+                    holder.mRightMenu.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mItemTouchListener.onRightMenuClick("" + holder.getAdapterPosition());
+                            holder.mSwipeItemLayout.close();
+                        }
+                    });
+                }
+            }
+        }
+
+    }
+
+    private static class SimpleViewHolder extends RecyclerView.ViewHolder {
+
+        private final View mLeftMenu;
+        private final View mRightMenu;
+        private final TextView mContent,num,modifiers;
+        private final SwipeItemLayout mSwipeItemLayout;
+
+        SimpleViewHolder(View itemView) {
+            super(itemView);
+            mSwipeItemLayout = (SwipeItemLayout) itemView.findViewById(R.id.swipe_layout);
+            mContent = (TextView) itemView.findViewById(R.id.tv_text_re);
+            num = (TextView) itemView.findViewById(R.id.tv_order_num_re);
+            modifiers = (TextView) itemView.findViewById(R.id.tv_dish_introduce_re);
+            mLeftMenu = itemView.findViewById(R.id.left_menu);
+            mRightMenu = itemView.findViewById(R.id.right_menu);
+
+        }
     }
 }

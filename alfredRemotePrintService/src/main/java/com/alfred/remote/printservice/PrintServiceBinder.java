@@ -321,7 +321,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void printSummaryAnalysisReport(String xzType, String printer,
-                                           String title, String plu, String pluMod, String category, String items)
+                                           String title, String plu, String pluMod, String category, String items,boolean isPluVoid)
             throws RemoteException {
         Gson gson = new Gson();
 
@@ -360,7 +360,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
             daPrint.setPrinterIp(prtDevice.getIP());
-            daPrint.print(pluData, modifier, categoryData, itemsData);
+            daPrint.print(pluData, modifier, categoryData, itemsData, isPluVoid);
             daPrint.AddFooter(prtTitle.getDate() + " " + prtTitle.getTime());
             pqMgr.queuePrint(daPrint.getJobForQueue());
             printMgr.addJob(prtDevice.getIP(), daPrint);
@@ -887,7 +887,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     billPrint.AddHeader(theOrder.getIsTakeAway(), tableName, theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(),info,theOrder.getAppOrderId());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(),info,theOrder.getAppOrderId() == null ? 0:theOrder.getAppOrderId());
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
                             PrintService.instance.getResources().getString(R.string.qty),
@@ -1021,7 +1021,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                    billPrint.AddHeader(theOrder.getIsTakeAway(), tableName,
                            theOrder.getPersons(),
                            theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                           prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId());
+                           prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
                    billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                            PrintService.instance.getResources().getString(R.string.price),
                            PrintService.instance.getResources().getString(R.string.qty),
@@ -1165,6 +1165,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                    break;
                                case ParamConst.SETTLEMENT_TYPE_EZLINK:
                                    paymentType = "EZ-Link";
+                                   break;
+                               case ParamConst.SETTLEMENT_TYPE_HALAL:
+                                   paymentType = "PayHalal";
                                    break;
                                case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                    paymentType = PrintService.instance.getResources().getString(R.string.paypal);
@@ -2055,7 +2058,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
 
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
@@ -2196,7 +2199,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             billPrint.AddOrderNo(orderNo);
                         billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                                 theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                                prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId());
+                                prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
 
                         billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                                 PrintService.instance.getResources().getString(R.string.price),
@@ -2348,6 +2351,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     case ParamConst.SETTLEMENT_TYPE_EZLINK:
                                         paymentType = "EZ-Link";
                                         break;
+                                    case ParamConst.SETTLEMENT_TYPE_HALAL:
+                                        paymentType = "PayHalal";
+                                        break;
                                     case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                         paymentType = PrintService.instance.getResources().getString(R.string.paypal);
                                         break;
@@ -2436,7 +2442,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //                            if (TextUtils.isEmpty(str.toString())) {
 //                                billPrint.printDeliveryList(appOrder.getOrderNo().toString(), appOrder.getAddress(), 1);
 
-            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+orderNo, PrintService.instance.getResources().getString(R.string.order_app_no_)+appOrder.getId().toString(),str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()));
+            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+orderNo, PrintService.instance.getResources().getString(R.string.order_app_no_)+appOrder.getId().toString(),str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()),appOrder.getOrderRemark());
             //  billPrint.printDeliveryList(" ", appOrder.getAddress().toString(), 1);
 //                                billPrint.AddAddress(appOrder.getAddress());
 //                            }
@@ -2817,6 +2823,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_EZLINK:
                                     paymentType = "EZ-Link";
+                                    break;
+                                case ParamConst.SETTLEMENT_TYPE_HALAL:
+                                    paymentType = "PayHalal";
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_PAYPAL:
                                     paymentType = PrintService.instance.getResources().getString(R.string.paypal);

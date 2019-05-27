@@ -150,6 +150,7 @@
     <string name="item_complete">this item has complete</string>
     <string name="sure_take_away">Are you sure take away?</string>
     <string name="no_order_detail">Cannot place the empty order.</string>
+    <string name="network_connected">Internet connection not available. Please connect for cloud sync..</string>
 
     <!-- setting-window -->
     <string name="setting">Setting</string>
@@ -202,6 +203,7 @@
 
     <string name="print_direction">Print Label Direction</string>
     <string name="credit_card_rounding">Credit Card Rounding</string>
+    <string name="include_plu_void">Include Plu Void</string>
     <string name="password_update_successfully">Password update successfully.</string>
     <string name="employee_no_exist">The employee does not exist at backoffice.</string>
     <string name="color_picker_tip">Tip: Touch the color ring or color bar to select a color value</string>

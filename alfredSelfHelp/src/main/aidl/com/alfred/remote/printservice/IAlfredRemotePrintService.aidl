@@ -10,19 +10,18 @@ interface IAlfredRemotePrintService {
 	void configure(int country,int lang, int dollarsign);
 	
 	void clearPrint();
-
 	void deleteOldPrinterMsg(String businessDate);
-	
-	void printKOT(String printer,String summary, String detail, String modifiers, 
+
+	void printKOT(String printer,String summary, String detail, String modifiers,
 						boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire);
 
-	void printKioskKOT(String printer,String summary, String detail, String modifiers, 
+	void printKioskKOT(String printer,String summary, String detail, String modifiers,
 						boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize );
 
 	void printBillSummary(String printer,String summary, String detail, String modifiers, int kotFontSize);
 
-						
-	void printBill(String printer, String title, 
+
+	void printBill(String printer, String title,
     							String order, String orderDetail,
     							String modifiers,String tax, String payment,
     							boolean doubleprint, boolean doubleReceipts,
@@ -36,7 +35,7 @@ interface IAlfredRemotePrintService {
 
 
 	void kickCashDrawer(String printer);
-	
+
 	void listPrinters(String type);
 
 	void closeDiscovery();
@@ -45,10 +44,11 @@ interface IAlfredRemotePrintService {
 
 	void printDaySalesReport(String xzType,String printer,String title, String report, String tax, String customPayment, String useropen, String sessionSales);
 
-	void printDetailAnalysisReport(String xzType, String printer, 
+	void printDetailAnalysisReport(String xzType, String printer,
 										String title, String daySaleSummary, String plu, String pluMod, String pluCombo, String category, String items);
-	void printSummaryAnalysisReport(String xzType, String printer, 
-										String title, String plu, String pluMod, String category, String items);
+									String title, String plu, String pluMod, String category, String items);
+	void printSummaryAnalysisReport(String xzType, String printer,
+										String title, String plu, String pluMod, String category, String items,boolean isPluVoid);
 	void printHourlyAnalysisReport(String xzType, String printer, String title, String hourly);
 	void printVoidItemAnalysisReport(String xzType, String printer, String title, String voidItems);
 	void printEntItemAnalysisReport(String xzType, String printer, String title, String voidItems);

@@ -916,7 +916,7 @@ public class BillPrint extends PrintJob {
 
     }
 
-    public void printDeliveryList(String orderNO, String appOrderNo,String customerInfo, String address,String time) {
+    public void printDeliveryList(String orderNO, String appOrderNo,String customerInfo, String address,String time,String remarks) {
 //        scale = 1;
 //        PrintData kot = new PrintData();
 //        kot.setDataFormat(PrintData.FORMAT_TXT);
@@ -965,6 +965,13 @@ public class BillPrint extends PrintJob {
         datePrint.setTextAlign(PrintData.ALIGN_LEFT);
         datePrint.setText(dateStr);
         this.data.add(datePrint);
+        //Date
+        PrintData rePrint = new PrintData();
+        String reStr = remarks + " "+reNext;
+        rePrint.setDataFormat(PrintData.FORMAT_TXT);
+        rePrint.setTextAlign(PrintData.ALIGN_LEFT);
+        rePrint.setText(reStr);
+        this.data.add(rePrint);
 
     }
 

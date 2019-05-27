@@ -198,7 +198,7 @@ public class ParamConst {
 	public static final int SETTLEMENT_TYPE_UBEREATS = 3002;
 	public static final int SETTLEMENT_TYPE_FOODPANDA = 3003;
 	public static final int SETTLEMENT_TYPE_VOUCHER = 4001;
-
+	public static final int SETTLEMENT_TYPE_HALAL   = 6001;// 马来西亚的QR支付
 
 	/**
 	 * 自定义支付选项，只用于页面展示 不做为数据存

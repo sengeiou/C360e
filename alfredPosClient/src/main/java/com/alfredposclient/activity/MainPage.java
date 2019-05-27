@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -83,6 +85,7 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.JSONUtil;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
@@ -303,7 +306,14 @@ public class MainPage extends BaseActivity {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    //关闭手势滑动
         settingView = (SettingView) findViewById(R.id.settingView);
         settingView.setParams(this, mDrawerLayout);
-        if (App.instance.isSUNMIShow()) {
+        if (MachineUtil.isHisense()) {
+            if (MachineUtil.isSunmiModel()) {
+                settingView.SUNMIVisible();
+            } else {
+                settingView.SUNMIGone();
+            }
+
+        } else if (MachineUtil.isHisense()) {
             settingView.SUNMIVisible();
         } else {
             settingView.SUNMIGone();
@@ -399,6 +409,7 @@ public class MainPage extends BaseActivity {
         XMPP.getInstance().setCanCheckAppOrder(true);
     }
 
+ 
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {
@@ -2269,6 +2280,7 @@ public class MainPage extends BaseActivity {
         transaction.hide(f_tables);
         transaction.commitAllowingStateLoss();
         isShowTables = false;
+
     }
 
 //	private void dismissTables() {
@@ -2287,6 +2299,10 @@ public class MainPage extends BaseActivity {
         TableInfoSQL.updateTables(currentTable);
         mainPageMenuView.setParam(currentOrder, handler);
         orderView.setParam(this, currentOrder, orderDetails, handler);
+
+//        DiffData data = new DiffData(this);//实例化data类
+//        data.updateData(orderDetails);//启动发送
+      //  DifferentDislay.setParam(orderDetails,currentOrder);
         operatePanel.setParams(this, currentOrder, orderDetails,
                 handler);
         loadingDialog.dismiss();

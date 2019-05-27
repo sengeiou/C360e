@@ -214,13 +214,13 @@ public class EditSettlementPage extends BaseActivity {
 //
 //                    }else {
 
-                       App.instance.remoteBillPrint(
+                       App.instance.remoteBillRePrint(
                                App.instance.getCahierPrinter(),
                                title,
                                currentOrder,
                                printOrderItems, orderModifiers,
                                OrderDetailTaxSQL.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder), PaymentSettlementSQL
-                                       .getAllPaymentSettlementByPaymentId(Integer.valueOf(map.get("paymentId"))), roundAmount);
+                                       .getAllPaymentSettlementByPaymentId(Integer.valueOf(map.get("paymentId"))), roundAmount, App.instance.getSystemSettings().isCashClosePrint());
                   //  }
 
                     boolean isEdit = false;
@@ -306,8 +306,8 @@ public class EditSettlementPage extends BaseActivity {
                     temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
                     if (orderItems.size() > 0 && printer != null) {
-                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                        App.instance.remoteBillRePrint(printer, title, temporaryOrder,
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
 
                     }
                     boolean isEdit = false;

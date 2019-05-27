@@ -129,13 +129,15 @@ public class Store {
 
 	public static final String PRINT_LABLE_DIRECTION = "PRINT_LABLE_DIRECTION";
 	public static final String CREDIT_CARD_ROUNDING = "CREDIT_CARD_ROUNDING";
+	public static final String INCLUDE_PLU_VOID = "INCLUDE_PLU_VOID";
+
 	public static final String PRINT_BILL = "PRINT_BILL";
 	public static final String OF_PAX = "OF_PAX";
 
 	public static final String OPEN_BALANCE = "OPEN_BALANCE";
 	public static final String KDS_LANDSCAPE= "KDS_LANDSCAPE";
 	public static final String DEFAULT_VIEW = "default_view";
-
+	public static final String REPORT_ORDER_TIMELY = "report_order_timely";
 
 	//subPos
 	public static final String MAIN_POS_IP = "MAIN_POS_IP";
@@ -159,7 +161,17 @@ public class Store {
 	public static final String KPMG_PAYMENT_TYPE = "kpmg_payment_type";
 
 	public static final String REPORT_NO_SPLIT_VALUE = "report_no_split_value";
+//  副屏显示
+public static final String PATH_IMAGE = "IMAGE_PATH";
+	public static final String SHOW_STYLE = "SHOW_STYLE";
 
+	public static final String LOCK_PASSWORD = "LOCK_PASSWORD";
+
+	public static final String ISFIRDT = "ISFIRDT";
+	public static final String WELCOME_PATH = "WELCOME_PATH";
+	public static final String VIDEO_IMAGE = "VIDEO_IMAGE";
+	public static final String TEXTSIZE = "TEXTSIZE";
+	public static final String SCREENSIZE = "SCREENSIZE";
 
 	private Store() {
 	};

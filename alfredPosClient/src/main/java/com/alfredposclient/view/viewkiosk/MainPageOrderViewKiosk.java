@@ -68,6 +68,7 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
+import com.alfredposclient.utils.NetworkUtils;
 import com.alfredposclient.view.RingTextView;
 
 import java.util.ArrayList;
@@ -159,6 +160,12 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 					return;
 				}
 
+				if(!NetworkUtils.isNetworkAvailable(context)){
+					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
+
+					//return;
+
+				}
 
 				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
 				Map<Integer, String> categorMap = new HashMap<Integer, String>();
