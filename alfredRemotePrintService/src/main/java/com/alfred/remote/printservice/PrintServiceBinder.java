@@ -315,7 +315,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void printSummaryAnalysisReport(String xzType, String printer,
-                                           String title, String plu, String pluMod, String category, String items)
+                                           String title, String plu, String pluMod, String category, String items,boolean isPluVoid)
             throws RemoteException {
         Gson gson = new Gson();
 
@@ -354,7 +354,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
             daPrint.setPrinterIp(prtDevice.getIP());
-            daPrint.print(pluData, modifier, categoryData, itemsData);
+            daPrint.print(pluData, modifier, categoryData, itemsData, isPluVoid);
             daPrint.AddFooter(prtTitle.getDate() + " " + prtTitle.getTime());
             pqMgr.queuePrint(daPrint.getJobForQueue());
             printMgr.addJob(prtDevice.getIP(), daPrint);

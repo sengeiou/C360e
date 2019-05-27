@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
@@ -83,7 +84,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 	private Handler handler;
 	private int hour;
 	private MainPosInfo mainPosInfo;
-	
+
 	public KOTView(Context context) {
 		super(context);
 		this.parent = (KitchenOrder) context;

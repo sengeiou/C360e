@@ -2351,7 +2351,7 @@ public class App extends BaseApplication {
             String itmStr = gson.toJson(items);
             String modStr = gson.toJson(modifier);
             mRemoteService.printSummaryAnalysisReport(xzType, prtStr, prtTitle,
-                    pluStr, modStr, catStr, itmStr);
+                    pluStr, modStr, catStr, itmStr,App.instance.systemSettings.isPluVoid());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
