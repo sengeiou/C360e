@@ -63,6 +63,7 @@ import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.MachineUtil;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.JobManager;
 import com.epson.epos2.discovery.DeviceInfo;
