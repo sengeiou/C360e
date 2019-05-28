@@ -2537,19 +2537,19 @@ public class OrderDetailSQL {
 //                    .getItemDetailByTemplateId(itemHappyHour.getFreeItemId());
 //            if (itemDetail == null) {
 //                return;
+////            }
+//        ItemPromotion itemPromotion = OrderHelper.getItemPromotion(order, orderDetail);
+//        if (itemPromotion != null && itemPromotion.getFreeNum().intValue() > 0&&OrderHelper.hasWeek(itemPromotion.getPromotionId())) {
+//            ItemDetail itemDetail = CoreData.getInstance()
+//                    .getItemDetailByTemplateId(itemPromotion.getFreeItemId());
+//            if (itemDetail == null) {
+//                return;
 //            }
-        ItemPromotion itemPromotion = OrderHelper.getItemPromotion(order, orderDetail);
-        if (itemPromotion != null && itemPromotion.getFreeNum().intValue() > 0&&OrderHelper.hasWeek(itemPromotion.getPromotionId())) {
-            ItemDetail itemDetail = CoreData.getInstance()
-                    .getItemDetailByTemplateId(itemPromotion.getFreeItemId());
-            if (itemDetail == null) {
-                return;
-            }
-            OrderDetail freeOrderDetail = ObjectFactory.getInstance()
-                    .getItemFreeOrderDetail(order, orderDetail, itemDetail,
-                            itemPromotion);
-            updateOrderDetail(freeOrderDetail);
-        }
+//            OrderDetail freeOrderDetail = ObjectFactory.getInstance()
+//                    .getItemFreeOrderDetail(order, orderDetail, itemDetail,
+//                            itemPromotion);
+//            updateOrderDetail(freeOrderDetail);
+//        }
     }
 
     private static void updateFreeOrderDetailForWaiter(Order order,

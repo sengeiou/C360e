@@ -1269,8 +1269,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
 				reportSessionSalesList);
 		if(reportItemPromotions!=null&&reportItemPromotions.size()>0){
-            App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-                    reportItemPromotions,reportOrderPromotions,promotions);
+//            App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
+//                    reportItemPromotions,reportOrderPromotions,promotions);
         }
 
 //		try {

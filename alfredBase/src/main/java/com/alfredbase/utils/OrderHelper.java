@@ -516,34 +516,35 @@ public class OrderHelper {
 
        List<Promotion>  promotionList =PromotionSQL.getAllPromotion();
 
-        for (int i = 0; i <promotionList.size() ; i++) {
-            Promotion promotion=promotionList.get(i);
-            if(hasWeek(promotion.getPromotionDateInfoId())){
-            switch (promotion.getType())
-            {
+       if(promotionList!=null&promotionList.size()>0) {
+		   for (int i = 0; i < promotionList.size(); i++) {
+			   Promotion promotion = promotionList.get(i);
+			   if (hasWeek(promotion.getPromotionDateInfoId())) {
+				   switch (promotion.getType()) {
 
-                case  1:
-               subTotal=  promotionAndItemPrice(order,orderDetails,promotion,subTotal);
-                    break;
-                case  2:
-                 subTotal=promotionAndItemFree(order,orderDetails,promotion,subTotal);
-                 break;
-                case  3:
-					subTotal=promotionAndTotalDiscount(order,orderDetails,promotion,subTotal);
-					break;
-				 case 4:
-                    subTotal=promotionAndTotalFree(order,orderDetails,promotion,subTotal);
-                    break;
-				case  5:
-					subTotal=promotionAndFree(order,orderDetails,promotion,subTotal);
-					break;
-                case  6:
-                    subTotal=promotionAndPax(order,orderDetails,promotion,subTotal,order.getPersons());
-                    break;
-            }
-			}
+					   case 1:
+						   subTotal = promotionAndItemPrice(order, orderDetails, promotion, subTotal);
+						   break;
+					   case 2:
+						   subTotal = promotionAndItemFree(order, orderDetails, promotion, subTotal);
+						   break;
+					   case 3:
+						   subTotal = promotionAndTotalDiscount(order, orderDetails, promotion, subTotal);
+						   break;
+					   case 4:
+						   subTotal = promotionAndTotalFree(order, orderDetails, promotion, subTotal);
+						   break;
+					   case 5:
+						   subTotal = promotionAndFree(order, orderDetails, promotion, subTotal);
+						   break;
+					   case 6:
+						   subTotal = promotionAndPax(order, orderDetails, promotion, subTotal, order.getPersons());
+						   break;
+				   }
+			   }
 
-        }
+		   }
+	   }
 		order.setSubTotal(BH.getBD(subTotal).toString());
 		}
 
@@ -865,6 +866,7 @@ public class OrderHelper {
 		}
 
 		order.setPromotion(BH.getBD(promotionPrice).toString());
+		if()
 		order.setTotal(total.toString());
 
 	}

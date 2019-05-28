@@ -131,7 +131,7 @@ public class HomePageImageView extends LinearLayout {
             home_page_sv.setVisibility(GONE);
             if (list != null && list.size() > 0) {
                 if (list.size() == 1) {
-                    ((BitmapDrawable)home_page_img.getDrawable()).getBitmap().recycle();
+                   // ((BitmapDrawable)home_page_img.getDrawable()).getBitmap().recycle();
                     home_page_img.setImageURI(Uri.parse(list.get(0)));
                 }
             } else {

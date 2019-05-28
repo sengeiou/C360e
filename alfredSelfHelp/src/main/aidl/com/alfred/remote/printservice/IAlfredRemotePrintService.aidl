@@ -46,7 +46,6 @@ interface IAlfredRemotePrintService {
 
 	void printDetailAnalysisReport(String xzType, String printer,
 										String title, String daySaleSummary, String plu, String pluMod, String pluCombo, String category, String items);
-									String title, String plu, String pluMod, String category, String items);
 	void printSummaryAnalysisReport(String xzType, String printer,
 										String title, String plu, String pluMod, String category, String items,boolean isPluVoid);
 	void printHourlyAnalysisReport(String xzType, String printer, String title, String hourly);
