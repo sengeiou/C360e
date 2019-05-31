@@ -200,15 +200,15 @@ public class OrderSQL {
 		OrderHelper.setOrderDiscount(order, orderDetails);
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);
-		OrderHelper.setPromotion(order);
-
 		OrderHelper.setOrderInclusiveTaxPrice(order);
+		OrderHelper.setPromotion(order);
 		List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
 		if(orderSplits != null && orderSplits.size() > 0){
 			for(OrderSplit orderSplit : orderSplits){
 				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
 			}
 		}
+		//OrderSQL.updateOrder(order);
 	}
 	/**
 	 * 修改订单Order折扣，调用这个方法
@@ -510,6 +510,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -579,6 +580,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -643,6 +645,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -704,6 +707,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -765,6 +769,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -882,6 +887,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				return order;
 			}
 		} catch (Exception e) {
@@ -940,6 +946,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1005,6 +1012,7 @@ public class OrderSQL {
 					order.setDiscountCategoryId(cursor.getString(28));
 					order.setNumTag(cursor.getString(29));
 					order.setSubPosBeanId(cursor.getInt(30));
+					order.setPromotion(cursor.getString(31));
 					return order;
 				}
 			} catch (Exception e) {
@@ -1064,6 +1072,7 @@ public class OrderSQL {
 					order.setDiscountCategoryId(cursor.getString(28));
 					order.setNumTag(cursor.getString(29));
 					order.setSubPosBeanId(cursor.getInt(30));
+					order.setPromotion(cursor.getString(31));
 					return order;
 				}
 			} catch (Exception e) {
@@ -1125,6 +1134,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1185,6 +1195,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1238,6 +1249,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1299,6 +1311,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1364,6 +1377,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1425,6 +1439,7 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
 				result.add(order);
 			}
 		} catch (Exception e) {

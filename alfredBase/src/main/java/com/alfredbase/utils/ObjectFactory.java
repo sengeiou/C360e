@@ -1171,7 +1171,7 @@ public class ObjectFactory {
                                              Promotion promotion) {
 
         OrderDetail orderDetail = null;
-        synchronized (lock_free_order_detail) {
+     //   synchronized (lock_free_order_detail) {
             orderDetail = OrderDetailSQL.getPromotionOrderDetail(order.getId(),
                     order.getId());
             if (orderDetail == null) {
@@ -1185,8 +1185,7 @@ public class ObjectFactory {
                 orderDetail.setItemNum(promotion.getFreeNum());
 //                orderDetail.setOrderDetailStatus(fromOrderDetail
 //                        .getOrderDetailStatus());
-//                orderDetail
-//                        .setOrderDetailType(fromOrderDetail.getOrderDetailType());
+               orderDetail.setOrderDetailType(0);
                 orderDetail.setReason("");
                 orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
                 orderDetail.setItemPrice(ParamConst.DOUBLE_ZERO);
@@ -1204,7 +1203,7 @@ public class ObjectFactory {
 
                 orderDetail.setModifierPrice(ParamConst.DOUBLE_ZERO);
                 orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
-              //  orderDetail.setOrderSplitId(fromOrderDetail.getOrderSplitId());
+                orderDetail.setOrderSplitId(0);
                 orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                 orderDetail.setAppOrderDetailId(0);
                 orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
@@ -1212,7 +1211,7 @@ public class ObjectFactory {
                 orderDetail.setItemNum(promotion.getFreeNum());
             }
             OrderDetailSQL.updateOrderDetail(orderDetail);
-        }
+      //  }
         return orderDetail;
     }
 
