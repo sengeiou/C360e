@@ -32,6 +32,7 @@
     <string name="table_">桌子 -  </string>
     <string name="take_away">打包</string>
     <string name="app_delivery">外卖</string>
+    <string name="dine_in">堂吃</string>
     
     <!-- Summary -->
     <string name="summary">汇总</string>

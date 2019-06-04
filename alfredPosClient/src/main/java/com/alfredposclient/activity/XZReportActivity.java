@@ -285,9 +285,22 @@ public class XZReportActivity extends BaseActivity {
 //        session = App.instance.getSessionStatus();
         revenueCenter = App.instance.getRevenueCenter();
         reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(businessDate);
+        reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
         if (reportDaySales != null) {
-            String nettsSales = reportDaySales.getNettSales();
-            calendarCard.setAmount(nettsSales);
+
+            if(reportDayPayments!=null){
+                BigDecimal totalCustomPayment = BH.getBD(ParamConst.DOUBLE_ZERO);
+                for (ReportDayPayment reportDayPayment : reportDayPayments) {
+                    totalCustomPayment = BH.add(totalCustomPayment, BH.getBD(reportDayPayment.getPaymentAmount()), false);
+                }
+                BigDecimal totals = BH.getBD(ParamConst.DOUBLE_ZERO);
+                totals = BH.add(totalCustomPayment, BH.getBD(reportDaySales.getNettSales()), false);
+                //  String nettsSales = reportDaySales.getNettSales();
+                calendarCard.setAmount(totals.toString());
+            }else {
+                String nettsSales = reportDaySales.getNettSales();
+                calendarCard.setAmount(nettsSales);
+            }
         }
         calendarCard.setDateDisplay(calendar);
         calendarCard.notifyChanges();
@@ -407,7 +420,7 @@ public class XZReportActivity extends BaseActivity {
             BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
             if (reportDayPayments != null && reportDayPayments.size() > 0) {
                 for (ReportDayPayment reportDayPayment : reportDayPayments) {
-                    BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
+                    overPaymentAmount=   BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
                 }
                 if (overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
                     ReportDaySalesItem other = new ReportDaySalesItem(context);
@@ -541,6 +554,12 @@ public class XZReportActivity extends BaseActivity {
                 ll_sales_total.addView(foodpanda);
             }
 
+            if(BH.getBD(reportDaySales.getPayHalal()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
+                ReportDaySalesItem payhalal = new ReportDaySalesItem(context);
+                payhalal.setData("PayHalal", reportDaySales.getPayHalalQty() + "",
+                        App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getPayHalal(),true);
+                ll_sales_total.addView(payhalal);
+            }
             if (reportDayPayments != null && reportDayPayments.size() > 0) {
                 int totalCustomPaymentQty = 0;
                 BigDecimal totalCustomPayment = BH.getBD(ParamConst.DOUBLE_ZERO);
@@ -553,7 +572,7 @@ public class XZReportActivity extends BaseActivity {
                     ll_sales_total.addView(other);
                 }
                 ReportDaySalesItem totalOther = new ReportDaySalesItem(context);
-                totalOther.setData("total Custom", totalCustomPaymentQty + "",
+                totalOther.setData("OTAL CUSTOM PAYMENT", totalCustomPaymentQty + "",
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(totalCustomPayment.toString()), true);
                 ll_sales_total.addView(totalOther);
             }

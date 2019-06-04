@@ -35,6 +35,7 @@ import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderModifierSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredposclient.Fragment.TableLayoutFragment;
@@ -57,6 +58,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
     public static final int HTTP_FAILED = -102;
     public static final int RESULT_FAILED = -103;
     public static final int CANCEL_APPORDER_SUCCESS = 103;
+    public static final int READY_APP_ORDER_SUCCESS = 104;
 
     private List<AppOrder> appOrders = new ArrayList<AppOrder>();
     private List<AppOrder> selectAppOrders = new ArrayList<AppOrder>();
@@ -85,7 +87,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
     private TableLayoutFragment f_tables;
     private LinearLayout ll_orderdetail_layout, ll_address;
 
-    private TextView tv_app_address, tv_app_address_name, tv_app_address_phone;
+    private TextView tv_app_address, tv_app_address_name, tv_app_address_phone,tv_app_address_time;
     private DeliveryDialog deliveryDialog;
 
     @Override
@@ -119,6 +121,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
         tv_app_address = (TextView) findViewById(R.id.tv_app_address);
         tv_app_address_name = (TextView) findViewById(R.id.tv_app_address_name);
         tv_app_address_phone = (TextView) findViewById(R.id.tv_app_address_phone);
+        tv_app_address_time = (TextView) findViewById(R.id.tv_app_address_time);
         tv_net_order.setOnClickListener(this);
         tv_delivery_order.setOnClickListener(this);
         tv_app_dine_in.setOnClickListener(this);
@@ -276,6 +279,14 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
             if (isEat == 1||isEat==2) {
                 ll_address.setVisibility(View.GONE);
             } else {
+
+                if(appOrder.getOrderStatus()==ParamConst.APP_ORDER_STATUS_ACCEPTED)
+                {
+                    btn_check.setText("Place Order");
+                }else if(appOrder.getOrderStatus()==ParamConst.APP_ORDER_STATUS_PAID) {
+                    btn_check.setText(getResources().getText(R.string.receving_order));
+                }
+
                 ll_address.setVisibility(View.VISIBLE);
 
                 if (TextUtils.isEmpty(appOrder.getAddress())) {
@@ -287,18 +298,27 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 
                 if (TextUtils.isEmpty(appOrder.getContact())) {
                     tv_app_address_name.setText("");
+                    tv_app_address_name.setVisibility(View.GONE);
                 } else {
                     //    String addr = appOrder.getAddress();
+                    tv_app_address_name.setVisibility(View.VISIBLE);
                     tv_app_address_name.setText("name: "+appOrder.getContact());
                 }
 
-                if (TextUtils.isEmpty(appOrder.getContact())) {
+                if (TextUtils.isEmpty(appOrder.getMobile())) {
                     tv_app_address_phone.setText("");
+                    tv_app_address_phone.setVisibility(View.GONE);
                 } else {
                     //    String addr = appOrder.getAddress();
+                    tv_app_address_phone.setVisibility(View.VISIBLE);
                     tv_app_address_phone.setText("phone :"+appOrder.getMobile());
                 }
-
+                if (appOrder.getDeliveryTime()==0) {
+                    tv_app_address_time.setText("");
+                } else {
+                    //    String addr = appOrder.getAddress();
+                    tv_app_address_time.setText("delivery time :"+TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()));
+                }
 
 //              ;
 //                tv_app_address_phone.setText(appOrder.getPhone());
@@ -352,6 +372,8 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
         textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_app_address));
         textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_app_address_name));
         textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_app_address_phone));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_app_address_time));
+
 
 
     }
@@ -375,9 +397,47 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 
 //					appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARED);
                     if (App.instance.isRevenueKiosk()) {
-                        loadingDialog.setTitle("Loading");
-                        loadingDialog.show();
-                        SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
+                        if(isEat==3&&appOrder.getOrderStatus()==ParamConst.APP_ORDER_STATUS_PAID)
+                        {
+                            DialogFactory.commonTwoBtnTimeDialog(context, context.getResources().getString(R.string.warning), "delivery time :" + TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()),
+                                    "Do you accept orders?",
+                                    context.getResources().getString(R.string.cancel),
+                                    context.getResources().getString(R.string.ok),
+                                    new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            loadingDialog.setTitle("Loading");
+                                            loadingDialog.show();
+                                            SyncCentre.getInstance().readyAppOrderStatus(context, appOrder.getId(), handler);
+
+                                        }
+                                    },
+                                    new View.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View arg0) {
+                                            loadingDialog.setTitle("Loading");
+                                            loadingDialog.show();
+                                            SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
+
+                                        }
+                                    },true
+                            );
+                        }else if (isEat==3&&appOrder.getOrderStatus()==ParamConst.APP_ORDER_STATUS_ACCEPTED){
+                            loadingDialog.setTitle("Loading");
+                            loadingDialog.show();
+                            List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId());
+                            List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(appOrder.getId());
+                            List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(appOrder.getId());
+                            App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+                            dismissLoadingDialog();
+                        }
+                        else {
+                            loadingDialog.setTitle("Loading");
+                            loadingDialog.show();
+                            SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
+                        }
                     } else {
                         showTables();
                     }
@@ -569,6 +629,22 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                     App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
                 }
                 break;
+
+                case READY_APP_ORDER_SUCCESS: {
+                    dismissLoadingDialog();
+                    int id = (Integer) msg.obj;
+                    AppOrder appOrder = AppOrderSQL.getAppOrderById(id);
+                    appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_ACCEPTED);
+                    AppOrderSQL.addAppOrder(appOrder);
+
+                    dismissLoadingDialog();
+                    refreshDataView();
+//                    List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(id);
+//                    List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(id);
+//                    List<AppOrderDetailTax> appOrderDetailTaxList = AppOrderDetailTaxSQL.getAppOrderDetailTaxByAppOrderId(id);
+//                    App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+                }
+                break;
                 case HTTP_FAILED:
                     dismissLoadingDialog();
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context,
@@ -678,7 +754,6 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 //        Toast.makeText(NetWorkOrderActivity.this, "print !", Toast.LENGTH_SHORT)
 //                .show();
 
-
     }
 
     class AppOderAdapter extends BaseAdapter {
@@ -761,7 +836,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                     statusStr = getResources().getString(R.string.paid);
                     break;
                 case ParamConst.APP_ORDER_STATUS_ACCEPTED:
-                    statusStr = getResources().getString(R.string.making);
+                    statusStr = getResources().getString(R.string.confirmed);
                     break;
                 case ParamConst.APP_ORDER_STATUS_PREPARING:
                     statusStr = getResources().getString(R.string.preparing);
@@ -834,6 +909,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
             public TextView tv_order_status;
             public TextView tv_order_type;
             public TextView tv_place_time;
+
         }
     }
 
@@ -885,6 +961,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                 holder.tv_app_address = (TextView) arg1.findViewById(R.id.tv_app_address);
                 holder.tv_app_address_phone = (TextView) arg1.findViewById(R.id.tv_app_address);
                 holder.tv_app_address_name = (TextView) arg1.findViewById(R.id.tv_app_address);
+                holder.tv_app_address_time=(TextView) arg1.findViewById(R.id.tv_app_address_time);
                 textTypeFace.setTrajanProRegular(holder.tv_orderdetail_name);
                 textTypeFace.setTrajanProRegular(holder.tv_orderdetail_qty);
                 textTypeFace.setTrajanProRegular(holder.tv_temp_modifier);
@@ -914,7 +991,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
             public TextView tv_temp_modifier;
 
             public LinearLayout ll_address;
-            public TextView tv_app_address_phone, tv_app_address_name, tv_app_address;
+            public TextView tv_app_address_phone, tv_app_address_name, tv_app_address,tv_app_address_time;
 
         }
     }

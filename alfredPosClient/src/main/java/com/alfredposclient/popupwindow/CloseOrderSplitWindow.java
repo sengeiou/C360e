@@ -310,7 +310,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         moneyKeyboard.setVisibility(View.GONE);
 //		swipe = contentView.findViewById(R.id.swipe);
 //		swipe.setOnClickListener(this);
-
+        contentView.findViewById(R.id.iv_halal).setVisibility(View.INVISIBLE);
         tv_other_media = (Button) contentView.findViewById(R.id.tv_other_media);
         tv_cards_rounding_num = (TextView) contentView.findViewById(R.id.tv_cards_rounding_num);
 

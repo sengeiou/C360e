@@ -501,6 +501,49 @@
 
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/ll_include_plu_void"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                             android:visibility="gone"
+                            android:orientation="vertical">
+
+
+                            <View
+
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
+                                android:id="@+id/rl_include_plu_void"
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_include_plu_void"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/include_plu_void"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredposclient.view.MyToggleButton
+                                    android:id="@+id/mt_include_plu_void"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -996,6 +1039,7 @@
                                 android:id="@+id/ll_set_pos_mode"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
+                                android:visibility="gone"
                                 android:layout_gravity="center_horizontal">
 
                                 <TextView

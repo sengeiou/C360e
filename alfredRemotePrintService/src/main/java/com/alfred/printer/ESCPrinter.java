@@ -16,6 +16,7 @@ import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.WIFIPrintCallback;
 import com.alfredbase.utils.BitmapUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
@@ -443,10 +444,15 @@ public class ESCPrinter implements WIFIPrintCallback {
                     this.printer.printQRBitmap(bitmap);
                 } else if (toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {
                     if (ip.equals(WifiCommunication.localIPAddress)) {
-                        this.printer.kickDrawerForSunmi();
+                        if(MachineUtil.isHisense()){
+                            this.printer.kickDrawerForHisense();
+                        }else {
+                            this.printer.kickDrawerForSunmi();
+                        }
                     } else {
                         this.printer.kickDrawer();
                     }
+
                     isKickDrawer = true;
                 }
             }

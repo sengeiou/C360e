@@ -14,6 +14,36 @@ public class MachineUtil {
         }
         return false;
     }
+// T1 or T2
+    public static boolean isSunmiModel() {
+        try {
+            String sn = Build.SERIAL;
+            String str = sn.substring(0,2);
+            if (str.equals("T1") || str.equals("T2")) {
+                return true;
+            }  else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isSunmiT2() {
+        try {
+            String sn = Build.SERIAL;
+            String str = sn.substring(0,2);
+            if ( str.equals("T2")) {
+                return true;
+            }  else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     public static boolean isHisense() {
         String model = Build.MODEL;
         LogUtil.d(TAG, model + "**************" + model);

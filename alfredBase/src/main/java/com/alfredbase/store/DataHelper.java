@@ -65,6 +65,8 @@ public class DataHelper {
                 onUpgradeForOldVersion25(db);
                 onUpgradeForOldVersion27(db);
                 onUpgradeForOldVersion28(db);
+                onUpgradeForOldVersion29(db);
+                onUpgradeForOldVersion30(db);
                 db.setTransactionSuccessful();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -106,6 +108,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 2:
                         onUpgradeForOldVersion2(db);
@@ -134,6 +138,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 3:
                         onUpgradeForOldVersion3(db);
@@ -161,6 +167,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 4:
                         onUpgradeForOldVersion4(db);
@@ -187,6 +195,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 5:
                         onUpgradeForOldVersion5(db);
@@ -212,6 +222,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 6:
                         onUpgradeForOldVersion6(db);
@@ -236,6 +248,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 7:
                         onUpgradeForOldVersion7(db);
@@ -259,6 +273,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 8:
                         onUpgradeForOldVersion8(db);
@@ -281,6 +297,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 9:
                         onUpgradeForOldVersion9(db);
@@ -302,6 +320,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 10:
                         onUpgradeForOldVersion10(db);
@@ -322,6 +342,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 11:
                         onUpgradeForOldVersion11(db);
@@ -341,6 +363,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 12:
                         onUpgradeForOldVersion12(db);
@@ -359,6 +383,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 13:
                         onUpgradeForOldVersion13(db);
@@ -376,6 +402,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 14:
                         onUpgradeForOldVersion14(db);
@@ -392,6 +420,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 15:
                         onUpgradeForOldVersion15(db);
@@ -407,6 +437,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 16:
                         onUpgradeForOldVersion16(db);
@@ -421,6 +453,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 17:
                         onUpgradeForOldVersion17(db);
@@ -434,6 +468,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 18:
                         onUpgradeForOldVersion18(db);
@@ -446,6 +482,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 19:
                         onUpgradeForOldVersion19(db);
@@ -457,6 +495,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 20:
                         onUpgradeForOldVersion20(db);
@@ -467,6 +507,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 21:
                         onUpgradeForOldVersion21(db);
@@ -476,6 +518,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 22:
                         onUpgradeForOldVersion22(db);
@@ -484,6 +528,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     //1.0.28
                     case 23:
@@ -492,6 +538,8 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     //1.0.29
                     case 24:
@@ -499,25 +547,40 @@ public class DataHelper {
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
 
                     case 25:
                         onUpgradeForOldVersion25(db);
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 26:
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
                     case 27:
                         onUpgradeForOldVersion27(db);
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
-                    case  28:
+                    case 28:
                         onUpgradeForOldVersion28(db);
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
                         break;
-
+                    case 29:
+                        onUpgradeForOldVersion29(db);
+                        onUpgradeForOldVersion30(db);
+                        break;
+                    case 30:
+                        onUpgradeForOldVersion30(db);
                     default:
                         break;
                 }
@@ -1493,16 +1556,7 @@ public class DataHelper {
                 db.execSQL("ALTER TABLE " + TableNames.SyncMsg
                         + " ADD COLUMN reportNo INTEGER");
 
-                db.execSQL("ALTER TABLE " + TableNames.KotSummary
-                        + " ADD COLUMN eatType INTEGER default 0");
-                db.execSQL("ALTER TABLE " + TableNames.KotSummary
-                        + " ADD COLUMN address TEXT");
-                db.execSQL("ALTER TABLE " + TableNames.KotSummary
-                        + " ADD COLUMN contact TEXT");
-                db.execSQL("ALTER TABLE " + TableNames.KotSummary
-                        + " ADD COLUMN mobile TEXT");
-                db.execSQL("ALTER TABLE " + TableNames.KotSummary
-                        + " ADD COLUMN deliveryTime INTEGER default 0");
+
 
 
             }catch (Exception e){
@@ -1513,47 +1567,34 @@ public class DataHelper {
                         + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, itemId INTEGER, qty INTEGER, defultQty INTEGER, "
                         + "minQty INTEGER,isActive INTEGER,displayQty INTEGER,createTime LONG,updateTime LONG,resetTime LONG)");
             }
-
-//            db.execSQL("CREATE TABLE "
-//                    + TableNames.PromotionData
-//                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
-//                    "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
-//                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG,basePrice TEXT)");
-//
-//
-//            db.execSQL("CREATE TABLE "
-//                    + TableNames.Promotion
-//                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,type INTEGER, promotionName TEXT, restaurantId INTEGER, isActive INTEGER,promotionWeight INTEGER," +
-//                    "discountPrice TEXT,discountPercentage TEXT,freeNum INTGER,freeItemId INTGER,freeItemName TEXT,itemMainCategoryId INTGER,itemCategoryId INTGER," +
-//                    "itemId INTGER ,itemNum INTGER,itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT,secondItemMainCategoryId INTGER,secondItemCategoryId INTGER," +
-//                    "secondItemId INTGER ,secondItemNum INTGER,secondItemMainCategoryName TEXT,secondItemCategoryName TEXT,secondItemName TEXT,createTime LONG,updateTime LONG," +
-//                    "basePrice TEXT,guestNum INTGER,promotionDateInfoId INTGER)");
-//
-//            db.execSQL("CREATE TABLE "
-//                    + TableNames.PromotionWeek
-//                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, week INTEGER, startTime TEXT,endTime TEXT,isActive INTEGER,createTime LONG,updateTime LONG,promotionDateInfoId INTEGER)");
-//
-//
-//            db.execSQL("CREATE TABLE "
-//                    + TableNames.PromotionItem
-//                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER, " +
-//                    "itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER," +
-//                    "itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT, freeItemName TEXT,createTime LONG,updateTime LONG)");
-//
-//            db.execSQL("CREATE TABLE "
-//                    + TableNames.PromotionOrder
-//                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER,itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER,"+
-//                    "itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT, freeItemName TEXT,createTime LONG,updateTime LONG,basePrice TEXT)");
-//
-//            db.execSQL("ALTER TABLE "
-//                    + TableNames.Order
-//                    + " ADD COLUMN  promotion TEXT default ''");
-//            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
-//                    + " ADD COLUMN promotionTotal TEXT");
-
         }
 
         private void onUpgradeForOldVersion28(SQLiteDatabase db){
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN eatType INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN address TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN contact TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN mobile TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN deliveryTime INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN appOrderId INTEGER default 0");
+
+//
+//
+
+        }
+
+        private void onUpgradeForOldVersion29(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN payHalal TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN payHalalQty INTEGER default 0");
+
+
             db.execSQL("CREATE TABLE "
                     + TableNames.PromotionData
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
@@ -1582,15 +1623,20 @@ public class DataHelper {
 
             db.execSQL("CREATE TABLE "
                     + TableNames.PromotionOrder
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER,itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER,"+
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER,itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER," +
                     "itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT, freeItemName TEXT,createTime LONG,updateTime LONG,basePrice TEXT)");
 
             db.execSQL("ALTER TABLE "
                     + TableNames.Order
-                    + " ADD COLUMN  promotion TEXT");
+                    + " ADD COLUMN  promotion TEXT default ''");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN promotionTotal TEXT");
 
+
+        }
+
+
+        private void onUpgradeForOldVersion30(SQLiteDatabase db){
             db.execSQL("ALTER TABLE "
                     + TableNames.Order
                     + " ADD COLUMN  orderRound TEXT");
@@ -1604,7 +1650,6 @@ public class DataHelper {
 
             db.execSQL("ALTER TABLE " + TableNames.RestaurantConfig
                     + " ADD COLUMN paraValue3 TEXT");
-
 
         }
     }

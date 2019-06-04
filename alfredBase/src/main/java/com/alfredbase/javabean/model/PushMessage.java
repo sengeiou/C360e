@@ -33,6 +33,7 @@ public class PushMessage {
 
 	public final static String REAL_TIME_REPORT = "real_time_report";
 	public final static String STOCK = "stock";
+	public final static  String PROMOTION="rest_promotion";
 	
 	public final static int MESSAGE_TYPE_HEART_BEAT = -2;
 	public final static int MESSAGE_TYPE_REGISTER = 0;

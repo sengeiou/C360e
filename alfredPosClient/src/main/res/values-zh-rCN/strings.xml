@@ -145,6 +145,7 @@
     <string name="item_complete">该项已经完成</string>
     <string name="sure_take_away">你确定将该订单打包?</string>
     <string name="no_order_detail">不能下空订单</string>
+    <string name="network_connected">互联网连接不可用。请连接以进行云同步。</string>
 
     <!-- setting-window -->
     <string name="setting">设置</string>
@@ -195,6 +196,7 @@
     <string name="print_lable">标签打印</string>
     <string name="print_direction">标签打印方向</string>
     <string name="credit_card_rounding">Credit Card Rounding</string>
+    <string name="include_plu_void">Include Plu Void</string>
     <string name="password_update_successfully">密码修改成功</string>
     <string name="employee_no_exist">当前员工不存在，请联系餐厅管理员</string>
     <string name="table_dining">当前桌子已经被占用</string>
@@ -384,6 +386,7 @@
     <string name="check">下单</string>
     <string name="paid">已支付</string>
     <string name="making">备餐中</string>
+    <string name="confirmed"> 已确认</string>
     <string name="prepared">已备餐</string>
     <string name="preparing">备餐中</string>
     <string name="finish">已完成</string>

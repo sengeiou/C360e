@@ -667,7 +667,7 @@ public class HttpAPI {
                                         Map<String, Integer> map = App.instance
                                                 .getPushMsgMap();
                                         if (!map.isEmpty()) {
-                                            map.remove(PushMessage.HAPPY_HOURS);
+                                            map.remove(PushMessage.PROMOTION);
                                             Store.saveObject(App.instance,
                                                     Store.PUSH_MESSAGE, map);
                                             App.instance.setPushMsgMap(map);
@@ -1682,6 +1682,47 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.RECEVING_APP_ORDER_SUCCESS, appOrderId));
+                            } else {
+                                if (resultCode == ResultCode.APP_ORDER_REFUND) {
+                                    AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
+                                }
+                                handler.sendMessage(handler.obtainMessage(
+                                        NetWorkOrderActivity.RESULT_FAILED, resultCode));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(
+                                        NetWorkOrderActivity.HTTP_FAILED, error));
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void readyAppOrder(Context context, String url,
+                                        AsyncHttpClient httpClient, final int appOrderId, final Handler handler) {
+        try {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("appOrderId", appOrderId);
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.READY_APP_ORDER_SUCCESS, appOrderId));
                             } else {
                                 if (resultCode == ResultCode.APP_ORDER_REFUND) {
                                     AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);

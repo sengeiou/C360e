@@ -25,7 +25,7 @@ interface IAlfredRemotePrintService {
 							String order, String orderDetail,
 							String modifiers,String tax, String payment,
 							boolean doubleprint, boolean doubleReceipts,
-							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble);
+							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr);
 
 	void printKioskBill(String printer, String title, 
 							String order, String orderDetail,
@@ -47,7 +47,7 @@ interface IAlfredRemotePrintService {
 	void printDetailAnalysisReport(String xzType, String printer, 
 										String title, String daySaleSummary, String plu, String pluMod, String pluCombo, String category, String items);
 	void printSummaryAnalysisReport(String xzType, String printer, 
-										String title, String plu, String pluMod, String category, String items);
+										String title, String plu, String pluMod, String category, String items,boolean isPluVoid);
 	void printHourlyAnalysisReport(String xzType, String printer, String title, String hourly);
 	void printVoidItemAnalysisReport(String xzType, String printer, String title, String voidItems);
 	void printEntItemAnalysisReport(String xzType, String printer, String title, String voidItems);

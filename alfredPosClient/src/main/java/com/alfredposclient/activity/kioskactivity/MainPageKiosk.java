@@ -83,6 +83,7 @@ import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
@@ -92,6 +93,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.JSONUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RxBus;
@@ -281,7 +283,14 @@ public class MainPageKiosk extends BaseActivity {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    //关闭手势滑动
         settingView = (SettingView) findViewById(R.id.settingView);
         settingView.setParams(this, mDrawerLayout);
-        if (App.instance.isSUNMIShow()) {
+        if (MachineUtil.isHisense()) {
+            if (MachineUtil.isSunmiModel()) {
+                settingView.SUNMIVisible();
+            } else {
+                settingView.SUNMIGone();
+            }
+
+        } else if (MachineUtil.isHisense()) {
             settingView.SUNMIVisible();
         } else {
             settingView.SUNMIGone();
@@ -373,6 +382,7 @@ public class MainPageKiosk extends BaseActivity {
         long nowTime = System.currentTimeMillis();
         int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
         App.instance.setKioskHoldNum(count);
+        App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
         XMPP.getInstance().setCanCheckAppOrder(true);
 
 
@@ -481,7 +491,7 @@ public class MainPageKiosk extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
-        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
+        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
         List<OrderDetail> orderDetails = OrderDetailSQL
                 .getUnFreeOrderDetails(oldOrder);
         if (!orderDetails.isEmpty()) {

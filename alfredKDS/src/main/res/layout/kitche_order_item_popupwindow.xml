@@ -182,17 +182,25 @@
             </RelativeLayout>
 
             <com.alfredkds.view.PopItemListView
-                android:id="@+id/lv_kot"
+            android:id="@+id/lv_kot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ll_top"
+            android:layout_above="@+id/ll_bottom"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@color/black"
+            android:dividerHeight="1px"
+            android:visibility="gone"
+            android:listSelector="@android:color/transparent" >
+        </com.alfredkds.view.PopItemListView>
+            <com.alfredkds.view.SwipeMenuRecyclerView
+                android:id="@+id/re_kot"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/ll_top"
                 android:layout_above="@+id/ll_bottom"
-                android:background="@android:color/transparent"
-                android:cacheColorHint="@android:color/transparent"
-                android:divider="@color/black"
-                android:dividerHeight="1px"
-                android:listSelector="@android:color/transparent" >
-            </com.alfredkds.view.PopItemListView>
+                ></com.alfredkds.view.SwipeMenuRecyclerView>
 
             <View
                 android:layout_width="match_parent"

@@ -30,6 +30,7 @@ public class AppOrder implements Serializable {
     private String address;//外卖地址
     private String contact;
     private String mobile;  //收货人电话
+
     private long deliveryTime;
 
     public long getDeliveryTime() {
