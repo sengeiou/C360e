@@ -949,11 +949,11 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 				if(checkState){
 
 					mt_print_waiter_once.setChecked(true);
-					settings.setPrintInstructions(ParamConst.DEFAULT_TRUE);
+					settings.setWaiterOnce(ParamConst.DEFAULT_TRUE);
 				}else{
 
 					mt_print_waiter_once.setChecked(false);
-					settings.setPrintInstructions(ParamConst.DEFAULT_FALSE);
+					settings.setWaiterOnce(ParamConst.DEFAULT_FALSE);
 				}
 				break;
 			case R.id.mt_print_bill:

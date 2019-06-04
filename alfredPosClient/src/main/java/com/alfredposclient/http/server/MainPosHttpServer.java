@@ -2943,7 +2943,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     resp = this.getJsonResponse(new Gson().toJson(result));
                     return resp;
                 }
-                if(order.getIsWaiterPrint()==1){
+                if(App.instance.getSystemSettings().isPrintWaiterOnce()&&order.getIsWaiterPrint()==1){
                     result.put("resultCode", ResultCode.ORDER_PRINT);
                     resp = this.getJsonResponse(new Gson().toJson(result));
                     return resp;
@@ -3046,6 +3046,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 OrderSQL.updateWaiterPrint(1, orderId);
                 result.put("resultCode", ResultCode.SUCCESS_WAITER_ONCE);
             }else {
+
+                OrderSQL.updateWaiterPrint(1, orderId);
 
             result.put("resultCode", ResultCode.SUCCESS);
             }
