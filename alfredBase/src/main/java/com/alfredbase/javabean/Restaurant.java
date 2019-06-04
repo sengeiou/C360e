@@ -356,7 +356,8 @@ public class Restaurant implements Serializable{
 				", restaurantPrint='" + restaurantPrint + '\'' +
 				", options='" + options + '\'' +
 				", footerOptions='" + footerOptions + '\'' +
-				", reportOrderTimely='" + reportOrderTimely + '\'' +
+				", reportOrderTimely=" + reportOrderTimely +
+				", RoundingFormart='" + RoundingFormart + '\'' +
 				'}';
 	}
 
