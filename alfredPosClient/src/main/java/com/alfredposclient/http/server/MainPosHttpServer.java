@@ -3041,8 +3041,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
                 }
             }
-            OrderSQL.updateWaiterPrint(1, orderId);
+            if(App.instance.getSystemSettings().isPrintWaiterOnce()){
+
+                OrderSQL.updateWaiterPrint(1, orderId);
+                result.put("resultCode", ResultCode.SUCCESS_WAITER_ONCE);
+            }else {
+
             result.put("resultCode", ResultCode.SUCCESS);
+            }
             resp = this.getJsonResponse(new Gson().toJson(result));
 
         } catch (Exception e) {

@@ -23,6 +23,8 @@ public class ResultCode {
 	 * 成功
 	 */
 	public static final int SUCCESS = 1;
+
+	public static final int SUCCESS_WAITER_ONCE = 100;
 	
 
 	/**

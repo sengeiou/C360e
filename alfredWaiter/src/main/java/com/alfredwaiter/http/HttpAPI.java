@@ -949,7 +949,10 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_BILL);
-                            } else if (resultCode == ResultCode.ORDER_FINISHED) {
+                            } else if(resultCode==ResultCode.SUCCESS_WAITER_ONCE){
+                                handler.sendEmptyMessage(ResultCode.SUCCESS_WAITER_ONCE);
+                            }
+                            else if (resultCode == ResultCode.ORDER_FINISHED) {
                                 handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
                             }
                             else if (resultCode == ResultCode.ORDER_PRINT) {

@@ -32,6 +32,7 @@ public class SystemSettings {
     private boolean isTransferPrint = true;
     private boolean isAutoToTable = false;
     private  boolean isInstructions=true;
+    private boolean isWaiterOnce=false;
 
     private int callStyle = 1;// 叫号端默认布局
 
@@ -523,6 +524,31 @@ public class SystemSettings {
             }
         }
         return isInstructions;
+    }
+
+
+    //waiter 是否只打印一次
+    public void setWaiterOnce(Integer waiterOnce) {
+        Store.putInt(this.context, Store.PRINT_WAITER_ONCE,
+                waiterOnce.intValue());
+        if (waiterOnce.intValue() == 1)
+            this.isWaiterOnce = true;
+        else
+            this.isWaiterOnce = false;
+    }
+
+
+    public boolean isPrintWaiterOnce() {
+        Integer value = Store.getInt(context,
+                Store.PRINT_WAITER_ONCE);
+        if (value != null && value != Store.DEFAULT_INT_TYPE) {
+            if (value.intValue() == 1) {
+                this.isWaiterOnce = true;
+            } else {
+                this.isWaiterOnce = false;
+            }
+        }
+        return isWaiterOnce;
     }
 
 
