@@ -866,7 +866,6 @@ public class OrderHelper {
 		}
 
 		order.setPromotion(BH.getBD(promotionPrice).toString());
-		if()
 		order.setTotal(total.toString());
 
 	}
