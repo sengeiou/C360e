@@ -617,7 +617,7 @@ public class ObjectFactory {
             }
             orderDetail.setGroupId(groupId);
             orderDetail.setOrderSplitId(0);
-            orderDetail.setIsTakeAway(order.getIsTakeAway());
+            orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
             orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
             if (itemDetail.getItemType() == 3)
                 orderDetail.setIsSet(1);
