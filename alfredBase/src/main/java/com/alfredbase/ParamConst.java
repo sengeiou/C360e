@@ -152,7 +152,7 @@ public class ParamConst {
 	public static final int DINE_IN = 0;
 	public static final int TAKE_AWAY = 1;
 	public static final int APP_DELIVERY = 2;
-	public static final int NOT_TAKE_AWAY=-1;
+	public static final int NOT_TAKE_AWAY=0;
 
 	// 0:没有发送，1：发送中，2：发送成功, 3没有成功
 	public static final int SYNC_MSG_UN_SEND = 0; // initial state create a new
