@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -2294,6 +2295,18 @@ public class MainPage extends BaseActivity {
     private void setData() {
         initOrder(currentTable);
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
+        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
+
+        for (int i = 0; i <myorderDetails.size() ; i++) {
+            if(myorderDetails.get(i).getOrderSplitId()==ParamConst.ORDERDETAIL_TYPE_GENERAL){
+                Log.d("aaaaaa","int"+myorderDetails.get(i).getOrderSplitId());
+
+            }else {
+                Log.d("bbbb","intger"+myorderDetails.get(i).getOrderSplitId());
+            }
+
+        }
+        List<OrderSplit> orderSplits  = OrderSplitSQL.getAllOrderSplits(currentOrder);
         //update tabels orders
         currentTable.setOrders(orderDetails.size());
         TableInfoSQL.updateTables(currentTable);
