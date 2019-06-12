@@ -2295,19 +2295,11 @@ public class MainPage extends BaseActivity {
     private void setData() {
         initOrder(currentTable);
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
-        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
-
-        for (int i = 0; i <myorderDetails.size() ; i++) {
-            if(myorderDetails.get(i).getOrderSplitId()==ParamConst.ORDERDETAIL_TYPE_GENERAL){
-                Log.d("aaaaaa","int"+myorderDetails.get(i).getOrderSplitId());
-
-            }else {
-                Log.d("bbbb","intger"+myorderDetails.get(i).getOrderSplitId());
-            }
-
-        }
-        List<OrderSplit> orderSplits  = OrderSplitSQL.getAllOrderSplits(currentOrder);
-        //update tabels orders
+//        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
+//
+//
+//        List<OrderSplit> orderSplits  = OrderSplitSQL.getAllOrderSplits(currentOrder);
+//        //update tabels orders
         currentTable.setOrders(orderDetails.size());
         TableInfoSQL.updateTables(currentTable);
         mainPageMenuView.setParam(currentOrder, handler);
