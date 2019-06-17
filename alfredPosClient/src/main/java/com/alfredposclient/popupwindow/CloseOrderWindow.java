@@ -654,7 +654,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
 
             settlementNum = BH.getBD(sumPaidamount);
-            if (settlementNum.compareTo(BH.formatMoney(order.getTotal())) > -1) {
+            if (settlementNum.compareTo(BH.getBD(BH.formatMoney(order.getTotal()))) > -1) {
                 remainTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
             } else {
                 remainTotal = BH.sub(BH.getBD(order.getTotal()),
@@ -757,7 +757,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                 }
                             });
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
-                            if (roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.formatMoney("0.00")) != 0) {
+                            if (roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
                                 order.setTotal(BH.sub(BH.getBD(order.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
                                 OrderSQL.update(order);
                                 if (parent instanceof EditSettlementPage) {
@@ -2037,7 +2037,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         BigDecimal cashNum = BH.getBD(num);
         BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
 
-         remainTotalAfterRound=BH.formatMoney(remainTotalAfterRound.toString());
+         remainTotalAfterRound=BH.getBD(BH.formatMoney(remainTotalAfterRound.toString()));
         int change = cashNum.compareTo(remainTotalAfterRound);
         if (change >= 0) {
             BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
@@ -2074,7 +2074,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 String showStr = tv_total_amount_num.getText().toString();
                 BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
                 BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
-               remainTotalAfterRound=BH.formatMoney(remainTotalAfterRound.toString());
+               remainTotalAfterRound=BH.getBD(BH.formatMoney(remainTotalAfterRound.toString()));
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
                     showStr = remainTotalAfterRound.toString();
                 } else {

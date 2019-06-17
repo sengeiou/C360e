@@ -249,6 +249,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_open_restaruant);
+		BH.initFormart( App.instance.getLocalRestaurantConfig().getFormatType());
 		if(App.instance.isRevenueKiosk()) {
 			PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
 			if (placeInfo == null) {

@@ -455,7 +455,7 @@ public class App extends BaseApplication {
 
     public void setCurrencySymbol(String currencySymbol, boolean isDouble) {
         this.currencySymbol = currencySymbol;
-        BH.initFormart(isDouble);
+       // BH.initFormart(isDouble);
     }
 
     public LocalRestaurantConfig getLocalRestaurantConfig() {

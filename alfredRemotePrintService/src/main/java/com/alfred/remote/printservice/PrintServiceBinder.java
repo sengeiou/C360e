@@ -816,7 +816,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                           String payment, boolean doubleprint,
                           boolean doubleReceipts, String rounding,
                           String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist) throws RemoteException {
-        BH.initFormart(isDouble);
+        BH.initFormart("");
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 
@@ -1217,14 +1217,14 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 
                     ////////////// Bill Summary
-                    String subTotal = theOrder.getSubTotal().toString();
-                    String discount = theOrder.getDiscountAmount().toString();
-                    String grandTotal = theOrder.getTotal().toString();
+                   subTotal = theOrder.getSubTotal().toString();
+                     discount = theOrder.getDiscountAmount().toString();
+                    grandTotal = theOrder.getTotal().toString();
 
 //                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
-                    String promotionTotal = theOrder.getPromotion().toString();
+                     promotionTotal = theOrder.getPromotion().toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
-                    List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
+                    stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
                         // String paymentType = "";
                         String cardNo = null;
@@ -2094,7 +2094,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                   String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist) throws RemoteException {
 
 
-        BH.initFormart(isDouble);
+        BH.initFormart("");
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 
@@ -2582,7 +2582,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                String orderDetail, String modifiers, String tax, String payment,
                                boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,
                                String currencySymbol, boolean openDrawer, boolean isDouble) throws RemoteException {
-        BH.initFormart(isDouble);
+        BH.initFormart("");
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 

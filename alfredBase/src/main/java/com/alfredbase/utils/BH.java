@@ -31,15 +31,25 @@ public class BH {
     static DecimalFormat format1;
 	private static boolean isDouble = true;
 	private static String  type="0.01" ;
+	private static BigDecimal formatM;
+
 //	private static int operatingType=100;
+private static DecimalFormat decimalFormat = new DecimalFormat(",###.00");//
 
 	public static void initFormart(String  typeFormat){
 		if(!TextUtils.isEmpty(typeFormat)){
 			type=typeFormat;
+			if(Integer.parseInt(type)>=0){
+				decimalFormat=new DecimalFormat(",###");
+			}else {
+				String sp=",##"+type;
+				decimalFormat=new DecimalFormat(sp);
+
+			}
 		}else {
 			type="0.01";
 		}
-		format = new DecimalFormat(formatZero().toString());
+		format = new DecimalFormat(formatNarrow().toString());
 		format.setRoundingMode(RoundingMode.HALF_UP);
 	}
 
@@ -52,7 +62,7 @@ public class BH {
 	 * @param
 	 * @return
 	 */
-	public static BigDecimal formatMoney(String string
+	public static String formatMoney(String string
 	) {
 		//Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
 	//	int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
@@ -60,12 +70,20 @@ public class BH {
 
 		format1=   new DecimalFormat(type);
 	//	format1.setRoundingMode(RoundingMode.HALF_UP);
+		formatM = BigDecimal.ZERO;
 		if (CommonUtil.isNull(string)) {
-			return new BigDecimal(format1.format(new BigDecimal("0")));
+			formatM=new BigDecimal(format1.format(new BigDecimal("0")));
+			return decimalFormat.format(formatM);
 		}else {
-
-			return new BigDecimal(format1.format(new BigDecimal(string)));
+			formatM=new BigDecimal(format1.format(new BigDecimal(string)));
+			return decimalFormat.format(formatM);
 		}
+//		if (CommonUtil.isNull(string)) {
+//			return new BigDecimal(format1.format(new BigDecimal("0")));
+//		}else {
+//
+//			return new BigDecimal(format1.format(new BigDecimal(string)));
+//		}
 //		if (CommonUtil.isNull(string))
 //			return new BigDecimal("0.00");
 //		BigDecimal value2 = null;
@@ -92,18 +110,20 @@ public class BH {
 //		}
 	}
 
-
-	public static BigDecimal formatMoney(Integer integer
+      // 显示金额格式
+	public static String formatMoney(Integer integer
 	) {
 
 
 		format1=   new DecimalFormat(type);
 	//	format1.setRoundingMode(RoundingMode.HALF_UP);
+		formatM = BigDecimal.ZERO;
 		if (CommonUtil.isNull(integer)) {
-			return new BigDecimal(format1.format(new BigDecimal("0")));
+			formatM=new BigDecimal(format1.format(new BigDecimal("0")));
+			return decimalFormat.format(formatM);
 		}else {
-
-			return new BigDecimal(format1.format(new BigDecimal(integer)));
+			formatM=new BigDecimal(format1.format(new BigDecimal(integer)));
+			return decimalFormat.format(formatM);
 		}
 ////		Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
 ////		int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
@@ -134,15 +154,15 @@ public class BH {
 //		}
 	}
 
-
-    public static BigDecimal formatZero(
+// 运算时后移两位
+    public static BigDecimal formatNarrow(
     ) {
-        BigDecimal newZero = BigDecimal.ZERO;
+        BigDecimal newformat = BigDecimal.ZERO;
 		BigDecimal big1=new BigDecimal(type);
 		BigDecimal big2=new BigDecimal("100");
 
-		newZero=big1.divide(big2);
-		return newZero;
+		newformat=big1.divide(big2);
+		return newformat;
 //        if (Double.valueOf(type)<10){
 //            String typeString=String.valueOf(type);
 //            if(typeString.contains(".")){
@@ -171,7 +191,7 @@ public class BH {
 
 	public static BigDecimal formatRound(BigDecimal value
 	) {
-		value=BH.sub(BH.formatMoney(value.toString()),value,true);
+		value=BH.sub( new BigDecimal(BH.formatMoney(value.toString())),value,true);
 		return value;
 	}
 
@@ -318,6 +338,11 @@ public class BH {
 		return new BigDecimal(format.format(new BigDecimal(integer)));
 	}
 
+	public static BigDecimal getReplace(String string) {
+		if (CommonUtil.isNull(string))
+			return new BigDecimal(ParamConst.DOUBLE_ZERO);
+		return new BigDecimal(format.format(new BigDecimal(string.replace(",",""))));
+	}
 	public static BigDecimal getBD(String string) {
 		if (CommonUtil.isNull(string))
 			return new BigDecimal(ParamConst.DOUBLE_ZERO);

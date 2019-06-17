@@ -1893,18 +1893,18 @@ public class App extends BaseApplication {
             String total = order.getTotal();
             String rounding = "0.00";
             if (roundAmount != null) {
-                total = BH.sub(BH.formatMoney(order.getTotal()),
+                total = BH.sub(BH.getBD(BH.formatMoney(order.getTotal())),
                         BH.getBD(roundAmount.getRoundBalancePrice()), true)
                         .toString();
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
             if(order.getPromotion()!=null){
-                total = BH.add(BH.formatMoney(total),
+                total = BH.add(BH.getReplace(BH.formatMoney(total)),
                         BH.getBD(order.getPromotion()), true)
                         .toString();
             }
-            roundingMap.put("Total", BH.formatMoney(total).toEngineeringString());
+            roundingMap.put("Total", BH.formatMoney(total));
             roundingMap.put("Rounding", BH.formatMoney(rounding).toString());
             Gson gson = new Gson();
             String prtStr = gson.toJson(printer);
@@ -2034,7 +2034,7 @@ public class App extends BaseApplication {
                             .toString();
                 }
                 if(order.getPromotion()!=null){
-                    total = BH.add(BH.formatMoney(total),
+                    total = BH.add(BH.getReplace(BH.formatMoney(total)),
                             BH.getBD(order.getPromotion()), true)
                             .toString();
                 }

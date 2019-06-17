@@ -35,7 +35,7 @@ public class OrderSQL {
 			String sql = "insert into "
 					+ TableNames.Order
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
-					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime," 
+					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
 					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -65,7 +65,7 @@ public class OrderSQL {
 
 	/**
 	 * 修改订单详情OrderDetail，调用这个方法
-	 * 
+	 *
 	 * @param order
 	 */
 	public static void updateOrder(Order order) {
@@ -76,10 +76,10 @@ public class OrderSQL {
 
 		update(order);
 	}
-	
+
 	/**
 	 * 修改订单Order折扣，调用这个方法
-	 * 
+	 *
 	 * @param order
 	 */
 	public static void updateOrderAndOrderDetailByDiscount(Order order) {
@@ -90,8 +90,8 @@ public class OrderSQL {
 		calculateByOrderDiscount(order);
 		update(order);
 	}
-	
-	
+
+
 
 	public static void update(Order order) {
 		if (order == null) {
@@ -173,7 +173,7 @@ public class OrderSQL {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void updateOrderIsTakeAway(Order order, int isTakeAway) {
 		try {
 			String sql = "update " + TableNames.Order + " set isTakeAway = ?  where id = ? ";
@@ -184,7 +184,7 @@ public class OrderSQL {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void updateOrderNo(Order order) {
 		try {
 			String sql = "update " + TableNames.Order + " set orderNo = ?  where id = ? ";
@@ -197,7 +197,7 @@ public class OrderSQL {
 	}
 
 	private static void calculate(Order order) {
-		
+
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		OrderHelper.setOrderSubTotal(order, orderDetails);
 		updateOrderDetail(order);
@@ -217,19 +217,20 @@ public class OrderSQL {
 	}
 	/**
 	 * 修改订单Order折扣，调用这个方法
-	 * 
+	 *
 	 * @param order
 	 */
-	private static void calculateByOrderDiscount(Order order){
-		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
-		OrderHelper.setOrderSubTotal(order, orderDetails);
-		OrderHelper.setOrderDiscount(order, orderDetails);
-		OrderHelper.setOrderTax(order, orderDetails);
-		OrderHelper.setOrderTotal(order, orderDetails);
+	private static void calculateByOrderDiscount(Order order) {
+        List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
+        OrderHelper.setOrderSubTotal(order, orderDetails);
+        OrderHelper.setOrderDiscount(order, orderDetails);
+        OrderHelper.setOrderTax(order, orderDetails);
+        OrderHelper.setOrderTotal(order, orderDetails);
         OrderHelper.setPromotion(order);
+    }
 	/**
 	 * 修改订单Order折扣，调用这个方法
-	 * 
+	 *
 	 * @param order
 	 */
 	private static void updateOrderDetail(Order order) {
@@ -603,8 +604,8 @@ public class OrderSQL {
 			}
 		}
 		return result;
-	}	
-	
+	}
+
 	public static ArrayList<Order> getFinishedOrdersBySession(SessionStatus sessionStatus, long businessDate, long closeTime) {
 		ArrayList<Order> result = new ArrayList<Order>();
 		String sql = "select * from "
@@ -670,7 +671,7 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static ArrayList<Order> getAllOrderByTime(long businessDate) {
 		ArrayList<Order> result = new ArrayList<Order>();
 		Cursor cursor = null;
@@ -733,7 +734,7 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static ArrayList<Order> getAllOrderByTime(long businessDate,SessionStatus sessionStatus, long nowTime) {
 		ArrayList<Order> result = new ArrayList<Order>();
 		Cursor cursor = null;
@@ -806,12 +807,12 @@ public class OrderSQL {
 				+ TableNames.TableInfo+" t where od.tableId = t.posId and od.businessDate = ? "
 				+ " and od.sessionStatus = ? and od.createTime > ? and od.createTime < ? and t.status = "
 				+ ParamConst.TABLE_STATUS_DINING
-				+ " and od.orderStatus <> " 
+				+ " and od.orderStatus <> "
 				+ ParamConst.ORDER_STATUS_FINISHED
 				+ " group by t.posId";
 		try {
 			cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate),
-					String.valueOf(sessionStatus.getSession_status()), 
+					String.valueOf(sessionStatus.getSession_status()),
 					String.valueOf(sessionStatus.getTime() ),String.valueOf(time)});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -854,7 +855,7 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static Order getLastOrderatTabel(int tableId) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order
@@ -913,7 +914,7 @@ public class OrderSQL {
 				cursor.close();
 			}
 		}
-		return order;		
+		return order;
 	}
 	public static Order getOrderByAppOrderId(int appOrderId) {
 		Order order = null;
@@ -1104,8 +1105,8 @@ public class OrderSQL {
 		}
 		return order;
 	}
-	
-	
+
+
 	public static Order getUnfinishedOrder(int orderId) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order
@@ -1228,7 +1229,7 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static Order getOrder(Integer orderID) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order + " where id = ?";
@@ -1412,7 +1413,7 @@ public class OrderSQL {
 		}
 		return order;
 	}
-	
+
 	public static List<Order> getOrderListByUnPlay(SessionStatus sessionStatus) {
 		String sql = "select * from " + TableNames.Order
 				+ "  where sessionStatus = ? and createTime > ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
@@ -1476,7 +1477,7 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static ArrayList<DashboardTotalDetailInfo> getTotalDetaiInfosForOrder(){
 		ArrayList<DashboardTotalDetailInfo> totalDetailInfos = new ArrayList<DashboardTotalDetailInfo>();
 		Cursor cursor = null;
@@ -1510,9 +1511,9 @@ public class OrderSQL {
 			}
 		}
 		return totalDetailInfos;
-	
+
 	}
-	
+
 	public static int getSumCountBySessionType(int sessionStatus){
 		int sumCount = 0;
 		String sql = "select count(*) from "+ TableNames.Order + " where sessionStatus = ?";
@@ -1531,7 +1532,7 @@ public class OrderSQL {
 			}
 		}
 		return sumCount;
-	
+
 	}
 
 
@@ -1591,7 +1592,7 @@ public class OrderSQL {
 		return sumCount;
 
 	}
-	
+
 	/*计算流水*/
 	public static int getSumCountByBizDate(long bizDate){
 		int sumCount = 0;
@@ -1611,7 +1612,7 @@ public class OrderSQL {
 			}
 		}
 		return sumCount;
-	
+
 	}
 
 	/*计算流水*/
@@ -1660,7 +1661,7 @@ public class OrderSQL {
 
 		return tableNames;
 	}
-	
+
 	public static void updateOrderStatus( int orderStatus, int id){
 
 		String sql = "update " + TableNames.Order + " set orderStatus = ? where id = ?" ;
@@ -1669,9 +1670,9 @@ public class OrderSQL {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 	}
-	
+
 	public static void updateOrderPersions( int persons, int id){
 
 		String sql = "update " + TableNames.Order + " set persons = ? where id = ?" ;
@@ -1680,7 +1681,7 @@ public class OrderSQL {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 	}
 
 
@@ -1703,6 +1704,6 @@ public class OrderSQL {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 	}
 }
