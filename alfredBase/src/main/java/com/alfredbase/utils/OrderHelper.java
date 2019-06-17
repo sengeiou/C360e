@@ -44,7 +44,7 @@ import java.util.List;
 
 public class OrderHelper {
 	/**
-	 * 获取订单详情的Tax
+	 * 获取订单详情的Tax“
 	 * 
 	 * @param orderDetail
 	 * @return
@@ -868,7 +868,6 @@ public class OrderHelper {
 		}
 
 		order.setPromotion(BH.getBD(promotionPrice).toString());
-		if()
 		order.setTotal(total.toString());
 
 	}

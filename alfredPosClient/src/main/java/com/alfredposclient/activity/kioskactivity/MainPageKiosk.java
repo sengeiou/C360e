@@ -1658,7 +1658,8 @@ public class MainPageKiosk extends BaseActivity {
                         }
                     }
                     OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
-                    OrderDetailSQL.updateOrderDetail(orderDetail);
+                  //  OrderDetailSQL.updateOrderDetail(orderDetail);
+                    OrderDetailSQL.updateOrderDetailAndOrder(orderDetail);
                     if (orderDetail != null && orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                         handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                     } else {

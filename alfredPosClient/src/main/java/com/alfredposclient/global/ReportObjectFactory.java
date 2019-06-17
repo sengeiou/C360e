@@ -393,6 +393,7 @@ public class ReportObjectFactory {
 								discountQty++;
 							}
 						}
+
 						if(!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())){
 							takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()),false);
 							takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
