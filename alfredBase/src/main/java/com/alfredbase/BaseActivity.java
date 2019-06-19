@@ -1,24 +1,27 @@
 package com.alfredbase;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.hardware.display.DisplayManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.view.Display;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.RxBus;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
@@ -30,7 +33,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
     protected Dialog oneButtonCompelDialog;
     public LoadingDialog loadingDialog;
     protected NotificationManager mNotificationManager;
-   // DifferentDislay  mPresentation;
+    // DifferentDislay  mPresentation;
     protected static DisplayImageOptions display = new DisplayImageOptions.Builder() // 圆角边处理的头像
             .cacheInMemory(true) // 缓存到内存，设置true则缓存到内存
             .cacheOnDisk(true) // 缓存到本地磁盘,设置true则缓存到磁盘
@@ -85,7 +88,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 //							| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LanguageManager.setLocale(base));
+    }
 
 
     protected void initView() {
@@ -239,6 +245,21 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
             return;
         oneButtonCompelDialog.show();
 
+    }
+
+    public void changeLanguage(String language) {
+        if (!TextUtils.isEmpty(language)) {
+            LanguageManager.setNewLocale(context, language);
+
+            String packageName = context.getPackageName();
+            Intent mStartActivity = context.getPackageManager().getLaunchIntentForPackage(packageName);
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+            System.exit(0);
+        }
     }
 
     @Override

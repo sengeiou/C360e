@@ -505,8 +505,8 @@
                             android:id="@+id/ll_include_plu_void"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                             android:visibility="gone"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:visibility="gone">
 
 
                             <View
@@ -673,6 +673,48 @@
                                 android:layout_marginRight="10dp" />
                         </RelativeLayout>
                     </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_language_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ll_app_order"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/box_system_setting"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="60dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:padding="10dp"
+                                android:text="@string/language"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_m" />
+
+                            <TextView
+                                android:id="@+id/tv_language"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="10dp"
+                                android:padding="10dp"
+                                android:text="@string/language"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_m" />
+
+
+                        </RelativeLayout>
+                    </LinearLayout>
+
                 </RelativeLayout>
 
                 <LinearLayout
@@ -1039,8 +1081,8 @@
                                 android:id="@+id/ll_set_pos_mode"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
-                                android:visibility="gone"
-                                android:layout_gravity="center_horizontal">
+                                android:layout_gravity="center_horizontal"
+                                android:visibility="gone">
 
                                 <TextView
                                     android:id="@+id/tv_pos_mode"
@@ -1079,6 +1121,7 @@
                                     android:visibility="invisible" />
 
                             </RelativeLayout>
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
@@ -1091,14 +1134,14 @@
                                 android:layout_gravity="center_horizontal">
 
                                 <TextView
-                                android:id="@+id/tv_callnum"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:paddingLeft="10dp"
-                                android:text="Number Calling Settingsss"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/text_size_m" />
+                                    android:id="@+id/tv_callnum"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:paddingLeft="10dp"
+                                    android:text="Number Calling Settingsss"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
 
                                 <TextView
                                     android:id="@+id/tv_callnum_style"
@@ -1146,12 +1189,11 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:layout_weight="3"
+                                    android:hint="Calling Header"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:hint="Calling Header"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
-
 
 
                             </LinearLayout>
@@ -1160,6 +1202,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/black" />
+
                             <LinearLayout
                                 android:id="@+id/ll_callnum_footer"
                                 android:layout_width="match_parent"
@@ -1173,12 +1216,11 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:layout_weight="3"
+                                    android:hint="Calling Footer"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:hint="Calling Footer"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
-
 
 
                             </LinearLayout>

@@ -437,4 +437,8 @@
     <string name="revenue_center">Revenue Center</string>
     <string name="ipaddr_tips">Device Pairing\nSet up POS IP Address</string>
     <string name="connect">Connect</string>
+    <string name="language">Language</string>
+    <string name="choose_language">Choose Language</string>
+
+
 </resources>

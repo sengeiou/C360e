@@ -3,13 +3,12 @@ package com.alfred.callnum.activity;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,9 +24,9 @@ import com.alfred.callnum.utils.MyQueue;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.AnimatorListenerImpl;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.LogUtil;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -92,7 +91,6 @@ public class MainActivity extends BaseActivity {
 
                     break;
                 case TYPE_AGAIN_CALL:
-
                     timer.schedule(new MyTimertask(), 1000);
                     break;
                 case App.HANDLER_CLEAN_CALL:

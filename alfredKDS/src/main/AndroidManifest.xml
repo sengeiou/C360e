@@ -42,7 +42,7 @@
         android:largeHeap="true">
         <activity
             android:name=".activity.Welcome"
-            android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation|keyboardHidden|locale"
             android:screenOrientation="landscape"
             android:theme="@style/NullActivityTheme">
             <intent-filter>

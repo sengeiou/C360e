@@ -3469,4 +3469,6 @@ public class App extends BaseApplication {
         }
     }
 
+
+    public static final int HANDLER_SET_LANGUAGE = 100;
 }

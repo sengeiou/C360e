@@ -69,5 +69,14 @@
 
     <string name="changes">CHANGE AMOUNT</string>
 
+    <string name="language_en">English</string>
+    <string name="language_ch">China</string>
+    <string name="language_in">Indonesia</string>
+    <string name="language_th">Thailand</string>
+    <string name="language_ph">Philippines</string>
+    <string name="language_vi">Vietnam</string>
+    <string name="language_ar">Arabic</string>
+
+
 
 </resources>

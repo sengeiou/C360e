@@ -142,4 +142,7 @@ public class APIName {
     public static final String POS_CLOSE_SESSION = "pos_close_session";
 
 
+    public static final String SET_LANGUAGE = "set_language"; //to server
+    public static final String POS_LANGUAGE = "pos_language"; //to client
+
 }
