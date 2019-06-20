@@ -8,7 +8,6 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
-import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
@@ -1396,11 +1395,12 @@ public class OrderDetailSQL {
         String sql = "select * from " + TableNames.OrderDetail
                 + " where orderId = ? and orderDetailType <> " +
                 +ParamConst.ORDERDETAIL_TYPE_VOID
-                + " and groupId not in (select groupId from "
+                + " and orderSplitId not in (select id from "
                 + TableNames.OrderSplit
                 + " where orderId = ? and orderStatus > "
                 + ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
-                + ") order by groupId desc"; Cursor cursor = null;
+                + ") order by groupId desc";
+        Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql, new String[]{orderId + "", orderId + ""});

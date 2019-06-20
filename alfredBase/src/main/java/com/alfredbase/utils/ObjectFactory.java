@@ -34,7 +34,6 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -63,7 +62,6 @@ import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
-import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
 import com.alfredbase.store.sql.BohHoldSettlementSQL;
@@ -640,7 +638,7 @@ public class ObjectFactory {
         }
         return orderDetail;
     }
-
+    // use in  transfer item feature
     public OrderDetail cpOrderDetail(OrderDetail cpOrderDetail) {
         OrderDetail orderDetail = new OrderDetail();
         synchronized (lock_orderDetail) {
@@ -649,6 +647,7 @@ public class ObjectFactory {
             orderDetail.setUpdateTime(cpOrderDetail.getUpdateTime());
             orderDetail.setOrderId(cpOrderDetail.getOrderId());
             orderDetail.setOrderOriginId(cpOrderDetail.getOrderOriginId());
+            orderDetail.setOrderSplitId(0);
             orderDetail.setUserId(cpOrderDetail.getUserId());
             orderDetail.setItemId(cpOrderDetail.getItemId());
             orderDetail.setItemName(cpOrderDetail.getItemName());

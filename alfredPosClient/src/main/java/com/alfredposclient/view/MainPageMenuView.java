@@ -42,7 +42,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
@@ -363,7 +362,7 @@ public class MainPageMenuView extends LinearLayout {
 					public void onGlobalLayout() {
 						int numColumns = (int)Math.floor(gv_menu_detail.getWidth()/(gv_menu_detail.getVerticalSpacing() + ScreenSizeUtil.dip2px(parent, ItemDetailAdapter.ITEM_WIDTH_HEIGHT)));
 						gv_menu_detail.setNumColumns(numColumns);
-						LogUtil.e("TEST", "宽===" + gv_menu_detail.getWidth() + "高====" + gv_menu_detail.getHeight());
+//						LogUtil.e("TEST", "宽===" + gv_menu_detail.getWidth() + "高====" + gv_menu_detail.getHeight());
 					}
 				});
 				gv_menu_detail.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
