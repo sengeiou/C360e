@@ -29,7 +29,7 @@ public class BillPrint extends PrintJob {
     public static int FIXED_COL4_SPACE = 2;
     public static int FIXED_COL4_PRICE = 10; //in case of 48 dots width, QTY col = 10dots
     public static int FIXED_COL4_QTY = 6; //in case of 48 dots width, QTY col = 10dots
-    public static int FIXED_COL4_TOTAL = 12; //in case of 48 dots width, QTY col = 10dots
+    public static int FIXED_COL4_TOTAL = 15; //in case of 48 dots width, QTY col = 10dots
 
     public static int COL4_ITEMNAME; // Width = CharSize/scale - FIXED_COL2_QTY/scale -
     // FIXED_COL2_PRICE/scale- FIXED_COL2_TOTAL/scale- FIXED_COL2_SPACE *3
@@ -600,7 +600,6 @@ public class BillPrint extends PrintJob {
         String[] splitedcontents = {col1Content};
 
         try {
-            //ln1 = (col1Content.getBytes("GBK").length)/(BillPrint.COL4_ITEMNAME*1.0);
             splitedcontents = StringUtil.formatLn(BillPrint.COL4_ITEMNAME * 1, col1Content);
             ln1 = splitedcontents.length;
         } catch (UnsupportedEncodingException e) {
@@ -624,7 +623,7 @@ public class BillPrint extends PrintJob {
         double ln4 = (col4Content.length()) / (BillPrint.FIXED_COL4_TOTAL * 1.0 / charScale);
         col4Lines = StringUtil.nearestTen(ln4);
         String col4PadContent = StringUtil.padLeft(col4Content, col4Lines * BillPrint.FIXED_COL4_PRICE / charScale);
-        ArrayList<String> splittedCol4Content = StringUtil.splitEqually(col4PadContent, BillPrint.FIXED_COL4_PRICE / charScale);
+        ArrayList<String> splittedCol4Content = StringUtil.splitEqually(col4PadContent, (BillPrint.FIXED_COL4_PRICE )/ charScale);
 
 
         for (int i = 0; i < Math.max(Math.max(col1Lines, col2Lines), Math.max(col3Lines, col4Lines)); i++) {
@@ -698,12 +697,12 @@ public class BillPrint extends PrintJob {
 
 
     public void addOrderModifier(String itemName, int scale, String price) {
-        BigDecimal bigDecimal = BH.formatMoney(price);
+        String bigDecimal = BH.formatMoney(price);
         PrintData orderMod = new PrintData();
         orderMod.setDataFormat(PrintData.FORMAT_TXT);
         orderMod.setFontsize(scale);
         orderMod.setLanguage(PrintData.LANG_CN);
-        orderMod.setText(this.getFourColContent("  " + itemName + reNext, bigDecimal.toString(), "", "", scale));
+        orderMod.setText(this.getFourColContent("  " + itemName + reNext, bigDecimal, "", "", scale));
         orderMod.setTextAlign(PrintData.ALIGN_LEFT);
         this.data.add(orderMod);
     }

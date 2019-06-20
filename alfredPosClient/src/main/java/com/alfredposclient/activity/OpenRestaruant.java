@@ -815,12 +815,12 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private void close(View v, final String actual) {
 		if(!ButtonClickTimer.canClick(v))
 			return;
-
-		if(!NetworkUtils.isNetworkAvailable(context)){
-
-			UIHelp.showShortToast(context, context.getResources().getString(R.string.network_connected));
-
-		}
+		int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+//		if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
+//
+//			UIHelp.showShortToast(context, context.getResources().getString(R.string.network_connected));
+//
+//		}
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		final SessionStatus sessionStatus = Store.getObject(
 				context, Store.SESSION_STATUS, SessionStatus.class);

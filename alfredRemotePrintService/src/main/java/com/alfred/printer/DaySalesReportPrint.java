@@ -250,25 +250,25 @@ public class DaySalesReportPrint extends ReportBasePrint {
     private void GetReportDaySalesText() {
         //StringBuffer sbr = new StringBuffer();
         this.addItem(PrintService.instance.getResources().getString(R.string.item_sales), reportDaySales.getItemSalesQty().toString(),
-                reportDaySales.getItemSales(), 1);
+                BH.formatThree(reportDaySales.getItemSales()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.stored_card_sales), reportDaySales.getTopUpsQty().toString(),
                 BH.formatMoney(BH.getBD(reportDaySales.getTopUps()).toString()).toString(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.ent_items), reportDaySales.getFocItemQty().toString(),
-                reportDaySales.getFocItem(), 1);
+                BH.formatThree( reportDaySales.getFocItem()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.ent_bills), reportDaySales.getFocBillQty().toString(),
-                reportDaySales.getFocBill(), 1);
+                BH.formatThree(reportDaySales.getFocBill()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.void_items), reportDaySales.getItemVoidQty().toString(),
-                reportDaySales.getItemVoid(), 1);
+                BH.formatThree(reportDaySales.getItemVoid()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.void_bills), reportDaySales.getBillVoidQty().toString(),
-                reportDaySales.getBillVoid(), 1);
+                BH.formatThree(reportDaySales.getBillVoid()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.refund_bills), reportDaySales.getBillRefundQty().toString(),
-                reportDaySales.getBillRefund(), 1);
+                BH.formatThree(reportDaySales.getBillRefund()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.refund_taxes), "",
-                reportDaySales.getRefundTax(), 1);
+                BH.formatThree(reportDaySales.getRefundTax()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.discount_on_per), reportDaySales.getDiscountPerQty().toString(),
-                reportDaySales.getDiscountPer(), 1);
+                BH.formatThree(reportDaySales.getDiscountPer()), 1);
         this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
-                reportDaySales.getDiscount(), PrintData.LANG_EN, 1);
+                BH.formatThree(reportDaySales.getDiscount()), PrintData.LANG_EN, 1);
 
         double nSales = Double.parseDouble(reportDaySales.getItemSales()) + Double.parseDouble(reportDaySales.getTopUps()) - Double.parseDouble(reportDaySales.getFocItem()) - Double.parseDouble(reportDaySales.getFocBill()) - Double.parseDouble(reportDaySales.getItemVoid()) - Double.parseDouble(reportDaySales.getBillVoid()) - Double.parseDouble(reportDaySales.getBillRefund()) - Double.parseDouble(reportDaySales.getDiscount()) - Double.parseDouble(reportDaySales.getDiscountPer());
         //this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.sub( BH.getBD(reportDaySales.getTotalSales()), BH.getBD(reportDaySales.getTotalTax()), true).toString(), 1);
@@ -282,7 +282,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 if (reportDayTaxs.get(i).getTaxType() != null) {
                     if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
                         ReportDayTax reportDayTax = reportDayTaxs.get(i);
-                         ObjectFactory.getInstance().getReportDayTax(reportDayTax);
+                        // ObjectFactory.getInstance().getReportDayTax(reportDayTax);
                         taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
                     }else if(reportDayTaxs.get(i).getTaxType().intValue() == 2) {
 
@@ -299,21 +299,21 @@ public class DaySalesReportPrint extends ReportBasePrint {
             this.addItem(PrintService.instance.getResources().getString(R.string.next_saels), " ", BH.formatMoney(BH.getBD(nSales).toString()).toString(), 1);
         }
         if (App.countryCode != ParamConst.CHINA) {
-            this.addItem(PrintService.instance.getResources().getString(R.string.total_tax), " ", reportDaySales.getTotalTax(), 1);
-            this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), " ", reportDaySales.getInclusiveTaxAmt(), 1);
+            this.addItem(PrintService.instance.getResources().getString(R.string.total_tax), " ",  BH.formatThree(reportDaySales.getTotalTax()), 1);
+            this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), " ",  BH.formatThree(reportDaySales.getInclusiveTaxAmt()), 1);
         }
 
         BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
         if (reportDayPayments != null && reportDayPayments.size() > 0) {
             for (ReportDayPayment reportDayPayment : reportDayPayments) {
-                 ObjectFactory.getInstance().getReportDayPayment(reportDayPayment);
+                // ObjectFactory.getInstance().getReportDayPayment(reportDayPayment);
                 overPaymentAmount=   BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
             }
             if (overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-                this.addItem("Custom Payment Change", " ", overPaymentAmount.toString(), 1);
+                this.addItem("Custom Payment Change", " ",  BH.formatThree(overPaymentAmount.toString()), 1);
             }
         }
-        this.addItem("Promotion", " ", reportDaySales.getPromotionTotal().toString(), 1);
+        this.addItem("Promotion", " ",  BH.formatThree(reportDaySales.getPromotionTotal()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.rounding), " ", reportDaySales.getTotalBalancePrice(), 1);
         double grossTotal;
         if(reportDaySales.getPromotionTotal()!=null) {
@@ -327,12 +327,12 @@ public class DaySalesReportPrint extends ReportBasePrint {
         this.addSectionHeader(PrintService.instance.getResources().getString(R.string.media));
         if (BH.getBD(reportDaySales.getCash()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
             this.addItem(PrintService.instance.getResources().getString(R.string.cash), reportDaySales.getCashQty().toString(),
-                    reportDaySales.getCash(), 1);
+                    BH.formatThree(reportDaySales.getCash()), 1);
         if (App.countryCode == ParamConst.CHINA) {
             this.addItem(PrintService.instance.getResources().getString(R.string.alipay), reportDaySales.getAlipayQty().toString(),
-                    reportDaySales.getAlipay(), 1);
+                    BH.formatThree(reportDaySales.getAlipay()), 1);
             this.addItem(PrintService.instance.getResources().getString(R.string.weixin), reportDaySales.getWeixinpayQty().toString(),
-                    reportDaySales.getWeixinpay(), 1);
+                    BH.formatThree(reportDaySales.getWeixinpay()), 1);
         }
         if (App.countryCode != ParamConst.CHINA) {
             if (BH.getBD(reportDaySales.getPaypalpay()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
@@ -343,59 +343,59 @@ public class DaySalesReportPrint extends ReportBasePrint {
                         BH.formatMoney(BH.getBD(reportDaySales.getStoredCard()).toString()).toString(), 1);
             if (BH.getBD(reportDaySales.getTopUps()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.stored_card_charge), reportDaySales.getTopUpsQty() == null ? "0" : reportDaySales.getTopUpsQty().toString(),
-                       reportDaySales.getTopUps(), 1);
+                        BH.formatThree(reportDaySales.getTopUps()), 1);
             if (BH.getBD(reportDaySales.getNets()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.nets), reportDaySales.getNetsQty().toString(),
-                        reportDaySales.getNets(), 1);
+                        BH.formatThree(reportDaySales.getNets()), 1);
             if (BH.getBD(reportDaySales.getVisa()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.visa), reportDaySales.getVisaQty().toString(),
-                        reportDaySales.getVisa(), 1);
+                        BH.formatThree(reportDaySales.getVisa()), 1);
             if (BH.getBD(reportDaySales.getMc()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.mc), reportDaySales.getMcQty().toString(),
-                        reportDaySales.getMc(), 1);
+                        BH.formatThree(reportDaySales.getMc()), 1);
             if (BH.getBD(reportDaySales.getAmex()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.amex), reportDaySales.getAmexQty().toString(),
-                        reportDaySales.getAmex(), 1);
+                        BH.formatThree(reportDaySales.getAmex()), 1);
             if (BH.getBD(reportDaySales.getJbl()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.jbl), reportDaySales.getJblQty().toString(),
-                        reportDaySales.getJbl(), 1);
+                        BH.formatThree(reportDaySales.getJbl()), 1);
             if (BH.getBD(reportDaySales.getUnionPay()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.unionpay), reportDaySales.getUnionPayQty().toString(),
-                        reportDaySales.getUnionPay(), 1);
+                        BH.formatThree(reportDaySales.getUnionPay()), 1);
             if (BH.getBD(reportDaySales.getDiner()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.diner), reportDaySales.getDinerQty().toString(),
-                        reportDaySales.getDiner(), 1);
+                        BH.formatThree(reportDaySales.getDiner()), 1);
             if (BH.getBD(reportDaySales.getHoldld()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.boh), reportDaySales.getHoldldQty().toString(),
-                        reportDaySales.getHoldld(), 1);
+                        BH.formatThree(reportDaySales.getHoldld()), 1);
         }
         int totalDeliveryQty = 0;
         BigDecimal totalDelivery = BH.getBD(ParamConst.DOUBLE_ZERO);
         if (BH.getBD(reportDaySales.getDeliveroo()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
             this.addItem(PrintService.instance.getResources().getString(R.string.deliveroo), reportDaySales.getDeliverooQty().toString(),
-                    BH.getBD(reportDaySales.getDeliveroo()).toString(), 1);
+                    BH.formatThree(reportDaySales.getDeliveroo()), 1);
             totalDelivery = BH.add(totalDelivery, BH.getBD(reportDaySales.getDeliveroo()), false);
             totalDeliveryQty += reportDaySales.getDeliverooQty().intValue();
         }
         if (BH.getBD(reportDaySales.getUbereats()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
             this.addItem(PrintService.instance.getResources().getString(R.string.ubereats), reportDaySales.getUbereatsQty().toString(),
-                    BH.getBD(reportDaySales.getUbereats()).toString(), 1);
+                    BH.formatThree(reportDaySales.getUbereats()), 1);
             totalDelivery = BH.add(totalDelivery, BH.getBD(reportDaySales.getUbereats()), false);
             totalDeliveryQty += reportDaySales.getUbereatsQty().intValue();
         }
         if (BH.getBD(reportDaySales.getFoodpanda()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
             this.addItem(PrintService.instance.getResources().getString(R.string.foodpanda), reportDaySales.getFoodpandaQty().toString(),
-                    BH.getBD(reportDaySales.getFoodpanda()).toString(), 1);
+                    BH.formatThree(reportDaySales.getFoodpanda()), 1);
             totalDelivery = BH.add(totalDelivery, BH.getBD(reportDaySales.getFoodpanda()), false);
             totalDeliveryQty += reportDaySales.getFoodpandaQty().intValue();
         }
         if (BH.getBD(reportDaySales.getVoucher()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
             this.addItem(PrintService.instance.getResources().getString(R.string.voucher), reportDaySales.getVoucherQty().toString(),
-                    BH.getBD(reportDaySales.getVoucher()).toString(), 1);
+                    BH.formatThree(reportDaySales.getVoucher()), 1);
         }
         if(BH.getBD(reportDaySales.getPayHalal()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
             this.addItem("PayHalal", reportDaySales.getPayHalalQty().toString(),
-                    BH.getBD(reportDaySales.getPayHalal()).toString(), 1);
+                    BH.formatThree(reportDaySales.getPayHalal()), 1);
         }
 
         BigDecimal totalCustomPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
@@ -405,33 +405,33 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 totalCustomPaymentAmount = BH.add(totalCustomPaymentAmount, BH.getBD(reportDayPayment.getPaymentAmount()), true);
                 totalCustomPaymentQty += reportDayPayment.getPaymentQty();
                 this.addItem(reportDayPayment.getPaymentName(), reportDayPayment.getPaymentQty().toString(),
-                        BH.getBD(reportDayPayment.getPaymentAmount()).toString(), 1);
+                        BH.formatThree(reportDayPayment.getPaymentAmount()), 1);
             }
             this.addItem("TOTAL CUSTOM PAYMENT", totalCustomPaymentQty + "",
-                    totalCustomPaymentAmount.toString(), 1);
+                    BH.formatThree(totalCustomPaymentAmount.toString()), 1);
         }
 
         if (totalDelivery.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
             this.addItem("TOTAL DELIVERY", totalDeliveryQty + "",
-                    totalDelivery.toString(), 1);
+                    BH.formatThree(totalDelivery.toString()), 1);
         }
 //        this.addItem(PrintService.instance.getResources().getString(R.string.ent), reportDaySales.getFocBillQty().toString(),
 //                reportDaySales.getFocBill(), 1);
         if (BH.getBD(reportDaySales.getTotalCard()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
             this.addItem(PrintService.instance.getResources().getString(R.string.total_card), reportDaySales.getTotalCardQty().toString(),
-                    reportDaySales.getTotalCard(), 1);
+                    BH.formatThree(reportDaySales.getTotalCard()), 1);
         if (App.countryCode != ParamConst.CHINA) {
             if (BH.getBD(reportDaySales.getNets()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_nets), reportDaySales.getNetsQty().toString(),
-                        reportDaySales.getNets(), 1);
+                        BH.formatThree(reportDaySales.getNets()), 1);
         }
         if (App.countryCode != ParamConst.CHINA) {
             if (BH.getBD(reportDaySales.getTotalCash()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_cash), reportDaySales.getTotalCashQty().toString(),
-                        reportDaySales.getTotalCash(), 1);
+                        BH.formatThree(reportDaySales.getTotalCash()), 1);
             if (BH.getBD(reportDaySales.getHoldld()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0)
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_boh), reportDaySales.getHoldldQty().toString(),
-                        reportDaySales.getHoldld(), 1);
+                        BH.formatThree(reportDaySales.getHoldld()), 1);
 //	        this.addItem(PrintService.instance.getResources().getString(R.string.total_ent), reportDaySales.getFocBillQty().toString(),
 //	                reportDaySales.getFocBill(), 1);
         }
@@ -441,17 +441,17 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 || BH.getBD(reportDaySales.getRefundTax()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
             this.addSectionHeader(PrintService.instance.getResources().getString(R.string.vr_summary));
             this.addItem(PrintService.instance.getResources().getString(R.string.void_bills), reportDaySales.getBillVoidQty().toString(),
-                    reportDaySales.getBillVoid(), 1);
+                    BH.formatThree(reportDaySales.getBillVoid()), 1);
             this.addItem(PrintService.instance.getResources().getString(R.string.void_items), reportDaySales.getItemVoidQty().toString(),
-                    reportDaySales.getItemVoid(), 1);
+                    BH.formatThree(reportDaySales.getItemVoid()), 1);
             this.addItem(PrintService.instance.getResources().getString(R.string.total_void),
                     String.valueOf(reportDaySales.getItemVoidQty() + reportDaySales.getBillVoidQty()),
                     String.valueOf(BH.formatMoney(BH.add(BH.getBD(reportDaySales.getItemVoid()),
                             BH.getBD(reportDaySales.getBillVoid()), true).toString())), 1);
             this.addItem(PrintService.instance.getResources().getString(R.string.refund_bills), reportDaySales.getBillRefundQty().toString(),
-                    reportDaySales.getBillRefund(), 1);
+                    BH.formatThree(reportDaySales.getBillRefund()), 1);
             this.addItem(PrintService.instance.getResources().getString(R.string.refund_taxes), "",
-                    reportDaySales.getRefundTax(), 1);
+                    BH.formatThree(reportDaySales.getRefundTax()), 1);
             this.addItem(PrintService.instance.getResources().getString(R.string.total_refund), "",
                     BH.formatMoney(BH.add(BH.getBD(reportDaySales.getBillRefund()), BH.getBD(reportDaySales.getRefundTax()), true).toString()).toString(), 1);
         }
@@ -459,9 +459,9 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 || BH.getBD(reportDaySales.getDiscount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
             this.addSectionHeader(PrintService.instance.getResources().getString(R.string.disc_summary));
             this.addItem(PrintService.instance.getResources().getString(R.string.discount_on_per), reportDaySales.getDiscountPerQty().toString(),
-                    reportDaySales.getDiscountPer(), 1);
+                    BH.formatThree(reportDaySales.getDiscountPer()), 1);
             this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
-                    reportDaySales.getDiscount(), PrintData.LANG_EN, 1);
+                    BH.formatThree(reportDaySales.getDiscount()), PrintData.LANG_EN, 1);
             this.addItem(PrintService.instance.getResources().getString(R.string.total_disc),
                     String.valueOf(reportDaySales.getDiscountPerQty() + reportDaySales.getDiscountQty()),
                     String.valueOf(BH.formatMoney(BH.add(BH.getBD(reportDaySales.getDiscountPer()),
@@ -486,7 +486,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                     this.addItem(reportDayTax.getTaxName(), "", BH.formatMoney(reportDayTax.getTaxAmount()).toString(), 1);
                     taxSvc = BH.add(taxSvc, BH.getBD(reportDayTax.getTaxAmount()), true);
                 }
-                this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), "", reportDaySales.getInclusiveTaxAmt(), 1);
+                this.addItem(PrintService.instance.getResources().getString(R.string.inclusive_tax), "",  BH.formatThree(reportDaySales.getInclusiveTaxAmt()), 1);
                 taxSvc = BH.add(taxSvc, BH.getBD(reportDaySales.getInclusiveTaxAmt()), true);
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_taxsvc), "", BH.formatMoney(taxSvc.toString()).toString(), 1);
             }
@@ -496,21 +496,21 @@ public class DaySalesReportPrint extends ReportBasePrint {
         if (reportUserOpenDrawerList != null && reportUserOpenDrawerList.size() > 0) {
             for (int i = 0; i < reportUserOpenDrawerList.size(); i++) {
                 ReportUserOpenDrawer reportUserOpenDrawer = reportUserOpenDrawerList.get(i);
-                this.addItem(reportUserOpenDrawer.getUserName(), PrintService.instance.getResources().getString(R.string.open_drawer), reportUserOpenDrawer.getTimes() + "", 1);
+                this.addItem(reportUserOpenDrawer.getUserName(), PrintService.instance.getResources().getString(R.string.open_drawer),  BH.formatThree(reportUserOpenDrawer.getTimes() + ""), 1);
             }
         }
-        this.addItem(PrintService.instance.getResources().getString(R.string.start_drawer), reportDaySales.getStartDrawerAmount(), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.total_cash), reportDaySales.getTotalCash(), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.start_drawer),  BH.formatThree(reportDaySales.getStartDrawerAmount()), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.total_cash),  BH.formatThree(reportDaySales.getTotalCash()), 1);
         this.addItem("Stored-Card Cash Charge", BH.formatMoney(BH.getBD(reportDaySales.getCashTopUp()).toString()).toString(), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.cash_in), reportDaySales.getCashInAmt(), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.cash_out), reportDaySales.getCashOutAmt(), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.expected_in_drawer), "", reportDaySales.getExpectedAmount(), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.actual_in_drawer), "", reportDaySales.getWaiterAmount(), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.difference), "", reportDaySales.getDifference(), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.cash_in),  BH.formatThree(reportDaySales.getCashInAmt()), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.cash_out),  BH.formatThree(reportDaySales.getCashOutAmt()), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.expected_in_drawer), "",  BH.formatThree(reportDaySales.getExpectedAmount()), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.actual_in_drawer), "",  BH.formatThree(reportDaySales.getWaiterAmount()), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.difference), "",  BH.formatThree(reportDaySales.getDifference()), 1);
 
         this.addBlankLine();
         //this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales),"",  nettSales.toString(), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), "", reportDaySales.getTotalSales(), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), "",  BH.formatThree(reportDaySales.getTotalSales()), 1);
 
         this.addItem(PrintService.instance.getResources().getString(R.string.total_of_bills), "", String.valueOf(reportDaySales.getTotalBills()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.avg_bills), "", BH.formatMoney(BH.div(
@@ -534,7 +534,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
             addHortionalLine(this.charSize);
             for (int i = 0; i < reportSessionSalesList.size(); i++) {
                 ReportSessionSales reportSessionSales = reportSessionSalesList.get(i);
-                ObjectFactory.getInstance().getReportSessionSales(reportSessionSales);
+               // ObjectFactory.getInstance().getReportSessionSales(reportSessionSales);
                 this.addItem("Shift Detail For Shift Number", "" + (i + 1), 1);
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_cash), BH.formatMoney(BH.getBD(reportSessionSales.getCash()).toString()).toString(), 1);
                 this.addItem("Stored-Card Cash Charge", BH.formatMoney(BH.getBD(reportSessionSales.getCashTopup()).toString()).toString(), 1);

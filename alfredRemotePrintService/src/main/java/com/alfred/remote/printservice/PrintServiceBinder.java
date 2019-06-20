@@ -809,14 +809,14 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
 
-    @Override
+
     public void printBill(String printer, String title,
                           String order, String orderDetail,
                           String modifiers, String tax,
                           String payment, boolean doubleprint,
                           boolean doubleReceipts, String rounding,
-                          String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist) throws RemoteException {
-        BH.initFormart("");
+                          String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist,String formatType) throws RemoteException {
+        BH.initFormart(formatType);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 
@@ -1101,10 +1101,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //						}
                     }
 
-                   String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
-                   String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
-                   String grandTotal = BH.getBD(theOrder.getTotal()).toString();
-                   String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                   String subTotal = theOrder.getSubTotal();
+                   String discount = theOrder.getDiscountAmount();
+                   String grandTotal = theOrder.getTotal();
+                   String promotionTotal = theOrder.getPromotion();
                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
                    List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
 //                   if (settlement != null) {
@@ -1217,26 +1217,26 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 
                     ////////////// Bill Summary
-                   subTotal = theOrder.getSubTotal().toString();
-                     discount = theOrder.getDiscountAmount().toString();
-                    grandTotal = theOrder.getTotal().toString();
-
-//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
-                     promotionTotal = theOrder.getPromotion().toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
+//                   subTotal = theOrder.getSubTotal().toString();
+//                     discount = theOrder.getDiscountAmount().toString();
+//                    grandTotal = theOrder.getTotal().toString();
+//
+////                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
+//                     promotionTotal = theOrder.getPromotion().toString();
+//                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
                     stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
                         // String paymentType = "";
                         String cardNo = null;
                         for (PrintReceiptInfo printReceiptInfo : settlement) {
-                            ObjectFactory.getInstance().getPrintReceiptInfo(printReceiptInfo);
+                          //  ObjectFactory.getInstance().getPrintReceiptInfo(printReceiptInfo);
                             String paymentType = "";
                             LinkedHashMap<String, String> stmt = new LinkedHashMap<String, String>();
                             switch (printReceiptInfo.getPaymentTypeId()) {
                                 case ParamConst.SETTLEMENT_TYPE_CASH:
-                                    if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.cash_), BH.formatMoney(BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString()).toString());
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), printReceiptInfo.getCashChange().toString());
+                                    if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getReplace(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
+                                        stmt.put(PrintService.instance.getResources().getString(R.string.cash_), BH.formatMoney(BH.add(BH.getReplace(printReceiptInfo.getPaidAmount()), BH.getReplace(printReceiptInfo.getCashChange()), true).toString()).toString());
+                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.formatMoney(printReceiptInfo.getCashChange()));
                                         isCashSettlement = true;
                                     }
                                     if (isCashSettlement && i == 0) {
@@ -1313,7 +1313,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             }
                             if (!TextUtils.isEmpty(paymentType)) {
                                 stmt.put(paymentType,
-                                        BH.getBD(printReceiptInfo.getPaidAmount()).toString());
+                                        BH.getReplace(printReceiptInfo.getPaidAmount()).toString());
                             }
                             if (!TextUtils
                                     .isEmpty(printReceiptInfo.getCardNo())) {
@@ -2091,10 +2091,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     public void printAppOrderBill(String printer, String title, String order,
                                   String orderDetail, String modifiers, String tax, String payment,
                                   boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,
-                                  String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist) throws RemoteException {
+                                  String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist,String formatType) throws RemoteException {
 
 
-        BH.initFormart("");
+        BH.initFormart(formatType);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 
@@ -2400,10 +2400,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //						}
                         }
                         ////////////// Bill Summary
-                        String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
-                        String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
-                        String grandTotal = BH.getBD(theOrder.getTotal()).toString();
-                        String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                        String subTotal = theOrder.getSubTotal();
+                        String discount =theOrder.getDiscountAmount();
+
+                        String grandTotal = theOrder.getTotal();
+
+//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
+                        String promotionTotal = theOrder.getPromotion();
                         billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
 
                         List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
@@ -2581,8 +2584,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     public void printKioskBill(String printer, String title, String order,
                                String orderDetail, String modifiers, String tax, String payment,
                                boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,
-                               String currencySymbol, boolean openDrawer, boolean isDouble) throws RemoteException {
-        BH.initFormart("");
+                               String currencySymbol, boolean openDrawer, boolean isDouble,String formatType) throws RemoteException {
+        BH.initFormart(formatType);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 
@@ -2745,7 +2748,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String subTotal = theOrder.getSubTotal();
                     String discount = theOrder.getDiscountAmount();
                     String grandTotal = theOrder.getTotal();
-                    String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                    String promotionTotal = theOrder.getPromotion();
                     billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
 
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
@@ -2808,11 +2811,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
-                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
+                         //   item=ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
+                                //    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -2843,7 +2846,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
+                                   // om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -2891,7 +2894,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (PrintReceiptInfo printReceiptInfo : settlement) {
                             LinkedHashMap<String, String> stmt = new LinkedHashMap<String, String>();
                             String paymentType = "";
-                            ObjectFactory.getInstance().getPrintReceiptInfo(printReceiptInfo);
+                          //  ObjectFactory.getInstance().getPrintReceiptInfo(printReceiptInfo);
                             switch (printReceiptInfo.getPaymentTypeId()) {
                                 case ParamConst.SETTLEMENT_TYPE_CASH:
                                     if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {

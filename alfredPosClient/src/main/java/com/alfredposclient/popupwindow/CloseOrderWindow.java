@@ -654,7 +654,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
 
             settlementNum = BH.getBD(sumPaidamount);
-            if (settlementNum.compareTo(BH.getBD(BH.formatMoney(order.getTotal()))) > -1) {
+            if (settlementNum.compareTo(BH.getReplace(BH.formatMoney(order.getTotal()))) > -1) {
                 remainTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
             } else {
                 remainTotal = BH.sub(BH.getBD(order.getTotal()),
@@ -2072,9 +2072,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         switch (viewTag) {
             case ParamConst.SETTLEMENT_TYPE_CASH: {
                 String showStr = tv_total_amount_num.getText().toString();
-                BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
+                BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getReplace(showStr));
                 BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
-               remainTotalAfterRound=BH.getBD(BH.formatMoney(remainTotalAfterRound.toString()));
+               remainTotalAfterRound=BH.getReplace(BH.formatMoney(remainTotalAfterRound.toString()));
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
                     showStr = remainTotalAfterRound.toString();
                 } else {

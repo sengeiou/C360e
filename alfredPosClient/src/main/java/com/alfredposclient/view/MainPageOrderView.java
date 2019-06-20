@@ -36,6 +36,7 @@ import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -144,13 +145,13 @@ public class MainPageOrderView extends LinearLayout {
 					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
 					return;
 				}
-
-				if(!NetworkUtils.isNetworkAvailable(context)){
-					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
-
-				//	return;
-
-				}
+				int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+//				if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
+//					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
+//
+//				//	return;
+//
+//				}
 				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
 
 				Map<Integer,String> categorMap=new HashMap<Integer,String>();

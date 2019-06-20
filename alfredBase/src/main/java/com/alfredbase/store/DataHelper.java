@@ -1650,6 +1650,8 @@ public class DataHelper {
 
             db.execSQL("ALTER TABLE " + TableNames.RestaurantConfig
                     + " ADD COLUMN paraValue3 TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.Tax
+                    + " ADD COLUMN beforeDiscount INTEGER");
 
         }
     }

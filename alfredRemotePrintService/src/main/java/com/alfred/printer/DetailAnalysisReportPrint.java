@@ -338,7 +338,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		for (int j = 0; j < reportPluDayItems.size(); j++) {
 
 			ReportPluDayItem reportPluDayItem = reportPluDayItems.get(j);
-			ObjectFactory.getInstance().getReportPluDayItem(reportPluDayItem);
+			//ObjectFactory.getInstance().getReportPluDayItem(reportPluDayItem);
 			if(map.containsKey(reportPluDayItem.getItemMainCategoryId().intValue())){
 				ReportPluDayItem amountReportPluDayItem = map.get(reportPluDayItem.getItemMainCategoryId().intValue());
 				BigDecimal amount = BH.add(BH.getBD(amountReportPluDayItem.getItemAmount()), BH.getBD(reportPluDayItem.getItemAmount()), false);
@@ -403,9 +403,9 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 					if (comItems != null && comItems.size() > 0) {
 
 						int mm = 0;
-						this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
+						this.AddItem(" "+reportPluDayItem.getItemName(), BH.formatMoney(reportPluDayItem.getItemPrice()),
 								reportPluDayItem.getItemCount().toString(),
-								reportPluDayItem.getItemAmount(), 1);
+								BH.formatThree(reportPluDayItem.getItemAmount()), 1);
 						lastLinePrinted = false;
 						this.addHortionalLine(this.charSize);
 						for (mm = 0; mm < comItems.size(); mm++) {
@@ -415,7 +415,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 								BigDecimal modifierAmount = BH.mul(BH.getBD(1.00), BH.getBD(pluModifier.getModifierPrice()), true);
 								BigDecimal modifierPrice = BH.mul(BH.getBD(1.00), BH.getBD(pluModifier.getModifierItemPrice()), true);
 								this.AddItem(" (" + pluModifier.getModifierName() + ")",
-										"(" + modifierPrice.toString() + ")", "(" + String.valueOf(count) + ")", "(" + modifierAmount.toString() + ")", 1);
+										"(" +  BH.formatThree(modifierPrice.toString()) + ")", "(" + String.valueOf(count) + ")", "(" +  BH.formatThree(modifierAmount.toString())+ ")", 1);
 								lastLinePrinted = false;
 							}
 						}
@@ -428,7 +428,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 					} else {
 
 						this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
-								reportPluDayItem.getItemCount().toString(), "" + reportPluDayItem.getItemAmount(), 1);
+								reportPluDayItem.getItemCount().toString(), "" +  BH.formatThree(reportPluDayItem.getItemAmount()), 1);
 						lastLinePrinted = false;
 					}
 					//END Comb modifier print

@@ -27,10 +27,10 @@ public class RoundUtil {
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_5CENTS)) {
 			DecimalFormat doubleFormat = new DecimalFormat("0");
-			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.05"),
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormatz("0.05"),
 					false);
 			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
-					BH.getBDNoFormat("0.05"), true);
+					BH.getBDNoFormatz("0.05"), true);
 		} else if(roundType.equalsIgnoreCase(ParamConst.ROUND_10CENTS_UP)){
 			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.1"),
 					false);

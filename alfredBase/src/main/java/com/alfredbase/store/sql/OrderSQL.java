@@ -202,6 +202,7 @@ public class OrderSQL {
 		OrderHelper.setOrderSubTotal(order, orderDetails);
 		updateOrderDetail(order);
 		orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
+		OrderHelper.setOrderBeforTax(order, orderDetails);
 		OrderHelper.setOrderDiscount(order, orderDetails);
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);

@@ -34,16 +34,18 @@ public class BH {
 	private static BigDecimal formatM;
 
 //	private static int operatingType=100;
-private static DecimalFormat decimalFormat = new DecimalFormat(",###.00");//
+private static DecimalFormat decimalFormat = new DecimalFormat(",##0.00");//
 
 	public static void initFormart(String  typeFormat){
 		if(!TextUtils.isEmpty(typeFormat)){
 			type=typeFormat;
-			if(Integer.parseInt(type)>=0){
+			if(Double.parseDouble(type)>=1){
 				decimalFormat=new DecimalFormat(",###");
+				//decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
 			}else {
 				String sp=",##"+type;
 				decimalFormat=new DecimalFormat(sp);
+				//decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
 
 			}
 		}else {
@@ -53,6 +55,55 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",###.00");//
 		format.setRoundingMode(RoundingMode.HALF_UP);
 	}
 
+	/**
+	 * 格式化金额(每三位以 ，分割)
+	 *
+	 * @param string
+	 * @param
+	 * @param
+	 * @return
+	 */
+	public static String formatThree(String string
+	) {
+
+		if (CommonUtil.isNull(string)) {
+
+			return decimalFormat.format(new BigDecimal(string));
+		}else {
+
+			return decimalFormat.format(new BigDecimal(string));
+		}
+
+
+	}
+
+	/**
+	 * 格式化金额
+	 *
+	 * @param string
+	 * @param
+	 * @param
+	 * @return
+	 */
+	public static BigDecimal formatType(String string
+	) {
+		//Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
+		//	int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
+
+
+		format1=   new DecimalFormat(type);
+			format1.setRoundingMode(RoundingMode.HALF_UP);
+		formatM = BigDecimal.ZERO;
+		if (CommonUtil.isNull(string)) {
+			formatM=new BigDecimal(format1.format(new BigDecimal("0")));
+			return formatM;
+		}else {
+			formatM=new BigDecimal(format1.format(new BigDecimal(string)));
+			return formatM;
+		}
+
+
+	}
 
 	/**
 	 * 格式化金额
@@ -69,7 +120,7 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",###.00");//
 
 
 		format1=   new DecimalFormat(type);
-	//	format1.setRoundingMode(RoundingMode.HALF_UP);
+		format1.setRoundingMode(RoundingMode.HALF_UP);
 		formatM = BigDecimal.ZERO;
 		if (CommonUtil.isNull(string)) {
 			formatM=new BigDecimal(format1.format(new BigDecimal("0")));
@@ -116,7 +167,7 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",###.00");//
 
 
 		format1=   new DecimalFormat(type);
-	//	format1.setRoundingMode(RoundingMode.HALF_UP);
+		format1.setRoundingMode(RoundingMode.HALF_UP);
 		formatM = BigDecimal.ZERO;
 		if (CommonUtil.isNull(integer)) {
 			formatM=new BigDecimal(format1.format(new BigDecimal("0")));
@@ -354,6 +405,13 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",###.00");//
 			return new BigDecimal(ParamConst.DOUBLE_ZERO);
 		return new BigDecimal(format.format(new BigDecimal(string)));
 	}
+
+	public static BigDecimal getBDNoFormatz(String string){
+		if (CommonUtil.isNull(string))
+			return new BigDecimal(ParamConst.DOUBLE_ZERO);
+		return new BigDecimal(doubleFormat.format(new BigDecimal(string)));
+	}
+
 
 	public static BigDecimal getBDThirdFormat(String string){
 		if (CommonUtil.isNull(string))
