@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -2294,7 +2295,11 @@ public class MainPage extends BaseActivity {
     private void setData() {
         initOrder(currentTable);
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
-        //update tabels orders
+//        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
+//
+//
+//        List<OrderSplit> orderSplits  = OrderSplitSQL.getAllOrderSplits(currentOrder);
+//        //update tabels orders
         currentTable.setOrders(orderDetails.size());
         TableInfoSQL.updateTables(currentTable);
         mainPageMenuView.setParam(currentOrder, handler);

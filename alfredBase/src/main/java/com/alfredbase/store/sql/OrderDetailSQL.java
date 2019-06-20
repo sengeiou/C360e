@@ -8,7 +8,6 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
-import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;

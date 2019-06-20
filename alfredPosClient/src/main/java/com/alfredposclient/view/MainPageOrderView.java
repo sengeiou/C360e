@@ -61,7 +61,6 @@ import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TextTypeFace;
-import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
@@ -69,8 +68,6 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
-import com.alfredposclient.utils.NetworkUtils;
-import com.path.android.jobqueue.network.NetworkUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -145,12 +142,12 @@ public class MainPageOrderView extends LinearLayout {
 					return;
 				}
 
-				if(!NetworkUtils.isNetworkAvailable(context)){
-					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
-
-				//	return;
-
-				}
+//				if(!NetworkUtils.isNetworkAvailable(context)){
+//					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
+//
+//				//	return;
+//
+//				}
 				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
 
 				Map<Integer,String> categorMap=new HashMap<Integer,String>();
@@ -315,7 +312,9 @@ public class MainPageOrderView extends LinearLayout {
 										orderMap);
 							}
 						} else {
-							KotSummarySQL.deleteKotSummary(kotSummary);
+//							if(placedOrderDetails == null || placedOrderDetails.size() ==0) {
+//								KotSummarySQL.deleteKotSummary(kotSummary);
+//							}
 							parent.runOnUiThread(new Runnable() {
 
 								@Override

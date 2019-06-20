@@ -2,12 +2,8 @@ package com.alfredposclient.jobs;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
-import com.alfredbase.global.CoreData;
-import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.RemainingStock;
-import com.alfredbase.javabean.RemainingStockVo;
 import com.alfredbase.javabean.SyncMsg;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.utils.LogUtil;
@@ -17,9 +13,7 @@ import com.alfredposclient.http.HttpAPI;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SyncMsgJob extends Job {
@@ -120,8 +114,9 @@ public class SyncMsgJob extends Job {
                     if (content == null)
                         return;
 
-                    if (this.msgType == HttpAPI.ORDER_DATA
-                            || this.msgType == HttpAPI.LOG_DATA
+                    if(this.msgType == HttpAPI.LOG_DATA){
+                        SyncCentre.getInstance().cloudSyncUploadRealOrderInfo(context, content, null);
+                    }else if (this.msgType == HttpAPI.ORDER_DATA
                             || this.msgType == HttpAPI.SUBPOS_ORDER_DATA) {
                         //sync order data
                         SyncCentre.getInstance().cloudSyncUploadOrderInfo(context, content, null);

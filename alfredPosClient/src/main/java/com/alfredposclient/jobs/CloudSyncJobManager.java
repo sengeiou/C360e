@@ -245,7 +245,7 @@ public class CloudSyncJobManager {
                     syncMsg.setCurrCount(currCount);
                     syncMsg.setBillNo(billNo);
                     SyncMsgSQL.add(syncMsg);
-                    syncOrderJob = new SyncMsgJob(revenueCenterId, HttpAPI.ORDER_DATA, uuid,
+                    syncOrderJob = new SyncMsgJob(revenueCenterId, HttpAPI.LOG_DATA, uuid,
                             orderId, bizDate, syncMsg.getCreateTime());
                     this.syncJobManager.addJobInBackground(syncOrderJob);
                 }

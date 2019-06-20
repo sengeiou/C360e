@@ -19,7 +19,6 @@ import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
-import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.http.HTTPKDSRequest;
 import com.alfredposclient.http.HTTPWaiterRequest;
 import com.alfredposclient.http.HttpAPI;
@@ -219,6 +218,13 @@ public class SyncCentre {
     }
 
     public void cloudSyncUploadOrderInfo(BaseActivity context,
+                                         SyncMsg syncMsg, Handler handler) {
+        //orderDataMsg
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+    }
+
+    public void cloudSyncUploadRealOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
         int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);

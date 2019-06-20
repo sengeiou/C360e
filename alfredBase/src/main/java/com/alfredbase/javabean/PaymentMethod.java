@@ -28,7 +28,7 @@ public class PaymentMethod implements Serializable {
 
     private int isDiscount;
 
-    private int isAdmin;
+    private int isAdmin;//是否验证
 
     private int isMsg;
 

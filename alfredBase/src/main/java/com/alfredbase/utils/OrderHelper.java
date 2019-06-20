@@ -520,7 +520,7 @@ public class OrderHelper {
 		   for (int i = 0; i < promotionList.size(); i++) {
 			   Promotion promotion = promotionList.get(i);
 			   if (hasWeek(promotion.getPromotionDateInfoId())) {
- 				   switch (promotion.getType()) {
+				   switch (promotion.getType()) {
 
 					   case 1:
 						   subTotal = promotionAndItemPrice(order, orderDetails, promotion, subTotal);
