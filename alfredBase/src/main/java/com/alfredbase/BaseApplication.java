@@ -18,10 +18,12 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
+import com.bugsee.library.Bugsee;
 import com.moonearly.utils.service.TcpUdpFactory;
 import com.moonearly.utils.service.UdpServiceCallBack;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -33,6 +35,7 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +52,8 @@ public class BaseApplication extends Application {
      * 当 isDebug == true， isOpenLog == true 为本地的服务器
      */
 
-    public static boolean isDebug = false ;    //	Debug开关 release的时候设置为false
-    public static boolean isOpenLog = true;    //	release 时设置为false
+    public static boolean isDebug = false;    //	Debug开关 release的时候设置为false
+    public static boolean isOpenLog = false;    //	release 时设置为false
 
     protected String APPPATH = "sunmi";// sunmi or google or alibaba;
 
@@ -166,6 +169,9 @@ public class BaseApplication extends Application {
 //		}else{//小于23版本直接使用
 //			// startScan();
 //		}
+
+        BugseeHelper.init(this);
+
     }
 
 
@@ -518,7 +524,7 @@ public class BaseApplication extends Application {
     }
 
     public void setTime(int time) {
-        if (time >= 30 * 1000  ) {
+        if (time >= 30 * 1000) {
             this.time = time;
         }
     }

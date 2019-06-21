@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -158,6 +159,7 @@ public class ModifierSetItemCountWindow implements OnClickListener, KeyBoardClic
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if ("Cancel".equals(key)) {
 			dismiss(false);
 		} else if ("Enter".equals(key)) {

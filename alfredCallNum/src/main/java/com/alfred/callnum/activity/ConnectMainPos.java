@@ -14,6 +14,7 @@ import com.alfred.callnum.http.SyncCentre;
 import com.alfred.callnum.utils.UIHelp;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
@@ -108,6 +109,8 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
             finish();
             return;
         }
+
+        BugseeHelper.buttonClicked(key);
         EditText tempEditText = getFocusView();
         if (tempEditText == null)
             return;

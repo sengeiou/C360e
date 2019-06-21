@@ -12,6 +12,7 @@ import com.alfred.callnum.R;
 import com.alfred.callnum.fragment.OneFragment;
 import com.alfred.callnum.global.App;
 import com.alfred.callnum.utils.UIHelp;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.LogUtil;
 
 public class WelcomeActivity extends FragmentActivity implements View.OnClickListener {
@@ -22,9 +23,12 @@ public class WelcomeActivity extends FragmentActivity implements View.OnClickLis
     private Button one, two, three, four;
 
     int viewId;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
+        BugseeHelper.trace("APP", getString(R.string.app_name));
 
         one = (Button) findViewById(R.id.btn_one);
         two = (Button) findViewById(R.id.btn_two);
@@ -41,10 +45,10 @@ public class WelcomeActivity extends FragmentActivity implements View.OnClickLis
 //LogUtil.e("wwww",ch[0]+"--"+num);
 
 
-        if(!TextUtils.isEmpty(App.instance.getPosIp())){
+        if (!TextUtils.isEmpty(App.instance.getPosIp())) {
             UIHelp.startMainActivity(WelcomeActivity.this, App.instance.getMainPageType());
             finish();
-        }else {
+        } else {
             UIHelp.startSelectRevenue(this);
             finish();
         }
@@ -56,6 +60,7 @@ public class WelcomeActivity extends FragmentActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+        BugseeHelper.buttonClicked(v);
         switch (v.getId()) {
 
             case R.id.btn_one:
@@ -73,9 +78,9 @@ public class WelcomeActivity extends FragmentActivity implements View.OnClickLis
 
 
         }
-      //  App.instance.setMainPageType(viewId);
+        //  App.instance.setMainPageType(viewId);
         UIHelp.startSelectRevenue(this);
 
-      // UIHelp.startMainActivity(WelcomeActivity.this, App.instance.getMainPageType());
+        // UIHelp.startMainActivity(WelcomeActivity.this, App.instance.getMainPageType());
     }
 }

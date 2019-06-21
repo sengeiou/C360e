@@ -14,8 +14,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -30,7 +34,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
     protected Dialog oneButtonCompelDialog;
     public LoadingDialog loadingDialog;
     protected NotificationManager mNotificationManager;
-   // DifferentDislay  mPresentation;
+    // DifferentDislay  mPresentation;
     protected static DisplayImageOptions display = new DisplayImageOptions.Builder() // 圆角边处理的头像
             .cacheInMemory(true) // 缓存到内存，设置true则缓存到内存
             .cacheOnDisk(true) // 缓存到本地磁盘,设置true则缓存到磁盘
@@ -86,8 +90,6 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
     }
 
 
-
-
     protected void initView() {
 
     }
@@ -133,7 +135,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
     }
 
     protected void handlerClickEvent(View v) {
-
+        BugseeHelper.buttonClicked(v);
     }
 
     public void selectTable(TableInfo tableInfo) {

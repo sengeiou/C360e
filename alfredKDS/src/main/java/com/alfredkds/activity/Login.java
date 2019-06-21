@@ -8,6 +8,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.User;
@@ -123,6 +124,8 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 	public void onKeyBoardClick(String key) {
 		if (keyBuf.length() >= KEY_LENGTH)
 			return;
+
+		BugseeHelper.buttonClicked(key);
 		if (key.equals("X")) {
 			if (keyBuf.length() > 0) {
 				keyBuf.deleteCharAt(keyBuf.length() - 1);

@@ -7,6 +7,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredwaiter.R;
 import com.alfredwaiter.global.App;
 
@@ -126,6 +127,7 @@ public class MoneyKeyboard extends LinearLayout implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		Button button = (Button) v;
+		BugseeHelper.buttonClicked((String) button.getText());
 		switch (v.getId()) {
 		// case R.id.btn_Cancel: {
 		// if (keyBoardClickListener != null)

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
@@ -103,6 +104,8 @@ public class WaiterReloginDialog implements View.OnClickListener, Numerickeyboar
     public void onKeyBoardClick(String key) {
         if (keyBuf.length() >= KEY_LENGTH)
             return;
+
+        BugseeHelper.buttonClicked(key);
         if (key.equals("X")) {
             if (keyBuf.length() > 0) {
                 keyBuf.deleteCharAt(keyBuf.length() - 1);

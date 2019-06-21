@@ -1018,6 +1018,11 @@ public class DataHelper {
             db.execSQL("ALTER TABLE "
                     + TableNames.OrderDetail
                     + " ADD COLUMN isSet INTEGER default 0");
+
+            //log table
+            db.execSQL("CREATE TABLE "
+                    + TableNames.EventLog
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, custId INTEGER, createdDate LONG, event TEXT)");
         }
 
         private void onUpgradeForOldVersion1(SQLiteDatabase db) {
@@ -1537,7 +1542,7 @@ public class DataHelper {
 //
 //        }
 
-        private void onUpgradeForOldVersion27(SQLiteDatabase db){
+        private void onUpgradeForOldVersion27(SQLiteDatabase db) {
             try {
                 db.execSQL("ALTER TABLE " + TableNames.AppOrder
                         + " ADD COLUMN address TEXT");
@@ -1557,11 +1562,9 @@ public class DataHelper {
                         + " ADD COLUMN reportNo INTEGER");
 
 
-
-
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 db.execSQL("CREATE TABLE "
                         + TableNames.RemainingStock
                         + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, itemId INTEGER, qty INTEGER, defultQty INTEGER, "
@@ -1569,7 +1572,7 @@ public class DataHelper {
             }
         }
 
-        private void onUpgradeForOldVersion28(SQLiteDatabase db){
+        private void onUpgradeForOldVersion28(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN eatType INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
@@ -1636,7 +1639,7 @@ public class DataHelper {
         }
 
 
-        private void onUpgradeForOldVersion30(SQLiteDatabase db){
+        private void onUpgradeForOldVersion30(SQLiteDatabase db) {
 
         }
     }
