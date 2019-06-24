@@ -70,6 +70,7 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.TextTypeFace;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.MainPage;
@@ -2109,7 +2110,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                 if (paymentMethod.getIsTax() == 0) {
                     //不计税
-                    deleteVoidOrEntTax();
+                   // deleteVoidOrEntTax();
+                    ToastUtils.showToast(parent,"setting error\n") ;
+
+                    return;
                 }
                 BigDecimal paidBD = BH.getBD(paymentMethod.getPartAcount());
                 if (viewTag == ParamConst.SETTLEMENT_CUSTOM_PART) {

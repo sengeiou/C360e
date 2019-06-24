@@ -68,6 +68,7 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.TextTypeFace;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.MainPage;
@@ -2417,6 +2418,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             case ParamConst.SETTLEMENT_CUSTOM_PART:
                 //固定金额
             case ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE: {
+                if (paymentMethod.getIsTax() == 0) {
+                    //不计税
+                  //  deleteVoidOrEntTax();
+                    ToastUtils.showToast(parent,"setting error\n");
+
+                    return;
+                }
 
                 BigDecimal paidBD = BH.getBD(paymentMethod.getPartAcount());
                 if (viewTag == ParamConst.SETTLEMENT_CUSTOM_PART) {
@@ -2460,11 +2468,11 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             break;
             case ParamConst.SETTLEMENT_CUSTOM_ALL: {
                 PaymentSettlement paymentSettlement = null;
-                if (paymentMethod.getIsPart() == 0) {
-                    //不计税
-                    deleteVoidOrEntTax();
-
-                }
+//                if (paymentMethod.getIsTax() == 0) {
+//                    //不计税
+//                    deleteVoidOrEntTax();
+//
+//                }
                 paymentSettlement = ObjectFactory.getInstance()
                         .getPaymentSettlement(payment, paymentTypeId,
                                 BH.getBD(orderSplit.getTotal()).toString());

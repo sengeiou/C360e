@@ -34,7 +34,7 @@ public class PaymentMethod implements Serializable {
 
     private int isMsgRequire;
 
-    private int isPart;
+    private int isPart;//0 不计税  、1 计税
 
     private double partAcount;
 

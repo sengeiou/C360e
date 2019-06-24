@@ -623,6 +623,43 @@ public class ObjectFactory {
         return orderDetail;
     }
 
+    public OrderDetail getOrderDetailAndPromotion(Order order, ItemDetail itemDetail,
+                                      int groupId,Promotion promotion) {
+        OrderDetail orderDetail = new OrderDetail();
+        synchronized (lock_orderDetail) {
+            long time = System.currentTimeMillis();
+            orderDetail.setCreateTime(time);
+            orderDetail.setUpdateTime(time);
+            orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+            orderDetail.setOrderId(order.getId());
+            orderDetail.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
+            orderDetail.setUserId(order.getUserId());
+            orderDetail.setItemId(itemDetail.getId());
+            orderDetail.setItemName(itemDetail.getItemName());
+            orderDetail.setItemNum(promotion.getItemNum());
+            orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+            orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_GENERAL);
+            orderDetail.setReason("");
+            orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
+            orderDetail.setItemPrice(itemDetail.getPrice());
+            orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
+            orderDetail.setFromOrderDetailId(0);
+            orderDetail.setIsFree(ParamConst.NOT_FREE);
+            orderDetail.setIsItemDiscount(itemDetail.getIsDiscount());
+            orderDetail.setAppOrderDetailId(0);
+            if (itemDetail.getItemType() == 2) {
+                orderDetail.setIsOpenItem(1);
+            }
+            orderDetail.setGroupId(groupId);
+            orderDetail.setOrderSplitId(0);
+            orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+            orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
+            if (itemDetail.getItemType() == 3)
+                orderDetail.setIsSet(1);
+        }
+        return orderDetail;
+    }
+
     public OrderDetail getOrderDetailFromKiosk(Order order, OrderDetail orderDetail) {
         synchronized (lock_orderDetail) {
             long time = System.currentTimeMillis();
