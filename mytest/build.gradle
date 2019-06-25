@@ -1,9 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'bugsee'
-
-bugsee {
-    appToken '9bad4a2e-bbde-42bb-b974-98a63639a567'
-}
 
 android {
     compileSdkVersion 28

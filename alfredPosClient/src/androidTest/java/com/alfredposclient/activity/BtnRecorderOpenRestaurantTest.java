@@ -6,6 +6,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 
 import com.alfredposclient.R;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,9 +32,17 @@ public class BtnRecorderOpenRestaurantTest {
     @Rule
     public ActivityTestRule<OpenRestaruant> mOpenRestaurantActivityTestRule =
             new ActivityTestRule<>(OpenRestaruant.class);
+    @Rule
+    public ActivityTestRule<MainPage> mMainPageActivityTestRule =
+            new ActivityTestRule<>(MainPage.class);
+
+    @Before
+    public void init() {
+
+    }
 
     @Test
-    public void clickOpenRestaurant_openMainPagUI(){
+    public void btnRecorder_bugseeTest() {
         onView(withId(R.id.iv_setting)).perform(click());
     }
 }
