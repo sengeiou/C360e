@@ -2460,7 +2460,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             break;
             case ParamConst.SETTLEMENT_CUSTOM_ALL: {
                 PaymentSettlement paymentSettlement = null;
-                if (paymentMethod.getIsPart() == 0) {
+                if (paymentMethod.getIsTax() == 0) {
                     //不计税
                     deleteVoidOrEntTax();
 
