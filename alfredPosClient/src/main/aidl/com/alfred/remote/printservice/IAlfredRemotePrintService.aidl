@@ -26,13 +26,13 @@ interface IAlfredRemotePrintService {
     							String order, String orderDetail,
     							String modifiers,String tax, String payment,
     							boolean doubleprint, boolean doubleReceipts,
-    							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr);
+    							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr,String promotiomData);
 
     	void printKioskBill(String printer, String title,
     							String order, String orderDetail,
     							String modifiers,String tax, String payment,
     							boolean doubleprint, boolean doubleReceipts,
-    							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble);
+    							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String promotiomData);
 
 
 	void kickCashDrawer(String printer);

@@ -30,6 +30,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.PromotionOrderSQL;
 import com.alfredbase.store.sql.PromotionSQL;
@@ -1149,10 +1150,12 @@ public class OrderHelper {
 		BigDecimal total = BH.getBD(ParamConst.DOUBLE_ZERO);
 		total=BH.getBD(order.getTotal());
 
-
+	List<OrderSplit> orderSplits =OrderSplitSQL.getUnFinishedOrderSplits(order.getId());
+     PromotionDataSQL.deletePromotionDataOrderId(order);
+	if(orderSplits== null||orderSplits.size()==0){
 		List<Promotion>  promotionList =PromotionSQL.getAllPromotion();
 
-		if(promotionList!=null&promotionList.size()>0) {
+		if(promotionList!=null&&promotionList.size()>0) {
 			for (int i = 0; i < promotionList.size(); i++) {
 				Promotion promotion = promotionList.get(i);
 				if (hasWeek(promotion.getPromotionDateInfoId())) {
@@ -1180,7 +1183,7 @@ public class OrderHelper {
 				}
 
 			}
-		}
+		}}
 //	 List<PromotionData> promotionDatas=PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 //
 //		if (promotionDatas.size() > 0) {
@@ -1209,8 +1212,8 @@ public class OrderHelper {
 //
 //			}
 //		}
-
-		//order.setPromotion(BH.getBD(promotionPrice).toString());
+         String  promotionTotal= PromotionDataSQL.getPromotionDataSum(order);
+		order.setPromotion(promotionTotal);
 
 		order.setTotal(total.toString());
 

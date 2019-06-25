@@ -106,6 +106,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
@@ -1904,6 +1905,7 @@ public class App extends BaseApplication {
                         BH.getBD(order.getPromotion()), true)
                         .toString();
             }
+          List<PromotionData>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
             roundingMap.put("Total", BH.formatMoney(total).toEngineeringString());
             roundingMap.put("Rounding", BH.formatMoney(rounding).toString());
             Gson gson = new Gson();
@@ -1915,6 +1917,7 @@ public class App extends BaseApplication {
             String tax = gson.toJson(taxes);
             String payment = gson.toJson(printReceiptInfos);
             String roundStr = gson.toJson(roundingMap);
+            String proStr=gson.toJson(promotionData);
             if (appOrderlist == null) {
                 String apporders = gson.toJson("");
             }
@@ -1942,7 +1945,7 @@ public class App extends BaseApplication {
                         this.systemSettings.isDoubleBillPrint(),
                         this.systemSettings.isDoubleReceiptPrint(), roundStr,
                         getLocalRestaurantConfig().getCurrencySymbol(),
-                        openDrawer, BH.IsDouble(), info, apporders);
+                        openDrawer, BH.IsDouble(), info, apporders,proStr);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -2038,6 +2041,8 @@ public class App extends BaseApplication {
                             BH.getBD(order.getPromotion()), true)
                             .toString();
                 }
+                ArrayList<PromotionData> promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+
                 roundingMap.put("Total", total);
                 roundingMap.put("Rounding", rounding);
                 Gson gson = new Gson();
@@ -2050,6 +2055,7 @@ public class App extends BaseApplication {
                 String payment = gson.toJson(printReceiptInfos);
                 String roundStr = gson.toJson(roundingMap);
                 String apporders = "";
+                String proStr=gson.toJson(promotionData);
                 // gson.toJson(roundingMap);
                 if (isRevenueKiosk()) {
                     if (countryCode == ParamConst.CHINA)
@@ -2058,14 +2064,14 @@ public class App extends BaseApplication {
                                 this.systemSettings.isDoubleBillPrint(),
                                 this.systemSettings.isDoubleReceiptPrint(), roundStr,
                                 getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-                                true, BH.IsDouble());
+                                true, BH.IsDouble(),proStr);
                     else
                         mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                                 details, mods, tax, payment,
                                 this.systemSettings.isDoubleBillPrint(),
                                 this.systemSettings.isDoubleReceiptPrint(), roundStr,
                                 null, getLocalRestaurantConfig().getCurrencySymbol(),
-                                openDrawer, BH.IsDouble());
+                                openDrawer, BH.IsDouble(),proStr);
 
                 } else {
                     mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
@@ -2073,7 +2079,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders);
+                            openDrawer, BH.IsDouble(),"",apporders,proStr);
                 }
 
             } catch (RemoteException e) {
@@ -2158,6 +2164,8 @@ public class App extends BaseApplication {
                     rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                             .toString();
                 }
+                ArrayList<PromotionData> promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+
                 roundingMap.put("Total", total);
                 roundingMap.put("Rounding", rounding);
                 Gson gson = new Gson();
@@ -2170,6 +2178,7 @@ public class App extends BaseApplication {
                 String payment = gson.toJson(printReceiptInfos);
                 String roundStr = gson.toJson(roundingMap);
                 String apporders = "";
+                String proStr=gson.toJson(promotionData);
                 // gson.toJson(roundingMap);
                 if (isRevenueKiosk()) {
                     if (countryCode == ParamConst.CHINA)
@@ -2178,14 +2187,14 @@ public class App extends BaseApplication {
                                 this.systemSettings.isDoubleBillPrint(),
                                 this.systemSettings.isDoubleReceiptPrint(), roundStr,
                                 getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-                                true, BH.IsDouble());
+                                true, BH.IsDouble(),proStr);
                     else
                         mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                                 details, mods, tax, payment,
                                 this.systemSettings.isDoubleBillPrint(),
                                 this.systemSettings.isDoubleReceiptPrint(), roundStr,
                                 null, getLocalRestaurantConfig().getCurrencySymbol(),
-                                openDrawer, BH.IsDouble());
+                                openDrawer, BH.IsDouble(),proStr);
 
                 } else {
                     mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
@@ -2193,7 +2202,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders);
+                            openDrawer, BH.IsDouble(),"",apporders,proStr);
                 }
 
             } catch (RemoteException e) {
