@@ -79,4 +79,12 @@ public class BugseeHelper {
         Bugsee.log(message);
     }
 
+    public static void reportBugsee() {
+        try {
+            throw new NullPointerException();
+        } catch (NullPointerException ex) {
+
+        }
+    }
+
 }

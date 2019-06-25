@@ -4,6 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredposclient.R;
 
 import org.junit.Rule;
@@ -35,5 +36,6 @@ public class BtnRecorderOpenRestaurantTest {
     @Test
     public void clickOpenRestaurant_openMainPagUI(){
         onView(withId(R.id.iv_setting)).perform(click());
+        BugseeHelper.reportBugsee();
     }
 }
