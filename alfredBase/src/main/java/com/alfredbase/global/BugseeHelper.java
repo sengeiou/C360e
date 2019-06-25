@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alfredbase.BuildConfig;
 import com.bugsee.library.Bugsee;
 
 import java.util.HashMap;
@@ -20,7 +21,13 @@ public class BugseeHelper {
         options.put(Bugsee.Option.VideoEnabled, true);//set true to recode video
         options.put(Bugsee.Option.MaxRecordingTime, 2 * 60 * 60);
         options.put(Bugsee.Option.ShakeToTrigger, false);
-        Bugsee.launch(application, "9bad4a2e-bbde-42bb-b974-98a63639a567", options);
+
+        if (BuildConfig.DEBUG) {
+            Bugsee.launch(application, "2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2", options);
+        } else {
+            Bugsee.launch(application, "9290f896-1a2e-4b70-b1fa-46823bb4398c", options);
+        }
+
     }
 
     public static void setEmail(String email) {

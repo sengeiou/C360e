@@ -1657,12 +1657,12 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
                 //Testing insert to db
 //                ObjectFactory.getInstance().addEventLog(App.instance.getRevenueCenter(), App.instance.getUser(), App.instance.getBusinessDate(), "Button Setting clicked");
 
-                List<EventLog> eventLogList = EventLogSQL.getAllEventLog();
-
-                for (EventLog eventLog : eventLogList) {
-                    if (eventLog == null) continue;
-                    Log.i("EVENT", eventLog.getEvent());
-                }
+//                List<EventLog> eventLogList = EventLogSQL.getAllEventLog();
+//
+//                for (EventLog eventLog : eventLogList) {
+//                    if (eventLog == null) continue;
+//                    Log.i("EVENT", eventLog.getEvent());
+//                }
 
                 break;
             case R.id.rl_lunch_bg:
