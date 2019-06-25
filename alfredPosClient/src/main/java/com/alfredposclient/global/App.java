@@ -485,10 +485,12 @@ public class App extends BaseApplication {
                 e.printStackTrace();
             }
         }
-        posType = Store.getInt(instance, Store.POS_TYPE, 0);
-        if (posType == 0) {
-            xmppThread = new XmppThread();
-            xmppThread.start();
+        if(!isOpenLog) {
+            posType = Store.getInt(instance, Store.POS_TYPE, 0);
+            if (posType == 0) {
+                xmppThread = new XmppThread();
+                xmppThread.start();
+            }
         }
         wifiPolicyNever();
         update15to16();
