@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +35,6 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
-import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
@@ -116,9 +114,6 @@ public class KitchenOrder extends BaseActivity {
         initTopBarView();
         initTextTypeFace();
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-
-
 
 
     }
@@ -259,7 +254,7 @@ public class KitchenOrder extends BaseActivity {
                         parameters.put("numTag", numTag);
                         SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
                     } else {
-                        UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
+                        UIHelp.showToast(KitchenOrder.this, getString(R.string.order_number_cannot_empty));
                     }
                 }
                 break;
@@ -276,7 +271,7 @@ public class KitchenOrder extends BaseActivity {
                         parameters.put("numTag", numTag);
                         SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
                     } else {
-                        UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
+                        UIHelp.showToast(KitchenOrder.this, getString(R.string.order_number_cannot_empty));
                     }
                 }
                 break;
@@ -316,7 +311,7 @@ public class KitchenOrder extends BaseActivity {
 
                     final int kotItemId = bundle1.getInt("id");
                     String title1 = getResources().getString(R.string.warning);
-                    String content1 = "Confirm  completed?";
+                    String content1 = context.getString(R.string.complete_all_item);
                     String left1 = getResources().getString(R.string.no);
                     String right1 = getResources().getString(R.string.yes);
                     DialogFactory.commonTwoBtnDialog(KitchenOrder.this, title1, content1, left1, right1, null, new OnClickListener() {
@@ -480,7 +475,7 @@ public class KitchenOrder extends BaseActivity {
                         } else {
                             String itemName = kotItemDetail.getItemName();
                             if (kotSummary.getIsTakeAway() == ParamConst.TAKE_AWAY || kotItemDetail.getIsTakeAway() == ParamConst.TAKE_AWAY) {
-                                itemName = itemName + "(Take Away)";
+                                itemName = itemName + "(" + this.getString(R.string.takeaway) + ")";
                             }
                             item.setItemDetailName(itemName);
                         }
@@ -656,7 +651,7 @@ public class KitchenOrder extends BaseActivity {
         if (kot.getKotSummary().getEatType() == ParamConst.APP_ORDER_DELIVERY) {
             StringBuffer deliverys = new StringBuffer();
             tv_kds_delivery.setVisibility(View.VISIBLE);
-            deliverys.append(context.getResources().getString(R.string.app_delivery) + "\n");
+            deliverys.append(context.getResources().getString(R.string.delivery) + "\n");
             if (!TextUtils.isEmpty(kot.getKotSummary().getAddress())) {
                 deliverys.append(kot.getKotSummary().getAddress() + "\n");
             }
@@ -677,9 +672,9 @@ public class KitchenOrder extends BaseActivity {
             tv_kds_delivery.setVisibility(View.GONE);
         }
         kotId.setText(kot.getKotSummary().getId() + "");
-        orderId.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo() + "");
-        tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
-        table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName() + "");
+        orderId.setText(context.getResources().getString(R.string.order_no) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo() + "");
+        tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_no) + kot.getKotSummary().getNumTag() + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
+        table.setText(context.getResources().getString(R.string.table) + " - " + kot.getKotSummary().getTableName() + "");
         posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
         date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
         time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
@@ -781,7 +776,7 @@ public class KitchenOrder extends BaseActivity {
                         break;
                     case RIGHT:
 
-                        DialogFactory.commonTwoBtnDialog(context, "Waring", "Out of stock ?",
+                        DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning), context.getString(R.string.out_of_stock),
                                 getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -891,7 +886,7 @@ public class KitchenOrder extends BaseActivity {
             final int position = Integer.valueOf(str).intValue();
 
 
-            DialogFactory.commonTwoBtnDialog(context, "Waring", "Out of stock ?",
+            DialogFactory.commonTwoBtnDialog(context, getString(R.string.warning), getString(R.string.out_of_stock),
                     getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
                         @Override
                         public void onClick(View v) {

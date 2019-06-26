@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -15,8 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -335,7 +332,7 @@ public class MainPage extends BaseActivity {
         loadingDialog = new LoadingDialog(context);
         loadingDialog.setTitle(context.getResources().getString(R.string.loading));
         printerLoadingDialog = new PrinterLoadingDialog(context);
-        printerLoadingDialog.setTitle(context.getResources().getString(R.string.send_kitchen));
+        printerLoadingDialog.setTitle(context.getResources().getString(R.string.sending_to_kitchen));
         view_top_line = findViewById(R.id.view_top_line);
         selectOrderSplitDialog = new SelectOrderSplitDialog(context, handler);
         FragmentManager fragmentManager = this.getSupportFragmentManager();
@@ -410,7 +407,6 @@ public class MainPage extends BaseActivity {
         XMPP.getInstance().setCanCheckAppOrder(true);
     }
 
- 
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {
@@ -603,8 +599,8 @@ public class MainPage extends BaseActivity {
 //				closeCloseOrderWindow();
 //				break;
                 case REFRESH_STOCK_NUM:
-                    if(mainPageMenuView != null){
-                        mainPageMenuView.setParam(currentOrder,handler);
+                    if (mainPageMenuView != null) {
+                        mainPageMenuView.setParam(currentOrder, handler);
                     }
                     break;
                 case StoredCardActivity.VIEW_EVENT_STORED_CARD_PAY: {
@@ -1064,7 +1060,7 @@ public class MainPage extends BaseActivity {
                                 }
                             }).start();
                             if (App.instance.getSystemSettings().isOfPax()) {
-                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
                             } else {
                                 setTablePacks("4");
                                 if (loadingDialog != null && loadingDialog.isShowing())
@@ -1086,7 +1082,7 @@ public class MainPage extends BaseActivity {
                             .intValue()) {
                         currentTable = newTable;
                         if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
                         } else {
                             handler.sendMessage(handler
                                     .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
@@ -1095,10 +1091,7 @@ public class MainPage extends BaseActivity {
                         DialogFactory.commonTwoBtnDialog(
                                 context,
                                 context.getResources().getString(R.string.table_transfer),
-                                context.getResources().getString(R.string.transfer_) +
-                                        oldTable.getName() + " " +
-                                        context.getResources().getString(R.string.to) +
-                                        " " + newTable.getName() + "?",
+                                context.getResources().getString(R.string.ask_transfer_table, oldTable.getName(), newTable.getName()),
                                 context.getResources().getString(R.string.no),
                                 context.getResources().getString(R.string.yes), null, new OnClickListener() {
                                     @Override
@@ -1119,7 +1112,7 @@ public class MainPage extends BaseActivity {
                             .intValue()) {
                         currentTable = newTable;
                         if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
                         } else {
                             handler.sendMessage(handler
                                     .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
@@ -1128,15 +1121,12 @@ public class MainPage extends BaseActivity {
                         DialogFactory.commonTwoBtnDialog(
                                 context,
                                 context.getResources().getString(R.string.table_transfer),
-                                context.getResources().getString(R.string.transfer_) +
-                                        oldTable.getName() + ": " + transfItemOrderDetail.getItemName() + " " +
-                                        context.getResources().getString(R.string.to) +
-                                        " " + newTable.getName() + "?",
+                                context.getResources().getString(R.string.ask_transfer_table, oldTable.getName() + ": " + transfItemOrderDetail.getItemName(), newTable.getName()),
                                 context.getResources().getString(R.string.no),
                                 context.getResources().getString(R.string.yes), null, new OnClickListener() {
                                     @Override
                                     public void onClick(View arg0) {
-                                        setPAXWindow.showForTransferItem(SetPAXWindow.TRANSFER_ITEM, context.getResources().getString(R.string.no_pax), newTable);
+                                        setPAXWindow.showForTransferItem(SetPAXWindow.TRANSFER_ITEM, context.getResources().getString(R.string.no_of_pax), newTable);
 //									handler.sendMessage(handler
 //											.obtainMessage(
 //													ACTION_TRANSFER_ITEM,
@@ -1176,7 +1166,7 @@ public class MainPage extends BaseActivity {
                                     }
                                 }
                             }).start();
-                            setPAXWindow.show(SetPAXWindow.APP_ORDER, context.getResources().getString(R.string.no_pax));
+                            setPAXWindow.show(SetPAXWindow.APP_ORDER, context.getResources().getString(R.string.no_of_pax));
                         } else {
                             DialogFactory.showOneButtonCompelDialog(context, "警告", "请选择空桌", null);
                         }
@@ -1788,7 +1778,7 @@ public class MainPage extends BaseActivity {
                     break;
                 case VIEW_EVENT_TANSFER_PAX:
                     String pax = (String) msg.obj;
-                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_pax));
+                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_of_pax));
                     break;
                 case VIEW_EVENT_VOID_OR_FREE:
                     verifyDialog.show(HANDLER_MSG_OBJECT_VOID_OR_FREE,
@@ -1825,14 +1815,14 @@ public class MainPage extends BaseActivity {
                     if (orderDetail.getIsTakeAway() != ParamConst.TAKE_AWAY) {
                         orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
                         if (orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " " + context.getResources().getString(R.string.app_take_away));
+                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " " + context.getResources().getString(R.string.takeaway));
                         } else {
-                            orderDetail.setSpecialInstractions(context.getResources().getString(R.string.app_take_away));
+                            orderDetail.setSpecialInstractions(context.getResources().getString(R.string.takeaway));
                         }
                     } else {
                         orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                         if (orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.take_away), "").replace(context.getResources().getString(R.string.app_take_away), ""));
+                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.takeaway), "").replace(context.getResources().getString(R.string.takeaway), ""));
                         }
                     }
                     OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
@@ -1903,11 +1893,11 @@ public class MainPage extends BaseActivity {
                 case VIEW_EVENT_SPLIT_BY_PAX: {
                     List<OrderSplit> orderSplitList = OrderSplitSQL.getOrderSplits(currentOrder);
                     if (orderSplitList.size() > 0 && orderSplitList.get(0).getSplitByPax() == 0) {
-                        UIHelp.showShortToast(context, "Can not split by pax");
+                        UIHelp.showShortToast(context, context.getResources().getString(R.string.cannot_split_by_pax));
                         return;
                     }
                     if (currentOrder.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_UNPAY) {
-                        setPAXWindow.show(SetPAXWindow.SPLITE_BY_PAX, context.getResources().getString(R.string.no_pax));
+                        setPAXWindow.show(SetPAXWindow.SPLITE_BY_PAX, context.getResources().getString(R.string.no_of_pax));
                     } else {
                         OrderBill orderBill = OrderBillSQL.getOrderBillByOrder(currentOrder);
                         if (App.instance.getSystemSettings().isPrintBeforCloseBill() || orderBill == null || orderBill.getBillNo() == null) {
@@ -2190,7 +2180,7 @@ public class MainPage extends BaseActivity {
                     List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);
                     selectOrderSplitDialog.show(orderSplits, currentOrder);
                 } else {
-                    UIHelp.showToast(context, context.getResources().getString(R.string.assign_items));
+                    UIHelp.showToast(context, context.getResources().getString(R.string.assign_items_to_group));
                 }
             }
         } else {
@@ -2307,7 +2297,7 @@ public class MainPage extends BaseActivity {
 
 //        DiffData data = new DiffData(this);//实例化data类
 //        data.updateData(orderDetails);//启动发送
-      //  DifferentDislay.setParam(orderDetails,currentOrder);
+        //  DifferentDislay.setParam(orderDetails,currentOrder);
         operatePanel.setParams(this, currentOrder, orderDetails,
                 handler);
         loadingDialog.dismiss();
@@ -2503,13 +2493,13 @@ public class MainPage extends BaseActivity {
                         @Override
                         public void onClick(View arg0) {
                             final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
-                            RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
-                            if(remainingStock!=null){
-                                int num=tag.getItemNum();
+                            RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                            if (remainingStock != null) {
+                                int num = tag.getItemNum();
                                 RemainingStockHelper.updateRemainingStockNum(remainingStock, num, true, new StockCallBack() {
                                     @Override
                                     public void onSuccess(Boolean isStock) {
-                                        if(isStock){
+                                        if (isStock) {
                                             App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
                                         }
 
@@ -2549,7 +2539,7 @@ public class MainPage extends BaseActivity {
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
             case KOT_PRINT_FAILED:
-               handler.sendMessage(handler.obtainMessage(action, obj));
+                handler.sendMessage(handler.obtainMessage(action, obj));
                 break;
             case KOT_PRINT_SUCCEED:
                 handler.sendMessage(handler.obtainMessage(action, obj));

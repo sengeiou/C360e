@@ -133,7 +133,7 @@
             android:layout_weight="1"
 
             android:background="@drawable/box_number_selector"
-            android:text="Custom"
+            android:text="@string/custom"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:gravity="center"

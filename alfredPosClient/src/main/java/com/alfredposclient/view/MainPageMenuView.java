@@ -374,7 +374,7 @@ public class MainPageMenuView extends LinearLayout {
 								.getItemAtPosition(position);
 						RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 						if(remainingStock!=null) {
-							DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "", "CANCEL", "DONE",
+							DialogFactory.commonTwoBtnInputIntDialog(parent, false, parent.getString(R.string.num), "", context.getString(R.string.cancel), context.getString(R.string.done).toUpperCase(),
 									new OnClickListener() {
 										@Override
 										public void onClick(View view) {
@@ -426,7 +426,7 @@ public class MainPageMenuView extends LinearLayout {
 										handler.sendMessage(msg);
 
 									}else{
-										UIHelp.showShortToast(parent, "Out Of Stock!");
+										UIHelp.showShortToast(parent, parent.getString(R.string.out_of_stock));
 									}
 								}
 							});

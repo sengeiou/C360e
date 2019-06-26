@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
-
 import com.alfredbase.R;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
@@ -128,9 +127,9 @@ public class DialogFactory {
      * @param rghtListener
      */
     public static void commonTwoBtnTimeDialog(final BaseActivity activity,
-                                          final String title,final String time, final String content, final String leftText, final String rightText,
-                                          final OnClickListener leftListener,
-                                          final OnClickListener rghtListener, final boolean canBack) {
+                                              final String title, final String time, final String content, final String leftText, final String rightText,
+                                              final OnClickListener leftListener,
+                                              final OnClickListener rghtListener, final boolean canBack) {
         activity.runOnUiThread(new Runnable() {
 
             @Override
@@ -185,9 +184,9 @@ public class DialogFactory {
      * @param rghtListener
      */
     public static void commonTwoBtnQRDialog(final BaseActivity activity,
-                                          final String url, final String leftText, final String rightText,
-                                          final OnClickListener leftListener,
-                                          final OnClickListener rghtListener) {
+                                            final String url, final String leftText, final String rightText,
+                                            final OnClickListener leftListener,
+                                            final OnClickListener rghtListener) {
         activity.runOnUiThread(new Runnable() {
 
             @Override
@@ -239,12 +238,12 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 String num = editText.getText().toString();
-                                if(TextUtils.isEmpty(num)){
+                                if (TextUtils.isEmpty(num)) {
                                     Toast toast = new Toast(activity);
                                     LayoutInflater inflater = activity.getLayoutInflater();
                                     View view = inflater.inflate(R.layout.toast_view, null);
                                     TextView tv_toast_view = (TextView) view.findViewById(R.id.tv_toast_view);
-                                    tv_toast_view.setText("Please key in Reference number");
+                                    tv_toast_view.setText(activity.getResources().getString(R.string.please_key_in_reference_number));
                                     TextTypeFace textTypeFace = TextTypeFace.getInstance();
                                     textTypeFace.setTrajanProRegular(tv_toast_view);
                                     toast.setGravity(Gravity.CENTER, 0, 10);
@@ -252,7 +251,7 @@ public class DialogFactory {
                                     toast.setView(view);
                                     toast.show();
                                     return;
-                                }else{
+                                } else {
                                     v.setTag(num);
                                 }
                                 dialog.dismiss();
@@ -314,8 +313,6 @@ public class DialogFactory {
 //		});
         return dialog;
     }
-
-
 
 
 //    public static Dialog kpmFDialog(final BaseActivity activity,
@@ -405,7 +402,6 @@ public class DialogFactory {
 //		});
         return dialog;
     }
-
 
 
     public static Dialog kpmCompleteDialog(final BaseActivity activity,
@@ -539,7 +535,6 @@ public class DialogFactory {
     }
 
 
-
     /**
      * 输入框的dialog(整数)
      *
@@ -552,9 +547,9 @@ public class DialogFactory {
      * @param rghtListener
      */
     public static void commonTwoBtnInputIntDialog(final BaseActivity activity, final Boolean balance,
-                                               final String title, final String content, final String leftText, final String rightText,
-                                               final OnClickListener leftListener,
-                                               final OnClickListener rghtListener) {
+                                                  final String title, final String content, final String leftText, final String rightText,
+                                                  final OnClickListener leftListener,
+                                                  final OnClickListener rghtListener) {
         activity.runOnUiThread(new Runnable() {
 
             @Override
@@ -576,8 +571,8 @@ public class DialogFactory {
                             @Override
                             public void onClick(final View v) {
                                 dialog.dismiss();
-                              //  CommonUtil.hideSoftkeyBoard(activity);
-                             //   hintKeyBoard(activity);
+                                //  CommonUtil.hideSoftkeyBoard(activity);
+                                //   hintKeyBoard(activity);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -610,7 +605,7 @@ public class DialogFactory {
                                 }
                                 dialog.dismiss();
                                 CommonUtil.hideSoftkeyBoard(activity);
-                             //   hintKeyBoard(activity);
+                                //   hintKeyBoard(activity);
 
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
@@ -629,6 +624,7 @@ public class DialogFactory {
         });
 
     }
+
     /**
      * 输入框的dialog
      *
@@ -728,7 +724,7 @@ public class DialogFactory {
     public static void showQrCodeDialog(final BaseActivity activity, String qrCodeText, final String tableName, boolean isEnCoding, final OnClickListener printOnClickListener) {
         try {
             String content = qrCodeText;
-            if(isEnCoding) {
+            if (isEnCoding) {
                 content = URLEncoder.encode(qrCodeText, "UTF-8");
             }
             QRCodeWriter writer = new QRCodeWriter();
@@ -786,11 +782,11 @@ public class DialogFactory {
             dialog.setContentView(view);
             TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
             StringBuffer title = new StringBuffer(activity.getString(R.string.has_new_version));
-            ((TextView) view.findViewById(R.id.tv_version)).setText("New Version:" + versionUpdate.getVersionName());
+            ((TextView) view.findViewById(R.id.tv_version)).setText(activity.getString(R.string.new_version)+" : " + versionUpdate.getVersionName());
             ((TextView) view.findViewById(R.id.tv_description)).setText(versionUpdate.getDescription());
             view.findViewById(R.id.btn_update_now).setOnClickListener(onClickListener);
             if (versionUpdate.getForceUpdate() == 1) {
-                title.append("\nPlease update now");
+                title.append("\n"+activity.getResources().getString(R.string.please_update_now));
                 view.findViewById(R.id.btn_update_later).setVisibility(View.GONE);
             } else {
                 view.findViewById(R.id.btn_update_later).setVisibility(View.VISIBLE);
@@ -1030,7 +1026,6 @@ public class DialogFactory {
     }
 
 
-
     public interface DialogCallBack {
         void callBack(PrinterDevice printerDevice);
     }
@@ -1083,11 +1078,10 @@ public class DialogFactory {
 
     public static void hintKeyBoard(BaseActivity parent) {
         //拿到 InputMethodManager
-        InputMethodManager imm = (InputMethodManager)parent.getSystemService(Context.INPUT_METHOD_SERVICE); //如果window上view获取焦点 && view不为空
-        if(imm.isActive()&&parent.getCurrentFocus()!=null){
+        InputMethodManager imm = (InputMethodManager) parent.getSystemService(Context.INPUT_METHOD_SERVICE); //如果window上view获取焦点 && view不为空
+        if (imm.isActive() && parent.getCurrentFocus() != null) {
             //拿到view的token 不为空
-            if (parent.getCurrentFocus().getWindowToken()!=null)
-            { //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
+            if (parent.getCurrentFocus().getWindowToken() != null) { //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
                 imm.hideSoftInputFromWindow(parent.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }

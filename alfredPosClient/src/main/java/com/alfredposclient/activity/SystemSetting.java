@@ -635,9 +635,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                 String maxOrderStr = tv_max_order_no.getText().toString();
 
                 if (TextUtils.isEmpty(maxOrderStr)) {
-                    setPAXWindow.show(SetPAXWindow.MAX_ORDER_NO, "0", "Max Order No");
+                    setPAXWindow.show(SetPAXWindow.MAX_ORDER_NO, "0", this.getString(R.string.max_order_no));
                 } else {
-                    setPAXWindow.show(SetPAXWindow.MAX_ORDER_NO, maxOrderStr, "Max Order No");
+                    setPAXWindow.show(SetPAXWindow.MAX_ORDER_NO, maxOrderStr, this.getString(R.string.max_order_no));
                 }
 
                 break;
@@ -744,7 +744,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                         parameters.put("language", str);
                         SyncCentre.getInstance().callServerLanguage(SystemSetting.this, App.instance.getMainPosInfo(), parameters, handler);
                     } else {
-//                        UIHelp.showToast(SystemSetting.this, "The order number can not be empty");
+//                        UIHelp.showToast(SystemSetting.this, getString(R.string.order_number_cannot_empty));
                     }
                     break;
                 case App.HANDLER_REFRESH_LANGUAGE:
@@ -761,7 +761,6 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                             }
                         };
                         handlerRestart.postDelayed(r, 2000);
-
 
 
                     }
@@ -1193,15 +1192,11 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (language.equals(LanguageManager.LANGUAGE_KEY_ENGLISH) || language.equals(LanguageManager.LANGUAGE_KEY_CHINESE)) {
-                    Message message = new Message();
-                    message.obj = language;
-                    message.arg2 = -1;
-                    message.what = App.HANDLER_SET_LANGUAGE;
-                    handler.sendMessage(message);
-                } else {
-                    UIHelp.showToast(App.getTopActivity(), "SOON");
-                }
+                Message message = new Message();
+                message.obj = language;
+                message.arg2 = -1;
+                message.what = App.HANDLER_SET_LANGUAGE;
+                handler.sendMessage(message);
             }
         });
 

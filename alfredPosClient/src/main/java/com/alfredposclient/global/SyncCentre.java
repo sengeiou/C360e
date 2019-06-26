@@ -21,6 +21,7 @@ import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredposclient.R;
 import com.alfredposclient.http.HTTPKDSRequest;
 import com.alfredposclient.http.HTTPWaiterRequest;
 import com.alfredposclient.http.HttpAPI;
@@ -621,7 +622,7 @@ public class SyncCentre {
     }
 
     //3rd party services
-    public String requestAlipayUrl(final Map<String, Object> parameters) {
+    public String requestAlipayUrl(final Context context, final Map<String, Object> parameters) {
         //{restaurantKey:"h6s235",userKey:"19x6ljc",revenueId:27,orderId:123243,billNo:12312,amount:100}
         String url = null;
         StringBuffer param = new StringBuffer("userKey=" + CoreData.getInstance().getLoginResult().getUserKey() + "&");
@@ -638,7 +639,8 @@ public class SyncCentre {
             } else {
                 url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
             }
-            param.append("amount=" + parameters.get("amount") + "&");
+            String amount = context.getString(R.string.amount);
+            param.append(amount+" =" + parameters.get("amount") + "&");
         }
 
         param.append("restaurantKey=" + CoreData.getInstance().getLoginResult()

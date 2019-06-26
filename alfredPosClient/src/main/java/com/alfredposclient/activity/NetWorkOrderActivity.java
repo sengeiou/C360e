@@ -96,7 +96,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
         setContentView(R.layout.activity_network_order);
         ll_orderdetail_layout = (LinearLayout) findViewById(R.id.ll_orderdetail_layout);
         loadingDialog = new LoadingDialog(this);
-        loadingDialog.setTitle("Loading");
+        loadingDialog.setTitle(context.getString(R.string.loading));
         inflater = LayoutInflater.from(this);
         lv_order_list = (ListView) findViewById(R.id.lv_order_list);
         lv_orderdetail_list = (ListView) findViewById(R.id.lv_orderdetail_list);
@@ -282,7 +282,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 
                 if(appOrder.getOrderStatus()==ParamConst.APP_ORDER_STATUS_ACCEPTED)
                 {
-                    btn_check.setText("Place Order");
+                    btn_check.setText(this.getString(R.string.place_order));
                 }else if(appOrder.getOrderStatus()==ParamConst.APP_ORDER_STATUS_PAID) {
                     btn_check.setText(getResources().getText(R.string.receving_order));
                 }
@@ -293,7 +293,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                     tv_app_address.setText("");
                 } else {
                     //    String addr = appOrder.getAddress();
-                    tv_app_address.setText("address: "+appOrder.getAddress());
+                    tv_app_address.setText(getResources().getString(R.string.address)+" : "+appOrder.getAddress());
                 }
 
                 if (TextUtils.isEmpty(appOrder.getContact())) {
@@ -324,9 +324,9 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 //                tv_app_address_phone.setText(appOrder.getPhone());
             }
             if (appOrder.getEatType() == ParamConst.APP_ORDER_TAKE_AWAY) {
-                tv_eat_type.setText(getResources().getString(R.string.app_take_away));
+                tv_eat_type.setText(getResources().getString(R.string.takeaway));
             } else if (appOrder.getEatType() == ParamConst.APP_ORDER_DELIVERY) {
-                tv_eat_type.setText(getResources().getString(R.string.app_delivery));
+                tv_eat_type.setText(getResources().getString(R.string.delivery));
             } else {
                 tv_eat_type.setText(getResources().getString(R.string.app_dine_in));
             }
@@ -407,7 +407,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                                         @Override
                                         public void onClick(View v) {
 
-                                            loadingDialog.setTitle("Loading");
+                                            loadingDialog.setTitle(context.getString(R.string.loading));
                                             loadingDialog.show();
                                             SyncCentre.getInstance().readyAppOrderStatus(context, appOrder.getId(), handler);
 
@@ -417,7 +417,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 
                                         @Override
                                         public void onClick(View arg0) {
-                                            loadingDialog.setTitle("Loading");
+                                            loadingDialog.setTitle(context.getString(R.string.loading));
                                             loadingDialog.show();
                                             SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
 
@@ -425,7 +425,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                                     },true
                             );
                         }else if (isEat==3&&appOrder.getOrderStatus()==ParamConst.APP_ORDER_STATUS_ACCEPTED){
-                            loadingDialog.setTitle("Loading");
+                            loadingDialog.setTitle(context.getString(R.string.loading));
                             loadingDialog.show();
                             List<AppOrderDetail> appOrderDetailList = AppOrderDetailSQL.getAppOrderDetailByAppOrderId(appOrder.getId());
                             List<AppOrderModifier> appOrderModifierList = AppOrderModifierSQL.getAppOrderModifierByAppOrderId(appOrder.getId());
@@ -434,7 +434,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                             dismissLoadingDialog();
                         }
                         else {
-                            loadingDialog.setTitle("Loading");
+                            loadingDialog.setTitle(context.getString(R.string.loading));
                             loadingDialog.show();
                             SyncCentre.getInstance().recevingAppOrderStatus(context, appOrder.getId(), handler);
                         }
@@ -480,7 +480,7 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 						@Override
 						public void onClick(View view) {
 							PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(context);
-							printerLoadingDialog.setTitle("Loading");
+							printerLoadingDialog.setTitle(context.getString(R.string.loading));
 							printerLoadingDialog.showByTime(3000);
 							new Thread(new Runnable() {
 								@Override

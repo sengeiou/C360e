@@ -36,7 +36,7 @@ public class KOTPrint extends PrintJob{
 		StringBuilder sbr = new StringBuilder();
 		sbr.append(revenueCenter)
 				.append(reNext)
-				.append(PrintService.instance.getResources().getString(R.string.table_)+ tableName)
+				.append(PrintService.instance.getResources().getString(R.string.table)+" : "+ tableName)
 				.append(reNext);
 
 		PrintData header = new PrintData();
@@ -52,21 +52,21 @@ public class KOTPrint extends PrintJob{
 	public void AddHeader(KotSummary kotsummary) {
 		StringBuilder sbr = new StringBuilder();
 		if (kotsummary.getIsTakeAway()==2) {
-			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
+			sbr.append(PrintService.instance.getResources().getString(R.string.order_no))
 					.append("\t")
 					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
 					.append(reNext)
-					.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext);
+					.append(PrintService.instance.getResources().getString(R.string.takeaway)).append(reNext);
 		}else if(kotsummary.getIsTakeAway()==3){
-			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
+			sbr.append(PrintService.instance.getResources().getString(R.string.order_no))
 					.append("\t")
 					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
 					.append(reNext)
-					.append(PrintService.instance.getResources().getString(R.string.delivery_print)).append(reNext);
+					.append(PrintService.instance.getResources().getString(R.string.delivery)).append(reNext);
 
 
 		}else{
-			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
+			sbr.append(PrintService.instance.getResources().getString(R.string.order_no))
 					.append("\t")
 					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
 					.append(reNext);
@@ -121,7 +121,7 @@ public class KOTPrint extends PrintJob{
 
 	public  void AddFire(){
 		StringBuilder sbr = new StringBuilder();
-		sbr.append("FIRE");
+		sbr.append(PrintService.instance.getResources().getString(R.string.fire));
 		sbr.append(reNext);
 		PrintData fire = new PrintData();
 		fire.setDataFormat(PrintData.FORMAT_TXT);
@@ -165,7 +165,7 @@ public class KOTPrint extends PrintJob{
 
 
 			PrintData appOrderPrint = new PrintData();
-			String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), 1);
+			String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.online_app_no), 1);
 			String appOrderStr = appStr+kotSummary.getAppOrderId()+ reNext;
 			appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
 			appOrderPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -191,7 +191,7 @@ public class KOTPrint extends PrintJob{
 		StringBuilder sbr = new StringBuilder();
 		int revenueIndex = kotSummary.getRevenueCenterIndex();
 		int isTakeAway = kotSummary.getIsTakeAway();
-		String orderNo = PrintService.instance.getResources().getString(R.string.order_no_) + kotSummary.getNumTag()
+		String orderNo = PrintService.instance.getResources().getString(R.string.order_no) + kotSummary.getNumTag()
 				+IntegerUtils.fromat(revenueIndex, orderId);
 
 		String tableName =PrintService.instance.getResources().getString(R.string.table_num)
@@ -203,12 +203,12 @@ public class KOTPrint extends PrintJob{
 		if (isTakeAway==2) {
 			sbr.append(orderNo)
 					.append(reNext)
-                    .append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
+                    .append(PrintService.instance.getResources().getString(R.string.takeaway)).append(reNext)
             ;
 		}else if(isTakeAway==3){
 			sbr.append(orderNo)
 					.append(reNext)
-                    .append(PrintService.instance.getResources().getString(R.string.delivery_print)).append(reNext)
+                    .append(PrintService.instance.getResources().getString(R.string.delivery)).append(reNext)
                     ;
 		}else if(isTakeAway==1){
 			sbr.append( "  ")

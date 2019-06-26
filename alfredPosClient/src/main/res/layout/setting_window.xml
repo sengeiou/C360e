@@ -486,7 +486,7 @@
                             android:layout_height="match_parent"
                             android:gravity="center_horizontal"
                             android:paddingTop="4dp"
-                            android:text="@string/clock_inout"
+                            android:text="@string/clock_in_out"
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
@@ -617,6 +617,7 @@
                         <TextView
                             android:id="@+id/tv_opendrawer"
                             android:layout_width="match_parent"
+                            android:textAllCaps="true"
                             android:layout_height="match_parent"
                             android:gravity="center_horizontal"
                             android:paddingTop="4dp"

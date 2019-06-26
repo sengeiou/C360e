@@ -12,7 +12,7 @@
         android:layout_gravity="left"
         android:background="@color/deep_gray"
         android:gravity="center"
-        android:text="out of stock"
+        android:text="@string/out_of_stock"
         android:textColor="@color/white"/>
 
     <TextView
@@ -22,7 +22,7 @@
         android:layout_gravity="right"
         android:background="@color/red2"
         android:gravity="center"
-        android:text="done"
+        android:text="@string/done"
         android:textColor="@color/white"/>
 
     <include layout="@layout/swipe_content"/>

@@ -524,7 +524,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID, order.getId());
 			if (orderDetailCount != 0) {
 				UIHelp.showToast(context,
-						context.getResources().getString(R.string.assign_items));
+						context.getResources().getString(R.string.assign_items_to_group));
 			} else {
 				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 						context);

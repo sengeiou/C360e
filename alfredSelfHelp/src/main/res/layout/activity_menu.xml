@@ -310,7 +310,7 @@
                                                     android:layout_alignParentRight="true"
                                                     android:background="@drawable/btn_main_g"
                                                     android:gravity="center"
-                                                    android:text="Yes"
+                                                    android:text="@string/yes"
                                                     android:textColor="@color/white"
                                                     android:textSize="36sp" />
 

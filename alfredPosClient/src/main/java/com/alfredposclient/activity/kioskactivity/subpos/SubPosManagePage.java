@@ -145,7 +145,7 @@ public class SubPosManagePage extends BaseActivity {
                 showCheck = true;
             }
             holder.tv_status.setText(status);
-            holder.btn_check.setText("Unassign");
+            holder.btn_check.setText(getString(R.string.unassign));
             holder.tv_tag.setText(subPosBean.getNumTag());
             if(showCheck){
                 holder.btn_check.setVisibility(View.VISIBLE);

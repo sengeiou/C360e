@@ -20,7 +20,6 @@ import com.alfred.printer.KickDrawerPrint;
 import com.alfred.printer.ModifierDetailAnalysisReportPrint;
 import com.alfred.printer.MonthlySalesReportPrint;
 import com.alfred.printer.PromotionSalesReportPrint;
-import com.alfred.printer.ReportBasePrint;
 import com.alfred.printer.StoredCardPrint;
 import com.alfred.printer.SummaryAnalysisReportPrint;
 import com.alfred.printer.TableQRCodePrint;
@@ -251,7 +250,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             salesPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.sales_analysis));
             salesPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
             salesPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.type),
-                    PrintService.instance.getResources().getString(R.string.qty_),
+                    PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
             salesPrint.setPrinterIp(prtDevice.getIP());
             salesPrint.print(reportData, taxData, reportDayPayments, reportUserOpenDrawers, reportSessionSales);
@@ -1112,8 +1111,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                            switch (printReceiptInfo.getPaymentTypeId()) {
                                case ParamConst.SETTLEMENT_TYPE_CASH:
                                    if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-                                       stmt.put(PrintService.instance.getResources().getString(R.string.cash_), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
-                                       stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.getBD(printReceiptInfo.getCashChange()).toString());
+                                       stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
+                                       stmt.put(PrintService.instance.getResources().getString(R.string.change), BH.getBD(printReceiptInfo.getCashChange()).toString());
                                        isCashSettlement = true;
                                    }
                                    if (isCashSettlement && i == 0) {
@@ -1149,7 +1148,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                    paymentType = PrintService.instance.getResources().getString(R.string.house_charge);
                                    break;
                                case ParamConst.SETTLEMENT_TYPE_VOID:
-                                   paymentType = PrintService.instance.getResources().getString(R.string._void);
+                                   paymentType = PrintService.instance.getResources().getString(R.string.void_);
                                    break;
                                case ParamConst.SETTLEMENT_TYPE_REFUND:
                                    paymentType = PrintService.instance.getResources().getString(R.string._refund);
@@ -2298,7 +2297,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     case ParamConst.SETTLEMENT_TYPE_CASH:
                                         if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
                                             stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
-                                            stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.getBD(printReceiptInfo.getCashChange()).toString());
+                                            stmt.put(PrintService.instance.getResources().getString(R.string.change), BH.getBD(printReceiptInfo.getCashChange()).toString());
                                             isCashSettlement = true;
                                         }
                                         if (isCashSettlement && i == 0) {
@@ -2334,7 +2333,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                         paymentType = PrintService.instance.getResources().getString(R.string.house_charge);
                                         break;
                                     case ParamConst.SETTLEMENT_TYPE_VOID:
-                                        paymentType = PrintService.instance.getResources().getString(R.string._void);
+                                        paymentType = PrintService.instance.getResources().getString(R.string.void_);
                                         break;
                                     case ParamConst.SETTLEMENT_TYPE_REFUND:
                                         paymentType = PrintService.instance.getResources().getString(R.string._refund);
@@ -2442,7 +2441,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //                            if (TextUtils.isEmpty(str.toString())) {
 //                                billPrint.printDeliveryList(appOrder.getOrderNo().toString(), appOrder.getAddress(), 1);
 
-            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+orderNo, PrintService.instance.getResources().getString(R.string.order_app_no_)+appOrder.getId().toString(),str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()),appOrder.getOrderRemark());
+            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no)+orderNo, PrintService.instance.getResources().getString(R.string.online_app_no)+appOrder.getId().toString(),str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()),appOrder.getOrderRemark());
             //  billPrint.printDeliveryList(" ", appOrder.getAddress().toString(), 1);
 //                                billPrint.AddAddress(appOrder.getAddress());
 //                            }
@@ -2771,7 +2770,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 case ParamConst.SETTLEMENT_TYPE_CASH:
                                     if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
                                         stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString());
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.getBD(printReceiptInfo.getCashChange()).toString());
+                                        stmt.put(PrintService.instance.getResources().getString(R.string.change), BH.getBD(printReceiptInfo.getCashChange()).toString());
                                         isCashSettlement = true;
                                     }
                                     if (isCashSettlement && i == 0) {
@@ -2807,7 +2806,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     paymentType = PrintService.instance.getResources().getString(R.string.house_charge);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_VOID:
-                                    paymentType = PrintService.instance.getResources().getString(R.string._void);
+                                    paymentType = PrintService.instance.getResources().getString(R.string.void_);
                                     break;
                                 case ParamConst.SETTLEMENT_TYPE_REFUND:
                                     paymentType = PrintService.instance.getResources().getString(R.string._refund);

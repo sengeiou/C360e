@@ -391,7 +391,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                                 isShow((ItemDetail) map.get("itemDetail"));
                             }
                         }else {
-                            UIHelp.showToast(MainPage.this,"out of stock");
+                            UIHelp.showToast(MainPage.this,MainPage.this.getString(R.string.out_of_stock));
                           //  return;
                         }
 
@@ -653,7 +653,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
         int itemCount = OrderDetailSQL.getCreatedOrderDetailCountForWaiter(currentOrder.getId().intValue());
         if (itemCount > 0) {
             tv_detail_qty.setVisibility(View.VISIBLE);
-            tv_detail_qty.setText("Item:" + itemCount);
+            tv_detail_qty.setText(getString(R.string.item)+" : " + itemCount);
         } else {
             tv_detail_qty.setVisibility(View.INVISIBLE);
         }

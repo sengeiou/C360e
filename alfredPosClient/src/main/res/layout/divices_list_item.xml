@@ -87,7 +87,7 @@
             android:background="@drawable/device_unbund_bg"
             android:gravity="center"
             android:padding="5dp"
-            android:text="Manually add printer"
+            android:text="@string/manually_add_printer"
             android:textColor="@color/devices_red"
             android:textSize="14sp"
             android:visibility="visible"/>

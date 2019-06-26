@@ -62,7 +62,7 @@
                         android:id="@+id/tv_payment_tax"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tax"
+                        android:text="@string/taxes"
                         android:textSize="20sp"
                         android:textColor="#4a4a4a" />
 
@@ -71,7 +71,7 @@
                         android:id="@+id/tv_payment_admin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tax"
+                        android:text="@string/taxes"
                          android:textSize="20sp"
                         android:textColor="#4a4a4a" />
 
@@ -79,7 +79,7 @@
                         android:id="@+id/tv_payment_pay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tax"
+                        android:text="@string/taxes"
                         android:textSize="20sp"
                         android:textColor="#4a4a4a" />
 

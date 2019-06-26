@@ -20,6 +20,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
+import com.alfredwaiter.R;
 import com.alfredwaiter.activity.ConnectPOS;
 import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.activity.Login;
@@ -111,7 +112,7 @@ public class App extends BaseApplication {
 					return;
 				}
 				if(!object.equals(CommonUtil.getLocalIpAddress())){
-					DialogFactory.showOneButtonCompelDialog(getTopActivity(), "Warning", "Your IP has changed.\nPlease ReLogin", new View.OnClickListener() {
+					DialogFactory.showOneButtonCompelDialog(getTopActivity(), getString(R.string.warning), getString(R.string.ip_changed_relogin), new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
 							SyncCentre.getInstance().cancelAllRequests();

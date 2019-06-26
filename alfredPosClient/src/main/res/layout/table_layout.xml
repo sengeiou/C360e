@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="50dp"
-                android:text="@string/place_name"
+                android:text="@string/place"
                 android:textColor="@color/white"
                 android:layout_toRightOf="@id/btn_back"
                 android:textSize="25sp" />
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Summary"
+                android:text="@string/summary"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
 

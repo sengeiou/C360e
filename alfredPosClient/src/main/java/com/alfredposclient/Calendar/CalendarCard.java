@@ -59,7 +59,7 @@ public class CalendarCard extends RelativeLayout {
 		this.amount = amount;
 	}
 
-	private void init(Context ctx) {
+	private void init(final Context ctx) {
 		if (isInEditMode()) return;
 		View layout = LayoutInflater.from(ctx).inflate(R.layout.card_view, null, false);
 		
@@ -132,7 +132,8 @@ public class CalendarCard extends RelativeLayout {
 					((TextView)((RelativeLayout)v.getChildAt(0)).getChildAt(1)).setVisibility(VISIBLE);
 					v.setBackgroundColor(Color.parseColor("#EEE685"));
 					if (!TextUtils.isEmpty(amount)) {
-						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("Gross Total Sales:" + "\n" + BH.formatMoney(amount));
+
+						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText(ctx.getString(R.string.gross_total_sales)+":" + "\n" + BH.formatMoney(amount));
 					}else {
 						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("");
 					}

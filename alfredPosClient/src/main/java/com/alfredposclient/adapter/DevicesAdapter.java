@@ -211,7 +211,7 @@ public class DevicesAdapter extends CustomAdapter {
 		
 		@Override
 		public void onClick(final View view) {
-			DialogFactory.commonTwoBtnDialog(App.getTopActivity(), con.getResources().getString(R.string.warning), "Unassign will disconnect Printer!", con.getResources().getString(R.string.cancel), con.getResources().getString(R.string.ok), null, new OnClickListener() {
+			DialogFactory.commonTwoBtnDialog(App.getTopActivity(), con.getResources().getString(R.string.warning),  con.getResources().getString(R.string.unassign_will_disconnect_printer), con.getResources().getString(R.string.cancel), con.getResources().getString(R.string.ok), null, new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {

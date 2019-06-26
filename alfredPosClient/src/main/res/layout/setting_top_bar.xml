@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="Print Report"
+                android:text="@string/print_report"
                 android:textSize="20sp"
                 android:textColor="@color/text_white_lightgray_selector" >
 

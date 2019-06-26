@@ -166,7 +166,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Transfer Table, Print"
+                                    android:text="@string/print_transfer_table"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -291,7 +291,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:padding="10dp"
-                                android:text="@string/print_before_close_bill"
+                                android:text="@string/print_check"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
@@ -420,7 +420,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="@string/print_direction"
+                                    android:text="@string/print_direction_up"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -660,7 +660,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:padding="10dp"
-                                android:text="Auto go to Table"
+                                android:text="@string/auto_go_to_table"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
@@ -780,7 +780,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Print PLU Category"
+                                    android:text="@string/print_plu_category"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -809,7 +809,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Print PLU Item"
+                                    android:text="@string/print_plu_item"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -838,7 +838,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Print PLU Modifier"
+                                    android:text="@string/print_plu_modifier"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -867,7 +867,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Print Hourly Payments"
+                                    android:text="@string/print_hourly_payments"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -903,7 +903,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Enable Screen Lock"
+                                    android:text="@string/enable_screen_lock"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -938,7 +938,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_centerVertical="true"
                                         android:padding="10dp"
-                                        android:text="@string/of_pax"
+                                        android:text="@string/no_of_pax"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m" />
 
@@ -970,7 +970,7 @@
                                     android:layout_centerVertical="true"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:text="Screen Lock Time"
+                                    android:text="@string/screen_lock_time"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1018,7 +1018,7 @@
                                     android:layout_centerVertical="true"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:text="@string/color_select_goods"
+                                    android:text="@string/menu_background_setting"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1139,7 +1139,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:paddingLeft="10dp"
-                                    android:text="Number Calling Settingsss"
+                                    android:text="@string/number_calling_setting_one_style"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1189,7 +1189,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:layout_weight="3"
-                                    android:hint="Calling Header"
+                                    android:hint="@string/calling_header"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
                                     android:textColor="@color/black"
@@ -1216,7 +1216,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:layout_weight="3"
-                                    android:hint="Calling Footer"
+                                    android:hint="@string/calling_footer"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
                                     android:textColor="@color/black"
@@ -1245,7 +1245,7 @@
                                     android:layout_weight="3"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:text="Max Order No"
+                                    android:text="@string/max_order_no"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1278,7 +1278,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Cancel instead of Void"
+                                    android:text="@string/cancel_instead_of_void"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 

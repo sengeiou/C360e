@@ -44,7 +44,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.8"
-                    android:text="@string/bill_num"
+                    android:text="@string/bill_number"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
 
@@ -132,7 +132,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BOH Amount"
+                    android:text="@string/boh_amount"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_m" />
 
@@ -155,7 +155,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name"
+                    android:text="@string/name"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_m" />
 
@@ -178,7 +178,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bill Date"
+                    android:text="@string/bill_date"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_m" />
 
@@ -201,7 +201,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Remarks"
+                    android:text="@string/remarks"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_m" />
 
@@ -224,7 +224,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PaymentType"
+                    android:text="@string/payment_type"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_m" />
 
@@ -262,7 +262,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Amount"
+                    android:text="@string/amount"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_m" />
 

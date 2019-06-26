@@ -1563,8 +1563,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                     kdsDevice.getDevice_id(),
                                     kdsDevice.getIP(), kdsDevice.getMac(), "", 0);
                     CoreData.getInstance().addLocalDevice(localDevice);
-                    final String kdsStr = kdsDevice == null ? "空的" : kdsDevice.toString();
-                    final String localStr = localDevice == null ? "空的" : localDevice.toString();
+//                    final String kdsStr = kdsDevice == null ? "空的" : kdsDevice.toString();
+//                    final String localStr = localDevice == null ? "空的" : localDevice.toString();
 
                     // Notify KDS pairing complete
                     final KDSDevice finalKdsDevice = kdsDevice;

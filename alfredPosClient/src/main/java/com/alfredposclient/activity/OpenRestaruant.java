@@ -1737,7 +1737,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			if (x_ > 0 && x_ < rl_slideUnlockView.getWidth() && y_ > 0
 					&& y_ < rl_slideUnlockView.getHeight()) {
 				if (open(v)) {
-					DialogFactory.commonTwoBtnInputDialog(context, true,"Start Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+					DialogFactory.commonTwoBtnInputDialog(context, true,context.getString(R.string.start_drawer), context.getString(R.string.enter_amount_of_cash_in_drawer), "CANCEL", context.getString(R.string.done).toUpperCase(),
 							new OnClickListener() {
 								@Override
 								public void onClick(View v) {
@@ -1837,7 +1837,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				if(!isShowingActualDialog) {
 					isShowingActualDialog = true;
 					final View msgView = (View) msg.obj;
-					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", context.getString(R.string.enter_amount_of_cash_in_drawer), "CANCEL", context.getString(R.string.done).toUpperCase(),
 							new OnClickListener() {
 								@Override
 								public void onClick(View view) {

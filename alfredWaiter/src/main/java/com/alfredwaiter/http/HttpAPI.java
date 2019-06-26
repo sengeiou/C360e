@@ -1001,7 +1001,7 @@ public class HttpAPI {
                     DialogFactory.commonTwoBtnDialog(App.getTopActivity(),
                             "Warning",
                             App.instance.getResources().getString(com.alfredbase.R.string.user_no_permission) + "\n Relogin?",
-                            "OK", "NO", new View.OnClickListener() {
+                            "OK", App.instance.getResources().getString(com.alfredbase.R.string.no).toUpperCase(), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     OrderDetailSQL.deleteAllOrderDetail();

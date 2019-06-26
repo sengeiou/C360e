@@ -3,8 +3,6 @@
 
     <!-- com.alfredselfhelp.global -->
     <string name="app_name">AlfredKDS</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="version">Version:</string>
     <string name="exit_program">Please click BACK again to exit</string>
     <string name="revenue_center">Revenue Center</string>
@@ -28,10 +26,6 @@
     <string name="other_pos_data">Other MainPos send data</string>
     <string name="order_discarded">The order has been discarded by cashier.</string>
     <string name="reconnect_pos">Main POS disconnected.\n Reconnect it?</string>
-    <string name="order_id_">Order No : </string>
-    <string name="table_">Table -  </string>
-    <string name="take_away">Take away</string>
-    <string name="app_delivery">Delivery</string>D
     <string name="dine_in">Dine in</string>
     <!--//0未发送、1待完成、2更新、3已完成、4已退单、-1已删除-->
 
@@ -42,11 +36,9 @@
     <string name="chargeback">Chargeback</string>
 
 
-    be doing ;
+    <!--be doing ;-->
 
     <!-- Summary -->
-    <string name="summary">Summary</string>
-    <string name="item">Item</string>
     <string name="pos_id">PosId</string>
     <string name="item_complete">complete</string>
     <string name="kitchen_name">Kitchen Name</string>
@@ -58,11 +50,8 @@
     <string name="kot_revert">revert</string>
     <string name="kot_id">KotId</string>
     <string name="order_id">OrderId</string>
-    <string name="order_no">OrderNO</string>
-    <string name="table">Table</string>
     <string name="pos">POS</string>
     <string name="data">Data</string>
-    <string name="time">Time</string>
     <string name="dish">Dish</string>
     <string name="undoing">Undoing</string>
 
@@ -70,15 +59,12 @@
     <string name="reset">All data will be removed, \n are you sure to reset KDS?</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="setting">Setting</string>
     <string name="reset_kds">Reset KDS</string>
     <string name="switch_account">Switch Account</string>
     <string name="kot_history_">Kot History</string>
 
     <!-- KdsHttpServer -->
-    <string name="transfer_table_failed">Transfer table failed</string>
     <string name="kot_submit_failed">KOT submit failed</string>
-    <string name="session_change">Session Change</string>
     <string name="relogin_pos">POS has closed the current session.\nPlease relogin when next session starts</string>
 
     <!-- other -->

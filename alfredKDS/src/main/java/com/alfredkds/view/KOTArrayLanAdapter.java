@@ -104,9 +104,9 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
             //0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
 
             if (kotItem.getKotStatus() == 1) {
-                holder.status.setText("progress");
+                holder.status.setText(mContext.getString(R.string.kot_in_progress));
             } else if (kotItem.getKotStatus() == 0) {
-                holder.status.setText("progress");
+                holder.status.setText(mContext.getString(R.string.kot_in_progress));
             } else if (kotItem.getKotStatus() == 2) {
                 //holder.status.setText("更新");
             } else if (kotItem.getKotStatus() == 3) {
@@ -122,10 +122,10 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
             holder.tv_lan_progress.start();
             if (kotItem.getCallType() == 1) {
                 //	holder.btn_call.setClickable(false);
-                holder.btn_call.setText("call again");
+                holder.btn_call.setText(mContext.getResources().getString(R.string.call_again));
 
             } else {
-                holder.btn_call.setText("call");
+                holder.btn_call.setText(mContext.getResources().getString(R.string.call));
                 //	holder.btn_call.setClickable(true);
                 // holder.btn_call.setText("void");
 

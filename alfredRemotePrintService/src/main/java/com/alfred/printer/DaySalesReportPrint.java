@@ -1,7 +1,5 @@
 package com.alfred.printer;
 
-import android.text.TextUtils;
-
 import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
@@ -11,7 +9,6 @@ import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
-import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ObjectFactory;
 
@@ -294,9 +291,9 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 }
             }
 
-            this.addItem(PrintService.instance.getResources().getString(R.string.next_saels), "", BH.add(taxSvg, BH.getBD(nSales), true).toString(), 1);
+            this.addItem(PrintService.instance.getResources().getString(R.string.next_sales_svg), "", BH.add(taxSvg, BH.getBD(nSales), true).toString(), 1);
         } else {
-            this.addItem(PrintService.instance.getResources().getString(R.string.next_saels), " ", BH.getBD(nSales).toString(), 1);
+            this.addItem(PrintService.instance.getResources().getString(R.string.next_sales_svg), " ", BH.getBD(nSales).toString(), 1);
         }
         if (App.countryCode != ParamConst.CHINA) {
             this.addItem(PrintService.instance.getResources().getString(R.string.total_tax), " ", BH.getBD(reportDaySales.getTotalTax()).toString(), 1);
@@ -462,13 +459,13 @@ public class DaySalesReportPrint extends ReportBasePrint {
                     reportDaySales.getDiscountPer(), 1);
             this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
                     reportDaySales.getDiscount(), PrintData.LANG_EN, 1);
-            this.addItem(PrintService.instance.getResources().getString(R.string.total_disc),
+            this.addItem(PrintService.instance.getResources().getString(R.string.total_discount),
                     String.valueOf(reportDaySales.getDiscountPerQty() + reportDaySales.getDiscountQty()),
                     String.valueOf(BH.add(BH.getBD(reportDaySales.getDiscountPer()),
                             BH.getBD(reportDaySales.getDiscount()), true)), 1);
         }
         if (reportDaySales.getTakeawayQty() > 0) {
-            this.addSectionHeader(PrintService.instance.getResources().getString(R.string.take_away));
+            this.addSectionHeader(PrintService.instance.getResources().getString(R.string.takeaway));
             this.addItem(PrintService.instance.getResources().getString(R.string.take_away_sales),
                     BH.getBD(reportDaySales.getTakeawaySales()).toString(), 1);
             this.addItem(PrintService.instance.getResources().getString(R.string.take_away_tax),

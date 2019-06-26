@@ -148,7 +148,7 @@ public class SelectRevenue extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     App.instance.setPairingIp(udpMsg.getIp());
-                    loadingDialog.setTitle("Loading");
+                    loadingDialog.setTitle(context.getString(R.string.loading));
                     loadingDialog.show();
                     SubPosSyncCentre.getInstance().chooseRevenue(context, handler);
                 }

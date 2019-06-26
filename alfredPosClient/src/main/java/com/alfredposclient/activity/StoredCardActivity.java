@@ -131,7 +131,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         textTypeFace = TextTypeFace.getInstance();
         textTypeFace.init(context);
         loadingDialog = new LoadingDialog(mainPage);
-        loadingDialog.setTitle("loading");
+        loadingDialog.setTitle(context.getString(R.string.loading));
         hasSurface = false;
         ll_stored_card_action = (LinearLayout) findViewById(R.id.ll_stored_card_action);
         rl_stored_card_title = (RelativeLayout) findViewById(R.id.rl_stored_card_title);
@@ -812,11 +812,11 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                     QRcodeString = code;
                     tv_stored_card_no.setText(card[2]);
                 }else{
-                    UIHelp.showShortToast(mainPage, "Please scan the stored-card QRcode");
+                    UIHelp.showShortToast(mainPage, this.getString(R.string.please_scan_stored_qrcode));
                 }
 
             }else{
-                UIHelp.showShortToast(mainPage, "Please scan the stored-card QRcode");
+                UIHelp.showShortToast(mainPage, this.getString(R.string.please_scan_stored_qrcode));
             }
             if(isPayAction){
 

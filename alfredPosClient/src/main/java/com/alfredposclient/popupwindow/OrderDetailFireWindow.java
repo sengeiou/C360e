@@ -302,7 +302,7 @@ public class OrderDetailFireWindow implements OnClickListener {
 									@Override
 									public void run() {
 										context.printerLoadingDialog
-												.setTitle(context.getResources().getString(R.string.send_kitchen));
+												.setTitle(context.getResources().getString(R.string.sending_to_kitchen));
 										context.printerLoadingDialog.showTime();
 									}
 								});

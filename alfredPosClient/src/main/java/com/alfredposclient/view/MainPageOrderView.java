@@ -61,7 +61,6 @@ import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TextTypeFace;
-import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
@@ -70,7 +69,6 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.NetworkUtils;
-import com.path.android.jobqueue.network.NetworkUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -302,7 +300,7 @@ public class MainPageOrderView extends LinearLayout {
 									@Override
 									public void run() {
 										parent.printerLoadingDialog
-												.setTitle(parent.getResources().getString(R.string.send_kitchen));
+												.setTitle(parent.getResources().getString(R.string.sending_to_kitchen));
 										parent.printerLoadingDialog.showTime();
 									}
 								});
@@ -397,7 +395,7 @@ public class MainPageOrderView extends LinearLayout {
 				+ TableInfoSQL.getTableById(order.getTableId())
 						.getName();
 		if(order.getIsTakeAway() == ParamConst.TAKE_AWAY){
-			orderNoStr = orderNoStr + "("+ parent.getResources().getString(R.string.take_away) + ")";
+			orderNoStr = orderNoStr + "("+ parent.getResources().getString(R.string.takeaway) + ")";
 		}
 		tv_table_name_ontop.setText(orderNoStr);
 		tv_item_count.setText("" + itemCount);
@@ -669,7 +667,7 @@ public class MainPageOrderView extends LinearLayout {
 												 @Override
 												 public void onSuccess(Boolean isStock) {
 													 if(!isStock){
-														 UIHelp.showShortToast(parent, "Out Of Stock");
+														 UIHelp.showShortToast(parent, parent.getString(R.string.out_of_stock));
 														 return;
 													 }else {
 														 App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
@@ -683,7 +681,7 @@ public class MainPageOrderView extends LinearLayout {
 												@Override
 												public void onSuccess(Boolean isStock) {
 													if(!isStock){
-														UIHelp.showShortToast(parent, "Out Of Stock");
+														UIHelp.showShortToast(parent, parent.getString(R.string.out_of_stock));
 														return;
 													}else {
 														App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
@@ -747,7 +745,7 @@ public class MainPageOrderView extends LinearLayout {
 												@Override
 												public void onSuccess(Boolean isStock) {
 													if(!isStock){
-														UIHelp.showShortToast(parent, "Out Of Stock");
+														UIHelp.showShortToast(parent, parent.getString(R.string.out_of_stock));
 														return;
 													}else {
 														App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
@@ -762,7 +760,7 @@ public class MainPageOrderView extends LinearLayout {
 												@Override
 												public void onSuccess(Boolean isStock) {
 													if(!isStock){
-														UIHelp.showShortToast(parent, "Out Of Stock");
+														UIHelp.showShortToast(parent, parent.getString(R.string.out_of_stock));
 														return;
 													}else {
 														App.instance.getSyncJob().updateRemainingStockNum(itemDetail.getItemTemplateId());
@@ -1130,7 +1128,7 @@ public class MainPageOrderView extends LinearLayout {
 					if (tag.getIsFree().intValue() == ParamConst.FREE) {
 						return;
 					} else if(!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())){
-						UIHelp.showShortToast(parent, "Cannot delete order item from diner app!");
+						UIHelp.showShortToast(parent, parent.getString(R.string.cannot_delete_order_from_diner_app));
 						return;
 					} else if(tag.getOrderSplitId() != null && tag.getOrderSplitId().intValue() != 0){
 						OrderSplit orderSplit = OrderSplitSQL.get(tag.getOrderSplitId().intValue());
@@ -1246,11 +1244,11 @@ public class MainPageOrderView extends LinearLayout {
 				case R.id.ll_transfer: {
 					OrderDetail orderDetail = (OrderDetail) view.getTag();
 					if(!IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
-						UIHelp.showShortToast(parent, "Orders from Diner App Cannot be Transferred");
+						UIHelp.showShortToast(parent, parent.getString(R.string.order_from_dinner_app_cannot_transfrerred));
 						return;
 					}
 					if(orderDetail.getGroupId() != null && orderDetail.getGroupId().intValue() > 0){
-						UIHelp.showShortToast(parent, "Please assign group to ?.");
+						UIHelp.showShortToast(parent, parent.getString(R.string.assign_items_to_group));
 						return;
 					}
 					handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_ITEM, orderDetail));

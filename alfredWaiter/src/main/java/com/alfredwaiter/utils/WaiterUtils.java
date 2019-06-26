@@ -12,7 +12,7 @@ public class WaiterUtils {
 	public static void showTransferTableDialog(BaseActivity baseActivity) {
 		baseActivity.showOneButtonCompelDialog(
 				baseActivity.getResources().getString(R.string.note),
-				baseActivity.getResources().getString(R.string.table_) + App.instance.getFromTableName()
+				baseActivity.getResources().getString(R.string.table) + App.instance.getFromTableName()
 						+ baseActivity.getResources().getString(R.string.transfer_)
 						+ App.instance.getToTableName() + "!",
 				new OnClickListener() {

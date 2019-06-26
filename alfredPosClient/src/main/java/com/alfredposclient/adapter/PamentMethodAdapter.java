@@ -100,7 +100,7 @@ public class PamentMethodAdapter extends BaseAdapter{
         }
 
         if ( p.getIsAdmin()==0) {
-            holder.admin.setText("Cashier, ");
+            holder.admin.setText(context.getString(R.string.cashier)+", ");
         } else {
             holder.admin.setText("Manager, ");
         }

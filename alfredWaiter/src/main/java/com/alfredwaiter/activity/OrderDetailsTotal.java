@@ -192,9 +192,9 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     if (groupId < 0) {
                         tv_group.setText("Group:All");
                     } else if (groupId == 0) {
-                        tv_group.setText("Group:?");
+                        tv_group.setText(getString(R.string.group)+":?");
                     } else {
-                        tv_group.setText("Group:" + groupId);
+                        tv_group.setText(getString(R.string.group)+":" + groupId);
                     }
 
                     refreshList();
@@ -379,11 +379,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             }
         }
         tv_item_count.setText(context.getResources().getString(R.string.item_count) + itemCount);
-        tv_sub_total.setText(context.getResources().getString(R.string.sub_total) + App.instance.getCurrencySymbol()
+        tv_sub_total.setText(context.getResources().getString(R.string.subtotal) +" : "+ App.instance.getCurrencySymbol()
                 + BH.formatMoney(currentOrder.getSubTotal()));
         tv_discount.setText(context.getResources().getString(R.string.discount_) + App.instance.getCurrencySymbol()
                 + BH.formatMoney(currentOrder.getDiscountAmount()));
-        tv_taxes.setText(context.getResources().getString(R.string.taxes) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTaxAmount()));
+        tv_taxes.setText(context.getResources().getString(R.string.taxes) +" : "+ App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTaxAmount()));
         tv_grand_total.setText(context.getString(R.string.grand_total) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTotal()));
     }
 
@@ -746,7 +746,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                         if (num <= newNum) {
                                             updateOrderDetail(tag, num);
                                         } else {
-                                            UIHelp.showToast(OrderDetailsTotal.this, "out of stock");
+                                            UIHelp.showToast(OrderDetailsTotal.this, OrderDetailsTotal.this.getString(R.string.out_of_stock));
                                         }
                                     } else {
                                         textView.setText(tag.getItemName() + "");

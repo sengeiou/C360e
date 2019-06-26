@@ -53,5 +53,5 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:gravity="center"
-        android:text="Back" />
+        android:text="@string/back" />
 </LinearLayout>

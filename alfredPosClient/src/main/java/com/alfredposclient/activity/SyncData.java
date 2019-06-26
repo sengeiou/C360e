@@ -208,7 +208,7 @@ public class SyncData extends BaseActivity {
 							if(warn.length() != 0){
 								warn.append(",");
 							}
-							warn.append(context.getResources().getString(R.string.printers));
+							warn.append(context.getResources().getString(R.string.printer));
 						}else{
 							boolean isPrinter = false;
 							boolean isPrinterGroup = false;

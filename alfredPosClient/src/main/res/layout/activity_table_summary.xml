@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Summary"
+            android:text="@string/summary"
             android:textColor="@color/white"
             android:textSize="25sp" />
     </RelativeLayout>
@@ -62,7 +62,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Table Number"
+                    android:text="@string/table_number"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textSize="20dp" />
@@ -71,7 +71,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Amount"
+                    android:text="@string/amount"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textSize="20dp" />
@@ -79,7 +79,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Time"
+                    android:text="@string/time"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textSize="20dp" />
@@ -87,7 +87,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Staff"
+                    android:text="@string/staff"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textSize="20dp" />
@@ -96,7 +96,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Order No."
+                    android:text="@string/order_no"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textSize="20dp" />

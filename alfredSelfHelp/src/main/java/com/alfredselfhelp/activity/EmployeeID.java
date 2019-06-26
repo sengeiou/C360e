@@ -68,7 +68,7 @@ public class EmployeeID extends BaseActivity implements Numerickeyboard.KeyBoard
         tv_id_5 = (TextView) findViewById(R.id.tv_id_5);
         tv_error = (TextView) findViewById(R.id.tv_error);
         tv_login_tips = (TextView) findViewById(R.id.tv_login_tips);
-        tv_login_tips.setText("Login");
+        tv_login_tips.setText(getString(R.string.login));
         ((TextView) findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
         initTextTypeFace();
     }
@@ -94,7 +94,7 @@ public class EmployeeID extends BaseActivity implements Numerickeyboard.KeyBoard
                 case ResultCode.SUCCESS: {
 //					if (needSync) {
                     dismissLoadingDialog();
-                    loadingDialog.setTitle("update all data");
+                    loadingDialog.setTitle(context.getString(R.string.update_all_data));
                     loadingDialog.show();
                     SyncCentre.getInstance().updateAllData(context, handler);
 //					}else{
@@ -121,10 +121,10 @@ public class EmployeeID extends BaseActivity implements Numerickeyboard.KeyBoard
                     break;
                 case ResultCode.SESSION_HAS_CHANGE:
                     dismissLoadingDialog();
-                    DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), "Session has changed !", new View.OnClickListener() {
+                    DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.session_change), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            loadingDialog.setTitle("update all data");
+                            loadingDialog.setTitle(context.getString(R.string.update_all_data));
                             loadingDialog.show();
                             SyncCentre.getInstance().updateAllData(context, handler);
                         }
@@ -158,7 +158,7 @@ public class EmployeeID extends BaseActivity implements Numerickeyboard.KeyBoard
             setPassword(keyBuf.length());
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("employee_ID", employee_ID);
-            loadingDialog.setTitle("Login...");
+            loadingDialog.setTitle(getString(R.string.login));
             loadingDialog.show();
             Store.putString(context, Store.EMPLOYEE_ID, employee_ID);
             SyncCentre.getInstance().login(context, map, handler);

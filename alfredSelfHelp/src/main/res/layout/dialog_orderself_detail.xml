@@ -82,7 +82,7 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="20dp"
                         android:layout_toLeftOf="@+id/tv_dialog_total"
-                        android:text="Total"
+                        android:text="@string/total"
                         android:textSize="24sp" />
 
                     <TextView
@@ -121,7 +121,7 @@
                 android:layout_height="120dp"
                 android:background="@drawable/btn_main_g"
                 android:gravity="center"
-                android:text="Yes"
+                android:text="@string/yes"
                 android:textColor="@color/white"
                 android:textSize="42sp"
 
@@ -137,7 +137,7 @@
                 android:layout_height="120dp"
                 android:background="@drawable/btn_main_g"
                 android:gravity="center"
-                android:text="No"
+                android:text="@string/no"
                 android:textColor="@color/white"
                 android:textSize="42sp"
 

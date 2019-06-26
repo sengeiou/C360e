@@ -91,7 +91,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="Save"
+                android:text="@string/save"
                 android:textSize="18sp" />
         </LinearLayout>
 

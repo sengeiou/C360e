@@ -80,7 +80,7 @@
                 android:id="@+id/btn_clear"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Query Balance"
+                android:text="@string/query_balance"
                 android:textSize="@dimen/text_size_m"
                 android:background="@color/white"
                 android:visibility="visible"/>
@@ -114,7 +114,7 @@
                     android:id="@+id/tv_stored_card_no"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/scanner"
+                    android:hint="@string/please_scan_stored_qrcode"
                     android:gravity="center"
                     android:background="@drawable/bill_box_bg"
                     android:textColor="@color/black"
@@ -158,7 +158,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
-                        android:hint="First name"
+                        android:hint="@string/first_name"
                         android:inputType="text"
                         android:singleLine="true" />
 
@@ -171,7 +171,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
-                        android:hint="Last name"
+                        android:hint="@string/last_name"
                         android:inputType="text"
                         android:singleLine="true" />
                 </LinearLayout>
@@ -193,7 +193,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
-                        android:hint="Phone"
+                        android:hint="@string/phone"
                         android:inputType="phone"
                         android:singleLine="true" />
 
@@ -205,7 +205,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
-                        android:hint="Email"
+                        android:hint="@string/email"
                         android:inputType="textEmailAddress"
                         android:singleLine="true" />
                 </LinearLayout>
@@ -215,7 +215,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="Address"
+                    android:hint="@string/address"
                     android:inputType="text"
                     android:singleLine="true" />
 
@@ -234,7 +234,7 @@
                         android:layout_weight="1"
                         android:singleLine="true"
                         android:background="@drawable/box_key_number_selector"
-                        android:text="Clear All" />
+                        android:text="@string/clear_all" />
 
                     <Button
                         android:id="@+id/btn_binding_ok"
@@ -307,7 +307,7 @@
                     android:layout_alignBottom="@+id/numerickeyboard"
                     android:background="@drawable/box_key_number_selector"
                     android:gravity="center"
-                    android:text="Refund"
+                    android:text="@string/_refund"
                     android:layout_marginBottom="10dp"
                     android:textColor="@color/text_color_selector"
                     android:textSize="@dimen/text_size_m_smail" />
@@ -339,7 +339,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:text="Please scan the Stored-Card or fill in user phone number"/>
+                    android:text="@string/please_scan_card_or_phone"/>
                 <!--<EditText-->
                     <!--android:id="@+id/et_query_card_no"-->
                     <!--android:layout_width="match_parent"-->
@@ -358,7 +358,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="Please enter the user phone number"
+                    android:hint="@string/please_enter_user_phone_number"
                     android:inputType="number"
                     android:singleLine="true" />
                 <Button
@@ -383,26 +383,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:text="Please scan new Stored-Card and the old Stored-Card number or user phone number"/>
+                    android:text="@string/please_scan_new_old_stored_qrcode"/>
                 <EditText
                     android:id="@+id/et_replacement_card_no"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="Please enter the old Stored-Card number"
+                    android:hint="@string/please_enter_old_stored_number"
                     android:inputType="number"
                     android:singleLine="true" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="OR"/>
+                    android:text="@string/or"
+                    android:textAllCaps="true"/>
                 <EditText
                     android:id="@+id/et_replacement_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="Please enter the user phone number"
+                    android:hint="@string/please_enter_user_phone_number"
                     android:inputType="number"
                     android:singleLine="true" />
                 <Button

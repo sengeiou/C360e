@@ -167,8 +167,8 @@ public class OrderSelfDialog extends Dialog{
 //        if (noStr != null) {
 //            no.setText(noStr);
 //        }
-        yes.setText("Yes");
-        no.setText("No");
+        yes.setText(mContext.getResources().getString(R.string.yes));
+        no.setText(mContext.getResources().getString(R.string.no));
     }
 
     /**

@@ -210,7 +210,7 @@
           android:layout_weight="1"
     android:layout_marginLeft="10dp"
     android:layout_gravity="center_vertical"
-    android:text="call"
+    android:text="@string/call"
           android:textColor="@color/white"
     android:background="@color/color_kotview"
     />

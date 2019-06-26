@@ -504,13 +504,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         TextView tv_discount = (TextView) view
                 .findViewById(R.id.tv_discount);
         textTypeFace.setTrajanProRegular(tv_discount);
-        tv_discount.setText(parent.getResources().getString(R.string.discount_));
+        tv_discount.setText(parent.getResources().getString(R.string.discount));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_discount_num));
         TextView tv_taxes = (TextView) view
                 .findViewById(R.id.tv_taxes);
         textTypeFace.setTrajanProRegular(tv_taxes);
-        tv_taxes.setText(parent.getResources().getString(R.string.taxes_));
+        tv_taxes.setText(parent.getResources().getString(R.string.taxes));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_taxes_num));
         TextView tv_cash_200 = (TextView) view
@@ -1116,7 +1116,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 View.INVISIBLE);
         switch (type) {
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
-                tv_special_settlement_title.setText("ENTERTAINMENT");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.entertainment));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.VISIBLE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
@@ -1127,13 +1127,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 rl_special_settlement_phone.setVisibility(View.VISIBLE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_VOID:
-                tv_special_settlement_title.setText("VOID");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.void_).toUpperCase());
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_REFUND:
-                tv_special_settlement_title.setText("Refund");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string._refund));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
@@ -1521,7 +1521,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
     }
 
     public void voidItem(final OrderDetail orderDetail) {
-        DialogFactory.commonTwoBtnDialog(parent, "Warring", "This operation is irreversible,\n Are you sure ?", "YES", "NO", new OnClickListener() {
+        DialogFactory.commonTwoBtnDialog(parent, "Warring", "This operation is irreversible,\n Are you sure ?", parent.getString(R.string.yes).toUpperCase(), parent.getString(R.string.no).toUpperCase(), new OnClickListener() {
             @Override
             public void onClick(View v) {
                 OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail, oldTotal);
@@ -3349,7 +3349,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 viewTag = ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE;
                 //备注
                 if (paymentMethod.getIsMsg() == 1) {
-                    tv_special_settlement_title.setText("CUSTOM");
+                    tv_special_settlement_title.setText(parent.getResources().getString(R.string.custom).toUpperCase());
                     rl_special_settlement_person.setVisibility(View.GONE);
                     rl_special_settlement_phone.setVisibility(View.GONE);
                     contentView.findViewById(R.id.ll_special_settlement).setVisibility(
@@ -3395,7 +3395,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
             viewTag = ParamConst.SETTLEMENT_CUSTOM_ALL;
             if (paymentMethod.getIsMsg() == 1) {
-                tv_special_settlement_title.setText("CUSTOM");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.custom).toUpperCase());
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(

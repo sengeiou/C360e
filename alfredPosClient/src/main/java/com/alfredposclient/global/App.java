@@ -780,10 +780,10 @@ public class App extends BaseApplication {
                 }
 
                 OrderModel orderModel = new OrderModel();
-                orderModel.setRestaurantName("Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName());
-                orderModel.setSubTotal(App.instance.getResources().getString(R.string.sub_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
+                orderModel.setRestaurantName(getString(R.string.welcome_to)+" " + CoreData.getInstance().getRestaurant().getRestaurantName());
+                orderModel.setSubTotal(App.instance.getResources().getString(R.string.subtotal) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
                 orderModel.setDiscount(App.instance.getResources().getString(R.string.discount) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString());
-                orderModel.setTaxes(App.instance.getResources().getString(R.string.taxes) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString());
+                orderModel.setTaxes(App.instance.getResources().getString(R.string.taxes) + " : " + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString());
                 orderModel.setGrandTotal(App.instance.getResources().getString(R.string.grand_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString());
                 orderModel.setGoodsModel(goodsModelTitle);
                 orderModel.setGoodsModelList(goodsModels);
@@ -992,7 +992,7 @@ public class App extends BaseApplication {
      */
     private String getSendData(Order order, List<OrderDetail> orderDetails, int type) {
 
-        String title = "Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName();
+        String title = getString(R.string.welcome_to)+" "+ CoreData.getInstance().getRestaurant().getRestaurantName();
         SecondScreenBean secondScreenDataHead = new SecondScreenBean();
         List<SecondScreenBean> secondScreenBeans = new ArrayList<SecondScreenBean>();
         for (int i = 0; i < orderDetails.size(); i++) {
@@ -1006,7 +1006,7 @@ public class App extends BaseApplication {
                             getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getRealPrice()).toString()));
         }
         List<SecondScreenTotal> secondScreenTotals = new ArrayList<SecondScreenTotal>();
-        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.sub_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.subtotal), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString()));
         secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.discount), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString()));
         secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.taxes), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString()));
         secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.grand_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString()));
@@ -3189,7 +3189,7 @@ public class App extends BaseApplication {
                 if (TextUtils.isEmpty(appOrder.getAddress())) {
                     userinfo = "";
                 } else {
-                        // appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
+                        // appOrderId=getString(R.string.online_app_no)+" : " + appOrder.getId()+"\r\n";
 
                     if (TextUtils.isEmpty(appOrder.getContact())) {
                         name = "";

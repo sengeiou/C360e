@@ -101,7 +101,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         mainPage = (BaseActivity) getActivity();
         name_w = ScreenSizeUtil.dip2px(mainPage, 85);
         loadingDialog = new LoadingDialog(mainPage);
-        loadingDialog.setTitle("loading");
+        loadingDialog.setTitle(context.getString(R.string.loading));
         Log.e(TAG, "onCreateView");
         final View view = inflater.inflate(R.layout.table_layout, container, false);
         lv_place = (ListView)view.findViewById(R.id.lv_place);
