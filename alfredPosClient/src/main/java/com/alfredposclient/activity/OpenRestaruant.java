@@ -1142,7 +1142,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						}
 					}
 				}
-				handler.sendMessage(handler.obtainMessage(canClose, actual));
+				if(canClose == CAN_CLOSE) {
+					handler.sendMessage(handler.obtainMessage(canClose, actual));
+				}else{
+					handler.sendMessage(handler.obtainMessage(canClose, v));
+				}
 			}
 		}).start();
 	}
