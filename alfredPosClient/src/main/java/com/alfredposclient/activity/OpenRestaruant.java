@@ -809,10 +809,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	}
 
 	/* close session */
-	private void close(View v, final String actual) {
-		if(!ButtonClickTimer.canClick(v))
-			return;
-
+	private void close(final String actual) {
 		if(!NetworkUtils.isNetworkAvailable(context)){
 
 			UIHelp.showShortToast(context, context.getResources().getString(R.string.network_connected));
@@ -972,7 +969,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		}).start();
 
 	}
-
+	String actual = "0.00";
 	private void closeAction(final View v) {
 		ObjectAnimator animator1 = null;
 		ObjectAnimator animator2 = null;
@@ -1037,90 +1034,117 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			public void onAnimationEnd(Animator animation) {
 				super.onAnimationEnd(animation);
 				rl_closerestbg.setVisibility(View.VISIBLE);
+				if(!ButtonClickTimer.canClick(v))
+					return;
 
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						                 
-						SessionStatus sessionStatus = Store.getObject(
-								context, Store.SESSION_STATUS, SessionStatus.class);
-						if(sessionStatus == null){
-							dismissPrinterLoadingDialog();
-							return;
-						}
-						int canClose = CAN_CLOSE;
-						if(App.instance.getCahierPrinter() == null){
-							handler.sendMessage(handler.obtainMessage(PRINTER_UNLINK, v));
-							return;
-						}
-						if (App.instance.isRevenueKiosk()) {
-							long nowTime = System.currentTimeMillis();
-							List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate(), nowTime);
-							if(!orderList.isEmpty()){
-								for (final Order order : orderList) {
-									List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
-											.getOrderDetails(order.getId());
-									if (!orderDetailsUnIncludeVoid.isEmpty()){
-										canClose = CAN_NOT_CLOSE;
-										break;
-									} else {
-//										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
-//										OrderSQL.deleteOrder(order);
-										GeneralSQL.deleteOrderAndInforByOrderId(order.getId());
-									}
+				if(!isShowingActualDialog) {
+					isShowingActualDialog = true;
+					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									actual = "0.00";
+									isShowingActualDialog = false;
+									closeSessionThread();
 								}
-							}
-							if(canClose == CAN_CLOSE) {
-								List<SubPosBean> subPosBeans = SubPosBeanSQL.getAllOpenSubPosBean();
-								if (subPosBeans != null && subPosBeans.size() > 0){
-									canClose = CAN_NOT_CLOSE_SUB;
+							},
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									EditText editText = (EditText) view;
+									actual = editText.getText().toString();
+									isShowingActualDialog = false;
+									closeSessionThread();
 								}
-							}
-						} else {
-							List<TableInfo> tables = TableInfoSQL.getAllUsedTables();
-							for (TableInfo table : tables) {
-								Order order = OrderSQL
-										.getLastOrderatTabel(table.getPosId().intValue());
-								if (order != null
-										&& order.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
-									List<OrderDetail> orderDetailsIncludeVoid = OrderDetailSQL
-											.getAllOrderDetailsByOrder(order);
-									if (orderDetailsIncludeVoid.isEmpty()) {
-										OrderSQL.deleteOrder(order);
-										OrderBillSQL
-												.deleteOrderBillByOrder(order);
-										table.setStatus(ParamConst.TABLE_STATUS_IDLE);
-//										TablesSQL.updateTables(table);
-										TableInfoSQL.updateTables(table);
-									} else {
-										List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
-												.getOrderDetails(order.getId());
-										if (orderDetailsUnIncludeVoid.isEmpty()) {
-											order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
-											OrderSQL.update(order);
-											table.setStatus(ParamConst.TABLE_STATUS_IDLE);
-//											TablesSQL.updateTables(table);
-											TableInfoSQL.updateTables(table);
-										} else {
-											canClose = CAN_NOT_CLOSE;
-										}
-									}
-								} else {
-									table.setStatus(ParamConst.TABLE_STATUS_IDLE);
-//									TablesSQL.updateTables(table);
-									TableInfoSQL.updateTables(table);
-								}
-							}
-						}
-							handler.sendMessage(handler.obtainMessage(canClose, v));
-					}
-				}).start();
+							});
+				}
 			}
 		});
 		set.playTogether(animator1, animator2);
 		set.start();
 		
+	}
+
+
+	private void closeSessionThread(){
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				SessionStatus sessionStatus = Store.getObject(
+						context, Store.SESSION_STATUS, SessionStatus.class);
+				if(sessionStatus == null){
+					dismissPrinterLoadingDialog();
+					return;
+				}
+				int canClose = CAN_CLOSE;
+				if(App.instance.getCahierPrinter() == null){
+					handler.sendMessage(handler.obtainMessage(PRINTER_UNLINK, v));
+					return;
+				}
+				if (App.instance.isRevenueKiosk()) {
+					long nowTime = System.currentTimeMillis();
+					List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate(), nowTime);
+					if(!orderList.isEmpty()){
+						for (final Order order : orderList) {
+							List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+									.getOrderDetails(order.getId());
+							if (!orderDetailsUnIncludeVoid.isEmpty()){
+								canClose = CAN_NOT_CLOSE;
+								break;
+							} else {
+//										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
+//										OrderSQL.deleteOrder(order);
+								GeneralSQL.deleteOrderAndInforByOrderId(order.getId());
+							}
+						}
+					}
+					if(canClose == CAN_CLOSE) {
+						List<SubPosBean> subPosBeans = SubPosBeanSQL.getAllOpenSubPosBean();
+						if (subPosBeans != null && subPosBeans.size() > 0){
+							canClose = CAN_NOT_CLOSE_SUB;
+						}
+					}
+				} else {
+					List<TableInfo> tables = TableInfoSQL.getAllUsedTables();
+					for (TableInfo table : tables) {
+						Order order = OrderSQL
+								.getLastOrderatTabel(table.getPosId().intValue());
+						if (order != null
+								&& order.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
+							List<OrderDetail> orderDetailsIncludeVoid = OrderDetailSQL
+									.getAllOrderDetailsByOrder(order);
+							if (orderDetailsIncludeVoid.isEmpty()) {
+								OrderSQL.deleteOrder(order);
+								OrderBillSQL
+										.deleteOrderBillByOrder(order);
+								table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//										TablesSQL.updateTables(table);
+								TableInfoSQL.updateTables(table);
+							} else {
+								List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+										.getOrderDetails(order.getId());
+								if (orderDetailsUnIncludeVoid.isEmpty()) {
+									order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+									OrderSQL.update(order);
+									table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//											TablesSQL.updateTables(table);
+									TableInfoSQL.updateTables(table);
+								} else {
+									canClose = CAN_NOT_CLOSE;
+								}
+							}
+						} else {
+							table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//									TablesSQL.updateTables(table);
+							TableInfoSQL.updateTables(table);
+						}
+					}
+				}
+				handler.sendMessage(handler.obtainMessage(canClose, actual));
+			}
+		}).start();
 	}
 
 	private void sendXPrintData(Map<String, Object> xReport,long businessDate,
@@ -1834,27 +1858,29 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
 			case CAN_CLOSE: {
-				if(!isShowingActualDialog) {
-					isShowingActualDialog = true;
-					final View msgView = (View) msg.obj;
-					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
-							new OnClickListener() {
-								@Override
-								public void onClick(View view) {
-									close(msgView, "0.00");
-									isShowingActualDialog = false;
-								}
-							},
-							new OnClickListener() {
-								@Override
-								public void onClick(View view) {
-									EditText editText = (EditText) view;
-									String actual = editText.getText().toString();
-									close(msgView, actual);
-									isShowingActualDialog = false;
-								}
-							});
-				}
+				String actual = (String) msg.obj;
+				close(actual);
+//				if(!isShowingActualDialog) {
+//					isShowingActualDialog = true;
+//					final View msgView = (View) msg.obj;
+//					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+//							new OnClickListener() {
+//								@Override
+//								public void onClick(View view) {
+//									close(msgView, "0.00");
+//									isShowingActualDialog = false;
+//								}
+//							},
+//							new OnClickListener() {
+//								@Override
+//								public void onClick(View view) {
+//									EditText editText = (EditText) view;
+//									String actual = editText.getText().toString();
+//									close(msgView, actual);
+//									isShowingActualDialog = false;
+//								}
+//							});
+//				}
 			}
 				break;
 			case CAN_NOT_CLOSE:{
