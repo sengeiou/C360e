@@ -663,6 +663,17 @@ public class OrderSplitSQL {
 		}
 	}
 
+	public static void deleteBySpliteIdList(int orderId, String spliteId) {
+		String sql = "delete from " + TableNames.OrderSplit + " where orderId = ? and id not in ("
+				+ spliteId
+				+ ")";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] { orderId });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void deleteOrderSplitByOrderAndGroupId(int orderId, int groupId){
 		String sql = "delete from " + TableNames.OrderSplit + " where orderId = ? and groupId = ?";
 		try {

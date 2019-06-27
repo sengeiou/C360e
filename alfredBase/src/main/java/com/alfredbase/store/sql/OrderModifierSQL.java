@@ -904,6 +904,19 @@ public class OrderModifierSQL {
 			e.printStackTrace();
 		}
 	}
+	public static void deleteOrderModifierByOrderOutsideOrderDetail(Order order) {
+		String sql = "delete from " + TableNames.OrderModifier
+				+ " where orderId = ? "
+				+ "and orderDetailId not in "
+				+ "(select id from "
+				+ TableNames.OrderDetail
+				+ " where orderId = ? )";
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] { order.getId(), order.getId() });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void deleteOrderModifierByOrderDetail(OrderDetail orderDetail) {
 		String sql = "delete from " + TableNames.OrderModifier
 				+ " where orderDetailId = ?";

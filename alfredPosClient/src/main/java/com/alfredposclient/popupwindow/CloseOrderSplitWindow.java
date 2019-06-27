@@ -2468,11 +2468,11 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             break;
             case ParamConst.SETTLEMENT_CUSTOM_ALL: {
                 PaymentSettlement paymentSettlement = null;
-//                if (paymentMethod.getIsTax() == 0) {
-//                    //不计税
-//                    deleteVoidOrEntTax();
-//
-//                }
+                if (paymentMethod.getIsTax() == 0) {
+                    //不计税
+                    deleteVoidOrEntTax();
+
+                }
                 paymentSettlement = ObjectFactory.getInstance()
                         .getPaymentSettlement(payment, paymentTypeId,
                                 BH.getBD(orderSplit.getTotal()).toString());

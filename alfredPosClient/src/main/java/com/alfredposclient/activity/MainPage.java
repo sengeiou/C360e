@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -15,8 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -559,9 +556,24 @@ public class MainPage extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
+        List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(oldOrder.getId().intValue());
+        StringBuffer orderSplitIds = new StringBuffer();
+        if(orderSplits != null && orderSplits.size() > 0) {
+            for (int i = 0; i < orderSplits.size(); i++) {
+                orderSplitIds.append(orderSplits.get(i).getId());
+                if (i < orderSplits.size() - 1) {
+                    orderSplitIds.append(',');
+                }
+            }
+        }
         Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
-        List<OrderDetail> orderDetails = OrderDetailSQL
-                .getUnFreeOrderDetails(oldOrder);
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        if(orderSplitIds.length() > 0){
+            orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(oldOrder,orderSplitIds.toString()));
+        }else{
+            orderDetails.addAll(OrderDetailSQL
+                    .getUnFreeOrderDetails(oldOrder));
+        }
         KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
         if (!orderDetails.isEmpty()) {
             for (OrderDetail orderDetail : orderDetails) {
@@ -588,9 +600,18 @@ public class MainPage extends BaseActivity {
                 }
             }
         }
-        OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-        OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-        OrderSQL.deleteOrder(oldOrder);
+
+        if(orderSplitIds.length() > 0){
+            OrderDetailSQL.deleteOrderDetailByOrderOutsideOrderSplit(oldOrder.getId(), orderSplitIds.toString());
+            OrderModifierSQL.deleteOrderModifierByOrderOutsideOrderDetail(oldOrder);
+            OrderSplitSQL.deleteBySpliteIdList(oldOrder.getId(), orderSplitIds.toString());
+            OrderSQL.updateOrder(oldOrder);
+            OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, oldOrder.getId());
+        }else {
+            OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
+            OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
+            OrderSQL.deleteOrder(oldOrder);
+        }
         initOrder(currentTable);
 
     }
