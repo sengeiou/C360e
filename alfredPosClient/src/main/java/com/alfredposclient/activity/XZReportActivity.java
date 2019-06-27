@@ -435,7 +435,13 @@ public class XZReportActivity extends BaseActivity {
             ll_sales_total.addView(rounding);
 
             // Total/sales
-            double grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue();
+            double grossTotal;
+            if(reportDaySales.getPromotionTotal()!=null) {
+                grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() - Double.parseDouble(reportDaySales.getPromotionTotal());
+            }else {
+                grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() ;
+            }
+         //   double grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue();
             ReportDaySalesItem totalSales = new ReportDaySalesItem(context);
             totalSales.setData("Gross Total Sales", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(grossTotal+"").toString(), true);

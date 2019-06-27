@@ -644,7 +644,9 @@ public class ObjectFactory {
             orderDetail.setItemPrice(itemDetail.getPrice());
             orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
             orderDetail.setFromOrderDetailId(0);
-            orderDetail.setIsFree(ParamConst.NOT_FREE);
+            orderDetail.setIsFree(ParamConst.FREE);
+            orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
+            orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
             orderDetail.setIsItemDiscount(itemDetail.getIsDiscount());
             orderDetail.setAppOrderDetailId(0);
             if (itemDetail.getItemType() == 2) {

@@ -148,7 +148,7 @@ public class ParamConst {
 	public static final int FREE = 1;
 
 
-	//  1 堂吃, 2 打包, 3 外卖
+	//  0 堂吃, 1 打包, 2 外卖
 	public static final int DINE_IN = 0;
 	public static final int TAKE_AWAY = 1;
 	public static final int APP_DELIVERY = 2;

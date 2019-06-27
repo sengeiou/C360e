@@ -1638,6 +1638,11 @@ public class DataHelper {
 
         private void onUpgradeForOldVersion30(SQLiteDatabase db){
 
+            db.execSQL("CREATE TABLE "
+                    + TableNames.ReportPromotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, revenueId INTEGER, revenueName TEXT, businessDate LONG, amountQty INTEGER, amountPromotion TEXT,promotionName TEXT,promotionId INTEGER,daySalesId INTEGER)");
+
+
         }
     }
 }

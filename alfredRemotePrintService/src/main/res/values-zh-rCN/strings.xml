@@ -22,7 +22,7 @@
     <string name="total_">总计 : </string>
     <string name="rounding_print">抹零 : </string>
     <string name="promotion_print">促销 : </string>
-    <string name="grand_total">应支付 : </string>
+    <string name="grand_total">应支付</string>
     <string name="cash_">现金</string>
     <string name="changes">找零</string>
     <string name="mastercard">MasterCard</string>

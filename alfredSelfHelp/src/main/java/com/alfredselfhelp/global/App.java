@@ -29,6 +29,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
@@ -44,6 +45,7 @@ import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.PaymentMethodSQL;
+import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.RxBus;
@@ -659,11 +661,12 @@ public class App extends BaseApplication {
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
-
-            if(order.getPromotion()!=null){
-                total = BH.add(BH.getBD(order.getTotal()),
-                        BH.getBD(order.getPromotion()), true);
-            }
+//
+//            if(order.getPromotion()!=null){
+//                total = BH.add(BH.getBD(order.getTotal()),
+//                        BH.getBD(order.getPromotion()), true);
+//            }
+            List<PromotionData>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
             roundingMap.put("Total", total.toString());
             roundingMap.put("Rounding", rounding);
@@ -676,10 +679,11 @@ public class App extends BaseApplication {
             String tax = gson.toJson(taxes);
             String payment = gson.toJson(printReceiptInfos);
             String roundStr = gson.toJson(roundingMap);
+            String proStr=gson.toJson(promotionData);
             mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                     details, mods, tax, payment, false, false, roundStr,
                     null, getLocalRestaurantConfig().getCurrencySymbol(),
-                    openDrawer, BH.IsDouble());
+                    openDrawer, BH.IsDouble(),proStr);
 
         } catch (RemoteException e) {
             e.printStackTrace();

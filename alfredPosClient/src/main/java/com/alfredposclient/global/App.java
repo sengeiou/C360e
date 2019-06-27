@@ -64,6 +64,7 @@ import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
+import com.alfredbase.javabean.ReportPromotion;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -1900,11 +1901,11 @@ public class App extends BaseApplication {
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
-            if(order.getPromotion()!=null){
-                total = BH.add(BH.formatMoney(total),
-                        BH.getBD(order.getPromotion()), true)
-                        .toString();
-            }
+//            if(order.getPromotion()!=null){
+//                total = BH.add(BH.formatMoney(total),
+//                        BH.getBD(order.getPromotion()), true)
+//                        .toString();
+//            }
           List<PromotionData>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
             roundingMap.put("Total", BH.formatMoney(total).toEngineeringString());
             roundingMap.put("Rounding", BH.formatMoney(rounding).toString());
@@ -2036,11 +2037,11 @@ public class App extends BaseApplication {
                     rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                             .toString();
                 }
-                if(order.getPromotion()!=null){
-                    total = BH.add(BH.formatMoney(total),
-                            BH.getBD(order.getPromotion()), true)
-                            .toString();
-                }
+//                if(order.getPromotion()!=null){
+//                    total = BH.add(BH.formatMoney(total),
+//                            BH.getBD(order.getPromotion()), true)
+//                            .toString();
+//                }
                 ArrayList<PromotionData> promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
                 roundingMap.put("Total", total);
@@ -2407,7 +2408,7 @@ public class App extends BaseApplication {
 
 
     public void remotePrintPromotionReport(String xzType, PrinterDevice printer,
-                                        PrinterTitle title, List<PromotionData> itemPromotion, List<PromotionData> orderPromotion, List<Promotion> promotions) {
+                                           PrinterTitle title, List<ReportPromotion> reportPromotion) {
         if (mRemoteService == null) {
             // Toast.makeText(this, "Printer service is not started yet",
             // 1000).show();
@@ -2418,11 +2419,11 @@ public class App extends BaseApplication {
             Gson gson = new Gson();
             String prtStr = gson.toJson(printer);
             String prtTitle = gson.toJson(title);
-            String itemPromotionStr = gson.toJson(itemPromotion);
-            String orderPromotionStr = gson.toJson(orderPromotion);
-            String promotionsStr = gson.toJson(promotions);
+            String itemPromotionStr = "";
+            String reportPromotionStr = gson.toJson(reportPromotion);
+
             mRemoteService.printPromotionAnalysisReport(xzType, prtStr, prtTitle,
-                 orderPromotionStr,itemPromotionStr,promotionsStr);
+                    reportPromotionStr);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

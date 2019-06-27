@@ -7,6 +7,7 @@ import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
+import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.Params;
@@ -709,12 +710,12 @@ public class BillPrint extends PrintJob {
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol,String promotion) {
-        AddBillSummary(subtotal, discount, taxes, total, rounding, currencySymbol, 0,promotion);
+                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol,List<PromotionData> promotionDatas) {
+        AddBillSummary(subtotal, discount, taxes, total, rounding, currencySymbol, 0,promotionDatas);
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol, int splitByPax,String promotion) {
+                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol, int splitByPax,List<PromotionData> promotionDatas) {
         if ("¥".equals(currencySymbol)) {
             currencySymbol = "￥";
         }
@@ -774,6 +775,24 @@ public class BillPrint extends PrintJob {
 //			}
         }
 
+        // promotion
+
+        if(promotionDatas!=null&&promotionDatas.size()>0){
+
+            for (int i = 0; i <promotionDatas.size() ; i++) {
+                PromotionData promotionData=promotionDatas.get(i);
+                PrintData promotionPrint = new PrintData();
+                String promotionStr = StringUtil.padLeft(BH.getBD(promotionData.getPromotionAmount()).toString(),
+                        this.FIXED_COL4_TOTAL);
+                String promotiontTotal = promotionData.getPromotionName()+" :" + currencySymbol + promotionStr + reNext;
+                promotionPrint.setDataFormat(PrintData.FORMAT_TXT);
+                promotionPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+                promotionPrint.setText(promotiontTotal);
+                this.data.add(promotionPrint);
+
+            }
+
+        }
         // total
         Map<String, String> roundMap = new HashMap<String, String>();
         Gson gson = new Gson();
@@ -789,17 +808,17 @@ public class BillPrint extends PrintJob {
         totalPrint.setMarginTop(10);
         totalPrint.setText(totaling);
         this.data.add(totalPrint);
-        // promotion
-        if(!TextUtils.isEmpty(promotion)) {
-            PrintData promotionPrint = new PrintData();
-            String promotionStr = StringUtil.padLeft(BH.getBD(promotion).toString(),
-                    this.FIXED_COL4_TOTAL);
-            String promotiontTotal = PrintService.instance.getResources().getString(R.string.promotion_print) + currencySymbol + promotionStr + reNext;
-            promotionPrint.setDataFormat(PrintData.FORMAT_TXT);
-            promotionPrint.setTextAlign(PrintData.ALIGN_RIGHT);
-            promotionPrint.setText(promotiontTotal);
-            this.data.add(promotionPrint);
-        }
+
+//        if(!TextUtils.isEmpty(promotion)) {
+//            PrintData promotionPrint = new PrintData();
+//            String promotionStr = StringUtil.padLeft(BH.getBD(promotion).toString(),
+//                    this.FIXED_COL4_TOTAL);
+//            String promotiontTotal = PrintService.instance.getResources().getString(R.string.promotion_print) + currencySymbol + promotionStr + reNext;
+//            promotionPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            promotionPrint.setTextAlign(PrintData.ALIGN_RIGHT);
+//            promotionPrint.setText(promotiontTotal);
+//            this.data.add(promotionPrint);
+//        }
         // rounding
         PrintData roundingPrint = new PrintData();
         String roundingStr = StringUtil.padLeft(BH.getBD(roundMap.get("Rounding")).toString(),
@@ -814,7 +833,7 @@ public class BillPrint extends PrintJob {
         //grand total
         PrintData gtPrint = new PrintData();
         String gtotalStr = StringUtil.padLeft(total, this.FIXED_COL4_TOTAL);
-        String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + " : " + currencySymbol + gtotalStr + reNext;
+        String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + " :" + currencySymbol + gtotalStr + reNext;
         if (splitByPax > 0) {
             padTotal = "Split By Pax " + PrintService.instance.getResources().getString(R.string.grand_total) + "/" + splitByPax + " : " + currencySymbol + gtotalStr + reNext;
         }

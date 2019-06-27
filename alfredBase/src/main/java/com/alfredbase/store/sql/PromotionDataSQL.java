@@ -242,12 +242,12 @@ public class PromotionDataSQL {
           {
         ArrayList<PromotionData> result = new ArrayList<PromotionData>();
         String sql = "select * from " + TableNames.PromotionData
-                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+                + " where businessDate=? and createTime > ? and updateTime < ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,
-                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime),String.valueOf(type)});
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime)});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -285,16 +285,16 @@ public class PromotionDataSQL {
         return result;
     }
 
-    public static ArrayList<PromotionData> getItemPromotionData(long businessDate,SessionStatus sessionStatus, long nowTime,int type)
+    public static ArrayList<PromotionData> getItemPromotionData(long businessDate,SessionStatus sessionStatus, long nowTime)
     {
         ArrayList<PromotionData> result = new ArrayList<PromotionData>();
         String sql = "select * from " + TableNames.PromotionData
-                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+                + " where businessDate=? and createTime > ? and updateTime < ? ";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,
-                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime),String.valueOf(type)});
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime)});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;

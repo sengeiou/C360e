@@ -564,10 +564,20 @@ public class OrderHelper {
 //				OrderDetail freeOrderDetail = ObjectFactory.getInstance()
 //						.getItemFreeOrderDetailMin(order, orderDetailMin,true);
 //				OrderDetailSQL.updateOrderDetail(freeOrderDetail);
-				total = BH.sub(BH.getBD(total),promotionPrice
-						, false);
+//				if (promotion.getFreeNum() > 0) {
+//					ItemDetail itemDetailFree = CoreData.getInstance()
+//							.getItemDetailByTemplateId(promotion.getFreeItemId());
+//					OrderDetail proOrderDetail = ObjectFactory.getInstance()
+//							.getOrderDetailAndPromotion(order, itemDetailFree
+//									, 0, promotion);
+//					proOrderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+//					OrderDetailSQL.updateOrderDetail(proOrderDetail);
+				promotionPrice=BH.getBD(orderDetailMin.getItemPrice());
+					total = BH.sub(BH.getBD(total), promotionPrice
+							, false);
 
-				addPromotion(order,promotion,null,promotionPrice.toString());
+					addPromotion(order, promotion, null, promotionPrice.toString());
+
 			}else {
 
 //				OrderDetail freeOrderDetail = ObjectFactory.getInstance()
@@ -665,7 +675,7 @@ public class OrderHelper {
 
 					BigDecimal discount = BH.divThirdFormat(BH.getBD(promotion.getDiscountPercentage()), BH.getBD(100), false);
 
-					promotionPrice = BH.mul(BH.getBD(total),
+					promotionPrice = BH.mul(BH.getBD(promotionTotal),
 							BH.getBD(discount),
 							false);
 
@@ -687,7 +697,7 @@ public class OrderHelper {
 
 					BigDecimal discount = BH.divThirdFormat(BH.getBD(promotion.getDiscountPercentage()), BH.getBD(100), false);
 
-					promotionPrice = BH.mul(BH.getBD(total),
+					promotionPrice = BH.mul(BH.getBD(promotionTotal),
 							BH.getBD(discount),
 							false);
 
@@ -1114,7 +1124,7 @@ public class OrderHelper {
 							promotionData.setFreeNum(promotion.getFreeNum());
 							promotionData.setDiscountPrice(promotion.getDiscountPrice());
 							promotionData.setDiscountPercentage(promotion.getDiscountPercentage());
-							promotionData.setPromotionAmount(promotion.getDiscountPrice());
+							//promotionData.setPromotionAmount(promotion.getDiscountPrice());
 							PromotionDataSQL.addPromotionData(promotionData);
 						} else {
 							if(freeOrderDetail!=null){
