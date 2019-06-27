@@ -1045,7 +1045,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 								public void onClick(View view) {
 									actual = "0.00";
 									isShowingActualDialog = false;
-									closeSessionThread();
+									closeSessionThread(v);
 								}
 							},
 							new OnClickListener() {
@@ -1054,7 +1054,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 									EditText editText = (EditText) view;
 									actual = editText.getText().toString();
 									isShowingActualDialog = false;
-									closeSessionThread();
+									closeSessionThread(v);
 								}
 							});
 				}
@@ -1066,7 +1066,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	}
 
 
-	private void closeSessionThread(){
+	private void closeSessionThread(final View v){
 		new Thread(new Runnable() {
 
 			@Override
