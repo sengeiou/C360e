@@ -27,20 +27,26 @@ import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.javabean.model.PrintOrderItem;
+import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
@@ -50,6 +56,7 @@ import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
 import com.alfredwaiter.R;
@@ -270,7 +277,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 case ResultCode.WAITER_OUT_OF_STOCK:
                     loadingDialog.dismiss();
                     String stockNum = (String) msg.obj;
-                    UIHelp.showToast(OrderDetailsTotal.this,stockNum);
+                    UIHelp.showToast(OrderDetailsTotal.this, stockNum);
 
                     break;
                 case VIEW_EVENT_PRINT_BILL:
@@ -499,13 +506,20 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                         new OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                Map<Integer, PrinterDevice> printerDeviceMap = App.instance.getPrinterDevices();
+                                PrinterDevice pd = new PrinterDevice();
+                                pd.setPrinterName("Sunmi");
+                                pd.setName("Sunmi");
+                                pd.setIP("localhost");
+                                printerDeviceMap.put(2, pd);
+
                                 DialogFactory.showSelectPrinterDialog(context, new DialogFactory.DialogCallBack() {
                                     @Override
                                     public void callBack(PrinterDevice printerDevice) {
                                         printBill(printerDevice.getDevice_id());
                                         Store.saveObject(context, Store.WAITER_PRINTER_DEVICE, printerDevice);
                                     }
-                                }, App.instance.getPrinterDevices());
+                                }, printerDeviceMap);
                             }
                         },
                         new OnClickListener() {
@@ -537,7 +551,41 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         if (printerDeviceId > 0) {
             parameters.put("deviceId", printerDeviceId);
         }
-        SyncCentre.getInstance().printBill(context, parameters, handler);
+//        SyncCentre.getInstance().printBill(context, parameters, handler);
+
+        //test print
+//        String tableName = TableInfoSQL.getTableById(
+//                currentOrder.getTableId()).getName();
+
+        PrinterDevice printerDevice = Store.getObject(context, Store.WAITER_PRINTER_DEVICE, PrinterDevice.class);
+//        PrinterTitle title = ObjectFactory.getInstance()
+//                .getPrinterTitle(
+//                        App.instance.getRevenueCenter(),
+//                        currentOrder,
+//                        App.instance.getUser().getFirstName()
+//                                + App.instance.getUser()
+//                                .getLastName(),
+//                        tableName, 1);
+
+        ArrayList<PrintOrderItem> orderItems = ObjectFactory
+                .getInstance().getItemList(
+                        OrderDetailSQL.getOrderDetails(currentOrder
+                                .getId()));
+
+        ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
+                        .getId()));
+
+//        List<Map<String, String>> taxMap = OrderDetailTaxSQL
+//                .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
+
+
+//        App.instance.remoteBillPrint(printerDevice, title, currentOrder, orderItems, orderModifiers,
+//                taxMap, null , null, "123");
+
+        KotSummary kotsummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
+
+        App.instance.testPrint(printerDevice, kotsummary, orderItems, orderModifiers);
     }
 
     @Override
@@ -740,21 +788,21 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                                     R.color.white));
                                     final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
                                     final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
-                                    int  detailNum=OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(),tag.getItemId());
-                                if(remainingStock!=null) {
-                                    if (remainingStock.getQty() >= detailNum) {
-                                        int newNum = remainingStock.getQty() - detailNum + tag.getItemNum();
-                                        if (num <= newNum) {
-                                            updateOrderDetail(tag, num);
+                                    int detailNum = OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(), tag.getItemId());
+                                    if (remainingStock != null) {
+                                        if (remainingStock.getQty() >= detailNum) {
+                                            int newNum = remainingStock.getQty() - detailNum + tag.getItemNum();
+                                            if (num <= newNum) {
+                                                updateOrderDetail(tag, num);
+                                            } else {
+                                                UIHelp.showToast(OrderDetailsTotal.this, "out of stock");
+                                            }
                                         } else {
-                                            UIHelp.showToast(OrderDetailsTotal.this, "out of stock");
+                                            textView.setText(tag.getItemName() + "");
                                         }
                                     } else {
-                                        textView.setText(tag.getItemName() + "");
+                                        updateOrderDetail(tag, num);
                                     }
-                                }else {
-                                    updateOrderDetail(tag, num);
-                                }
 
                                     if (num == 0) {
                                         updateOrderDetail(tag, num);

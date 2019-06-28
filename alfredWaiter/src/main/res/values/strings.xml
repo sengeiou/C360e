@@ -114,4 +114,11 @@
     <string name="allow_delivery">Allow Delivery?</string>
     <string name="new_open_item" tools:ignore="MissingTranslation">New Open Item</string>
     <string name="edit" tools:ignore="ExtraTranslation">edit</string>
+    <string name="print_down">Print Service Down</string>
+    <string name="reconnect_print">Are you sure to reconnect Alfred Print Service?</string>
+    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="select_printer">Select Printer Information</string>
+    <string name="printer_thermal_type">80mm Thermal Printer</string>
+    <string name="printer_dotmatrix_type">80mm Dot Matrix Printer</string>
+    <string name="printer_ipaddr">Printer IP Address</string>
 </resources>

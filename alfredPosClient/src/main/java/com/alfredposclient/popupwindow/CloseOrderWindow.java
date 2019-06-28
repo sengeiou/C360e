@@ -78,6 +78,7 @@ import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.OrderDetailAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
@@ -662,7 +663,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BH.getBD(sumPaidamount), true);
             }
         }
-        ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
+        ((TextView) contentView.findViewById(R.id.tv_residue_total_num))
+                .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
 
 
 //		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
@@ -1509,8 +1511,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         showPaymentReminder();
                         return;
                     }
-                    String payHalalOrderId = order.getRestId()+""+order.getRevenueId()+""+orderBill.getBillNo();
-                    String url = String.format("https://payhalal.me/qr/%s/%s/%s","1001",BH.getBD(order.getTotal()).toString(),payHalalOrderId);
+                    String payHalalOrderId = order.getRestId() + "" + order.getRevenueId() + "" + orderBill.getBillNo();
+                    String url = String.format("https://payhalal.me/qr/%s/%s/%s", "1001", BH.getBD(order.getTotal()).toString(), payHalalOrderId);
                     DialogFactory.commonTwoBtnQRDialog(parent, url, "Back", "Paid", null, new OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1521,7 +1523,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                     });
                 }
-                    break;
+                break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
                         showPaymentReminder();
@@ -2600,7 +2602,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     newPaymentMapList.add(paymentMap);
                 }
             }
-                break;
+            break;
             default:
                 break;
         }
@@ -2955,10 +2957,34 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             verifyDialog.show("PAMENTMETHOD", null);
 
         } else {
-
-
-            initPayment();
+            if ("IPAY88".equalsIgnoreCase(paym.getNameOt())) {
+                //TODO: request generated QR Code to server
+                showDialogIpay88();
+            } else {
+                initPayment();
+            }
         }
+    }
+
+    private void showDialogIpay88() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("amount", order.getTotal());
+        parameters.put("backendURL", 1);
+        parameters.put("barcodeNo", 1);
+        parameters.put("currency", "MYR");
+//        parameters.put("merchantCode", 1);
+        parameters.put("paymentId", paymentMethod.getPaymentTypeId());
+        parameters.put("prodDesc", 1);
+        parameters.put("refNo", 1);
+        parameters.put("remark", 1);
+        parameters.put("signature", 1);
+        parameters.put("signatureType", 1);
+        parameters.put("terminalID", 1);
+        parameters.put("userContact", 1);
+        parameters.put("userEmail", 1);
+        parameters.put("userName", 1);
+        parameters.put("lang", 1);
+        SyncCentre.getInstance().requestIpay88Payment(parent, parameters, handler);
     }
 
     private void initPayment() {
