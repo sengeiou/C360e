@@ -14,7 +14,7 @@
         android:gravity="center_vertical"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:text="Item Name"
+        android:text="@string/item_name"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_m"/>
     
@@ -27,7 +27,7 @@
         android:gravity="center_vertical"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:text="Item Price"
+        android:text="@string/item_price"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_m"/>
     

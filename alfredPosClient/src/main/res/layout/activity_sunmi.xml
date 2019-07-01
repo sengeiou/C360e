@@ -32,7 +32,7 @@
         android:textSize="20sp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:text="Vice Screen Show Style"/>
+        android:text="@string/vice_scree_show_style"/>
 
     <RadioGroup
         android:id="@+id/sunmi_rg"

@@ -19,7 +19,7 @@
             android:id="@+id/set_image"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Picture"
+            android:text="@string/picture"
             android:checked="false"
             android:textColor="@color/black"
             android:button="@drawable/radiobutton_selector"
@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:checked="true"
             android:button="@drawable/radiobutton_selector"
-            android:text="Text"
+            android:text="@string/text"
             android:textColor="@color/black"
             android:gravity="center_vertical"
             android:layout_marginLeft="40dp"
@@ -102,7 +102,7 @@
                     android:id="@+id/set_big"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="Big"
+                    android:text="@string/big"
                     android:checked="true"
                     android:textColor="@color/black"
                     android:button="@drawable/radiobutton_selector"
@@ -142,14 +142,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Ok" />
+            android:text="@string/ok" />
 
         <Button
             android:id="@+id/bt_cancle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="@string/cancel" />
     </LinearLayout>
 
 </LinearLayout>

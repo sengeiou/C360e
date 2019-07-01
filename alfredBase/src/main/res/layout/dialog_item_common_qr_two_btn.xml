@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_marginTop="20dp"
             android:layout_height="30dp"
-            android:hint="Reference number"
+            android:hint="@string/reference_number"
             android:focusableInTouchMode="false"
             android:focusable="false"
             android:textColor="@android:color/black"

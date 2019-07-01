@@ -1151,7 +1151,7 @@
 
                                     android:layout_marginLeft="30dp"
                                     android:layout_toRightOf="@id/tv_callnum"
-                                    android:text="style"
+                                    android:text="@string/style"
                                     android:textColor="@color/black"
 
                                     android:textSize="20dp"
@@ -1324,7 +1324,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Version:"
+            android:text="@string/version"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_s" />
     </LinearLayout>

@@ -91,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:text="Choose Image" />
+                    android:text="@string/choose_image" />
 
 
                 <Button
@@ -117,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_margin="5dp"
-                android:text="Printer setting" />
+                android:text="@string/printer_setting" />
 
             <Button
                 android:id="@+id/btn_time"
@@ -126,7 +126,7 @@
                 android:layout_margin="5dp"
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@id/btn_print_setting"
-                android:text="Idle time" />
+                android:text="@string/idle_time" />
 
 
             <Button
@@ -167,8 +167,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Touch to Start"
-
+                android:text="@string/touch_to_start"
                 android:textColor="@color/white"
                 android:textSize="50sp" />
         </RelativeLayout>

@@ -205,7 +205,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Item"
+                android:text="@string/item"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_small" />
 
@@ -223,7 +223,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="Discount "
+                android:text="@string/discount"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_small" />
 
@@ -232,7 +232,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Taxes "
+                android:text="@string/taxes"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>

@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:background="#FF468456"
         android:gravity="center"
-        android:text="Swipe to Open"
+        android:text="@string/swipe_to_open"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_s" />
 

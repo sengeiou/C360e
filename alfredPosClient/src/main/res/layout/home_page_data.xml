@@ -23,7 +23,7 @@
             android:textStyle="bold"
             android:textColor="@color/white"
             android:layout_gravity="center"
-            tools:text="Welcome to ZunJun"/>
+            android:text="Welcome to ZunJun"/>
 
         <View
             android:layout_width="match_parent"

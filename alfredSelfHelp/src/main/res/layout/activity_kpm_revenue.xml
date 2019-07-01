@@ -75,7 +75,7 @@
                         android:layout_height="300dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="Searching POS in progress…"
+                        android:text="@string/searching_pos_in_progress"
                         android:textColor="@color/gray1"
                         android:textSize="45sp" />
 
@@ -96,7 +96,7 @@
                         android:layout_marginTop="30dp"
                         android:background="@drawable/style_dialog_btn1"
                         android:gravity="center"
-                        android:text="Manual Search"
+                        android:text="@string/connect_manually"
                         android:textColor="@color/white"
                         android:textSize="42dp"
                         android:visibility="visible" />
@@ -121,7 +121,7 @@
                     android:background="@drawable/btn_view_card_g"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Login"
+                    android:text="@string/login"
                     android:textColor="@color/gray6"
                     android:textSize="36sp" />
             </LinearLayout>

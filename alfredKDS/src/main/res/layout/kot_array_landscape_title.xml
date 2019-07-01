@@ -107,7 +107,7 @@
               android:layout_weight="0.6"
               android:textColor="@color/white"
 
-              android:text="Status"
+              android:text="@string/status"
               android:background="@color/color_kotview"
 
               android:textSize="16dp"

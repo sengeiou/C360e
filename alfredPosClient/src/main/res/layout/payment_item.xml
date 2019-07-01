@@ -67,7 +67,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
-        android:text="Edit settlement"
+        android:text="@string/edit_settlement"
         android:textSize="10dp"
         android:gravity="center"/>
 

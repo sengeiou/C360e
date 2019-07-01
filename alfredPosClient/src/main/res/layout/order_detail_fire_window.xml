@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/print_btn_selector"
                     android:gravity="center"
-                    android:text="OK"
+                    android:text="@string/ok"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s" />
             </LinearLayout>

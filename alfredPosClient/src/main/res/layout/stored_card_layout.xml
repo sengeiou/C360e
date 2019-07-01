@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_stored_cart_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -245,7 +246,8 @@
                         android:layout_weight="1"
                         android:background="@drawable/box_key_number_selector"
                         android:singleLine="true"
-                        android:text="OK" />
+                        android:textAllCaps="true"
+                        android:text="@string/ok" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -268,7 +270,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:text="11123.00"
+                        tools:text="11123.00"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_b" />
                     <View
@@ -321,7 +323,7 @@
                     android:background="@drawable/box_key_number_selector"
                     android:gravity="center"
                     android:layout_alignBottom="@+id/numerickeyboard"
-                    android:text="Paid"
+                    android:text="@string/paid"
                     android:textColor="@color/text_color_selector"
                     android:layout_marginBottom="10dp"
                     android:textSize="@dimen/text_size_m_smail" />
@@ -434,7 +436,7 @@
             android:id="@+id/tv_usb_scanner"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Please Scan Qr Code"
+            android:text="@string/scan_qrcode"
             android:background="@color/white"
             android:gravity="center"
             />

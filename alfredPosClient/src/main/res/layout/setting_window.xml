@@ -8,19 +8,19 @@
         android:id="@+id/ll_setting_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/pos_setting_title"
-        android:orientation="horizontal" 
         android:layout_alignParentTop="true"
-        android:gravity="center_vertical">
+        android:background="@color/pos_setting_title"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tv_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:paddingLeft="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
             android:text="@string/setting"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_big" />
@@ -32,19 +32,19 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:src="@drawable/icon_setting_close"/>
+            android:src="@drawable/icon_setting_close" />
     </RelativeLayout>
-    
-	<ScrollView
+
+    <ScrollView
         android:id="@+id/sv_setting"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
+        android:layout_height="match_parent"
         android:layout_above="@+id/ll_app_version"
         android:layout_below="@+id/ll_setting_title">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" 
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
@@ -52,12 +52,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
                     <ImageView
                         android:id="@+id/iv_close_subpos"
@@ -72,7 +73,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center_horizontal"
                         android:paddingTop="4dp"
-                        android:text="Close Sub Pos"
+                        android:text="@string/close_sub_pos"
                         android:textColor="@color/text_brownness_selector"
                         android:textSize="@dimen/text_size_s_small" />
                 </LinearLayout>
@@ -82,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_edit"
@@ -98,47 +99,48 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
-               		<LinearLayout
-               		    android:id="@+id/ll_reprint_bill"
-                   		 android:layout_width="0dp"
-                    	 android:layout_height="wrap_content"
-                    	 android:layout_weight="1"
-                    	 android:padding="10dp"
-                   		 android:orientation="vertical" >
-	                        <ImageView
-	                            android:id="@+id/iv_reprint_bill"
-	                            android:layout_width="wrap_content"
-	                            android:layout_height="wrap_content"
-	                            android:layout_gravity="center_horizontal"
-	                            android:src="@drawable/reprint_bill_selector" />
+                    <LinearLayout
+                        android:id="@+id/ll_reprint_bill"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
-	                        <TextView
-	                            android:id="@+id/tv_reprint_bill"
-	                            android:layout_width="match_parent"
-	                            android:layout_height="match_parent"
-	                            android:gravity="center_horizontal"
-	                            android:paddingTop="4dp"
-	                            android:text="@string/bill_manage"
-	                            android:textColor="@color/text_brownness_selector"
-	                            android:textSize="@dimen/text_size_s_small" />
-                   </LinearLayout>
+                        <ImageView
+                            android:id="@+id/iv_reprint_bill"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/reprint_bill_selector" />
+
+                        <TextView
+                            android:id="@+id/tv_reprint_bill"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_horizontal"
+                            android:paddingTop="4dp"
+                            android:text="@string/bill_manage"
+                            android:textColor="@color/text_brownness_selector"
+                            android:textSize="@dimen/text_size_s_small" />
+                    </LinearLayout>
 
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
                         android:background="@color/pos_setting_title"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/ll_edit_settlement"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:orientation="vertical"
                         android:padding="10dp"
-                        android:visibility="gone"
-                        android:orientation="vertical">
+                        android:visibility="gone">
 
                         <ImageView
                             android:id="@+id/iv_edit_settlement"
@@ -167,15 +169,15 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/ll_boh_settlement"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_boh_settlement"
@@ -204,9 +206,10 @@
                         android:id="@+id/ll_stored_card"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:padding="10dp"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
                         <ImageView
                             android:id="@+id/iv_stored_card_setting"
                             android:layout_width="wrap_content"
@@ -230,7 +233,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_report"
@@ -246,15 +249,15 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/ll_dashboard"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_dashboard"
@@ -271,9 +274,9 @@
                             android:paddingTop="4dp"
                             android:text="@string/dashboard"
                             android:textColor="@color/text_brownness_selector"
-                            android:textSize="@dimen/text_size_s_small"/>
+                            android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
-                    
+
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
@@ -283,9 +286,9 @@
                         android:id="@+id/ll_xz_report"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_xz_report"
@@ -305,25 +308,25 @@
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
                 </LinearLayout>
-                
-                 <View
+
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/pos_setting_title" /> 
-                                   
+                    android:background="@color/pos_setting_title" />
+
                 <LinearLayout
                     android:id="@+id/monthly_sale_report_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/ll_monthly_sale_report"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_monthly_sale_report"
@@ -338,11 +341,11 @@
                             android:layout_height="match_parent"
                             android:gravity="center_horizontal"
                             android:paddingTop="4dp"
-                            android:text="月报表"
+                            android:text="@string/monthly_report"
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
-                                        
+
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
@@ -352,9 +355,10 @@
                         android:id="@+id/ll_monthly_plu_report"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
                         <ImageView
                             android:id="@+id/iv_monthly_plu_report"
                             android:layout_width="wrap_content"
@@ -368,30 +372,30 @@
                             android:layout_height="match_parent"
                             android:gravity="center_horizontal"
                             android:paddingTop="4dp"
-                            android:text="月品项销售报表"
+                            android:text="@string/monthly_item_sales_report"
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
 
                     </LinearLayout>
                 </LinearLayout>
-                                
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/pos_setting_title" /> 
-                                   
+                    android:background="@color/pos_setting_title" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/ll_entplu"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_entplu"
@@ -408,9 +412,9 @@
                             android:paddingTop="4dp"
                             android:text="@string/ent_plu"
                             android:textColor="@color/text_brownness_selector"
-                            android:textSize="@dimen/text_size_s_small"/>
+                            android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
-                    
+
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
@@ -420,9 +424,9 @@
                         android:id="@+id/ll_voidplu"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_voidplu"
@@ -441,13 +445,13 @@
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
-                </LinearLayout>                
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_system_title"
@@ -463,15 +467,15 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/ll_clock_select"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:padding="10dp"
-                        android:orientation="vertical" >
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_clock_select"
@@ -500,9 +504,9 @@
                         android:id="@+id/ll_cash_inout"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_cash_in_out"
@@ -522,22 +526,24 @@
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
                 </LinearLayout>
-				<View
+
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/pos_setting_title" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/ll_devices"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" 
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_devices"
@@ -567,8 +573,8 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:padding="10dp"
-                        android:orientation="vertical" >
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_system"
@@ -597,7 +603,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/ll_opendrawer"
@@ -605,7 +611,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:padding="10dp" >
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_operndrawer"
@@ -617,15 +623,15 @@
                         <TextView
                             android:id="@+id/tv_opendrawer"
                             android:layout_width="match_parent"
-                            android:textAllCaps="true"
                             android:layout_height="match_parent"
                             android:gravity="center_horizontal"
                             android:paddingTop="4dp"
                             android:text="@string/open_drawer"
+                            android:textAllCaps="true"
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
-                    
+
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
@@ -636,8 +642,8 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <ImageView
                             android:id="@+id/iv_close"
@@ -662,8 +668,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="10dp"
                         android:orientation="vertical"
+                        android:padding="10dp"
                         android:visibility="gone">
 
                         <ImageView
@@ -697,34 +703,34 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/ll_sunmi"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="10dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:id="@+id/iv_sunmi"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/ll_sunmi"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/setting_system_selector" />
-
-                    <TextView
-                        android:id="@+id/tv_sunmi"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:paddingTop="4dp"
-                        android:text="SUNMI"
-                        android:textColor="@color/text_brownness_selector"
-                        android:textSize="@dimen/text_size_s_small" />
-                </LinearLayout>
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/iv_sunmi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/setting_system_selector" />
+
+                        <TextView
+                            android:id="@+id/tv_sunmi"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center"
+                            android:paddingTop="4dp"
+                            android:text="SUNMI"
+                            android:textColor="@color/text_brownness_selector"
+                            android:textSize="@dimen/text_size_s_small" />
+                    </LinearLayout>
 
                     <View
                         android:layout_width="1dp"
@@ -734,7 +740,7 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
 
                 </LinearLayout>
 
@@ -742,19 +748,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/pos_setting_title" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
 
                     <LinearLayout
                         android:id="@+id/ll_printer_qr_code"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:minHeight="80dp"
                         android:layout_weight="1"
-                        android:orientation="horizontal" >
+                        android:minHeight="80dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/tv_printer_qr_code"
@@ -762,21 +769,23 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:paddingTop="4dp"
-                            android:text="Show QRCode"
+                            android:text="@string/show_qrcode"
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
+
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
                         android:background="@color/pos_setting_title" />
+
                     <LinearLayout
                         android:id="@+id/ll_sub_pos"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:minHeight="80dp"
                         android:layout_weight="1"
-                        android:orientation="horizontal" >
+                        android:minHeight="80dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/tv_sub_pos"
@@ -784,21 +793,22 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:paddingTop="4dp"
-                            android:text="Sub Pos Management"
+                            android:text="@string/manage_sub_POS"
                             android:textColor="@color/text_brownness_selector"
                             android:textSize="@dimen/text_size_s_small" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="5dp"
-                    android:background="@color/pos_setting_title"/>
+                    android:background="@color/pos_setting_title" />
                 <!-- <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -810,20 +820,22 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-      <LinearLayout
-          android:id="@+id/ll_app_version" 
+
+    <LinearLayout
+        android:id="@+id/ll_app_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_app_version"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:padding="10dp"
-            android:gravity="center">
-	        <TextView
-	            android:id="@+id/tv_app_version"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="Version:"
-	            android:gravity="center_horizontal|bottom"
-	            android:textColor="@color/gray"
-	            android:textSize="@dimen/text_size_s" />        
-        </LinearLayout>
+            android:gravity="center_horizontal|bottom"
+            android:text="@string/version"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_size_s" />
+    </LinearLayout>
 </RelativeLayout>

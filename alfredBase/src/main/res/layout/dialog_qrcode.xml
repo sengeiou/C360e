@@ -37,7 +37,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:gravity="center"
-        android:text="Print QR Code" />
+        android:text="@string/print_qrcode" />
     <Button
         android:id="@+id/btn_qrcode_save"
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:gravity="center"
-        android:text="Save QR Code" />
+        android:text="@string/save_qrcode" />
 
     <Button
         android:id="@+id/btn_qrcode_back"

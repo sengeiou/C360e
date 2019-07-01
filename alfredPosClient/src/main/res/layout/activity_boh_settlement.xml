@@ -109,7 +109,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bill No"
+                    android:text="@string/bill_number"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_m" />
 
@@ -237,7 +237,7 @@
                     android:gravity="center_vertical"
                     android:textSize="@dimen/text_size_m"
                     android:drawablePadding="5dp"
-                    android:text="Cash"
+                    android:text="@string/cash"
                     android:drawableLeft="@drawable/select"/>
 
                 <TextView
@@ -247,7 +247,7 @@
                     android:layout_marginLeft="40dp"
                     android:textSize="@dimen/text_size_m"
                     android:textColor="@color/white"
-                    android:text="Card"
+                    android:text="@string/card"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:drawableLeft="@drawable/nomol"/>
@@ -289,7 +289,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="40dp"
-                    android:text=" Save "
+                    android:text="@string/save"
                     android:textSize="@dimen/text_size_xb" />
 
                 <Button
@@ -298,7 +298,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="30dp"
-                    android:text="Cancel"
+                    android:text="@string/cancel"
                     android:textSize="@dimen/text_size_xb" />
 
             </LinearLayout>

@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:text="Enter password"
+            android:text="@string/waiter_login_tips2"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_m" />
 
@@ -120,5 +120,5 @@
         android:layout_alignLeft="@id/view_numerickeyboard"
         android:layout_alignRight="@id/view_numerickeyboard"
         android:layout_below="@+id/view_numerickeyboard"
-        android:text="Logout"/>
+        android:text="@string/logout"/>
 </RelativeLayout>

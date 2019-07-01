@@ -52,7 +52,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Good"
                             android:textColor="@color/white"
                             android:textSize="100sp" />
 
@@ -61,7 +60,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="-50dp"
-                            android:text="Afternoon"
+                            tools:text="Afternoon"
                             android:textColor="@color/white"
                             android:textSize="100sp" />
 
@@ -95,7 +94,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="Grab &amp; Go"
+                        android:text="@string/takeaway"
                         android:textColor="@color/white"
                         android:textSize="40sp"
                         android:visibility="visible"
@@ -108,7 +107,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="5dp"
-                        android:text="Place on Sensor"
+                        android:text="@string/place_on_sensor"
                         android:textColor="@color/white"
                         android:textSize="24sp"
 
@@ -213,7 +212,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:gravity="center"
-                            android:text="Your Orders"
+                            android:text="@string/your_orders"
                             android:textColor="@color/white"
                             android:textSize="45sp" />
 
@@ -295,7 +294,7 @@
                                                     android:layout_height="wrap_content"
                                                     android:layout_marginTop="0dp"
                                                     android:ellipsize="end"
-                                                    android:text="Would you also like orange juice to go with your order?"
+                                                    android:text="@string/add_orange_juice_to_order"
                                                     android:textColor="@color/gray1"
                                                     android:textSize="24sp"
 
@@ -339,7 +338,7 @@
                             android:layout_alignParentBottom="true"
                             android:layout_marginLeft="5dp"
                             android:layout_toLeftOf="@+id/tv_cart_total"
-                            android:text="Total:"
+                            android:text="@string/total"
                             android:textSize="24sp" />
 
                         <TextView
@@ -435,7 +434,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
                             android:layout_marginRight="15dp"
-                            android:text="View Cart"
+                            android:text="@string/view_cart"
                             android:textColor="@color/white"
                             android:textSize="@dimen/p36" />
 

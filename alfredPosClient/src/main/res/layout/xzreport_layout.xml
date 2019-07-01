@@ -130,7 +130,7 @@
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="Total/#of/Bills:"
+                        android:text="@string/total_of_bills"
                         android:textColor="#898989"
                         android:textSize="15dp" />
 
@@ -158,7 +158,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:gravity="center"
-                        android:text="Total/Open/Items:"
+                        android:text="@string/total_open_item"
                         android:textColor="#898989"
                         android:textSize="15dp" />
 
@@ -220,7 +220,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:gravity="center_vertical|left"
-                android:text="Item"
+                android:text="@string/item"
                 android:textColor="#008B45"
                 android:textSize="15sp" />
 
@@ -490,7 +490,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:gravity="center_vertical|left"
-                android:text="Item"
+                android:text="@string/item"
                 android:textColor="#008B45"
                 android:textSize="15sp" />
 

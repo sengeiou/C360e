@@ -43,7 +43,7 @@
                     android:layout_marginRight="100dp"
                     android:layout_marginTop="30dp"
                     android:gravity="center_horizontal"
-                    android:text="Are you sure you got the right order?"
+                    android:text="@string/are_sure_get_right_order"
                     android:textColor="@color/black"
                     android:textSize="45sp" />
 

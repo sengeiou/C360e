@@ -90,7 +90,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="0dp"
             android:layout_toLeftOf="@id/btn_refresh"
-            android:text="delivery print" />
+            android:text="@string/delivery" />
     </RelativeLayout>
 
 

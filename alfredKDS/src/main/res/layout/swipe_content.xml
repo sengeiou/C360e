@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|left"
                 android:paddingRight="10dp"
-                android:text="-- Modifiers,instructions"
+                tools:text="-- Modifiers,instructions"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_m_smail" />
         </LinearLayout>

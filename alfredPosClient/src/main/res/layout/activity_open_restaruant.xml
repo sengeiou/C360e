@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/mainbg" >
+    android:background="@drawable/mainbg">
 
     <TextView
         android:id="@+id/tv_tips"
@@ -91,7 +92,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:singleLine="true"
-                            android:text="AAAAAA"
+                            tools:text="AAAAAA"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -137,7 +138,7 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginTop="5dp"
-                                android:text="Mon"
+                                tools:text="Mon"
                                 android:textColor="@color/white"
                                 android:textSize="16sp" />
 
@@ -149,7 +150,7 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_marginRight="10dp"
                                 android:layout_marginTop="5dp"
-                                android:text="17th"
+                                tools:text="17th"
                                 android:textColor="@color/white"
                                 android:textSize="16sp" />
 
@@ -163,7 +164,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
-                                    android:text="11"
+                                    tools:text="11"
                                     android:textColor="@color/white"
                                     android:textSize="80sp" />
                             </RelativeLayout>
@@ -209,7 +210,7 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginTop="5dp"
-                                android:text="May"
+                                tools:text="May"
                                 android:textColor="@color/white"
                                 android:textSize="16sp" />
 
@@ -221,7 +222,7 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_marginRight="10dp"
                                 android:layout_marginTop="5dp"
-                                android:text="2014"
+                                tools:text="2014"
                                 android:textColor="@color/white"
                                 android:textSize="16sp" />
 
@@ -235,7 +236,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
-                                    android:text="58"
+                                    tools:text="58"
                                     android:textColor="@color/white"
                                     android:textSize="80sp" />
                             </RelativeLayout>

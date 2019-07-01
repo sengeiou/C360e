@@ -46,7 +46,7 @@
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Payment"
+                    android:text="@string/payment"
                     android:layout_marginLeft="1dp"
                     android:textColor="@color/black"
                     android:textSize="24sp" />

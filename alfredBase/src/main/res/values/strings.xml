@@ -165,7 +165,7 @@
     <string name="screen_lock_time">Screen Lock Time</string>
     <string name="change_employee_password">Change Employee Password</string>
     <string name="menu_background_setting">Menu background setting</string>
-    <string name="connect_manually">Connect Manually</string>
+    <string name="connect_manually">Connect Manual</string>
     <!--end translate-->
 
 
@@ -354,5 +354,43 @@
     <string name="image_file_not_selected">Image file not selected</string>
     <string name="video_file_not_selected">Video file not selected</string>
     <string name="no_support_video_on_sdcard">There are no compatible videos</string>
+    <string name="card">Card</string>
+    <string name="reconnect_pos">reconnect POS</string>
+    <string name="searching_pos_in_progress">Searching POS in progress…</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="printer_setting">Printer Setting</string>
+    <string name="touch_to_start">Touch to Start</string>
+    <string name="last_detail">Last Detail</string>
+    <string name="mode_detail">More Detail</string>
+    <string name="place_on_sensor">Place on sensor</string>
+    <string name="your_orders">Your orders</string>
+    <string name="add_orange_juice_to_order">Do you also want orange juice to be added to your order?</string>
+    <string name="view_cart">View Cart</string>
+    <string name="vice_scree_show_style" translatable="false">Vice Screen Show Style</string>
+    <string name="click">Click</string>
+    <string name="picture">Picture</string>
+    <string name="text">Text</string>
+    <string name="big">Big</string>
+    <string name="reference_number">Reference Number</string>
+    <string name="are_sure_get_right_order">Are you sure you got the right order ?</string>
+    <string name="print_qrcode">Print QR Code</string>
+    <string name="save_qrcode">Save QR Code</string>
+    <string name="total_open_item">Total / Open / Items:</string>
+    <string name="total_of_bills">Total of Bills</string>
+    <string name="please_select_modifiers">Please Select Modifiers</string>
+    <string name="system_setup">System Setup</string>
+    <string name="username">Username</string>
+    <string name="device_id">Device Id</string>
+    <string name="status">Status</string>
+    <string name="tag">Tag</string>
+    <string name="swipe_to_open">Swipe to Open</string>
+    <string name="close_sub_pos">Close Sub Pos</string>
+    <string name="monthly_report">Monthly Report</string>
+    <string name="monthly_item_sales_report">monthly item sales report</string>
+    <string name="show_qrcode">Show QRCode</string>
+    <string name="select_video">Select Video</string>
+    <string name="select_image">Select Image</string>
+    <string name="empty">Empty</string>
+    <string name="payment">Payment</string>
 
 </resources>
