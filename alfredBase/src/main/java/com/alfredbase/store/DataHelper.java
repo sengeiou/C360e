@@ -1019,10 +1019,10 @@ public class DataHelper {
                     + TableNames.OrderDetail
                     + " ADD COLUMN isSet INTEGER default 0");
 
-            //log table
-            db.execSQL("CREATE TABLE "
-                    + TableNames.EventLog
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, custId INTEGER, createdDate LONG, event TEXT)");
+            //log table, not used just for testing purpose
+//            db.execSQL("CREATE TABLE "
+//                    + TableNames.EventLog
+//                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, custId INTEGER, createdDate LONG, event TEXT)");
         }
 
         private void onUpgradeForOldVersion1(SQLiteDatabase db) {
