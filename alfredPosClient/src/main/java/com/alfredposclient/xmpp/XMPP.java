@@ -512,9 +512,9 @@ public class XMPP implements ConnectionListener, PingFailedListener{
         }catch (Exception e){
             e.printStackTrace();
         }
-        if (this.connection != null) {
-            this.connection.disconnect();
-        }
+//        if (this.connection != null) {
+//            this.connection.disconnect();
+//        }
         timer = new Timer();
         timer.schedule(new MyTimertask(),1000);
     }

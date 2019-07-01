@@ -2314,6 +2314,10 @@ public class MainPage extends BaseActivity {
 //	}
 
     private void setData() {
+        if(currentOrder == null){
+            showTables();
+            return;
+        }
         initOrder(currentTable);
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 //        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());

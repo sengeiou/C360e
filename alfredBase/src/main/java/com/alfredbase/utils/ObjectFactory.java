@@ -441,22 +441,36 @@ public class ObjectFactory {
                           int orderStatus, Tax inclusiveTax, int appOrderId) {
 
         Order order = null;
+        int posId = 0;
+        int placesId = 0;
+        int pack = 4;
+        if(tables != null){
+            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+                posId = tables.getPosId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+                placesId = tables.getPlacesId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+                pack = tables.getPacks();
+            }
+        }
         synchronized (lock_order) {
-            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate, sessionStatus);
+            order = OrderSQL.getUnfinishedOrderAtTable(posId, businessDate, sessionStatus);
             if (order == null) {
 
                 order = new Order();
                 order.setId(CommonSQL.getNextSeq(TableNames.Order));
                 order.setOrderOriginId(orderOriginId);
                 order.setUserId(user.getId());
-                order.setPersons(tables.getPacks());
+                order.setPersons(pack);
                 order.setOrderStatus(orderStatus);
                 order.setDiscountRate(ParamConst.DOUBLE_ZERO);
                 order.setSessionStatus(sessionStatus.getSession_status());
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
-                order.setPlaceId(tables.getPlacesId());
-                order.setTableId(tables.getPosId());
+                order.setPlaceId(placesId);
+                order.setTableId(posId);
                 long time = System.currentTimeMillis();
                 order.setCreateTime(time);
                 order.setUpdateTime(time);
@@ -485,20 +499,34 @@ public class ObjectFactory {
                                           SessionStatus sessionStatus, long businessDate, Tax inclusiveTax) {
 
         Order order = null;
+        int posId = 0;
+        int placesId = 0;
+        int pack = 4;
+        if(tables != null){
+            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+                posId = tables.getPosId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+                placesId = tables.getPlacesId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+                pack = tables.getPacks();
+            }
+        }
         synchronized (lock_order) {
             if (order == null) {
                 order = new Order();
                 order.setId(CommonSQL.getNextSeq(TableNames.Order));
                 order.setOrderOriginId(orderOriginId);
                 order.setUserId(user.getId());
-                order.setPersons(tables.getPacks());
+                order.setPersons(pack);
                 order.setOrderStatus(ParamConst.ORDER_STATUS_KIOSK);
                 order.setDiscountRate(ParamConst.DOUBLE_ZERO);
                 order.setSessionStatus(sessionStatus.getSession_status());
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
-                order.setPlaceId(tables.getPlacesId());
-                order.setTableId(tables.getPosId());
+                order.setPlaceId(placesId);
+                order.setTableId(posId);
                 long time = System.currentTimeMillis();
                 order.setCreateTime(time);
                 order.setUpdateTime(time);
@@ -526,6 +554,20 @@ public class ObjectFactory {
                                       TableInfo tables, long businessDate, Restaurant restaurant,
                                       Tax inclusiveTax, boolean isKiosk) {
         Order order = null;
+        int posId = 0;
+        int placesId = 0;
+        int pack = 4;
+        if(tables != null){
+            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+                posId = tables.getPosId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+                placesId = tables.getPlacesId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+                pack = tables.getPacks();
+            }
+        }
         if (appOrder != null) {
             synchronized (lock_order) {
                 order = OrderSQL.getOrderByAppOrderId(appOrder
@@ -545,8 +587,8 @@ public class ObjectFactory {
                     order.setSessionStatus(sessionStatus.getSession_status());
                     order.setRestId(restaurant.getId());
                     order.setRevenueId(revenueCenter.getId());
-                    order.setPlaceId(tables.getPlacesId());
-                    order.setTableId(tables.getPosId());
+                    order.setPlaceId(placesId);
+                    order.setTableId(posId);
                     long time = System.currentTimeMillis();
                     order.setCreateTime(time);
                     order.setUpdateTime(time);
@@ -2312,7 +2354,20 @@ public class ObjectFactory {
                                             User user, RevenueCenter revenueCenter, long businessDate) {
 
         ReportDiscount reportDiscount = null;
-
+        int posId = 0;
+        int placesId = 0;
+        int pack = 4;
+        if(tables != null){
+            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+                posId = tables.getPosId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+                placesId = tables.getPlacesId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+                pack = tables.getPacks();
+            }
+        }
         synchronized (lock_getReportDiscount) {
             reportDiscount = ReportDiscountSQL
                     .getReportDiscountByOrderId(order.getId());
@@ -2328,7 +2383,7 @@ public class ObjectFactory {
                 reportDiscount.setRevenueName(revenueCenter.getRevName());
                 reportDiscount.setBusinessDate(businessDate);
                 // reportDiscount.setBillNumber(OrderBillSQL.getOrderBillByOrder(order).getBillNo());
-                reportDiscount.setTableId(tables.getPosId());
+                reportDiscount.setTableId(posId);
                 reportDiscount.setTableName(tables.getName());
                 reportDiscount.setActuallAmount("0");// TODO
                 reportDiscount.setDiscount("0.00");// TODO
