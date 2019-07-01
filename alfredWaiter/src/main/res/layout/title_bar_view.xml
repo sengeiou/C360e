@@ -39,7 +39,7 @@
         android:padding="5dp"
         android:layout_marginRight="15dp"
         android:src="@drawable/title_refresh_selector" 
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
     <RelativeLayout
         android:id="@+id/ll_kot_notification"

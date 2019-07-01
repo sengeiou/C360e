@@ -201,6 +201,7 @@ public class TablesPage extends BaseActivity {
 		switch (v.getId()) {
 		case R.id.iv_refresh:
 			getPlaces();
+//			UIHelp.startDevices(context);
 			break;
 		case R.id.ll_kot_notification:
 			UIHelp.startKOTNotification(context);

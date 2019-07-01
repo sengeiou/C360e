@@ -121,4 +121,6 @@
     <string name="printer_thermal_type">80mm Thermal Printer</string>
     <string name="printer_dotmatrix_type">80mm Dot Matrix Printer</string>
     <string name="printer_ipaddr">Printer IP Address</string>
+    <string name="devices_bluetooth">Bluetooth</string>
+    <string name="devices_network">Network</string>
 </resources>

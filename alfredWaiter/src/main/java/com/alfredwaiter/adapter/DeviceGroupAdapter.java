@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.Printer;
-import com.alfredselfhelp.R;
+import com.alfredwaiter.R;
 
 import java.util.List;
 

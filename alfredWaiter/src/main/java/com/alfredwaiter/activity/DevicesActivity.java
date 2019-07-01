@@ -564,7 +564,8 @@ public class DevicesActivity extends BaseActivity {
 
 //        refreshPrinterDevices(null);
         App.instance.discoverPrinter(handler);
-        deviceGroupAdapter.setSelectIndex(dex);
+        if (deviceGroupAdapter != null)
+            deviceGroupAdapter.setSelectIndex(dex);
         registEvent();
     }
 

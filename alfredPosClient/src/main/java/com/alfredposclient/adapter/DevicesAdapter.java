@@ -17,7 +17,6 @@ import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.view.CustomAdapter;
-import com.alfredposclient.R;
 import com.alfredposclient.activity.DevicesActivity;
 import com.alfredposclient.global.App;
 

@@ -16,6 +16,10 @@ import android.widget.TextView;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.view.CustomAdapter;
+import com.alfredwaiter.R;
+import com.alfredwaiter.activity.DevicesActivity;
+import com.alfredwaiter.global.App;
+import com.alfredwaiter.global.KpmDialogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +111,7 @@ public class DevicesAdapter extends CustomAdapter {
             holder.ll_manually_add = (LinearLayout) convertView.findViewById(R.id.ll_manually_add);
             holder.devices_item_type = (TextView) convertView.findViewById(R.id.devices_item_type);
             holder.img_delete = (ImageView) convertView.findViewById(R.id.img_delete);
-            holder.card_view_add = (CardView) convertView.findViewById(R.id.card_view_add);
+//            holder.card_view_add = (CardView) convertView.findViewById(R.id.card_view_add);
 
             convertView.setTag(holder);
         } else {
@@ -153,7 +157,7 @@ public class DevicesAdapter extends CustomAdapter {
             holder.ll_auto_add.setVisibility(View.GONE);
             holder.img_delete.setVisibility(View.GONE);
             holder.ll_manually_add.setVisibility(View.VISIBLE);
-            holder.card_view_add.setVisibility(View.VISIBLE);
+//            holder.card_view_add.setVisibility(View.VISIBLE);
             holder.ll_manually_add.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -164,7 +168,7 @@ public class DevicesAdapter extends CustomAdapter {
             holder.ll_auto_add.setVisibility(View.VISIBLE);
             holder.img_delete.setVisibility(View.VISIBLE);
             holder.ll_manually_add.setVisibility(View.GONE);
-            holder.card_view_add.setVisibility(View.GONE);
+//            holder.card_view_add.setVisibility(View.GONE);
             holder.ll_auto_add.setOnClickListener(listener);
             if (printerDevice.getDevice_id() != -1) {
                 //  holder.devices_unbund_tv.setOnClickListener(ocl);
@@ -241,7 +245,7 @@ public class DevicesAdapter extends CustomAdapter {
         public void onClick(View view) {
             if (ButtonClickTimer.canClick(view)) {
                 PrinterDevice device = (PrinterDevice) view.getTag();
-                if(device.getDevice_id() == -1) {
+                if (device.getDevice_id() == -1) {
                     handler.sendMessage(handler.obtainMessage(DevicesActivity.ASSIGN_PRINTER_DEVICE, device));
                 }
             }
@@ -259,6 +263,6 @@ public class DevicesAdapter extends CustomAdapter {
         LinearLayout ll_auto_add;
         LinearLayout ll_manually_add, ll_add;
 
-        CardView card_view_add;
+//        CardView card_view_add;
     }
 }

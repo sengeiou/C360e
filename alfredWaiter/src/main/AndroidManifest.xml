@@ -95,6 +95,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@style/NullActivityTheme" />
+        <activity android:name=".activity.DevicesActivity" />
 
         <receiver android:name=".receiver.DownloadReceiver">
             <intent-filter>
