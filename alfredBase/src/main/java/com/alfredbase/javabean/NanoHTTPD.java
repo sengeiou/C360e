@@ -172,7 +172,7 @@ public abstract class NanoHTTPD {
             public void run() {
                 do {
                     try {
-                        System.out.println("准备接受请求");
+                        System.out.println("Ready to accept the request");
                         final Socket finalAccept = myServerSocket.accept();
                         registerConnection(finalAccept);
                         finalAccept.setSoTimeout(SOCKET_READ_TIMEOUT);

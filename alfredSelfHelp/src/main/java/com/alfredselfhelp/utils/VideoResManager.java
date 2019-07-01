@@ -141,7 +141,7 @@ public class VideoResManager {
 			}*/
 			Fill(mExSdRoot, mFilePaths);
 			if (mFilePaths.size() == 0) {
-				Toast.makeText(mCtx, "在SD卡中未发现支持的视频", Toast.LENGTH_LONG).show();
+				Toast.makeText(mCtx, mCtx.getString(R.string.no_support_video_on_sdcard), Toast.LENGTH_LONG).show();
 			} else {
 				mbExSdUsed = true;
 			}

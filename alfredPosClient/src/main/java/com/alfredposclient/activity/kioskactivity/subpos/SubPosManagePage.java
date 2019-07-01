@@ -34,7 +34,7 @@ public class SubPosManagePage extends BaseActivity {
         setContentView(R.layout.sub_pos_manage_page);
         lv_subpos = (ListView) findViewById(R.id.lv_subpos);
         tv_title_name = (TextView) findViewById(R.id.tv_title_name);
-        tv_title_name.setText("Sub Pos Manage");
+        tv_title_name.setText(getString(R.string.manage_sub_POS));
         subPosBeans = SubPosBeanSQL.getAllSubPosBean();
         findViewById(R.id.ll_print).setVisibility(View.GONE);
         findViewById(R.id.btn_back).setOnClickListener(this);
@@ -81,7 +81,7 @@ public class SubPosManagePage extends BaseActivity {
                     if(subPosBean == null){
                         return;
                     }
-                    DialogFactory.commonTwoBtnDialog(context, "Warning", "Sub Pos UNABLE to close if Unassigned",
+                    DialogFactory.commonTwoBtnDialog(context, getString(R.string.warning), context.getString(R.string.subbpos_unable_to_close),
                             context.getString(R.string.cancel), context.getString(R.string.ok),
                             null,
                             new View.OnClickListener() {
@@ -138,10 +138,10 @@ public class SubPosManagePage extends BaseActivity {
             holder.tv_pos_id.setText(subPosBean.getId()+"");
             holder.tv_userName.setText(subPosBean.getUserName());
             holder.tv_device_id.setText(subPosBean.getDeviceId());
-            String status = "Close";
+            String status = getString(R.string.close);
             boolean showCheck = false;
             if(subPosBean.getSubPosStatus() == ParamConst.SUB_POS_STATUS_OPEN){
-                status = "Open";
+                status = getString(R.string.open);
                 showCheck = true;
             }
             holder.tv_status.setText(status);

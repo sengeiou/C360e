@@ -8,7 +8,7 @@
     <string name="select_revenue_centre_info1">เลือกหนึ่งในศูนย์รายได้เพื่อซิงค์</string>
     <string name="select_revenue_centre_info2">การซิงค์จะใช้เวลาประมาณ 1 นาที</string>
     <string name="sync_complete">ซิงค์เสร็จสมบูรณ์ POS พร้อมสำหรับห้องรับประทานอาหาร 1. กรุณาเข้าสู่ระบบ POS ด้วยบัญชีแคชเชียร์</string>
-    <string name="home_page_info">เส้นทางของร้านอาหาร \ n ทางวิ่ง</string>
+    <string name="home_page_info">เส้นทางของร้านอาหารทางวิ่ง</string>
     <string name="cashier_login_tips1">ป้อนรหัสพนักงานแคชเชียร์</string>
     <string name="bill_manage">จัดการบิล</string>
     <string name="boh_settlement">การชำระบัญชีของ BOH</string>

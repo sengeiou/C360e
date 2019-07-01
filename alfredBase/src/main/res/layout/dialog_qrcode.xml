@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="20dp"
-        android:text="Scan QR Code by ServedByAlfred \nto select and send order by customer"
+        android:text="@string/scan_qr_servedalfred_order_byself"
         android:gravity="center_horizontal"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_big" />

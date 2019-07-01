@@ -1133,7 +1133,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_REFUND:
-                tv_special_settlement_title.setText(parent.getResources().getString(R.string._refund));
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.refund));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);

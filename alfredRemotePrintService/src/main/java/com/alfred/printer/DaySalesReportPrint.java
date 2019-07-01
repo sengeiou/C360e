@@ -502,7 +502,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
         this.addItem(PrintService.instance.getResources().getString(R.string.cash_in), reportDaySales.getCashInAmt(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.cash_out), reportDaySales.getCashOutAmt(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.expected_in_drawer), "", reportDaySales.getExpectedAmount(), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.actual_in_drawer), "", reportDaySales.getWaiterAmount(), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.start_drawer), "", reportDaySales.getWaiterAmount(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.difference), "", reportDaySales.getDifference(), 1);
 
         this.addBlankLine();
@@ -536,7 +536,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_cash), BH.getBD(reportSessionSales.getCash()).toString(), 1);
                 this.addItem("Stored-Card Cash Charge", BH.getBD(reportSessionSales.getCashTopup()).toString(), 1);
                 this.addItem(PrintService.instance.getResources().getString(R.string.expected_in_drawer), BH.getBD(reportSessionSales.getExpectedAmount()).toString(), 1);
-                this.addItem(PrintService.instance.getResources().getString(R.string.actual_in_drawer), BH.getBD(reportSessionSales.getActualAmount()).toString(), 1);
+                this.addItem(PrintService.instance.getResources().getString(R.string.start_drawer), BH.getBD(reportSessionSales.getActualAmount()).toString(), 1);
                 this.addItem(PrintService.instance.getResources().getString(R.string.difference), BH.getBD(reportSessionSales.getDifference()).toString(), 1);
                 if (i < reportSessionSalesList.size() - 1)
                     this.addBlankLine();

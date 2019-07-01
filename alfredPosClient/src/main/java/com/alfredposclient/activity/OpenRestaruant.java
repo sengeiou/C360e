@@ -1548,7 +1548,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
            if(train==-2){
           // 0  正常模式， 1 培训模式
 			   DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
-					   "开启培训模式？",
+					   context.getString(R.string.open_training_mode),
 					   context.getResources().getString(R.string.cancel),
 					   context.getResources().getString(R.string.ok),
 					   new OnClickListener() {
@@ -1737,7 +1737,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			if (x_ > 0 && x_ < rl_slideUnlockView.getWidth() && y_ > 0
 					&& y_ < rl_slideUnlockView.getHeight()) {
 				if (open(v)) {
-					DialogFactory.commonTwoBtnInputDialog(context, true,context.getString(R.string.start_drawer), context.getString(R.string.enter_amount_of_cash_in_drawer), "CANCEL", context.getString(R.string.done).toUpperCase(),
+					DialogFactory.commonTwoBtnInputDialog(context, true,context.getString(R.string.start_drawer), context.getString(R.string.enter_amount_of_cash_in_drawer), context.getString(R.string.cancel), context.getString(R.string.done).toUpperCase(),
 							new OnClickListener() {
 								@Override
 								public void onClick(View v) {
@@ -1767,7 +1767,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 	private void openSession(){
 		System.out.println("====-------000oooooooooo");
-		UIHelp.showShortToast(context, "opening");
+		UIHelp.showShortToast(context, context.getString(R.string.open));
 		new Thread(new Runnable() {
 
 			@Override
@@ -1837,7 +1837,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				if(!isShowingActualDialog) {
 					isShowingActualDialog = true;
 					final View msgView = (View) msg.obj;
-					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", context.getString(R.string.enter_amount_of_cash_in_drawer), "CANCEL", context.getString(R.string.done).toUpperCase(),
+					DialogFactory.commonTwoBtnInputDialog(context, false, context.getString(R.string.start_drawer), context.getString(R.string.enter_amount_of_cash_in_drawer), context.getString(R.string.cancel), context.getString(R.string.done).toUpperCase(),
 							new OnClickListener() {
 								@Override
 								public void onClick(View view) {
@@ -1895,7 +1895,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				});
 
 				DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.warning),
-						"There are some sub Pos not closed yet.", getString(R.string.ok), "To close", null,
+						getString(R.string.subpos_not_closed), getString(R.string.ok), context.getString(R.string.close), null,
 						new OnClickListener() {
 							@Override
 							public void onClick(View arg0) {

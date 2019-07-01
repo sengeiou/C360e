@@ -71,7 +71,7 @@ public class TableSummaryActivity extends BaseActivity {
         }
         TableSummaryAdapter tableSummaryAdapter = new TableSummaryAdapter(tableSummaries);
         lv_table_summary.setAdapter(tableSummaryAdapter);
-        tv_total_amount.setText("Amount("+App.instance.getLocalRestaurantConfig().getCurrencySymbol()+total+")");
+        tv_total_amount.setText(getString(R.string.amount)+" ("+App.instance.getLocalRestaurantConfig().getCurrencySymbol()+total+")");
     }
 
 

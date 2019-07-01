@@ -34,7 +34,6 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
@@ -45,10 +44,8 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
-import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
 import com.alfredwaiter.R;
@@ -190,11 +187,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 case VIEW_EVENT_SELECT_GROUP:
                     groupId = (Integer) msg.obj;
                     if (groupId < 0) {
-                        tv_group.setText("Group:All");
+                        tv_group.setText(getString(R.string.group_all));
                     } else if (groupId == 0) {
-                        tv_group.setText(getString(R.string.group)+":?");
+                        tv_group.setText(getString(R.string.group) + " ?");
                     } else {
-                        tv_group.setText(getString(R.string.group)+":" + groupId);
+                        tv_group.setText(getString(R.string.group) + " " + groupId);
                     }
 
                     refreshList();
@@ -248,7 +245,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 case ResultCode.ORDER_HAS_CLOSING:
                     DialogFactory.showOneButtonCompelDialog(context,
                             context.getResources().getString(R.string.warn),
-                            "Order is closing, please select table and replace order again.", null);
+                            context.getString(R.string.order_is_close_replace_new), null);
                     break;
                 case ResultCode.ORDER_SPLIT_IS_SETTLED:
                     loadingDialog.dismiss();
@@ -269,7 +266,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 case ResultCode.WAITER_OUT_OF_STOCK:
                     loadingDialog.dismiss();
                     String stockNum = (String) msg.obj;
-                    UIHelp.showToast(OrderDetailsTotal.this,stockNum);
+                    UIHelp.showToast(OrderDetailsTotal.this, stockNum);
 
                     break;
                 case VIEW_EVENT_PRINT_BILL:
@@ -301,7 +298,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private void loadOrder(TableInfo tableInfo) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("tables", tableInfo);
-        loadingDialog.setTitle("updating...");
+        loadingDialog.setTitle(context.getString(R.string.updating));
         loadingDialog.show();
         SyncCentre.getInstance().selectTables(context, parameters,
                 handler);
@@ -379,11 +376,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             }
         }
         tv_item_count.setText(context.getResources().getString(R.string.item_count) + itemCount);
-        tv_sub_total.setText(context.getResources().getString(R.string.subtotal) +" : "+ App.instance.getCurrencySymbol()
+        tv_sub_total.setText(context.getResources().getString(R.string.subtotal) + " : " + App.instance.getCurrencySymbol()
                 + BH.formatMoney(currentOrder.getSubTotal()));
         tv_discount.setText(context.getResources().getString(R.string.discount_) + App.instance.getCurrencySymbol()
                 + BH.formatMoney(currentOrder.getDiscountAmount()));
-        tv_taxes.setText(context.getResources().getString(R.string.taxes) +" : "+ App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTaxAmount()));
+        tv_taxes.setText(context.getResources().getString(R.string.taxes) + " : " + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTaxAmount()));
         tv_grand_total.setText(context.getString(R.string.grand_total) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTotal()));
     }
 
@@ -490,11 +487,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             break;
             case R.id.btn_print_bill: {
                 final PrinterDevice printerDevice = Store.getObject(context, Store.WAITER_PRINTER_DEVICE, PrinterDevice.class);
-                String str = "Use the default Cashier Printer ?";
+                String str = getString(R.string.use_default_cashier_printer);
                 if (printerDevice != null) {
-                    str = "Use the \"" + (TextUtils.isEmpty(printerDevice.getPrinterName()) ? printerDevice.getName() : printerDevice.getPrinterName()) + "\" Printer ?\nIP:" + printerDevice.getIP();
+                    str = getString(R.string.use_cashier_printer_ip, TextUtils.isEmpty(printerDevice.getPrinterName()) ? printerDevice.getName() : printerDevice.getPrinterName(), printerDevice.getIP());
                 }
-                DialogFactory.commonTwoBtnDialog(context, "Warning", str, "Other", "OK",
+                DialogFactory.commonTwoBtnDialog(context, getString(R.string.warning), str, getString(R.string.other), getString(R.string.ok).toUpperCase(),
                         new OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -739,21 +736,21 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                                     R.color.white));
                                     final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
                                     final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
-                                    int  detailNum=OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(),tag.getItemId());
-                                if(remainingStock!=null) {
-                                    if (remainingStock.getQty() >= detailNum) {
-                                        int newNum = remainingStock.getQty() - detailNum + tag.getItemNum();
-                                        if (num <= newNum) {
-                                            updateOrderDetail(tag, num);
+                                    int detailNum = OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(), tag.getItemId());
+                                    if (remainingStock != null) {
+                                        if (remainingStock.getQty() >= detailNum) {
+                                            int newNum = remainingStock.getQty() - detailNum + tag.getItemNum();
+                                            if (num <= newNum) {
+                                                updateOrderDetail(tag, num);
+                                            } else {
+                                                UIHelp.showToast(OrderDetailsTotal.this, OrderDetailsTotal.this.getString(R.string.out_of_stock));
+                                            }
                                         } else {
-                                            UIHelp.showToast(OrderDetailsTotal.this, OrderDetailsTotal.this.getString(R.string.out_of_stock));
+                                            textView.setText(tag.getItemName() + "");
                                         }
                                     } else {
-                                        textView.setText(tag.getItemName() + "");
+                                        updateOrderDetail(tag, num);
                                     }
-                                }else {
-                                    updateOrderDetail(tag, num);
-                                }
 
                                     if (num == 0) {
                                         updateOrderDetail(tag, num);

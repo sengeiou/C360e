@@ -3,8 +3,10 @@ package com.alfredbase.utils;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
+import com.alfredbase.R;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
@@ -831,7 +833,7 @@ public class ObjectFactory {
             newTable.setResolution(width);
             newTable.setResolutionWidth(width);
             newTable.setResolutionHeight(height);
-            newTable.setName("table" + newTable.getPosId().intValue());
+            newTable.setName(BaseApplication.getTopActivity().getString(R.string.table)+" " + newTable.getPosId().intValue());
 //			if(imageName.startsWith("table_1"))
 //				newTable.setPacks(1);
 //			else if(imageName.startsWith("table_2"))

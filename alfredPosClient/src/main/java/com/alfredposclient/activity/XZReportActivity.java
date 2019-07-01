@@ -140,7 +140,7 @@ public class XZReportActivity extends BaseActivity {
                     if (loadingDialog != null && loadingDialog.isShowing()) {
                         loadingDialog.dismiss();
                     }
-                    UIHelp.showShortToast(XZReportActivity.this, "No Data");
+                    UIHelp.showShortToast(XZReportActivity.this, XZReportActivity.this.getString(R.string.no_data));
                     break;
             }
         }
@@ -781,7 +781,7 @@ public class XZReportActivity extends BaseActivity {
             ll_sales_total.addView(expected);
             // Actual In Drawer
             ReportDaySalesItem actual = new ReportDaySalesItem(context);
-            actual.setData("Actual in Drawer", "",
+            actual.setData(context.getString(R.string.start_drawer), "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(reportDaySales.getWaiterAmount()), true);
             ll_sales_total.addView(actual);
             // Difference
@@ -809,7 +809,7 @@ public class XZReportActivity extends BaseActivity {
                 ((ListView) findViewById(R.id.lv_summary_sales)).setAdapter(xzReportSumaryAdapter);
             }
         } else {
-            UIHelp.showShortToast(XZReportActivity.this, "No Data");
+            UIHelp.showShortToast(XZReportActivity.this, XZReportActivity.this.getString(R.string.no_data));
             calendarCard.setVisibility(View.VISIBLE);
             ll_xz_analsis.setVisibility(View.GONE);
             ll_print.setVisibility(View.GONE);

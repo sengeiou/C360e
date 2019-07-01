@@ -57,17 +57,16 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     private static final String TAG = StoredCardActivity.class.getSimpleName();
 
     public static final int REGIST_STOREDCARD_SUCCEED = 101;
-//    public static final int REGIST_STOREDCARD_FAILURE = -100;
+    //    public static final int REGIST_STOREDCARD_FAILURE = -100;
     public static final int REPLACEMENT_STOREDCARD_SUCCEED = 102;
     public static final int PAID_STOREDCARD_SUCCEED = 155;
     public static final int CHANGE_STOREDCARD_SUCCEED = 104;
     public static final int QUERYBALANCE_STOREDCARD_SUCCEED = 105;
-//    public static final int REPLACEMENT_STOREDCARD_FAILURE = -101;
+    //    public static final int REPLACEMENT_STOREDCARD_FAILURE = -101;
     public static final int HTTP_FAILURE = -156;
 
 
-
-//    public static final int VIEW_EVENT_STORED_CARD_REFUND = 150;
+    //    public static final int VIEW_EVENT_STORED_CARD_REFUND = 150;
 //    public static final int VIEW_EVENT_STORED_CARD_LOSS = 151;
 //    public static final int VIEW_EVENT_STORED_CARD_REPLACEMEN = 152;
     public static final int VIEW_EVENT_STORED_CARD_PAY = 153;
@@ -78,7 +77,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     private LinearLayout ll_stored_card_action;
     private RelativeLayout rl_stored_card_title;
     private RelativeLayout rl_stored_cart_root;
-    private  LinearLayout ll_stored_card_scan;
+    private LinearLayout ll_stored_card_scan;
     private CameraManager cameraManager;
     // 声音、震动控制
     private BeepManager beepManager;
@@ -108,7 +107,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     private EditText et_replacement_card_no;
     private EditText et_replacement_phone;
 
-//    private EditText et_query_card_no;
+    //    private EditText et_query_card_no;
     private EditText et_query_phone;
 
     private TextView tv_store_card_value;
@@ -124,6 +123,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 
     private boolean useUSBScanner = false;
     private Observable<String> observable;
+
     @Override
     protected void initView() {
         mainPage = context;
@@ -176,8 +176,8 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         findViewById(R.id.rl_query_ok).setOnClickListener(this);
         selectActionViewId = R.id.btn_paid_refund;
         refreshActionView();
-        isPayAction = getIntent().getBooleanExtra("isPayAction",false);
-        if(App.instance.isSUNMIShow()){
+        isPayAction = getIntent().getBooleanExtra("isPayAction", false);
+        if (App.instance.isSUNMIShow()) {
             observable = RxBus.getInstance().register(RxBus.RX_MSG_2);
             observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                 @Override
@@ -188,28 +188,28 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                     }
                 }
             });
-        }else {
+        } else {
             beepManager = new BeepManager(mainPage);
         }
-        if(!isPayAction) {
+        if (!isPayAction) {
             ll_stored_card_action.setVisibility(View.VISIBLE);
             hiddenScanView();
             isFontShow = true;
             showActionView();
-        }else{
+        } else {
             isFontShow = true;
             amount = getIntent().getStringExtra("amount");
             findViewById(R.id.ll_stored_card_scan).setVisibility(View.VISIBLE);
-            if(App.instance.isSUNMIShow()){
+            if (App.instance.isSUNMIShow()) {
                 findViewById(R.id.rl_camera_scanner).setVisibility(View.GONE);
                 findViewById(R.id.tv_usb_scanner).setVisibility(View.VISIBLE);
-                if(App.instance.isUsbScannerLink()) {
+                if (App.instance.isUsbScannerLink()) {
                     useUSBScanner = true;
 //                    UIHelp.showShortToast(context, "Please Scan the QR Coder");
-                }else{
+                } else {
                     UIHelp.showShortToast(context, "Please input Scanner");
                 }
-            }else {
+            } else {
                 findViewById(R.id.rl_camera_scanner).setVisibility(View.VISIBLE);
                 findViewById(R.id.tv_usb_scanner).setVisibility(View.GONE);
                 showScanner(true);
@@ -217,7 +217,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         }
         tv_store_card_value.setText("");
 
-        RelativeLayout.LayoutParams ps = new RelativeLayout.LayoutParams((int)(ScreenSizeUtil.width * 2 / 3),
+        RelativeLayout.LayoutParams ps = new RelativeLayout.LayoutParams((int) (ScreenSizeUtil.width * 2 / 3),
                 (int) (ScreenSizeUtil.height * 2 / 3 + ScreenSizeUtil.dip2px(this, 60)));
         ps.addRule(RelativeLayout.CENTER_IN_PARENT);
         rl_stored_cart_root.setLayoutParams(ps);
@@ -225,15 +225,12 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     }
 
 
-
-
-
-    private void refreshActionView(){
+    private void refreshActionView() {
         btn_paid_refund.setBackgroundColor(getResources().getColor(R.color.white));
         btn_binding.setBackgroundColor(getResources().getColor(R.color.white));
         btn_clear.setBackgroundColor(getResources().getColor(R.color.white));
         btn_rebinding.setBackgroundColor(getResources().getColor(R.color.white));
-        switch (selectActionViewId){
+        switch (selectActionViewId) {
             case R.id.btn_paid_refund:
                 btn_paid_refund.setBackgroundColor(getResources().getColor(R.color.light_gray));
                 break;
@@ -274,14 +271,14 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         viewfinderView.drawViewfinder();
     }
 
-    private void showScanner(boolean flag){
+    private void showScanner(boolean flag) {
 
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
-        }else{
+        } else {
 
         }
-        if(cameraManager != null)
+        if (cameraManager != null)
             cameraManager.closeDriver();
         cameraManager = new CameraManager(App.instance);
         viewfinderView.setCameraManager(cameraManager);
@@ -307,9 +304,9 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     }
 
 
-    private void hiddenScanView(){
+    private void hiddenScanView() {
         ll_stored_card_scan.setVisibility(View.GONE);
-        if(isShowedScaner) {
+        if (isShowedScaner) {
             if (captureActivityHandler != null) {
                 captureActivityHandler.quitSynchronously();
                 captureActivityHandler = null;
@@ -384,8 +381,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 //    }
 
 
-
-    private void showActionView(){
+    private void showActionView() {
         QRcodeString = "";
         View ll_stored_card_user = findViewById(R.id.ll_stored_card_user);
         View rl_stored_card_paid = findViewById(R.id.rl_stored_card_paid);
@@ -398,7 +394,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         rl_stored_card_replacement.setVisibility(View.GONE);
         ll_stored_card_info.setVisibility(View.VISIBLE);
         tv_stored_card_no.setText(QRcodeString);
-        switch (selectActionViewId){
+        switch (selectActionViewId) {
             case R.id.btn_binding:
                 ll_stored_card_user.setVisibility(View.VISIBLE);
                 break;
@@ -427,7 +423,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     @Override
     public void onPause() {
         useUSBScanner = false;
-        if(isShowedScaner) {
+        if (isShowedScaner) {
             if (captureActivityHandler != null) {
                 captureActivityHandler.quitSynchronously();
                 captureActivityHandler = null;
@@ -451,13 +447,13 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 
     @Override
     public void onDestroy() {
-        if(inactivityTimer != null) {
+        if (inactivityTimer != null) {
 //            inactivityTimer.onPause();
             inactivityTimer.shutdown();
             inactivityTimer = null;
         }
 
-        if(observable != null){
+        if (observable != null) {
             RxBus.getInstance().unregister(RxBus.RX_MSG_2, observable);
         }
         super.onDestroy();
@@ -473,9 +469,9 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         try {
             // 打开Camera硬件设备
 
-            if (b){
+            if (b) {
                 cameraManager.openFrontCamera(surfaceHolder);
-            }else {
+            } else {
                 cameraManager.openBackCamera(surfaceHolder);
             }
 //			cameraManager.openDriver(surfaceHolder);
@@ -506,7 +502,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 //        builder.setOnCancelListener(new FinishListener(getActivity()));
 //        builder.show();
         DialogFactory.commonTwoBtnDialog(mainPage, mainPage.getResources().getString(R.string.warning),
-                "Sorry, your camera has some problems,\n you should restart app",
+                context.getString(R.string.camera_error),
                 mainPage.getResources().getString(R.string.cancel),
                 mainPage.getResources().getString(R.string.ok),
                 null,
@@ -519,14 +515,14 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     }
 
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(loadingDialog !=null && loadingDialog.isShowing()){
+            if (loadingDialog != null && loadingDialog.isShowing()) {
                 loadingDialog.dismiss();
             }
-            switch (msg.what){
+            switch (msg.what) {
                 case ResultCode.CONNECTION_FAILED:
                     loadingDialog.dismiss();
                     UIHelp.showToast(mainPage, ResultCode.getErrorResultStr(mainPage,
@@ -534,17 +530,17 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                     break;
                 case REGIST_STOREDCARD_SUCCEED:
                     clearRegistInfo();
-                    UIHelp.showShortToast(mainPage, "Stored card register succeed");
+                    UIHelp.showShortToast(mainPage, context.getString(R.string.register_success));
                     break;
                 case PAID_STOREDCARD_SUCCEED:
-                    UIHelp.showShortToast(mainPage, "Stored card paid succeed");
+                    UIHelp.showShortToast(mainPage, context.getString(R.string.payment_success));
                     tv_store_card_value.setText("");
                     break;
                 case CHANGE_STOREDCARD_SUCCEED:
-                    UIHelp.showShortToast(mainPage, "Stored card change succeed");
+                    UIHelp.showShortToast(mainPage, context.getString(R.string.card_change_success));
                     break;
                 case QUERYBALANCE_STOREDCARD_SUCCEED:
-                    DialogFactory.showOneButtonCompelDialog(context, "", "Balance: " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD((String) msg.obj).toString(), null);
+                    DialogFactory.showOneButtonCompelDialog(context, "", context.getString(R.string.query_balance) + " : " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD((String) msg.obj).toString(), null);
                     et_query_phone.setText("");
                     clearRegistInfo();
                     break;
@@ -556,7 +552,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         }
     };
 
-    private void clearRegistInfo(){
+    private void clearRegistInfo() {
         et_first_name.setText("");
         et_phone.setText("");
         et_last_name.setText("");
@@ -566,7 +562,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         QRcodeString = null;
     }
 
-    public void storedCardRefund(){
+    public void storedCardRefund() {
         String value = tv_store_card_value.getText().toString();
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("qrCode", QRcodeString);
@@ -576,7 +572,8 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         loadingDialog.show();
         SyncCentre.getInstance().updateStoredCardValue(mainPage, map, handler);
     }
-    public void storedCardQueryBalance(){
+
+    public void storedCardQueryBalance() {
         String query_phone = et_query_phone.getText().toString().trim();
 //        String query_card_no = et_query_card_no.getText().toString().trim();
         Map<String, Object> map = new HashMap<String, Object>();
@@ -587,7 +584,8 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         loadingDialog.show();
         SyncCentre.getInstance().queryStoredCardBalance(mainPage, map, handler);
     }
-    public void storedCardReplacement(){
+
+    public void storedCardReplacement() {
         String replacement_phone = et_replacement_phone.getText().toString().trim();
         String replacement_card_no = et_replacement_card_no.getText().toString().trim();
         Map<String, Object> map = new HashMap<String, Object>();
@@ -601,7 +599,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 
     @Override
     protected void handlerClickEvent(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_binding:
             case R.id.btn_paid_refund:
             case R.id.btn_clear:
@@ -613,34 +611,34 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
             case R.id.iv_stored_card_scan:
                 isFontShow = true;
 
-                if(App.instance.isSUNMIShow()){
-                    if(App.instance.isUsbScannerLink()) {
+                if (App.instance.isSUNMIShow()) {
+                    if (App.instance.isUsbScannerLink()) {
                         useUSBScanner = true;
-                        UIHelp.showShortToast(context, "Please Scan the QR Coder");
-                    }else{
-                        UIHelp.showShortToast(context, "Please input Scanner");
+                        UIHelp.showShortToast(context, context.getString(R.string.scan_qrcode));
+                    } else {
+                        UIHelp.showShortToast(context, context.getString(R.string.input_scanner));
                     }
-                }else {
+                } else {
                     findViewById(R.id.ll_stored_card_scan).setVisibility(View.VISIBLE);
                     showScanner(isFontShow);
                 }
                 break;
             case R.id.btn_change:
-                if(App.instance.isSUNMIShow()){
-                    if(App.instance.isUsbScannerLink()) {
+                if (App.instance.isSUNMIShow()) {
+                    if (App.instance.isUsbScannerLink()) {
                         useUSBScanner = true;
-                        UIHelp.showShortToast(context, "Please Scan the QR Coder");
-                    }else{
-                        UIHelp.showShortToast(context, "Please input Scanner");
+                        UIHelp.showShortToast(context, context.getString(R.string.scan_qrcode));
+                    } else {
+                        UIHelp.showShortToast(context, context.getString(R.string.input_scanner));
                     }
-                }else {
+                } else {
                     showScanner(isFontShow);
                 }
                 break;
             case R.id.btn_cancel_scan:
-                if(isPayAction){
+                if (isPayAction) {
                     this.finish();
-                }else{
+                } else {
                     hiddenScanView();
                 }
 
@@ -653,9 +651,9 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
         findViewById(R.id.btn_replacement_ok).setOnClickListener(this);
         findViewById(R.id.rl_query_ok).setOnClickListener(this);
              */
-            case R.id.btn_binding_ok:{
-                if(TextUtils.isEmpty(QRcodeString)){
-                    UIHelp.showShortToast(mainPage, "Place scan user QRCode");
+            case R.id.btn_binding_ok: {
+                if (TextUtils.isEmpty(QRcodeString)) {
+                    UIHelp.showShortToast(mainPage, mainPage.getString(R.string.scan_qrcode));
                     return;
                 }
                 String firstName = et_first_name.getText().toString();
@@ -663,8 +661,8 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 String lastName = et_last_name.getText().toString();
                 String email = et_email.getText().toString();
                 String address = et_address.getText().toString();
-                if(TextUtils.isEmpty(firstName) || TextUtils.isEmpty(phone)){
-                    UIHelp.showShortToast(mainPage, "First name and phone can not empty");
+                if (TextUtils.isEmpty(firstName) || TextUtils.isEmpty(phone)) {
+                    UIHelp.showShortToast(mainPage, this.getString(R.string.name_phone_mandatory));
                     return;
                 }
                 loadingDialog.show();
@@ -688,8 +686,8 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
             }
             break;
             case R.id.tv_refund:
-                if(TextUtils.isEmpty(QRcodeString)){
-                    UIHelp.showShortToast(mainPage, "Place scan user QRCode");
+                if (TextUtils.isEmpty(QRcodeString)) {
+                    UIHelp.showShortToast(mainPage, this.getString(R.string.scan_user_qr));
                     return;
                 }
 //                mainPageHandler.sendEmptyMessage(VIEW_EVENT_STORED_CARD_REFUND);
@@ -697,15 +695,15 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 break;
             case R.id.tv_paid: {
                 if (TextUtils.isEmpty(QRcodeString)) {
-                    UIHelp.showShortToast(mainPage, "Place scan user QRCode");
+                    UIHelp.showShortToast(mainPage, this.getString(R.string.scan_user_qr));
                     return;
                 }
                 String value = tv_store_card_value.getText().toString();
                 try {
-                    if(Integer.parseInt(value) > 200){
-                        UIHelp.showToast(context, "Top up limit of $200");
+                    if (Integer.parseInt(value) > 200) {
+                        UIHelp.showToast(context, this.getString(R.string.top_up_limit_200));
                     }
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
 
@@ -720,25 +718,31 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
             }
             break;
             case R.id.btn_replacement_ok: {
-                if(TextUtils.isEmpty(QRcodeString)){
-                    UIHelp.showShortToast(mainPage, "Place scan user QRCode");
+                if (TextUtils.isEmpty(QRcodeString)) {
+                    UIHelp.showShortToast(mainPage, this.getString(R.string.scan_user_qr));
                     return;
                 }
                 String replacement_phone = et_replacement_phone.getText().toString().trim();
                 String replacement_card_no = et_replacement_card_no.getText().toString().trim();
-                if(TextUtils.isEmpty(replacement_phone) && TextUtils.isEmpty(replacement_card_no)){
-                    UIHelp.showShortToast(mainPage, "phone and cardNo can not all empty");
+                if (TextUtils.isEmpty(replacement_phone) && TextUtils.isEmpty(replacement_card_no)) {
+                    et_replacement_phone.setError(getString(R.string.mandatory));
+                    et_replacement_card_no.setError(getString(R.string.mandatory));
+//                    UIHelp.showShortToast(mainPage, "phone and cardNo can not all empty");
                     return;
                 }
 //                mainPageHandler.sendEmptyMessage(VIEW_EVENT_STORED_CARD_REPLACEMEN);
                 storedCardReplacement();
             }
             break;
-            case R.id.rl_query_ok:{
+            case R.id.rl_query_ok: {
                 String query_phone = et_query_phone.getText().toString().trim();
 //                String query_card_no = et_query_card_no.getText().toString().trim();
-                if(TextUtils.isEmpty(query_phone) && TextUtils.isEmpty(QRcodeString)){
-                    UIHelp.showShortToast(mainPage, "Phone num and QRcode can not all empty");
+                if (TextUtils.isEmpty(query_phone)) {
+                    et_query_phone.setError(getString(R.string.mandatory));
+                    return;
+                }
+                if (TextUtils.isEmpty(QRcodeString)) {
+                    UIHelp.showShortToast(mainPage, this.getString(R.string.scan_user_qr));
                     return;
                 }
 //                mainPageHandler.sendEmptyMessage(VIEW_EVENT_STORED_CARD_LOSS);
@@ -769,20 +773,19 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
     }
 
 
-
     /**
      * 扫描成功，处理反馈信息
      *
      * @param rawResult
      */
     public void handleDecode(Result rawResult) {
-        if(!App.instance.isSUNMIShow()) {
+        if (!App.instance.isSUNMIShow()) {
             inactivityTimer.onActivity();
             hiddenScanView();
         }
         //这里处理解码完成后的结果，此处将参数回传到Activity处理
-        if (rawResult !=null && !TextUtils.isEmpty(rawResult.getText())) {
-            if(!App.instance.isSUNMIShow()) {
+        if (rawResult != null && !TextUtils.isEmpty(rawResult.getText())) {
+            if (!App.instance.isSUNMIShow()) {
                 beepManager.playBeepSoundAndVibrate();
             }
 //            Toast.makeText(this, "扫描成功", Toast.LENGTH_SHORT).show();
@@ -790,7 +793,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 //            Intent intent = getIntent();
 //            intent.putExtra("codedContent", );
             String code = rawResult.getText();
-            if(isPayAction){
+            if (isPayAction) {
 //                Map<String, Object> map = new HashMap<String, Object>();
 //                map.put("qrCode", code);
 //                map.put("revenueId", App.instance.getRevenueCenter().getId().intValue());
@@ -806,19 +809,19 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                 finish();
                 return;
             }
-            if(code.startsWith("1_") || code.startsWith("2_")){
-                String [] card = code.split("_");
-                if(card.length == 3 && IntegerUtils.isInteger(card[2])){
+            if (code.startsWith("1_") || code.startsWith("2_")) {
+                String[] card = code.split("_");
+                if (card.length == 3 && IntegerUtils.isInteger(card[2])) {
                     QRcodeString = code;
                     tv_stored_card_no.setText(card[2]);
-                }else{
+                } else {
                     UIHelp.showShortToast(mainPage, this.getString(R.string.please_scan_stored_qrcode));
                 }
 
-            }else{
+            } else {
                 UIHelp.showShortToast(mainPage, this.getString(R.string.please_scan_stored_qrcode));
             }
-            if(isPayAction){
+            if (isPayAction) {
 
             }
 
@@ -832,10 +835,10 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 
     @Override
     public void onKeyBoardClick(String key) {
-         if (key.equals(mainPage.getResources().getString(com.alfredbase.R.string.delete))) {
-             tv_store_card_value.setText("");
-        } else{
-             tv_store_card_value.setText(tv_store_card_value.getText().toString() + key);
+        if (key.equals(mainPage.getResources().getString(com.alfredbase.R.string.delete))) {
+            tv_store_card_value.setText("");
+        } else {
+            tv_store_card_value.setText(tv_store_card_value.getText().toString() + key);
         }
     }
 }

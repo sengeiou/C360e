@@ -44,7 +44,6 @@
     <string name="discount_">折扣：-</string>
     <string name="group_all">组：所有</string>
     <string name="print_bill">打印比尔</string>
-    <string name="notification">通知</string>
 
     <!-- Setting -->
     <string name="system_reset">系统重置</string>

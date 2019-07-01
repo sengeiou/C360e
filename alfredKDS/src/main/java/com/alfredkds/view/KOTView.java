@@ -329,6 +329,14 @@ public class KOTView extends LinearLayout implements AnimationListener,
         tv_progress.start();
 //		tv_progress.setText(str);
 
+        tv_progress.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener()
+        {
+            @Override
+            public void onChronometerTick(Chronometer chronometer)
+            {
+//todo kalo lewat brp menit warna jadi merah
+            }
+        });
 
         if (lv_dishes.getAdapter() == null) {
             lv_dishes.setAdapter(adapter);

@@ -56,7 +56,7 @@
     <string name="subtotal">Subtotal</string>
     <string name="total">Total</string>
     <string name="item">Item</string>
-    <string name="taxes">Taxes</string>
+    <string name="taxes">Tax</string>
     <string name="place_order">Place Order</string>
     <string name="grand_total">Grand Total</string>
     <string name="pax">Pax</string>
@@ -184,7 +184,7 @@
     <string name="have_online_order">You have a new online order</string>
     <string name="select_revenue_center">Your are eligible to serve\nin those revenue centers</string>
     <!-- ResultCode -->
-    <string name="failed_connect_server">Failed to connect to </string>
+    <string name="failed_connect_server">Failed connect to </string>
     <string name="try_later">,Please try later</string>
     <string name="conn_time_out">Connection timed out</string>
     <string name="unknown_error">System Unknown Error</string>
@@ -232,7 +232,7 @@
 
     <string name="your_table_number">Your table number is</string>
     <string name="order_number_cannot_empty">The order number can not be empty</string>
-    <string name="_refund">Refund</string>
+    <string name="refund">Refund</string>
     <string name="cannot_delete">Can not Delete</string>
     <string name="delete_table_name">Delete the table name</string>
     <string name="please_select_order">Please choose an order</string>
@@ -287,5 +287,72 @@
     <string name="night">Night</string>
     <string name="description">Description</string>
     <string name="please_input_description">Please input description</string>
+    <string name="notification">Notification</string>
+    <string name="print_item_selected_month">Print sales of goods in the selected month?</string>
+    <string name="no_data_sales_month">There is no data on the sale of goods for the selected month</string>
+    <string name="check_your_connection">Please check your connection</string>
+    <string name="empty_queue">Empty Queue</string>
+    <string name="delivery_time">Delivery Time</string>
+    <string name="accept_order">Accept order ?</string>
+    <string name="refund_error">Refund Error</string>
+    <string name="online">Online</string>
+    <string name="didnt_choose_data">You didn\'t choose any data</string>
+    <string name="have_a_choice">Have a choice</string>
+    <string name="normal">Normal</string>
+    <string name="open_training_mode">Open training mode</string>
+    <string name="subpos_not_closed">There are some Sub-Pos not closed yet</string>
+    <string name="invalid_product">Invalid product, please inform this item to counter staff</string>
+    <string name="order_is_close_replace_new">Order is closing, please select table and replace order again</string>
+    <string name="updating">Updating</string>
+    <string name="use_default_cashier_printer">Use Default Cashier Printer ?</string>
+    <string name="use_cashier_printer_ip" translatable="false">Use %1$s Cashier Printer ? \nIP %2$s</string>
+    <string name="other">Other</string>
+    <string name="without_tax">Without Tax</string>
+    <string name="manager">Manager</string>
+    <string name="select_printer">Select Printer</string>
+    <string name="click_to_connect">Click to connect</string>
+    <string name="not_found">Not found</string>
+    <string name="scan_qr_servedalfred_order_byself">Scan QR Code by ServedByAlfred to select and send order by yourself</string>
+    <string name="stored_card_balance_not_enough">The stored card balance is not enough</string>
+    <string name="stored_card_has_past_due">The stored card has past due</string>
+    <string name="restaurant_cannot_use_stored_card">Your restaurant cannot use stored card</string>
+    <string name="cannot_use_stored_card">You cannot use stored card</string>
+    <string name="error" translatable="false">error</string>
+    <string name="number_has_registered">The mobile phone number has been registered !</string>
+    <string name="no_data">no data</string>
+    <string name="cannot_print">cannot print</string>
+    <string name="please_choose_the_kiosk_revenue">Please choose the kiosk revenue</string>
+    <string name="reprint_bill_copy">Reprint Bill Copy</string>
+    <string name="pos_not_connect_to_kitchen">POS has no Kitchen Printer Configured. Kindly check Backend Settings if a Printer is Configured for the Kitchen</string>
+    <string name="cancel_split">Cancel Split</string>
+    <string name="search_revenue">Search Revenue ...</string>
+    <string name="exit">Exit</string>
+    <string name="success">success</string>
+    <string name="failed">failed</string>
+    <string name="camera_error">Sorry, your camera has some problems, please restart app or your phone</string>
+    <string name="register_success">Registration Success</string>
+    <string name="payment_success">Payment Success</string>
+    <string name="card_change_success">Card change success</string>
+    <string name="scan_qrcode">Please Scan the QR Code</string>
+    <string name="input_scanner">Please input Scanner</string>
+    <string name="version_requires_update">This version requires data updates. Please ensure that the network is unblocked when syncing!</string>
+    <string name="images">Images</string>
+    <string name="name_phone_mandatory">First name and phone can not empty</string>
+    <string name="scan_user_qr">Please scan user QR Code</string>
+    <string name="top_up_limit_200">Top up limit is 200</string>
+    <string name="mandatory">must be filled</string>
+    <string name="manage_sub_POS">Manage sub POS</string>
+    <string name="subbpos_unable_to_close">Sub-POS cannot be closed if it is not assigned</string>
+    <string name="training">Training</string>
+    <string name="down">Down</string>
+    <string name="up">Up</string>
+    <string name="style">Style</string>
+    <string name="time_greater_equal_30s">time must be greater or equal to 30 seconds</string>
+    <string name="set_time">Set time</string>
+    <string name="switch_mode">Swtich Mode</string>
+    <string name="language_changed">Language has been changed</string>
+    <string name="image_file_not_selected">Image file not selected</string>
+    <string name="video_file_not_selected">Video file not selected</string>
+    <string name="no_support_video_on_sdcard">There are no compatible videos</string>
 
 </resources>

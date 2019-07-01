@@ -126,7 +126,7 @@ public class MainActivity extends BaseActivity {
                         try {
                             if (queue.QueueLength() > 0) {
 
-                                CallBean callBean = (CallBean) queue.deQueue();
+                                CallBean callBean = (CallBean) queue.deQueue(MainActivity.this);
                                 String name = callBean.getCallNumber().toString();
                                 if (oneFragment != null) {
                                     oneFragment.addData(0, callBean);

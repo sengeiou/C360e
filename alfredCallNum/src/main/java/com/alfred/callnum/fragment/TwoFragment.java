@@ -486,7 +486,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                     call_big.setVisibility(View.GONE);
 
                 } else {
-                    Toast.makeText(getActivity(), "未选择图像文件", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getActivity().getString(R.string.image_file_not_selected), Toast.LENGTH_SHORT).show();
                 }
             } else if (requestCode == 2) {
                 if (selFile != null) {
@@ -503,7 +503,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                     call_big.setVisibility(View.GONE);
 
                 } else {
-                    Toast.makeText(getActivity(), "未选择视频文件", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getActivity().getString(R.string.video_file_not_selected), Toast.LENGTH_SHORT).show();
                 }
             }
         }

@@ -42,9 +42,8 @@
     <string name="settled"> is settled</string>
     <string name="item_count">Item Count:</string>
     <string name="discount_">Discount:-</string>
-    <string name="group_all">Group:All</string>
+    <string name="group_all">Group : All</string>
     <string name="print_bill">Print Bill</string>
-    <string name="notification">Notification</string>
 
     <!-- Setting -->
     <string name="system_reset">System Reset</string>

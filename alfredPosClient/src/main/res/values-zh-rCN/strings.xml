@@ -8,7 +8,7 @@
     <string name="select_revenue_centre_info1">选择要同步的收入中心之一</string>
     <string name="select_revenue_centre_info2">同步将花费大约1分钟</string>
     <string name="sync_complete">同步完成。 POS已准备好进入餐厅1.请使用收银台帐户登录POS</string>
-    <string name="home_page_info">餐馆之路\ nOutght to run</string>
+    <string name="home_page_info">餐馆应该如何运作</string>
     <string name="cashier_login_tips1">输入收银员工ID</string>
     <string name="bill_manage">比尔管理</string>
     <string name="boh_settlement">BOH结算</string>

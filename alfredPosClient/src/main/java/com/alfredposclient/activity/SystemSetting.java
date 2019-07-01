@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -174,9 +173,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 
 
         if (trainType == 1) {
-            tv_pos_mode_type.setText("培训");
+            tv_pos_mode_type.setText(this.getString(R.string.training));
         } else {
-            tv_pos_mode_type.setText("正常");
+            tv_pos_mode_type.setText(this.getString(R.string.normal));
         }
         if (syncMap.isEmpty()) {
             tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
@@ -380,10 +379,10 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
             mt_print_lable.setChecked(false);
         }
         if (settings.isPrintLableD()) {
-            tv_lable_upOrdown.setText("Down");
+            tv_lable_upOrdown.setText(getString(R.string.down));
             mt_print_lable_direction.setChecked(true);
         } else {
-            tv_lable_upOrdown.setText("Up");
+            tv_lable_upOrdown.setText(getString(R.string.up));
             mt_print_lable_direction.setChecked(false);
         }
 
@@ -417,7 +416,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
         }
 
         if (settings.getCallStyle() > 0) {
-            tv_callnum_style.setText(settings.getCallStyle() + " style");
+            tv_callnum_style.setText(settings.getCallStyle() + " " + getString(R.string.style));
         }
         //	if(TextUtils.isEmpty(App.instance.getCallAppIp())){
 //			tv_callnum.setText(null);
@@ -516,7 +515,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                         int m = Integer.parseInt(minStr);
                         int s = Integer.parseInt(secondStr);
                         if (h == 0 && m == 0 && s < 30) {
-                            DialogFactory.showOneButtonCompelDialog(SystemSetting.this, getResources().getString(R.string.warning), "time must >= 30 second", null);
+                            DialogFactory.showOneButtonCompelDialog(SystemSetting.this, getResources().getString(R.string.warning), getString(R.string.time_greater_equal_30s), null);
                             return;
                         }
                         int time = s * 1000
@@ -525,7 +524,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                         Store.putInt(App.instance, Store.RELOGIN_TIME, time);
                         App.instance.setTime(time);
                     }
-                }).setTitleText("set time")
+                }).setTitleText(getString(R.string.set_time))
                         .setTitleSize(30)
                         .setContentTextSize(25)//设置滚轮文字大小
                         .setDividerColor(Color.BLACK)//设置分割线的颜色
@@ -559,7 +558,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 
                 // 0  正常模式， 1 培训模式
                 DialogFactory.commonTwoBtnDialog(context, "",
-                        "切换模式？",
+                        getString(R.string.switch_mode) + " ?",
                         context.getResources().getString(R.string.cancel),
                         context.getResources().getString(R.string.ok),
                         new OnClickListener() {
@@ -579,13 +578,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                                     SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
                                     try {
                                         AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
-                                        tv_pos_mode_type.setText("培训");
+                                        tv_pos_mode_type.setText(getString(R.string.training));
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                 } else {
                                     SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
-                                    tv_pos_mode_type.setText("正常");
+                                    tv_pos_mode_type.setText(getString(R.string.normal));
                                 }
 
                                 runOnUiThread(new Runnable() {
@@ -655,8 +654,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
         final EditText inputServer = new EditText(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(inputServer)
-                .setNegativeButton("Cancel", null);
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.cancel), null);
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 String input = inputServer.getText().toString();
@@ -753,7 +752,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                     }
                     final String language = (String) msg.obj;
                     if (!TextUtils.isEmpty(language)) {
-                        UIHelp.showToast(SystemSetting.this, "Language has been changed");
+                        UIHelp.showToast(SystemSetting.this, getString(R.string.language_changed));
                         Handler handlerRestart = new Handler();
                         final Runnable r = new Runnable() {
                             public void run() {
@@ -1032,11 +1031,11 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
             case R.id.mt_print_lable_direction:
 
                 if (checkState) {
-                    tv_lable_upOrdown.setText("Down");
+                    tv_lable_upOrdown.setText(getString(R.string.down));
                     mt_print_lable_direction.setChecked(true);
                     settings.setPrintLableD(ParamConst.DEFAULT_TRUE);
                 } else {
-                    tv_lable_upOrdown.setText("Up");
+                    tv_lable_upOrdown.setText(getString(R.string.up));
                     mt_print_lable_direction.setChecked(false);
                     settings.setPrintLableD(ParamConst.DEFAULT_FALSE);
                 }
@@ -1128,7 +1127,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                     public void onClick(DialogInterface dialog, int which) {
 
                         settings.setCallStyle(Integer.valueOf(items[which]).intValue());
-                        tv_callnum_style.setText(settings.getCallStyle() + " style");
+                        tv_callnum_style.setText(settings.getCallStyle() + " "+getString(R.string.style));
                         dialog.dismiss();
 
 //						Toast.makeText(SystemSetting.this, items[which],

@@ -9,7 +9,7 @@
     <string name="select_revenue_centre_info1">Pumili ng Isa sa Revenue Center sa Sync</string>
     <string name="select_revenue_centre_info2">Magkakaroon ng pag-sync sa paligid ng 1 minuto</string>
     <string name="sync_complete">Nakumpleto ang pag-sync. Ang POS ay handa na para sa Dining Room 1. Mangyaring mag-login POS sa isang cashier account</string>
-    <string name="home_page_info">Ang Way ng Mga Restaurant \ nOutght na Patakbuhin</string>
+    <string name="home_page_info">Ang Way ng Mga Restaurant Outght na Patakbuhin</string>
     <string name="cashier_login_tips1">Ipasok ang Employee ID ng Cashier</string>
     <string name="bill_manage">Pamahalaan ang Bill</string>
     <string name="boh_settlement">BOH Settlement</string>

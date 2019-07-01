@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothDevice;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.alfredbase.R;
+
 public class PrintBean {
 
     public static final int PRINT_TYPE = 1664;
@@ -22,7 +24,7 @@ public class PrintBean {
      * @param devicee 蓝牙设备对象
      */
     public PrintBean(BluetoothDevice devicee) {
-        this.name = TextUtils.isEmpty(devicee.getName()) ? "未知" : devicee.getName();
+        this.name = TextUtils.isEmpty(devicee.getName()) ? "Unknown" : devicee.getName();
         this.address = devicee.getAddress();
         this.isConnect = devicee.getBondState() == BluetoothDevice.BOND_BONDED;
         this.type = devicee.getBluetoothClass().getDeviceClass();
@@ -58,10 +60,10 @@ public class PrintBean {
     public String getDeviceType(View view) {
         if (type == PRINT_TYPE) {
 
-            return isConnect ? "选择打印" : "点击连接";
+            return isConnect ? view.getContext().getString(R.string.select_printer) :  view.getContext().getString(R.string.click_to_connect);
         } else {
 
-            return "非打印设备";
+            return view.getContext().getString(R.string.not_found);
         }
     }
 

@@ -307,7 +307,7 @@
                     android:layout_alignBottom="@+id/numerickeyboard"
                     android:background="@drawable/box_key_number_selector"
                     android:gravity="center"
-                    android:text="@string/_refund"
+                    android:text="@string/refund"
                     android:layout_marginBottom="10dp"
                     android:textColor="@color/text_color_selector"
                     android:textSize="@dimen/text_size_m_smail" />

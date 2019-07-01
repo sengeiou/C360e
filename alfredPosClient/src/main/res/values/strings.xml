@@ -8,7 +8,7 @@
     <string name="select_revenue_centre_info1">Select One of Revenue Centre to Sync</string>
     <string name="select_revenue_centre_info2">Sync will be taking around 1 minute</string>
     <string name="sync_complete">Sync completes. The POS is ready for Dining Room 1. Please login POS with a cashier account</string>
-    <string name="home_page_info">The Way of Restaurants\nOutght to be Run</string>
+    <string name="home_page_info">The Way of Restaurants Outght to be Run</string>
     <string name="cashier_login_tips1">Enter Cashier Employee ID</string>
     <string name="bill_manage">Bill Manage</string>
     <string name="boh_settlement">BOH Settlement</string>
@@ -52,7 +52,7 @@
     <string name="address">Address</string>
     <string name="binding">Binding</string>
     <string name="change_card">Change Card</string>
-    <string name="query_balance">Query Balance</string>
+    <string name="query_balance">Balance</string>
     <string name="please_scan_new_old_stored_qrcode">Please scan the new Stored-Card and the old Stored-Card number or user phone number</string>
     <string name="please_enter_old_stored_number">Please enter the old Stored-Card number</string>
     <string name="please_enter_user_phone_number">Please enter the user phone number</string>

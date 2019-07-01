@@ -228,7 +228,7 @@ public class SyncData extends BaseActivity {
 							if(warn.length() != 0){
 								warn.append(",");
 							}
-							warn.append(context.getResources().getString(R.string.item_));
+							warn.append(context.getResources().getString(R.string.item));
 						}
 						if(itemCategories.isEmpty() || itemMainCategories.isEmpty()){
 							if(warn.length() != 0){
@@ -255,7 +255,7 @@ public class SyncData extends BaseActivity {
 										}
 									});
 						}else{
-							DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.item_), 
+							DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.item),
 									context.getResources().getString(R.string.sync_date_warning_tips) + warn.toString(), null);
 						}
 					}

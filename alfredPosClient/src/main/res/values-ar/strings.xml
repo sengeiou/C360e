@@ -8,7 +8,7 @@
     <string name="select_revenue_centre_info1">حدد أحد مراكز الإيرادات للمزامنة</string>
     <string name="select_revenue_centre_info2">سوف تستغرق المزامنة حوالي دقيقة واحدة</string>
     <string name="sync_complete">اكتمال المزامنة. POS جاهز لغرفة الطعام 1. يرجى تسجيل الدخول POS بحساب أمين الصندوق</string>
-    <string name="home_page_info">طريقة المطاعم \ n يجب أن تكون قيد التشغيل</string>
+    <string name="home_page_info">طريقة المطاعم يجب أن تكون قيد التشغيل</string>
     <string name="cashier_login_tips1">أدخل معرف موظف الصندوق</string>
     <string name="bill_manage">إدارة بيل</string>
     <string name="boh_settlement">BOH تسوية</string>

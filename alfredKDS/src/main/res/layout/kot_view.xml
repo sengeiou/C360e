@@ -107,7 +107,7 @@
                     android:layout_weight="2"
                     android:gravity="center_vertical"
                     android:paddingLeft="15dp"
-                    android:text="@string/onl"
+                    android:text="@string/online_app_no"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s" />
 

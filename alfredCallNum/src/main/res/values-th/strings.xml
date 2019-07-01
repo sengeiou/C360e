@@ -44,7 +44,6 @@
     <string name="discount_">ส่วนลด: -</string>
     <string name="group_all">กลุ่ม: ทั้งหมด</string>
     <string name="print_bill">พิมพ์บิล</string>
-    <string name="notification">การแจ้งเตือน</string>
 
     <!-- Setting -->
     <string name="system_reset">รีเซ็ตระบบ</string>

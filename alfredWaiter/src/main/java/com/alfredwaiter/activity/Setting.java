@@ -75,12 +75,12 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                     break;
                 case TEMPORARY_DISH_ADD_POS_SUCCESS:
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
-                            "添加成功"));
+                            context.getString(R.string.success)));
                     break;
 
                 case TEMPORARY_DISH_ADD_POS_FAILED:
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
-                            "添加失败"));
+                            context.getString(R.string.failed)));
                     break;
 
                 case VIEW_EVENT_DISMISS_OPEN_ITEM_WINDOW:
