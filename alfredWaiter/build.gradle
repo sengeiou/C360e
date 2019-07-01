@@ -38,6 +38,14 @@ android {
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
 //    android.applicationVariants.all { variant ->
 //        variant.outputs.each { output ->
 //            def outputFile = output.outputFile
