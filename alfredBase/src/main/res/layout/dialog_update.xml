@@ -38,7 +38,7 @@
             android:textSize="20sp"
             android:layout_marginTop="10dp"
             android:textColor="@color/black"
-            android:text="New features:"
+            android:text="@string/new_feature"
             />
         <TextView
             android:id="@+id/tv_description"

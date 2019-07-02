@@ -49,13 +49,14 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/setting_edit_selector" />
 
+            <!--anti-checkout-->
             <TextView
                 android:id="@+id/tv_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="反结账"
+                android:text="@string/revert"
                 android:textColor="@color/text_white_lightgray_selector"
                 android:textSize="20sp" />
         </LinearLayout>

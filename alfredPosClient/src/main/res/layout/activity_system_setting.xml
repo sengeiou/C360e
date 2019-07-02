@@ -596,7 +596,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:padding="10dp"
-                                android:text="Auto Receive Online Order"
+                                android:text="@string/auto_receive_online_order"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
@@ -625,7 +625,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:padding="10dp"
-                                android:text="Lock Manual Ordering"
+                                android:text="@string/lock_manual_ordering"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
@@ -1090,8 +1090,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:paddingLeft="10dp"
-
-                                    android:text="pos mode : "
+                                    android:text="@string/pos_mode"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1103,7 +1102,7 @@
 
                                     android:layout_marginLeft="30dp"
                                     android:layout_toRightOf="@id/tv_pos_mode"
-                                    android:text="style"
+                                    android:text="@string/style"
                                     android:textColor="@color/black"
 
                                     android:textSize="20dp"

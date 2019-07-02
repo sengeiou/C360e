@@ -61,7 +61,7 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/style_dialog_btn1"
             android:gravity="center"
-            android:text="Position the QR code at the sdanner"
+            android:text="@strnig/position_qrcode_at_scanner"
             android:textColor="@color/white"
             android:textSize="42dp"
             android:visibility="visible" />

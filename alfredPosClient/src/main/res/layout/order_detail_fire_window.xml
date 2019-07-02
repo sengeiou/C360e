@@ -117,7 +117,7 @@
             android:layout_centerInParent="true"
             android:layout_marginTop="10dp"
             android:singleLine="true"
-            android:text="Customers require to split bill"
+            android:text="@string/customers_require_to_split_bill"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_m"
             android:visibility="invisible" />

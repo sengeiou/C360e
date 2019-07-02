@@ -159,7 +159,7 @@
                         android:id="@+id/kitchen_tv_orderremark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Order remark:"
+                        android:text="@string/order_remark"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_s"
                         android:singleLine="false"

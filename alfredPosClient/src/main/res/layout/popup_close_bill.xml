@@ -1373,7 +1373,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentLeft="true"
                                         android:paddingLeft="5dp"
-                                        android:text="付款码"
+                                        android:text="@string/payment_code"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m_smail"
                                         android:visibility="gone" />
@@ -1385,7 +1385,7 @@
                                         android:layout_centerVertical="true"
                                         android:layout_marginLeft="10dp"
                                         android:background="@color/white"
-                                        android:hint="扫描付款码"
+                                        android:hint="@string/scan_payment_code"
                                         android:maxLength="9"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m_smail" />

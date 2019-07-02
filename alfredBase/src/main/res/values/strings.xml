@@ -392,5 +392,27 @@
     <string name="select_image">Select Image</string>
     <string name="empty">Empty</string>
     <string name="payment">Payment</string>
+    <string name="picture_in_full_screen">Picture in full screen</string>
+    <string name="text_in_full_screen">Text in full screen</string>
+    <string name="video_in_full_screen">Video in full screen</string>
+    <string name="show_text_and_pictures">Show text and pictures</string>
+    <string name="show_text_and_video">Show text and Video</string>
+    <string name="select_picture_or_video">Select Picture Or Video</string>
+    <string name="auto_receive_online_order">Auto Receive Online Order</string>
+    <string name="lock_manual_ordering">Lock Manual Ordering</string>
+    <string name="pos_mode">POS mode</string>
+    <string name="position_qrcode_at_scanner">Position the QR code at the scanner</string>
+    <string name="new_feature">New Feature</string>
+    <string name="order_remark">Order remark</string>
+    <string name="complete_all">Complete All</string>
+    <string name="customers_require_to_split_bill">Customers require to split bill</string>
+    <string name="enter">Enter</string>
+    <string name="add_new_place">Add a new place</string>
+    <string name="payment_code">Payment Code</string>
+    <string name="scan_payment_code">Scan Payment Code</string>
+    <string name="change_qty">Change QTY</string>
+    <string name="item_sales">Item Sales</string>
+    <string name="item_price">Item Price</string>
+    <string name="revert">Revert</string>
 
 </resources>
