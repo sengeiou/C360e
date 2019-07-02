@@ -388,5 +388,28 @@
     <string name="select_image">Chọn ảnh</string>
     <string name="select_video">Chọn video</string>
     <string name="payment">Thanh toán</string>
+    <string name="picture_in_full_screen">Hình ảnh toàn màn hình</string>
+    <string name="text_in_full_screen">Văn bản toàn màn hình</string>
+    <string name="video_in_full_screen">Video toàn màn hình</string>
+    <string name="show_text_and_pictures">Hiển thị văn bản và hình ảnh</string>
+    <string name="show_text_and_video">Hiển thị văn bản và video</string>
+    <string name="select_picture_or_video">Chọn hình ảnh hoặc video</string>
+    <string name="auto_receive_online_order">Tự động nhận đặt hàng trực tuyến</string>
+    <string name="lock_manual_ordering">Khóa đặt hàng bằng tay</string>
+    <string name="pos_mode">Chế độ POS</string>
+    <string name="position_qrcode_at_scanner">Định vị mã QR tại máy quét</string>
+    <string name="new_feature">Tính năng mới</string>
+    <string name="order_remark">Nhận xét đặt hàng</string>
+    <string name="complete_all">Hoàn thành tất cả</string>
+    <string name="customers_require_to_split_bill">Khách hàng yêu cầu chia hóa đơn</string>
+    <string name="enter">Đi vào</string>
+    <string name="add_new_place">Thêm một địa điểm mới</string>
+    <string name="payment_code">Mã thanh toán</string>
+    <string name="scan_payment_code">Quét mã thanh toán</string>
+    <string name="change_qty">Thay đổi QTY</string>
+    <string name="item_sales">Mục bán hàng</string>
+    <string name="item_price">Giá mặt hàng</string>
+    <string name="revert">Hoàn nguyên</string>
+    <string name="item_name">Tên mục</string>
 
 </resources>

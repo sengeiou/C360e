@@ -388,5 +388,28 @@
     <string name="select_image">Piliin ang Larawan</string>
     <string name="select_video">Piliin ang Video</string>
     <string name="payment">Pagbabayad</string>
+    <string name="picture_in_full_screen">Larawan sa buong screen</string>
+    <string name="text_in_full_screen">Teksto sa buong screen</string>
+    <string name="video_in_full_screen">Video sa buong screen</string>
+    <string name="show_text_and_pictures">Ipakita ang teksto at mga larawan</string>
+    <string name="show_text_and_video">Ipakita ang teksto at Video</string>
+    <string name="select_picture_or_video">Piliin ang Larawan o Video</string>
+    <string name="auto_receive_online_order">Auto Tumanggap ng Online Order</string>
+    <string name="lock_manual_ordering">Lock Manual Manualing</string>
+    <string name="pos_mode">POS mode</string>
+    <string name="position_qrcode_at_scanner">Ilagay ang QR code sa scanner</string>
+    <string name="new_feature">Bagong Tampok</string>
+    <string name="order_remark">Tandaan ang order</string>
+    <string name="complete_all">Kumpletuhin ang Lahat</string>
+    <string name="customers_require_to_split_bill">Kinakailangan ng mga kustomer na hatiin ang bill</string>
+    <string name="enter">Ipasok</string>
+    <string name="add_new_place">Magdagdag ng bagong lugar</string>
+    <string name="payment_code">Code ng Pagbabayad</string>
+    <string name="scan_payment_code">I-scan ang Code ng Pagbabayad</string>
+    <string name="change_qty">Baguhin ang QTY</string>
+    <string name="item_sales">Pagbebenta ng Item</string>
+    <string name="item_price">Presyo ng Item</string>
+    <string name="revert">Ibalik</string>
+    <string name="item_name">Pangalan ng Item</string>
 
 </resources>

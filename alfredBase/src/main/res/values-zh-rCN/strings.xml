@@ -388,5 +388,28 @@
     <string name="select_image">选择图像</string>
     <string name="select_video">选择视频</string>
     <string name="payment">付款</string>
+    <string name="picture_in_full_screen">全屏图片</string>
+    <string name="text_in_full_screen">全屏文字</string>
+    <string name="video_in_full_screen">全屏视频</string>
+    <string name="show_text_and_pictures">显示文字和图片</string>
+    <string name="show_text_and_video">显示文字和视频</string>
+    <string name="select_picture_or_video">选择图片或视频</string>
+    <string name="auto_receive_online_order">自动接收在线订单</string>
+    <string name="lock_manual_ordering">锁定手动订购</string>
+    <string name="pos_mode">POS模式</string>
+    <string name="position_qrcode_at_scanner">将QR码放在扫描仪上</string>
+    <string name="new_feature">新功能</string>
+    <string name="order_remark">订单备注</string>
+    <string name="complete_all">全部完成</string>
+    <string name="customers_require_to_split_bill">客户需要拆分账单</string>
+    <string name="enter">输入</string>
+    <string name="add_new_place">添加一个新地方</string>
+    <string name="payment_code">付款代码</string>
+    <string name="scan_payment_code">扫描付款代码</string>
+    <string name="change_qty">改变数量</string>
+    <string name="item_sales">物品销售</string>
+    <string name="item_price">商品价格</string>
+    <string name="revert">还原</string>
+    <string name="item_name">项目名称</string>
 
 </resources>

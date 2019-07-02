@@ -389,5 +389,28 @@
     <string name="select_image">اختر صورة</string>
     <string name="select_video">اختر الفيديو</string>
     <string name="payment">دفع</string>
+    <string name="picture_in_full_screen">الصورة في وضع ملء الشاشة</string>
+    <string name="text_in_full_screen">النص في وضع ملء الشاشة</string>
+    <string name="video_in_full_screen">فيديو بملء الشاشة</string>
+    <string name="show_text_and_pictures">عرض النص والصور</string>
+    <string name="show_text_and_video">عرض النص والفيديو</string>
+    <string name="select_picture_or_video">حدد صورة أو فيديو</string>
+    <string name="auto_receive_online_order">تلقي السيارات على الانترنت النظام</string>
+    <string name="lock_manual_ordering">قفل الطلب اليدوي</string>
+    <string name="pos_mode">وضع POS</string>
+    <string name="position_qrcode_at_scanner">ضع رمز الاستجابة السريعة في الماسح الضوئي</string>
+    <string name="new_feature">ميزة جديدة</string>
+    <string name="order_remark">ترتيب ملاحظة</string>
+    <string name="complete_all">أكمل الكل</string>
+    <string name="customers_require_to_split_bill">يحتاج العملاء إلى تقسيم الفاتورة</string>
+    <string name="enter">أدخل</string>
+    <string name="add_new_place">أضف مكان جديد</string>
+    <string name="payment_code">رمز الدفع</string>
+    <string name="scan_payment_code">مسح رمز الدفع</string>
+    <string name="change_qty">تغيير الكمية</string>
+    <string name="item_sales">مبيعات البند</string>
+    <string name="item_price">سعر البند</string>
+    <string name="revert">العودة</string>
+    <string name="item_name">اسم العنصر</string>
 
 </resources>

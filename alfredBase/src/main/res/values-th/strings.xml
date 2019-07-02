@@ -388,5 +388,28 @@
     <string name="select_image">เลือกรูปภาพ</string>
     <string name="select_video">เลือกวิดีโอ</string>
     <string name="payment">การชำระเงิน</string>
+    <string name="picture_in_full_screen">รูปภาพเต็มหน้าจอ</string>
+    <string name="text_in_full_screen">ข้อความเต็มหน้าจอ</string>
+    <string name="video_in_full_screen">วิดีโอแบบเต็มหน้าจอ</string>
+    <string name="show_text_and_pictures">แสดงข้อความและรูปภาพ</string>
+    <string name="show_text_and_video">แสดงข้อความและวิดีโอ</string>
+    <string name="select_picture_or_video">เลือกรูปภาพหรือวิดีโอ</string>
+    <string name="auto_receive_online_order">รับออเดอร์ออนไลน์โดยอัตโนมัติ</string>
+    <string name="lock_manual_ordering">ล็อคการสั่งซื้อด้วยตนเอง</string>
+    <string name="pos_mode">โหมด POS</string>
+    <string name="position_qrcode_at_scanner">วางรหัส QR ที่เครื่องสแกน</string>
+    <string name="new_feature">คุณลักษณะใหม่</string>
+    <string name="order_remark">คำสั่งซื้อ</string>
+    <string name="complete_all">เสร็จสมบูรณ์ทั้งหมด</string>
+    <string name="customers_require_to_split_bill">ลูกค้าต้องการแบ่งบิล</string>
+    <string name="enter">เข้าสู่</string>
+    <string name="add_new_place">เพิ่มสถานที่ใหม่</string>
+    <string name="payment_code">รหัสการชำระเงิน</string>
+    <string name="scan_payment_code">สแกนรหัสการชำระเงิน</string>
+    <string name="change_qty">เปลี่ยนจำนวน</string>
+    <string name="item_sales">ขายสินค้า</string>
+    <string name="item_price">ราคาสินค้า</string>
+    <string name="revert">คืนกลับ</string>
+    <string name="item_name">ชื่อรายการ</string>
 
 </resources>

@@ -390,4 +390,28 @@
     <string name="select_video">Pilih video</string>
     <string name="payment">Pembayaran</string>
 
+    <string name="picture_in_full_screen">Gambar di layar penuh</string>
+    <string name="text_in_full_screen">Teks dalam layar penuh</string>
+    <string name="video_in_full_screen">Video dalam layar penuh</string>
+    <string name="show_text_and_pictures">Tampilkan teks dan gambar</string>
+    <string name="show_text_and_video">Tampilkan teks dan Video</string>
+    <string name="select_picture_or_video">Pilih Gambar Atau Video</string>
+    <string name="auto_receive_online_order">Terima Otomatis Pesanan Online</string>
+    <string name="lock_manual_ordering">Kunci Pemesanan Manual</string>
+    <string name="pos_mode">Mode POS</string>
+    <string name="position_qrcode_at_scanner">Posisikan kode QR di pemindai</string>
+    <string name="new_feature">Fitur baru</string>
+    <string name="order_remark">Pesan pesanan</string>
+    <string name="complete_all">Lengkapi Semua</string>
+    <string name="customers_require_to_split_bill">Pelanggan perlu membagi tagihan</string>
+    <string name="enter">Memasukkan</string>
+    <string name="add_new_place">Tambahkan tempat baru</string>
+    <string name="payment_code">Kode Pembayaran</string>
+    <string name="scan_payment_code">Pindai Kode Pembayaran</string>
+    <string name="change_qty">Ubah QTY</string>
+    <string name="item_sales">Penjualan Barang</string>
+    <string name="item_price">Harga barang</string>
+    <string name="revert">Kembali</string>
+    <string name="item_name">Nama barang</string>
+
 </resources>
