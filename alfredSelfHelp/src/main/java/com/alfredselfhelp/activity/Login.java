@@ -58,7 +58,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
         tv_login_tips = (TextView) findViewById(R.id.tv_login_tips);
         old_employee_ID = Store.getString(context, Store.EMPLOYEE_ID);
         oldUser = Store.getObject(context, Store.KPM_USER, User.class);
-        tv_login_tips.setText(oldUser.getFirstName() + "." + oldUser.getLastName() + getString(R.string.waiter_login_tips2));
+        tv_login_tips.setText(oldUser.getFirstName() + "." + oldUser.getLastName() +"\n"+ getString(R.string.waiter_login_tips2));
         ((TextView) findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
         Button btn_re_connect = (Button) findViewById(R.id.btn_re_connect);
         btn_re_connect.setVisibility(View.VISIBLE);

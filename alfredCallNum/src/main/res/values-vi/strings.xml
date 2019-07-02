@@ -9,16 +9,16 @@
     <string name="loading">Tải</string>
 
     <!-- before login -->
-    <string name="scan_qr_remind">Quét mã QR từ POS của trung tâm \ nrevenue để ghép nối máy tính bảng KDS. \ NHo Trượt sang trái và \ n Kết nối POS bằng IP theo cách thủ công</string>
-    <string name="set_ipaddr">Ghép nối thiết bị \ n Thiết lập địa chỉ IP POS</string>
+    <string name="scan_qr_remind">Quét mã QR từ POS của trung tâm \nrevenue để ghép nối máy tính bảng KDS. \nHo Trượt sang trái và \nKết nối POS bằng IP theo cách thủ công</string>
+    <string name="set_ipaddr">Ghép nối thiết bị \nThiết lập địa chỉ IP POS</string>
     <string name="connect">Kết nối</string>
     <string name="invalid_ip">Thiết bị hoặc IP POS chính không hợp lệ không nằm trong cùng một mạng. Hãy kiểm tra</string>
     <string name="invalid_ip_">Địa chỉ IP không hợp lệ do bạn đặt</string>
     <string name="link">Phải liên kết</string>
-    <string name="select_revenue_center">Bạn đủ điều kiện để phục vụ \ nin các trung tâm doanh thu</string>
+    <string name="select_revenue_center">Bạn đủ điều kiện để phục vụ \nin các trung tâm doanh thu</string>
     <string name="logining">Đăng nhập</string>
-    <string name="waiter_login_tips1">Thiết bị được ghép nối \ nNhập ID nhân viên bồi bàn</string>
-    <string name="waiter_login_tips2">\ nNhập mật khẩu</string>
+    <string name="waiter_login_tips1">Thiết bị được ghép nối \nNhập ID nhân viên bồi bàn</string>
+    <string name="waiter_login_tips2">\nNhập mật khẩu</string>
 
     <!-- TablePage,MainPage,ModifierDetail,Instruction -->
     <string name="title">Chức vụ</string>
@@ -62,13 +62,13 @@
     <string name="lock_screen">Màn hình khóa</string>
 
     <!-- other -->
-    <string name="relogin_pos">POS đã đóng cửa phiên hiện tại. \ nVui lòng đăng nhập lại khi phiên tiếp theo bắt đầu</string>
+    <string name="relogin_pos">POS đã đóng cửa phiên hiện tại. \nVui lòng đăng nhập lại khi phiên tiếp theo bắt đầu</string>
     <string name="pairing_failed">Ghép nối không thành công: Lỗi mạng</string>
     <string name="empty_invalid">Giá trị trống không hợp lệ</string>
     <string name="number_people">Vui lòng nhập số người</string>
     <string name="note">CHÚ THÍCH</string>
     <string name="transfer_">  đã được chuyển sang Bảng:</string>
-    <string name="order_belong">Chọn người đặt hàng \ nbelongs</string>
+    <string name="order_belong">Chọn người đặt hàng \nbelongs</string>
     <string name="clear">Thông thoáng</string>
     <string name="enter">Đi vào</string>
     <string name="cancel">Hủy bỏ</string>

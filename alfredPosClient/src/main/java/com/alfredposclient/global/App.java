@@ -2239,6 +2239,8 @@ public class App extends BaseApplication {
             mRemoteService.deleteOldPrinterMsg(businessDate + "");
         } catch (RemoteException e) {
             e.printStackTrace();
+        }catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 

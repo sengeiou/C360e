@@ -18,7 +18,7 @@
     <string name="select_revenue_center">Your are eligible to serve\nin those revenue centers</string>
     <string name="logining">Logining</string>
     <string name="waiter_login_tips1">Device paired\nEnter Waiter Employee ID</string>
-    <string name="waiter_login_tips2">\nEnter Password</string>
+    <string name="waiter_login_tips2">Enter Password</string>
 
     <!-- TablePage,MainPage,ModifierDetail,Instruction -->
     <string name="title">Title</string>

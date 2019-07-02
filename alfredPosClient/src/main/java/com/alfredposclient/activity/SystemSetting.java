@@ -99,6 +99,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
     MyToggleButton mt_print_lable;
     MyToggleButton mt_print_bill, mt_credit_card_rounding, mt_include_plu_void;
     private int textsize, textcolor;
+    private ImageView iv_language;
     private TextView tv_lable_upOrdown, tv_callnum_style, tv_callnum_header, tv_callnum_footer, tv_pos_mode_type, tv_pos_mode, tv_language;
     private LinearLayout ll_language_setting;
     AlertDialog alertLanguage;
@@ -167,6 +168,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
         tv_language = (TextView) findViewById(R.id.tv_language);
         tv_language.setOnClickListener(this);
         tv_language.setText(LanguageManager.getLanguageName(this));
+
+        iv_language = (ImageView) findViewById(R.id.iv_language);
+        iv_language.setImageDrawable(LanguageManager.getLanguageFlag(this));
 
         ll_language_setting = (LinearLayout) findViewById(R.id.ll_language_setting);
         ll_language_setting.setOnClickListener(this);

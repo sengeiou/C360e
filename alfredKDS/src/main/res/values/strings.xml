@@ -25,7 +25,7 @@
     <string name="send_failed">Send Failed!</string>
     <string name="other_pos_data">Other MainPos send data</string>
     <string name="order_discarded">The order has been discarded by cashier.</string>
-    <string name="reconnect_pos">Main POS disconnected.\n Reconnect it?</string>
+    <string name="reconnect_pos">Main POS disconnected.\nReconnect it?</string>
     <string name="dine_in">Dine in</string>
     <!--//0未发送、1待完成、2更新、3已完成、4已退单、-1已删除-->
 
@@ -56,7 +56,7 @@
     <string name="undoing">Undoing</string>
 
     <!-- Setting -->
-    <string name="reset">All data will be removed, \n are you sure to reset KDS?</string>
+    <string name="reset">All data will be removed, \nare you sure to reset KDS?</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="reset_kds">Reset KDS</string>

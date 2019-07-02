@@ -146,7 +146,7 @@
     <string name="cash_out">เงินออก</string>
     <string name="manually_add_printer">เพิ่มเครื่องพิมพ์ด้วยตนเอง</string>
     <string name="device_scan_tips">สแกนรหัส QR เพื่อรับแท็บเล็ตที่จับคู่กับ pos</string>
-    <string name="device_scan_tips_manually">OR \ n ตั้งค่า POS IP ในแท็บเล็ตด้วยตนเอง</string>
+    <string name="device_scan_tips_manually">OR \nตั้งค่า POS IP ในแท็บเล็ตด้วยตนเอง</string>
     <string name="printer">เครื่องพิมพ์</string>
     <string name="kds">KDS</string>
     <string name="select_printer_information">เลือกข้อมูลเครื่องพิมพ์</string>
@@ -182,7 +182,7 @@
     <string name="new_password_no_same">รหัสผ่านใหม่ที่ป้อนไม่เหมือนกันโปรดลองอีกครั้ง</string>
     <string name="online_order">สั่งซื้อออนไลน์</string>
     <string name="have_online_order">คุณมีคำสั่งซื้อออนไลน์ใหม่</string>
-    <string name="select_revenue_center">คุณมีสิทธิ์แสดงศูนย์รายได้ \ nin เหล่านั้น</string>
+    <string name="select_revenue_center">คุณมีสิทธิ์แสดงศูนย์รายได้ \nin เหล่านั้น</string>
     <!-- ResultCode -->
     <string name="failed_connect_server">ไม่สามารถเชื่อมต่อได้</string>
     <string name="try_later">กรุณาลองใหม่ภายหลัง</string>

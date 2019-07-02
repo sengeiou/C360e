@@ -146,7 +146,7 @@
     <string name="cash_out">المصروفات</string>
     <string name="manually_add_printer">إضافة الطابعة يدويًا</string>
     <string name="device_scan_tips">مسح رمز الاستجابة السريعة للحصول على أقراص مقترنة بـ pos</string>
-    <string name="device_scan_tips_manually">أو \ n إعداد POS IP يدويًا على الجهاز اللوحي</string>
+    <string name="device_scan_tips_manually">أو \nإعداد POS IP يدويًا على الجهاز اللوحي</string>
     <string name="printer">طابعة</string>
     <string name="kds">KDS</string>
     <string name="select_printer_information">حدد معلومات الطابعة</string>
@@ -182,7 +182,7 @@
     <string name="new_password_no_same">كلمات المرور الجديدة التي تم إدخالها ليست هي نفسها ، يرجى المحاولة مرة أخرى.</string>
     <string name="online_order">طلب الشراء عبر الإنترنت</string>
     <string name="have_online_order">لديك طلب جديد عبر الإنترنت</string>
-    <string name="select_revenue_center">أنت مؤهل للخدمة \ n في مراكز الدخل هذه</string>
+    <string name="select_revenue_center">أنت مؤهل للخدمة \nفي مراكز الدخل هذه</string>
     <!-- ResultCode -->
     <string name="failed_connect_server">فشل الاتصال ب</string>
     <string name="try_later">، يرجى المحاولة لاحقا</string>

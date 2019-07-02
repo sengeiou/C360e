@@ -9,16 +9,16 @@
     <string name="loading">Memuat</string>
 
     <!-- before login -->
-    <string name="scan_qr_remind">Pindai kode QR dari POS pusat pendapatan untuk mendapatkan pasangan KDS tablet. \ Natau Geser ke kiri Dan \ nHubungkan POS secara manual dengan IP</string>
-    <string name="set_ipaddr">Penyandingan Perangkat \ nSiapkan Alamat IP POS</string>
+    <string name="scan_qr_remind">Pindai kode QR dari POS pusat pendapatan untuk mendapatkan pasangan KDS tablet. \natau Geser ke kiri Dan \nHubungkan POS secara manual dengan IP</string>
+    <string name="set_ipaddr">Penyandingan Perangkat \nSiapkan Alamat IP POS</string>
     <string name="connect">Menghubungkan</string>
     <string name="invalid_ip">IP atau Perangkat POS utama tidak valid dalam jaringan yang sama. Silakan periksa</string>
     <string name="invalid_ip_">Alamat IP tidak valid yang Anda tentukan</string>
     <string name="link">Harus menautkan</string>
     <string name="select_revenue_center">Anda berhak untuk melayani di pusat pendapatan tersebut</string>
     <string name="logining">Masuk</string>
-    <string name="waiter_login_tips1">Perangkat dipasangkan \ nMasukkan ID Karyawan Pelayan</string>
-    <string name="waiter_login_tips2">\ nMasukkan Kata Sandi</string>
+    <string name="waiter_login_tips1">Perangkat dipasangkan \nMasukkan ID Karyawan Pelayan</string>
+    <string name="waiter_login_tips2">\nMasukkan Kata Sandi</string>
 
     <!-- TablePage,MainPage,ModifierDetail,Instruction -->
     <string name="title">Judul</string>
@@ -62,7 +62,7 @@
     <string name="lock_screen">Layar kunci</string>
 
     <!-- other -->
-    <string name="relogin_pos">POS telah menutup sesi saat ini. \ nSilakan masuk kembali saat sesi berikutnya dimulai</string>
+    <string name="relogin_pos">POS telah menutup sesi saat ini. \nSilakan masuk kembali saat sesi berikutnya dimulai</string>
     <string name="pairing_failed">Penyandingan gagal: Kesalahan jaringan</string>
     <string name="empty_invalid">Nilai kosong tidak valid</string>
     <string name="number_people">Silakan Masukkan Jumlah Orang</string>

@@ -1030,7 +1030,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			break;
 		}
 		zPrinterLoadingDialog.setTitle(context.getResources().getString(R.string.save_print_sales));
-		zPrinterLoadingDialog.show();
+		if(!zPrinterLoadingDialog.isShowing()) {
+			zPrinterLoadingDialog.show();
+		}
 		AnimatorSet set = new AnimatorSet();
 		animator1.addListener(new AnimatorListenerImpl(){
 			@Override

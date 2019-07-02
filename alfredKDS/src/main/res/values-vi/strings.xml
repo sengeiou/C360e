@@ -9,13 +9,13 @@
     <string name="loading">Tải</string>
 
     <!-- before login -->
-    <string name="scanqr_tips">Quét mã QR từ POS của trung tâm \ nrevenue để ghép nối máy tính bảng KDS. \ NHo Trượt sang trái và \ n Kết nối POS bằng IP theo cách thủ công</string>
-    <string name="ipaddr_tips">Ghép nối thiết bị \ n Thiết lập địa chỉ IP POS</string>
+    <string name="scanqr_tips">Quét mã QR từ POS của trung tâm \nrevenue để ghép nối máy tính bảng KDS. \nHo Trượt sang trái và \nKết nối POS bằng IP theo cách thủ công</string>
+    <string name="ipaddr_tips">Ghép nối thiết bị \nThiết lập địa chỉ IP POS</string>
     <string name="connect">Kết nối</string>
     <string name="check_ip">Kiểm tra địa chỉ IP không đúng</string>
     <string name="pairing_fails">Ghép nối thất bại, không có giấy phép</string>
-    <string name="employee_id">Thiết bị được ghép nối \ nNhập ID nhân viên của bạn</string>
-    <string name="select_kitchen">KDS Ghép nối \ nVui lòng chọn bếp \ nthat KDS thuộc về</string>
+    <string name="employee_id">Thiết bị được ghép nối \nNhập ID nhân viên của bạn</string>
+    <string name="select_kitchen">KDS Ghép nối \nVui lòng chọn bếp \nthat KDS thuộc về</string>
     <string name="paired_failed">Thiết bị KDS không được ghép nối với Alfred POS</string>
     <string name="cashier_login_tips1">Nhập ID nhân viên</string>
     <string name="cashier_login_tips2">Nhập mật khẩu</string>
@@ -25,7 +25,7 @@
     <string name="send_failed">Gửi thất bại!</string>
     <string name="other_pos_data">MainPos khác gửi dữ liệu</string>
     <string name="order_discarded">Đơn đặt hàng đã bị thu ngân.</string>
-    <string name="reconnect_pos">POS chính bị ngắt kết nối. \ N Kết nối lại?</string>
+    <string name="reconnect_pos">POS chính bị ngắt kết nối. \nKết nối lại?</string>
     <string name="dine_in">Ăn trưa ở</string>
     <!--//0未发送、1待完成、2更新、3已完成、4已退单、-1已删除-->
 
@@ -65,7 +65,7 @@
 
     <!-- KdsHttpServer -->
     <string name="kot_submit_failed">Gửi KOT không thành công</string>
-    <string name="relogin_pos">POS đã đóng phiên hiện tại. \ NVui lòng đăng nhập lại khi phiên tiếp theo bắt đầu</string>
+    <string name="relogin_pos">POS đã đóng phiên hiện tại. \nVui lòng đăng nhập lại khi phiên tiếp theo bắt đầu</string>
 
     <!-- other -->
     <string name="network_error">Lỗi mạng nghiêm trọng</string>

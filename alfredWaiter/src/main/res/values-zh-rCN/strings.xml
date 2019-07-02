@@ -9,16 +9,16 @@
     <string name="loading">载入中</string>
 
     <!-- before login -->
-    <string name="scan_qr_remind">从\ nrevenue中心的POS扫描二维码以获得KDS平板电脑配对。\ n或向左滑动\ n通过IP手动连接POS</string>
-    <string name="set_ipaddr">设备配对\ n设置POS IP地址</string>
+    <string name="scan_qr_remind">从\nrevenue中心的POS扫描二维码以获得KDS平板电脑配对。\n或向左滑动\n通过IP手动连接POS</string>
+    <string name="set_ipaddr">设备配对\n设置POS IP地址</string>
     <string name="connect">连</string>
     <string name="invalid_ip">无效的主POS IP或设备不在同一网络中。请检查</string>
     <string name="invalid_ip_">您设置的IP地址无效</string>
     <string name="link">必须链接</string>
     <string name="select_revenue_center">您有资格在这些收入中心服务</string>
     <string name="logining">Logining</string>
-    <string name="waiter_login_tips1">设备配对\ n输入服务员员工ID</string>
-    <string name="waiter_login_tips2">\ n输入密码</string>
+    <string name="waiter_login_tips1">设备配对\n输入服务员员工ID</string>
+    <string name="waiter_login_tips2">\n输入密码</string>
 
     <!-- TablePage,MainPage,ModifierDetail,Instruction -->
     <string name="title">标题</string>
@@ -62,13 +62,13 @@
     <string name="lock_screen">锁屏</string>
 
     <!-- other -->
-    <string name="relogin_pos">POS已关闭当前会话。 \ n请在下次会话开始时重新登录</string>
+    <string name="relogin_pos">POS已关闭当前会话。 \n请在下次会话开始时重新登录</string>
     <string name="pairing_failed">配对失败：网络错误</string>
     <string name="empty_invalid">空值无效</string>
     <string name="number_people">请输入人数</string>
     <string name="note">注意</string>
     <string name="transfer_">  已转移到表：</string>
-    <string name="order_belong">选择订单\ n所属的人</string>
+    <string name="order_belong">选择订单\n所属的人</string>
     <string name="clear">明确</string>
     <string name="enter">输入</string>
     <string name="cancel">取消</string>
@@ -82,6 +82,6 @@
 
 
     <string name="edit">编辑</string>
-    <string name="ip_changed_relogin">您的IP已更改。\ n请重新登录</string>
+    <string name="ip_changed_relogin">您的IP已更改。\n请重新登录</string>
 
 </resources>

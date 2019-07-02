@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -18,12 +19,11 @@ public class LanguageManager {
     public static final String LANGUAGE_KEY_CHINESE = "zh";
     public static final String LANGUAGE_KEY_INDONESIA = "in";
     public static final String LANGUAGE_KEY_TAGALOG = "tl";
-    public static final String LANGUAGE_KEY_ARABIC= "ar";
-    public static final String LANGUAGE_KEY_THAILAND= "th";
-    public static final String LANGUAGE_KEY_VIETNAM="vi";
+    public static final String LANGUAGE_KEY_ARABIC = "ar";
+    public static final String LANGUAGE_KEY_THAILAND = "th";
+    public static final String LANGUAGE_KEY_VIETNAM = "vi";
 
     private static final String LANGUAGE_KEY = "language_key";
-
 
 
     /**
@@ -59,17 +59,51 @@ public class LanguageManager {
         return mPreferences.getString(LANGUAGE_KEY, LANGUAGE_KEY_ENGLISH);
     }
 
-    public static String getLanguageName(Context mContext){
+    public static Drawable getLanguageFlag(Context mContext) {
         String str = getLanguagePref(mContext);
-        if(TextUtils.isEmpty(str)){
+        int flag = R.drawable.ic_flag_uk;
+        if (!TextUtils.isEmpty(str)) {
+            if (str.equals(LANGUAGE_KEY_ENGLISH)) {
+                flag = R.drawable.ic_flag_uk;
+            } else if (str.equals(LANGUAGE_KEY_CHINESE)) {
+                flag = R.drawable.ic_flag_china;
+            } else if (str.equals(LANGUAGE_KEY_INDONESIA)) {
+                flag = R.drawable.ic_flag_indonesia;
+            } else if (str.equals(LANGUAGE_KEY_TAGALOG)) {
+                flag = R.drawable.ic_flag_philippines;
+            } else if (str.equals(LANGUAGE_KEY_ARABIC)) {
+                flag = R.drawable.ic_flag_arabia;
+            } else if (str.equals(LANGUAGE_KEY_THAILAND)) {
+                flag = R.drawable.ic_flag_thailand;
+            } else if (str.equals(LANGUAGE_KEY_VIETNAM)) {
+                flag = R.drawable.ic_flag_vietnam;
+            }
+        }
+
+        return mContext.getResources().getDrawable(flag);
+    }
+
+    public static String getLanguageName(Context mContext) {
+        String str = getLanguagePref(mContext);
+        if (TextUtils.isEmpty(str)) {
             return mContext.getString(R.string.language_en);
-        }else{
-            if(str.equals(LANGUAGE_KEY_ENGLISH)){
+        } else {
+            if (str.equals(LANGUAGE_KEY_ENGLISH)) {
                 return mContext.getString(R.string.language_en);
-            }else if(str.equals(LANGUAGE_KEY_CHINESE)){
+            } else if (str.equals(LANGUAGE_KEY_CHINESE)) {
                 return mContext.getString(R.string.language_ch);
-            }else{
+            } else if (str.equals(LANGUAGE_KEY_INDONESIA)) {
                 return mContext.getString(R.string.language_in);
+            } else if (str.equals(LANGUAGE_KEY_TAGALOG)) {
+                return mContext.getString(R.string.language_ph);
+            } else if (str.equals(LANGUAGE_KEY_ARABIC)) {
+                return mContext.getString(R.string.language_ar);
+            } else if (str.equals(LANGUAGE_KEY_THAILAND)) {
+                return mContext.getString(R.string.language_th);
+            } else if (str.equals(LANGUAGE_KEY_VIETNAM)) {
+                return mContext.getString(R.string.language_vi);
+            } else {
+                return mContext.getString(R.string.language_en);
             }
         }
     }

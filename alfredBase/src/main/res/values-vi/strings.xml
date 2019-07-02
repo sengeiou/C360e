@@ -146,7 +146,7 @@
     <string name="cash_out">Rút tiền</string>
     <string name="manually_add_printer">Thêm thủ công máy in</string>
     <string name="device_scan_tips">Quét mã QR để có được máy tính bảng được ghép nối với pos</string>
-    <string name="device_scan_tips_manually">HOẶC \ n tự thiết lập IP POS trong máy tính bảng</string>
+    <string name="device_scan_tips_manually">HOẶC \ntự thiết lập IP POS trong máy tính bảng</string>
     <string name="printer">Máy in</string>
     <string name="kds">KDS</string>
     <string name="select_printer_information">Chọn thông tin máy in</string>
@@ -182,7 +182,7 @@
     <string name="new_password_no_same">Mật khẩu mới được nhập không giống nhau, vui lòng thử lại.</string>
     <string name="online_order">Đặt hàng trực tuyến</string>
     <string name="have_online_order">Bạn có một đơn đặt hàng trực tuyến mới</string>
-    <string name="select_revenue_center">Bạn đủ điều kiện để phục vụ \ nin các trung tâm doanh thu</string>
+    <string name="select_revenue_center">Bạn đủ điều kiện để phục vụ \nin các trung tâm doanh thu</string>
     <!-- ResultCode -->
     <string name="failed_connect_server">Không thể kết nối với</string>
     <string name="try_later">, Vui lòng thử lại sau</string>

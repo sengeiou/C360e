@@ -9,16 +9,16 @@
     <string name="loading">Naglo-load</string>
 
     <!-- before login -->
-    <string name="scan_qr_remind">I-scan ang QR code mula sa POS ng \ nrevenue center upang makakuha ng KDS tablet na ipinares. \ NOr Slide sa kaliwa At \ nManunekta na kumunekta sa POS sa pamamagitan ng IP</string>
-    <string name="set_ipaddr">Device Pairing \ nSet up POS IP Address</string>
+    <string name="scan_qr_remind">I-scan ang QR code mula sa POS ng \nrevenue center upang makakuha ng KDS tablet na ipinares. \nOr Slide sa kaliwa At \nManunekta na kumunekta sa POS sa pamamagitan ng IP</string>
+    <string name="set_ipaddr">Device Pairing \nSet up POS IP Address</string>
     <string name="connect">Ikonekta</string>
     <string name="invalid_ip">Hindi wastong pangunahing POS IP o Mga Device ay wala sa parehong network. Mangyaring suriin</string>
     <string name="invalid_ip_">Isang hindi wastong IP address na itinakda mo</string>
     <string name="link">Dapat i-link ang</string>
     <string name="select_revenue_center">Ang iyong mga karapat-dapat na maghatid ng mga sentrong pang-kita</string>
     <string name="logining">Logining</string>
-    <string name="waiter_login_tips1">Nakareserba ang device na \ nEnter Waiter Employee ID</string>
-    <string name="waiter_login_tips2">\ nIpasok ang Password</string>
+    <string name="waiter_login_tips1">Nakareserba ang device na \nEnter Waiter Employee ID</string>
+    <string name="waiter_login_tips2">\nIpasok ang Password</string>
 
     <!-- TablePage,MainPage,ModifierDetail,Instruction -->
     <string name="title">Pamagat</string>
@@ -62,7 +62,7 @@
     <string name="lock_screen">Lock ng screen</string>
 
     <!-- other -->
-    <string name="relogin_pos">Isinara ng POS ang kasalukuyang sesyon. \ nMangyaring mag-relogin kapag nagsisimula ang susunod na session</string>
+    <string name="relogin_pos">Isinara ng POS ang kasalukuyang sesyon. \nMangyaring mag-relogin kapag nagsisimula ang susunod na session</string>
     <string name="pairing_failed">Nabigo ang pagpapares: Mga error sa network</string>
     <string name="empty_invalid">Ang di-wastong halaga ay hindi wasto</string>
     <string name="number_people">Mangyaring Ipasok ang Bilang ng Mga Tao</string>

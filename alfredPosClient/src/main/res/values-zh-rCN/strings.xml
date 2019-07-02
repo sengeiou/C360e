@@ -30,8 +30,8 @@
     <string name="weight">重量</string>
     <string name="weight_kg">重量（KG）</string>
     <string name="discount_item">折扣项目</string>
-    <string name="discount_w_category">按类别折扣\ n（只能申请一次）</string>
-    <string name="cannot_unseat">无法取消这张桌子。 \ n已订购一些菜单。</string>
+    <string name="discount_w_category">按类别折扣\n（只能申请一次）</string>
+    <string name="cannot_unseat">无法取消这张桌子。 \n已订购一些菜单。</string>
     <string name="ask_transfer_table">你确定将％1 $ s转移到％2 $ s吗？</string>
     <string name="adjustment">调整</string>
     <string name="custom_payment">自定义付款</string>
@@ -94,19 +94,19 @@
     <string name="server">服务器</string>
     <string name="loading">载入中</string>
     <string name="exit_program">请再次单击BACK退出</string>
-    <string name="drop_session_open">删除会话\ n开始</string>
-    <string name="drop_session_close">退回\ n关闭</string>
-    <string name="manually_update">没有收到数据更新消息。\ n您是否需要从后台手动更新数据？</string>
+    <string name="drop_session_open">删除会话\n开始</string>
+    <string name="drop_session_close">退回\n关闭</string>
+    <string name="manually_update">没有收到数据更新消息。\n您是否需要从后台手动更新数据？</string>
     <string name="day_symbol">日</string>
     <!-- MainPage-TopMenuView -->
     <string name="alfred">阿尔弗雷德</string>
     <string name="number">0</string>
     <!-- MainPage-Operate  -->
-    <string name="transfer_table">传输\ nTable</string>
-    <string name="hold_bill">按住\ nBill</string>
+    <string name="transfer_table">传输\nTable</string>
+    <string name="hold_bill">按住\nBill</string>
     <string name="kiosk_hold">报亭和举行</string>
-    <string name="open_item">打开\ nItem域</string>
-    <string name="edit_kot">编辑\ nkot</string>
+    <string name="open_item">打开\nItem域</string>
+    <string name="edit_kot">编辑\nkot</string>
     <string name="app_dine_in">在用餐</string>
     <!-- Close Bill -->
     <string name="print_receipt">打印收据</string>
@@ -129,7 +129,7 @@
     <string name="edit_settlement">编辑结算</string>
     <string name="card_loss">报告丢失</string>
     <string name="fill_card">填充卡</string>
-    <string name="cash_inout">现金\ NIN / OUT</string>
+    <string name="cash_inout">现金\nIN / OUT</string>
     <string name="sunmi_screen">SUNMI副屏幕</string>
     <!-- setting -->
     <string name="update_msg">请更新消息</string>
@@ -171,7 +171,7 @@
     <!-- MainPage -->
     <string name="sending_to_kitchen">送到厨房</string>
     <string name="place_before_print">请先下订单！</string>
-    <string name="setting_printer">打印机未就绪，\ n请转到设置>设备> \ n打印机以分配正确的收银打印机！</string>
+    <string name="setting_printer">打印机未就绪，\n请转到设置>设备> \n打印机以分配正确的收银打印机！</string>
     <string name="bill_printing">比尔正在印刷</string>
     <string name="no_items">订单列表中没有商品！</string>
     <string name="receipt_printing">收据是打印</string>
@@ -264,7 +264,7 @@
     <string name="order_first">不能申请折扣！</string>
     <string name="no_cashier_printer">还没有收银打印机</string>
     <string name="discard_current_order">你确定要放弃当前的订单吗？</string>
-    <string name="unseat_table">你确定要取消桌子吗？\ nVoid项目不会被记录到报告中。</string>
+    <string name="unseat_table">你确定要取消桌子吗？\nVoid项目不会被记录到报告中。</string>
 
     <!-- Clock in/Out -->
     <string name="clock_out_btn">时钟输出</string>
@@ -302,7 +302,7 @@
     <string name="devices_bluetooth">蓝牙</string>
 
     <string name="revenue_center">收入中心</string>
-    <string name="ipaddr_tips">设备配对\ n设置POS IP地址</string>
+    <string name="ipaddr_tips">设备配对\n设置POS IP地址</string>
     <string name="connect">连</string>
     <string name="language">语言</string>
     <string name="choose_language">选择语言</string>

@@ -1000,7 +1000,7 @@ public class HttpAPI {
 
                     DialogFactory.commonTwoBtnDialog(App.getTopActivity(),
                             "Warning",
-                            App.instance.getResources().getString(com.alfredbase.R.string.user_no_permission) + "\n Relogin?",
+                            App.instance.getResources().getString(com.alfredbase.R.string.user_no_permission) + "\nRelogin?",
                             "OK", App.instance.getResources().getString(com.alfredbase.R.string.no).toUpperCase(), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

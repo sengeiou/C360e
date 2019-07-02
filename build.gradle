@@ -28,33 +28,35 @@ ext {
 }
 
 buildscript {
+//    ext.kotlin_version = '1.3.21'
     repositories {
-        jcenter()
-//        mavenCentral()
         google()
-//
-//        maven {
-//            url 'https://maven.google.com'
-//        }
+//        mavenCentral()
+//        maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
 
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
         classpath 'com.tencent.bugly:symtabfileuploader:latest.release'
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 //        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
-
-//        mavenCentral()
         google()
+        jcenter()
+//        maven {
+//            url "https://maven.google.com" // Google's Maven repository
+//        }
+//        maven { url "https://jitpack.io" }
     }
 }
-println "In pos, gradle id is " +gradle.hashCode()
+println "In pos, gradle id is " + gradle.hashCode()
 println "Home Dir:" + gradle.gradleHomeDir
 println "User Home Dir:" + gradle.gradleUserHomeDir
 println "Parent: " + gradle.parent

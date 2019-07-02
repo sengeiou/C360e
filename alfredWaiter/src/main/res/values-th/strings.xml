@@ -9,16 +9,16 @@
     <string name="loading">กำลังโหลด</string>
 
     <!-- before login -->
-    <string name="scan_qr_remind">สแกนรหัส QR จาก POS ของ \ n ศูนย์รวมเพื่อรับแท็บเล็ต KDS ที่จับคู่ \ n หรือเลื่อนไปทางซ้ายและ \ n เชื่อมต่อ POS ด้วย IP ด้วยตนเอง</string>
-    <string name="set_ipaddr">การจับคู่อุปกรณ์ \ n ตั้งค่าที่อยู่ IP ของ POS</string>
+    <string name="scan_qr_remind">สแกนรหัส QR จาก POS ของ \nศูนย์รวมเพื่อรับแท็บเล็ต KDS ที่จับคู่ \nหรือเลื่อนไปทางซ้ายและ \nเชื่อมต่อ POS ด้วย IP ด้วยตนเอง</string>
+    <string name="set_ipaddr">การจับคู่อุปกรณ์ \nตั้งค่าที่อยู่ IP ของ POS</string>
     <string name="connect">ต่อ</string>
     <string name="invalid_ip">IP IP หลักหรืออุปกรณ์ไม่ถูกต้องไม่ได้อยู่ในเครือข่ายเดียวกัน โปรดตรวจสอบ</string>
     <string name="invalid_ip_">ที่อยู่ IP ที่คุณกำหนดไม่ถูกต้อง</string>
     <string name="link">จะต้องเชื่อมโยง</string>
-    <string name="select_revenue_center">คุณมีสิทธิ์แสดงศูนย์รายได้ \ nin เหล่านั้น</string>
+    <string name="select_revenue_center">คุณมีสิทธิ์แสดงศูนย์รายได้ \nin เหล่านั้น</string>
     <string name="logining">Logining</string>
-    <string name="waiter_login_tips1">อุปกรณ์จับคู่ \ n ใส่รหัสพนักงานพนักงาน</string>
-    <string name="waiter_login_tips2">\ n ป้อนรหัสผ่าน</string>
+    <string name="waiter_login_tips1">อุปกรณ์จับคู่ \nใส่รหัสพนักงานพนักงาน</string>
+    <string name="waiter_login_tips2">\nป้อนรหัสผ่าน</string>
 
     <!-- TablePage,MainPage,ModifierDetail,Instruction -->
     <string name="title">หัวข้อ</string>
@@ -62,7 +62,7 @@
     <string name="lock_screen">ล็อกหน้าจอ</string>
 
     <!-- other -->
-    <string name="relogin_pos">POS ได้ปิดเซสชันปัจจุบัน \ n โปรดทำการล็อกอินอีกครั้งเมื่อเซสชันถัดไปเริ่มต้นขึ้น</string>
+    <string name="relogin_pos">POS ได้ปิดเซสชันปัจจุบัน \nโปรดทำการล็อกอินอีกครั้งเมื่อเซสชันถัดไปเริ่มต้นขึ้น</string>
     <string name="pairing_failed">การจับคู่ล้มเหลว: ข้อผิดพลาดของเครือข่าย</string>
     <string name="empty_invalid">ค่าว่างไม่ถูกต้อง</string>
     <string name="number_people">กรุณาใส่จำนวนคน</string>
@@ -82,6 +82,6 @@
 
 
     <string name="edit">แก้ไข</string>
-    <string name="ip_changed_relogin">IP ของคุณมีการเปลี่ยนแปลง \n โปรดลงชื่อเข้าใช้อีกครั้ง</string>
+    <string name="ip_changed_relogin">IP ของคุณมีการเปลี่ยนแปลง \nโปรดลงชื่อเข้าใช้อีกครั้ง</string>
 
 </resources>

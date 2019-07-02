@@ -9,16 +9,16 @@
     <string name="loading">جار التحميل</string>
 
     <!-- before login -->
-    <string name="scan_qr_remind">قم بمسح رمز الاستجابة السريعة من POS الخاص بـ \ n مركز الإيرادات للحصول على إقران KDS tablet. \ n أو مرر إلى اليسار و \ n قم يدويًا بتوصيل POS عبر IP</string>
-    <string name="set_ipaddr">إقران الجهاز \ n قم بإعداد عنوان IP لنقاط البيع</string>
+    <string name="scan_qr_remind">قم بمسح رمز الاستجابة السريعة من POS الخاص بـ \nمركز الإيرادات للحصول على إقران KDS tablet. \nأو مرر إلى اليسار و \nقم يدويًا بتوصيل POS عبر IP</string>
+    <string name="set_ipaddr">إقران الجهاز \nقم بإعداد عنوان IP لنقاط البيع</string>
     <string name="connect">الاتصال</string>
     <string name="invalid_ip">ليست أجهزة POS IP الرئيسية أو الأجهزة غير صالحة في نفس الشبكة. يرجى المراجعة</string>
     <string name="invalid_ip_">عنوان IP غير صالح تم تعيينه بواسطتك</string>
     <string name="link">يجب ربط</string>
-    <string name="select_revenue_center">أنت مؤهل للخدمة \ n في مراكز الدخل هذه</string>
+    <string name="select_revenue_center">أنت مؤهل للخدمة \nفي مراكز الدخل هذه</string>
     <string name="logining">Logining</string>
-    <string name="waiter_login_tips1">يقترن الجهاز \ n بإدخال معرف موظف النادل</string>
-    <string name="waiter_login_tips2">\ n أدخل كلمة المرور</string>
+    <string name="waiter_login_tips1">يقترن الجهاز \nبإدخال معرف موظف النادل</string>
+    <string name="waiter_login_tips2">\nأدخل كلمة المرور</string>
 
     <!-- TablePage,MainPage,ModifierDetail,Instruction -->
     <string name="title">عنوان</string>
@@ -62,13 +62,13 @@
     <string name="lock_screen">اقفل الشاشة</string>
 
     <!-- other -->
-    <string name="relogin_pos">لقد أغلق POS الجلسة الحالية. \ n الرجاء إعادة التسجيل عند بدء الجلسة التالية</string>
+    <string name="relogin_pos">لقد أغلق POS الجلسة الحالية. \nالرجاء إعادة التسجيل عند بدء الجلسة التالية</string>
     <string name="pairing_failed">فشل الاقتران: أخطاء الشبكة</string>
     <string name="empty_invalid">القيمة الفارغة غير صالحة</string>
     <string name="number_people">الرجاء إدخال عدد من الناس</string>
     <string name="note">ملحوظة</string>
     <string name="transfer_">  تم نقله إلى الجدول:</string>
-    <string name="order_belong">حدد من سيتبع الأمر \ n</string>
+    <string name="order_belong">حدد من سيتبع الأمر \n</string>
     <string name="clear">واضح</string>
     <string name="enter">أدخل</string>
     <string name="cancel">إلغاء</string>

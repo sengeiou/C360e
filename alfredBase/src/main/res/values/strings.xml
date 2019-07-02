@@ -146,7 +146,7 @@
     <string name="cash_out">Cash Out</string>
     <string name="manually_add_printer">Manually add printer</string>
     <string name="device_scan_tips">Scan QR code to get tablets paired with pos</string>
-    <string name="device_scan_tips_manually">OR\n manually set up POS IP in tablet</string>
+    <string name="device_scan_tips_manually">OR\nmanually set up POS IP in tablet</string>
     <string name="printer">Printer</string>
     <string name="kds">KDS</string>
     <string name="select_printer_information">Select Printer Information</string>
@@ -414,5 +414,6 @@
     <string name="item_sales">Item Sales</string>
     <string name="item_price">Item Price</string>
     <string name="revert">Revert</string>
+    <string name="item_name">Item Name</string>
 
 </resources>

@@ -146,7 +146,7 @@
     <string name="cash_out">Kas keluar</string>
     <string name="manually_add_printer">Tambahkan printer secara manual</string>
     <string name="device_scan_tips">Pindai kode QR untuk membuat tablet dipasangkan dengan pos</string>
-    <string name="device_scan_tips_manually">ATAU \ n secara manual mengatur POS IP di tablet</string>
+    <string name="device_scan_tips_manually">ATAU \nsecara manual mengatur POS IP di tablet</string>
     <string name="printer">Printer</string>
     <string name="kds">KDS</string>
     <string name="select_printer_information">Pilih Informasi Printer</string>

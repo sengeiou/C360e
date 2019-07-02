@@ -146,7 +146,7 @@
     <string name="cash_out">兑现</string>
     <string name="manually_add_printer">手动添加打印机</string>
     <string name="device_scan_tips">扫描二维码以获得与pos配对的平板电脑</string>
-    <string name="device_scan_tips_manually">或者\ n在平板电脑中手动设置POS IP</string>
+    <string name="device_scan_tips_manually">或者\n在平板电脑中手动设置POS IP</string>
     <string name="printer">打印机</string>
     <string name="kds">KDS</string>
     <string name="select_printer_information">选择打印机信息</string>
