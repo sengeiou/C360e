@@ -2473,6 +2473,7 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             error.printStackTrace();
                             String body = new String(responseBody);
+                            Log.wtf("Test_get_failed", " " + body);
                             super.onFailure(statusCode, headers, responseBody, error);
 
                         }

@@ -3,7 +3,6 @@ package com.alfredposclient.global;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -25,7 +24,6 @@ import com.alfredposclient.R;
 import com.alfredposclient.http.HTTPKDSRequest;
 import com.alfredposclient.http.HTTPWaiterRequest;
 import com.alfredposclient.http.HttpAPI;
-import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
 
@@ -569,8 +567,6 @@ public class SyncCentre {
     public void setClientLanguage(final Context context, String version, String tag) {
 
         ArrayList<String> urls = new ArrayList<String>();
-        String callNumApi = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
-        urls.add(callNumApi);
 
         Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
         Set<Integer> key = waiterDeviceMap.keySet();
@@ -587,6 +583,12 @@ public class SyncCentre {
             String url = "http://" + kdsDevice.getIP() + ":" + APPConfig.KDS_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
             urls.add(url);
         }
+
+        if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
+            String callNumApi = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+            urls.add(callNumApi);
+        }
+
         for (int i = 0; i < urls.size(); i++) {
             HttpAPI.setClientLanguage(context, urls.get(i), syncHttpClient, version, tag);
         }
@@ -640,7 +642,7 @@ public class SyncCentre {
                 url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
             }
             String amount = context.getString(R.string.amount);
-            param.append(amount+" =" + parameters.get("amount") + "&");
+            param.append(amount + " =" + parameters.get("amount") + "&");
         }
 
         param.append("restaurantKey=" + CoreData.getInstance().getLoginResult()
