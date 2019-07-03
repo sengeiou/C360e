@@ -17,6 +17,7 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.WaiterDevice;
+import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredposclient.http.HTTPKDSRequest;
 import com.alfredposclient.http.HTTPWaiterRequest;
@@ -62,15 +63,15 @@ public class SyncCentre {
             instance = new SyncCentre();
 
             httpClient = new AsyncHttpClient();
-            httpClient.addHeader("Connection", "close");
             httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
+            httpClient.addHeader("Keep-Alive", "30");
             httpClient.setTimeout(20 * 1000);
             syncHttpClient = new SyncHttpClient();
-            syncHttpClient.addHeader("Connection", "close");
+            syncHttpClient.addHeader("Keep-Alive", "30");
             syncHttpClient.setTimeout(20 * 1000);
             syncHttpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
             bigSyncHttpClient = new SyncHttpClient();
-            bigSyncHttpClient.addHeader("Connection", "close");
+            bigSyncHttpClient.addHeader("Keep-Alive", "30");
             bigSyncHttpClient.setTimeout(100 * 1000);
             bigSyncHttpClient.setMaxRetriesAndTimeout(0, 1 * 1000);
         }
@@ -122,15 +123,17 @@ public class SyncCentre {
                 getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
                 httpClient, handler, MODE_FIRST_SYNC);
-
         HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getHappyHour(context,
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
-     getRemainingStock(context,handler,MODE_FIRST_SYNC);
+        HttpAPI.getPromotionInfo (context,
+                getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_FIRST_SYNC);
+        HttpAPI.getPromotionData(context,
+                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
+
+        getRemainingStock(context,handler,MODE_FIRST_SYNC);
 
     }
-
-
 
 //修改单个菜数量
     public void updateReaminingStockByItemId(Context context, Map<String, Object> parameters,Handler handler
@@ -217,8 +220,22 @@ public class SyncCentre {
     public void cloudSyncUploadOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
-        HttpAPI.cloudSync(context, syncMsg,
-                getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+    }
+
+    public void cloudSyncUploadRealOrderInfo(BaseActivity context,
+                                         SyncMsg syncMsg, Handler handler) {
+        //orderDataMsg
+        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+        if(timely==0) {
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+        }else {
+
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/orderRealDateDataMsg"), bigSyncHttpClient);
+        }
     }
 
     /*
@@ -227,8 +244,17 @@ public class SyncCentre {
     public void cloudSyncUploadReportInfo(BaseActivity context,
                                           SyncMsg syncMsg, Handler handler) {
         //reportDataMsg
-        HttpAPI.cloudSync(context, syncMsg,
-                getAbsoluteUrl("receive/reportDataMsg"), bigSyncHttpClient);
+
+        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+        if(timely==0) {
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/reportDataMsg"), bigSyncHttpClient);
+        }else {
+
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/reportRealDateDataMsg"), bigSyncHttpClient);
+        }
+
     }
 
     /*load day sales report from cloud */
@@ -265,6 +291,10 @@ public class SyncCentre {
 
         if (type.equals(PushMessage.STOCK)) {
             getRemainingStock(context, handler, MODE_PUSH_SYNC);
+        }
+        if (type.equals(PushMessage.PROMOTION)) {
+            HttpAPI.getPromotionInfo (context,
+                    getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_PUSH_SYNC);
         }
 
         if (type.equals(PushMessage.PAYMENT_METHOD)) {
@@ -341,6 +371,9 @@ public class SyncCentre {
     public void recevingAppOrderStatus(Context context, int appOrderId, Handler handler) {
         HttpAPI.recevingAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
     }
+    public void readyAppOrderStatus(Context context, int appOrderId, Handler handler) {
+        HttpAPI.readyAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
+    }
 
     public void updatePlaceTable(Context context, Map<String, Object> parameters, Handler handler) {
         HttpAPI.updatePlaceTable(context, getAbsoluteUrl(APIName.RESTAURANT_CHANGEPLACE), httpClient, parameters, handler);
@@ -390,7 +423,7 @@ public class SyncCentre {
         if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://172.16.3.207:8083/alfred-api/" + relativeUrl;
+            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
             return "http://139.224.17.126/alfred-api/" + relativeUrl;

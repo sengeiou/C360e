@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +22,8 @@ import java.io.Serializable;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:15/12/16 下午2:49
+ * Author:
+ * Date:
  */
 public class ThemeConfig implements Serializable{
 

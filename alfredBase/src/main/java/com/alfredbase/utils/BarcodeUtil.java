@@ -14,7 +14,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 
 /**
- * @time 2015-11-17 下午3:46:18
+ * @time
  * @tags   
  * @todo TODO
  */

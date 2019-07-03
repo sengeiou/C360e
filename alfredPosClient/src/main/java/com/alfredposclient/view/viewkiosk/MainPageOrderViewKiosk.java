@@ -68,6 +68,7 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
+import com.alfredposclient.utils.NetworkUtils;
 import com.alfredposclient.view.RingTextView;
 
 import java.util.ArrayList;
@@ -159,6 +160,12 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 					return;
 				}
 
+				if(!NetworkUtils.isNetworkAvailable(context)){
+					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
+
+					//return;
+
+				}
 
 				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
 				Map<Integer, String> categorMap = new HashMap<Integer, String>();
@@ -398,7 +405,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 				itemCount += orderDetail.getItemNum();
 			}
 		} else {
-			// bob add:
+			//  add:
 			// if there is no order detail, complete all KOT if the order has
 			// KotSummary kotSummary =
 			// KotSummarySQL.getKotSummary(order.getId());
@@ -429,10 +436,10 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 			tv_pax.setText(parent.getString(R.string.pax) + " 4");
 		}
 		tv_item_count.setText("" + itemCount);
-		tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()));
-		tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()));
-		tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()));
-		tv_grand_total.setText(parent.getResources().getString(R.string.grand_total) + ": " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
+		tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()));
+		tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()));
+		tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()));
+		tv_grand_total.setText(parent.getResources().getString(R.string.grand_total) + ": " + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()));
 	}
 
 	class OrderAdapter extends AbstractSlideExpandableListAdapter {
@@ -571,7 +578,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
 			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
 					orderDetail.getItemId());
-			// bob: itemDetails will be null in case that wait app keep old
+			//  itemDetails will be null in case that wait app keep old
 			// wrong menu
 			// if (itemDetail == null) {
 			// return arg1;
@@ -581,8 +588,8 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 			}
 			holder.specialInstract
 					.setText(orderDetail.getSpecialInstractions());
- 			holder.name.setText(itemDetail.getItemName());
-			holder.price.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()));
+			holder.name.setText(itemDetail.getItemName());
+			holder.price.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getItemPrice()));
 			holder.tv_qty.setText(orderDetail.getItemNum() + "");
 			holder.tv_qty.setBackgroundColor(context.getResources().getColor(
 					R.color.white));
@@ -783,16 +790,16 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 				}
 			});
 
-			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()));
+			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getRealPrice()));
 
 			if(orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE){
-				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
-				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
+				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(ParamConst.DOUBLE_ZERO).toString());
+				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(ParamConst.DOUBLE_ZERO).toString());
 			}else{
-				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getDiscountPrice()).toString());
+				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getDiscountPrice()).toString());
 				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-						+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
-						BH.getBD(orderDetail.getDiscountPrice()), true).toString());
+						+ BH.formatMoney(BH.sub(BH.getBD(orderDetail.getRealPrice()),
+						BH.getBD(orderDetail.getDiscountPrice()), true).toString()));
 			}
 			holder.discount.setBackgroundColor(context.getResources().getColor(
 					R.color.white));

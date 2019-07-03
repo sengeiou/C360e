@@ -83,6 +83,7 @@ import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
@@ -92,6 +93,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.JSONUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RxBus;
@@ -197,7 +199,7 @@ public class MainPageKiosk extends BaseActivity {
     public static final int KIOSK_VIEW_EVENT_DELETE_ORDER = 1045;
 
     // KOT PRINT
-    public static final int KOT_PRINT_FAILED = 200;
+    public static final int KOT_PRINT_FAILED = 204;
     public static final int KOT_PRINT_SUCCEED = 201;
     public static final int KOT_PRINT_NULL = 202;
     public static final int KOT_ITEM_PRINT_NULL = 203;
@@ -281,7 +283,14 @@ public class MainPageKiosk extends BaseActivity {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    //关闭手势滑动
         settingView = (SettingView) findViewById(R.id.settingView);
         settingView.setParams(this, mDrawerLayout);
-        if (App.instance.isSUNMIShow()) {
+        if (MachineUtil.isHisense()) {
+            if (MachineUtil.isSunmiModel()) {
+                settingView.SUNMIVisible();
+            } else {
+                settingView.SUNMIGone();
+            }
+
+        } else if (MachineUtil.isHisense()) {
             settingView.SUNMIVisible();
         } else {
             settingView.SUNMIGone();
@@ -373,6 +382,7 @@ public class MainPageKiosk extends BaseActivity {
         long nowTime = System.currentTimeMillis();
         int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
         App.instance.setKioskHoldNum(count);
+        App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
         XMPP.getInstance().setCanCheckAppOrder(true);
 
 
@@ -481,7 +491,7 @@ public class MainPageKiosk extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
-        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
+        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
         List<OrderDetail> orderDetails = OrderDetailSQL
                 .getUnFreeOrderDetails(oldOrder);
         if (!orderDetails.isEmpty()) {
@@ -781,9 +791,9 @@ public class MainPageKiosk extends BaseActivity {
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
 //
 
-                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
-
-                            } else {
+//                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
+//
+//                            } else {
                                 if (!App.instance.isRevenueKiosk()) {
                                     App.instance.remoteBillPrint(printer, title, paidOrder,
                                             orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
@@ -793,7 +803,7 @@ public class MainPageKiosk extends BaseActivity {
                                                 orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
                                     }
                                 }
-                            }
+//                            }
                         }
 //
 
@@ -991,10 +1001,10 @@ public class MainPageKiosk extends BaseActivity {
 
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
-                        if (App.instance.getSystemSettings().isPrintBill()) {
+//                        if (App.instance.getSystemSettings().isPrintBill()) {
                             App.instance.remoteBillPrint(printer, title, temporaryOrder,
                                     orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                        }
+//                        }
                     }
 //
 //				if (orderItems.size() > 0 && printer != null) {
@@ -1112,9 +1122,15 @@ public class MainPageKiosk extends BaseActivity {
                 }
                 case VIEW_EVENT_ADD_ORDER_DETAIL:
                     addOrderDetail((OrderDetail) msg.obj);
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case VIEW_EVENT_SET_DATA:
                     setData();
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case MainPage.VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
                     setData();
@@ -1455,7 +1471,7 @@ public class MainPageKiosk extends BaseActivity {
                                         kotItemDetails.add(freeKotItemDetail);
                                     }
 
-                                    //Bob: fix issue: kot print no modifier showup
+                                    // fix issue: kot print no modifier showup
                                     // look for kot modifiers
                                     Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
                                     ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
@@ -1648,7 +1664,8 @@ public class MainPageKiosk extends BaseActivity {
                         }
                     }
                     OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
-                    OrderDetailSQL.updateOrderDetail(orderDetail);
+                  //  OrderDetailSQL.updateOrderDetail(orderDetail);
+                    OrderDetailSQL.updateOrderDetailAndOrder(orderDetail);
                     if (orderDetail != null && orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                         handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                     } else {
@@ -2028,7 +2045,7 @@ public class MainPageKiosk extends BaseActivity {
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
             case KOT_PRINT_FAILED:
-                handler.sendMessage(handler.obtainMessage(action));
+               handler.sendMessage(handler.obtainMessage(action));
                 break;
             case KOT_PRINT_SUCCEED:
                 handler.sendMessage(handler.obtainMessage(action, obj));

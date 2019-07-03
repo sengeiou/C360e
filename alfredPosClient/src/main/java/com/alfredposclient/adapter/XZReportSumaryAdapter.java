@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.utils.BH;
 import com.alfredposclient.R;
 import com.alfredposclient.javabean.ReportDetailAnalysisItem;
 
@@ -64,7 +65,7 @@ public class XZReportSumaryAdapter extends BaseAdapter {
             viewHolder.xzreport_item_num.setVisibility(View.VISIBLE);
             viewHolder.xzreport_item_total.setVisibility(View.VISIBLE);
             viewHolder.xzreport_item_num.setText(reportDetailAnalysisItem.getQty() + "");
-            viewHolder.xzreport_item_total.setText(reportDetailAnalysisItem.getAmount().toString());
+            viewHolder.xzreport_item_total.setText(BH.formatMoney(reportDetailAnalysisItem.getAmount().toString()).toString());
         }else{
             viewHolder.xzreport_item_num.setVisibility(View.INVISIBLE);
             viewHolder.xzreport_item_total.setVisibility(View.INVISIBLE);

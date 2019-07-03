@@ -35,9 +35,68 @@ public class KotSummary implements Serializable{
 	private String empName; // 提交菜品的用户名
 
 	private String numTag="";
+	private int eatType; // 0 堂吃, 1 打包, 2外卖
+	private String address;//外卖地址
+	private String contact;
+	private String mobile;  //收货人电话
+	private long deliveryTime;
 
+	private int appOrderId;
+	private String remarks;
 	private int isSubPos;
-	
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public int getEatType() {
+		return eatType;
+	}
+
+	public int getAppOrderId() {
+		return appOrderId;
+	}
+
+	public void setAppOrderId(int appOrderId) {
+		this.appOrderId = appOrderId;
+	}
+
+	public void setEatType(int eatType) {
+		this.eatType = eatType;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getContact() {
+		return contact;
+	}
+
+	public void setContact(String contact) {
+		this.contact = contact;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public long getDeliveryTime() {
+		return deliveryTime;
+	}
+
+	public void setDeliveryTime(long deliveryTime) {
+		this.deliveryTime = deliveryTime;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -97,7 +156,7 @@ public class KotSummary implements Serializable{
 		this.status = status;
 	}
 	
-	//Bob: not use it for print
+	//: not use it for print
 	public String getOrderIdString() {
 		return String.valueOf(this.orderId);
 	}
@@ -182,6 +241,14 @@ public class KotSummary implements Serializable{
 		this.isSubPos = isSubPos;
 	}
 
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
 	@Override
 	public String toString() {
 		return "KotSummary{" +
@@ -202,6 +269,14 @@ public class KotSummary implements Serializable{
 				", orderRemark='" + orderRemark + '\'' +
 				", empName='" + empName + '\'' +
 				", numTag='" + numTag + '\'' +
+				", eatType=" + eatType +
+				", address='" + address + '\'' +
+				", contact='" + contact + '\'' +
+				", mobile='" + mobile + '\'' +
+				", deliveryTime=" + deliveryTime +
+				", appOrderId=" + appOrderId +
+				", remarks='" + remarks + '\'' +
+				", isSubPos=" + isSubPos +
 				'}';
 	}
 }

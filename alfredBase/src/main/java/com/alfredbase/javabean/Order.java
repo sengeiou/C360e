@@ -1,5 +1,6 @@
 package com.alfredbase.javabean;
 
+import com.alfredbase.ParamConst;
 import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
@@ -102,7 +103,7 @@ public class Order implements Serializable {
 	private Integer appOrderId;
 
 	//默认不是takeaway
-	private Integer isTakeAway = 0;
+	private Integer isTakeAway = ParamConst.NOT_TAKE_AWAY; //0 堂吃, 1 打包, 2外卖
 
 	private String tableName;
 
@@ -112,6 +113,7 @@ public class Order implements Serializable {
 	private String orderRemark;
 
 	private String discountCategoryId;
+
 	// 在已经结账的订单上面做修改的时候 用到 临时用 不存数据库
 	@Expose(serialize = false)
 	private String oldTotal;
@@ -121,7 +123,7 @@ public class Order implements Serializable {
 	private int subPosBeanId = 0;// IF it is main Pos， subPosBeanId is  zero
 	@Expose(serialize = false)
 	private int isSplitByPax;
-	
+	private  String promotion;
 	public Order() {
 	}
 
@@ -450,6 +452,14 @@ public class Order implements Serializable {
 		this.subPosBeanId = subPosBeanId;
 	}
 
+	public String getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(String promotion) {
+		this.promotion = promotion;
+	}
+
 	@Override
 	public String toString() {
 		return "Order{" +
@@ -485,6 +495,9 @@ public class Order implements Serializable {
 				", oldTotal='" + oldTotal + '\'' +
 				", numTag='" + numTag + '\'' +
 				", subPosBeanId=" + subPosBeanId +
+				", isSplitByPax=" + isSplitByPax +
+				", promotion='" + promotion + '\'' +
 				'}';
-	}
+
+}
 }

@@ -141,6 +141,13 @@ public class MainPageOrderView extends LinearLayout {
 					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
 					return;
 				}
+
+//				if(!NetworkUtils.isNetworkAvailable(context)){
+//					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
+//
+//				//	return;
+//
+//				}
 				List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
 
 				Map<Integer,String> categorMap=new HashMap<Integer,String>();
@@ -305,7 +312,9 @@ public class MainPageOrderView extends LinearLayout {
 										orderMap);
 							}
 						} else {
-							KotSummarySQL.deleteKotSummary(kotSummary);
+//							if(placedOrderDetails == null || placedOrderDetails.size() ==0) {
+//								KotSummarySQL.deleteKotSummary(kotSummary);
+//							}
 							parent.runOnUiThread(new Runnable() {
 
 								@Override
@@ -373,7 +382,7 @@ public class MainPageOrderView extends LinearLayout {
 				itemCount += orderDetail.getItemNum();
 			}
 		} else {
-			// bob add:
+			//  add:
 			// if there is no order detail, complete all KOT if the order has
 			// KotSummary kotSummary =
 			// KotSummarySQL.getKotSummary(order.getId());
@@ -407,18 +416,18 @@ public class MainPageOrderView extends LinearLayout {
 			taxAmount = BH.sub(BH.getBD(order.getTaxAmount()), taxAmount, true);
 			discountAmount = BH.sub(BH.getBD(order.getDiscountAmount()), discountAmount, true);
 			total = BH.sub(BH.getBD(order.getTotal()), total, true);
-			tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + subtotal.toString());
-			tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + discountAmount.toString());
-			tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + taxAmount.toString());
+			tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(subtotal.toString()).toString());
+			tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(discountAmount.toString()).toString());
+			tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(taxAmount.toString()).toString());
 			tv_grand_total.setText(context.getResources().getString(R.string.grand_total) + ": " +
-					App.instance.getLocalRestaurantConfig().getCurrencySymbol() + total.toString());
+					App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(total.toString()).toString());
 
 		}else {
-			tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getSubTotal()).toString());
-			tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getDiscountAmount()).toString());
-			tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTaxAmount()).toString());
+			tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
+			tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString());
+			tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() +BH.formatMoney( order.getTaxAmount()).toString());
 			tv_grand_total.setText(context.getResources().getString(R.string.grand_total) + ": " +
-					App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(order.getTotal()).toString());
+					App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString());
 		}
 	}
 
@@ -561,7 +570,7 @@ public class MainPageOrderView extends LinearLayout {
 
 //			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
 //					orderDetail.getItemId());
-			// bob: itemDetails will be null in case that wait app keep old
+			// : itemDetails will be null in case that wait app keep old
 			// wrong menu
 			// if (itemDetail == null) {
 			// return arg1;
@@ -575,7 +584,7 @@ public class MainPageOrderView extends LinearLayout {
 			holder.specialInstract
 					.setText(orderDetail.getSpecialInstractions());
 			holder.name.setText(orderDetail.getItemName());
-			holder.price.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()));
+			holder.price.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getItemPrice()));
 			holder.tv_qty.setText(orderDetail.getItemNum() + "");
 			holder.tv_qty.setBackgroundColor(context.getResources().getColor(
 					R.color.white));
@@ -780,16 +789,16 @@ public class MainPageOrderView extends LinearLayout {
 				}
 			});
 
-			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()));
+			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getRealPrice()));
 
 			if(orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE){
-				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
-				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
+				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() +  BH.formatMoney(ParamConst.DOUBLE_ZERO).toString());
+				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() +  BH.formatMoney(ParamConst.DOUBLE_ZERO).toString());
 			}else{
-				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getDiscountPrice()).toString());
+				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getDiscountPrice()).toString());
 				holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-						+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
-						BH.getBD(orderDetail.getDiscountPrice()), true));
+						+ BH.formatMoney(BH.sub(BH.getBD(orderDetail.getRealPrice()),
+						BH.getBD(orderDetail.getDiscountPrice()), true).toString()));
 			}
 			holder.discount.setBackgroundColor(context.getResources().getColor(
 					R.color.white));

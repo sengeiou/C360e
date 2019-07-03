@@ -132,14 +132,25 @@
                         android:text="20/04/2014"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_s" />
-                </LinearLayout>
 
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_kds_delivery"
+                    android:layout_below="@+id/ll_pos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_s"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="5dp"
+                    />
                 <LinearLayout
                     android:id="@+id/kitchen_ll_orderRemark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_below="@+id/ll_pos"
+                    android:layout_below="@+id/tv_kds_delivery"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingBottom="5dp">
@@ -171,17 +182,25 @@
             </RelativeLayout>
 
             <com.alfredkds.view.PopItemListView
-                android:id="@+id/lv_kot"
+            android:id="@+id/lv_kot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ll_top"
+            android:layout_above="@+id/ll_bottom"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@color/black"
+            android:dividerHeight="1px"
+            android:visibility="gone"
+            android:listSelector="@android:color/transparent" >
+        </com.alfredkds.view.PopItemListView>
+            <com.alfredkds.view.SwipeMenuRecyclerView
+                android:id="@+id/re_kot"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/ll_top"
                 android:layout_above="@+id/ll_bottom"
-                android:background="@android:color/transparent"
-                android:cacheColorHint="@android:color/transparent"
-                android:divider="@color/black"
-                android:dividerHeight="1px"
-                android:listSelector="@android:color/transparent" >
-            </com.alfredkds.view.PopItemListView>
+                ></com.alfredkds.view.SwipeMenuRecyclerView>
 
             <View
                 android:layout_width="match_parent"

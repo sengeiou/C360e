@@ -42,6 +42,19 @@ public class NetUtil {
 		return false;
 	}
 
+	// 6.0之后 检查Internet通不通 不需要ping 可以使用此方法
+//	public static boolean isNetSystemUsable(Context context) {
+//		boolean isNetUsable = false;
+//		ConnectivityManager manager = (ConnectivityManager)
+//				context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//			NetworkCapabilities networkCapabilities =
+//					manager.getNetworkCapabilities(manager.getActiveNetwork());
+//			isNetUsable = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+//		}
+//		return isNetUsable;
+//	}
+
 	public static Map<String, String> decodeUrl(String paramString) {
 		int i = 0;
 		Map<String, String> localBundle = new HashMap<String, String>();

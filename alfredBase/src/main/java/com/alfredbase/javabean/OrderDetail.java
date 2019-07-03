@@ -355,6 +355,9 @@ public class OrderDetail implements Serializable {
     }
 
     public Integer getOrderSplitId() {
+        if(orderSplitId == null){
+            orderSplitId = 0;
+        }
         return orderSplitId;
     }
 

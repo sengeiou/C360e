@@ -310,7 +310,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         moneyKeyboard.setVisibility(View.GONE);
 //		swipe = contentView.findViewById(R.id.swipe);
 //		swipe.setOnClickListener(this);
-
+        contentView.findViewById(R.id.iv_halal).setVisibility(View.INVISIBLE);
         tv_other_media = (Button) contentView.findViewById(R.id.tv_other_media);
         tv_cards_rounding_num = (TextView) contentView.findViewById(R.id.tv_cards_rounding_num);
 
@@ -435,7 +435,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 BH.getBD(sumPaidamount), true);
         settlementNum = BH.getBD(sumPaidamount);
 
-        // Bob fix bug: If order amount is 0, we restrict it to use CASH
+        //fix bug: If order amount is 0, we restrict it to use CASH
         // settlement
         if (settlementNum.compareTo(BigDecimal.ZERO) == 0) {
             paymentType = ParamConst.SETTLEMENT_TYPE_CASH;
@@ -2460,7 +2460,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             break;
             case ParamConst.SETTLEMENT_CUSTOM_ALL: {
                 PaymentSettlement paymentSettlement = null;
-                if (paymentMethod.getIsPart() == 0) {
+                if (paymentMethod.getIsTax() == 0) {
                     //不计税
                     deleteVoidOrEntTax();
 

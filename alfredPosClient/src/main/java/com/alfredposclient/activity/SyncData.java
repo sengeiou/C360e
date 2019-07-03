@@ -288,7 +288,7 @@ public class SyncData extends BaseActivity {
 			case SYNC_DATA_TAG:
 				int type = (Integer) msg.obj;
 				if(type == SYNC_SUCCEED){
-					if(syncDataCount == 8){
+					if(syncDataCount == 10){
 						handler.sendEmptyMessage(HANDLER_GET_PLACE_INFO);
 					}else{
 

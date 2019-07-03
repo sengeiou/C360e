@@ -13,6 +13,7 @@ import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.ObjectFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -281,6 +282,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 if (reportDayTaxs.get(i).getTaxType() != null) {
                     if (reportDayTaxs.get(i).getTaxType().intValue() == 1) {
                         ReportDayTax reportDayTax = reportDayTaxs.get(i);
+                         ObjectFactory.getInstance().getReportDayTax(reportDayTax);
                         taxSvg = BH.add(taxSvg, BH.getBD(reportDayTax.getTaxAmount()), true);
                     }else if(reportDayTaxs.get(i).getTaxType().intValue() == 2) {
 
@@ -304,14 +306,21 @@ public class DaySalesReportPrint extends ReportBasePrint {
         BigDecimal overPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
         if (reportDayPayments != null && reportDayPayments.size() > 0) {
             for (ReportDayPayment reportDayPayment : reportDayPayments) {
-                BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
+                 ObjectFactory.getInstance().getReportDayPayment(reportDayPayment);
+                overPaymentAmount=   BH.add(overPaymentAmount, BH.getBD(reportDayPayment.getOverPaymentAmount()), false);
             }
             if (overPaymentAmount.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
                 this.addItem("Custom Payment Change", " ", overPaymentAmount.toString(), 1);
             }
         }
+        this.addItem("Promotion", " ", BH.getBD(reportDaySales.getPromotionTotal()).toString(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.rounding), " ", reportDaySales.getTotalBalancePrice(), 1);
-        double grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue();
+        double grossTotal;
+        if(reportDaySales.getPromotionTotal()!=null) {
+            grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() - Double.parseDouble(reportDaySales.getPromotionTotal());
+        }else {
+            grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() ;
+        }
         //	this.addItem(PrintService.instance.getResources().getString(R.string.gross_total), " ", BH.add(overPaymentAmount, BH.getBD(reportDaySales.getTotalSales()), true).toString(), 1);
 
         this.addItem(PrintService.instance.getResources().getString(R.string.gross_total), " ", BH.getBD(grossTotal).toString(), 1);
@@ -384,6 +393,10 @@ public class DaySalesReportPrint extends ReportBasePrint {
             this.addItem(PrintService.instance.getResources().getString(R.string.voucher), reportDaySales.getVoucherQty().toString(),
                     BH.getBD(reportDaySales.getVoucher()).toString(), 1);
         }
+        if(BH.getBD(reportDaySales.getPayHalal()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0){
+            this.addItem("PayHalal", reportDaySales.getPayHalalQty().toString(),
+                    BH.getBD(reportDaySales.getPayHalal()).toString(), 1);
+        }
 
         BigDecimal totalCustomPaymentAmount = BH.getBD(ParamConst.DOUBLE_ZERO);
         int totalCustomPaymentQty = 0;
@@ -394,7 +407,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 this.addItem(reportDayPayment.getPaymentName(), reportDayPayment.getPaymentQty().toString(),
                         BH.getBD(reportDayPayment.getPaymentAmount()).toString(), 1);
             }
-            this.addItem("TOTAL Custom Payment", totalCustomPaymentQty + "",
+            this.addItem("TOTAL CUSTOM PAYMENT", totalCustomPaymentQty + "",
                     totalCustomPaymentAmount.toString(), 1);
         }
 
@@ -521,6 +534,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
             addHortionalLine(this.charSize);
             for (int i = 0; i < reportSessionSalesList.size(); i++) {
                 ReportSessionSales reportSessionSales = reportSessionSalesList.get(i);
+                ObjectFactory.getInstance().getReportSessionSales(reportSessionSales);
                 this.addItem("Shift Detail For Shift Number", "" + (i + 1), 1);
                 this.addItem(PrintService.instance.getResources().getString(R.string.total_cash), BH.getBD(reportSessionSales.getCash()).toString(), 1);
                 this.addItem("Stored-Card Cash Charge", BH.getBD(reportSessionSales.getCashTopup()).toString(), 1);

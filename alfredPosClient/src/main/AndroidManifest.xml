@@ -247,6 +247,11 @@
             android:theme="@style/NullActivityTheme"
             />
         <service android:name="floatwindow.xishuang.float_lib.service.FloatMonkService"/>
+
+        <service
+            android:name=".service.HomeService"
+            android:process=":remote" >
+        </service>
     </application>
 
 </manifest>

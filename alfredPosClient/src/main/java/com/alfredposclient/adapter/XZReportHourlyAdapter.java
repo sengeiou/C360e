@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.javabean.ReportHourly;
+import com.alfredbase.utils.BH;
 import com.alfredposclient.R;
 
 import java.util.List;
@@ -61,7 +62,7 @@ public class XZReportHourlyAdapter extends BaseAdapter {
         viewHolder.xarepurt_item.setBackgroundColor(Color.parseColor("#B4EEB4"));
         viewHolder.xzreport_item_name.setText(reportHourly.getHour() + "");
         viewHolder.xzreport_item_num.setText(reportHourly.getAmountQty() + "");
-        viewHolder.xzreport_item_total.setText(reportHourly.getAmountPrice());
+        viewHolder.xzreport_item_total.setText(BH.formatMoney(reportHourly.getAmountPrice()).toString());
 
         return convertView;
     }

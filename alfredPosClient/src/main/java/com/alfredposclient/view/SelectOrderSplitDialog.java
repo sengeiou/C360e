@@ -124,7 +124,11 @@ public class SelectOrderSplitDialog extends Dialog {
 			if(orderSplit.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED){
 				rtv_text.setDoneCircleColor(groupId);
 			}else{
-				rtv_text.setCircleColor(context.getResources().getColor(ColorUtils.ColorGroup.getColor(groupId)), groupId);
+				int colorId = ColorUtils.ColorGroup.getColor(groupId);
+				if(colorId == 0){
+					colorId = R.color.split_group1;
+				}
+				rtv_text.setCircleColor(context.getResources().getColor(colorId), groupId);
 			}
 			return arg1;
 		}

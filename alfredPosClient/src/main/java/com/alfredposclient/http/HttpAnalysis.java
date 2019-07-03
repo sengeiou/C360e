@@ -16,6 +16,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
+import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MonthlyPLUReport;
@@ -24,6 +25,9 @@ import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.Promotion;
+import com.alfredbase.javabean.PromotionOrder;
+import com.alfredbase.javabean.PromotionWeek;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -66,6 +70,10 @@ import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.PromotionItemSQL;
+import com.alfredbase.store.sql.PromotionOrderSQL;
+import com.alfredbase.store.sql.PromotionSQL;
+import com.alfredbase.store.sql.PromotionWeekSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportDayTaxSQL;
@@ -235,6 +243,11 @@ public class HttpAnalysis {
 				}).start();
 
 			}
+
+			if(restaurant!=null)
+			{
+				Store.putInt(App.instance, Store.REPORT_ORDER_TIMELY, restaurant.getReportOrderTimely());
+			}
 			CoreData.getInstance().setRestaurant(restaurant);
 			RestaurantSQL.deleteAllRestaurant();
 			RestaurantSQL.addRestaurant(restaurant);
@@ -394,7 +407,7 @@ public class HttpAnalysis {
 					object.getString("pamentMethodList"),
 					new TypeToken<ArrayList<PaymentMethod>>() {
 					}.getType());
-			CoreData.getInstance().setPamentMethodList(pamentMethodList);
+			CoreData.getInstance().setPamentMethodList(pamentMethodList == null ? new ArrayList<PaymentMethod> () : pamentMethodList);
 			PaymentMethodSQL.deleteAllPaymentMethod();
 			PaymentMethodSQL.addPaymentMethod(pamentMethodList);
 
@@ -446,6 +459,76 @@ public class HttpAnalysis {
 			e.printStackTrace();
 		}
 	}
+
+	public static void getPromotionInfo(int statusCode, Header[] headers,
+									byte[] responseBody) {
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<Promotion> promotionList = gson.fromJson(
+					object.getString("promotionInfoList"),
+					new TypeToken<ArrayList<Promotion>>() {
+					}.getType());
+			List<PromotionWeek> promotionWeekTimeList = gson.fromJson(
+					object.getString("promotionWeekTimeList"),
+					new TypeToken<ArrayList<PromotionWeek>>() {
+					}.getType());
+			PromotionSQL.deleteAllPromotion();
+		    PromotionSQL.addPromotion(promotionList);
+		    PromotionWeekSQL.deleteAllPromotionWeek();
+		    PromotionWeekSQL.addPromotionWeek(promotionWeekTimeList);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void getPromotionData(int statusCode, Header[] headers,
+										byte[] responseBody) {
+		try {
+			JSONObject object = new JSONObject(new String(responseBody));
+			Gson gson = new Gson();
+			List<PromotionWeek> promotionWeekList = gson.fromJson(
+					object.getString("promotionWeekList"),
+					new TypeToken<ArrayList<PromotionWeek>>() {
+					}.getType());
+			List<ItemPromotion> itemPromotionList = gson.fromJson(
+					object.getString("itemPromotionList"),
+					new TypeToken<ArrayList<ItemPromotion>>() {
+					}.getType());
+			List<PromotionOrder> orderPromotionList = gson.fromJson(
+					object.getString("orderPromotionList"),
+					new TypeToken<ArrayList<PromotionOrder>>() {
+					}.getType());
+
+        PromotionWeekSQL.deleteAllPromotionWeek();
+        PromotionWeekSQL.addPromotionWeek(promotionWeekList);
+			PromotionItemSQL.deleteAllPromotionItem();
+			PromotionOrderSQL.deleteAllpromotionOrder();
+			PromotionOrderSQL.addPromotionOrder(orderPromotionList);
+			PromotionItemSQL.addPromotionItem(itemPromotionList);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+//	public static void getPromotionData(int statusCode, Header[] headers,
+//											byte[] responseBody) {
+//		try {
+//			JSONObject object = new JSONObject(new String(responseBody));
+//			Gson gson = new Gson();
+//			PromotionAndWeekVo promotionAndWeekVo = gson.fromJson(
+//					object.getString("PromotionAndOrderVo"),
+//					new TypeToken<PromotionAndWeekVo>() {
+//					}.getType());
+//
+//
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		}
+//	}
+
+
+
 
 	public static List<BohHoldSettlement> getBOHSettlement(int statusCode, Header[] headers,
 			byte[] responseBody) {
@@ -733,7 +816,7 @@ public class HttpAnalysis {
 				}
 //				App.instance.appOrderShowDialog(false, appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
 			}
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 3);
+			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

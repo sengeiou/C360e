@@ -649,6 +649,206 @@ public class HttpAPI {
         }
     }
 
+    public static void getPromotionInfo (Context context, String url,
+                                    AsyncHttpClient httpClient, final Handler handler, final int mode) {
+        try {
+            httpClient.post(context, url, HttpAssembling.getParam(),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                new Thread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        HttpAnalysis.getPromotionInfo(statusCode,
+                                                headers, responseBody);
+                                        Map<String, Integer> map = App.instance
+                                                .getPushMsgMap();
+                                        if (!map.isEmpty()) {
+                                            map.remove(PushMessage.PROMOTION);
+                                            Store.saveObject(App.instance,
+                                                    Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
+                                        }
+                                        if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(
+                                                            SyncData.SYNC_DATA_TAG,
+                                                            SyncData.SYNC_SUCCEED));
+                                        } else {
+                                            handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                        }
+                                    }
+                                }).start();
+                            } else {
+                                if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        SyncData.SYNC_DATA_TAG,
+                                        SyncData.SYNC_FAILURE));
+                            } else {
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            }
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public static void getPromotionData (Context context, String url,
+                                         AsyncHttpClient httpClient, final Handler handler, final int mode) {
+        try {
+            httpClient.post(context, url, HttpAssembling.getParam(),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                new Thread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        HttpAnalysis.getPromotionData(statusCode,
+                                                headers, responseBody);
+                                        Map<String, Integer> map = App.instance
+                                                .getPushMsgMap();
+                                        if (!map.isEmpty()) {
+                                            map.remove(PushMessage.HAPPY_HOURS);
+                                            Store.saveObject(App.instance,
+                                                    Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
+                                        }
+                                        if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(
+                                                            SyncData.SYNC_DATA_TAG,
+                                                            SyncData.SYNC_SUCCEED));
+                                        } else {
+                                            handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                        }
+                                    }
+                                }).start();
+                            } else {
+                                if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        SyncData.SYNC_DATA_TAG,
+                                        SyncData.SYNC_FAILURE));
+                            } else {
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            }
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public static void getItemPromotionInfos (Context context, String url,
+                                         AsyncHttpClient httpClient, final Handler handler, final int mode) {
+        try {
+            httpClient.post(context, url, HttpAssembling.getParam(),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                new Thread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+//                                        HttpAnalysis.getItemPromotionInfos(statusCode,
+//                                                headers, responseBody);
+
+                                        Map<String, Integer> map = App.instance
+                                                .getPushMsgMap();
+                                        if (!map.isEmpty()) {
+                                            map.remove(PushMessage.HAPPY_HOURS);
+                                            Store.saveObject(App.instance,
+                                                    Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
+                                        }
+                                        if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(
+                                                            SyncData.SYNC_DATA_TAG,
+                                                            SyncData.SYNC_SUCCEED));
+                                        } else {
+                                            handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                        }
+                                    }
+                                }).start();
+                            } else {
+                                if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        SyncData.SYNC_DATA_TAG,
+                                        SyncData.SYNC_FAILURE));
+                            } else {
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            }
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void getPlaceInfo(Context context,
                                     Map<String, Object> parameters, String url,
                                     AsyncHttpClient httpClient, final Handler handler, final int mode) {
@@ -1485,6 +1685,47 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.RECEVING_APP_ORDER_SUCCESS, appOrderId));
+                            } else {
+                                if (resultCode == ResultCode.APP_ORDER_REFUND) {
+                                    AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);
+                                }
+                                handler.sendMessage(handler.obtainMessage(
+                                        NetWorkOrderActivity.RESULT_FAILED, resultCode));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            if (handler != null)
+                                handler.sendMessage(handler.obtainMessage(
+                                        NetWorkOrderActivity.HTTP_FAILED, error));
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void readyAppOrder(Context context, String url,
+                                        AsyncHttpClient httpClient, final int appOrderId, final Handler handler) {
+        try {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("appOrderId", appOrderId);
+            httpClient.post(context, url,
+                    HttpAssembling.encapsulateBaseInfo(parameters),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendMessage(handler.obtainMessage(NetWorkOrderActivity.READY_APP_ORDER_SUCCESS, appOrderId));
                             } else {
                                 if (resultCode == ResultCode.APP_ORDER_REFUND) {
                                     AppOrderSQL.updateAppOrderStatusById(appOrderId, ParamConst.APP_ORDER_STATUS_REFUND);

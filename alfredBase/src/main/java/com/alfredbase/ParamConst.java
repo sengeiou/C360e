@@ -148,10 +148,11 @@ public class ParamConst {
 	public static final int FREE = 1;
 
 
-	
-	// 是否外带(0不外带、1外带)
-	public static final int NOT_TAKE_AWAY = 0;
+	//  0 堂吃, 1 打包, 2 外卖
+	public static final int DINE_IN = 0;
 	public static final int TAKE_AWAY = 1;
+	public static final int APP_DELIVERY = 2;
+	public static final int NOT_TAKE_AWAY=DINE_IN;
 
 	// 0:没有发送，1：发送中，2：发送成功, 3没有成功
 	public static final int SYNC_MSG_UN_SEND = 0; // initial state create a new
@@ -197,7 +198,7 @@ public class ParamConst {
 	public static final int SETTLEMENT_TYPE_UBEREATS = 3002;
 	public static final int SETTLEMENT_TYPE_FOODPANDA = 3003;
 	public static final int SETTLEMENT_TYPE_VOUCHER = 4001;
-
+	public static final int SETTLEMENT_TYPE_HALAL   = 6001;// 马来西亚的QR支付
 
 	/**
 	 * 自定义支付选项，只用于页面展示 不做为数据存
@@ -456,10 +457,7 @@ public class ParamConst {
 
 	public static final int APP_ORDER_EAT_IN = 1;
 	public static final int APP_ORDER_TAKE_AWAY = 2;
-
 	public static final int APP_ORDER_DELIVERY = 3;
-
-
 	public static final int POS_TYPE_MAIN = 0;
 
 	public static final int POS_TYPE_SUB = 1;
@@ -467,5 +465,9 @@ public class ParamConst {
 	public static final int SUB_POS_STATUS_OPEN = 1;
 
 	public static final int SUB_POS_STATUS_CLOSE = 0;
+
+	//promotion
+	public static final int ITEM_PROMOTION = 0;
+	public static final int ORDER_PROMOTION = 1;
 
 }

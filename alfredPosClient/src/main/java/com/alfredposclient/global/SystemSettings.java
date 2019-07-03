@@ -22,6 +22,7 @@ public class SystemSettings {
     private boolean printLable = false; //
     private boolean printLableDirection = false; //
     private boolean cardRounding = false; // 是否四舍五入
+    private boolean pluVoid = true; // 是否四舍五入
     private boolean printBill = true; // 打印账单
     private boolean isOfPax = true;//开桌人数
     private boolean printBeforCloseBill = true; // bill close need print Bill?
@@ -477,6 +478,32 @@ public class SystemSettings {
 
 
     //信用卡四舍五入
+    public boolean isPluVoid() {
+        Integer value = Store.getInt(context,
+                Store.INCLUDE_PLU_VOID);
+        if (value != null && value != Store.DEFAULT_INT_TYPE) {
+            if (value.intValue() == 1) {
+                this.pluVoid = true;
+            } else {
+                this.pluVoid = false;
+            }
+        }
+        return pluVoid;
+    }
+
+
+    public void setPluVoid(Integer cardRound) {
+        Store.putInt(this.context, Store.INCLUDE_PLU_VOID,
+                cardRound.intValue());
+        if (cardRound.intValue() == 1)
+            this.pluVoid = true;
+        else
+            this.pluVoid = false;
+    }
+
+
+
+    //plu是否包含void
     public boolean isCardRounding() {
         Integer value = Store.getInt(context,
                 Store.CREDIT_CARD_ROUNDING);
@@ -499,7 +526,6 @@ public class SystemSettings {
         else
             this.cardRounding = false;
     }
-
 
     public void setPrintLable(Integer printLable) {
         Store.putInt(this.context, Store.PRINT_LABLE,

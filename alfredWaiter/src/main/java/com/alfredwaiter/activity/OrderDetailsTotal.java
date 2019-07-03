@@ -380,11 +380,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         }
         tv_item_count.setText(context.getResources().getString(R.string.item_count) + itemCount);
         tv_sub_total.setText(context.getResources().getString(R.string.sub_total) + App.instance.getCurrencySymbol()
-                + BH.getBD(currentOrder.getSubTotal()));
+                + BH.formatMoney(currentOrder.getSubTotal()));
         tv_discount.setText(context.getResources().getString(R.string.discount_) + App.instance.getCurrencySymbol()
-                + BH.getBD(currentOrder.getDiscountAmount()));
-        tv_taxes.setText(context.getResources().getString(R.string.taxes) + App.instance.getCurrencySymbol() + BH.getBD(currentOrder.getTaxAmount()));
-        tv_grand_total.setText(context.getString(R.string.grand_total) + App.instance.getCurrencySymbol() + BH.getBD(currentOrder.getTotal()));
+                + BH.formatMoney(currentOrder.getDiscountAmount()));
+        tv_taxes.setText(context.getResources().getString(R.string.taxes) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTaxAmount()));
+        tv_grand_total.setText(context.getString(R.string.grand_total) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTotal()));
     }
 
     private void getIntentData() {
@@ -740,17 +740,20 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
                                     final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                                     int  detailNum=OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(),tag.getItemId());
-
-                                    if(remainingStock.getQty()>=detailNum){
-                                    int newNum=remainingStock.getQty()-detailNum+tag.getItemNum();
-                                    if(num<=newNum){
-                                        updateOrderDetail(tag, num);
-                                    }else {
-                                        UIHelp.showToast(OrderDetailsTotal.this,"out of stock");
-                                    }
-                                    }else {
+                                if(remainingStock!=null) {
+                                    if (remainingStock.getQty() >= detailNum) {
+                                        int newNum = remainingStock.getQty() - detailNum + tag.getItemNum();
+                                        if (num <= newNum) {
+                                            updateOrderDetail(tag, num);
+                                        } else {
+                                            UIHelp.showToast(OrderDetailsTotal.this, "out of stock");
+                                        }
+                                    } else {
                                         textView.setText(tag.getItemName() + "");
                                     }
+                                }else {
+                                    updateOrderDetail(tag, num);
+                                }
 
                                     if (num == 0) {
                                         updateOrderDetail(tag, num);
@@ -773,11 +776,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             }
             holder.name.setText(orderDetail.getItemName());
             holder.price.setText(App.instance.getCurrencySymbol()
-                    + BH.getBD(orderDetail.getItemPrice()).toString());
+                    + BH.formatMoney(orderDetail.getItemPrice()).toString());
             holder.tv_qty.setText(orderDetail.getItemNum() + "");
             holder.tv_qty.setTag(orderDetail);
             holder.subtotal.setText(App.instance.getCurrencySymbol()
-                    + BH.getBD(orderDetail.getRealPrice()).toString());
+                    + BH.formatMoney(orderDetail.getRealPrice()).toString());
             arg1.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {

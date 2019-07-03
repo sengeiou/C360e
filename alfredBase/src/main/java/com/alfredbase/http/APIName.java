@@ -10,6 +10,9 @@ public class APIName {
     public static final String ITEM_GETMODIFIER = "item/getModifier";
     public static final String TAX_GETTAX = "tax/getTax";
     public static final String HAPPYHOUR_GETHAPPYHOUR = "happyHour/getHappyHour";
+    public static final String  PROMOTIONINFO_GETPROMOTIONINFO = "promotionPossInfo/getPromotionInfo";
+    public static final String PROMOTIONPOSSINFO_GETPROMOTIONDATA = "promotionPossInfo/getPromotionData";
+
     public static final String RESTAURANT_GETPLACEINFO = "restaurant/getPlaceInfo";
     public static final String BOH_GETBOHHOLDUNPAID = "boh/getBohHoldUnpaid";
     public static final String BOH_UPDATEBOHHOLDPAID = "boh/updateBohHoldPaid";
@@ -50,7 +53,7 @@ public class APIName {
     /**
      * 以pos作为服务器
      */
-    // 以下是Waiter专用的api
+    // 以下是Waiter专用的apiInternet connection not available. Please connect for cloud sync.
     public static final String EMPLOYEE_ID = "employee_id";
     public static final String SELECT_TABLES = "select_tables";
     public static final String COMMIT_ORDER = "commit_Order";

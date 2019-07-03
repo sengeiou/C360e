@@ -11,6 +11,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
+import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
@@ -19,6 +20,9 @@ import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
+import com.alfredbase.javabean.Promotion;
+import com.alfredbase.javabean.PromotionOrder;
+import com.alfredbase.javabean.PromotionWeek;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -48,6 +52,10 @@ import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.PromotionItemSQL;
+import com.alfredbase.store.sql.PromotionOrderSQL;
+import com.alfredbase.store.sql.PromotionSQL;
+import com.alfredbase.store.sql.PromotionWeekSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.RevenueCenterSQL;
@@ -88,6 +96,10 @@ public class CoreData {
 	private List<ItemHappyHour> itemHappyHours;
 	private List<HappyHourWeek> happyHourWeeks;
 	private List<HappyHour> happyHours;
+	private List<ItemPromotion> itemPromotions;
+	private List<PromotionOrder> promotionOrders;
+	private List<Promotion> promotions;
+	private List<PromotionWeek> promotionWeeks;
 	private RoundRule roundRule;
 	private List<Printer> printers;
 	private List<RestaurantConfig> restaurantConfigs;
@@ -145,6 +157,10 @@ public class CoreData {
 		itemHappyHours = ItemHappyHourSQL.getAllItemHappyHour();
 		happyHourWeeks = HappyHourWeekSQL.getAllHappyHourWeek();
 		happyHours = HappyHourSQL.getAllHappyHour();
+		promotions=PromotionSQL.getAllPromotion();
+		promotionOrders=PromotionOrderSQL.getAllpromotionOrder();
+		itemPromotions=PromotionItemSQL.getAllPromotionItem();
+		promotionWeeks= PromotionWeekSQL.getAllPromotionWeek();
 		userRestaurant = UserRestaurantSQL.getAll();
 		kotNotifications = KotNotificationSQL.getAllKotNotification();
 		localDevices = LocalDeviceSQL.getAllLocalDevice();
@@ -355,7 +371,7 @@ public class CoreData {
 		return null;
 	}
 
-	/*Bob: This function CANNNOT be used for Open Item coz all open items have no template ID*/
+	/*: This function CANNNOT be used for Open Item coz all open items have no template ID*/
 	public ItemDetail getItemDetailByTemplateId(Integer id) {
 		if (id == null || id.intValue() == 0)
 			return null;
@@ -395,6 +411,38 @@ public class CoreData {
 					}
 				}
 			}
+		}
+		return null;
+	}
+
+	public ItemPromotion getItemPromotion(RevenueCenter revenueCenter,
+										  ItemDetail itemDetail) {
+		if (itemDetail == null)
+			return null;
+		List<ItemPromotion> itemPromotions = getItemPromotions();
+		for (ItemPromotion itemPromotion : itemPromotions) {
+//			if (itemPromotion.getPromotionId().intValue() == revenueCenter
+//					.getHappyHourId().intValue()) {
+				// 先按照菜来找
+				if (itemPromotion.getItemId().intValue() == itemDetail
+						.getItemTemplateId().intValue()) {
+					return itemPromotion;
+				}
+				// 然后按照分类来找
+				if(itemPromotion.getItemId().intValue() <= 0) {
+					if (itemPromotion.getItemCategoryId().intValue() == itemDetail
+							.getItemCategoryId().intValue()) {
+						return itemPromotion;
+					}
+				}
+				// 最后按照主分类找
+				if(itemPromotion.getItemId().intValue() <= 0 && itemPromotion.getItemCategoryId() <=0) {
+					if (itemPromotion.getItemMainCategoryId().intValue() == itemDetail
+							.getItemMainCategoryId().intValue()) {
+						return itemPromotion;
+					}
+				}
+//			}
 		}
 		return null;
 	}
@@ -482,6 +530,17 @@ public class CoreData {
 		return result;
 	}
 
+	public List<ItemDetail> getItemDetails(Integer itemCategoryId) {
+		List<ItemDetail> result = new ArrayList<ItemDetail>();
+		for (ItemDetail itemDetail : getItemDetails()) {
+			if (itemDetail.getItemCategoryId().intValue() == itemCategoryId.intValue())
+				result.add(itemDetail);
+		}
+		return result;
+	}
+
+
+
 	public List<ItemDetail> getItemDetails(ItemCategory itemCategory) {
 		List<ItemDetail> result = new ArrayList<ItemDetail>();
 		for (ItemDetail itemDetail : getItemDetails()) {
@@ -491,7 +550,6 @@ public class CoreData {
 		}
 		return result;
 	}
-
 	public RevenueCenter getRevenueCenter(Order order) {
 		for (RevenueCenter revenueCenter : getRevenueCenters()) {
 			if (revenueCenter.getId().intValue() == order.getRevenueId()
@@ -899,9 +957,11 @@ public class CoreData {
 	public PaymentMethod getPamentMethodByPaymentTypeId(Integer paymentTypeId) {
 		if (paymentTypeId == null)
 			return null;
-		for (PaymentMethod pamentMethod : getPamentMethodList()) {
-			if (pamentMethod.getPaymentTypeId().intValue() == paymentTypeId.intValue()) {
-				return pamentMethod;
+		if(pamentMethodList != null && pamentMethodList.size() > 0) {
+			for (PaymentMethod pamentMethod : pamentMethodList) {
+				if (pamentMethod.getPaymentTypeId().intValue() == paymentTypeId.intValue()) {
+					return pamentMethod;
+				}
 			}
 		}
 		return null;
@@ -940,6 +1000,37 @@ public class CoreData {
 
 	public void setTaxs(List<Tax> taxs) {
 		this.taxs = taxs;
+	}
+
+	public List<ItemPromotion> getItemPromotions() {
+		return itemPromotions;
+	}
+
+	public void setItemPromotions(List<ItemPromotion> itemPromotions) {
+		this.itemPromotions = itemPromotions;
+	}
+
+	public List<PromotionWeek> getPromotionWeeks() {
+		return promotionWeeks;
+	}
+	public void setPromotionWeeks(List<PromotionWeek> promotionWeeks) {
+		this.promotionWeeks = promotionWeeks;
+	}
+
+	public List<PromotionOrder> getPromotionOrders() {
+		return promotionOrders;
+	}
+
+	public void setPromotionOrders(List<PromotionOrder> promotionOrders) {
+		this.promotionOrders = promotionOrders;
+	}
+
+	public List<Promotion> getPromotions() {
+		return promotions;
+	}
+
+	public void setPromotions(List<Promotion> promotions) {
+		this.promotions = promotions;
 	}
 
 	public List<ItemHappyHour> getItemHappyHours() {
@@ -1070,7 +1161,7 @@ public class CoreData {
 				taxCategoryList.add(taxCategory);
 			}
 		}
-		taxCategoryList.add(0,new TaxCategory());
+		taxCategoryList.add(new TaxCategory());
 		return taxCategoryList;
 	}
 

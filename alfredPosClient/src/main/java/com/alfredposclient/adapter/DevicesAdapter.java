@@ -25,8 +25,8 @@ import java.util.List;
 
 /**
  * 
- * @author 刘秀秀
- * @time 2015-12-1 下午1:59:36
+ * @author
+ * @time
  * @tags 设备Adapter
  */
 public class DevicesAdapter extends CustomAdapter {

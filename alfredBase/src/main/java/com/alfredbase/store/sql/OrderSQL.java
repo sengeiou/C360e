@@ -37,8 +37,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
 					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime," 
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getOrderOriginId(), order.getUserId(),
@@ -55,7 +55,7 @@ public class OrderSQL {
 							order.getAppOrderId(),order.getIsTakeAway(),
 					        order.getTableName(), order.getOrderRemark(),
 							order.getDiscountCategoryId(), order.getNumTag(),
-							order.getSubPosBeanId()
+							order.getSubPosBeanId(),order.getPromotion()
 						});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -102,8 +102,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,promotion)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -120,7 +120,7 @@ public class OrderSQL {
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
-							order.getNumTag(), order.getSubPosBeanId()});
+							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,7 +134,7 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId)"
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			db.execSQL(
 					sql,
@@ -152,7 +152,7 @@ public class OrderSQL {
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
-							order.getNumTag(), order.getSubPosBeanId()});
+							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion()});
 	}
 
 	public static void updateUnFinishedOrderFromWaiter(Order order) {
@@ -200,6 +200,8 @@ public class OrderSQL {
 		OrderHelper.setOrderDiscount(order, orderDetails);
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);
+		OrderHelper.setPromotion(order);
+
 		OrderHelper.setOrderInclusiveTaxPrice(order);
 		List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
 		if(orderSplits != null && orderSplits.size() > 0){
@@ -387,8 +389,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Order order : orderList) {
@@ -522,7 +524,18 @@ public class OrderSQL {
 	}
 	public static ArrayList<Order> getUnpaidOrdersBySession(SessionStatus sessionStatus, long businessDate, long nowTime) {
 		ArrayList<Order> result = new ArrayList<Order>();
-		String sql = "select * from " + TableNames.Order  + " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? and orderStatus < "+ParamConst.ORDER_STATUS_HOLD+" ";
+		String sql = "select * from "
+				+ TableNames.Order
+				+ " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? "
+				+ " and orderStatus in ("
+				+ ParamConst.ORDER_STATUS_UNPAY
+				+ ", "
+				+ ParamConst.ORDER_STATUS_HOLD_KITCHEN
+				+ ", "
+				+ ParamConst.ORDER_STATUS_OPEN_IN_POS
+				+ ", "
+				+ ParamConst.ORDER_STATUS_OPEN_IN_WAITER
+				+ ") ";
 		SQLiteDatabase db = SQLExe.getDB();
 		Cursor cursor = null;
 		try {
@@ -940,61 +953,126 @@ public class OrderSQL {
 		return order;
 	}
 
-	public static Order getUnfinishedOrderAtTable(int tableId, Long bizDate) {
+	public static Order getUnfinishedOrderAtTable(int tableId, Long bizDate, SessionStatus sessionStatus) {
 		Order order = null;
-		String sql = "select * from " + TableNames.Order
-				+ " where tableId = ? and orderStatus < ? and businessDate = ? order by id DESC";
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(
-					sql,
-					new String[] { tableId + "",
-							ParamConst.ORDER_STATUS_HOLD + "", String.valueOf(bizDate) });
-			int count = cursor.getCount();
-			if (count < 1) {
-				return order;
-			}
-			if (cursor.moveToFirst()) {
-				order = new Order();
-				order.setId(cursor.getInt(0));
-				order.setOrderOriginId(cursor.getInt(1));
-				order.setUserId(cursor.getInt(2));
-				order.setPersons(cursor.getInt(3));
-				order.setOrderStatus(cursor.getInt(4));
-				order.setSubTotal(cursor.getString(5));
-				order.setTaxAmount(cursor.getString(6));
-				order.setDiscountAmount(cursor.getString(7));
-				order.setTotal(cursor.getString(8));
-				order.setSessionStatus(cursor.getInt(9));
-				order.setRestId(cursor.getInt(10));
-				order.setRevenueId(cursor.getInt(11));
-				order.setPlaceId(cursor.getInt(12));
-				order.setTableId(cursor.getInt(13));
-				order.setCreateTime(cursor.getLong(14));
-				order.setUpdateTime(cursor.getLong(15));
-				order.setOrderNo(cursor.getInt(16));
-				order.setBusinessDate(cursor.getLong(17));
-				order.setDiscountRate(cursor.getString(18));
-				order.setDiscountType(cursor.getInt(19));
-				order.setDiscountPrice(cursor.getString(20));
-				order.setInclusiveTaxName(cursor.getString(21));
-				order.setInclusiveTaxPrice(cursor.getString(22));
-				order.setInclusiveTaxPercentage(cursor.getString(23));
-				order.setAppOrderId(cursor.getInt(24));
-				order.setIsTakeAway(cursor.getInt(25));
-				order.setTableName(cursor.getString(26));
-				order.setOrderRemark(cursor.getString(27));
-				order.setDiscountCategoryId(cursor.getString(28));
-				order.setNumTag(cursor.getString(29));
-				order.setSubPosBeanId(cursor.getInt(30));
-				return order;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(tableId > 0) {
+			String sql = "select * from " + TableNames.Order
+					+ " where tableId = ? and orderStatus < ? and sessionStatus = ? and createTime > ? and businessDate = ? order by id DESC";
+			//sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ?
+			Cursor cursor = null;
+			try {
+				cursor = SQLExe.getDB().rawQuery(
+						sql,
+						new String[]{tableId + "",
+								ParamConst.ORDER_STATUS_HOLD + "",
+								String.valueOf(sessionStatus.getSession_status()),
+								String.valueOf(sessionStatus.getTime()),
+								String.valueOf(bizDate)});
+				int count = cursor.getCount();
+				if (count < 1) {
+					return order;
+				}
+				if (cursor.moveToFirst()) {
+					order = new Order();
+					order.setId(cursor.getInt(0));
+					order.setOrderOriginId(cursor.getInt(1));
+					order.setUserId(cursor.getInt(2));
+					order.setPersons(cursor.getInt(3));
+					order.setOrderStatus(cursor.getInt(4));
+					order.setSubTotal(cursor.getString(5));
+					order.setTaxAmount(cursor.getString(6));
+					order.setDiscountAmount(cursor.getString(7));
+					order.setTotal(cursor.getString(8));
+					order.setSessionStatus(cursor.getInt(9));
+					order.setRestId(cursor.getInt(10));
+					order.setRevenueId(cursor.getInt(11));
+					order.setPlaceId(cursor.getInt(12));
+					order.setTableId(cursor.getInt(13));
+					order.setCreateTime(cursor.getLong(14));
+					order.setUpdateTime(cursor.getLong(15));
+					order.setOrderNo(cursor.getInt(16));
+					order.setBusinessDate(cursor.getLong(17));
+					order.setDiscountRate(cursor.getString(18));
+					order.setDiscountType(cursor.getInt(19));
+					order.setDiscountPrice(cursor.getString(20));
+					order.setInclusiveTaxName(cursor.getString(21));
+					order.setInclusiveTaxPrice(cursor.getString(22));
+					order.setInclusiveTaxPercentage(cursor.getString(23));
+					order.setAppOrderId(cursor.getInt(24));
+					order.setIsTakeAway(cursor.getInt(25));
+					order.setTableName(cursor.getString(26));
+					order.setOrderRemark(cursor.getString(27));
+					order.setDiscountCategoryId(cursor.getString(28));
+					order.setNumTag(cursor.getString(29));
+					order.setSubPosBeanId(cursor.getInt(30));
+					return order;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
+			} finally {
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
+			}
+		}else{
+			String sql = "select * from " + TableNames.Order
+					+ " where orderStatus < ? and sessionStatus = ? and createTime > ? and businessDate = ? order by id DESC";
+			//sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ?
+			Cursor cursor = null;
+			try {
+				cursor = SQLExe.getDB().rawQuery(
+						sql,
+						new String[]{ParamConst.ORDER_STATUS_HOLD + "",
+								String.valueOf(sessionStatus.getSession_status()),
+								String.valueOf(sessionStatus.getTime()),
+								String.valueOf(bizDate)});
+				int count = cursor.getCount();
+				if (count < 1) {
+					return order;
+				}
+				if (cursor.moveToFirst()) {
+					order = new Order();
+					order.setId(cursor.getInt(0));
+					order.setOrderOriginId(cursor.getInt(1));
+					order.setUserId(cursor.getInt(2));
+					order.setPersons(cursor.getInt(3));
+					order.setOrderStatus(cursor.getInt(4));
+					order.setSubTotal(cursor.getString(5));
+					order.setTaxAmount(cursor.getString(6));
+					order.setDiscountAmount(cursor.getString(7));
+					order.setTotal(cursor.getString(8));
+					order.setSessionStatus(cursor.getInt(9));
+					order.setRestId(cursor.getInt(10));
+					order.setRevenueId(cursor.getInt(11));
+					order.setPlaceId(cursor.getInt(12));
+					order.setTableId(cursor.getInt(13));
+					order.setCreateTime(cursor.getLong(14));
+					order.setUpdateTime(cursor.getLong(15));
+					order.setOrderNo(cursor.getInt(16));
+					order.setBusinessDate(cursor.getLong(17));
+					order.setDiscountRate(cursor.getString(18));
+					order.setDiscountType(cursor.getInt(19));
+					order.setDiscountPrice(cursor.getString(20));
+					order.setInclusiveTaxName(cursor.getString(21));
+					order.setInclusiveTaxPrice(cursor.getString(22));
+					order.setInclusiveTaxPercentage(cursor.getString(23));
+					order.setAppOrderId(cursor.getInt(24));
+					order.setIsTakeAway(cursor.getInt(25));
+					order.setTableName(cursor.getString(26));
+					order.setOrderRemark(cursor.getString(27));
+					order.setDiscountCategoryId(cursor.getString(28));
+					order.setNumTag(cursor.getString(29));
+					order.setSubPosBeanId(cursor.getInt(30));
+					return order;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			} finally {
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
 			}
 		}
 		return order;
@@ -1430,6 +1508,36 @@ public class OrderSQL {
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime), String.valueOf(businessDate)});
+			if (cursor.moveToFirst()) {
+				sumCount = cursor.getInt(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return sumCount;
+
+	}
+
+	public static int getKioskHoldCountByStatus(long businessDate, SessionStatus sessionStatus, long nowTime, int status){
+		int sumCount = 0;
+		String sql = "select count(0) from "
+				+ TableNames.Order
+				+ " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? and orderStatus = ?";
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql,
+					new String[]{String.valueOf(
+							sessionStatus.getSession_status()),
+							String.valueOf(sessionStatus.getTime()),
+							String.valueOf(nowTime),
+							String.valueOf(businessDate),
+							String.valueOf(status)
+					});
 			if (cursor.moveToFirst()) {
 				sumCount = cursor.getInt(0);
 			}

@@ -6,7 +6,7 @@ import org.apache.mina.core.session.IoSession;
 
 /**
  * 
- * @author 冯小卫 2014-3-7
+ * @author
  * 
  *         基于Mina事件驱动模型的一个实现，主要用于消息接收和转发
  * 

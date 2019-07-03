@@ -9,7 +9,6 @@ public class HappyHour {
 	private Long updateTime;
 
 	public HappyHour() {
-
 	}
 
 	public HappyHour(Integer id, Integer restaurantId, String happy_hour_name,

@@ -81,7 +81,6 @@ public class RoundAmount {
 	public void setRoundBeforePrice(String roundBeforePrice) {
 		this.roundBeforePrice = roundBeforePrice;
 	}
-
 	public String getRoundAlfterPrice() {
 		return roundAlfterPrice;
 	}

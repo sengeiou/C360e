@@ -14,6 +14,7 @@ import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.ObjectFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 	public final static int FIXED_COL4_TOTAL = 10; //in case of 48 dots width, QTY col = 10dots
 
 	public static int COL4_ITEMNAME; // Width = CharSize/scale - FIXED_COL2_QTY/scale -
-	                                      // FIXED_COL2_PRICE/scale- FIXED_COL2_TOTAL/scale- FIXED_COL2_SPACE *3
+	// FIXED_COL2_PRICE/scale- FIXED_COL2_TOTAL/scale- FIXED_COL2_SPACE *3
 
 	private ArrayList<ReportPluDayItem> reportPluDayItems;
 	private ArrayList<ReportPluDayModifier>  pluModifiers;
@@ -52,8 +53,8 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 	}
 
 	public void print(ArrayList<ReportPluDayItem> plu, ArrayList<ReportPluDayModifier> modifier,
-			ArrayList<ReportPluDayComboModifier> comb,
-			ArrayList<ItemMainCategory> category, ArrayList<ItemCategory>items ) {
+					  ArrayList<ReportPluDayComboModifier> comb,
+					  ArrayList<ItemMainCategory> category, ArrayList<ItemCategory>items ) {
 		this.reportPluDayItems = plu;
 		this.itemMainCategorys = category;
 		this.itemCategorys = items;
@@ -71,9 +72,9 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 					this.addHortionalLine(this.charSize);
 
 				this.AddItem(reportPluItem.getItemName(),
-							String.valueOf(BH.getBD(reportPluItem.getItemPrice())),
-							String.valueOf(reportPluItem.getSumItemNum()),
-							String.valueOf(BH.getBD(reportPluItem.getSumRealPrice())), 1);
+						String.valueOf(BH.getBD(reportPluItem.getItemPrice())),
+						String.valueOf(reportPluItem.getSumItemNum()),
+						String.valueOf(BH.getBD(reportPluItem.getSumRealPrice())), 1);
 
 				this.addHortionalLine(this.charSize);
 			}else{
@@ -98,7 +99,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		this.data.add(cashierPrint);
 
 		//FOC
-        String totalFOC = String.valueOf(BH.add(BH.getBD(reportDaySales.getFocItem()),
+		String totalFOC = String.valueOf(BH.add(BH.getBD(reportDaySales.getFocItem()),
 				BH.getBD(reportDaySales.getFocBill()), true));
 
 		PrintData focPrint = new PrintData();
@@ -110,8 +111,8 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		this.data.add(focPrint);
 
 		//Void
-        String totalVoid = String.valueOf(BH.add(BH.getBD(reportDaySales.getItemVoid()),
-        											BH.getBD(reportDaySales.getBillVoid()), true));
+		String totalVoid = String.valueOf(BH.add(BH.getBD(reportDaySales.getItemVoid()),
+				BH.getBD(reportDaySales.getBillVoid()), true));
 
 		PrintData ttvPrint = new PrintData();
 		String ttvLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.total_void), this.FIXED_COL3_TOTAL);
@@ -122,7 +123,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		this.data.add(ttvPrint);
 
 		//disc
-        String totalDisc =
+		String totalDisc =
 				String.valueOf(BH.add(BH.getBD(reportDaySales.getDiscountPer()),
 						BH.getBD(reportDaySales.getDiscount()), true));
 		PrintData discPrint = new PrintData();
@@ -201,7 +202,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 	 *
 	 **/
 	private String GetFourColHeader(String col1Title, String col2Title,
-			String col3Title, String col4Title) {
+									String col3Title, String col4Title) {
 
 		int pad = 0;
 		StringBuffer ret = new StringBuffer();
@@ -224,7 +225,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 	 *
 	 **/
 	private String GetFourColContent(String col1Content, String col2Content,
-										String col3Content, String col4Content,int charScale) {
+									 String col3Content, String col4Content,int charScale) {
 
 		StringBuffer result = new StringBuffer();
 
@@ -337,6 +338,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 		for (int j = 0; j < reportPluDayItems.size(); j++) {
 
 			ReportPluDayItem reportPluDayItem = reportPluDayItems.get(j);
+			ObjectFactory.getInstance().getReportPluDayItem(reportPluDayItem);
 			if(map.containsKey(reportPluDayItem.getItemMainCategoryId().intValue())){
 				ReportPluDayItem amountReportPluDayItem = map.get(reportPluDayItem.getItemMainCategoryId().intValue());
 				BigDecimal amount = BH.add(BH.getBD(amountReportPluDayItem.getItemAmount()), BH.getBD(reportPluDayItem.getItemAmount()), false);
@@ -395,7 +397,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 				ReportPluDayItem reportPluDayItem = reportPluDayItems.get(j);
 				if (amontReportPluDayItem.getItemMainCategoryId().intValue() == reportPluDayItem.getItemMainCategoryId().intValue()) {
-					//Bob: Print comb modifier
+					// Print comb modifier
 					int itmId = reportPluDayItem.getItemDetailId().intValue();
 					ArrayList<ReportPluDayComboModifier> comItems = combMap.get(itmId);
 					if (comItems != null && comItems.size() > 0) {
@@ -502,16 +504,16 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 //					}
 //				}
 //			}
-					if (allQty != 0) {
-						this.addHortionalLine(this.charSize);
-						this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "", "" + allAmount, 1);
-					}
+		if (allQty != 0) {
+			this.addHortionalLine(this.charSize);
+			this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "", "" + allAmount, 1);
+		}
 
 
 	}
 
 	/*
-	 * Bob: get code from Comb*/
+	 *  get code from Comb*/
 //	private void GetCombDetailAnalysisText() {
 //		//StringBuffer sbr = new StringBuffer();
 //		int allQty = 0;
@@ -552,9 +554,9 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 	private Map<Integer, ArrayList<ReportPluDayComboModifier>> getCombItemMap(ArrayList<ReportPluDayComboModifier> comb) {
 
 		Map<Integer, ArrayList<ReportPluDayComboModifier>> result = new HashMap<Integer, ArrayList<ReportPluDayComboModifier>>();
-        if (comb !=null && comb.size()>0) {
-    		ComparatorPluDayComboModifier comparatorPluDayComboModifier = new ComparatorPluDayComboModifier();
-    		Collections.sort(comb, comparatorPluDayComboModifier);
+		if (comb !=null && comb.size()>0) {
+			ComparatorPluDayComboModifier comparatorPluDayComboModifier = new ComparatorPluDayComboModifier();
+			Collections.sort(comb, comparatorPluDayComboModifier);
 			int itemId = 0;
 
 			for (int j = 0; j < comb.size(); j++) {
@@ -568,16 +570,16 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 				}
 				itemCombo = result.get(itemId);
 				int count = pluModifier.getModifierCount().intValue() - pluModifier.getVoidModifierCount().intValue() - pluModifier.getBillVoidCount().intValue();
-                if (count>0)				
-				   itemCombo.add(pluModifier);
+				if (count>0)
+					itemCombo.add(pluModifier);
 			}
-        }
-	    return result;
+		}
+		return result;
 	}
-	
+
 	private boolean isVoidEntItem() {
 		boolean ret = false;
-		
+
 		return ret;
 	}
 	public void setData(ArrayList<PrintData> data) {

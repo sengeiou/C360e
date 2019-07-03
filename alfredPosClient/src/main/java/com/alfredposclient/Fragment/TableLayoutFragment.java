@@ -121,7 +121,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //        width = (int) ScreenSizeUtil.width * 4 / 5;
 //        ll_table_left.setLayoutParams(ps2);
         ll_table_right = (LinearLayout) view.findViewById(R.id.ll_table_right);
-
+        view.findViewById(R.id.btn_back).setOnClickListener(this);
 //        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 //            @Override
 //            public boolean onPreDraw() {
@@ -421,7 +421,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 }else{
                     if(ButtonClickTimer.canClick(v)){
                         if(mainPage instanceof MainPage) {
-                            Order order = OrderSQL.getUnfinishedOrderAtTable(newTable.getPosId(), App.instance.getBusinessDate());
+                            Order order = OrderSQL.getUnfinishedOrderAtTable(newTable.getPosId(), App.instance.getBusinessDate(), App.instance.getSessionStatus());
                             if(order != null && order.getId() != null){
                                 OrderSplitSQL.deleteOrderSplitPaxByOrderId(order);
                             }
@@ -430,7 +430,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                             if(newTable.getStatus().intValue() == ParamConst.TABLE_STATUS_IDLE) {
                                 mainPage.selectTable(newTable);
                             } else{
-                                Order order = OrderSQL.getUnfinishedOrderAtTable(newTable.getPosId(), App.instance.getBusinessDate());
+                                Order order = OrderSQL.getUnfinishedOrderAtTable(newTable.getPosId(), App.instance.getBusinessDate(),App.instance.getSessionStatus());
                                 if(OrderDetailSQL.getOrderDetails(order.getId().intValue()).size() > 0){
                                     UIHelp.showToast(mainPage, mainPage.getResources().getString(R.string.table_dining));
                                 }else{
@@ -627,6 +627,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 UIHelp.startTableSummaryActivity(mainPage);
             }
                 break;
+            case R.id.btn_back:{
+                mainPage.onBackPressed();
+            }
+            break;
         }
     }
 

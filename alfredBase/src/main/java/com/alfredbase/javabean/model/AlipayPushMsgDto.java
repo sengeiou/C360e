@@ -13,8 +13,8 @@ import java.io.Serializable;
  * none</dd>
  * </dl>
  * 
- * @author slg
- * @version 1.0, 2015年4月23日
+ * @author
+ * @version 1.0,
  */
 public class AlipayPushMsgDto implements Serializable {
 

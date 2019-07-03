@@ -78,7 +78,6 @@ import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.StockCallBack;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
-import com.alfredposclient.global.UIHelp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -310,7 +309,8 @@ public class KpmgResponseUtil {
                 jsonObject.getString("cardNum");
             }
             final int orderId = SubPosCommitSQL.commitOrderForKPMG(order, orderSplits, orderBills, payments, orderDetails,
-                    orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts, cardNum, App.instance.getBusinessDate(), App.instance.getSessionStatus().getSession_status());
+                    orderModifiers, orderDetailTaxs, paymentSettlements, roundAmounts, cardNum, App.instance.getBusinessDate(),
+                    App.instance.getSessionStatus().getSession_status(), TableInfoSQL.getKioskTable().getPosId());
             map.put("resultCode", ResultCode.SUCCESS);
             if (orderId != 0) {
                 new Thread(new Runnable() {
@@ -319,7 +319,7 @@ public class KpmgResponseUtil {
                         Order placeOrder = OrderSQL.getOrder(orderId);
                         Payment payment = PaymentSQL.getPaymentByOrderId(placeOrder.getId());
                         if (payment == null) {
-                            placeOrder.setOrderStatus(ParamConst.ORDER_STATUS_HOLD);
+                            placeOrder.setOrderStatus(ParamConst.ORDER_STATUS_KIOSK);
                             OrderSQL.updateOrder(placeOrder);
                         } else {
                             KotSummary kotSummary = ObjectFactory.getInstance()

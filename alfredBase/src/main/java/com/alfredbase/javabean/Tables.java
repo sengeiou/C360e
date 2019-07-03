@@ -30,7 +30,7 @@ public class Tables implements Serializable{
 //	// 桌子状态 0 空的、 1 占用、 2 正在结账
 //	private Integer tableStatus = 0;
 //
-//	//Bob add: calculate the total orders that table has currently.
+//	// add: calculate the total orders that table has currently.
 //	private Integer orders = 0;
 //
 //	public Tables() {

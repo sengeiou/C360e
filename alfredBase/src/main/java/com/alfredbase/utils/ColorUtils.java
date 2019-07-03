@@ -49,7 +49,7 @@ public class ColorUtils {
 		color21(21, R.color.split_group21);
 
 		public static int getColor(int bigIndex) {
-			int index = bigIndex > 21 ? bigIndex % 21 : bigIndex;
+			int index = bigIndex % 21 == 0 ? 21 : bigIndex % 21;
 			for (ColorGroup color : ColorGroup.values()) {
 				if (color.index == index) {
 					return color.colorId;

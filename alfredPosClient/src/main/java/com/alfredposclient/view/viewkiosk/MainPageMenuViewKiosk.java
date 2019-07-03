@@ -44,7 +44,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
@@ -133,6 +132,11 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //		initItemMainCategory();
 //		initItemDetail();
 //		initItemCategory(current_index);
+    }
+
+    public void refreshAllMenu(){
+        TwoLevelMenuAdapter twoLevelMenuAdapter = (TwoLevelMenuAdapter) twoLevelMenu.getAdapter();
+        twoLevelMenuAdapter.notifyDataSetChanged();
     }
 
     public void setParam(Order order, Handler handler) {

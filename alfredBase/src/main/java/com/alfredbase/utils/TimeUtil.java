@@ -51,6 +51,8 @@ public class TimeUtil {
 	
 	public static final SimpleDateFormat CLOSE_BILL_DATA_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+	public static final SimpleDateFormat PRINTER_DELIVERY_DATE_TIME = new SimpleDateFormat(
+			"dd/MM/yyyy, HH:mm");
 	public static String getPrintDate(long time) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(time);
@@ -101,7 +103,14 @@ public class TimeUtil {
 		calendar.setTimeInMillis(time);
 		return CLOSE_BILL_DATA_TIME.format(calendar.getTime());
 	}
-	
+
+	public static String getDeliveryDataTime(long time){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(time);
+		return PRINTER_DELIVERY_DATE_TIME.format(calendar.getTime());
+	}
+
+
 	public static String getTimeFormat(long time){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(time);
@@ -138,11 +147,35 @@ public class TimeUtil {
 		return dayForWeek;
 	}
 
+	public static int getWeek(long time) {
+		Calendar cd = Calendar.getInstance();
+		cd.setTime(new Date(time));
+		int week = cd.get(Calendar.DAY_OF_WEEK);
+		int mWeek = 0;
+		if (1 == week) {
+			mWeek = 1;
+		} else if (2 == week) {
+			mWeek = 2;
+		} else if (3 == week) {
+			mWeek = 3;
+		} else if (4 == week) {
+			mWeek = 4;
+		} else if (5 == week) {
+			mWeek = 5;
+		} else if (6 == week) {
+			mWeek = 6;
+		} else if (7 == week) {
+			mWeek = 7;
+		}
+		return mWeek;
+	}
+
 	public static long getTimeInMillis() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(1970, 0, 01);
 		return cal.getTimeInMillis();
 	}
+
 
 	/**
 	 * 获取0点时间

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +30,8 @@ import cn.finalteam.toolsfinal.adapter.ViewHolderAdapter;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:15/11/30 下午2:26
+ * Author:
+ * Date:
  */
 public class PhotoEditListAdapter extends ViewHolderAdapter<PhotoEditListAdapter.ViewHolder, PhotoInfo> {
 

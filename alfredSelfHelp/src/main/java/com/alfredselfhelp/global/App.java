@@ -58,6 +58,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -650,16 +651,21 @@ public class App extends BaseApplication {
         }
         try {
             Map<String, String> roundingMap = new HashMap<String, String>();
-            String total = order.getTotal();
+            BigDecimal total = BH.getBD(order.getTotal());
             String rounding = "0.00";
             if (roundAmount != null) {
                 total = BH.sub(BH.getBD(order.getTotal()),
-                        BH.getBD(roundAmount.getRoundBalancePrice()), true)
-                        .toString();
+                        BH.getBD(roundAmount.getRoundBalancePrice()), true);
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
-            roundingMap.put("Total", total);
+
+            if(order.getPromotion()!=null){
+                total = BH.add(BH.getBD(order.getTotal()),
+                        BH.getBD(order.getPromotion()), true);
+            }
+
+            roundingMap.put("Total", total.toString());
             roundingMap.put("Rounding", rounding);
             Gson gson = new Gson();
             String prtStr = gson.toJson(printer);

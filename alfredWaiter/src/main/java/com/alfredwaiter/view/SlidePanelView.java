@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * 参考http://blog.csdn.net/hellogv/article/details/6828584
  *
- * @author 冯小卫 2014-4-30
+ * @author
  */
 public class SlidePanelView extends LinearLayout implements
         GestureDetector.OnGestureListener, CheckListener {

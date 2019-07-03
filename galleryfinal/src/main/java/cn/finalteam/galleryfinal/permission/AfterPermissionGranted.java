@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +22,8 @@ import java.lang.annotation.Target;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:16/1/24 下午11:30
+ * Author:
+ * Date:
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

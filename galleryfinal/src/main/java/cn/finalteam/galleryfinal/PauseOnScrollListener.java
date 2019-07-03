@@ -5,8 +5,8 @@ import android.widget.AbsListView;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:2016/1/9 0009 18:23
+ * Author:
+ *
  */
 public abstract class PauseOnScrollListener implements AbsListView.OnScrollListener {
 

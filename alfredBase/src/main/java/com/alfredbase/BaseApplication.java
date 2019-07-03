@@ -43,7 +43,7 @@ public class BaseApplication extends Application {
 
     public static BaseApplication instance;
     public static List<BaseActivity> activitys;
-    public static final int DATABASE_VERSION = 28;
+    public static final int DATABASE_VERSION = 30;
     /**
      * 注意
      * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
@@ -51,10 +51,11 @@ public class BaseApplication extends Application {
      * 当 isDebug == true， isOpenLog == true 为本地的服务器
      */
 
-    public static boolean isDebug = false;    //	Debug开关 release的时候设置为false
+    public static boolean isDebug = false ;    //	Debug开关 release的时候设置为false
     public static boolean isOpenLog = true;    //	release 时设置为false
 
     protected String APPPATH = "sunmi";// sunmi or google or alibaba;
+
 
     public static int UDP_INDEX_POS = 1;
     public static int UDP_INDEX_WAITER = 2;
@@ -432,7 +433,7 @@ public class BaseApplication extends Application {
 
     /**
      * 关闭 ActivityList用 慎用（必须确定目标activity在栈里） 且用，且珍惜！！
-     * added by Alex, 2014-8-25
+     * added by
      *
      * @param cls 关闭到当前activity为止(从栈顶)
      */
@@ -452,7 +453,7 @@ public class BaseApplication extends Application {
 
     /**
      * 关闭 ActivityList用 慎用（必须确定目标activity在栈里） 且用，且珍惜！！
-     * added by Alex, 2014-8-25
+     * added by
      *
      * @param cls 关闭到当前activity为止(从栈底)
      */
@@ -520,7 +521,7 @@ public class BaseApplication extends Application {
     }
 
     public void setTime(int time) {
-        if (time >= 30 * 1000) {
+        if (time >= 30 * 1000  ) {
             this.time = time;
         }
     }

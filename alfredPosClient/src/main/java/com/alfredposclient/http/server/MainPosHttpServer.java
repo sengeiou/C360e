@@ -872,7 +872,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
                 result.put("subPosBean", subPosBean);
                 result.put("businessDate", App.instance.getBusinessDate());
-                if (sessionStatusTime != 0l && sessionStatusTime != App.instance.getSessionStatus().getTime()) {
+                if (sessionStatusTime != 0l && sessionStatusTime <= App.instance.getSessionStatus().getTime()) {
                     result.put("resultCode", ResultCode.SESSION_HAS_CHANGE);
                 } else {
                     result.put("resultCode", ResultCode.SUCCESS);
@@ -2575,7 +2575,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 resp = this.getJsonResponse(new Gson().toJson(result));
                 return resp;
             }
-            // Bob: fix bug: filter out old data that may be in KDS
+            // : fix bug: filter out old data that may be in KDS
             ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
             for (int i = 0; i < kotItemDetails.size(); i++) {
                 KotItemDetail kotItemDetail = kotItemDetails.get(i);
@@ -3110,7 +3110,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     kotItemDetails.add(freeKotItemDetail);
                 }
 
-                //Bob: fix issue: kot print no modifier showup
+                //: fix issue: kot print no modifier showup
                 // look for kot modifiers
                 Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
                 ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
@@ -3173,7 +3173,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             int tableId = jsonObject.getInt("tableId");
             TableInfo tableInfo = TableInfoSQL.getTableById(tableId);
             if (tableInfo != null && tableInfo.getStatus().intValue() != ParamConst.TABLE_STATUS_IDLE) {
-                Order order = OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), App.instance.getBusinessDate());
+                Order order = OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), App.instance.getBusinessDate(), App.instance.getSessionStatus());
                 int placeOrderCount = OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(order);
                 if (placeOrderCount > 0) {
                     result.put("resultCode", ResultCode.CONNOT_UNSEAT_TABLE);

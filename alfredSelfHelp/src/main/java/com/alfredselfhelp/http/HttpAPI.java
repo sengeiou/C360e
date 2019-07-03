@@ -156,8 +156,8 @@ public class HttpAPI {
 								HttpAnalysis.login(resultCode, body, handler);
 							} else {
 
-								handler.sendEmptyMessage(resultCode);
-							//	elseResultCodeAction(resultCode, body);
+							//	handler.sendEmptyMessage(resultCode);
+								elseResultCodeAction(resultCode, body);
 							}
 						}
 						@Override

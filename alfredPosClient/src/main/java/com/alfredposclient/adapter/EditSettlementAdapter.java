@@ -111,7 +111,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 		holder.tv_bill_no.setText(billNo);
 		holder.tv_place_name.setText(editSettlementInfo.getPlaceName());
 		holder.tv_table_name.setText(editSettlementInfo.getTableName());
-		holder.tv_total.setText(BH.getBD(editSettlementInfo.getTotalAmount()).toString());
+		holder.tv_total.setText(BH.formatMoney(editSettlementInfo.getTotalAmount()).toString());
 		holder.tv_poeple.setText(editSettlementInfo.getUserName());
 		holder.tv_time.setText(editSettlementInfo.getPaymentCreateTime());
 		if(App.instance.isRevenueKiosk()){
@@ -202,7 +202,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 			RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit, orderBill);
 			Payment payment = PaymentSQL.getPaymentByOrderSplitId(orderSplit.getId().intValue());
 			List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getAllPaymentSettlementByPaymentId(payment.getId().intValue());
-			App.instance.remoteBillPrint(printer, title, temporaryOrder,
+			App.instance.remoteBillRePrint(printer, title, temporaryOrder,
 					orderItems, orderModifiers, taxMap, paymentSettlements,
 					roundAmount, false);
 		} else {
@@ -219,7 +219,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 			RoundAmount roundAmount = RoundAmountSQL
 					.getRoundAmountByOrderAndBill(order, orderBill);
 			List<PaymentSettlement> paymentSettlements = PaymentSettlementSQL.getAllPaymentSettlementByPaymentId(editSettlementInfo.getPaymentId());
-			App.instance.remoteBillPrint(
+			App.instance.remoteBillRePrint(
 					printer,
 					ObjectFactory.getInstance().getPrinterTitle(
 							App.instance.getRevenueCenter(),

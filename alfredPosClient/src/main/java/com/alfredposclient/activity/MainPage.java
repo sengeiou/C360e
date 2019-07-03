@@ -83,6 +83,7 @@ import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.JSONUtil;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
@@ -303,7 +304,14 @@ public class MainPage extends BaseActivity {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    //关闭手势滑动
         settingView = (SettingView) findViewById(R.id.settingView);
         settingView.setParams(this, mDrawerLayout);
-        if (App.instance.isSUNMIShow()) {
+        if (MachineUtil.isHisense()) {
+            if (MachineUtil.isSunmiModel()) {
+                settingView.SUNMIVisible();
+            } else {
+                settingView.SUNMIGone();
+            }
+
+        } else if (MachineUtil.isHisense()) {
             settingView.SUNMIVisible();
         } else {
             settingView.SUNMIGone();
@@ -399,6 +407,7 @@ public class MainPage extends BaseActivity {
         XMPP.getInstance().setCanCheckAppOrder(true);
     }
 
+ 
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {
@@ -547,9 +556,24 @@ public class MainPage extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
-        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate());
-        List<OrderDetail> orderDetails = OrderDetailSQL
-                .getUnFreeOrderDetails(oldOrder);
+        List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(oldOrder.getId().intValue());
+        StringBuffer orderSplitIds = new StringBuffer();
+        if(orderSplits != null && orderSplits.size() > 0) {
+            for (int i = 0; i < orderSplits.size(); i++) {
+                orderSplitIds.append(orderSplits.get(i).getId());
+                if (i < orderSplits.size() - 1) {
+                    orderSplitIds.append(',');
+                }
+            }
+        }
+        Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        if(orderSplitIds.length() > 0){
+            orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(oldOrder,orderSplitIds.toString()));
+        }else{
+            orderDetails.addAll(OrderDetailSQL
+                    .getUnFreeOrderDetails(oldOrder));
+        }
         KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
         if (!orderDetails.isEmpty()) {
             for (OrderDetail orderDetail : orderDetails) {
@@ -576,9 +600,18 @@ public class MainPage extends BaseActivity {
                 }
             }
         }
-        OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-        OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-        OrderSQL.deleteOrder(oldOrder);
+
+        if(orderSplitIds.length() > 0){
+            OrderDetailSQL.deleteOrderDetailByOrderOutsideOrderSplit(oldOrder.getId(), orderSplitIds.toString());
+            OrderModifierSQL.deleteOrderModifierByOrderOutsideOrderDetail(oldOrder);
+            OrderSplitSQL.deleteBySpliteIdList(oldOrder.getId(), orderSplitIds.toString());
+            OrderSQL.updateOrder(oldOrder);
+            OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, oldOrder.getId());
+        }else {
+            OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
+            OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
+            OrderSQL.deleteOrder(oldOrder);
+        }
         initOrder(currentTable);
 
     }
@@ -1012,9 +1045,15 @@ public class MainPage extends BaseActivity {
                 }
                 case VIEW_EVENT_ADD_ORDER_DETAIL:
                     addOrderDetail((OrderDetail) msg.obj);
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case VIEW_EVENT_SET_DATA:
                     setData();
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
                     setData();
@@ -1282,7 +1321,7 @@ public class MainPage extends BaseActivity {
                                 if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
                                     currentOrder = null;
                                 } else {
-                                    currentOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), App.instance.getBusinessDate());
+                                    currentOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), App.instance.getBusinessDate(), App.instance.getSessionStatus());
                                 }
                                 initOrder(currentTable);
                                 setTablePacks(currentTable.getPacks() + "");
@@ -1556,7 +1595,7 @@ public class MainPage extends BaseActivity {
                                         kotItemDetails.add(freeKotItemDetail);
                                     }
 
-                                    //Bob: fix issue: kot print no modifier showup
+                                    //: fix issue: kot print no modifier showup
                                     // look for kot modifiers
                                     Order placedOrder = OrderSQL.getOrder(orderDetail.getOrderId());
                                     ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
@@ -2270,6 +2309,7 @@ public class MainPage extends BaseActivity {
         transaction.hide(f_tables);
         transaction.commitAllowingStateLoss();
         isShowTables = false;
+
     }
 
 //	private void dismissTables() {
@@ -2281,13 +2321,25 @@ public class MainPage extends BaseActivity {
 //	}
 
     private void setData() {
+        if(currentOrder == null){
+            showTables();
+            return;
+        }
         initOrder(currentTable);
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
-        //update tabels orders
+//        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
+//
+//
+//        List<OrderSplit> orderSplits  = OrderSplitSQL.getAllOrderSplits(currentOrder);
+//        //update tabels orders
         currentTable.setOrders(orderDetails.size());
         TableInfoSQL.updateTables(currentTable);
         mainPageMenuView.setParam(currentOrder, handler);
         orderView.setParam(this, currentOrder, orderDetails, handler);
+
+//        DiffData data = new DiffData(this);//实例化data类
+//        data.updateData(orderDetails);//启动发送
+      //  DifferentDislay.setParam(orderDetails,currentOrder);
         operatePanel.setParams(this, currentOrder, orderDetails,
                 handler);
         loadingDialog.dismiss();
@@ -2503,6 +2555,7 @@ public class MainPage extends BaseActivity {
                             OrderDetailSQL.deleteOrderDetail(tag);
                             OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
                             ModifierCheckSql.deleteModifierCheck(tag.getId(), tag.getOrderId());
+
                             try {
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("orderId", tag.getOrderId().intValue());
@@ -2528,7 +2581,7 @@ public class MainPage extends BaseActivity {
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
             case KOT_PRINT_FAILED:
-                handler.sendMessage(handler.obtainMessage(action, obj));
+               handler.sendMessage(handler.obtainMessage(action, obj));
                 break;
             case KOT_PRINT_SUCCEED:
                 handler.sendMessage(handler.obtainMessage(action, obj));

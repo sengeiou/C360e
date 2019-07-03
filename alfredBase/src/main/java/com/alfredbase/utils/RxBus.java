@@ -23,6 +23,9 @@ public class RxBus {
     public static final String RX_GET_STOCK = "RX_GET_STOCK";
     public static final String RX_REFRESH_ORDER = "RX_REFRESH_ORDER";
     public static final String RX_WIFI_STORE = "RX_WIFI_STORE";
+
+    public static final String showWelcom = "SHOW_WELCOM_VIEW";
+    public static final String showOrder = "SHOW_ORDER_VIEW";
     public static final String RX_TRAIN = "RX_TRAIN";
     private static RxBus instance;
     private ConcurrentHashMap<Object, List<Subject>> maps = new ConcurrentHashMap<Object, List<Subject>>();

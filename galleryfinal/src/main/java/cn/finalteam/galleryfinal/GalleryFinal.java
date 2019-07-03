@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2014 pengjianbo(pengjianbosoft@gmail.com), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +32,8 @@ import cn.finalteam.toolsfinal.io.FileUtils;
 
 /**
  * Desction:
- * Author:pengjianbo
- * Date:15/12/2 上午11:05
+ * Author:
+ * Date:
  */
 public class GalleryFinal {
     static final int TAKE_REQUEST_CODE = 1001;

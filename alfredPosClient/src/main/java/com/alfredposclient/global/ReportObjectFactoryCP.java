@@ -160,6 +160,13 @@ public class ReportObjectFactoryCP {
 		String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
 		String ezPayQty = ezPayMap.get("count");
 
+
+		Map<String, String> halalPayMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_HALAL, businessDate);
+		String halalPay = BH.getBD(halalPayMap.get("sumAmount")).toString();
+		String halalPayQty = halalPayMap.get("count");
+
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_PAYPAL, businessDate);
@@ -568,6 +575,8 @@ public class ReportObjectFactoryCP {
 		reportDaySales.setVoucherQty(Integer.parseInt(voucherQty));
 		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
 		reportDaySales.setTotalHour(totalHour);
+        reportDaySales.setPayHalal(BH.getBD(halalPay).toString());
+        reportDaySales.setPayHalalQty(Integer.parseInt(halalPayQty));
 		return reportDaySales;
 	}
 
@@ -2210,6 +2219,13 @@ public class ReportObjectFactoryCP {
 		String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
 		String ezPayQty = ezPayMap.get("count");
 
+		Map<String, String> halalPayMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_HALAL, businessDate,
+						sessionStatus);
+		String halalPay = BH.getBD(halalPayMap.get("sumAmount")).toString();
+		String halalPayQty = halalPayMap.get("count");
+
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
 						ParamConst.SETTLEMENT_TYPE_PAYPAL, businessDate,
@@ -2635,6 +2651,8 @@ public class ReportObjectFactoryCP {
 		reportDaySales.setFoodpandaQty(Integer.parseInt(foodpandaQty));
 		reportDaySales.setVoucher(voucher);
 		reportDaySales.setVoucherQty(Integer.parseInt(voucherQty));
+        reportDaySales.setPayHalal(BH.getBD(halalPay).toString());
+        reportDaySales.setPayHalalQty(Integer.parseInt(halalPayQty));
 		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
 		reportDaySales.setTotalHour(totalHour);
 		//-----------------------分割线----------------------------

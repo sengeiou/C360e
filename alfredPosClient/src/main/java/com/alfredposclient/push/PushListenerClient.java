@@ -146,7 +146,10 @@ public class PushListenerClient implements XMPP.PushListener {
                             || PushMessage.USER.equals(msg.getMsg())
                             //						|| PushMessage.PLACE_TABLE.equals(msg.getMsg())
                             || PushMessage.TAX.equals(msg.getMsg())
-                            || PushMessage.PAYMENT_METHOD.equals(msg.getMsg())||PushMessage.STOCK.equals(msg.getMsg())) {
+                            || PushMessage.PAYMENT_METHOD.equals(msg.getMsg())
+                            ||PushMessage.STOCK.equals(msg.getMsg())
+                            ||PushMessage.PROMOTION.equals(msg.getMsg())
+                            ) {
                         saveUpdateInfo(msg);
                     }
                     if (PushMessage.RESTAURANT.equals(msg.getMsg())

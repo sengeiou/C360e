@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alfredbase.utils.BH;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 
@@ -131,7 +132,7 @@ public class CalendarCard extends RelativeLayout {
 					((TextView)((RelativeLayout)v.getChildAt(0)).getChildAt(1)).setVisibility(VISIBLE);
 					v.setBackgroundColor(Color.parseColor("#EEE685"));
 					if (!TextUtils.isEmpty(amount)) {
-						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("Gross Total Sales:" + "\n" + amount);
+						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("Gross Total Sales:" + "\n" + BH.formatMoney(amount));
 					}else {
 						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("");
 					}
