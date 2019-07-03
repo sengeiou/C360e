@@ -48,18 +48,18 @@ public class KOTPrint extends PrintJob{
 		addHortionalLine(this.charSize);
 	}
 
-	public void AddHeader(KotSummary kotsummary) {
+	public void AddHeader(KotSummary kotsummary,String trainString) {
 		StringBuilder sbr = new StringBuilder();
 		if (kotsummary.getIsTakeAway()==1) {
 			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
 					.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
-					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
+					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString()+trainString)
 					.append(reNext);
 		}else{
 			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
-					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString())
+					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString()+trainString)
 					.append(reNext);
 		}
 		if(!TextUtils.isEmpty(kotsummary.getEmpName())){
@@ -91,7 +91,7 @@ public class KOTPrint extends PrintJob{
 		addHortionalLine(this.charSize);
 	}
 
-	public void AddKioskHeader(KotSummary kotSummary, String orderId) {
+	public void AddKioskHeader(KotSummary kotSummary, String orderId,String trainString) {
 		addFeed();
 		StringBuilder sbr = new StringBuilder();
 		int revenueIndex = kotSummary.getRevenueCenterIndex();
@@ -108,10 +108,12 @@ public class KOTPrint extends PrintJob{
 		if (isTakeAway==1) {
 			sbr.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext)
 					.append(orderNo)
+					.append(trainString)
 					.append(reNext);
 		}else{
 			sbr.append( "  ")
 					.append(orderNo)
+					.append(trainString)
 					.append(reNext);
 		}
 		if(!TextUtils.isEmpty(kotSummary.getEmpName())){

@@ -16,28 +16,49 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.VerifyDialog;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
+import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Modifier;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.GeneralSQL;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
+import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.ChangePasswordDialog;
 import com.alfredposclient.R;
+import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.jobs.CloudSyncJobManager;
+import com.alfredposclient.popupwindow.DiscountWindow;
 import com.alfredposclient.popupwindow.SelectPrintWindow;
 import com.alfredposclient.popupwindow.SetPAXWindow;
 import com.alfredposclient.utils.AlfredRootCmdUtil;
@@ -91,7 +112,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private SetPAXWindow setPAXWindow;
 	private LinearLayout ll_max_order_no;
 	private TextView tv_max_order_no,tv_print_lable;
-
+  private RelativeLayout ll_set_pos_mode;
 	private LinearLayout ll_print_lable,ll_print_bill,ll_print_lable_direction,ll_callnum_header,ll_callnum_footer;
 	private View v_print_lable;
 	private int maxOrderNo;
@@ -99,13 +120,18 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	MyToggleButton mt_print_bill,mt_credit_card_rounding;
 	private int textsize,textcolor;
 	private TextView tv_lable_upOrdown,tv_callnum_style,tv_callnum_header,tv_callnum_footer,tv_pos_mode_type,tv_pos_mode;
-	int	trainType;
+	int	trainType,trainDisplay;
 
+	private static final String TRAIN_TYPE = "TRAIN_TYPE";
+	VerifyDialog verifyDialog;
+
+	private static final String DATABASE_NAME_TRAIN= "com.alfredposclient.train";
 	@Override
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_system_setting);
 		trainType= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+		trainDisplay= Store.getInt(context,SharedPreferencesHelper.TRAIN_DISPLAY);
 		if(App.instance.isRevenueKiosk()){
 			findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
 			findViewById(R.id.ll_print_lable).setVisibility(View.VISIBLE);
@@ -157,12 +183,15 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
 		tv_callnum_style=(TextView)findViewById(R.id.tv_callnum_style);
 		tv_pos_mode_type=(TextView)findViewById(R.id.tv_pos_mode_type);
+		ll_set_pos_mode=(RelativeLayout) findViewById(R.id.ll_set_pos_mode);
 
            if(trainType==1){
            	tv_pos_mode_type.setText("train");
 		   }else {
            	tv_pos_mode_type.setText("business");
 		   }
+
+
 		if (syncMap.isEmpty()) {
 			tv_syncdata_warn.setText(context.getResources().getString(R.string.no_update));
 			tv_syncdata_warn.setVisibility(View.GONE);
@@ -209,9 +238,15 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_auto_table.setOnStateChangeListeren(this);
 		mt_print_bill.setOnStateChangeListeren(this);
 		mt_of_pax.setOnStateChangeListeren(this);
+		ll_set_pos_mode.setOnClickListener(this);
+		if(trainDisplay==1){
+			ll_set_pos_mode.setVisibility(View.VISIBLE);
+		}else {
+			ll_set_pos_mode.setVisibility(View.GONE);
+		}
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);
-		findViewById(R.id.ll_set_pos_mode).setOnClickListener(this);
+		//findViewById(R.id.ll_set_pos_mode).setOnClickListener(this);
 		findViewById(R.id.ll_set_pwd).setOnClickListener(this);
 		findViewById(R.id.ll_set_lock_time).setOnClickListener(this);
 		findViewById(R.id.ll_set_color).setOnClickListener(this);
@@ -545,58 +580,116 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 							@Override
 							public void onClick(View arg0) {
 
+								Map<String, Object> parameters = new HashMap<String, Object>();
+								final SessionStatus sessionStatus = Store.getObject(
+										context, Store.SESSION_STATUS, SessionStatus.class);
+								final long bizDate = App.instance.getBusinessDate().longValue();
+								final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 
-								if(trainType!=1) {
-								//	String path=AlfredRootCmdUtil.COPY_FILE;
+								parameters.put("session",
+										Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
+								SyncCentre.getInstance().sendSessionClose(context, parameters);
 
-									SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
-									try {
-										AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
-										tv_pos_mode_type.setText("train");
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
+								if(trainType!=1){
+									verifyDialog = new VerifyDialog(SystemSetting.this, handler);
+									verifyDialog.show(TRAIN_TYPE, null);
+
+
+
+								//	tv_pos_mode_type.setText("business");
+//									runOnUiThread(new Runnable() {
+//
+//										@Override
+//										public void run() {
+
+
+										//	SQLExe.getDB().execSQL("DROP TABLE IF EXISTS "+ DATABASE_NAME_TRAIN);
+
+
+
+
+											// 退出程序
+
+//											File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
+//											if(!file.exists()){
+//											//LogUtil.e("ssss","sss");
+//
+//											new Handler().postDelayed(new Runnable() {
+//
+//		                                           @Override
+//                                                    public void run() {
+//
+//													   try {
+//														   AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
+//													   } catch (Exception e) {
+//														   e.printStackTrace();
+//													   }
+//													   Intent intent = new Intent(App.instance, Welcome.class);
+//													   @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+//															   App.instance
+//																	   .getApplicationContext(),
+//															   0, intent,
+//															   Intent.FLAG_ACTIVITY_NEW_TASK);
+//
+//													   AlarmManager mgr = (AlarmManager) App.instance
+//															   .getSystemService(Context.ALARM_SERVICE);
+//													   mgr.set(AlarmManager.RTC,
+//															   System.currentTimeMillis() + 1500,
+//															   restartIntent); // 1秒钟后重启应用
+//													   ActivityManager am = (ActivityManager) App.instance
+//															   .getSystemService(Context.ACTIVITY_SERVICE);
+//													   am.killBackgroundProcesses(getPackageName());
+//													   App.instance.finishAllActivity();
+//													              //do something
+//													          }
+//                                      }, 1000);    //延时3s执行
+//
+//
+////
+////										}
+////									});
+
+
 								}else {
 									SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
 									tv_pos_mode_type.setText("business");
+									runOnUiThread(new Runnable() {
+
+										@Override
+										public void run() {
+											Intent intent = new Intent(App.instance, Welcome.class);
+											@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+													App.instance
+															.getApplicationContext(),
+													0, intent,
+													Intent.FLAG_ACTIVITY_NEW_TASK);
+											// 退出程序
+
+											//File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
+//											if(!file.exists()){
+//												//LogUtil.e("ssss","sss");
+//												SessionStatus sessionStatus = Store.getObject(
+//														context, Store.SESSION_STATUS, SessionStatus.class);
+//												GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
+//												Store.remove(context, Store.SESSION_STATUS);
+												//App.instance.setSessionStatus(null);
+//											}
+
+											AlarmManager mgr = (AlarmManager) App.instance
+													.getSystemService(Context.ALARM_SERVICE);
+											mgr.set(AlarmManager.RTC,
+													System.currentTimeMillis() + 1000,
+													restartIntent); // 1秒钟后重启应用
+											ActivityManager am = (ActivityManager) App.instance
+													.getSystemService(Context.ACTIVITY_SERVICE);
+											am.killBackgroundProcesses(getPackageName());
+											App.instance.finishAllActivity();
+										}
+									});
+
 								}
 
 
-
-
-								runOnUiThread(new Runnable() {
-
-									@Override
-									public void run() {
-										Intent intent = new Intent(App.instance, Welcome.class);
-										@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
-												App.instance
-														.getApplicationContext(),
-												0, intent,
-												Intent.FLAG_ACTIVITY_NEW_TASK);
-										// 退出程序
-
-										File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
-										if(!file.exists()){
-											//LogUtil.e("ssss","sss");
-											SessionStatus sessionStatus = Store.getObject(
-													context, Store.SESSION_STATUS, SessionStatus.class);
-											GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
-											Store.remove(context, Store.SESSION_STATUS);
-											App.instance.setSessionStatus(null);
-										}
-
-										AlarmManager mgr = (AlarmManager) App.instance
-												.getSystemService(Context.ALARM_SERVICE);
-										mgr.set(AlarmManager.RTC,
-												System.currentTimeMillis() + 1000,
-												restartIntent); // 1秒钟后重启应用
-										ActivityManager am = (ActivityManager) App.instance
-												.getSystemService(Context.ACTIVITY_SERVICE);
-										am.killBackgroundProcesses(getPackageName());
-										App.instance.finishAllActivity();
-									}
-								});
 							}
 						});
 			}
@@ -718,6 +811,76 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 //				String ip = (String)msg.obj;
 //				App.instance.setCallAppIp(ip);
 //				tv_callnum.setText(ip);
+				break;
+
+				case VerifyDialog.DIALOG_RESPONSE:
+				{
+					Map<String, Object> result = (Map<String, Object>) msg.obj;
+					//User user1 = (User) result.get("User");
+
+
+					//		Toast.makeText(context,result.get("MsgObject")+"--111111- ",Toast.LENGTH_LONG).show();
+
+					if (result.get("MsgObject").equals(TRAIN_TYPE)) {
+//						Map<String, Object> maps = (Map<String, Object>) result
+//								.get("Object");
+
+						if(trainType!=1) {
+							//	String path=AlfredRootCmdUtil.COPY_FILE;
+
+							SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
+							try {
+								AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
+								tv_pos_mode_type.setText("train");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}else {
+//							SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+//							tv_pos_mode_type.setText("business");
+						}
+
+
+
+//
+//						runOnUiThread(new Runnable() {
+//
+//							@Override
+//							public void run() {
+								Intent intent = new Intent(App.instance, Welcome.class);
+								@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+										App.instance
+												.getApplicationContext(),
+										0, intent,
+										Intent.FLAG_ACTIVITY_NEW_TASK);
+								// 退出程序
+
+							//	File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
+							//	if(!file.exists()){
+//									//LogUtil.e("ssss","sss");
+//									SessionStatus sessionStatus = Store.getObject(
+//											context, Store.SESSION_STATUS, SessionStatus.class);
+//									GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
+//									Store.remove(context, Store.SESSION_STATUS);
+//									App.instance.setSessionStatus(null);
+							//	}
+
+								AlarmManager mgr = (AlarmManager) App.instance
+										.getSystemService(Context.ALARM_SERVICE);
+								mgr.set(AlarmManager.RTC,
+										System.currentTimeMillis() + 1000,
+										restartIntent); // 1秒钟后重启应用
+								ActivityManager am = (ActivityManager) App.instance
+										.getSystemService(Context.ACTIVITY_SERVICE);
+								am.killBackgroundProcesses(getPackageName());
+								App.instance.finishAllActivity();
+//							}
+//						});
+//
+
+					}
+
+				}
 				break;
 			default:
 				break;

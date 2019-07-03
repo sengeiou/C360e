@@ -481,7 +481,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void printKOT(String printer, String summary,
-                         String detail, String modifiers, boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire) throws RemoteException {
+                         String detail, String modifiers, boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire,int trainType) throws RemoteException {
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         KotSummary kotsummary = gson.fromJson(summary, KotSummary.class);
@@ -524,7 +524,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                         }
                     }
-                    kot.AddHeader(kotsummary);
+                    String trainString = null;
+                    if(trainType==1){
+                        trainString=PrintService.instance.getResources().getString(R.string.training);
+                    }
+                    kot.AddHeader(kotsummary,trainString);
                     if (isFire) {
                         kot.AddFire();
                     }
@@ -602,7 +606,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 if (item.getKotStatus().intValue() == ParamConst.KOT_STATUS_VOID) {
                                     kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                                 }
-                                kot.AddHeader(kotsummary);
+                                String trainString = null;
+                                if(trainType==1){
+                                    trainString=PrintService.instance.getResources().getString(R.string.training);
+                                }
+                                kot.AddHeader(kotsummary,trainString);
                                 if (isFire) {
                                     kot.AddFire();
                                 }
@@ -659,7 +667,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 }
                             }
                             kot.AddTitle(kotsummary.getRevenueCenterName(), kotsummary.getTableName());
-                            kot.AddHeader(kotsummary);
+                            String trainString = "";
+                            if(trainType==1){
+                                trainString=PrintService.instance.getResources().getString(R.string.training);
+                            }
+                            kot.AddHeader(kotsummary,trainString);
                             if (isFire) {
                                 kot.AddFire();
                             }
@@ -762,9 +774,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String tableName;
-                    if (prtTitle.getCopy() == 2) {
-                        tableName = prtTitle.getTableName() + "(Reprint Bill Copy)";
-                    } else {
+                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                        tableName = prtTitle.getTableName() + ".Training (Reprint Bill Copy)";
+                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                        tableName = prtTitle.getTableName() + ".Training";
+                    }
+                    else {
                         tableName = prtTitle.getTableName();
                     }
 
@@ -891,9 +906,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String tableName;
-                    if (prtTitle.getCopy() == 2) {
-                        tableName = prtTitle.getTableName() + "(Reprint Bill Copy)";
-                    } else {
+                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                        tableName = prtTitle.getTableName() + ".Training (Reprint Bill Copy)";
+                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                        tableName = prtTitle.getTableName() + ".Training";
+                    }
+                    else {
                         tableName = prtTitle.getTableName();
                     }
 
@@ -1607,7 +1625,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void printKioskKOT(String printer, String summary, String detail,
-                              String modifiers, boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize)
+                              String modifiers, boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize,int trainType)
             throws RemoteException {
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
@@ -1641,11 +1659,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         kot.setCharSize(48);
                     }
 
+                    String trainString = "";
+                    if(trainType==1){
+                        trainString=PrintService.instance.getResources().getString(R.string.training);
+                    }
                     //kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
                     if (!TextUtils.isEmpty(orderNo))
-                        kot.AddKioskHeader(kotsummary, orderNo);
+                        kot.AddKioskHeader(kotsummary, orderNo,trainString);
                     else
-                        kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
+                        kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString(),trainString);
 
                     kot.setPrinterIp(prtDevice.getIP());
                     if (!TextUtils.isEmpty(kotsummary.getDescription())) {
@@ -1730,10 +1752,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 if (item.getKotStatus().intValue() == ParamConst.KOT_STATUS_VOID) {
                                     kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                                 }
+
+                                String trainString = "";
+                                if(trainType==1){
+                                    trainString=PrintService.instance.getResources().getString(R.string.training);
+                                }
+                                //kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
                                 if (!TextUtils.isEmpty(orderNo))
-                                    kot.AddKioskHeader(kotsummary, orderNo);
+                                    kot.AddKioskHeader(kotsummary, orderNo,trainString);
                                 else
-                                    kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
+                                    kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString(),trainString);
+
                                 kot.setPrinterIp(prtDevice.getIP());
                                 kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
                                         PrintService.instance.getResources().getString(R.string.qty));
@@ -1784,10 +1813,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             if (item.getKotStatus().intValue() == ParamConst.KOT_STATUS_VOID) {
                                 kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                             }
+
+                            String trainString = "";
+                            if(trainType==1){
+                                trainString=PrintService.instance.getResources().getString(R.string.training);
+                            }
+                            //kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
                             if (!TextUtils.isEmpty(orderNo))
-                                kot.AddKioskHeader(kotsummary, orderNo);
+                                kot.AddKioskHeader(kotsummary, orderNo,trainString);
                             else
-                                kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
+                                kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString(),trainString);
+
                             kot.setPrinterIp(prtDevice.getIP());
                             kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
                                     PrintService.instance.getResources().getString(R.string.qty));
@@ -1899,12 +1935,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
-                    if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                    } else {
-                        orderNo1 = prtTitle.getOrderNo();
-                    }
 
+                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                        orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
+                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                        orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                    }
+                    else {
+                        orderNo1 = prtTitle.getOrderNo() ;
+                    }
                     if (!TextUtils.isEmpty(orderNo))
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
@@ -2034,10 +2073,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
                     if (appOrders==null||appOrders.size()<=0) {
                         String orderNo1;
-                        if (prtTitle.getCopy() == 2) {
-                            orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                        } else {
-                            orderNo1 = prtTitle.getOrderNo();
+                        if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                            orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
+                        }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                            orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                        }
+                        else {
+                            orderNo1 = prtTitle.getOrderNo() ;
                         }
 
                         if (!TextUtils.isEmpty(orderNo))
@@ -2363,10 +2405,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
-                    if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                    } else {
-                        orderNo1 = prtTitle.getOrderNo();
+                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                        orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
+                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                        orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                    }
+                    else {
+                        orderNo1 = prtTitle.getOrderNo() ;
                     }
 
                     if (!TextUtils.isEmpty(orderNo))
@@ -2493,10 +2538,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
-                    if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                    } else {
-                        orderNo1 = prtTitle.getOrderNo();
+                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                        orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
+                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                        orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                    }
+                    else {
+                        orderNo1 = prtTitle.getOrderNo() ;
                     }
 
                     if (!TextUtils.isEmpty(orderNo))
@@ -2746,7 +2794,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                     }
                 }
-                kot.AddHeader(kotsummary);
+                String trainString = "";
+//                if(trainType==1){
+//                    trainString=PrintService.instance.getResources().getString(R.string.training);
+//                }
+                kot.AddHeader(kotsummary,trainString);
                 kot.setPrinterIp(prtDevice.getIP());
                 kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
                         PrintService.instance.getResources().getString(R.string.qty));

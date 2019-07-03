@@ -83,15 +83,15 @@ public class ReportBasePrint extends PrintJob{
 		billNoPrint.setText(padBillNo);
 		this.data.add(billNoPrint);
 
-		if(trainType==1){
-			PrintData trainPrint = new PrintData();
-			String trainLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.mode), this.FIXED_COL3_TOTAL);
-			String trainStr = trainLabel + ":" + PrintService.instance.getResources().getString(R.string.train) + reNext;
-			trainPrint.setDataFormat(PrintData.FORMAT_TXT);
-			trainPrint.setTextAlign(PrintData.ALIGN_LEFT);
-			trainPrint.setText(trainStr);
-			this.data.add(trainPrint);
-		}
+//		if(trainType==1){
+//			PrintData trainPrint = new PrintData();
+//			String trainLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.mode), this.FIXED_COL3_TOTAL);
+//			String trainStr = trainLabel + ":" + PrintService.instance.getResources().getString(R.string.train) + reNext;
+//			trainPrint.setDataFormat(PrintData.FORMAT_TXT);
+//			trainPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//			trainPrint.setText(trainStr);
+//			this.data.add(trainPrint);
+//		}
 		//Business Date
 		PrintData bizDatePrint = new PrintData();
 		String bdateLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.business_date), this.FIXED_COL3_TOTAL);

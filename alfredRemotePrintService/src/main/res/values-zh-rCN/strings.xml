@@ -15,6 +15,7 @@
     <string name="table">台号</string>
     <string name="pax">人数</string>
     <string name="item">菜名</string>
+    <string name="training">.培训</string>
     <string name="price">价格</string>
     <string name="qty">数量</string>
     <string name="total">总计</string>

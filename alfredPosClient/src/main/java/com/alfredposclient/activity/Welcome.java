@@ -300,7 +300,13 @@ public class Welcome extends BaseActivity {
 	public void handlerClickEvent(View v) {
 		super.handlerClickEvent(v);
 	}
-	
+
+	@Override
+	protected void onResume() {
+
+		super.onResume();
+	}
+
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(downReceiver);

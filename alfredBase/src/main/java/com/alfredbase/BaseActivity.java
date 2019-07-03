@@ -127,7 +127,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
                 public void onTrainClick() {
                     RxBus.getInstance().post(RxBus.RX_TRAIN, "");
 
-                   Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
+                   //Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
                 }
             });
 

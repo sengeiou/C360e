@@ -305,15 +305,15 @@ public class BillPrint extends PrintJob {
         this.data.add(billNoPrint);
 
         //trainType
-        if(trainType==1){
-            PrintData trainPrint = new PrintData();
-            String trainLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.mode), this.FIXED_COL4_TOTAL);
-            String trainStr = trainLabel + ":" + PrintService.instance.getResources().getString(R.string.train) + reNext;
-            trainPrint.setDataFormat(PrintData.FORMAT_TXT);
-            trainPrint.setTextAlign(PrintData.ALIGN_LEFT);
-            trainPrint.setText(trainStr);
-            this.data.add(trainPrint);
-        }
+//        if(trainType==1){
+//            PrintData trainPrint = new PrintData();
+//            String trainLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.mode), this.FIXED_COL4_TOTAL);
+//            String trainStr = trainLabel + ":" + PrintService.instance.getResources().getString(R.string.train) + reNext;
+//            trainPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            trainPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            trainPrint.setText(trainStr);
+//            this.data.add(trainPrint);
+//        }
         //cashier
         PrintData cashierPrint = new PrintData();
         String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.cashier), this.FIXED_COL4_TOTAL);

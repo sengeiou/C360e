@@ -11,6 +11,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.APIName;
 import com.alfredbase.http.AlfredHttpServer;
 import com.alfredbase.http.ResultCode;
@@ -1330,6 +1331,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
                 return this.getJsonResponse(new Gson().toJson(result));
             }
+
+            String trainType = jsonObject.optString("trainType");
+
+            int  train = SharedPreferencesHelper.getInt(App.instance,SharedPreferencesHelper.TRAINING_MODE);
+            if (Integer.valueOf(trainType) != train) {
+                Map<String, Object> result = new HashMap<String, Object>();
+                result.put("resultCode", ResultCode.USER_POS_TYPE);
+                return this.getJsonResponse(new Gson().toJson(result));
+            }
+
             if (apiName.equals(APIName.LOGIN_LOGOUT)) {// 注销
                 return handlerLogout(body);
             } else if (apiName.equals(APIName.SELECT_TABLES)) {// 选择桌子
@@ -1637,13 +1648,17 @@ public class MainPosHttpServer extends AlfredHttpServer {
         return resp;
     }
 
-    private Response handlerLogin(String params) {
+    private Response  handlerLogin(String params) {
         Response resp = null;
         try {
             JSONObject jsonObject = new JSONObject(params);
             String employee_ID = jsonObject.optString("employee_ID");
             String password = jsonObject.optString("password");
             Integer type = jsonObject.optInt("type");
+            int trainType=  SharedPreferencesHelper.getInt(App.instance,SharedPreferencesHelper.TRAINING_MODE);
+            if(trainType<1){
+                trainType=0;
+            }
             User user = CoreData.getInstance().getUser(employee_ID, password);
             Map<String, Object> result = new HashMap<String, Object>();
             if (user != null) {
@@ -1717,6 +1732,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         result.put("mainPosInfo", mainPosInfo);
                         result.put("session", sessionStatus);
                         result.put("businessDate", App.instance.getBusinessDate());
+                        result.put("trainType",trainType);
                         resp = this.getJsonResponse(new Gson().toJson(result));
 
                     } else if (type == ParamConst.USER_TYPE_WAITER &&

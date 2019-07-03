@@ -1,6 +1,11 @@
 package com.alfredposclient.view;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -12,22 +17,31 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
+import com.alfredposclient.activity.Welcome;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.utils.AlertToDeviceSetting;
+import com.alfredposclient.utils.AlfredRootCmdUtil;
 
-public class SettingView extends LinearLayout implements OnClickListener {
+import java.io.File;
+
+public class SettingView extends LinearLayout implements OnClickListener,View.OnLongClickListener {
 
 	private BaseActivity context;
 	private DrawerLayout mDrawerLayout;
@@ -72,6 +86,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 		findViewById(R.id.ll_clock_select).setOnClickListener(this);
 		findViewById(R.id.ll_cash_inout).setOnClickListener(this);
 		findViewById(R.id.ll_system).setOnClickListener(this);
+		findViewById(R.id.ll_system).setOnLongClickListener(this);
 		findViewById(R.id.ll_opendrawer).setOnClickListener(this);
 		findViewById(R.id.iv_setting_close).setOnClickListener(this);
 		findViewById(R.id.ll_setting_title).setOnClickListener(null);	
@@ -324,5 +339,102 @@ public class SettingView extends LinearLayout implements OnClickListener {
 
 	public void SUNMIGone(){
 		findViewById(R.id.ll_sunmi).setVisibility(GONE);
+	}
+
+	@Override
+	public boolean onLongClick(View v) {
+		// 0  正常模式， 1 培训模式
+		final int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+
+	int	display= Store.getInt(context,SharedPreferencesHelper.TRAIN_DISPLAY);
+// 0  隐藏， 1 显示
+if(display!=1){
+
+	DialogFactory.commonTwoBtnDialog(context, "",
+			"Display Training Mode？",
+			context.getResources().getString(R.string.cancel),
+			context.getResources().getString(R.string.ok),
+			new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
+				}
+			},
+			new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+
+					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+				}
+
+
+			});
+}else {
+
+	DialogFactory.commonTwoBtnDialog(context, "",
+			"Hide Training Mode？",
+			context.getResources().getString(R.string.cancel),
+			context.getResources().getString(R.string.ok),
+			new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+
+				}
+			},
+			new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+
+					Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 0);
+
+					if (train==1) {
+						SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
+
+						context.runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								Intent intent = new Intent(App.instance, Welcome.class);
+								@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+										App.instance
+												.getApplicationContext(),
+										0, intent,
+										Intent.FLAG_ACTIVITY_NEW_TASK);
+								// 退出程序
+
+//							File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
+//							if(!file.exists()){
+//								//LogUtil.e("ssss","sss");
+//								SessionStatus sessionStatus = Store.getObject(
+//										context, Store.SESSION_STATUS, SessionStatus.class);
+//								GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
+//								Store.remove(context, Store.SESSION_STATUS);
+//								App.instance.setSessionStatus(null);
+//							}
+
+								AlarmManager mgr = (AlarmManager) App.instance
+										.getSystemService(Context.ALARM_SERVICE);
+								mgr.set(AlarmManager.RTC,
+										System.currentTimeMillis() + 1000,
+										restartIntent); // 1秒钟后重启应用
+								ActivityManager am = (ActivityManager) App.instance
+										.getSystemService(Context.ACTIVITY_SERVICE);
+								am.killBackgroundProcesses(context.getPackageName());
+								App.instance.finishAllActivity();
+							}
+						});
+					}
+				}
+
+
+			});
+}
+
+
+		//ToastUtils.showToast(context,"changanl");
+		return true;
 	}
 }

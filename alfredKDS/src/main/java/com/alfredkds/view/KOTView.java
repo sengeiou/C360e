@@ -30,6 +30,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -226,6 +227,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemModifiers.clear();
 		this.kotItemModifiers.addAll(kot.getKotItemModifiers());
 		kotId.setText(kot.getKotSummary().getId() + "");
+		int trainType= Store.getInt(context,Store.TRAIN_TYPE);
+
+
 		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo();
 		if(!TextUtils.isEmpty(kot.getKotSummary().getEmpName())){
 			orderNoStr = orderNoStr + "(Emp:" + kot.getKotSummary().getEmpName() + ")";
@@ -236,7 +240,12 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}
 		orderId.setText(orderNoStr);
-		tv_kiosk_order_id.setText(kioskOrderNoStr);
+		if(trainType==1){
+			tv_kiosk_order_id.setText(kioskOrderNoStr+".Training");
+		}else {
+			tv_kiosk_order_id.setText(kioskOrderNoStr);
+		}
+
 		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
 	//	posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
 

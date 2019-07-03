@@ -581,7 +581,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 			}
 			holder.specialInstract
 					.setText(orderDetail.getSpecialInstractions());
-			holder.name.setText(itemDetail.getItemName());
+ 			holder.name.setText(itemDetail.getItemName());
 			holder.price.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()));
 			holder.tv_qty.setText(orderDetail.getItemNum() + "");
 			holder.tv_qty.setBackgroundColor(context.getResources().getColor(

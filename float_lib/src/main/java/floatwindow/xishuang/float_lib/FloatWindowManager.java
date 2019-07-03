@@ -36,13 +36,13 @@ public class FloatWindowManager {
         wmParams = new WindowManager.LayoutParams();
         WindowManager windowManager = getWindowManager(context);
         mFloatLayout = new FloatLayout(context);
-
-        if (Build.VERSION.SDK_INT  >= 24) {
-            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        }
-//        if (Build.VERSION.SDK_INT >= 24) { /*android7.0不能用TYPE_TOAST*/
-//            wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+//
+//        if (Build.VERSION.SDK_INT  >= 24) {
+//            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 //        }
+        if (Build.VERSION.SDK_INT >= 24) { /*android7.0不能用TYPE_TOAST*/
+            wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+        }
         else { /*以下代码块使得android6.0之后的用户不必再去手动开启悬浮窗权限*/
             String packname = context.getPackageName();
             PackageManager pm = context.getPackageManager();

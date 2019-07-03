@@ -123,7 +123,7 @@ public class FloatLayout extends FrameLayout {
         }
         //响应点击事件
         if (isclick) {
-            Toast.makeText(mContext, "点击了", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "", Toast.LENGTH_SHORT).show();
 
                 FloatActionController.getInstance().onClick();
 

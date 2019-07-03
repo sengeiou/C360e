@@ -349,20 +349,21 @@ public class App extends BaseApplication {
     private boolean isUsbScannerLink = false;
     private boolean isTrain=true;
     private int train;
+    private Boolean trainDisplay ;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         instance = this;
-         train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
+
+        train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
         if(train==1){
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
+           // setSessionStatus(null);
         }else {
             SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         }
-
-
         systemSettings = new SystemSettings(this);
 
         kdsJobManager = new KotJobManager(this);
@@ -471,6 +472,16 @@ public class App extends BaseApplication {
                                 public void onClick(View arg0) {
 
                                     isTrain=true;
+
+                                    Map<String, Object> parameters = new HashMap<String, Object>();
+                                    final SessionStatus sessionStatus = Store.getObject(
+                                            context, Store.SESSION_STATUS, SessionStatus.class);
+                                    final long bizDate = App.instance.getBusinessDate().longValue();
+                                    final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+
+                                    parameters.put("session",
+                                            Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
+                                    SyncCentre.getInstance().sendSessionClose(context, parameters);
                                     if (train != 1) {
 
                                         SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
@@ -569,6 +580,9 @@ public class App extends BaseApplication {
         }
         wifiPolicyNever();
         update15to16();
+
+
+
     }
 
     public XmppThread getXmppThread() {
@@ -1680,18 +1694,18 @@ public class App extends BaseApplication {
                 if (countryCode == ParamConst.CHINA)
                     mRemoteService.printKioskKOT(printstr, kotsumStr, kdlstr,
                             modstr, this.systemSettings.isKotPrintTogether(),
-                            this.systemSettings.isKotDoublePrint(), getPrintOrderNo(kotsummary.getOrderId().intValue()), 2);
+                            this.systemSettings.isKotDoublePrint(), getPrintOrderNo(kotsummary.getOrderId().intValue()), 2,train);
                 else
                     mRemoteService.printKioskKOT(printstr, kotsumStr, kdlstr,
                             modstr, this.systemSettings.isKotPrintTogether(),
-                            this.systemSettings.isKotDoublePrint(), null, 3);
+                            this.systemSettings.isKotDoublePrint(), null, 3,train);
             } else {
                 int size = 2;
                 if (countryCode == ParamConst.CHINA)
                     size = 2;
                 mRemoteService.printKOT(printstr, kotsumStr, kdlstr, modstr,
                         this.systemSettings.isKotPrintTogether(),
-                        this.systemSettings.isKotDoublePrint(), size, isFire);
+                        this.systemSettings.isKotDoublePrint(), size, isFire,train);
             }
             return true;
         } catch (RemoteException e) {

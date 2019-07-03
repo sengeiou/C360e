@@ -771,7 +771,7 @@ public class MainPage extends BaseActivity {
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
                                             .getId()));
-                            App.instance.remoteBillPrint(printer, title, currentOrder,
+                            App.instance. remoteBillPrint(printer, title, currentOrder,
                                     orderItems, orderModifiers, taxMap, null, null);
 //						handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                         }
