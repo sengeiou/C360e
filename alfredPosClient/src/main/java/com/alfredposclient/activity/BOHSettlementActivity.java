@@ -78,6 +78,7 @@ public class BOHSettlementActivity extends BaseActivity {
         btn_save = (Button) findViewById(R.id.btn_save);
         tv_payment_cash.setOnClickListener(this);
         tv_payment_card.setOnClickListener(this);
+        findViewById(R.id.btn_back).setOnClickListener(this);
         btn_save.setOnClickListener(this);
         ((TextView)findViewById(R.id.tv_title_name)).setText(getResources().getString(R.string.boh_settlement));
         findViewById(R.id.btn_cancel).setOnClickListener(this);
@@ -202,6 +203,9 @@ public class BOHSettlementActivity extends BaseActivity {
                 break;
             case R.id.tv_payment_card:
                 selectPayType(PAID_CARD);
+                break;
+            case R.id.btn_back:
+                this.finish();
                 break;
         }
     }

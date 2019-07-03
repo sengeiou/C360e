@@ -1122,9 +1122,15 @@ public class MainPageKiosk extends BaseActivity {
                 }
                 case VIEW_EVENT_ADD_ORDER_DETAIL:
                     addOrderDetail((OrderDetail) msg.obj);
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case VIEW_EVENT_SET_DATA:
                     setData();
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case MainPage.VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
                     setData();

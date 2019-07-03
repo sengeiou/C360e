@@ -120,7 +120,10 @@ public class MainPageMenuView extends LinearLayout {
 	public void setParent(BaseActivity parent){
 		this.parent = parent;
 	}
-
+	public void refreshAllMenu(){
+		TwoLevelMenuAdapter twoLevelMenuAdapter = (TwoLevelMenuAdapter) twoLevelMenu.getAdapter();
+		twoLevelMenuAdapter.notifyDataSetChanged();
+	}
 	public void setParam(Order order, Handler handler) {
 		this.handler = handler;
 		this.order = order;
