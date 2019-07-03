@@ -121,7 +121,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //        width = (int) ScreenSizeUtil.width * 4 / 5;
 //        ll_table_left.setLayoutParams(ps2);
         ll_table_right = (LinearLayout) view.findViewById(R.id.ll_table_right);
-
+        view.findViewById(R.id.btn_back).setOnClickListener(this);
 //        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 //            @Override
 //            public boolean onPreDraw() {
@@ -627,6 +627,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 UIHelp.startTableSummaryActivity(mainPage);
             }
                 break;
+            case R.id.btn_back:{
+                mainPage.onBackPressed();
+            }
+            break;
         }
     }
 
