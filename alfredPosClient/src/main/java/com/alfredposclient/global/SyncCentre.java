@@ -3,6 +3,7 @@ package com.alfredposclient.global;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -565,23 +566,26 @@ public class SyncCentre {
     //start language
 
     public void setClientLanguage(final Context context, String version, String tag) {
-
         ArrayList<String> urls = new ArrayList<String>();
 
         Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
-        Set<Integer> key = waiterDeviceMap.keySet();
-        for (Integer index : key) {
-            WaiterDevice waiterDevice = waiterDeviceMap.get(index);
-            String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
-            urls.add(url);
+        if (waiterDeviceMap != null && waiterDeviceMap.size() > 0) {
+            Set<Integer> key = waiterDeviceMap.keySet();
+            for (Integer index : key) {
+                WaiterDevice waiterDevice = waiterDeviceMap.get(index);
+                String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+                urls.add(url);
+            }
         }
 
         Map<Integer, KDSDevice> kdsDeviceMap = App.instance.getKDSDevices();
-        key = kdsDeviceMap.keySet();
-        for (Integer index : key) {
-            KDSDevice kdsDevice = kdsDeviceMap.get(index);
-            String url = "http://" + kdsDevice.getIP() + ":" + APPConfig.KDS_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
-            urls.add(url);
+        if (kdsDeviceMap != null && kdsDeviceMap.size() > 0) {
+            Set<Integer> key = kdsDeviceMap.keySet();
+            for (Integer index : key) {
+                KDSDevice kdsDevice = kdsDeviceMap.get(index);
+                String url = "http://" + kdsDevice.getIP() + ":" + APPConfig.KDS_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+                urls.add(url);
+            }
         }
 
         if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {

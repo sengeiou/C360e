@@ -3208,14 +3208,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             final String language = jsonObject.getString("language");
             final String version = jsonObject.getString("appVersion");
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-                        SyncCentre.getInstance().setClientLanguage(App.getTopActivity(), version, language);
-                    }
-                }
-            }).start();
+            SyncCentre.getInstance().setClientLanguage(App.getTopActivity(), version, language);
             result.put("resultCode", ResultCode.SUCCESS);
             resp = this.getJsonResponse(new Gson().toJson(result));
         } catch (Exception e) {

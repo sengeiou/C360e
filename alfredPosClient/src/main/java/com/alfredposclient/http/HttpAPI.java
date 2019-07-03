@@ -2416,6 +2416,7 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
                                 Message message = new Message();
                                 message.obj = language;
                                 message.arg2 = -1;
@@ -2460,6 +2461,7 @@ public class HttpAPI {
                         public void onSuccess(int statusCode, Header[] headers,
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
+                            String body = new String(responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
 
                             } else {
@@ -2473,7 +2475,6 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             error.printStackTrace();
                             String body = new String(responseBody);
-                            Log.wtf("Test_get_failed", " " + body);
                             super.onFailure(statusCode, headers, responseBody, error);
 
                         }
