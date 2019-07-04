@@ -245,21 +245,21 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}
+
+		if(kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.DINE_IN){
+			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.dine_in)+ ")";
+			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.dine_in)+ ")";
+		}else if(kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.APP_DELIVERY){
+			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.app_delivery)+ ")";
+			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.app_delivery)+ ")";
+		}
 		String trainString="";
 
-        if(trainType==1){
-            trainString=".Training";
-        }
-		if(kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.DINE_IN){
-			orderNoStr = orderNoStr+trainString + "(" + context.getResources().getString(R.string.dine_in)+ ")";
-			kioskOrderNoStr = kioskOrderNoStr +trainString+ "(" + context.getResources().getString(R.string.dine_in)+ ")";
-		}else if(kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.APP_DELIVERY){
-			orderNoStr = orderNoStr+trainString + "(" + context.getResources().getString(R.string.app_delivery)+ ")";
-			kioskOrderNoStr = kioskOrderNoStr +trainString+ "(" + context.getResources().getString(R.string.app_delivery)+ ")";
+		if(trainType==1){
+			trainString=".Training";
 		}
-
 		if(TextUtils.isEmpty(kot.getKotSummary().getTableName())){
-            table.setText(kioskOrderNoStr);
+            table.setText(kioskOrderNoStr+trainString);
 			if(kot.getKotSummary().getAppOrderId()>0) {
                    if(kot.getKotSummary().getEatType()==3){
 					   orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId()+"\n" +TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
@@ -276,7 +276,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			}
             ll_type.setVisibility(GONE);
         }else {
-            table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
+            table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName()+trainString);
             orderId.setText(orderNoStr);
             tv_kiosk_order_id.setText(kioskOrderNoStr);
             if(kot.getKotSummary().getAppOrderId()>0){

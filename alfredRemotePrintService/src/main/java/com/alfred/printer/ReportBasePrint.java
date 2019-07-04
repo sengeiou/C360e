@@ -73,11 +73,14 @@ public class ReportBasePrint extends PrintJob{
 		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		cashierPrint.setText(cashierStr);
 		this.data.add(cashierPrint);
-		
+		String trainString = "";
+		if(trainType==1){
+			trainString=PrintService.instance.getResources().getString(R.string.training);
+		}
 		//report NO
 		PrintData billNoPrint = new PrintData();
 		String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.report_no_), this.FIXED_COL3_TOTAL);
-		String padBillNo = billNoStr+":"+reportNo+reNext;
+		String padBillNo = billNoStr+":"+reportNo+trainString+reNext;
 		billNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		billNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		billNoPrint.setText(padBillNo);

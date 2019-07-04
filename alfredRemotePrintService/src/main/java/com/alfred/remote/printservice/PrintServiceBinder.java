@@ -988,9 +988,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
                     String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+                    String total = BH.getBD(theOrder.getTotal()).toString();
                     String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                    }
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionTotal);
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
                     pqMgr.queuePrint(billPrint.getJobForQueue());
@@ -1035,9 +1039,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             String tableName;
                             String trainString="";
                             if (prtTitle.getCopy() == 2 && prtTitle.getTrainType() == 1) {
-                                tableName = prtTitle.getTableName() + ".Training (Reprint Bill Copy)";
+                                tableName = prtTitle.getTableName() + " (Reprint Bill Copy)";
+                                trainString=  PrintService.instance.getResources().getString(R.string.training);
+
                             } else if (prtTitle.getCopy() != 2 && prtTitle.getTrainType() == 1) {
-                                tableName = prtTitle.getTableName() + ".Training";
+                                tableName = prtTitle.getTableName() + "";
+                                trainString=  PrintService.instance.getResources().getString(R.string.training);
+
                             } else {
                                 tableName = prtTitle.getTableName();
                             }
@@ -1122,9 +1130,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                             String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
                             String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+                            String total = BH.getBD(theOrder.getTotal()).toString();
                             String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                            if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                                grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                            }
                             String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                            billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionTotal);
+                            billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionTotal);
                             List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                             if (settlement != null) {
                                 // String paymentType = "";
@@ -2091,10 +2103,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
+                    String trainString="";
                     if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
-                        orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
+                        orderNo1 = prtTitle.getOrderNo()  + " (Reprint Bill Copy)";
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+
                     }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
-                        orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                        orderNo1 = prtTitle.getOrderNo()  + "";
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+
                     }
                     else {
                         orderNo1 = prtTitle.getOrderNo() ;
@@ -2185,9 +2202,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
                     String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+                    String total = BH.getBD(theOrder.getTotal()).toString();
                     String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                    }
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
 
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
@@ -2330,9 +2351,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         ////////////// Bill Summary
                         String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
                         String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+                        String total = BH.getBD(theOrder.getTotal()).toString();
                         String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                        if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                            grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                        }
                         String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                        billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
+                        billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
 
                         List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                         if (settlement != null) {
@@ -2579,9 +2604,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     String orderNo1;
                     if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
-                        orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
+                        orderNo1 = prtTitle.getOrderNo()  + "(Reprint Bill Copy)";
                     }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
-                        orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                        orderNo1 = prtTitle.getOrderNo()  + "";
                     }
                     else {
                         orderNo1 = prtTitle.getOrderNo() ;
@@ -2671,9 +2696,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = theOrder.getSubTotal();
                     String discount = theOrder.getDiscountAmount();
-                    String grandTotal = theOrder.getTotal();
+                    String total = BH.getBD(theOrder.getTotal()).toString();
+                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                    }
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
 
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
@@ -2713,9 +2742,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     String orderNo1;
                     if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
-                        orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
+                        orderNo1 = prtTitle.getOrderNo()  + " (Reprint Bill Copy)";
                     }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
-                        orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                        orderNo1 = prtTitle.getOrderNo()  + "";
                     }
                     else {
                         orderNo1 = prtTitle.getOrderNo() ;
@@ -2807,11 +2836,14 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
                     String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+                    String total = BH.getBD(theOrder.getTotal()).toString();
                     String grandTotal = BH.getBD(theOrder.getTotal()).toString();
-
+                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                    }
 //                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
                         //   String paymentType = "";

@@ -340,10 +340,16 @@ public class BillPrint extends PrintJob {
             this.data.add(tableNumPrint);
             addHortionalLine(this.charSize);
         }
+         String trainString="";
+        if(trainType==1){
+            trainString=  PrintService.instance.getResources().getString(R.string.training);
+        }
+
+
         //流水号 NO
         PrintData orderNoPrint = new PrintData();
         String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL - 1);
-        String padorderNo = orderNoStr + orderNo + reNext;
+        String padorderNo = orderNoStr + orderNo+trainString + reNext;
         orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
         orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
         orderNoPrint.setFontsize(2);
@@ -793,6 +799,10 @@ public class BillPrint extends PrintJob {
         PrintData totalPrint = new PrintData();
         String totalStr = StringUtil.padLeft(BH.getBD(roundMap.get("Total")).toString(),
                 this.FIXED_COL4_TOTAL);
+        if (splitByPax > 0) {
+            totalStr = StringUtil.padLeft(BH.getBD(total).toString(),
+                    this.FIXED_COL4_TOTAL);
+        }
         String totaling = PrintService.instance.getResources().getString(R.string.total_) + currencySymbol + totalStr + reNext;
         totalPrint.setDataFormat(PrintData.FORMAT_TXT);
         totalPrint.setTextAlign(PrintData.ALIGN_RIGHT);

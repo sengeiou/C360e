@@ -1334,12 +1334,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
             String trainType = jsonObject.optString("trainType");
 
-            int  train = SharedPreferencesHelper.getInt(App.instance,SharedPreferencesHelper.TRAINING_MODE);
-            if (Integer.valueOf(trainType) != train) {
-                Map<String, Object> result = new HashMap<String, Object>();
-                result.put("resultCode", ResultCode.USER_POS_TYPE);
-                return this.getJsonResponse(new Gson().toJson(result));
-            }
+//            int  train = SharedPreferencesHelper.getInt(App.instance,SharedPreferencesHelper.TRAINING_MODE);
+//            if (Integer.valueOf(trainType) != train) {
+//                Map<String, Object> result = new HashMap<String, Object>();
+//                result.put("resultCode", ResultCode.USER_POS_TYPE);
+//                return this.getJsonResponse(new Gson().toJson(result));
+//            }
 
             if (apiName.equals(APIName.LOGIN_LOGOUT)) {// 注销
                 return handlerLogout(body);

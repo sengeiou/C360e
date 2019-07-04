@@ -1903,6 +1903,10 @@ public class ObjectFactory {
         printerTitle.setGroupNum(orderSplit.getGroupId() + "");
         printerTitle.setIsKiosk(revenue.getIsKiosk());
         printerTitle.setCopy(copy);
+        String trainString = "";
+//        if(trainType==1){
+//            trainString=".Training";
+//        }
 //		printerTitle.setOrderNo(orderSplit.getOrderId().toString());
         if (revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
             printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
