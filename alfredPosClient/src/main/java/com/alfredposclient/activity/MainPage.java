@@ -2018,7 +2018,7 @@ public class MainPage extends BaseActivity {
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
                             .getInstance().getItemList(orderSplitDetails);
                     List<Map<String, String>> taxMap = OrderDetailTaxSQL
-                            .getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
+                            .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
 
                     ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                             .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
@@ -2026,9 +2026,10 @@ public class MainPage extends BaseActivity {
                     temporaryOrder.setPersons(paidOrderSplit.getPersons());
                     temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
                     temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
+                    temporaryOrder.setTotal(currentOrder.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
