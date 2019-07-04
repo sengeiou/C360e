@@ -2651,7 +2651,11 @@ public class MainPage extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_CANCELED){
+            return;
+        }
         setData();
+
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NetWorkOrderActivity.CHECK_REQUEST_CODE && resultCode == NetWorkOrderActivity.CHECK_REQUEST_CODE) {
             activityRequestCode = requestCode;

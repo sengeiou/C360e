@@ -23,42 +23,22 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.KotItemDetail;
-import com.alfredbase.javabean.KotItemModifier;
-import com.alfredbase.javabean.KotSummary;
-import com.alfredbase.javabean.Modifier;
-import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.SessionStatus;
-import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.GeneralSQL;
-import com.alfredbase.store.sql.KotItemDetailSQL;
-import com.alfredbase.store.sql.KotItemModifierSQL;
-import com.alfredbase.store.sql.KotSummarySQL;
-import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.LogUtil;
-import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.ChangePasswordDialog;
 import com.alfredposclient.R;
-import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.SystemSettings;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
-import com.alfredposclient.popupwindow.DiscountWindow;
 import com.alfredposclient.popupwindow.SelectPrintWindow;
 import com.alfredposclient.popupwindow.SetPAXWindow;
 import com.alfredposclient.utils.AlfredRootCmdUtil;
@@ -68,7 +48,6 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -606,62 +585,6 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 									verifyDialog = new VerifyDialog(SystemSetting.this, handler);
 									verifyDialog.show(TRAIN_TYPE, null);
 
-
-
-								//	tv_pos_mode_type.setText("business");
-//									runOnUiThread(new Runnable() {
-//
-//										@Override
-//										public void run() {
-
-
-										//	SQLExe.getDB().execSQL("DROP TABLE IF EXISTS "+ DATABASE_NAME_TRAIN);
-
-
-
-
-											// 退出程序
-
-//											File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
-//											if(!file.exists()){
-//											//LogUtil.e("ssss","sss");
-//
-//											new Handler().postDelayed(new Runnable() {
-//
-//		                                           @Override
-//                                                    public void run() {
-//
-//													   try {
-//														   AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
-//													   } catch (Exception e) {
-//														   e.printStackTrace();
-//													   }
-//													   Intent intent = new Intent(App.instance, Welcome.class);
-//													   @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
-//															   App.instance
-//																	   .getApplicationContext(),
-//															   0, intent,
-//															   Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//													   AlarmManager mgr = (AlarmManager) App.instance
-//															   .getSystemService(Context.ALARM_SERVICE);
-//													   mgr.set(AlarmManager.RTC,
-//															   System.currentTimeMillis() + 1500,
-//															   restartIntent); // 1秒钟后重启应用
-//													   ActivityManager am = (ActivityManager) App.instance
-//															   .getSystemService(Context.ACTIVITY_SERVICE);
-//													   am.killBackgroundProcesses(getPackageName());
-//													   App.instance.finishAllActivity();
-//													              //do something
-//													          }
-//                                      }, 1000);    //延时3s执行
-//
-//
-////
-////										}
-////									});
-
-
 								}else {
 									SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
 									tv_pos_mode_type.setText("business");
@@ -670,23 +593,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 										@Override
 										public void run() {
 											Intent intent = new Intent(App.instance, Welcome.class);
-											@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+											@SuppressLint("WrongConstant")
+											PendingIntent restartIntent = PendingIntent.getActivity(
 													App.instance
 															.getApplicationContext(),
 													0, intent,
 													Intent.FLAG_ACTIVITY_NEW_TASK);
 											// 退出程序
-
-											//File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
-//											if(!file.exists()){
-//												//LogUtil.e("ssss","sss");
-//												SessionStatus sessionStatus = Store.getObject(
-//														context, Store.SESSION_STATUS, SessionStatus.class);
-//												GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
-//												Store.remove(context, Store.SESSION_STATUS);
-												//App.instance.setSessionStatus(null);
-//											}
-
 											AlarmManager mgr = (AlarmManager) App.instance
 													.getSystemService(Context.ALARM_SERVICE);
 											mgr.set(AlarmManager.RTC,
@@ -852,44 +765,28 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 //							SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
 //							tv_pos_mode_type.setText("business");
 						}
-
-
-
-//
-//						runOnUiThread(new Runnable() {
-//
-//							@Override
-//							public void run() {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
 								Intent intent = new Intent(App.instance, Welcome.class);
-								@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+								@SuppressLint("WrongConstant")
+								PendingIntent restartIntent = PendingIntent.getActivity(
 										App.instance
 												.getApplicationContext(),
 										0, intent,
 										Intent.FLAG_ACTIVITY_NEW_TASK);
 								// 退出程序
-
-							//	File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
-							//	if(!file.exists()){
-//									//LogUtil.e("ssss","sss");
-//									SessionStatus sessionStatus = Store.getObject(
-//											context, Store.SESSION_STATUS, SessionStatus.class);
-//									GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
-//									Store.remove(context, Store.SESSION_STATUS);
-//									App.instance.setSessionStatus(null);
-							//	}
-
 								AlarmManager mgr = (AlarmManager) App.instance
 										.getSystemService(Context.ALARM_SERVICE);
 								mgr.set(AlarmManager.RTC,
-										System.currentTimeMillis() + 1000,
+										System.currentTimeMillis() + 2000,
 										restartIntent); // 1秒钟后重启应用
 								ActivityManager am = (ActivityManager) App.instance
 										.getSystemService(Context.ACTIVITY_SERVICE);
 								am.killBackgroundProcesses(getPackageName());
 								App.instance.finishAllActivity();
-//							}
-//						});
-//
+							}
+						});
 
 					}
 

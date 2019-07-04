@@ -1,5 +1,6 @@
 package com.alfredbase;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -490,15 +491,16 @@ public class BaseApplication extends Application {
 
     public void finishAllActivity() {
         while (true) {
-            BaseActivity oldActivity = activitys.get(0);
+            BaseActivity oldActivity = getTopActivity();
             if (oldActivity == null) {
                 break;
             }
+            oldActivity.setResult(Activity.RESULT_CANCELED);
             oldActivity.finish();
             activitys.remove(oldActivity);
-            android.os.Process.killProcess(android.os.Process.myPid());
-            FloatActionController.getInstance().stopMonkServer(this);
         }
+        android.os.Process.killProcess(android.os.Process.myPid());
+        FloatActionController.getInstance().stopMonkServer(this);
     }
 
     /**
