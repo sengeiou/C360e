@@ -11,10 +11,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.alfredbase.R;
 import com.floatwindow.float_lib.OnTrainListener;
 import com.floatwindow.float_lib.FloatActionController;
 
-import floatwindow.xishuang.float_lib.R;
 
 /**
  * Author:xishuang

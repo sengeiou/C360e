@@ -22,7 +22,8 @@ import android.widget.FrameLayout;
 
 import java.util.Arrays;
 
-import floatwindow.xishuang.float_lib.R;
+
+import com.alfredbase.R;
 import com.floatwindow.float_lib.util.DensityUtil;
 import com.floatwindow.float_lib.util.DeviceUtil;
 
