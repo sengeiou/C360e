@@ -719,12 +719,12 @@ public class BillPrint extends PrintJob {
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol,String promotion) {
-        AddBillSummary(subtotal, discount, taxes, total, rounding, currencySymbol, 0,promotion);
+                               List<Map<String, String>> taxes, String total, String grandTotal, String rounding, String currencySymbol,String promotion) {
+        AddBillSummary(subtotal, discount, taxes, total, grandTotal, rounding, currencySymbol, 0,promotion);
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol, int splitByPax,String promotion) {
+                               List<Map<String, String>> taxes, String total, String grandTotal, String rounding, String currencySymbol, int splitByPax,String promotion) {
         if ("¥".equals(currencySymbol)) {
             currencySymbol = "￥";
         }
@@ -823,7 +823,7 @@ public class BillPrint extends PrintJob {
 
         //grand total
         PrintData gtPrint = new PrintData();
-        String gtotalStr = StringUtil.padLeft(total, this.FIXED_COL4_TOTAL);
+        String gtotalStr = StringUtil.padLeft(grandTotal, this.FIXED_COL4_TOTAL);
         String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + " : " + currencySymbol + gtotalStr + reNext;
         if (splitByPax > 0) {
             padTotal = "Split By Pax " + PrintService.instance.getResources().getString(R.string.grand_total) + "/" + splitByPax + " : " + currencySymbol + gtotalStr + reNext;
