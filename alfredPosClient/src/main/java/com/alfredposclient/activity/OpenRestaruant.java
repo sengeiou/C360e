@@ -3,7 +3,6 @@ package com.alfredposclient.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.DownloadManager;
@@ -23,14 +22,12 @@ import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -120,13 +117,11 @@ import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.NetworkUtils;
 import com.alfredposclient.utils.SessionImageUtils;
-import com.alfredposclient.view.PopupWindowHelper;
 import com.alfredposclient.view.SettingView;
 import com.google.gson.Gson;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.umeng.analytics.MobclickAgent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -134,7 +129,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -1721,16 +1715,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 											   0, intent,
 											   Intent.FLAG_ACTIVITY_NEW_TASK);
 									   // 退出程序
-									   File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
-//									   if(!file.exists()){
-//										   //LogUtil.e("ssss","sss");
-////										   SessionStatus sessionStatus = Store.getObject(
-////												   context, Store.SESSION_STATUS, SessionStatus.class);
-////										   GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
-////										   Store.remove(context, Store.SESSION_STATUS);
-////										   App.instance.setSessionStatus(null);
-//									   }
-
 									   AlarmManager mgr = (AlarmManager) App.instance
 											   .getSystemService(Context.ALARM_SERVICE);
 									   mgr.set(AlarmManager.RTC,
