@@ -783,6 +783,10 @@ public class BillPrint extends PrintJob {
         PrintData totalPrint = new PrintData();
         String totalStr = StringUtil.padLeft(BH.getBD(roundMap.get("Total")).toString(),
                 this.FIXED_COL4_TOTAL);
+        if (splitByPax > 0) {
+            totalStr = StringUtil.padLeft(BH.getBD(total).toString(),
+                    this.FIXED_COL4_TOTAL);
+        }
         String totaling = PrintService.instance.getResources().getString(R.string.total_) + currencySymbol + totalStr + reNext;
         totalPrint.setDataFormat(PrintData.FORMAT_TXT);
         totalPrint.setTextAlign(PrintData.ALIGN_RIGHT);
