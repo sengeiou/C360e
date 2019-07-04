@@ -22,6 +22,7 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
+import com.floatwindow.float_lib.FloatActionController;
 import com.moonearly.utils.service.TcpUdpFactory;
 import com.moonearly.utils.service.UdpServiceCallBack;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -37,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import floatwindow.xishuang.float_lib.FloatActionController;
 
 public class BaseApplication extends Application {
 

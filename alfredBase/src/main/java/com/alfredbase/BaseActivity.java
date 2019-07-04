@@ -5,39 +5,27 @@ import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
-import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.view.Display;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.ButtonClickTimer;
-import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
-import com.alfredbase.view.FloatViewHelper;
+import com.floatwindow.float_lib.FloatActionController;
+import com.floatwindow.float_lib.OnTrainListener;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.umeng.analytics.MobclickAgent;
-
-import floatwindow.xishuang.float_lib.FloatActionController;
-import floatwindow.xishuang.float_lib.FloatCallBack;
-import floatwindow.xishuang.float_lib.OnTrainListener;
-import floatwindow.xishuang.float_lib.permission.FloatPermissionManager;
-import floatwindow.xishuang.float_lib.view.FloatLayout;
 
 public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected BaseActivity context;
