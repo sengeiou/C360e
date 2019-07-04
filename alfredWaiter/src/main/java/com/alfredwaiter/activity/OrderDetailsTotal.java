@@ -512,6 +512,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                         .put("table",
                                 TableInfoSQL.getTableById(
                                         currentOrder.getTableId()));
+                parameters.put("order", currentOrder);
                 SyncCentre.getInstance().getBillPrint(context, parameters, handler);
             }
             break;
