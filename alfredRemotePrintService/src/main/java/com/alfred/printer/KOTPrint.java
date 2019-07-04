@@ -54,13 +54,13 @@ public class KOTPrint extends PrintJob{
 		if (kotsummary.getIsTakeAway()==1) {
 			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
-					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString()++trainString)
+					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString()+trainString)
 					.append(reNext)
 					.append(PrintService.instance.getResources().getString(R.string.takeaway_print)).append(reNext);
 		}else if(kotsummary.getIsTakeAway()==2){
 			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
 					.append("\t")
-					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString()++trainString)
+					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString()+trainString)
 					.append(reNext)
 					.append(PrintService.instance.getResources().getString(R.string.delivery_print)).append(reNext);
 
@@ -185,7 +185,7 @@ public class KOTPrint extends PrintJob{
 
 		addHortionalLine(this.charSize);
 	}
-	public void AddKioskHeader(KotSummary kotSummary, String orderId) {
+	public void AddKioskHeader(KotSummary kotSummary, String orderId,String trainString) {
 //		addFeed();
 
 		StringBuilder sbr = new StringBuilder();

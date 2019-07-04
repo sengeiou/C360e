@@ -24,6 +24,7 @@ public class Store {
 	public static final String SESSION_STATUS = "SESSION_STATUS";
 	public static final String BUSINESS_DATE = "BUSINESS_DATE";
 	public static final String TRAIN_TYPE = "TRAIN_TYPE";
+	public static final String TRAIN_FIRST = "TRAIN_FIRST";
 
 	public static final String EMPLOYEE_ID = "EMPLOYEE_ID";
 	public static final String PASSWORD = "PASSWORD";

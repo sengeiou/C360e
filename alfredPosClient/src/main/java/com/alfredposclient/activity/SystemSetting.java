@@ -839,6 +839,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 						if(trainType!=1) {
 							//	String path=AlfredRootCmdUtil.COPY_FILE;
+							Store.putInt(App.instance,Store.TRAIN_FIRST,0);
 
 							SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
 							try {

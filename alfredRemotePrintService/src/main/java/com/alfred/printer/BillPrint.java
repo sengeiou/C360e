@@ -105,7 +105,7 @@ public class BillPrint extends PrintJob {
 
 
     public void AddHeader(int isTakeAway, String table, int pax, String billNo,
-                          String posNo, String cashier, String dateTime, String orderNo, String info,int appOrderId) {
+                          String posNo, String cashier, String dateTime, String orderNo, String info,int appOrderId,String trainString) {
 
 
 
@@ -148,7 +148,7 @@ public class BillPrint extends PrintJob {
         //流水号 NO
         PrintData orderNoPrint = new PrintData();
         String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL - 1);
-        String padorderNo = orderNoStr + orderNo + reNext;
+        String padorderNo = orderNoStr + orderNo +trainString+ reNext;
         orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
         orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 //		orderNoPrint.setFontsize(2);

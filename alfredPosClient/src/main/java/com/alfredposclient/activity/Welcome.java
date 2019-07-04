@@ -150,6 +150,7 @@ public class Welcome extends BaseActivity {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
+
 					CoreData.getInstance().init(context);
 					App.instance.setLocalRestaurantConfig(CoreData.getInstance().getRestaurantConfigs());
 					App.instance.initKdsAndPrinters();

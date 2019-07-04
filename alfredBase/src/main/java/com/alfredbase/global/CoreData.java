@@ -171,10 +171,19 @@ public class CoreData {
 		trainType= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
 		SessionStatus sessionStatus = Store.getObject(
 				context, Store.SESSION_STATUS, SessionStatus.class);
+
+
+//
+		//train= SharedPreferencesHelper.pu(this,SharedPreferencesHelper.TRAINING_MODE);
 		if(trainType==1){
 
-            GeneralSQL.deleteAllDataInSubPos();
-            Store.remove(context, Store.SESSION_STATUS);
+			int first= Store.getInt(context,Store.TRAIN_FIRST,0);
+			if(first==0){
+				GeneralSQL.deleteAllDataInSubPos();
+				Store.remove(context, Store.SESSION_STATUS);
+                Store.putInt(context,Store.TRAIN_FIRST,1);
+			}
+
         }else {
 
 		}
