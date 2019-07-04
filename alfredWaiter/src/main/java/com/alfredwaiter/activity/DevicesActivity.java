@@ -2,6 +2,7 @@ package com.alfredwaiter.activity;
 
 import android.animation.ObjectAnimator;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.view.CustomListView;
 import com.alfredbase.view.HorizontalListView;
@@ -542,16 +544,7 @@ public class DevicesActivity extends BaseActivity {
     private void initData() {
 
         //本机IP地址和MAC地址
-//        if (!TextUtils.isEmpty(CommonUtil.getLocalIpAddress()) && !TextUtils.isEmpty(CommonUtil.getLocalMacAddress(context))) {
-//            devices_ip_tv.setText(CommonUtil.getLocalIpAddress() + "\n"
-//                    + CommonUtil.getLocalMacAddress(context));
-//            //   new MyThread().start();
-////            new MyAsyncTask().execute();
-//        } else {
-//            devices_ip_tv.setVisibility(View.GONE);
-////            device_code_img.setVisibility(View.GONE);
-//        }
-        printerDBModelList = new ArrayList<PrinterDevice>(App.instance.getPrinterDevices().values());
+        printerDBModelList = new ArrayList<>(App.instance.getPrinterDevices().values());
 //        if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
 //            printerDeptModelList = PrinterSQL.getAllPrinterByType(1);
 //        } else {

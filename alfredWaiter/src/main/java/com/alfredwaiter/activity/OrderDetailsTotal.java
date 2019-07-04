@@ -27,6 +27,8 @@ import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
@@ -35,14 +37,17 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
@@ -52,10 +57,8 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
-import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
@@ -91,6 +94,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     public static final int VIEW_EVENT_PRINT_BILL_FAILED = 5;
     public static final int VIEW_EVENT_GET_PRINT_LIST = 6;
     public static final int VIEW_EVENT_GET_PRINT_LIST_FAILED = 7;
+    public static final int GET_PRINT_KOT_DATA_SUCCESS = 8;
+    public static final int GET_PRINT_KOT_DATA_FAILED = 9;
 
     private static final int DURATION_1 = 300;
     private ListView lv_dishes;
@@ -119,6 +124,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private WaiterModifierCPWindow modifierWindow;
     private Observable<String> observable;
     private OrderDetail selectedOrderDetail;
+    private PrinterDevice selectedPrinter;
+    private boolean isOpenScreen;
 
     @Override
     protected void initView() {
@@ -190,6 +197,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
+                case GET_PRINT_KOT_DATA_SUCCESS:
+                    printKOT();
+                    break;
+                case GET_PRINT_KOT_DATA_FAILED:
+                    //get data kot failed
+                    break;
                 case TablesPage.VIEW_EVENT_SELECT_TABLES:
                     dismissLoadingDialog();
                     currentOrder = (Order) msg.obj;
@@ -222,6 +235,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     // }
                     orderDetails = OrderDetailSQL.getCreatedOrderDetails(currentOrder.getId());
 
+                    getPrintKOTData();
                     refreshList();
                     UIHelp.showToast(context, context.getResources().getString(R.string.place_succ));
 
@@ -232,7 +246,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     break;
                 case VIEW_EVENT_GET_BILL:
                     loadingDialog.dismiss();
-                    UIHelp.startOrderReceiptDetails(context, currentOrder);
+
+                    if (!isOpenScreen)
+                        printBill();
+                    else
+                        UIHelp.startOrderReceiptDetails(context, currentOrder);
                     break;
                 case VIEW_EVENT_GET_BILL_FAILED:
                     loadingDialog.dismiss();
@@ -488,6 +506,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 //	commitOrderToPOS();
                 break;
             case R.id.btn_get_bill: {
+                isOpenScreen = true;
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters
                         .put("table",
@@ -502,21 +521,25 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 if (printerDevice != null) {
                     str = "Use the \"" + (TextUtils.isEmpty(printerDevice.getPrinterName()) ? printerDevice.getName() : printerDevice.getPrinterName()) + "\" Printer ?\nIP:" + printerDevice.getIP();
                 }
+
+                isOpenScreen = false;
+
                 DialogFactory.commonTwoBtnDialog(context, "Warning", str, "Other", "OK",
                         new OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Map<Integer, PrinterDevice> printerDeviceMap = App.instance.getPrinterDevices();
-                                PrinterDevice pd = new PrinterDevice();
-                                pd.setPrinterName("Sunmi");
-                                pd.setName("Sunmi");
-                                pd.setIP("localhost");
-                                printerDeviceMap.put(2, pd);
 
                                 DialogFactory.showSelectPrinterDialog(context, new DialogFactory.DialogCallBack() {
                                     @Override
                                     public void callBack(PrinterDevice printerDevice) {
-                                        printBill(printerDevice.getDevice_id());
+                                        selectedPrinter = printerDevice;
+                                        if ("V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {
+                                            getPrintBillData();
+                                        } else {
+                                            printBill();
+                                        }
+
                                         Store.saveObject(context, Store.WAITER_PRINTER_DEVICE, printerDevice);
                                     }
                                 }, printerDeviceMap);
@@ -525,12 +548,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                         new OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (printerDevice != null) {
-                                    printBill(printerDevice.getDevice_id());
+                                selectedPrinter = printerDevice;
+                                if (selectedPrinter != null && "V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {
+                                    getPrintBillData();
                                 } else {
-                                    printBill(0);
+                                    printBill();
                                 }
-
                             }
                         }, true);
             }
@@ -543,49 +566,99 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         }
     }
 
-    private void printBill(int printerDeviceId) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("orderId", currentOrder.getId().intValue());
-        parameters.put("tableName", TableInfoSQL.getTableById(
-                currentOrder.getTableId()).getName());
-        if (printerDeviceId > 0) {
-            parameters.put("deviceId", printerDeviceId);
+    private void getPrintBillData() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("table",
+                TableInfoSQL.getTableById(
+                        currentOrder.getTableId()));
+        parameters.put("order", currentOrder);
+        SyncCentre.getInstance().getBillPrint(context, parameters, handler);
+    }
+
+    private void printBill() {
+        if (currentOrder == null) return;
+        if (selectedPrinter != null && "V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {
+            String tableName = TableInfoSQL.getTableById(
+                    currentOrder.getTableId()).getName();
+
+            RevenueCenter rvc = App.instance.getRevenueCenter();
+            User user = App.instance.getUser();
+            String firstName = user != null ? user.getFirstName() : "";
+            String lastName = user != null ? user.getLastName() : "";
+
+            PrinterTitle title = ObjectFactory.getInstance()
+                    .getPrinterTitle(
+                            rvc,
+                            currentOrder,
+                            firstName
+                                    + lastName,
+                            tableName, 1);
+
+            ArrayList<PrintOrderItem> orderItems = ObjectFactory
+                    .getInstance().getItemList(
+                            OrderDetailSQL.getOrderDetails(currentOrder
+                                    .getId()));
+
+            ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                    .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
+                            .getId()));
+
+            List<Map<String, String>> taxMap = OrderDetailTaxSQL
+                    .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
+
+            App.instance.printBill(selectedPrinter, title, currentOrder, orderItems, orderModifiers, taxMap, null, null, false);
+
+        } else {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("orderId", currentOrder.getId().intValue());
+            parameters.put("tableName", TableInfoSQL.getTableById(
+                    currentOrder.getTableId()).getName());
+
+            if (selectedPrinter != null && selectedPrinter.getDevice_id() > 0) {
+                parameters.put("deviceId", selectedPrinter.getDevice_id());
+            }
+            SyncCentre.getInstance().printBill(context, parameters, handler);
         }
-//        SyncCentre.getInstance().printBill(context, parameters, handler);
 
-        //test print
-//        String tableName = TableInfoSQL.getTableById(
-//                currentOrder.getTableId()).getName();
+    }
 
-        PrinterDevice printerDevice = Store.getObject(context, Store.WAITER_PRINTER_DEVICE, PrinterDevice.class);
-//        PrinterTitle title = ObjectFactory.getInstance()
-//                .getPrinterTitle(
-//                        App.instance.getRevenueCenter(),
-//                        currentOrder,
-//                        App.instance.getUser().getFirstName()
-//                                + App.instance.getUser()
-//                                .getLastName(),
-//                        tableName, 1);
-
-        ArrayList<PrintOrderItem> orderItems = ObjectFactory
-                .getInstance().getItemList(
-                        OrderDetailSQL.getOrderDetails(currentOrder
-                                .getId()));
-
-        ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
-                .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
-                        .getId()));
-
-//        List<Map<String, String>> taxMap = OrderDetailTaxSQL
-//                .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
-
-
-//        App.instance.remoteBillPrint(printerDevice, title, currentOrder, orderItems, orderModifiers,
-//                taxMap, null , null, "123");
+    private void printKOT() {
+        PrinterDevice printerDevice = App.instance.getLocalPrinterDevice();
+        if (currentOrder == null || printerDevice == null) return;
 
         KotSummary kotsummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
 
-        App.instance.testPrint(printerDevice, kotsummary, orderItems, orderModifiers);
+        if (kotsummary == null) return;
+
+        ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotsummary.getOrderId());
+        ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
+
+        ArrayList<KotItemDetail> printKOTItemDetails = new ArrayList<>();
+
+        if (App.instance.getNewOrderDetail() != null) {
+
+            for (OrderDetail orderDetail : App.instance.getNewOrderDetail()) {
+                for (KotItemDetail kotItemDetail : kotItemDetails) {
+                    int orderDetailId = kotItemDetail.getOrderDetailId();
+
+                    if (orderDetailId == orderDetail.getId()) {
+                        printKOTItemDetails.add(kotItemDetail);
+                        break;
+                    }
+                }
+            }
+        } else {
+            printKOTItemDetails.addAll(kotItemDetails);
+        }
+
+        App.instance.getNewOrderDetail().clear();
+        App.instance.printKOT(printerDevice, kotsummary, printKOTItemDetails, kotItemModifiers);
+    }
+
+    private void getPrintKOTData() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("order", currentOrder);
+        SyncCentre.getInstance().getPrintKOTData(context, parameters, handler);
     }
 
     @Override
@@ -621,6 +694,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         if (newOrderDetails == null || newOrderDetails.isEmpty()) {
             return;
         }
+
         Map<String, Object> parameters = new HashMap<String, Object>();
         List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
         List<OrderModifier> orderModifiers = OrderModifierSQL

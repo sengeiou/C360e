@@ -746,9 +746,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
             return KpmgResponseUtil.getInstance().kpmgLogin(body);
         } else if (apiName.equals(APIName.KPMG_UPDATE_DATA)) {
             return KpmgResponseUtil.getInstance().updateAllData();
-        }else if(apiName.equals(APIName.GET_REMAINING_STOCK_KPMG)){
+        } else if (apiName.equals(APIName.GET_REMAINING_STOCK_KPMG)) {
             return KpmgResponseUtil.getInstance().kpmgReaminingStock();
-        }else if(apiName.equals(APIName.KPMG_CHECK_SOTCK_NUM)){
+        } else if (apiName.equals(APIName.KPMG_CHECK_SOTCK_NUM)) {
             return KpmgResponseUtil.getInstance().kpmgCheckSotckNum(body);
         }
         int userId = jsonObject.optInt("userId");
@@ -1343,9 +1343,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return this.handlerKDSIpChange(body);
             } else if (apiName.equals(APIName.KOT_ITEM_COMPLETE)) { // 厨房提交item做完数据
                 return handlerKOTItemComplete(body);
-            }else if (apiName.equals(APIName.KOT_OUT_OF_STOCK)){ //厨房out of stock
+            } else if (apiName.equals(APIName.KOT_OUT_OF_STOCK)) { //厨房out of stock
                 return handlerKOTOutOfStock(body);
-            }else if (apiName.equals(APIName.CANCEL_COMPLETE)) {// 厨房取消做完的菜
+            } else if (apiName.equals(APIName.CANCEL_COMPLETE)) {// 厨房取消做完的菜
                 return cancelComplete(body);
             } else if (apiName.equals(APIName.COLLECT_KOT_ITEM)) { // waiter
                 // 点击取菜
@@ -1362,10 +1362,69 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return handlerWaiterUnseatTable(body);
             } else if (apiName.equals(APIName.VOID_ITEM)) {
                 return handlerWaiterVoidItem(body);
+            } else if (apiName.equals(APIName.PRINT_KOT_DATA)) {
+                return handlePrintKOTData(body);
             } else {
                 return this.getNotFoundResponse();
             }
         }
+    }
+
+    private Response handlePrintKOTData(String params) {
+        Response resp;
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            Order order = gson.fromJson(jsonObject.optString("order"), Order.class);
+            int deviceId = 0;
+
+            Map<Integer, KDSDevice> kdsDevices = App.instance.getKDSDevices();
+
+            for (Map.Entry<Integer, KDSDevice> entry : kdsDevices.entrySet()) {
+                deviceId = entry.getKey();
+            }
+
+            KotSummary kotSummary = ObjectFactory.getInstance()
+                    .getKotSummaryForPlace(
+                            TableInfoSQL.getTableById(
+                                    order.getTableId()).getName(), order,
+                            App.instance.getRevenueCenter(),
+                            App.instance.getBusinessDate());
+
+            List<KotItemDetail> kotItemDetails = new ArrayList<>();
+            List<KotItemModifier> kotItemModifiers = new ArrayList<>();
+
+            List<PrinterGroup> printerGroupList = CoreData
+                    .getInstance().getPrinterGroupByPrinter(
+                            deviceId);
+
+            for (PrinterGroup printerGroup : printerGroupList) {
+                kotItemDetails
+                        .addAll(KotItemDetailSQL
+                                .getKotItemDetailByKotSummaryAndPrinterGroup(
+                                        kotSummary.getId(),
+                                        printerGroup
+                                                .getPrinterGroupId()));
+            }
+
+            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                kotItemModifiers
+                        .addAll(KotItemModifierSQL
+                                .getKotItemModifiersByKotItemDetail(kotItemDetail
+                                        .getId()));
+            }
+
+            result.put("kotSummary", kotSummary);
+            result.put("kotItemDetails", kotItemDetails);
+            result.put("kotItemModifiers", kotItemModifiers);
+            result.put("resultCode", ResultCode.SUCCESS);
+            resp = this.getJsonResponse(new Gson().toJson(result));
+        } catch (JSONException e) {
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+        }
+
+        return resp;
     }
 
     private Response handlerLogout(String params) {
@@ -1821,6 +1880,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         resp = this.getJsonResponse(new Gson().toJson(result));
         return resp;
     }
+
     private Response handlerStock(String params) {
         Response resp;
         List<RemainingStock> remainingStocks = RemainingStockSQL.getAllRemainingStock();
@@ -2103,28 +2163,28 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
             LogUtil.i(TAG, "------11111");
-            final StringBuffer stringBuffer=new StringBuffer();
+            final StringBuffer stringBuffer = new StringBuffer();
 
-            if(waiterOrderDetails!=null){
+            if (waiterOrderDetails != null) {
 
-                Map<String ,String> map=new HashMap<String,String>();
-                Map<Integer,Object> mapNum=new HashMap<Integer, Object>();
-                    for (int i = 0; i <waiterOrderDetails.size() ; i++) {
-                         OrderDetail orderDetail=waiterOrderDetails.get(i);
-                         int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
-                         RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
-                        if(mapNum.containsKey(itemTempId)){
-                          //  int num=mapNum.get(orderDetail.getItemId()).intValue()+orderDetail.getItemNum();
-                            OrderDetail orderDetail1=(OrderDetail)mapNum.get(itemTempId);
-                            OrderDetail orderDetail1New= new OrderDetail();
-                            orderDetail1New.setItemName(orderDetail1.getItemName());
-                            int num=orderDetail1.getItemNum().intValue()+orderDetail.getItemNum().intValue();
-                            orderDetail1New.setItemNum(num);
-                            mapNum.put(itemTempId,orderDetail1New);
+                Map<String, String> map = new HashMap<String, String>();
+                Map<Integer, Object> mapNum = new HashMap<Integer, Object>();
+                for (int i = 0; i < waiterOrderDetails.size(); i++) {
+                    OrderDetail orderDetail = waiterOrderDetails.get(i);
+                    int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+                    RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                    if (mapNum.containsKey(itemTempId)) {
+                        //  int num=mapNum.get(orderDetail.getItemId()).intValue()+orderDetail.getItemNum();
+                        OrderDetail orderDetail1 = (OrderDetail) mapNum.get(itemTempId);
+                        OrderDetail orderDetail1New = new OrderDetail();
+                        orderDetail1New.setItemName(orderDetail1.getItemName());
+                        int num = orderDetail1.getItemNum().intValue() + orderDetail.getItemNum().intValue();
+                        orderDetail1New.setItemNum(num);
+                        mapNum.put(itemTempId, orderDetail1New);
 
-                        }else {
-                            mapNum.put(itemTempId,orderDetail);
-                        }
+                    } else {
+                        mapNum.put(itemTempId, orderDetail);
+                    }
 //                        if(remainingStock!=null) {
 //                            int num = orderDetail.getItemNum();
 //                            if(num>remainingStock.getQty()){
@@ -2132,8 +2192,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 ////                                    stringBuffer.append(orderDetail.getItemName() + "：alone" + remainingStock.getQty() + " ");
 //                            }
 //                        }
-                    }
-
+                }
 
 
                 Iterator<Map.Entry<Integer, Object>> entries = mapNum.entrySet().iterator();
@@ -2141,22 +2200,22 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     Map.Entry<Integer, Object> entry = entries.next();
                     System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 
-                    final RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(entry.getKey());
+                    final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(entry.getKey());
 
-                    if(remainingStock!=null) {
-                          OrderDetail orderDetailStock= (OrderDetail) entry.getValue();
-                            if(orderDetailStock.getItemNum()>remainingStock.getQty()){
-                                map.put(orderDetailStock.getItemName(),orderDetailStock.getItemName() + "：alone" + remainingStock.getQty() + " ");
+                    if (remainingStock != null) {
+                        OrderDetail orderDetailStock = (OrderDetail) entry.getValue();
+                        if (orderDetailStock.getItemNum() > remainingStock.getQty()) {
+                            map.put(orderDetailStock.getItemName(), orderDetailStock.getItemName() + "：alone" + remainingStock.getQty() + " ");
 //                                    stringBuffer.append(orderDetail.getItemName() + "：alone" + remainingStock.getQty() + " ");
-                            }
                         }
+                    }
 
                 }
 //                for (int value : mapNum.values()) {
 //                    System.out.println("Value = " + value);
 //                    stringBuffer.append(value);
 //                }
-                if(map!=null&&map.size()>0){
+                if (map != null && map.size() > 0) {
                     for (String value : map.values()) {
                         System.out.println("Value = " + value);
                         stringBuffer.append(value);
@@ -2165,7 +2224,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     result.put("stockNum", stringBuffer.toString());
                     resp = this.getJsonResponse(new Gson().toJson(result));
                     return resp;
-                }else {
+                } else {
                     for (int i = 0; i < waiterOrderDetails.size(); i++) {
                         final OrderDetail orderDetail = waiterOrderDetails.get(i);
                         final int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
@@ -2186,6 +2245,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
 
+            List<OrderDetail> newOrderDetails = new ArrayList<>();
 
             // waiter 过来的数据 存到 pos的DB中 不带Id存储
             for (OrderDetail orderDetail : waiterOrderDetails) {
@@ -2213,6 +2273,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                             OrderDetailSQL.updateOrderDetail(orderDetail);
                             OrderDetailTaxSQL.updateOrderSplitIdbyOrderDetail(orderDetail);
                         }
+
+                        newOrderDetails.add(orderDetail);
+
                         if (waiterOrderModifiers != null
                                 && !waiterOrderModifiers.isEmpty()) {
                             for (OrderModifier orderModifier : waiterOrderModifiers) {
@@ -2304,6 +2367,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             }
             result.put("order", order);
             result.put("orderDetails", OrderDetailSQL.getOrderDetails(order.getId()));
+            result.put("newOrderDetails", newOrderDetails);
             result.put("orderModifiers",
                     OrderModifierSQL.getAllOrderModifier(order));
             result.put("orderDetailTaxs",
@@ -2513,13 +2577,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
         Map<String, Object> result = new HashMap<String, Object>();
         Response resp;
         try {
-            JSONObject jsonObject ;
+            JSONObject jsonObject;
             jsonObject = new JSONObject(params);
             int orderDetailId = jsonObject.getInt("orderDetailId");
             OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(orderDetailId);
             ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
-            RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
-            if(remainingStock!=null){
+            RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+            if (remainingStock != null) {
                 Map<String, Object> reMap = new HashMap<String, Object>();
                 reMap.put("itemId", itemDetail.getItemTemplateId());
                 reMap.put("num", 0);
@@ -2864,13 +2928,18 @@ public class MainPosHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             TableInfo tables = gson.fromJson(jsonObject.getString("table"),
                     TableInfo.class);
+            Order order = gson.fromJson(jsonObject.getString("order"), Order.class);
             //Table status in waiter APP is not same that of table in POS
             //need get latest status on app.
             TableInfo tabInPOS = TableInfoSQL.getTableById(tables.getPosId());
             App.getTopActivity().httpRequestAction(
                     MainPage.VIEW_EVNT_GET_BILL_PRINT, tabInPOS);
 
+            OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+                    order, App.instance.getRevenueCenter());
+
             result.put("resultCode", ResultCode.SUCCESS);
+            result.put("orderBill", orderBill);
             resp = this.getJsonResponse(new Gson().toJson(result));
 
         } catch (Exception e) {
