@@ -118,6 +118,7 @@ import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.NetworkUtils;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
+import com.floatwindow.float_lib.FloatActionController;
 import com.google.gson.Gson;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.umeng.analytics.MobclickAgent;
@@ -2368,6 +2369,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	public void onBackPressed() {
 	    if (doubleBackToExitPressedOnce) {
+			FloatActionController.getInstance().stopMonkServer(context);
 	        super.onBackPressed();
 	        return;
 	    }
@@ -2379,7 +2381,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
 	        @Override
 	        public void run() {
-	            doubleBackToExitPressedOnce=false;                       
+	            doubleBackToExitPressedOnce=false;
+
 	        }
 	    }, 2000);
 	} 

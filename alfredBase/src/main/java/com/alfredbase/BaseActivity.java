@@ -33,6 +33,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected Dialog oneButtonCompelDialog;
     public LoadingDialog loadingDialog;
     protected NotificationManager mNotificationManager;
+  int t=0;
    // DifferentDislay  mPresentation;
     protected static DisplayImageOptions display = new DisplayImageOptions.Builder() // 圆角边处理的头像
             .cacheInMemory(true) // 缓存到内存，设置true则缓存到内存
@@ -63,6 +64,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         context = this;
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         MobclickAgent.updateOnlineConfig(this);
+
         initView();
 
 
@@ -88,7 +90,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
 //							| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
+    protected void initviewWelcom() {
+    t=1;
 
+    }
 
 
     protected void initView() {
@@ -105,6 +110,8 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected void onDestroy() {
         super.onDestroy();
         BaseApplication.activitys.remove(this);
+     //   FloatActionController.getInstance().stopMonkServer(this);
+
 
    }
 
@@ -112,10 +119,11 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+
         int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
-        if(train==1)
+        if(train==1&&t!=1)
         {
-         //   FloatActionController.getInstance().startMonkServer(this);
+            //   FloatActionController.getInstance().startMonkServer(this);
 
             if (Build.VERSION.SDK_INT >= 23) {
                 if(!Settings.canDrawOverlays(getApplicationContext())) {
@@ -132,13 +140,13 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
                 //执行6.0以下绘制代码
             }
 
-           // FloatActionController.getInstance().registerOnTrainListener(this);
+            // FloatActionController.getInstance().registerOnTrainListener(this);
             FloatActionController.getInstance().registerOnTrainListener(new OnTrainListener() {
                 @Override
                 public void onTrainClick() {
                     RxBus.getInstance().post(RxBus.RX_TRAIN, "");
 
-                   //Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -174,12 +182,14 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
 //                 //   Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
 //                }
 //            });
-          //  FloatActionController.getInstance().registerOnTrainListener(this);
+            //  FloatActionController.getInstance().registerOnTrainListener(this);
 //
         }else {
+
             FloatActionController.getInstance().stopMonkServer(this);
 
         }
+t=0;
 
 //        boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
 //        //有对应权限或者系统版本小于7.0
@@ -197,7 +207,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+
     }
+
+
 
     public void dismissLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
@@ -334,6 +347,8 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         if (compelDialog != null && compelDialog.isShowing()) {
             return;
         }
+
+
         super.onBackPressed();
     }
 

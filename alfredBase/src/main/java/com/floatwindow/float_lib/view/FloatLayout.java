@@ -28,13 +28,21 @@ public class FloatLayout extends FrameLayout {
     private long startTime;
     private float mTouchStartX;
     private float mTouchStartY;
-    private boolean isclick;
+    // 是否移动了
+    private boolean isMoved;
+    // 是否释放了
+    private boolean isReleased;
+    private boolean isclick=false;
     private WindowManager.LayoutParams mWmParams;
     private Context mContext;
     private long endTime;
     private OnClickListener onClickListener;
     public static final String BROADCAST_ACTION = "com.example.whd_alive";
     private BroadcastReceiver mBroadcastReceiver;
+    // 计数器，防止多次点击导致最后一次形成longpress的时间变短
+    private int mCounter;
+    // 长按的runnable
+    private Runnable mLongPressRunnable;
     public FloatLayout(Context context) {
         this(context, null);
         mContext = context;
@@ -76,11 +84,31 @@ public class FloatLayout extends FrameLayout {
 //                Toast.makeText(mContext,"dianji",Toast.LENGTH_LONG).show();
 //            }
 //        });
+        mLongPressRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                System.out.println("thread");
+//                System.out.println("mCounter--->>>"+mCounter);
+//                System.out.println("isReleased--->>>"+isReleased);
+//                System.out.println("isMoved--->>>"+isMoved);
+                mCounter--;
+                // 计数器大于0，说明当前执行的Runnable不是最后一次down产生的。
+                if ( mCounter>0|| isReleased || isMoved)
+                    return;
+               // performLongClick();// 回调长按事件
+                FloatActionController.getInstance().onClick();
+            }
+        };
     }
+
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // 获取相对屏幕的坐标，即以屏幕左上角为原点
+        isclick=false;
         int x = (int) event.getRawX();
         int y = (int) event.getRawY();
         //下面的这些事件，跟图标的移动无关，为了区分开拖动和点击事件
@@ -90,6 +118,11 @@ public class FloatLayout extends FrameLayout {
                 startTime = System.currentTimeMillis();
                 mTouchStartX = event.getX();
                 mTouchStartY = event.getY();
+                mCounter++;
+                isReleased = false;
+                isMoved = false;
+                postDelayed(mLongPressRunnable, 2000);
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 //图标移动的逻辑在这里
@@ -98,6 +131,7 @@ public class FloatLayout extends FrameLayout {
                 // 如果移动量大于3才移动
                 if (Math.abs(mTouchStartX - mMoveStartX) > 3
                         && Math.abs(mTouchStartY - mMoveStartY) > 3) {
+                    isMoved=true;
                     // 更新浮动窗口位置参数
                     mWmParams.x = (int) (x - mTouchStartX);
                     mWmParams.y = (int) (y - mTouchStartY);
@@ -107,19 +141,20 @@ public class FloatLayout extends FrameLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 endTime = System.currentTimeMillis();
-                //当从点击到弹起小于半秒的时候,则判断为点击,如果超过则不响应点击事件
-                if ((endTime - startTime) > 0.3 * 1000L) {
-                    isclick = false;
-                } else {
-                    isclick = true;
-                }
+               // 当从点击到弹起小于半秒的时候,则判断为点击,如果超过则不响应点击事件
+//                if ((endTime - startTime) > 1 * 1000L) {
+//                    isclick = false;
+//                } else {
+//                    isclick = true;
+//                }
+                isReleased = true;
                 break;
         }
         //响应点击事件
         if (isclick) {
-            Toast.makeText(mContext, "", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(mContext, "", Toast.LENGTH_SHORT).show();
 
-                FloatActionController.getInstance().onClick();
+              //  FloatActionController.getInstance().onClick();
 
         }
         return true;

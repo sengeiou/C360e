@@ -74,7 +74,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private MyToggleButton mt_top_masking_use;
 	private MyToggleButton mt_top_screen_lock;
 	private MyToggleButton mt_cancel_order_void;
-	private MyToggleButton mt_transfer_print;
+	private MyToggleButton mt_transfer_print,mt_pos_mode_type;
 	private MyToggleButton mt_auto_table,mt_of_pax,mt_print_lable_direction;
 	private SystemSettings settings;
 	private LoadingDialog loadingDialog;
@@ -156,6 +156,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_top_screen_lock = (MyToggleButton)findViewById(R.id.mt_top_screen_lock);
 		mt_cancel_order_void = (MyToggleButton)findViewById(R.id.mt_cancel_order_void);
 		mt_transfer_print = (MyToggleButton)findViewById(R.id.mt_transfer_print);
+		mt_pos_mode_type=(MyToggleButton)findViewById(R.id.mt_pos_mode_type);
 		mt_auto_table = (MyToggleButton)findViewById(R.id.mt_auto_table);
 		mt_of_pax=(MyToggleButton)findViewById(R.id.mt_of_pax);
 		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
@@ -216,6 +217,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_top_screen_lock.setOnStateChangeListeren(this);
 		mt_cancel_order_void.setOnStateChangeListeren(this);
 		mt_transfer_print.setOnStateChangeListeren(this);
+		mt_pos_mode_type.setOnStateChangeListeren(this);
 		mt_auto_table.setOnStateChangeListeren(this);
 		mt_print_bill.setOnStateChangeListeren(this);
 		mt_of_pax.setOnStateChangeListeren(this);
@@ -414,7 +416,11 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		}else{
 			mt_of_pax.setChecked(false);
 		}
-
+		if(settings.isTraining()){
+			mt_pos_mode_type.setChecked(true);
+		}else{
+			mt_pos_mode_type.setChecked(false);
+		}
 		if(settings.getCallStyle()>0){
 			tv_callnum_style.setText(settings.getCallStyle()+" style");
 		}
@@ -556,67 +562,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			case R.id.ll_set_pos_mode:
 			{
 				// 0  正常模式， 1 培训模式
-				DialogFactory.commonTwoBtnDialog(context, "",
-								"Switching mode？",
-						context.getResources().getString(R.string.cancel),
-						context.getResources().getString(R.string.ok),
-						new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								//SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
-							}
-						},
-						new OnClickListener() {
 
-							@Override
-							public void onClick(View arg0) {
-
-								Map<String, Object> parameters = new HashMap<String, Object>();
-								final SessionStatus sessionStatus = Store.getObject(
-										context, Store.SESSION_STATUS, SessionStatus.class);
-								final long bizDate = App.instance.getBusinessDate().longValue();
-								final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-
-								parameters.put("session",
-										Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
-								SyncCentre.getInstance().sendSessionClose(context, parameters);
-
-								if(trainType!=1){
-									verifyDialog = new VerifyDialog(SystemSetting.this, handler);
-									verifyDialog.show(TRAIN_TYPE, null);
-
-								}else {
-									SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
-									tv_pos_mode_type.setText("business");
-									runOnUiThread(new Runnable() {
-
-										@Override
-										public void run() {
-											Intent intent = new Intent(App.instance, Welcome.class);
-											@SuppressLint("WrongConstant")
-											PendingIntent restartIntent = PendingIntent.getActivity(
-													App.instance
-															.getApplicationContext(),
-													0, intent,
-													Intent.FLAG_ACTIVITY_NEW_TASK);
-											// 退出程序
-											AlarmManager mgr = (AlarmManager) App.instance
-													.getSystemService(Context.ALARM_SERVICE);
-											mgr.set(AlarmManager.RTC,
-													System.currentTimeMillis() + 1000,
-													restartIntent); // 1秒钟后重启应用
-											ActivityManager am = (ActivityManager) App.instance
-													.getSystemService(Context.ACTIVITY_SERVICE);
-											am.killBackgroundProcesses(getPackageName());
-											App.instance.finishAllActivity();
-										}
-									});
-
-								}
-
-
-							}
-						});
 			}
 				break;
 
@@ -753,6 +699,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 						if(trainType!=1) {
 							//	String path=AlfredRootCmdUtil.COPY_FILE;
 							Store.putInt(App.instance,Store.TRAIN_FIRST,0);
+							mt_pos_mode_type.setChecked(true);
+                           settings.setTraining(ParamConst.DEFAULT_TRUE);
 
 							SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
 							try {
@@ -1112,6 +1060,85 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 					mt_of_pax.setChecked(false);
 					settings.setOfPax(ParamConst.DEFAULT_FALSE);
 				}
+			case R.id.mt_pos_mode_type:
+
+
+				DialogFactory.commonTwoBtnDialog(context, "Turning on Training Mode",
+						"For first time Users, Tablet Settings will pop up\n" +
+								"Switch on \"Appear on top\", and go back to App？",
+						context.getResources().getString(R.string.cancel),
+						context.getResources().getString(R.string.ok),
+						new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								if(settings.isTraining()){
+									mt_pos_mode_type.setChecked(true);
+								}else{
+									mt_pos_mode_type.setChecked(false);
+								}
+								//SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+							}
+						},
+						new OnClickListener() {
+
+							@Override
+							public void onClick(View arg0) {
+
+								Map<String, Object> parameters = new HashMap<String, Object>();
+								final SessionStatus sessionStatus = Store.getObject(
+										context, Store.SESSION_STATUS, SessionStatus.class);
+								final long bizDate = App.instance.getBusinessDate().longValue();
+								final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+
+								parameters.put("session",
+										Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
+								SyncCentre.getInstance().sendSessionClose(context, parameters);
+
+								if(trainType!=1){
+									verifyDialog = new VerifyDialog(SystemSetting.this, handler);
+									verifyDialog.show(TRAIN_TYPE, null);
+
+								}else {
+									mt_pos_mode_type.setChecked(false);
+				                      settings.setTraining(ParamConst.DEFAULT_FALSE);
+									SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+									tv_pos_mode_type.setText("business");
+									runOnUiThread(new Runnable() {
+
+										@Override
+										public void run() {
+											Intent intent = new Intent(App.instance, Welcome.class);
+											@SuppressLint("WrongConstant")
+											PendingIntent restartIntent = PendingIntent.getActivity(
+													App.instance
+															.getApplicationContext(),
+													0, intent,
+													Intent.FLAG_ACTIVITY_NEW_TASK);
+											// 退出程序
+											AlarmManager mgr = (AlarmManager) App.instance
+													.getSystemService(Context.ALARM_SERVICE);
+											mgr.set(AlarmManager.RTC,
+													System.currentTimeMillis() + 1000,
+													restartIntent); // 1秒钟后重启应用
+											ActivityManager am = (ActivityManager) App.instance
+													.getSystemService(Context.ACTIVITY_SERVICE);
+											am.killBackgroundProcesses(getPackageName());
+											App.instance.finishAllActivity();
+										}
+									});
+
+								}
+
+
+							}
+						});
+//				if(checkState){
+//					mt_pos_mode_type.setChecked(true);
+//					settings.setTraining(ParamConst.DEFAULT_TRUE);
+//				}else{
+//					mt_pos_mode_type.setChecked(false);
+//					settings.setTraining(ParamConst.DEFAULT_FALSE);
+//				}
 				break;
 			default:
 				break;

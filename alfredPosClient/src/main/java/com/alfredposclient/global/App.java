@@ -463,7 +463,7 @@ public class App extends BaseApplication {
                     isTrain=false;
                     // 0  正常模式， 1 培训模式
                     DialogFactory.commonTwoBtnDialog(context, "",
-                            "Switching mode？",
+                            "Disable Training Mode?",
                             context.getResources().getString(R.string.cancel),
                             context.getResources().getString(R.string.ok),
                             new OnClickListener() {
