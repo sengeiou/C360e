@@ -167,9 +167,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		ll_set_pos_mode=(RelativeLayout) findViewById(R.id.ll_set_pos_mode);
 
            if(trainType==1){
-           	tv_pos_mode_type.setText("training");
+          // 	tv_pos_mode_type.setText("training");
 		   }else {
-           	tv_pos_mode_type.setText("business");
+         //  	tv_pos_mode_type.setText("business");
 		   }
 
 
@@ -1063,9 +1063,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			case R.id.mt_pos_mode_type:
 
 
-				DialogFactory.commonTwoBtnDialog(context, "Turning on Training Mode",
-						"For first time Users, Tablet Settings will pop up\n" +
-								"Switch on \"Appear on top\", and go back to App？",
+				DialogFactory.commonTwoBtnDialog(context, SystemSetting.this.getResources().getString(
+						R.string.warning),
+						"Turning on Training Mode.\n For first time Users, Tablet Settings will pop up Switch on "+"Appear on top"+", and go back to App.",
 						context.getResources().getString(R.string.cancel),
 						context.getResources().getString(R.string.ok),
 						new OnClickListener() {
