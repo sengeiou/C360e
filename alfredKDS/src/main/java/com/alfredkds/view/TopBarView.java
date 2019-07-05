@@ -62,7 +62,12 @@ public class TopBarView extends LinearLayout implements OnClickListener{
 			UIHelp.startFilter(parent);
 			break;
 		case R.id.iv_refresh:
-			parent.adapter.notifyDataSetChanged();
+			if (App.instance.getSystemSettings().isKdsLan()) {
+				parent.madapter.notifyDataSetChanged();
+			} else {
+				parent.adapter.notifyDataSetChanged();
+			}
+
 			break;
 		case R.id.iv_setting:
 			UIHelp.startSetting(parent);

@@ -1049,7 +1049,7 @@
                                     android:layout_centerVertical="true"
                                     android:paddingLeft="10dp"
 
-                                    android:text="pos mode : "
+                                    android:text="Training Mode"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1061,9 +1061,10 @@
 
                                     android:layout_marginLeft="30dp"
                                     android:layout_toRightOf="@id/tv_pos_mode"
-                                    android:text="style"
+                                    android:text=""
                                     android:textColor="@color/black"
                                     android:textSize="20dp"
+                                    android:visibility="gone"
 
 
                                     />

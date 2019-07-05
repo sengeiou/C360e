@@ -56,6 +56,7 @@ import com.alfredkds.view.PopItemListView;
 import com.alfredkds.view.PopItemListView.RemoveDirection;
 import com.alfredkds.view.PopItemListView.RemoveListener;
 import com.alfredkds.view.SwipeItemLayout;
+import com.alfredkds.view.SwipeMenuRecyclerView;
 import com.alfredkds.view.TopBarView;
 import com.alfredkds.view.Type;
 import com.google.android.gms.appindexing.Action;
@@ -177,7 +178,12 @@ public class KitchenOrder extends BaseActivity {
                     break;
                 case App.HANDLER_SEND_FAILURE:
                     loadingDialog.dismiss();
-                    adapter.notifyDataSetChanged();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.notifyDataSetChanged();
+                    }else {
+                        adapter.notifyDataSetChanged();
+                    }
+                  //  adapter.notifyDataSetChanged();
                     refresh();
                     break;
                 case App.HANDLER_RETURN_ERROR:
@@ -210,8 +216,14 @@ public class KitchenOrder extends BaseActivity {
                     UIHelp.showToast(context, context.getResources().getString(R.string.order_discarded));
                     //kots = App.instance.getRefreshKots();
                     List<Kot> kots = App.instance.getRefreshKots();
-                    adapter.setKots(kots);
-                    adapter.notifyDataSetChanged();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.notifyDataSetChanged();
+                    }else {
+                        adapter.setKots(kots);
+                        adapter.notifyDataSetChanged();
+                    }
+
                     if (kots.isEmpty()) {
                         itemPopupWindow.dismiss();
                     }
@@ -236,8 +248,16 @@ public class KitchenOrder extends BaseActivity {
                         kots = App.instance.getRefreshKots();
                         //kots = App.instance.getInitKots();
                         loadingDialog.dismiss();
-                        madapter.setKots(getKotItem(kots));
-                        madapter.notifyDataSetChanged();
+
+                        if (App.instance.getSystemSettings().isKdsLan()) {
+                            madapter.setKots(getKotItem(kots));
+                            madapter.notifyDataSetChanged();
+                        }else {
+                            adapter.setKots(kots);
+                            adapter.notifyDataSetChanged();
+                        }
+//                        madapter.setKots(getKotItem(kots));
+//                        madapter.notifyDataSetChanged();
                         tv_order_qyt.setText(kotItems.size() + "");
 
                     }
@@ -363,8 +383,14 @@ public class KitchenOrder extends BaseActivity {
             loadingDialog.dismiss();
         }
         List<Kot> kots = App.instance.getRefreshKots();
-        adapter.setKots(kots);
-        adapter.notifyDataSetChanged();
+        if (App.instance.getSystemSettings().isKdsLan())  {
+            madapter.setKots(getKotItem(kots));
+            madapter.notifyDataSetChanged();
+        }else {
+            adapter.setKots(kots);
+            adapter.notifyDataSetChanged();
+        }
+
         tv_order_qyt.setText(kots.size() + "");
         if (kots.isEmpty()) {
 //			itemPopupWindow.dismiss();
@@ -574,7 +600,12 @@ public class KitchenOrder extends BaseActivity {
                 break;
             case R.id.iv_back:
                 if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-                    adapter.notifyDataSetChanged();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.notifyDataSetChanged();
+                    }else {
+                        adapter.notifyDataSetChanged();
+                    }
+
                     itemPopupWindow.dismiss();
                 }
                 break;
@@ -702,12 +733,12 @@ public class KitchenOrder extends BaseActivity {
         popItemAdapter = new PopItemAdapter(context);
         popItemAdapter.setKot(kot);
         popItemListView.setAdapter(popItemAdapter);
-        reKot=(RecyclerView)view.findViewById(R.id.re_kot);
+        reKot=(SwipeMenuRecyclerView)view.findViewById(R.id.re_kot);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         reKot.setLayoutManager(linearLayoutManager);
-        DividerItemDecoration dividerItemDecoration =
-                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        reKot.addItemDecoration(dividerItemDecoration);
+//        DividerItemDecoration dividerItemDecoration =
+//                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+//        reKot.addItemDecoration(dividerItemDecoration);
 
          kadapter = new KotAdapter( mItemTouchListener);
         kadapter.setKot(kot);
