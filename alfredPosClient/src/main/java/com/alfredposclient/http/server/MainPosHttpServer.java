@@ -1432,7 +1432,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
     }
 
 
-    private Response hanlderWaiterGetRevenues(String params) {
+    private Response      hanlderWaiterGetRevenues(String params) {
         Response resp;
         Map<String, Object> result = new HashMap<String, Object>();
         Gson gson = new Gson();

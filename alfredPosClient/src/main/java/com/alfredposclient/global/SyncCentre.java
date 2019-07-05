@@ -128,8 +128,8 @@ public class SyncCentre {
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getPromotionInfo (context,
                 getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_FIRST_SYNC);
-        HttpAPI.getPromotionData(context,
-                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
+//        HttpAPI.getPromotionData(context,
+//                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
 
         getRemainingStock(context,handler,MODE_FIRST_SYNC);
 
