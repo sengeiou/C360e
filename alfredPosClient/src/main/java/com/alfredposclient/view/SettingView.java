@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -39,14 +40,29 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.AlfredRootCmdUtil;
+import com.floatwindow.float_lib.FloatActionController;
 
 import java.io.File;
 
-public class SettingView extends LinearLayout implements OnClickListener,View.OnLongClickListener {
+public class SettingView extends LinearLayout implements OnClickListener,View.OnLongClickListener,View.OnTouchListener {
 
 	private BaseActivity context;
 	private DrawerLayout mDrawerLayout;
 	final static String[] letters= {"a","b", "c","d","e","f","g","h","i","j"};
+
+	private long startTime;
+	private float mTouchStartX;
+	private float mTouchStartY;
+	// 是否移动了
+	private boolean isMoved;
+	// 是否释放了
+	private boolean isReleased;
+	// 计数器，防止多次点击导致最后一次形成longpress的时间变短
+	private int mCounter;
+	// 长按的runnable
+	private Runnable mLongPressRunnable;
+	private long endTime;
+	private boolean isclick=false;
 	public SettingView(Context context) {
 		super(context);
 		init(context);
@@ -67,7 +83,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 		this.mDrawerLayout = drawerLayout;
 	}
 	
-	private void init(Context context) {
+	private void init(final Context context) {
 		View.inflate(context, R.layout.setting_window, this);
 		
 
@@ -87,7 +103,9 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 		findViewById(R.id.ll_clock_select).setOnClickListener(this);
 		findViewById(R.id.ll_cash_inout).setOnClickListener(this);
 		findViewById(R.id.ll_system).setOnClickListener(this);
-		findViewById(R.id.ll_system).setOnLongClickListener(this);
+		//findViewById(R.id.ll_system).setOnLongClickListener(this);
+		findViewById(R.id.ll_system).setOnTouchListener(this);
+
 		findViewById(R.id.ll_opendrawer).setOnClickListener(this);
 		findViewById(R.id.iv_setting_close).setOnClickListener(this);
 		findViewById(R.id.ll_setting_title).setOnClickListener(null);	
@@ -120,6 +138,114 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 		}
 		((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
 		initTextTypeFace();
+
+		mLongPressRunnable = new Runnable() {
+
+			@Override
+			public void run() {
+				System.out.println("thread");
+//                System.out.println("mCounter--->>>"+mCounter);
+//                System.out.println("isReleased--->>>"+isReleased);
+//                System.out.println("isMoved--->>>"+isMoved);
+				mCounter--;
+				// 计数器大于0，说明当前执行的Runnable不是最后一次down产生的。
+				if ( mCounter>0|| isReleased || isMoved)
+					return;
+
+
+				final int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+
+				int	display= Store.getInt(context,SharedPreferencesHelper.TRAIN_DISPLAY);
+// 0  隐藏， 1 显示
+				if(display!=1){
+
+					DialogFactory.commonTwoBtnDialog((BaseActivity) context, "",
+							"Enable Training Mode Option？",
+							context.getResources().getString(R.string.cancel),
+							context.getResources().getString(R.string.ok),
+							new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
+								}
+							},
+							new OnClickListener() {
+
+								@Override
+								public void onClick(View arg0) {
+
+									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+								}
+
+
+							});
+				}else {
+
+					DialogFactory.commonTwoBtnDialog((BaseActivity) context, "",
+							"Disable Training Mode Option？",
+							context.getResources().getString(R.string.cancel),
+							context.getResources().getString(R.string.ok),
+							new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+
+								}
+							},
+							new OnClickListener() {
+
+								@Override
+								public void onClick(View arg0) {
+
+									Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 0);
+
+									if (train==1) {
+										SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
+
+//										context.runOnUiThread(new Runnable() {
+//
+//											@Override
+//											public void run() {
+												Intent intent = new Intent(App.instance, Welcome.class);
+												@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+														App.instance
+																.getApplicationContext(),
+														0, intent,
+														Intent.FLAG_ACTIVITY_NEW_TASK);
+												// 退出程序
+
+//							File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
+//							if(!file.exists()){
+//								//LogUtil.e("ssss","sss");
+//								SessionStatus sessionStatus = Store.getObject(
+//										context, Store.SESSION_STATUS, SessionStatus.class);
+//								GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
+//								Store.remove(context, Store.SESSION_STATUS);
+//								App.instance.setSessionStatus(null);
+//							}
+
+												AlarmManager mgr = (AlarmManager) App.instance
+														.getSystemService(Context.ALARM_SERVICE);
+												mgr.set(AlarmManager.RTC,
+														System.currentTimeMillis() + 1000,
+														restartIntent); // 1秒钟后重启应用
+												ActivityManager am = (ActivityManager) App.instance
+														.getSystemService(Context.ACTIVITY_SERVICE);
+												am.killBackgroundProcesses(context.getPackageName());
+												App.instance.finishAllActivity();
+//											}
+//										});
+									}
+								}
+
+
+							});
+				}
+
+				// performLongClick();// 回调长按事件
+				//FloatActionController.getInstance().onClick();
+			}
+		};
 	}
 	
 	public void initOptionsNoSessionOpen() {
@@ -358,7 +484,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 if(display!=1){
 
 	DialogFactory.commonTwoBtnDialog(context, "",
-			"Display Training Mode？",
+			"Enable Training Mode Option？",
 			context.getResources().getString(R.string.cancel),
 			context.getResources().getString(R.string.ok),
 			new OnClickListener() {
@@ -380,7 +506,7 @@ if(display!=1){
 }else {
 
 	DialogFactory.commonTwoBtnDialog(context, "",
-			"Hide Training Mode？",
+			"HDisable Training Mode Option？",
 			context.getResources().getString(R.string.cancel),
 			context.getResources().getString(R.string.ok),
 			new OnClickListener() {
@@ -443,5 +569,48 @@ if(display!=1){
 
 		//ToastUtils.showToast(context,"changanl");
 		return true;
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+
+		int action = event.getAction();
+		switch (action) {
+			case MotionEvent.ACTION_DOWN:
+				startTime = System.currentTimeMillis();
+				mTouchStartX = event.getX();
+				mTouchStartY = event.getY();
+				mCounter++;
+				isReleased = false;
+				isMoved = false;
+				postDelayed(mLongPressRunnable, 5000);
+
+				break;
+			case MotionEvent.ACTION_MOVE:
+				//图标移动的逻辑在这里
+				float mMoveStartX = event.getX();
+				float mMoveStartY = event.getY();
+				// 如果移动量大于3才移动
+				if (Math.abs(mTouchStartX - mMoveStartX) > 3
+						&& Math.abs(mTouchStartY - mMoveStartY) > 3) {
+					isMoved=true;
+					// 更新浮动窗口位置参数
+
+					return false;
+				}
+				break;
+			case MotionEvent.ACTION_UP:
+				endTime = System.currentTimeMillis();
+				// 当从点击到弹起小于半秒的时候,则判断为点击,如果超过则不响应点击事件
+//                if ((endTime - startTime) > 1 * 1000L) {
+//                    isclick = false;
+//                } else {
+//                    isclick = true;
+//                }
+				isReleased = true;
+				break;
+		}
+
+		return false;
 	}
 }

@@ -18,6 +18,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.adapter.HomePageViewPagerAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
+import com.floatwindow.float_lib.FloatActionController;
 
 import java.util.ArrayList;
 
@@ -248,6 +249,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 	@Override
 	public void onBackPressed() {
 		 if (doubleBackToExitPressedOnce) {
+			 FloatActionController.getInstance().stopMonkServer(context);
 		        super.onBackPressed();
 		        return;
 		    }

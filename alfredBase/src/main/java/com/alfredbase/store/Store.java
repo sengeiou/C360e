@@ -135,6 +135,7 @@ public class Store {
 
 	public static final String PRINT_BILL = "PRINT_BILL";
 	public static final String OF_PAX = "OF_PAX";
+	public static final String TRAINING = "training";
 
 	public static final String OPEN_BALANCE = "OPEN_BALANCE";
 	public static final String KDS_LANDSCAPE= "KDS_LANDSCAPE";
