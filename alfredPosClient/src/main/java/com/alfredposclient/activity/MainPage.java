@@ -1780,7 +1780,8 @@ public class MainPage extends BaseActivity {
                                 printerLoadingDialog.dismiss();
                             }
                             if (!isShowTables) {
-                                showTables();
+//                                showTables();
+                                handler.sendEmptyMessage(VIEW_EVENT_SHOW_TABLES);
                             }
                         }
                     }
@@ -2110,6 +2111,7 @@ public class MainPage extends BaseActivity {
 //			closeOrderSplitWindow.onBack();
 //			return;
 //		}
+
         if (selectOrderSplitDialog != null && selectOrderSplitDialog.isShowing()) {
             selectOrderSplitDialog.dismiss();
         }
