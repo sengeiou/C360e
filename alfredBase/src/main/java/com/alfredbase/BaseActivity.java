@@ -33,7 +33,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected Dialog oneButtonCompelDialog;
     public LoadingDialog loadingDialog;
     protected NotificationManager mNotificationManager;
-  int t=0;
+    int displayTrain=ParamConst.ENABLE_POS_TRAINING;
    // DifferentDislay  mPresentation;
     protected static DisplayImageOptions display = new DisplayImageOptions.Builder() // 圆角边处理的头像
             .cacheInMemory(true) // 缓存到内存，设置true则缓存到内存
@@ -91,7 +91,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     }
 
     protected void initviewWelcom() {
-    t=1;
+        displayTrain=ParamConst.DISABLE_POS_TRAINING;
 
     }
 
@@ -121,7 +121,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         MobclickAgent.onResume(this);
 
         int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
-        if(train==1&&t!=1)
+        if(train==ParamConst.ENABLE_POS_TRAINING&&displayTrain!=ParamConst.DISABLE_POS_TRAINING)
         {
             //   FloatActionController.getInstance().startMonkServer(this);
 
@@ -189,7 +189,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
             FloatActionController.getInstance().stopMonkServer(this);
 
         }
-t=0;
+           displayTrain=ParamConst.ENABLE_POS_TRAINING;
 
 //        boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
 //        //有对应权限或者系统版本小于7.0
