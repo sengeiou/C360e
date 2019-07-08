@@ -105,7 +105,7 @@ public class App extends BaseApplication {
     private SessionStatus sessionStatus;
     private String fromTableName;
     private String toTableName;
-    public String VERSION = "1.0.8";
+    public String VERSION = "1.0.9";
     private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<Integer, PrinterDevice>();
     private Observable<Object> observable;
     private Observable<String> observable1;
