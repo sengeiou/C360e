@@ -18,6 +18,7 @@ import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.utils.ColorUtils;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -36,6 +37,7 @@ public class SelectOrderSplitDialog extends Dialog {
 	private List<OrderSplit> orderSplits = new ArrayList<OrderSplit>();
 	private Order order;
 	private boolean canDelete = false;
+	private View contentView;
 
 	public SelectOrderSplitDialog(BaseActivity context, Handler handler) {
 		super(context, R.style.Dialog_transparent);
@@ -46,7 +48,7 @@ public class SelectOrderSplitDialog extends Dialog {
 	}
 
 	private void init() {
-		View contentView = View.inflate(getContext(),
+		contentView = View.inflate(getContext(),
 				R.layout.select_groupid_dialog, null);
 		setContentView(contentView);
 		textTypeFace = TextTypeFace.getInstance();
@@ -56,6 +58,7 @@ public class SelectOrderSplitDialog extends Dialog {
 				.findViewById(R.id.gv_person_index);
 		adapter = new Adapter();
 		gv_person_index.setAdapter(adapter);
+		gv_person_index.setNumColumns(3);
 		gv_person_index.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -84,11 +87,43 @@ public class SelectOrderSplitDialog extends Dialog {
 	public void show(List<OrderSplit> orderSplits, Order order, boolean canDelete){
 		this.orderSplits = orderSplits;
 		this.order = order;
+//		gv_person_index.setMaxHeight(contentView.getMeasuredHeightAndState());
+		setGridViewHeight(gv_person_index);
 		adapter.notifyDataSetChanged();
 		super.show();
 		App.instance.orderInPayment = order;
 		this.canDelete = canDelete;
 
+	}
+
+	private void setGridViewHeight(GridView gridview) {
+		// 获取gridview的adapter
+		Adapter listAdapter = (Adapter) gridview.getAdapter();
+		if (listAdapter == null) {
+			return;
+		}
+		// 固定列宽，有多少列
+		int numColumns= 3; //5
+		int totalHeight = 0;
+		// 计算每一列的高度之和
+		for (int i = 0; i < listAdapter.getCount(); i += numColumns) {
+			// 获取gridview的每一个item
+			View listItem = listAdapter.getView(i, null, gridview);
+			listItem.measure(0, 0);
+			// 获取item的高度和
+			totalHeight += listItem.getMeasuredHeight();
+			if(i < listAdapter.getCount() - numColumns){
+				totalHeight += gridview.getVerticalSpacing();
+			}
+		}
+		// 获取gridview的布局参数
+		ViewGroup.LayoutParams params = gridview.getLayoutParams();
+		int gH = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(context, 100));
+		if(totalHeight > gH){
+			totalHeight = gH;
+		}
+		params.height = totalHeight;
+		gridview.setLayoutParams(params);
 	}
 
 	@Override
