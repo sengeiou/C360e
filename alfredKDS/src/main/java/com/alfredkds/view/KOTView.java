@@ -320,8 +320,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
 		}
 
-		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
-		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
+		date.setText(TimeUtil.getPrintDateTime(kot.getKotSummary().getCreateTime()));
+	//	time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
 
 //		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 //		long currentTime = System.currentTimeMillis();
