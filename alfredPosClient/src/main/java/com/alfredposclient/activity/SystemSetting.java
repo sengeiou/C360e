@@ -222,7 +222,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_print_bill.setOnStateChangeListeren(this);
 		mt_of_pax.setOnStateChangeListeren(this);
 		ll_set_pos_mode.setOnClickListener(this);
-		if(trainDisplay==1){
+		if(trainDisplay==ParamConst.ENABLE_POS_TRAINING){
 			ll_set_pos_mode.setVisibility(View.GONE);
 		}else {
 			ll_set_pos_mode.setVisibility(View.VISIBLE);
@@ -559,12 +559,12 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			break;
 
 
-			case R.id.ll_set_pos_mode:
-			{
-				// 0  正常模式， 1 培训模式
-
-			}
-				break;
+//			case R.id.ll_set_pos_mode:
+//			{
+//				// 0  正常模式， 1 培训模式
+//
+//			}
+//				break;
 
 			case R.id.ll_callnum_footer:
                input(2);
@@ -696,7 +696,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 //						Map<String, Object> maps = (Map<String, Object>) result
 //								.get("Object");
 
-						if(trainType!=1) {
+						if(trainType!=ParamConst.ENABLE_POS_TRAINING) {
 							//	String path=AlfredRootCmdUtil.COPY_FILE;
 							Store.putInt(App.instance,Store.TRAIN_FIRST,0);
 							mt_pos_mode_type.setChecked(true);

@@ -166,7 +166,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 							new OnClickListener() {
 								@Override
 								public void onClick(View v) {
-									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
+									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
 								}
 							},
 							new OnClickListener() {
@@ -174,7 +174,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 								@Override
 								public void onClick(View arg0) {
 
-									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
 								}
 
 
@@ -188,7 +188,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 							new OnClickListener() {
 								@Override
 								public void onClick(View v) {
-									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+									Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
 
 								}
 							},
@@ -197,7 +197,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 								@Override
 								public void onClick(View arg0) {
 
-									Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 0);
+									Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 1);
 
 									if (train==1) {
 										SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
@@ -480,91 +480,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 		final int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
 
 	int	display= Store.getInt(context,SharedPreferencesHelper.TRAIN_DISPLAY);
-// 0  隐藏， 1 显示
-if(display!=1){
 
-	DialogFactory.commonTwoBtnDialog(context, "",
-			"Enable Training Mode Option？",
-			context.getResources().getString(R.string.cancel),
-			context.getResources().getString(R.string.ok),
-			new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
-				}
-			},
-			new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-
-					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
-				}
-
-
-			});
-}else {
-
-	DialogFactory.commonTwoBtnDialog(context, "",
-			"Disable Training Mode Option？",
-			context.getResources().getString(R.string.cancel),
-			context.getResources().getString(R.string.ok),
-			new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
-
-				}
-			},
-			new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-
-					Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 1);
-
-					if (train==1) {
-						SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
-
-						context.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								Intent intent = new Intent(App.instance, Welcome.class);
-								@SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
-										App.instance
-												.getApplicationContext(),
-										0, intent,
-										Intent.FLAG_ACTIVITY_NEW_TASK);
-								// 退出程序
-
-//							File file = new File("/data/data/com.alfredposclient/databases/com.alfredposclient.train");
-//							if(!file.exists()){
-//								//LogUtil.e("ssss","sss");
-//								SessionStatus sessionStatus = Store.getObject(
-//										context, Store.SESSION_STATUS, SessionStatus.class);
-//								GeneralSQL.deleteKioskHoldOrderInfoBySession(sessionStatus,App.instance.getBusinessDate());
-//								Store.remove(context, Store.SESSION_STATUS);
-//								App.instance.setSessionStatus(null);
-//							}
-
-								AlarmManager mgr = (AlarmManager) App.instance
-										.getSystemService(Context.ALARM_SERVICE);
-								mgr.set(AlarmManager.RTC,
-										System.currentTimeMillis() + 1000,
-										restartIntent); // 1秒钟后重启应用
-								ActivityManager am = (ActivityManager) App.instance
-										.getSystemService(Context.ACTIVITY_SERVICE);
-								am.killBackgroundProcesses(context.getPackageName());
-								App.instance.finishAllActivity();
-							}
-						});
-					}
-				}
-
-
-			});
-}
 
 
 		//ToastUtils.showToast(context,"changanl");
