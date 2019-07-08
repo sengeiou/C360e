@@ -157,7 +157,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 
 				int	display= Store.getInt(context,SharedPreferencesHelper.TRAIN_DISPLAY);
 // 0  隐藏， 1 显示
-				if(display!=1){
+				if(display!=ParamConst.ENABLE_POS_TRAINING){
 
 					DialogFactory.commonTwoBtnDialog((BaseActivity) context, "",
 							"Enable Training Mode Option？",

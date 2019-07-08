@@ -86,7 +86,7 @@
                     android:layout_weight="1"
                     android:gravity="right|center_vertical"
                     android:paddingRight="15dp"
-                    android:text="11:20am"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s" />
             </LinearLayout>
