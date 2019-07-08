@@ -157,7 +157,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 
 				int	display= Store.getInt(context,SharedPreferencesHelper.TRAIN_DISPLAY);
 // 0  隐藏， 1 显示
-				if(display!=ParamConst.ENABLE_POS_TRAINING){
+				if(display==ParamConst.ENABLE_POS_TRAINING){
 
 					DialogFactory.commonTwoBtnDialog((BaseActivity) context, "",
 							"Enable Training Mode Option？",
@@ -490,7 +490,7 @@ if(display!=1){
 			new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
+					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
 				}
 			},
 			new OnClickListener() {
@@ -498,7 +498,7 @@ if(display!=1){
 				@Override
 				public void onClick(View arg0) {
 
-					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
 				}
 
 
@@ -506,13 +506,13 @@ if(display!=1){
 }else {
 
 	DialogFactory.commonTwoBtnDialog(context, "",
-			"HDisable Training Mode Option？",
+			"Disable Training Mode Option？",
 			context.getResources().getString(R.string.cancel),
 			context.getResources().getString(R.string.ok),
 			new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+					Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
 
 				}
 			},
@@ -521,7 +521,7 @@ if(display!=1){
 				@Override
 				public void onClick(View arg0) {
 
-					Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 0);
+					Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 1);
 
 					if (train==1) {
 						SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +16,8 @@ import android.widget.Toast;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import com.alfredposclient.R;
 
@@ -174,7 +176,7 @@ public class TrainToast {
                 LayoutInflater inflate = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View v = mToast.getView();
                 mNextViewField.set(mTN, v);
-                Method method = mTN.getClass().getDeclaredMethod("show", null);
+                Method method = mTN.getClass().getDeclaredMethod("show", Collection.class);
                 method.invoke(mTN, null);
             }
             mShow.invoke(mTN, null);

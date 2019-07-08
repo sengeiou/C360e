@@ -223,9 +223,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_of_pax.setOnStateChangeListeren(this);
 		ll_set_pos_mode.setOnClickListener(this);
 		if(trainDisplay==1){
-			ll_set_pos_mode.setVisibility(View.VISIBLE);
-		}else {
 			ll_set_pos_mode.setVisibility(View.GONE);
+		}else {
+			ll_set_pos_mode.setVisibility(View.VISIBLE);
 		}
 
 		findViewById(R.id.ll_set_callnum).setOnClickListener(this);

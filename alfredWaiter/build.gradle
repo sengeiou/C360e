@@ -47,7 +47,7 @@ android {
         }
     }
 
-    useLibrary 'org.apache.http.legacy'
+    //useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {

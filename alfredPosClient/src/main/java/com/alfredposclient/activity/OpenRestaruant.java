@@ -2341,13 +2341,13 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 				case OVERLAY_PERMISSION_REQ_CODE:
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-						if (!Settings.canDrawOverlays(this)) {
-							Toast.makeText(OpenRestaruant.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-						} else {
-							// TODO: 18/1/7 已经授权
-						}
-					}
+//					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//						if (!Settings.canDrawOverlays(this)) {
+//							Toast.makeText(OpenRestaruant.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+//						} else {
+//							// TODO: 18/1/7 已经授权
+//						}
+//					}
 					break;
 			}
 		}
