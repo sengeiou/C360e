@@ -635,7 +635,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
 
-                    String trainString = null;
+                    String trainString = "";
                     if(trainType==1){
                         trainString=PrintService.instance.getResources().getString(R.string.training);
                     }
@@ -723,7 +723,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 
 
-                                String trainString = null;
+                                String trainString ="";
                                 if(trainType==1){
                                     trainString=PrintService.instance.getResources().getString(R.string.training);
                                 }
