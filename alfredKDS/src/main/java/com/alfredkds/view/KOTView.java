@@ -125,7 +125,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		tv_progress = (Chronometer) kotView.findViewById(R.id.tv_progress);
 		lv_dishes = (ListView) kotView.findViewById(R.id.lv_dishes);
 		tv_kiosk_order_id = (TextView) kotView.findViewById(R.id.tv_kiosk_order_id);
-		tv_kiosk_app_order_id=(TextView)kotView.findViewById(R.id.tv_kiosk_app_order_id) ;
+ 		tv_kiosk_app_order_id=(TextView)kotView.findViewById(R.id.tv_kiosk_app_order_id) ;
 		tv_order_type=(TextView)kotView.findViewById(R.id.tv_order_type);
 		tv_orderremark = (TextView) kotView.findViewById(R.id.tv_orderremark);
 		ll_orderRemark = (LinearLayout) kotView.findViewById(R.id.ll_orderRemark);
@@ -138,12 +138,14 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		adapter = new KotItemDetailAdapter();
 //		initTextTypeFace();
 		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-			tv_kiosk_order_id.setVisibility(View.VISIBLE);
-			orderId.setVisibility(View.GONE);
-		}else {
-			tv_kiosk_order_id.setVisibility(View.GONE);
-			orderId.setVisibility(View.VISIBLE);
-		}
+            tv_kiosk_order_id.setVisibility(View.GONE);
+            orderId.setVisibility(View.GONE);
+            time.setVisibility(GONE);
+        }else {
+            tv_kiosk_order_id.setVisibility(View.GONE);
+            orderId.setVisibility(View.VISIBLE);
+            time.setVisibility(VISIBLE);
+        }
 
 	}
 
@@ -320,8 +322,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
 		}
 
-		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
-		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
+		date.setText(TimeUtil.getPrintDateTime(kot.getKotSummary().getCreateTime()));
+		//time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
 
 //		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 //		long currentTime = System.currentTimeMillis();
