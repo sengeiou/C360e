@@ -127,13 +127,13 @@ public class MainPageMenuView extends LinearLayout {
 	public void setParam(Order order, Handler handler) {
 		this.handler = handler;
 		this.order = order;
-
 		size= Store.getInt(App.instance, Store.TEXT_SIZE, 0);
 		tsize=Store.getInt(App.instance, Store.T_TEXT_SIZE, 0);
 
 		color= Store.getInt(App.instance, Store.COLOR_PICKER, Color.WHITE);
 		textcolor=Store.getInt(App.instance, Store.T_COLOR_PICKER, Color.WHITE);
-
+		listMainCategorys = CoreData.getInstance()
+				.getItemMainCategories();
 		if(size!=tsize||color!=textcolor){
 			isFirst=true;
 
@@ -146,10 +146,12 @@ public class MainPageMenuView extends LinearLayout {
 			twoLevelMenu.setAdapter(new TwoLevelMenuAdapter());
 			isFirst = false;
 		}else{
+//			if(oneLevelMenu != null){
+//				oneLevelMenu.getAdapter().notifyDataSetChanged();
+//			}
 			notifyItemStockNum(current_index);
 		}
-		listMainCategorys = CoreData.getInstance()
-				.getItemMainCategories();
+
 	}
 
 	private void notifyItemStockNum(int position){
@@ -242,6 +244,7 @@ public class MainPageMenuView extends LinearLayout {
 	class OneLevelMenuAdapter extends RecyclerView.Adapter<OneLevelMenuAdapter.CategoryViewHolder>{
 		private List<ItemMainCategory> itemMainCategoryList = new ArrayList<>();
 		public OneLevelMenuAdapter(){
+			itemMainCategoryList.clear();
 			itemMainCategoryList.addAll(CoreData.getInstance().getItemMainCategories());
 			itemMainCategoryList.add(0, null);
 			itemMainCategoryList.add(null);

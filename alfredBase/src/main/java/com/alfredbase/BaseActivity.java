@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -66,6 +63,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         MobclickAgent.updateOnlineConfig(this);
 
         initView();
+        initView(savedInstanceState);
 
 
 //        DisplayManager mDisplayManager;// 屏幕管理类
@@ -95,6 +93,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
 
     }
 
+
+    protected void initView(Bundle savedInstanceState) {
+        displayTrain=ParamConst.DISABLE_POS_TRAINING;
+    }
 
     protected void initView() {
 

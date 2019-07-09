@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -320,7 +321,7 @@ public class MainPage extends BaseActivity {
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
         System.out.println("========MMMMMM");
         setContentView(R.layout.activity_main_page);
         super.initView();
@@ -406,9 +407,19 @@ public class MainPage extends BaseActivity {
         });
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
         XMPP.getInstance().setCanCheckAppOrder(true);
+        if(savedInstanceState != null){
+            currentOrder = (Order) savedInstanceState.getSerializable("currentOrder");
+            currentTable = (TableInfo) savedInstanceState.getSerializable("currentTable");
+            setData();
+        }
     }
 
- 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("currentOrder",currentOrder);
+        outState.putSerializable("currentTable",currentTable);
+    }
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {

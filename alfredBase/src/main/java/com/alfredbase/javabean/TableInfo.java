@@ -1,10 +1,12 @@
 package com.alfredbase.javabean;
 
+import java.io.Serializable;
+
 /**
  * Created by Alex on 16/9/22.
  */
 
-public class TableInfo {
+public class TableInfo implements Serializable {
     /*
     posId, name, imageName, restaurantId, revenueId,xAxis, yAxis, placesId, resolution, shape, type,
     status, isDecorate, unionId, isActive, createTime, updateTime
