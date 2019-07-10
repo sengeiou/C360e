@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredselfhelp.R;
@@ -83,6 +84,8 @@ public class CountView extends LinearLayout implements OnClickListener {
         if(!ButtonClickTimer.canClickShort(v)){
             return;
         }
+
+        BugseeHelper.buttonClicked(v);
         switch (v.getId()) {
             case R.id.ll_minus: {
                 int count = 0;

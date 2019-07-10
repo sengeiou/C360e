@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
@@ -156,6 +157,7 @@ public class SetWeightWindow implements OnClickListener, KeyBoardClickListener  
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if ("X".equals(key)) {
 			dismiss();
 		} else if ("Enter".equals(key)) {

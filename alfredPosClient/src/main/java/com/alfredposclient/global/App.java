@@ -33,8 +33,10 @@ import com.alfred.remote.printservice.IAlfredRemotePrintService;
 import com.alfred.remote.printservice.RemotePrintServiceCallback;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.BuildConfig;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.CashInOut;
@@ -203,7 +205,7 @@ public class App extends BaseApplication {
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
     private static final String DATABASE_NAME = "com.alfredposclient";
-    private static final String DATABASE_NAME_TRAIN= "com.alfredposclient.train";
+    private static final String DATABASE_NAME_TRAIN = "com.alfredposclient.train";
     private String callAppIp;
 
     private int appOrderNum;
@@ -363,7 +365,7 @@ public class App extends BaseApplication {
         super.onCreate();
 
         instance = this;
-
+        BugseeHelper.init(this, "9290f896-1a2e-4b70-b1fa-46823bb4398c");
         train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
         if(train==1){
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
@@ -446,8 +448,6 @@ public class App extends BaseApplication {
                         reloginDialog.show();
                     }
                 }
-
-
             }
         });
 
@@ -532,8 +532,6 @@ public class App extends BaseApplication {
             }
         });
 
-
-
 //        TcpUdpFactory.getServiceIp(5, new UdpSendCallBack() {
 //            @Override
 //            public void call(boolean isSucceed) {
@@ -593,7 +591,7 @@ public class App extends BaseApplication {
 //
 ////
 
-        if (MachineUtil.isHisense()||(MachineUtil.isSUNMIShow()&&MachineUtil.isSunmiT2())) {
+        if (MachineUtil.isHisense() || (MachineUtil.isSUNMIShow() && MachineUtil.isSunmiT2())) {
 
             DisplayManager mDisplayManager;// 屏幕管理类
             mDisplayManager = (DisplayManager) this
@@ -607,8 +605,6 @@ public class App extends BaseApplication {
                 mPresentation.show();
             }
         }
-
-
 
     }
 
@@ -1996,7 +1992,7 @@ public class App extends BaseApplication {
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
-            if(order.getPromotion()!=null){
+            if (order.getPromotion() != null) {
                 total = BH.add(BH.formatMoney(total),
                         BH.getBD(order.getPromotion()), true)
                         .toString();
@@ -2114,7 +2110,7 @@ public class App extends BaseApplication {
                 printReceiptInfos.add(printReceiptInfo);
             }
         }
-        if(getSystemSettings().isPrintBill()) {
+        if (getSystemSettings().isPrintBill()) {
             if (mRemoteService == null) {
                 printerDialog();
                 return;
@@ -2130,7 +2126,7 @@ public class App extends BaseApplication {
                     rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                             .toString();
                 }
-                if(order.getPromotion()!=null){
+                if (order.getPromotion() != null) {
                     total = BH.add(BH.formatMoney(total),
                             BH.getBD(order.getPromotion()), true)
                             .toString();
@@ -2170,23 +2166,23 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders);
+                            openDrawer, BH.IsDouble(), "", apporders);
                 }
 
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        }else if(isCashSettlement){
+        } else if (isCashSettlement) {
             kickOutCashDrawer(printer);
         }
     }
 
     public void remoteBillRePrint(PrinterDevice printer, PrinterTitle title,
-                                   Order order, ArrayList<PrintOrderItem> orderItems,
-                                   ArrayList<PrintOrderModifier> orderModifiers,
-                                   List<Map<String, String>> taxes,
-                                   List<PaymentSettlement> settlement, RoundAmount roundAmount,
-                                   boolean openDrawer){
+                                  Order order, ArrayList<PrintOrderItem> orderItems,
+                                  ArrayList<PrintOrderModifier> orderModifiers,
+                                  List<Map<String, String>> taxes,
+                                  List<PaymentSettlement> settlement, RoundAmount roundAmount,
+                                  boolean openDrawer) {
 
         boolean isCashSettlement = false;
         List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
@@ -2284,18 +2280,18 @@ public class App extends BaseApplication {
                                 null, getLocalRestaurantConfig().getCurrencySymbol(),
                                 openDrawer, BH.IsDouble());
 
-                } else {
-                    mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-                            mods, tax, payment,
-                            this.systemSettings.isDoubleBillPrint(),
-                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                            getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders);
-                }
-
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            } else {
+                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                        mods, tax, payment,
+                        this.systemSettings.isDoubleBillPrint(),
+                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                        getLocalRestaurantConfig().getCurrencySymbol(),
+                        openDrawer, BH.IsDouble(), "", apporders);
             }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void kickOutCashDrawer(PrinterDevice printer) {
@@ -2466,7 +2462,7 @@ public class App extends BaseApplication {
             String itmStr = gson.toJson(items);
             String modStr = gson.toJson(modifier);
             mRemoteService.printSummaryAnalysisReport(xzType, prtStr, prtTitle,
-                    pluStr, modStr, catStr, itmStr,App.instance.systemSettings.isPluVoid());
+                    pluStr, modStr, catStr, itmStr, App.instance.systemSettings.isPluVoid());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -2495,7 +2491,7 @@ public class App extends BaseApplication {
 
 
     public void remotePrintPromotionReport(String xzType, PrinterDevice printer,
-                                        PrinterTitle title, List<PromotionData> itemPromotion, List<PromotionData> orderPromotion, List<Promotion> promotions) {
+                                           PrinterTitle title, List<PromotionData> itemPromotion, List<PromotionData> orderPromotion, List<Promotion> promotions) {
         if (mRemoteService == null) {
             // Toast.makeText(this, "Printer service is not started yet",
             // 1000).show();
@@ -2510,7 +2506,7 @@ public class App extends BaseApplication {
             String orderPromotionStr = gson.toJson(orderPromotion);
             String promotionsStr = gson.toJson(promotions);
             mRemoteService.printPromotionAnalysisReport(xzType, prtStr, prtTitle,
-                 orderPromotionStr,itemPromotionStr,promotionsStr);
+                    orderPromotionStr, itemPromotionStr, promotionsStr);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -3098,7 +3094,7 @@ public class App extends BaseApplication {
             KotSummary kotSummary = ObjectFactory.getInstance()
                     .getKotSummaryApporder(
                             TableInfoSQL.getTableById(
-                                    order.getTableId()).getName(), order,appOrder,
+                                    order.getTableId()).getName(), order, appOrder,
                             App.instance.getRevenueCenter(),
                             App.instance.getBusinessDate());
             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
@@ -3282,11 +3278,11 @@ public class App extends BaseApplication {
 
                 String userinfo, phone;
                 String name = null;
-                String appOrderId= "";
+                String appOrderId = "";
                 if (TextUtils.isEmpty(appOrder.getAddress())) {
                     userinfo = "";
                 } else {
-                        // appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
+                    // appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
 
                     if (TextUtils.isEmpty(appOrder.getContact())) {
                         name = "";
@@ -3305,9 +3301,9 @@ public class App extends BaseApplication {
                         //    String addr = appOrder.getAddress();
                         phone = "" + appOrder.getMobile() + "\n";
                     }
-                    if(TextUtils.isEmpty(appOrder.getOrderRemark())){
-                        userinfo =name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
-                    }else {
+                    if (TextUtils.isEmpty(appOrder.getOrderRemark())) {
+                        userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                    } else {
                         userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")" + "\n" + appOrder.getOrderRemark();
                     }
                 }

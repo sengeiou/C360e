@@ -10,6 +10,7 @@ import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
 import com.alfredbase.javabean.CashInOut;
+import com.alfredbase.javabean.EventLog;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemModifier;
@@ -68,6 +69,7 @@ import com.alfredbase.store.sql.BohHoldSettlementSQL;
 import com.alfredbase.store.sql.CardsSettlementSQL;
 import com.alfredbase.store.sql.CashInOutSQL;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.EventLogSQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
@@ -291,7 +293,7 @@ public class ObjectFactory {
                 payment.setCreateTime(System.currentTimeMillis());
                 payment.setUpdateTime(System.currentTimeMillis());
                 payment.setBusinessDate(business);
-                if(orderBillMap.containsKey(payment.getBillNo())){
+                if (orderBillMap.containsKey(payment.getBillNo())) {
                     payment.setBillNo(orderBillMap.get(payment.getBillNo()));
                 }
                 Integer orderSplitId = payment.getOrderSplitId();
@@ -357,13 +359,13 @@ public class ObjectFactory {
                 paymentSettlement.setId(CommonSQL.getNextSeq(TableNames.PaymentSettlement));
                 paymentSettlement.setCreateTime(System.currentTimeMillis());
                 paymentSettlement.setUpdateTime(System.currentTimeMillis());
-                if(orderBillMap.containsKey(paymentSettlement.getBillNo())){
+                if (orderBillMap.containsKey(paymentSettlement.getBillNo())) {
                     paymentSettlement.setBillNo(orderBillMap.get(paymentSettlement.getBillNo()));
                 }
                 Integer paymentId = paymentSettlement.getPaymentId();
                 if (paymentId != null && paymentMap.containsKey(paymentId.intValue())) {
                     paymentSettlement.setPaymentId(paymentMap.get(paymentId.intValue()));
-                    if(!TextUtils.isEmpty(cardNum)) {
+                    if (!TextUtils.isEmpty(cardNum)) {
                         switch (paymentSettlement.getPaymentTypeId()) {
                             case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
                             case ParamConst.SETTLEMENT_TYPE_UNIPAY:
@@ -600,12 +602,12 @@ public class ObjectFactory {
                     order.setSubTotal(appOrder.getSubTotal());
                     order.setOrderRemark(appOrder.getOrderRemark());
 
-                 //   1 堂吃, 2 打包, 3 外卖
+                    //   1 堂吃, 2 打包, 3 外卖
                     if (appOrder.getEatType() == ParamConst.TAKE_AWAY) {
                         order.setIsTakeAway(ParamConst.TAKE_AWAY);
-                    } else if(appOrder.getEatType() == ParamConst.APP_DELIVERY) {
+                    } else if (appOrder.getEatType() == ParamConst.APP_DELIVERY) {
                         order.setIsTakeAway(ParamConst.APP_DELIVERY);
-                    }else {
+                    } else {
                         order.setIsTakeAway(ParamConst.DINE_IN);
                     }
                     if (inclusiveTax != null) {
@@ -1094,10 +1096,9 @@ public class ObjectFactory {
     }
 
 
-
     public OrderDetail getItemFreeOrderDetail(Order order,
-                                          OrderDetail fromOrderDetail, ItemDetail itemDetail,
-                                          ItemPromotion itemPromotion) {
+                                              OrderDetail fromOrderDetail, ItemDetail itemDetail,
+                                              ItemPromotion itemPromotion) {
 
         OrderDetail orderDetail = null;
         synchronized (lock_free_order_detail) {
@@ -1148,17 +1149,17 @@ public class ObjectFactory {
     }
 
     public OrderDetail getItemFreeOrderDetailMin(Order order,
-                                              OrderDetail orderDetail,Boolean isFree) {
+                                                 OrderDetail orderDetail, Boolean isFree) {
 
 
         synchronized (lock_free_order_detail) {
 
-            BigDecimal  price=BH.getBD(ParamConst.DOUBLE_ZERO);
-            if(isFree){
-               price= BH.sub(BH.mul(BH.getBD(orderDetail.getItemPrice()),BH.getBD(orderDetail.getItemNum()),false),BH.getBD(orderDetail.getItemPrice()),false);
+            BigDecimal price = BH.getBD(ParamConst.DOUBLE_ZERO);
+            if (isFree) {
+                price = BH.sub(BH.mul(BH.getBD(orderDetail.getItemPrice()), BH.getBD(orderDetail.getItemNum()), false), BH.getBD(orderDetail.getItemPrice()), false);
 
-            }else {
-               price= BH.mul(BH.getBD(orderDetail.getItemPrice()),BH.getBD(orderDetail.getItemNum()),false);
+            } else {
+                price = BH.mul(BH.getBD(orderDetail.getItemPrice()), BH.getBD(orderDetail.getItemNum()), false);
 
             }
             orderDetail.setRealPrice(price.toString());
@@ -1208,8 +1209,8 @@ public class ObjectFactory {
     }
 
     public OrderDetail getPromotionFreeOrderDetail(Order order,
-                                             ItemDetail itemDetail,
-                                             Promotion promotion) {
+                                                   ItemDetail itemDetail,
+                                                   Promotion promotion) {
 
         OrderDetail orderDetail = null;
         synchronized (lock_free_order_detail) {
@@ -1219,7 +1220,7 @@ public class ObjectFactory {
                 orderDetail = new OrderDetail();
                 orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
                 orderDetail.setOrderId(order.getId());
-              //  orderDetail.setOrderOriginId(fromOrderDetail.getOrderOriginId());
+                //  orderDetail.setOrderOriginId(fromOrderDetail.getOrderOriginId());
                 orderDetail.setUserId(order.getUserId());
                 orderDetail.setItemId(itemDetail.getId());
                 orderDetail.setItemName(itemDetail.getItemName());
@@ -1241,11 +1242,11 @@ public class ObjectFactory {
                 orderDetail.setUpdateTime(time);
                 orderDetail.setFromOrderDetailId(order.getId());
                 orderDetail.setIsFree(ParamConst.FREE);
-               // orderDetail.setGroupId(fromOrderDetail.getGroupId());
+                // orderDetail.setGroupId(fromOrderDetail.getGroupId());
 
                 orderDetail.setModifierPrice(ParamConst.DOUBLE_ZERO);
                 orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
-              //  orderDetail.setOrderSplitId(fromOrderDetail.getOrderSplitId());
+                //  orderDetail.setOrderSplitId(fromOrderDetail.getOrderSplitId());
                 orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                 orderDetail.setAppOrderDetailId(0);
                 orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
@@ -1963,7 +1964,7 @@ public class ObjectFactory {
 //					BH.getBD(orderDetail.getItemNum()), true);
             else
                 amountBH = BH.getBD(orderDetail.getRealPrice());
-            list.add(new PrintOrderItem(orderDetail.getId(), orderDetail.getIsTakeAway(),  orderDetail.getItemId(),
+            list.add(new PrintOrderItem(orderDetail.getId(), orderDetail.getIsTakeAway(), orderDetail.getItemId(),
                     orderDetail.getItemName(), BH.getBD(orderDetail.getItemPrice())
                     .toString(), orderDetail.getItemNum() + "", amountBH
                     .toString(), orderDetail.getWeight()));
@@ -2095,8 +2096,8 @@ public class ObjectFactory {
     }
 
 
-    public KotSummary getKotSummaryApporder(String tableName, Order order,AppOrder appOrder,
-                                    RevenueCenter revenueCenter, long businessDate) {
+    public KotSummary getKotSummaryApporder(String tableName, Order order, AppOrder appOrder,
+                                            RevenueCenter revenueCenter, long businessDate) {
 
         KotSummary kotSummary = null;
         synchronized (lock_getKotSummary) {
@@ -2117,13 +2118,12 @@ public class ObjectFactory {
                 kotSummary.setNumTag(order.getNumTag());
                 kotSummary.setEatType(appOrder.getEatType());
                 kotSummary.setAppOrderId(appOrder.getId());
-                if(appOrder.getEatType()==ParamConst.APP_ORDER_DELIVERY)
-                {
+                if (appOrder.getEatType() == ParamConst.APP_ORDER_DELIVERY) {
                     kotSummary.setAddress(appOrder.getAddress());
                     kotSummary.setContact(appOrder.getContact());
                     kotSummary.setMobile(appOrder.getMobile());
                     kotSummary.setDeliveryTime(appOrder.getDeliveryTime());
-                  kotSummary.setOrderRemark(appOrder.getOrderRemark());
+                    kotSummary.setOrderRemark(appOrder.getOrderRemark());
                 }
             }
             if (revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
@@ -2424,6 +2424,17 @@ public class ObjectFactory {
         return cashInOut;
     }
 
+    //Add log
+    public EventLog addEventLog(RevenueCenter revenueCenter, User user, long businessDate, String event) {
+        EventLog eventLog = new EventLog();
+        eventLog.setId(CommonSQL.getNextSeq(TableNames.EventLog));
+        eventLog.setCustId(user.getId());
+        eventLog.setCreatedDate(System.currentTimeMillis());
+        eventLog.setEvent(event);
+        EventLogSQL.update(eventLog);
+        return eventLog;
+    }
+
     Object lock_LocalDevice = new Object();
 
     public LocalDevice getLocalDevice(String name, String model, int type, int deviceId,
@@ -2486,9 +2497,10 @@ public class ObjectFactory {
         }
         return cardsSettlement;
     }
+
     public CardsSettlement getCardsSettlementForKPMG(int paymentId,
-                                              PaymentSettlement paymentSettlement, int paymentTypeId,
-                                              String cardNo, int billNo) {
+                                                     PaymentSettlement paymentSettlement, int paymentTypeId,
+                                                     String cardNo, int billNo) {
 
         CardsSettlement cardsSettlement = null;
 
@@ -2668,53 +2680,55 @@ public class ObjectFactory {
         return userOpenDrawerRecord;
     }
 
-    public void getPrintOrder(Order order ) {
-           order.setDiscountAmount(BH.formatMoney(order.getDiscountAmount()).toString());
-           order.setDiscountPrice(BH.formatMoney(order.getDiscountPrice()).toString());
-           order.setInclusiveTaxPercentage(BH.formatMoney(order.getInclusiveTaxPercentage()).toString());
-           order.setInclusiveTaxPrice(BH.formatMoney(order.getInclusiveTaxPrice()).toString());
-           order.setTotal(BH.formatMoney(order.getTotal()).toString());
-           order.setOldTotal(BH.formatMoney(order.getOldTotal()).toString());
-           order.setTaxAmount(BH.formatMoney(order.getTaxAmount()).toString());
-           order.setSubTotal(BH.formatMoney(order.getSubTotal()).toString());
-           order.setDiscountRate(BH.formatMoney(order.getDiscountRate()).toString());
+    public void getPrintOrder(Order order) {
+        order.setDiscountAmount(BH.formatMoney(order.getDiscountAmount()).toString());
+        order.setDiscountPrice(BH.formatMoney(order.getDiscountPrice()).toString());
+        order.setInclusiveTaxPercentage(BH.formatMoney(order.getInclusiveTaxPercentage()).toString());
+        order.setInclusiveTaxPrice(BH.formatMoney(order.getInclusiveTaxPrice()).toString());
+        order.setTotal(BH.formatMoney(order.getTotal()).toString());
+        order.setOldTotal(BH.formatMoney(order.getOldTotal()).toString());
+        order.setTaxAmount(BH.formatMoney(order.getTaxAmount()).toString());
+        order.setSubTotal(BH.formatMoney(order.getSubTotal()).toString());
+        order.setDiscountRate(BH.formatMoney(order.getDiscountRate()).toString());
         //return order;
     }
 
-    public PrintOrderItem getPrintOrderItem(PrintOrderItem printOrderItem ) {
-         printOrderItem.setAmount(BH.formatMoney(printOrderItem.getAmount()).toString());
-         printOrderItem.setPrice(BH.formatMoney(printOrderItem.getPrice()).toString());
+    public PrintOrderItem getPrintOrderItem(PrintOrderItem printOrderItem) {
+        printOrderItem.setAmount(BH.formatMoney(printOrderItem.getAmount()).toString());
+        printOrderItem.setPrice(BH.formatMoney(printOrderItem.getPrice()).toString());
         return printOrderItem;
     }
 
-    public PrintOrderModifier getPrintOrderModifier(PrintOrderModifier printOrderModifier ) {
+    public PrintOrderModifier getPrintOrderModifier(PrintOrderModifier printOrderModifier) {
         printOrderModifier.setAmount(BH.formatMoney(printOrderModifier.getAmount()).toString());
         printOrderModifier.setPrice(BH.formatMoney(printOrderModifier.getPrice()).toString());
         return printOrderModifier;
     }
-    public void getPrintModifier(Modifier modifier ) {
+
+    public void getPrintModifier(Modifier modifier) {
         modifier.setPrice(BH.formatMoney(modifier.getPrice()).toString());
 
     }
 
 
-    public void getReportDayTax(ReportDayTax reportDayTax ) {
+    public void getReportDayTax(ReportDayTax reportDayTax) {
         reportDayTax.setTaxAmount(BH.formatMoney(reportDayTax.getTaxAmount()).toString());
         reportDayTax.setTaxPercentage(BH.formatMoney(reportDayTax.getTaxPercentage()).toString());
 
     }
-    public void getPrintReceiptInfo(PrintReceiptInfo printReceiptInfo ) {
+
+    public void getPrintReceiptInfo(PrintReceiptInfo printReceiptInfo) {
         printReceiptInfo.setCashChange(BH.formatMoney(printReceiptInfo.getCashChange()).toString());
         printReceiptInfo.setPaidAmount(BH.formatMoney(printReceiptInfo.getPaidAmount()).toString());
 
     }
 
-    public void getReportDayPayment(ReportDayPayment reportDayPayment ) {
+    public void getReportDayPayment(ReportDayPayment reportDayPayment) {
         reportDayPayment.setOverPaymentAmount(BH.formatMoney(reportDayPayment.getOverPaymentAmount()).toString());
         reportDayPayment.setPaymentAmount(BH.formatMoney(reportDayPayment.getPaymentAmount()).toString());
-        }
+    }
 
-    public void getReportSessionSales(ReportSessionSales reportSessionSales ) {
+    public void getReportSessionSales(ReportSessionSales reportSessionSales) {
         reportSessionSales.setActualAmount(BH.formatMoney(reportSessionSales.getActualAmount()).toString());
         reportSessionSales.setCash(BH.formatMoney(reportSessionSales.getCash()).toString());
         reportSessionSales.setDifference(BH.formatMoney(reportSessionSales.getDifference()).toString());
@@ -2722,7 +2736,7 @@ public class ObjectFactory {
         reportSessionSales.setCashTopup(BH.formatMoney(reportSessionSales.getCashTopup()).toString());
     }
 
-    public void getReportPluDayItem(ReportPluDayItem reportPluDayItem ) {
+    public void getReportPluDayItem(ReportPluDayItem reportPluDayItem) {
         reportPluDayItem.setBillFocPrice(BH.formatMoney(reportPluDayItem.getBillFocPrice()).toString());
         reportPluDayItem.setBillVoidPrice(BH.formatMoney(reportPluDayItem.getBillVoidPrice()).toString());
         reportPluDayItem.setItemAmount(BH.formatMoney(reportPluDayItem.getItemAmount()).toString());
@@ -2734,7 +2748,7 @@ public class ObjectFactory {
 
     }
 
-    public void getReportPluDayModifier(ReportPluDayModifier reportPluDayModifier ) {
+    public void getReportPluDayModifier(ReportPluDayModifier reportPluDayModifier) {
         reportPluDayModifier.setBillFocPrice(BH.formatMoney(reportPluDayModifier.getBillFocPrice()).toString());
         reportPluDayModifier.setBillVoidPrice(BH.formatMoney(reportPluDayModifier.getBillVoidPrice()).toString());
         reportPluDayModifier.setBohModifierPrice(BH.formatMoney(reportPluDayModifier.getBohModifierPrice()).toString());
@@ -2748,12 +2762,12 @@ public class ObjectFactory {
     }
 
 
-    public void getReportHourly(ReportHourly reportHourly ) {
+    public void getReportHourly(ReportHourly reportHourly) {
         reportHourly.setAmountPrice(BH.formatMoney(reportHourly.getAmountPrice()).toString());
     }
 
 
-    public void getPrintReportDaySales(ReportDaySales reportDaySales ) {
+    public void getPrintReportDaySales(ReportDaySales reportDaySales) {
         reportDaySales.setAlipay(BH.formatMoney(reportDaySales.getAlipay()).toString());
         reportDaySales.setAmex(BH.formatMoney(reportDaySales.getAmex()).toString());
         reportDaySales.setBillRefund(BH.formatMoney(reportDaySales.getBillRefund()).toString());

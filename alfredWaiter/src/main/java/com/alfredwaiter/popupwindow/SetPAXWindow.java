@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ScreenSizeUtil;
@@ -143,6 +144,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if ("Cancel".equals(key)) {
 			dismiss(false);
 		} else if ("Enter".equals(key)) {

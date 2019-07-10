@@ -11,8 +11,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
@@ -61,7 +65,6 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         context = this;
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         MobclickAgent.updateOnlineConfig(this);
-
         initView();
         initView(savedInstanceState);
 
@@ -209,10 +212,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
-
     }
-
-
 
     public void dismissLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
@@ -233,7 +233,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     }
 
     protected void handlerClickEvent(View v) {
-
+        BugseeHelper.buttonClicked(v);
     }
 
     public void selectTable(TableInfo tableInfo) {
@@ -349,8 +349,6 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         if (compelDialog != null && compelDialog.isShowing()) {
             return;
         }
-
-
         super.onBackPressed();
     }
 

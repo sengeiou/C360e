@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.NetUtil;
 import com.alfredbase.utils.TextTypeFace;
 
@@ -378,6 +379,8 @@ public class ConnectPOS extends BaseActivity implements Callback,
     public void onKeyBoardClick(String key) {
         if (TextUtils.isEmpty(key))
             return;
+
+        BugseeHelper.buttonClicked(key);
         EditText tempEditText = getFocusView();
         if (tempEditText == null)
             return;

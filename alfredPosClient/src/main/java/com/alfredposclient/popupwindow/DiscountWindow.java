@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.store.sql.OrderDetailSQL;
@@ -316,6 +317,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if ("X".equals(key)) {
 			dismiss();
 			if (resultCall != null)

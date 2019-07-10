@@ -1,4 +1,17 @@
 apply plugin: 'com.android.application'
+apply plugin: 'bugsee'
+import com.android.build.gradle.api.BaseVariant
+
+bugsee {
+    appToken { BaseVariant variant ->
+        switch (variant.buildType.name) {
+            case 'release': '5cc128ed-939d-428a-9060-2813a324b2f2'
+                break
+            case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+                break
+        }
+    }
+}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -23,6 +36,14 @@ android {
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
 //    android.applicationVariants.all { variant ->
 //        variant.outputs.each { output ->
 //            def outputFile = output.outputFile

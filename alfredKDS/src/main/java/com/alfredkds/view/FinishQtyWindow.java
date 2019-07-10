@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.store.sql.KotItemDetailSQL;
@@ -162,6 +163,8 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener{
 	@Override
 	public void onKeyBoardClick(String key) {
 		String itemnum = tv_itemnum.getText().toString();
+		BugseeHelper.log(itemnum);
+		BugseeHelper.buttonClicked(key);
 		if ("X".equals(key)) {
 			dismiss();
 		} else if ("Enter".equals(key)) {
