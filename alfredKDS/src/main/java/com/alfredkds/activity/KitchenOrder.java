@@ -370,7 +370,7 @@ public class KitchenOrder extends BaseActivity {
                                     parameters.put("kotItemDetails", itemDetails);
                                     parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                                     parameters.put("type", 1);
-                                    SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+                                    SyncCentre.getInstance().kotNextKDS(KitchenOrder.this,
                                             App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
                                     loadingDialog.show();
                                 }

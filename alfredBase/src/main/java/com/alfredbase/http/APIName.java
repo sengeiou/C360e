@@ -10,7 +10,7 @@ public class APIName {
     public static final String ITEM_GETMODIFIER = "item/getModifier";
     public static final String TAX_GETTAX = "tax/getTax";
     public static final String HAPPYHOUR_GETHAPPYHOUR = "happyHour/getHappyHour";
-    public static final String  PROMOTIONINFO_GETPROMOTIONINFO = "promotionPossInfo/getPromotionInfo";
+    public static final String PROMOTIONINFO_GETPROMOTIONINFO = "promotionPossInfo/getPromotionInfo";
     public static final String PROMOTIONPOSSINFO_GETPROMOTIONDATA = "promotionPossInfo/getPromotionData";
 
     public static final String RESTAURANT_GETPLACEINFO = "restaurant/getPlaceInfo";
@@ -84,6 +84,7 @@ public class APIName {
     public static final String SUMMARY_COMPLETE = "summary_complete";
     public static final String CALL_SPECIFY_THE_NUMBER = "call_specify_the_number";
     public static final String KOT_OUT_OF_STOCK = "kot_out_of_stock";
+    public static final String KOT_NEXT_KDS = "kot_next_kds";
 
     // 以下是桌面设备专用
 
@@ -112,7 +113,7 @@ public class APIName {
     public static final String KPMG_UPDATE_DATA = "kpmg/updateData";
     public static final String KPMG_COMMIT_ORDER = "kpmg/commitOrder";
     public static final String GET_REMAINING_STOCK_KPMG = "kpmg/getRemainingStock";
-    public static final String KPMG_CHECK_SOTCK_NUM= "kpmg/checkSotckNum";
+    public static final String KPMG_CHECK_SOTCK_NUM = "kpmg/checkSotckNum";
 
     // CallNum
     public static final String CALLNUM_ASSIGNREVENUE = "desktop/callNumassignRevenue";

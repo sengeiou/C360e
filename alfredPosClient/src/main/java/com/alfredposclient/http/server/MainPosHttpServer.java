@@ -1345,6 +1345,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return handlerKOTItemComplete(body);
             } else if (apiName.equals(APIName.KOT_OUT_OF_STOCK)) { //厨房out of stock
                 return handlerKOTOutOfStock(body);
+            } else if (apiName.equals(APIName.KOT_NEXT_KDS)) {
+                return handlerNextKDSKOT(body);
             } else if (apiName.equals(APIName.CANCEL_COMPLETE)) {// 厨房取消做完的菜
                 return cancelComplete(body);
             } else if (apiName.equals(APIName.COLLECT_KOT_ITEM)) { // waiter
@@ -2602,6 +2604,20 @@ public class MainPosHttpServer extends AlfredHttpServer {
         return resp;
     }
 
+
+    private Response handlerNextKDSKOT(String params) {
+        Map<String, Object> result = new HashMap<>();
+        Response resp = null;
+        Gson gson = new Gson();
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return resp;
+    }
 
     private Response handlerKOTItemComplete(String params) {
         Map<String, Object> result = new HashMap<String, Object>();
