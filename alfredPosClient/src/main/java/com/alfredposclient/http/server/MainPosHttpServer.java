@@ -2614,12 +2614,71 @@ public class MainPosHttpServer extends AlfredHttpServer {
         try {
             JSONObject jsonObject = new JSONObject(params);
 
+            int kdsId = jsonObject.getInt("kdsId");
             final KotSummary kotSummary = gson.fromJson(
                     jsonObject.getString("kotSummary"), KotSummary.class);
             ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
                     jsonObject.optString("kotItemDetails"),
                     new TypeToken<ArrayList<KotItemDetail>>() {
                     }.getType());
+            KotSummary localKotSummary = KotSummarySQL.getKotSummaryById(kotSummary.getId().intValue());
+            if (localKotSummary == null) {
+                result.put("resultCode", ResultCode.KOTSUMMARY_IS_UNREAL);
+                resp = this.getJsonResponse(new Gson().toJson(result));
+                return resp;
+            }
+
+            // : fix bug: filter out old data that may be in KDS
+            ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
+            for (int i = 0; i < kotItemDetails.size(); i++) {
+                KotItemDetail kotItemDetail = kotItemDetails.get(i);
+                if (kotItemDetail.getOrderId().intValue() == kotSummary.getOrderId().intValue())
+                    filteredKotItemDetails.add(kotItemDetail);
+            }
+
+            List<KotItemDetail> resultKotItemDetails = new ArrayList<KotItemDetail>();
+            // end bug fix
+
+            for (int i = 0; i < filteredKotItemDetails.size(); i++) {
+                KotItemDetail kotItemDetail = filteredKotItemDetails.get(i);
+                if (TextUtils.isEmpty(localKotSummary.getNumTag())) {
+                    OrderDetailSQL.updateOrderDetailStatusById(
+                            ParamConst.ORDERDETAIL_STATUS_PREPARED,
+                            kotItemDetail.getOrderDetailId());
+                } else {
+                    CPOrderDetailSQL.updateOrderDetailStatusById(
+                            ParamConst.ORDERDETAIL_STATUS_PREPARED,
+                            kotItemDetail.getOrderDetailId());
+                }
+
+                KotItemDetail lastSubKotItemDetail = KotItemDetailSQL.getLastKotItemDetailByOrderDetailId(localKotSummary.getId(), kotItemDetail.getOrderDetailId());
+                if (lastSubKotItemDetail != null && lastSubKotItemDetail.getUnFinishQty() != (kotItemDetail.getUnFinishQty() + kotItemDetail.getFinishQty())) {
+                    result.put("resultCode", ResultCode.KOT_COMPLETE_USER_FAILED);
+                    resp = this.getJsonResponse(new Gson().toJson(result));
+                    return resp;
+                } else if (kotItemDetail.getUnFinishQty() == 0) {
+                    kotItemDetail.setFinishQty(kotItemDetail.getItemNum());
+                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+                    kotItemDetail.setFireStatus(ParamConst.FIRE_STATUS_DEFAULT);
+                }
+                KotItemDetail subKotItemDetail = ObjectFactory.getInstance()
+                        .getSubKotItemDetail(kotItemDetail);
+                resultKotItemDetails.add(subKotItemDetail);
+                KotNotification kotNotification = ObjectFactory.getInstance()
+                        .getKotNotification(App.instance.getSessionStatus(),
+                                kotSummary, subKotItemDetail);
+
+                kotNotifications.add(kotNotification);
+            }
+            if (filteredKotItemDetails.size() > 0) {
+                App.getTopActivity().httpRequestAction(
+                        MainPage.ACTION_KOT_NEXT_KDS, kotSummary.getOrderId(), kdsId);
+                result.put("resultCode", ResultCode.SUCCESS);
+                resp = this.getJsonResponse(new Gson().toJson(result));
+            } else {
+                result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);
+                resp = this.getJsonResponse(new Gson().toJson(result));
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

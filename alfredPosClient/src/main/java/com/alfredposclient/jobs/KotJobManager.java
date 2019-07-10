@@ -55,13 +55,9 @@ public class KotJobManager {
         this.kotJobManager = new JobManager(this.context, kotconfiguration);
     }
 
-    public void sendKOTToNextKDS() {
-
-    }
-
     public void sendKOTTmpToKDS(KotSummary kotSummary,
                                 ArrayList<KotItemDetail> kotItemDetails, ArrayList<KotItemModifier> modifiers,
-                                String method, Map<String, Object> orderMap) {
+                                String method, Map<String, Object> orderMap, int kdsId) {
 
         ArrayList<Integer> printerGroupIds = new ArrayList<>();
         Map<Integer, ArrayList<KotItemDetail>> mapKOT = new HashMap<>();
@@ -129,35 +125,54 @@ public class KotJobManager {
                     .getPrintersInGroup(prgid);
 
             if (isAssemblyLine) {
-                if (printers.size() > 0) {
-                    Printer printer = printers.get(0);//get first display
-                    // KDS device
-                    KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
-                    // physical printer
-                    PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer
-                            .getId());
+                Printer printer = null;
 
-                    if (kdsDevice == null && printerDevice == null) {
-                        return;
-                    }
+                if (kdsId > 0) {
+                    boolean isPrinterFound = false;
 
-                    if (kdsDevice != null && kotSummary != null) {
-                        //region assign current kds device
-                        for (KotItemDetail kotItemDetail : mapKOT.get(prgid)) {
-                            kotItemDetail.setCurrentKDSId(kdsDevice.getDevice_id());
-                            KotItemDetailSQL.update(kotItemDetail);
-                        }
-                        //endregion
-                        KotJob kotjob = new KotJob(kdsDevice, kotSummary,
-                                mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_TMP_KOT);
-
-                        String printerType = !TextUtils.isEmpty(printer.getPrinterType()) ? printer.getPrinterType() : "0";
-                        if ("1".equals(printerType)) {
-                            kotJobManager.addJob(kotjob);
+                    for (Printer mPrinter : printers) {
+                        if (mPrinter.getId().equals(kdsId)) {
+                            isPrinterFound = true;
                         } else {
-                            //TODO: do assembly line
-                            kotJobManager.addJob(kotjob);
+                            if (isPrinterFound) {
+                                printer = mPrinter;
+                                break;
+                            }
                         }
+                    }
+                } else {
+                    if (printers.size() > 0)
+                        printer = printers.get(0);
+                }
+
+                if (printer == null) return;
+
+                // KDS device
+                KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
+                // physical printer
+                PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer
+                        .getId());
+
+                if (kdsDevice == null && printerDevice == null) {
+                    return;
+                }
+
+                if (kdsDevice != null && kotSummary != null) {
+                    //region assign current kds device
+                    for (KotItemDetail kotItemDetail : mapKOT.get(prgid)) {
+                        kotItemDetail.setCurrentKDSId(kdsDevice.getDevice_id());
+                        KotItemDetailSQL.update(kotItemDetail);
+                    }
+                    //endregion
+                    KotJob kotjob = new KotJob(kdsDevice, kotSummary,
+                            mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_TMP_KOT);
+
+                    String printerType = !TextUtils.isEmpty(printer.getPrinterType()) ? printer.getPrinterType() : "0";
+                    if ("1".equals(printerType)) {
+                        kotJobManager.addJob(kotjob);
+                    } else {
+                        //TODO: do assembly line
+                        kotJobManager.addJob(kotjob);
                     }
                 }
             } else {

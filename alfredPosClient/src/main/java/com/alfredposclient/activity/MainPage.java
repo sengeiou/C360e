@@ -2357,6 +2357,20 @@ public class MainPage extends BaseActivity {
     }
 
     private void sendKOTTmpToKDS() {
+        sendKOTTmpToKDS(0, 0);
+    }
+
+    private void sendKOTTmpToKDS(int orderId, final int kdsId) {
+
+        final Order currentOrder;
+
+        if (orderId > 0) {
+            currentOrder = OrderSQL.getOrder(orderId);
+        } else {
+            currentOrder = this.currentOrder;
+        }
+
+        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 
         if (orderDetails.isEmpty()) {
             UIHelp.showShortToast(this, getResources().getString(R.string.no_order_detail));
@@ -2367,6 +2381,7 @@ public class MainPage extends BaseActivity {
 
         Map<Integer, String> categorMap = new HashMap<>();
         Map<String, Map<Integer, String>> checkMap = new HashMap<>();
+
         for (int i = 0; i < allModifierCheck.size(); i++) {
             ModifierCheck modifierCheck;
             modifierCheck = allModifierCheck.get(i);
@@ -2426,10 +2441,11 @@ public class MainPage extends BaseActivity {
                     placedOrder, App.instance.getRevenueCenter());
             OrderBillSQL.add(orderBill);
 
+            final Order finalCurrentOrder = currentOrder;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Order placedOrder = OrderSQL.getOrder(currentOrder.getId());
+                    Order placedOrder = OrderSQL.getOrder(finalCurrentOrder.getId());
                     List<OrderDetail> placedOrderDetails
                             = OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
                     KotSummary kotSummary = ObjectFactory.getInstance()
@@ -2529,12 +2545,12 @@ public class MainPage extends BaseActivity {
                                 }
                             });
                             Map<String, Object> orderMap = new HashMap<>();
-                            orderMap.put("orderId", currentOrder.getId());
+                            orderMap.put("orderId", finalCurrentOrder.getId());
                             orderMap.put("orderDetailIds", orderDetailIds);
                             App.instance.getKdsJobManager().sendKOTTmpToKDS(
                                     kotSummary, kotItemDetails,
                                     kotItemModifiers, kotCommitStatus,
-                                    orderMap);
+                                    orderMap, kdsId);
                         }
                     } else {
                         KotSummarySQL.deleteKotSummary(kotSummary);
@@ -2682,8 +2698,17 @@ public class MainPage extends BaseActivity {
             case REFRESH_STOCK_NUM:
                 handler.sendEmptyMessage(action);
                 break;
+            default:
+                break;
+        }
+    }
+
+    public void httpRequestAction(int action, Object... objs) {
+        switch (action) {
             case ACTION_KOT_NEXT_KDS:
-                handler.sendEmptyMessage(action);
+                int orderId = (int) objs[0];
+                int kdsId = (int) objs[1];
+                sendKOTTmpToKDS(orderId, kdsId);
                 break;
             default:
                 break;
