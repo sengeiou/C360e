@@ -2609,9 +2609,17 @@ public class MainPosHttpServer extends AlfredHttpServer {
         Map<String, Object> result = new HashMap<>();
         Response resp = null;
         Gson gson = new Gson();
+        List<KotNotification> kotNotifications = new ArrayList<>();
 
         try {
             JSONObject jsonObject = new JSONObject(params);
+
+            final KotSummary kotSummary = gson.fromJson(
+                    jsonObject.getString("kotSummary"), KotSummary.class);
+            ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
+                    jsonObject.optString("kotItemDetails"),
+                    new TypeToken<ArrayList<KotItemDetail>>() {
+                    }.getType());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

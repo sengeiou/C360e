@@ -220,6 +220,7 @@ public class MainPage extends BaseActivity {
     public static final int ACTION_REMOVE_ORDER_DETAIL = 161;
     public static final int ACTION_CANCEL_ORDER_DETAIL = 162;
     public static final int VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER = 163;
+    public static final int ACTION_KOT_NEXT_KDS = 164;
 
 
     public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
@@ -2679,6 +2680,9 @@ public class MainPage extends BaseActivity {
             }
             break;
             case REFRESH_STOCK_NUM:
+                handler.sendEmptyMessage(action);
+                break;
+            case ACTION_KOT_NEXT_KDS:
                 handler.sendEmptyMessage(action);
                 break;
             default:
