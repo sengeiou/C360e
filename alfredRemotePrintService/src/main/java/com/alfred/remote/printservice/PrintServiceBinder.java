@@ -1002,12 +1002,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String total = theOrder.getTotal().toString();
                     String grandTotal = theOrder.getTotal().toString();
                     if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
-                        grandTotal = (theOrder.getGrandTotal().toString();
+                        grandTotal = theOrder.getGrandTotal().toString();
                     }
 
 //                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
                     String promotionTotal = theOrder.getPromotion().toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, total,rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
                     pqMgr.queuePrint(billPrint.getJobForQueue());
@@ -1387,7 +1387,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
     }
 
-
+    }
     @Override
     public void listPrinters(String type) {
         if (type.equals("1")) {

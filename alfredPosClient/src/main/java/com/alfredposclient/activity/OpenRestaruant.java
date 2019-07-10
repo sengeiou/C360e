@@ -849,9 +849,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	}
 
 	/* close session */
-	private void close(View v, final String actual) {
-		if(!ButtonClickTimer.canClick(v))
-			return;
+	private void close(final String actual) {
+
 		int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
 //		if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
 //

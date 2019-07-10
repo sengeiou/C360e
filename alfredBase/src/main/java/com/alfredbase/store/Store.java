@@ -140,7 +140,7 @@ public class Store {
 	public static final String OPEN_BALANCE = "OPEN_BALANCE";
 	public static final String KDS_LANDSCAPE= "KDS_LANDSCAPE";
 	public static final String DEFAULT_VIEW = "default_view";
-	public static final String REPORT_ORDER_TIMELY = "report_order_timely";
+	public static final String REPORT_ORDER_TIMELY = "report_order_timely";// 实时订单
 
 	//subPos
 	public static final String MAIN_POS_IP = "MAIN_POS_IP";
