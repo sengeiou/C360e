@@ -171,6 +171,8 @@ public class MainActivity extends BaseActivity {
         });
 //        VtintApiCentre.getInstance().init(context);
 //        VtintApiCentre.getInstance().SearchUsb();
+
+//        throw new NullPointerException("Test crash");
     }
 
 
@@ -311,6 +313,7 @@ public class MainActivity extends BaseActivity {
               //  dismissLoadingDialog();
                     loadingDialog.setTitle("loding..");
                     loadingDialog.show();
+
                 SyncCentre.getInstance().getRemainingStock(context,handler);
 //
                 break;
