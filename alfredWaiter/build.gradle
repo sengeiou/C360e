@@ -3,11 +3,9 @@ apply plugin: 'bugsee'
 import com.android.build.gradle.api.BaseVariant
 
 bugsee {
-//    appToken '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
-//    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
-            case 'release': '9290f896-1a2e-4b70-b1fa-46823bb4398c'
+            case 'release': '5cc128ed-939d-428a-9060-2813a324b2f2'
                 break
             case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
                 break

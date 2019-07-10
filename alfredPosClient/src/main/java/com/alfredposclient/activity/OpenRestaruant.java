@@ -532,6 +532,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //		}
 
 
+        initBugseeModifier();
+    }
+
+    private void initBugseeModifier() {
         Restaurant restaurant = RestaurantSQL.getRestaurant();
         if (restaurant != null) {
             BugseeHelper.setEmail(restaurant.getEmail());
@@ -541,6 +545,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
             BugseeHelper.setAttribute("restaurant_country", restaurant.getCountry());
             BugseeHelper.setAttribute("restaurant_city", restaurant.getCity());
         }
+
+        String employeeId = Store.getString(context, Store.EMPLOYEE_ID);
+        BugseeHelper.setAttribute("employee_id", employeeId);
+
+//        throw new NullPointerException("Test Crash");
     }
 
     @Override

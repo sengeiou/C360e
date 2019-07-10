@@ -16,7 +16,7 @@ import java.util.HashMap;
  * Created by Arif S. on 6/19/19
  */
 public class BugseeHelper {
-    public static void init(Application application) {
+    public static void init(Application application, String token) {
         HashMap<String, Object> options = new HashMap<>();
         options.put(Bugsee.Option.VideoEnabled, true);//set true to recode video
         options.put(Bugsee.Option.MaxRecordingTime, 2 * 60 * 60);
@@ -25,7 +25,7 @@ public class BugseeHelper {
         if (BuildConfig.DEBUG) {
             Bugsee.launch(application, "2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2", options);
         } else {
-            Bugsee.launch(application, "9290f896-1a2e-4b70-b1fa-46823bb4398c", options);
+            Bugsee.launch(application, token, options);
         }
 
     }

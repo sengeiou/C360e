@@ -170,8 +170,6 @@ public class BaseApplication extends Application {
 //			// startScan();
 //		}
 
-        BugseeHelper.init(this);
-
     }
 
 

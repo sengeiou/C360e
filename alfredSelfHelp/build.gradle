@@ -9,7 +9,7 @@ bugsee {
 //    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
-            case 'release': '9290f896-1a2e-4b70-b1fa-46823bb4398c'
+            case 'release': 'f252f398-4474-43c3-b287-38e6ce235894'
                 break
             case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
                 break
