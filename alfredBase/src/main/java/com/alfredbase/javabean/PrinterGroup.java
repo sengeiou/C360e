@@ -6,23 +6,30 @@ public class PrinterGroup {
     private Integer printerGroupId;
 
     private Integer printerId;
-    
+
     private String printerName; //not used in DB
 
     private Integer companyId;
 
     private Integer restaurantId;
 
-    
+    /**
+     * printer group type
+     * 0 = broadcast
+     * 1 = assembly line
+     */
+    private Integer printerType;
+
+
     public String getPrinterName() {
-		return printerName;
-	}
+        return printerName;
+    }
 
-	public void setPrinterName(String printerName) {
-		this.printerName = printerName;
-	}
+    public void setPrinterName(String printerName) {
+        this.printerName = printerName;
+    }
 
-	public Integer getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -60,5 +67,13 @@ public class PrinterGroup {
 
     public void setRestaurantId(Integer restaurantId) {
         this.restaurantId = restaurantId;
+    }
+
+    public Integer getPrinterType() {
+        return printerType;
+    }
+
+    public void setPrinterType(Integer printerType) {
+        this.printerType = printerType;
     }
 }

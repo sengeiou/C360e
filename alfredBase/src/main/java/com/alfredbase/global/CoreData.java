@@ -72,479 +72,490 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CoreData {
-	private static CoreData instance;
+    private static CoreData instance;
 
-	private String userKey;
+    private String userKey;
 
-	private List<User> users;
-	private List<RevenueCenter> revenueCenters;
-	private Restaurant restaurant;
-//	private List<Tables> tableList;
-	private List<TableInfo> newTableList;
-//	private List<Places> placeList;
-	private List<ItemModifier> itemModifiers;
-	private List<ItemDetail> itemDetails;
-	private List<ItemCategory> itemCategories;
-	private List<ItemMainCategory> itemMainCategories;
-	private List<ItemMainCategory> itemMainCategoriesForSelfHelp;
-	private LoginResult loginResult;
-	private List<TaxCategory> taxCategories;
-	private List<Modifier> modifierList;
-	private List<Tax> taxs;
-	private List<ItemHappyHour> itemHappyHours;
-	private List<HappyHourWeek> happyHourWeeks;
-	private List<HappyHour> happyHours;
-	private List<ItemPromotion> itemPromotions;
-	private List<PromotionOrder> promotionOrders;
-	private List<Promotion> promotions;
-	private List<PromotionWeek> promotionWeeks;
-	private RoundRule roundRule;
-	private List<Printer> printers;
-	private List<RestaurantConfig> restaurantConfigs;
+    private List<User> users;
+    private List<RevenueCenter> revenueCenters;
+    private Restaurant restaurant;
+    //	private List<Tables> tableList;
+    private List<TableInfo> newTableList;
+    //	private List<Places> placeList;
+    private List<ItemModifier> itemModifiers;
+    private List<ItemDetail> itemDetails;
+    private List<ItemCategory> itemCategories;
+    private List<ItemMainCategory> itemMainCategories;
+    private List<ItemMainCategory> itemMainCategoriesForSelfHelp;
+    private LoginResult loginResult;
+    private List<TaxCategory> taxCategories;
+    private List<Modifier> modifierList;
+    private List<Tax> taxs;
+    private List<ItemHappyHour> itemHappyHours;
+    private List<HappyHourWeek> happyHourWeeks;
+    private List<HappyHour> happyHours;
+    private List<ItemPromotion> itemPromotions;
+    private List<PromotionOrder> promotionOrders;
+    private List<Promotion> promotions;
+    private List<PromotionWeek> promotionWeeks;
+    private RoundRule roundRule;
+    private List<Printer> printers;
+    private List<RestaurantConfig> restaurantConfigs;
 
-	private List<PrinterGroup> printerGroups;
-	private List<UserRestaurant> userRestaurant;
-	private List<KotNotification> kotNotifications;
-	private List<LocalDevice> localDevices;
+    private List<PrinterGroup> printerGroups;
+    private List<UserRestaurant> userRestaurant;
+    private List<KotNotification> kotNotifications;
+    private List<LocalDevice> localDevices;
 
-	private SubPosBean subPosBean;
+    private SubPosBean subPosBean;
 
 
-	private List<PaymentMethod> pamentMethodList;
-	private List<SettlementRestaurant> settlementRestaurant;
+    private List<PaymentMethod> pamentMethodList;
+    private List<SettlementRestaurant> settlementRestaurant;
 
-	private PrinterDevice device;
+    private PrinterDevice device;
 
-	public RoundRule getRoundRule() {
-		return roundRule;
-	}
+    public RoundRule getRoundRule() {
+        return roundRule;
+    }
 
-	public void setRoundRule(RoundRule roundRule) {
-		this.roundRule = roundRule;
-	}
+    public void setRoundRule(RoundRule roundRule) {
+        this.roundRule = roundRule;
+    }
 
-	private CoreData() {
-	}
+    private CoreData() {
+    }
 
-	public static CoreData getInstance() {
-		if (instance == null) {
-			instance = new CoreData();
-		}
-		return instance;
-	}
+    public static CoreData getInstance() {
+        if (instance == null) {
+            instance = new CoreData();
+        }
+        return instance;
+    }
 
-	public void init(Context context) {
-		loginResult = Store
-				.getObject(context, Store.LOGIN_RESULT, LoginResult.class);
-		users = UserSQL.getAllUser();
-		revenueCenters = RevenueCenterSQL.getAllRevenueCenter();
-		printers = PrinterSQL.getAllPrinter();
-		printerGroups = PrinterGroupSQL.getAllPrinterGroup();
-		restaurant = RestaurantSQL.getRestaurant();
+    public void init(Context context) {
+        loginResult = Store
+                .getObject(context, Store.LOGIN_RESULT, LoginResult.class);
+        users = UserSQL.getAllUser();
+        revenueCenters = RevenueCenterSQL.getAllRevenueCenter();
+        printers = PrinterSQL.getAllPrinter();
+        printerGroups = PrinterGroupSQL.getAllPrinterGroup();
+        restaurant = RestaurantSQL.getRestaurant();
 //		tableList = TablesSQL.getAllTables();
-		newTableList = TableInfoSQL.getAllTables();
+        newTableList = TableInfoSQL.getAllTables();
 //		placeList = PlacesSQL.getAllPlaces();
-		itemModifiers = ItemModifierSQL.getAllItemModifier();
-		itemDetails = ItemDetailSQL.getAllItemDetail();
-		itemCategories = ItemCategorySQL.getAllItemCategory();
-		itemMainCategories = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenter();//getAllItemMainCategory();
-		taxCategories = TaxCategorySQL.getAllTaxCategory();
-		modifierList = ModifierSQL.getAllModifier();
-		taxs = TaxSQL.getAllTax();
-		itemHappyHours = ItemHappyHourSQL.getAllItemHappyHour();
-		happyHourWeeks = HappyHourWeekSQL.getAllHappyHourWeek();
-		happyHours = HappyHourSQL.getAllHappyHour();
-		promotions=PromotionSQL.getAllPromotion();
-		promotionOrders=PromotionOrderSQL.getAllpromotionOrder();
-		itemPromotions=PromotionItemSQL.getAllPromotionItem();
-		promotionWeeks= PromotionWeekSQL.getAllPromotionWeek();
-		userRestaurant = UserRestaurantSQL.getAll();
-		kotNotifications = KotNotificationSQL.getAllKotNotification();
-		localDevices = LocalDeviceSQL.getAllLocalDevice();
-		restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
-		settlementRestaurant= SettlementRestaurantSQL.getAllSettlementRestaurant();
-		pamentMethodList= PaymentMethodSQL.getAllPaymentMethod();
+        itemModifiers = ItemModifierSQL.getAllItemModifier();
+        itemDetails = ItemDetailSQL.getAllItemDetail();
+        itemCategories = ItemCategorySQL.getAllItemCategory();
+        itemMainCategories = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenter();//getAllItemMainCategory();
+        taxCategories = TaxCategorySQL.getAllTaxCategory();
+        modifierList = ModifierSQL.getAllModifier();
+        taxs = TaxSQL.getAllTax();
+        itemHappyHours = ItemHappyHourSQL.getAllItemHappyHour();
+        happyHourWeeks = HappyHourWeekSQL.getAllHappyHourWeek();
+        happyHours = HappyHourSQL.getAllHappyHour();
+        promotions = PromotionSQL.getAllPromotion();
+        promotionOrders = PromotionOrderSQL.getAllpromotionOrder();
+        itemPromotions = PromotionItemSQL.getAllPromotionItem();
+        promotionWeeks = PromotionWeekSQL.getAllPromotionWeek();
+        userRestaurant = UserRestaurantSQL.getAll();
+        kotNotifications = KotNotificationSQL.getAllKotNotification();
+        localDevices = LocalDeviceSQL.getAllLocalDevice();
+        restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
+        settlementRestaurant = SettlementRestaurantSQL.getAllSettlementRestaurant();
+        pamentMethodList = PaymentMethodSQL.getAllPaymentMethod();
 
-	}
+    }
 
-	public PrinterDevice getDevice() {
-		return device;
-	}
+    public PrinterDevice getDevice() {
+        return device;
+    }
 
-	public void setDevice(PrinterDevice device) {
-		this.device = device;
-	}
+    public void setDevice(PrinterDevice device) {
+        this.device = device;
+    }
 
-	public List<ItemModifier> getItemModifiers(ItemDetail itemDetail) {
-		List<ItemModifier> result = new ArrayList<ItemModifier>();
-		if (itemDetail == null || itemDetail.getItemTemplateId() == null) {
-			return result;
-		}
-		for (ItemModifier itemModifier : getItemModifiers()) {
-			if(itemModifier.getType() != null && itemModifier.getItemCategoryId() != null
-					&&itemModifier.getItemCategoryId().intValue() == itemDetail.getItemCategoryId().intValue()
-						&& itemModifier.getType().intValue() == 1) {
-					result.add(itemModifier);
-			}else if (itemModifier.getItemId() != null
-					&& itemDetail.getItemTemplateId() != null
-					&& itemModifier.getItemId().intValue() == itemDetail.getItemTemplateId().intValue()) {
-				result.add(itemModifier);
-			}
-		}
-		return result;
-	}
-	
-	
-	public OrderModifier getOrderModifier(List<OrderModifier> orderModifiers,
-			Modifier modifier) {
-		for (OrderModifier orderModifier : orderModifiers) {
-			if (modifier.getId().intValue() == orderModifier.getModifierId()
-					.intValue()) {
-				return orderModifier;
-			}
-		}
-		return null;
-	}
+    public List<ItemModifier> getItemModifiers(ItemDetail itemDetail) {
+        List<ItemModifier> result = new ArrayList<ItemModifier>();
+        if (itemDetail == null || itemDetail.getItemTemplateId() == null) {
+            return result;
+        }
+        for (ItemModifier itemModifier : getItemModifiers()) {
+            if (itemModifier.getType() != null && itemModifier.getItemCategoryId() != null
+                    && itemModifier.getItemCategoryId().intValue() == itemDetail.getItemCategoryId().intValue()
+                    && itemModifier.getType().intValue() == 1) {
+                result.add(itemModifier);
+            } else if (itemModifier.getItemId() != null
+                    && itemDetail.getItemTemplateId() != null
+                    && itemModifier.getItemId().intValue() == itemDetail.getItemTemplateId().intValue()) {
+                result.add(itemModifier);
+            }
+        }
+        return result;
+    }
 
-	private Printer getPrinterById(int printerid) {
-		for (Printer printer : getPrinters()) {
-			if (printerid == printer.getId().intValue()) {
-				return printer;
-			}
-		}
-		return null;
-	}
 
-	public int isCashierPrinter(int printid) {
-		for (Printer printer : getPrinters()) {
-			if (printid == printer.getId().intValue()
-					&& 1 == printer.getIsCashdrawer()) {
-				return 1;
-			}
-		}
-		return 0;
-	}
+    public OrderModifier getOrderModifier(List<OrderModifier> orderModifiers,
+                                          Modifier modifier) {
+        for (OrderModifier orderModifier : orderModifiers) {
+            if (modifier.getId().intValue() == orderModifier.getModifierId()
+                    .intValue()) {
+                return orderModifier;
+            }
+        }
+        return null;
+    }
 
-	public Printer getPrinter(ItemDetail itemDetail) {
-		if (itemDetail == null || itemDetail.getPrinterId() == null) {
-			return null;
-		}
-		for (Printer printer : getPrinters()) {
-			if (itemDetail.getPrinterId().intValue() == printer.getId()
-					.intValue()) {
-				return printer;
-			}
-		}
-		return null;
-	}
+    private Printer getPrinterById(int printerid) {
+        for (Printer printer : getPrinters()) {
+            if (printerid == printer.getId().intValue()) {
+                return printer;
+            }
+        }
+        return null;
+    }
 
-	public Printer getPrinterByName(String name) {
-		for (Printer printer : getPrinters()) {
-			if (name.equals(printer.getPrinterName())) {
-				return printer;
-			}
-		}
-		return null;
-	}
+    public int isCashierPrinter(int printid) {
+        for (Printer printer : getPrinters()) {
+            if (printid == printer.getId().intValue()
+                    && 1 == printer.getIsCashdrawer()) {
+                return 1;
+            }
+        }
+        return 0;
+    }
 
-	public List<Printer> getKDSPhysicalPrinters() {
-		List<Printer> printers = new ArrayList<Printer>();
-		for (Printer printer : getPrinters()) {
-			if (printer.getType() == ParamConst.PRINTER_TYPE_UNGROUP
-					&& printer.getIsCashdrawer() == 0) {
-				printers.add(printer);
-			}
-		}
-		return printers;
-	}
+    public Printer getPrinter(ItemDetail itemDetail) {
+        if (itemDetail == null || itemDetail.getPrinterId() == null) {
+            return null;
+        }
+        for (Printer printer : getPrinters()) {
+            if (itemDetail.getPrinterId().intValue() == printer.getId()
+                    .intValue()) {
+                return printer;
+            }
+        }
+        return null;
+    }
 
-	public List<Printer> getPhysicalPrinters() {
-		List<Printer> printers = new ArrayList<Printer>();
-		for (Printer printer : getPrinters()) {
-			if (printer.getType() == ParamConst.PRINTER_TYPE_UNGROUP) {
-				printers.add(printer);
-			}
-		}
-		return printers;
-	}
+    public Printer getPrinterByName(String name) {
+        for (Printer printer : getPrinters()) {
+            if (name.equals(printer.getPrinterName())) {
+                return printer;
+            }
+        }
+        return null;
+    }
 
-	public ArrayList<Printer> getPrintersInGroup(int groupid) {
-		ArrayList<Printer> result = new ArrayList<Printer>();
-		for (PrinterGroup pg : this.printerGroups) {
-			if (pg.getPrinterGroupId().intValue() == groupid) {
-				Printer pt = this.getPrinterById(pg.getPrinterId().intValue());
-				result.add(pt);
-			}
-		}
-		return result;
-	}
+    public List<Printer> getKDSPhysicalPrinters() {
+        List<Printer> printers = new ArrayList<Printer>();
+        for (Printer printer : getPrinters()) {
+            if (printer.getType() == ParamConst.PRINTER_TYPE_UNGROUP
+                    && printer.getIsCashdrawer() == 0) {
+                printers.add(printer);
+            }
+        }
+        return printers;
+    }
 
-	public List<PrinterGroup> getPrinterGroupByPrinter(int printerId) {
-		List<PrinterGroup> printerGroupList = new ArrayList<PrinterGroup>();
-		for (PrinterGroup pg : this.printerGroups) {
-			if (pg.getPrinterId().intValue() == printerId) {
-				printerGroupList.add(pg);
-			}
-		}
-		return printerGroupList;
-	}
+    public List<Printer> getPhysicalPrinters() {
+        List<Printer> printers = new ArrayList<Printer>();
+        for (Printer printer : getPrinters()) {
+            if (printer.getType() == ParamConst.PRINTER_TYPE_UNGROUP) {
+                printers.add(printer);
+            }
+        }
+        return printers;
+    }
 
-	public Modifier getModifier(ItemModifier itemModifier) {
-		if (itemModifier == null
-				|| itemModifier.getModifierCategoryId() == null) {
-			return null;
-		}
-		for (Modifier modifier : getModifierList()) {
-			if (modifier.getId().intValue() == itemModifier
-					.getModifierCategoryId().intValue()) {
-				return modifier;
-			}
-		}
-		return null;
-	}
+    public ArrayList<Printer> getPrintersInGroup(int groupid) {
+        ArrayList<Printer> result = new ArrayList<Printer>();
+        for (PrinterGroup pg : this.printerGroups) {
+            if (pg.getPrinterGroupId().intValue() == groupid) {
+                Printer pt = this.getPrinterById(pg.getPrinterId().intValue());
+                result.add(pt);
+            }
+        }
+        return result;
+    }
 
-	public Modifier getModifier(int modifierId) {
-		for (Modifier modifier : getModifierList()) {
-			if (modifier.getId().intValue() == modifierId) {
-				return modifier;
-			}
-		}
-		return null;
-	}
+    public List<PrinterGroup> getPrinterGroupByPrinter(int printerId) {
+        List<PrinterGroup> printerGroupList = new ArrayList<PrinterGroup>();
+        for (PrinterGroup pg : this.printerGroups) {
+            if (pg.getPrinterId().intValue() == printerId) {
+                printerGroupList.add(pg);
+            }
+        }
+        return printerGroupList;
+    }
 
-	public List<Modifier> getModifiers(Modifier modifier) {
-		List<Modifier> result = new ArrayList<Modifier>();
-		if (modifier == null || modifier.getId() == null)
-			return result;
-		for (Modifier temp : getModifierList()) {
-			if (modifier.getId().intValue() == temp.getCategoryId().intValue()
-					&& temp.getType().intValue() == 1) {
-				result.add(temp);
-			}
-		}
-		return result;
-	}
-	
+    public PrinterGroup getPrinterGroup(int printerGroupId) {
+        for (PrinterGroup pg : this.printerGroups) {
+            if (pg.getPrinterGroupId().equals(printerGroupId)) {
+                return pg;
+            }
+        }
+        return null;
+    }
 
-	public ItemDetail getItemDetailById(Integer id) {
-		if (id == null)
-			return null;
-		for (ItemDetail itemDetail : getItemDetails()) {
-			if (itemDetail.getId().intValue() == id.intValue()) {
-				return itemDetail;
-			}
-		}
-		return null;
-	}
-	public ItemDetail getItemDetailByBarCode(String barcode) {
-		if (TextUtils.isEmpty(barcode))
-			return null;
-		for (ItemDetail itemDetail : getItemDetails()) {
-			if (barcode.equals(itemDetail.getBarcode())) {
-				return itemDetail;
-			}
-		}
-		return null;
-	}
-	public ItemDetail getItemDetailByBarCodeForKPMG(String barcode) {
-		if (TextUtils.isEmpty(barcode))
-			return null;
-		for (ItemDetail itemDetail : getItemDetails()) {
-			if (barcode.equals(IntegerUtils.format20(itemDetail.getBarcode()))) {
-				return itemDetail;
-			}
-		}
-		return null;
-	}
+    public Modifier getModifier(ItemModifier itemModifier) {
+        if (itemModifier == null
+                || itemModifier.getModifierCategoryId() == null) {
+            return null;
+        }
+        for (Modifier modifier : getModifierList()) {
+            if (modifier.getId().intValue() == itemModifier
+                    .getModifierCategoryId().intValue()) {
+                return modifier;
+            }
+        }
+        return null;
+    }
 
-	/*: This function CANNNOT be used for Open Item coz all open items have no template ID*/
-	public ItemDetail getItemDetailByTemplateId(Integer id) {
-		if (id == null || id.intValue() == 0)
-			return null;
-		for (ItemDetail itemDetail : getItemDetails()) {
-			if (itemDetail.getItemTemplateId().intValue() == id.intValue()) {
-				return itemDetail;
-			}
-		}
-		return null;
-	}
+    public Modifier getModifier(int modifierId) {
+        for (Modifier modifier : getModifierList()) {
+            if (modifier.getId().intValue() == modifierId) {
+                return modifier;
+            }
+        }
+        return null;
+    }
 
-	public ItemHappyHour getItemHappyHour(RevenueCenter revenueCenter,
-			ItemDetail itemDetail) {
-		if (itemDetail == null)
-			return null;
-		List<ItemHappyHour> itemHappyHours = getItemHappyHours();
-		for (ItemHappyHour itemHappyHour1 : itemHappyHours) {
-			if (itemHappyHour1.getHappyHourId().intValue() == revenueCenter
-					.getHappyHourId().intValue()) {
-				// 先按照菜来找
-				if (itemHappyHour1.getItemId().intValue() == itemDetail
-						.getItemTemplateId().intValue()) {
-					return itemHappyHour1;
-				}
-				// 然后按照分类来找
-				if(itemHappyHour1.getItemId().intValue() <= 0) {
-					if (itemHappyHour1.getItemCategoryId().intValue() == itemDetail
-							.getItemCategoryId().intValue()) {
-						return itemHappyHour1;
-					}
-				}
-				// 最后按照主分类找
-				if(itemHappyHour1.getItemId().intValue() <= 0 && itemHappyHour1.getItemCategoryId() <=0) {
-					if (itemHappyHour1.getItemMainCategoryId().intValue() == itemDetail
-							.getItemMainCategoryId().intValue()) {
-						return itemHappyHour1;
-					}
-				}
-			}
-		}
-		return null;
-	}
+    public List<Modifier> getModifiers(Modifier modifier) {
+        List<Modifier> result = new ArrayList<Modifier>();
+        if (modifier == null || modifier.getId() == null)
+            return result;
+        for (Modifier temp : getModifierList()) {
+            if (modifier.getId().intValue() == temp.getCategoryId().intValue()
+                    && temp.getType().intValue() == 1) {
+                result.add(temp);
+            }
+        }
+        return result;
+    }
 
-	public ItemPromotion getItemPromotion(RevenueCenter revenueCenter,
-										  ItemDetail itemDetail) {
-		if (itemDetail == null)
-			return null;
-		List<ItemPromotion> itemPromotions = getItemPromotions();
-		for (ItemPromotion itemPromotion : itemPromotions) {
+
+    public ItemDetail getItemDetailById(Integer id) {
+        if (id == null)
+            return null;
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (itemDetail.getId().intValue() == id.intValue()) {
+                return itemDetail;
+            }
+        }
+        return null;
+    }
+
+    public ItemDetail getItemDetailByBarCode(String barcode) {
+        if (TextUtils.isEmpty(barcode))
+            return null;
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (barcode.equals(itemDetail.getBarcode())) {
+                return itemDetail;
+            }
+        }
+        return null;
+    }
+
+    public ItemDetail getItemDetailByBarCodeForKPMG(String barcode) {
+        if (TextUtils.isEmpty(barcode))
+            return null;
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (barcode.equals(IntegerUtils.format20(itemDetail.getBarcode()))) {
+                return itemDetail;
+            }
+        }
+        return null;
+    }
+
+    /*: This function CANNNOT be used for Open Item coz all open items have no template ID*/
+    public ItemDetail getItemDetailByTemplateId(Integer id) {
+        if (id == null || id.intValue() == 0)
+            return null;
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (itemDetail.getItemTemplateId().intValue() == id.intValue()) {
+                return itemDetail;
+            }
+        }
+        return null;
+    }
+
+    public ItemHappyHour getItemHappyHour(RevenueCenter revenueCenter,
+                                          ItemDetail itemDetail) {
+        if (itemDetail == null)
+            return null;
+        List<ItemHappyHour> itemHappyHours = getItemHappyHours();
+        for (ItemHappyHour itemHappyHour1 : itemHappyHours) {
+            if (itemHappyHour1.getHappyHourId().intValue() == revenueCenter
+                    .getHappyHourId().intValue()) {
+                // 先按照菜来找
+                if (itemHappyHour1.getItemId().intValue() == itemDetail
+                        .getItemTemplateId().intValue()) {
+                    return itemHappyHour1;
+                }
+                // 然后按照分类来找
+                if (itemHappyHour1.getItemId().intValue() <= 0) {
+                    if (itemHappyHour1.getItemCategoryId().intValue() == itemDetail
+                            .getItemCategoryId().intValue()) {
+                        return itemHappyHour1;
+                    }
+                }
+                // 最后按照主分类找
+                if (itemHappyHour1.getItemId().intValue() <= 0 && itemHappyHour1.getItemCategoryId() <= 0) {
+                    if (itemHappyHour1.getItemMainCategoryId().intValue() == itemDetail
+                            .getItemMainCategoryId().intValue()) {
+                        return itemHappyHour1;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public ItemPromotion getItemPromotion(RevenueCenter revenueCenter,
+                                          ItemDetail itemDetail) {
+        if (itemDetail == null)
+            return null;
+        List<ItemPromotion> itemPromotions = getItemPromotions();
+        for (ItemPromotion itemPromotion : itemPromotions) {
 //			if (itemPromotion.getPromotionId().intValue() == revenueCenter
 //					.getHappyHourId().intValue()) {
-				// 先按照菜来找
-				if (itemPromotion.getItemId().intValue() == itemDetail
-						.getItemTemplateId().intValue()) {
-					return itemPromotion;
-				}
-				// 然后按照分类来找
-				if(itemPromotion.getItemId().intValue() <= 0) {
-					if (itemPromotion.getItemCategoryId().intValue() == itemDetail
-							.getItemCategoryId().intValue()) {
-						return itemPromotion;
-					}
-				}
-				// 最后按照主分类找
-				if(itemPromotion.getItemId().intValue() <= 0 && itemPromotion.getItemCategoryId() <=0) {
-					if (itemPromotion.getItemMainCategoryId().intValue() == itemDetail
-							.getItemMainCategoryId().intValue()) {
-						return itemPromotion;
-					}
-				}
+            // 先按照菜来找
+            if (itemPromotion.getItemId().intValue() == itemDetail
+                    .getItemTemplateId().intValue()) {
+                return itemPromotion;
+            }
+            // 然后按照分类来找
+            if (itemPromotion.getItemId().intValue() <= 0) {
+                if (itemPromotion.getItemCategoryId().intValue() == itemDetail
+                        .getItemCategoryId().intValue()) {
+                    return itemPromotion;
+                }
+            }
+            // 最后按照主分类找
+            if (itemPromotion.getItemId().intValue() <= 0 && itemPromotion.getItemCategoryId() <= 0) {
+                if (itemPromotion.getItemMainCategoryId().intValue() == itemDetail
+                        .getItemMainCategoryId().intValue()) {
+                    return itemPromotion;
+                }
+            }
 //			}
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	public List<TaxCategory> getTaxCategorys(Integer taxCategoryId) {
-		List<TaxCategory> result = new ArrayList<TaxCategory>();
-		if (taxCategoryId == null)
-			return result;
-		TaxCategory currentTaxCategory = null;
-		for (TaxCategory taxCategory : getTaxCategories()) {
-			if (taxCategory.getId().intValue() == taxCategoryId.intValue()) {
-				currentTaxCategory = taxCategory;
-				break;
-			}
-		}
-		if (currentTaxCategory != null) {
-			for (TaxCategory taxCategory : getTaxCategories()) {
-				if (currentTaxCategory.getId().intValue() == taxCategory
-						.getTaxCategoryId().intValue()) {
-					result.add(taxCategory);
-				}
-			}
-		}
-		return result;
-	}
+    public List<TaxCategory> getTaxCategorys(Integer taxCategoryId) {
+        List<TaxCategory> result = new ArrayList<TaxCategory>();
+        if (taxCategoryId == null)
+            return result;
+        TaxCategory currentTaxCategory = null;
+        for (TaxCategory taxCategory : getTaxCategories()) {
+            if (taxCategory.getId().intValue() == taxCategoryId.intValue()) {
+                currentTaxCategory = taxCategory;
+                break;
+            }
+        }
+        if (currentTaxCategory != null) {
+            for (TaxCategory taxCategory : getTaxCategories()) {
+                if (currentTaxCategory.getId().intValue() == taxCategory
+                        .getTaxCategoryId().intValue()) {
+                    result.add(taxCategory);
+                }
+            }
+        }
+        return result;
+    }
 
-	public Tax getTax(Integer taxId) {
-		if (taxId == null)
-			return null;
-		for (Tax tax : getTaxs()) {
-			if (tax.getId().intValue() == taxId.intValue()) {
-				return tax;
-			}
-		}
-		return null;
-	}
+    public Tax getTax(Integer taxId) {
+        if (taxId == null)
+            return null;
+        for (Tax tax : getTaxs()) {
+            if (tax.getId().intValue() == taxId.intValue()) {
+                return tax;
+            }
+        }
+        return null;
+    }
 
-	public TaxCategory getTaxCategory(Integer taxOnId) {
-		if (taxOnId == null)
-			return null;
-		for (TaxCategory taxCategory : getTaxCategories()) {
-			if (taxCategory.getId().intValue() == taxOnId.intValue()) {
-				return taxCategory;
-			}
-		}
-		return null;
-	}
+    public TaxCategory getTaxCategory(Integer taxOnId) {
+        if (taxOnId == null)
+            return null;
+        for (TaxCategory taxCategory : getTaxCategories()) {
+            if (taxCategory.getId().intValue() == taxOnId.intValue()) {
+                return taxCategory;
+            }
+        }
+        return null;
+    }
 
-	public TaxCategory getTaxCategoryByTaxId(Integer taxId) {
-		if (taxId == null)
-			return null;
-		for (TaxCategory taxCategory : getTaxCategories()) {
-			if (taxCategory.getTaxId().intValue() == taxId.intValue()) {
-				return taxCategory;
-			}
-		}
-		return null;
-	}
+    public TaxCategory getTaxCategoryByTaxId(Integer taxId) {
+        if (taxId == null)
+            return null;
+        for (TaxCategory taxCategory : getTaxCategories()) {
+            if (taxCategory.getTaxId().intValue() == taxId.intValue()) {
+                return taxCategory;
+            }
+        }
+        return null;
+    }
 
-	public ArrayList<ItemCategory> getItemCategory(
-			ItemMainCategory itemMainCategory) {
-		if (itemCategories == null)
-			return null;
-		ArrayList<ItemCategory> result = new ArrayList<ItemCategory>();
-		if (itemMainCategory == null || itemMainCategory.getId() == null) {
-			return result;
-		}
-		for (int i = 0; i < itemCategories.size(); i++) {
-			ItemCategory itemCategory = itemCategories.get(i);
-			if (itemCategory.getItemMainCategoryId().intValue() == itemMainCategory
-					.getId().intValue())
-				result.add(itemCategory);
-		}
-		return result;
-	}
+    public ArrayList<ItemCategory> getItemCategory(
+            ItemMainCategory itemMainCategory) {
+        if (itemCategories == null)
+            return null;
+        ArrayList<ItemCategory> result = new ArrayList<ItemCategory>();
+        if (itemMainCategory == null || itemMainCategory.getId() == null) {
+            return result;
+        }
+        for (int i = 0; i < itemCategories.size(); i++) {
+            ItemCategory itemCategory = itemCategories.get(i);
+            if (itemCategory.getItemMainCategoryId().intValue() == itemMainCategory
+                    .getId().intValue())
+                result.add(itemCategory);
+        }
+        return result;
+    }
 
-	public List<ItemDetail> getItemDetails(String key) {
-		if (CommonUtil.isNull(key))
-			return null;
-		List<ItemDetail> result = new ArrayList<ItemDetail>();
-		for (ItemDetail itemDetail : getItemDetails()) {
-			if (itemDetail.getItemName().contains(key))
-				result.add(itemDetail);
-		}
-		return result;
-	}
+    public List<ItemDetail> getItemDetails(String key) {
+        if (CommonUtil.isNull(key))
+            return null;
+        List<ItemDetail> result = new ArrayList<ItemDetail>();
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (itemDetail.getItemName().contains(key))
+                result.add(itemDetail);
+        }
+        return result;
+    }
 
-	public List<ItemDetail> getItemDetails(Integer itemCategoryId) {
-		List<ItemDetail> result = new ArrayList<ItemDetail>();
-		for (ItemDetail itemDetail : getItemDetails()) {
-			if (itemDetail.getItemCategoryId().intValue() == itemCategoryId.intValue())
-				result.add(itemDetail);
-		}
-		return result;
-	}
+    public List<ItemDetail> getItemDetails(Integer itemCategoryId) {
+        List<ItemDetail> result = new ArrayList<ItemDetail>();
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (itemDetail.getItemCategoryId().intValue() == itemCategoryId.intValue())
+                result.add(itemDetail);
+        }
+        return result;
+    }
 
 
+    public List<ItemDetail> getItemDetails(ItemCategory itemCategory) {
+        List<ItemDetail> result = new ArrayList<ItemDetail>();
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (itemDetail.getItemCategoryId().intValue() == itemCategory
+                    .getId().intValue())
+                result.add(itemDetail);
+        }
+        return result;
+    }
 
-	public List<ItemDetail> getItemDetails(ItemCategory itemCategory) {
-		List<ItemDetail> result = new ArrayList<ItemDetail>();
-		for (ItemDetail itemDetail : getItemDetails()) {
-			if (itemDetail.getItemCategoryId().intValue() == itemCategory
-					.getId().intValue())
-				result.add(itemDetail);
-		}
-		return result;
-	}
-	public RevenueCenter getRevenueCenter(Order order) {
-		for (RevenueCenter revenueCenter : getRevenueCenters()) {
-			if (revenueCenter.getId().intValue() == order.getRevenueId()
-					.intValue()) {
-				return revenueCenter;
-			}
-		}
-		return null;
-	}
+    public RevenueCenter getRevenueCenter(Order order) {
+        for (RevenueCenter revenueCenter : getRevenueCenters()) {
+            if (revenueCenter.getId().intValue() == order.getRevenueId()
+                    .intValue()) {
+                return revenueCenter;
+            }
+        }
+        return null;
+    }
 
 //	public List<Places> getPlaceList(Integer revenueId) {
 //		if (placeList == null)
@@ -557,7 +568,7 @@ public class CoreData {
 //		}
 //		return result;
 //	}
-	
+
 //	public List<Tables> getTableList(Integer revenueId) {
 //		if (tableList == null)
 //			return Collections.emptyList();
@@ -591,218 +602,218 @@ public class CoreData {
 //		}
 //		return null;
 //	}
-	
-	public User getUser(String employee_ID, String password) {
-		if (CommonUtil.isNull(employee_ID) || CommonUtil.isNull(password))
-			return null;
-		if (users == null || users.size() == 0) {
-			users = UserSQL.getAllUser();
-		}
-		if (users == null) {
-			return null;
-		}
-		for (User user : users) {
-			if (Integer.parseInt(employee_ID) == user.getEmpId().intValue()
-					&& password.equals(user.getPassword() + ""))
-				return user;
 
-		}
-		return null;
-	}
+    public User getUser(String employee_ID, String password) {
+        if (CommonUtil.isNull(employee_ID) || CommonUtil.isNull(password))
+            return null;
+        if (users == null || users.size() == 0) {
+            users = UserSQL.getAllUser();
+        }
+        if (users == null) {
+            return null;
+        }
+        for (User user : users) {
+            if (Integer.parseInt(employee_ID) == user.getEmpId().intValue()
+                    && password.equals(user.getPassword() + ""))
+                return user;
 
-	public User getUserByEmpId(int empId) {
-		if (users == null || users.size() == 0)
-			users = UserSQL.getAllUser();
-		if(users == null){
-			return null;
-		}
-		for (User user : users) {
-			if (user.getEmpId().intValue() == empId) {
-				return user;
-			}
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	public User getUserById(int uId) {
-		if (uId < 1)
-			return null;
-		if (users == null || users.size() == 0)
-			users = UserSQL.getAllUser();
-		if (users == null) {
-			return null;
-		}
-		for (User user : users) {
-			if (user.getId().intValue() == uId) {
-				return user;
-			}
-		}
-		return null;
-	}
+    public User getUserByEmpId(int empId) {
+        if (users == null || users.size() == 0)
+            users = UserSQL.getAllUser();
+        if (users == null) {
+            return null;
+        }
+        for (User user : users) {
+            if (user.getEmpId().intValue() == empId) {
+                return user;
+            }
+        }
+        return null;
+    }
 
-	public Boolean checkUserInRevcenter(int userId, int restaurantid,
-			int revenueid) {
+    public User getUserById(int uId) {
+        if (uId < 1)
+            return null;
+        if (users == null || users.size() == 0)
+            users = UserSQL.getAllUser();
+        if (users == null) {
+            return null;
+        }
+        for (User user : users) {
+            if (user.getId().intValue() == uId) {
+                return user;
+            }
+        }
+        return null;
+    }
 
-		for (UserRestaurant user : userRestaurant) {
-			if (user.getUserId().intValue() == userId
-					&& user.getRestaurantId().intValue() == restaurantid
-					&& user.getRevenueId().intValue() == revenueid) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public Boolean checkUserInRevcenter(int userId, int restaurantid,
+                                        int revenueid) {
 
-	/*
-	 * Only Cashier, Manager staff can access Cashier device
-	 */
-	public Boolean checkUserCashierAccessInRevcenter(User mUser,
-			int restaurantid, int revenueid) {
+        for (UserRestaurant user : userRestaurant) {
+            if (user.getUserId().intValue() == userId
+                    && user.getRestaurantId().intValue() == restaurantid
+                    && user.getRevenueId().intValue() == revenueid) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-		for (UserRestaurant user : userRestaurant) {
-			if (user.getUserId().intValue() == mUser.getId().intValue()
-					&& user.getRestaurantId().intValue() == restaurantid
-					&& user.getRevenueId().intValue() == revenueid) {
-				if (mUser.getType() == ParamConst.USER_TYPE_POS
-						|| mUser.getType() == ParamConst.USER_TYPE_MANAGER) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /*
+     * Only Cashier, Manager staff can access Cashier device
+     */
+    public Boolean checkUserCashierAccessInRevcenter(User mUser,
+                                                     int restaurantid, int revenueid) {
 
-	/*
-	 * Only Cashier, Manager, Waiter staff can access KDS device
-	 */
-	public Boolean checkUserWaiterAccessInRevcenter(int userId,
-			int restaurantid, int revenueid) {
+        for (UserRestaurant user : userRestaurant) {
+            if (user.getUserId().intValue() == mUser.getId().intValue()
+                    && user.getRestaurantId().intValue() == restaurantid
+                    && user.getRevenueId().intValue() == revenueid) {
+                if (mUser.getType() == ParamConst.USER_TYPE_POS
+                        || mUser.getType() == ParamConst.USER_TYPE_MANAGER) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-		for (UserRestaurant user : userRestaurant) {
-			if (user.getUserId().intValue() == userId
-					&& user.getRestaurantId().intValue() == restaurantid
-					&& user.getRevenueId().intValue() == revenueid) {
-				User kdsuser = getUserById(userId);
-				if (kdsuser != null
-						&& (kdsuser.getType() == ParamConst.USER_TYPE_POS
-								|| kdsuser.getType() == ParamConst.USER_TYPE_MANAGER || kdsuser
-								.getType() == ParamConst.USER_TYPE_WAITER)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /*
+     * Only Cashier, Manager, Waiter staff can access KDS device
+     */
+    public Boolean checkUserWaiterAccessInRevcenter(int userId,
+                                                    int restaurantid, int revenueid) {
 
-	/*
-	 * Only Cashier, Manager, Kitchen staff can access KDS device
-	 */
-	public Boolean checkUserKDSAccessInRevcenter(int userId, int restaurantid,
-			int revenueid) {
+        for (UserRestaurant user : userRestaurant) {
+            if (user.getUserId().intValue() == userId
+                    && user.getRestaurantId().intValue() == restaurantid
+                    && user.getRevenueId().intValue() == revenueid) {
+                User kdsuser = getUserById(userId);
+                if (kdsuser != null
+                        && (kdsuser.getType() == ParamConst.USER_TYPE_POS
+                        || kdsuser.getType() == ParamConst.USER_TYPE_MANAGER || kdsuser
+                        .getType() == ParamConst.USER_TYPE_WAITER)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-		for (UserRestaurant user : userRestaurant) {
-			if (user.getUserId().intValue() == userId
-					&& user.getRestaurantId().intValue() == restaurantid
-					&& user.getRevenueId().intValue() == revenueid) {
-				User kdsuser = getUserById(userId);
-				if (kdsuser != null
-						&& (kdsuser.getType() == ParamConst.USER_TYPE_POS
-								|| kdsuser.getType() == ParamConst.USER_TYPE_MANAGER || kdsuser
-								.getType() == ParamConst.USER_TYPE_KOT)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /*
+     * Only Cashier, Manager, Kitchen staff can access KDS device
+     */
+    public Boolean checkUserKDSAccessInRevcenter(int userId, int restaurantid,
+                                                 int revenueid) {
 
-	public Boolean checkUserInRestaurant(int userId, int restaurantid) {
+        for (UserRestaurant user : userRestaurant) {
+            if (user.getUserId().intValue() == userId
+                    && user.getRestaurantId().intValue() == restaurantid
+                    && user.getRevenueId().intValue() == revenueid) {
+                User kdsuser = getUserById(userId);
+                if (kdsuser != null
+                        && (kdsuser.getType() == ParamConst.USER_TYPE_POS
+                        || kdsuser.getType() == ParamConst.USER_TYPE_MANAGER || kdsuser
+                        .getType() == ParamConst.USER_TYPE_KOT)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-		for (UserRestaurant user : userRestaurant) {
-			if (user.getUserId().intValue() == userId
-					&& user.getRestaurantId().intValue() == restaurantid) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public Boolean checkUserInRestaurant(int userId, int restaurantid) {
 
-	public List<ItemCategory> getItemCategories(
-			ItemMainCategory itemMainCategory) {
-		if (itemCategories == null)
-			return Collections.emptyList();
-		List<ItemCategory> result = new ArrayList<ItemCategory>();
-		for (ItemCategory itemCategory : itemCategories) {
-			if (itemCategory.getItemMainCategoryId().intValue() == itemMainCategory
-					.getId().intValue())
-				result.add(itemCategory);
-		}
+        for (UserRestaurant user : userRestaurant) {
+            if (user.getUserId().intValue() == userId
+                    && user.getRestaurantId().intValue() == restaurantid) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-		return result;
-	}
+    public List<ItemCategory> getItemCategories(
+            ItemMainCategory itemMainCategory) {
+        if (itemCategories == null)
+            return Collections.emptyList();
+        List<ItemCategory> result = new ArrayList<ItemCategory>();
+        for (ItemCategory itemCategory : itemCategories) {
+            if (itemCategory.getItemMainCategoryId().intValue() == itemMainCategory
+                    .getId().intValue())
+                result.add(itemCategory);
+        }
 
-	public List<User> getUsers() {
-		if (users == null || users.size() == 0)
-			users = UserSQL.getAllUser();
-		if (users == null) {
-			return Collections.emptyList();
-		}
-		return users;
-	}
+        return result;
+    }
 
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
+    public List<User> getUsers() {
+        if (users == null || users.size() == 0)
+            users = UserSQL.getAllUser();
+        if (users == null) {
+            return Collections.emptyList();
+        }
+        return users;
+    }
 
-	public List<RevenueCenter> getRevenueCenters() {
-		if (revenueCenters == null)
-			return Collections.emptyList();
-		return revenueCenters;
-	}
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 
-	public void setRevenueCenters(List<RevenueCenter> revenueCenters) {
-		this.revenueCenters = revenueCenters;
-	}
+    public List<RevenueCenter> getRevenueCenters() {
+        if (revenueCenters == null)
+            return Collections.emptyList();
+        return revenueCenters;
+    }
 
-	public List<Printer> getPrinters() {
-		if (printers == null)
-			return Collections.emptyList();
-		return printers;
-	}
+    public void setRevenueCenters(List<RevenueCenter> revenueCenters) {
+        this.revenueCenters = revenueCenters;
+    }
 
-	public List<Printer> getNameOfPrintergroup() {
-		List<Printer> groupNames = new ArrayList<Printer>();
-		for (Printer printer : this.printers) {
-			if (printer.getType().intValue() == 0)
-				groupNames.add(printer);
-		}
-		return groupNames;
-	}
+    public List<Printer> getPrinters() {
+        if (printers == null)
+            return Collections.emptyList();
+        return printers;
+    }
 
-	public void setPrinters(List<Printer> printers) {
-		this.printers = printers;
-	}
+    public List<Printer> getNameOfPrintergroup() {
+        List<Printer> groupNames = new ArrayList<Printer>();
+        for (Printer printer : this.printers) {
+            if (printer.getType().intValue() == 0)
+                groupNames.add(printer);
+        }
+        return groupNames;
+    }
 
-	public List<PrinterGroup> getPrinterGroups() {
-		if (printerGroups == null)
-			return Collections.emptyList();
-		return printerGroups;
-	}
+    public void setPrinters(List<Printer> printers) {
+        this.printers = printers;
+    }
 
-	public void setPrinterGroups(List<PrinterGroup> printerGroups) {
-		this.printerGroups = printerGroups;
-	}
+    public List<PrinterGroup> getPrinterGroups() {
+        if (printerGroups == null)
+            return Collections.emptyList();
+        return printerGroups;
+    }
 
-	public Restaurant getRestaurant() {
-		if(restaurant == null){
-			restaurant = RestaurantSQL.getRestaurant();
-		}
-		return restaurant;
-	}
+    public void setPrinterGroups(List<PrinterGroup> printerGroups) {
+        this.printerGroups = printerGroups;
+    }
 
-	public void setRestaurant(Restaurant restaurant) {
-		this.restaurant = restaurant;
-	}
+    public Restaurant getRestaurant() {
+        if (restaurant == null) {
+            restaurant = RestaurantSQL.getRestaurant();
+        }
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
 
 //	public List<Tables> getTableList() {
 //		if (tableList == null)
@@ -824,287 +835,289 @@ public class CoreData {
 //		this.placeList = placeList;
 //	}
 
-	public List<ItemModifier> getItemModifiers() {
-		if (itemModifiers == null)
-			return Collections.emptyList();
-		return itemModifiers;
-	}
+    public List<ItemModifier> getItemModifiers() {
+        if (itemModifiers == null)
+            return Collections.emptyList();
+        return itemModifiers;
+    }
 
-	public void setItemModifiers(List<ItemModifier> itemModifiers) {
-		this.itemModifiers = itemModifiers;
-	}
+    public void setItemModifiers(List<ItemModifier> itemModifiers) {
+        this.itemModifiers = itemModifiers;
+    }
 
-	public List<ItemDetail> getItemDetails() {
-		if (itemDetails == null)
-			return Collections.emptyList();
-		return itemDetails;
-	}
+    public List<ItemDetail> getItemDetails() {
+        if (itemDetails == null)
+            return Collections.emptyList();
+        return itemDetails;
+    }
 
-	public void setItemDetails(List<ItemDetail> itemDetails) {
-		List<ItemDetail> mItemDetails = new ArrayList<ItemDetail>();
-		for (ItemDetail itemDetail : itemDetails) {
-			if (itemDetail.getItemType() != ParamConst.ITEMDETAIL_TEMPLATE) {
-				mItemDetails.add(itemDetail);
-			}
-		}
-		this.itemDetails = mItemDetails;
-	}
+    public void setItemDetails(List<ItemDetail> itemDetails) {
+        List<ItemDetail> mItemDetails = new ArrayList<ItemDetail>();
+        for (ItemDetail itemDetail : itemDetails) {
+            if (itemDetail.getItemType() != ParamConst.ITEMDETAIL_TEMPLATE) {
+                mItemDetails.add(itemDetail);
+            }
+        }
+        this.itemDetails = mItemDetails;
+    }
 
-	public List<ItemCategory> getItemCategories() {
-		if (itemCategories == null)
-			return Collections.emptyList();
-		return itemCategories;
-	}
-
-
-	public List<ItemCategory> getItemCategoriesorDetail() {
-		if (itemCategories == null) {
-			return Collections.emptyList();
-		}
-		List<ItemCategory> mItemCategory = new ArrayList<ItemCategory>();
-		List<ItemDetail> itemDetailandCate =new ArrayList<ItemDetail>();
-		for (ItemCategory itemCategory :itemCategories) {
-			itemDetailandCate.clear();
-			for (ItemDetail itemDetail : CoreData.getInstance().getItemDetails()) {
-				if (itemDetail.getItemCategoryId().intValue() == itemCategory
-						.getId().intValue()) {
-					itemDetailandCate.add(itemDetail);
-				}
-			}
-
-			if(itemDetailandCate.size()>0){
-				mItemCategory.add(itemCategory);
-			}
-
-		}
-		return mItemCategory;
-	}
-
-	public void setItemCategories(List<ItemCategory> itemCategories) {
-		this.itemCategories = itemCategories;
-	}
-
-	public List<ItemMainCategory> getItemMainCategories() {
-		if (itemMainCategories == null)
-			return Collections.emptyList();
-		itemMainCategories = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenter();
-		return itemMainCategories;
-	}
-	public List<ItemMainCategory> getItemMainCategoriesForSelp() {
-		if (itemMainCategoriesForSelfHelp == null)
-			itemMainCategoriesForSelfHelp = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp();
-		return itemMainCategoriesForSelfHelp;
-	}
-
-	public void setItemMainCategories(List<ItemMainCategory> itemMainCategories) {
-		this.itemMainCategories = itemMainCategories;
-	}
-
-	public LoginResult getLoginResult() {
-		return loginResult;
-	}
-
-	public void setLoginResult(LoginResult loginResult) {
-		this.loginResult = loginResult;
-	}
+    public List<ItemCategory> getItemCategories() {
+        if (itemCategories == null)
+            return Collections.emptyList();
+        return itemCategories;
+    }
 
 
-	public List<PaymentMethod> getPamentMethodList() {
-		return pamentMethodList;
-	}
+    public List<ItemCategory> getItemCategoriesorDetail() {
+        if (itemCategories == null) {
+            return Collections.emptyList();
+        }
+        List<ItemCategory> mItemCategory = new ArrayList<ItemCategory>();
+        List<ItemDetail> itemDetailandCate = new ArrayList<ItemDetail>();
+        for (ItemCategory itemCategory : itemCategories) {
+            itemDetailandCate.clear();
+            for (ItemDetail itemDetail : CoreData.getInstance().getItemDetails()) {
+                if (itemDetail.getItemCategoryId().intValue() == itemCategory
+                        .getId().intValue()) {
+                    itemDetailandCate.add(itemDetail);
+                }
+            }
 
-	public void setPamentMethodList(List<PaymentMethod> pamentMethodList) {
-		this.pamentMethodList = pamentMethodList;
-	}
+            if (itemDetailandCate.size() > 0) {
+                mItemCategory.add(itemCategory);
+            }
 
-	public PaymentMethod getPaymentMethod(int id){
-		if(pamentMethodList != null){
-			for(PaymentMethod paymentMethod : pamentMethodList){
-				if(paymentMethod.getId().intValue() == id){
-					return paymentMethod;
-				}
-			}
-		}
-		return  null;
-	}
+        }
+        return mItemCategory;
+    }
+
+    public void setItemCategories(List<ItemCategory> itemCategories) {
+        this.itemCategories = itemCategories;
+    }
+
+    public List<ItemMainCategory> getItemMainCategories() {
+        if (itemMainCategories == null)
+            return Collections.emptyList();
+        itemMainCategories = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenter();
+        return itemMainCategories;
+    }
+
+    public List<ItemMainCategory> getItemMainCategoriesForSelp() {
+        if (itemMainCategoriesForSelfHelp == null)
+            itemMainCategoriesForSelfHelp = ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenterForSelfHelp();
+        return itemMainCategoriesForSelfHelp;
+    }
+
+    public void setItemMainCategories(List<ItemMainCategory> itemMainCategories) {
+        this.itemMainCategories = itemMainCategories;
+    }
+
+    public LoginResult getLoginResult() {
+        return loginResult;
+    }
+
+    public void setLoginResult(LoginResult loginResult) {
+        this.loginResult = loginResult;
+    }
 
 
-	public PaymentMethod getPamentMethod(Integer pamentMethodId) {
-		if (pamentMethodId == null)
-			return null;
-		for (PaymentMethod pamentMethod : getPamentMethodList()) {
-			if (pamentMethod.getId().intValue() == pamentMethodId.intValue()) {
-				return pamentMethod;
-			}
-		}
-		return null;
-	}
+    public List<PaymentMethod> getPamentMethodList() {
+        return pamentMethodList;
+    }
 
-	public PaymentMethod getPamentMethodByPaymentTypeId(Integer paymentTypeId) {
-		if (paymentTypeId == null)
-			return null;
-		if(pamentMethodList != null && pamentMethodList.size() > 0) {
-			for (PaymentMethod pamentMethod : pamentMethodList) {
-				if (pamentMethod.getPaymentTypeId().intValue() == paymentTypeId.intValue()) {
-					return pamentMethod;
-				}
-			}
-		}
-		return null;
-	}
+    public void setPamentMethodList(List<PaymentMethod> pamentMethodList) {
+        this.pamentMethodList = pamentMethodList;
+    }
 
-	public List<SettlementRestaurant> getSettlementRestaurant() {
-		return settlementRestaurant;
-	}
+    public PaymentMethod getPaymentMethod(int id) {
+        if (pamentMethodList != null) {
+            for (PaymentMethod paymentMethod : pamentMethodList) {
+                if (paymentMethod.getId().intValue() == id) {
+                    return paymentMethod;
+                }
+            }
+        }
+        return null;
+    }
 
-	public void setSettlementRestaurant(List<SettlementRestaurant> settlementRestaurant) {
-		this.settlementRestaurant = settlementRestaurant;
-	}
 
-	public List<TaxCategory> getTaxCategories() {
-		if(taxCategories == null){
-			return new ArrayList<TaxCategory>();
-		}
-		return taxCategories;
-	}
+    public PaymentMethod getPamentMethod(Integer pamentMethodId) {
+        if (pamentMethodId == null)
+            return null;
+        for (PaymentMethod pamentMethod : getPamentMethodList()) {
+            if (pamentMethod.getId().intValue() == pamentMethodId.intValue()) {
+                return pamentMethod;
+            }
+        }
+        return null;
+    }
 
-	public void setTaxCategories(List<TaxCategory> taxCategories) {
-		this.taxCategories = taxCategories;
-	}
+    public PaymentMethod getPamentMethodByPaymentTypeId(Integer paymentTypeId) {
+        if (paymentTypeId == null)
+            return null;
+        if (pamentMethodList != null && pamentMethodList.size() > 0) {
+            for (PaymentMethod pamentMethod : pamentMethodList) {
+                if (pamentMethod.getPaymentTypeId().intValue() == paymentTypeId.intValue()) {
+                    return pamentMethod;
+                }
+            }
+        }
+        return null;
+    }
 
-	public List<Modifier> getModifierList() {
-		return modifierList;
-	}
+    public List<SettlementRestaurant> getSettlementRestaurant() {
+        return settlementRestaurant;
+    }
 
-	public void setModifierList(List<Modifier> modifierList) {
-		this.modifierList = modifierList;
-	}
+    public void setSettlementRestaurant(List<SettlementRestaurant> settlementRestaurant) {
+        this.settlementRestaurant = settlementRestaurant;
+    }
 
-	public List<Tax> getTaxs() {
-		return taxs;
-	}
+    public List<TaxCategory> getTaxCategories() {
+        if (taxCategories == null) {
+            return new ArrayList<TaxCategory>();
+        }
+        return taxCategories;
+    }
 
-	public void setTaxs(List<Tax> taxs) {
-		this.taxs = taxs;
-	}
+    public void setTaxCategories(List<TaxCategory> taxCategories) {
+        this.taxCategories = taxCategories;
+    }
 
-	public List<ItemPromotion> getItemPromotions() {
-		return itemPromotions;
-	}
+    public List<Modifier> getModifierList() {
+        return modifierList;
+    }
 
-	public void setItemPromotions(List<ItemPromotion> itemPromotions) {
-		this.itemPromotions = itemPromotions;
-	}
+    public void setModifierList(List<Modifier> modifierList) {
+        this.modifierList = modifierList;
+    }
 
-	public List<PromotionWeek> getPromotionWeeks() {
-		return promotionWeeks;
-	}
-	public void setPromotionWeeks(List<PromotionWeek> promotionWeeks) {
-		this.promotionWeeks = promotionWeeks;
-	}
+    public List<Tax> getTaxs() {
+        return taxs;
+    }
 
-	public List<PromotionOrder> getPromotionOrders() {
-		return promotionOrders;
-	}
+    public void setTaxs(List<Tax> taxs) {
+        this.taxs = taxs;
+    }
 
-	public void setPromotionOrders(List<PromotionOrder> promotionOrders) {
-		this.promotionOrders = promotionOrders;
-	}
+    public List<ItemPromotion> getItemPromotions() {
+        return itemPromotions;
+    }
 
-	public List<Promotion> getPromotions() {
-		return promotions;
-	}
+    public void setItemPromotions(List<ItemPromotion> itemPromotions) {
+        this.itemPromotions = itemPromotions;
+    }
 
-	public void setPromotions(List<Promotion> promotions) {
-		this.promotions = promotions;
-	}
+    public List<PromotionWeek> getPromotionWeeks() {
+        return promotionWeeks;
+    }
 
-	public List<ItemHappyHour> getItemHappyHours() {
-		return itemHappyHours;
-	}
+    public void setPromotionWeeks(List<PromotionWeek> promotionWeeks) {
+        this.promotionWeeks = promotionWeeks;
+    }
 
-	public void setItemHappyHours(List<ItemHappyHour> itemHappyHours) {
-		this.itemHappyHours = itemHappyHours;
-	}
+    public List<PromotionOrder> getPromotionOrders() {
+        return promotionOrders;
+    }
 
-	public List<HappyHourWeek> getHappyHourWeeks() {
-		if (happyHourWeeks == null)
-			return Collections.emptyList();
-		return happyHourWeeks;
-	}
+    public void setPromotionOrders(List<PromotionOrder> promotionOrders) {
+        this.promotionOrders = promotionOrders;
+    }
 
-	public void setHappyHourWeeks(List<HappyHourWeek> happyHourWeeks) {
-		this.happyHourWeeks = happyHourWeeks;
-	}
+    public List<Promotion> getPromotions() {
+        return promotions;
+    }
 
-	public List<HappyHour> getHappyHours() {
-		return happyHours;
-	}
+    public void setPromotions(List<Promotion> promotions) {
+        this.promotions = promotions;
+    }
 
-	public void setHappyHours(List<HappyHour> happyHours) {
-		this.happyHours = happyHours;
-	}
+    public List<ItemHappyHour> getItemHappyHours() {
+        return itemHappyHours;
+    }
 
-	public String getUserKey() {
-		return userKey;
-	}
+    public void setItemHappyHours(List<ItemHappyHour> itemHappyHours) {
+        this.itemHappyHours = itemHappyHours;
+    }
 
-	public void setUserKey(String userKey) {
-		this.userKey = userKey;
-	}
+    public List<HappyHourWeek> getHappyHourWeeks() {
+        if (happyHourWeeks == null)
+            return Collections.emptyList();
+        return happyHourWeeks;
+    }
 
-	public List<UserRestaurant> getUserRestaurant() {
-		return userRestaurant;
-	}
+    public void setHappyHourWeeks(List<HappyHourWeek> happyHourWeeks) {
+        this.happyHourWeeks = happyHourWeeks;
+    }
 
-	public void setUserRestaurant(List<UserRestaurant> userRestaurant) {
-		this.userRestaurant = userRestaurant;
-	}
+    public List<HappyHour> getHappyHours() {
+        return happyHours;
+    }
 
-	public List<KotNotification> getKotNotifications() {
-		return kotNotifications;
-	}
+    public void setHappyHours(List<HappyHour> happyHours) {
+        this.happyHours = happyHours;
+    }
 
-	public void setKotNotifications(List<KotNotification> notifications) {
-		this.kotNotifications = notifications;
-	}
+    public String getUserKey() {
+        return userKey;
+    }
 
-	public List<LocalDevice> getLocalDevices() {
-		return localDevices;
-	}
+    public void setUserKey(String userKey) {
+        this.userKey = userKey;
+    }
 
-	public LocalDevice getLocalDeviceById(int id) {
-		LocalDevice ret = null;
-		for (LocalDevice item : this.localDevices) {
-			if (item.getId() == id) {
-				ret = item;
-				break;
-			}
-		}
-		return ret;
-	}
+    public List<UserRestaurant> getUserRestaurant() {
+        return userRestaurant;
+    }
 
-	public LocalDevice getLocalDeviceByDeviceIdAndIP(int deviceId, String ip) {
-		LocalDevice ret = null;
-		for (LocalDevice item : this.localDevices) {
-			if (item.getDeviceId().intValue() == deviceId
-					&& item.getIp().equals(ip)) {
-				ret = item;
-				break;
-			}
-		}
-		return ret;
-	}
+    public void setUserRestaurant(List<UserRestaurant> userRestaurant) {
+        this.userRestaurant = userRestaurant;
+    }
 
-	public void setLocalDevices(List<LocalDevice> localDevices) {
-		this.localDevices = localDevices;
-	}
+    public List<KotNotification> getKotNotifications() {
+        return kotNotifications;
+    }
 
-	public void addLocalDevice(LocalDevice localDevice) {
-		LocalDeviceSQL.addLocalDevice(localDevice);
+    public void setKotNotifications(List<KotNotification> notifications) {
+        this.kotNotifications = notifications;
+    }
+
+    public List<LocalDevice> getLocalDevices() {
+        return localDevices;
+    }
+
+    public LocalDevice getLocalDeviceById(int id) {
+        LocalDevice ret = null;
+        for (LocalDevice item : this.localDevices) {
+            if (item.getId() == id) {
+                ret = item;
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public LocalDevice getLocalDeviceByDeviceIdAndIP(int deviceId, String ip) {
+        LocalDevice ret = null;
+        for (LocalDevice item : this.localDevices) {
+            if (item.getDeviceId().intValue() == deviceId
+                    && item.getIp().equals(ip)) {
+                ret = item;
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public void setLocalDevices(List<LocalDevice> localDevices) {
+        this.localDevices = localDevices;
+    }
+
+    public void addLocalDevice(LocalDevice localDevice) {
+        LocalDeviceSQL.addLocalDevice(localDevice);
 
 //		if (localDevices == null)
-			localDevices = LocalDeviceSQL.getAllLocalDevice();
+        localDevices = LocalDeviceSQL.getAllLocalDevice();
 
 //		boolean found = false;
 //		for (LocalDevice item : localDevices) {
@@ -1115,50 +1128,50 @@ public class CoreData {
 //		}
 //		if (!found)
 //			this.localDevices.add(localDevice);
-	}
+    }
 
-	public void removeLocalDeviceByDeviceIdAndIP(int deviceId, String ip) {
-		LocalDeviceSQL.deleteLocalDeviceByPrinterIdAndIP(deviceId, ip);
-		for (Iterator<LocalDevice> it = localDevices.listIterator(); it
-				.hasNext();) {
-			LocalDevice item = it.next();
-			if (item.getDeviceId().intValue() == deviceId
-					&& item.getIp().equals(ip)) {
-				it.remove();
-			}
-		}
-	}
+    public void removeLocalDeviceByDeviceIdAndIP(int deviceId, String ip) {
+        LocalDeviceSQL.deleteLocalDeviceByPrinterIdAndIP(deviceId, ip);
+        for (Iterator<LocalDevice> it = localDevices.listIterator(); it
+                .hasNext(); ) {
+            LocalDevice item = it.next();
+            if (item.getDeviceId().intValue() == deviceId
+                    && item.getIp().equals(ip)) {
+                it.remove();
+            }
+        }
+    }
 
-	public List<RestaurantConfig> getRestaurantConfigs() {
-		if(restaurantConfigs == null){
-			return Collections.emptyList();
-		}
-		return restaurantConfigs;
-	}
+    public List<RestaurantConfig> getRestaurantConfigs() {
+        if (restaurantConfigs == null) {
+            return Collections.emptyList();
+        }
+        return restaurantConfigs;
+    }
 
-	public void setRestaurantConfigs(List<RestaurantConfig> restaurantConfigs) {
-		this.restaurantConfigs = restaurantConfigs;
-	}
-	
-	public List<TaxCategory> getTaxCategoryGroup() {
-		List<TaxCategory> taxCategoryList = new ArrayList<TaxCategory>();
-		for(TaxCategory taxCategory : taxCategories){
-			if(IntegerUtils.isEmptyOrZero(taxCategory.getTaxCategoryId()) && IntegerUtils.isEmptyOrZero(taxCategory.getTaxId())){
-				taxCategoryList.add(taxCategory);
-			}
-		}
-		taxCategoryList.add(new TaxCategory());
-		return taxCategoryList;
-	}
+    public void setRestaurantConfigs(List<RestaurantConfig> restaurantConfigs) {
+        this.restaurantConfigs = restaurantConfigs;
+    }
 
-	public  List<TableInfo> getNewTableListByPlace(int placeId){
-		List<TableInfo> newTables = new ArrayList<TableInfo>();
-		for(TableInfo newTable : newTableList){
-			if(newTable.getPlacesId().intValue() == placeId){
-				newTables.add(newTable);
-			}
-		}
-		return newTables;
-	}
+    public List<TaxCategory> getTaxCategoryGroup() {
+        List<TaxCategory> taxCategoryList = new ArrayList<TaxCategory>();
+        for (TaxCategory taxCategory : taxCategories) {
+            if (IntegerUtils.isEmptyOrZero(taxCategory.getTaxCategoryId()) && IntegerUtils.isEmptyOrZero(taxCategory.getTaxId())) {
+                taxCategoryList.add(taxCategory);
+            }
+        }
+        taxCategoryList.add(new TaxCategory());
+        return taxCategoryList;
+    }
+
+    public List<TableInfo> getNewTableListByPlace(int placeId) {
+        List<TableInfo> newTables = new ArrayList<TableInfo>();
+        for (TableInfo newTable : newTableList) {
+            if (newTable.getPlacesId().intValue() == placeId) {
+                newTables.add(newTable);
+            }
+        }
+        return newTables;
+    }
 
 }

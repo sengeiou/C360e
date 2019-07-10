@@ -128,6 +128,7 @@ public class APIName {
      * 以kds作为服务器
      */
     public static final String SUBMIT_NEW_KOT = "submit_new_kot";
+    public static final String SUBMIT_TMP_KOT = "submit_tmp_kot";
 
     /**
      * 以waiter作为服务器

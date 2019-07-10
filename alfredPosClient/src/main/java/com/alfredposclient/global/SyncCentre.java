@@ -541,6 +541,14 @@ public class SyncCentre {
 
     }
 
+    public void syncSubmitTmpKotToKDS(KDSDevice kdsDevice, BaseActivity context,
+                                   Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_TMP_KOT);
+        HTTPKDSRequest.syncSubmitTmpKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
     public void syncTransferTable(KDSDevice kdsDevice, BaseActivity context,
                                   final Map<String, Object> parameters, Handler handler) {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_KOT);

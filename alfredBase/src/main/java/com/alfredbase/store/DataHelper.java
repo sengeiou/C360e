@@ -1640,7 +1640,12 @@ public class DataHelper {
 
 
         private void onUpgradeForOldVersion30(SQLiteDatabase db) {
-
+            db.execSQL("ALTER TABLE "
+                    + TableNames.PrinterGroup
+                    + " ADD COLUMN  printerType INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  currentKDSId INTEGER default 0");
         }
     }
 }

@@ -2,259 +2,269 @@ package com.alfredbase.javabean;
 
 import java.io.Serializable;
 
-public class KotItemDetail implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6754950186409258464L;
+public class KotItemDetail implements Serializable {
 
-	private Integer id;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 6754950186409258464L;
 
-	private Integer restaurantId;
+    private Integer id;
 
-	private Integer revenueId;
+    private Integer restaurantId;
 
-	private Integer orderId;
+    private Integer revenueId;
 
-	private Integer orderDetailId;
-	
-	private Integer printerGroupId;
-	
-	private Integer kotSummaryId;
+    private Integer orderId;
 
-	private String itemName;
+    private Integer orderDetailId;
 
-	private Integer itemNum;
-	//	当前 提交pos机的菜的数量
-	private Integer finishQty;
+    private Integer printerGroupId;
 
-	private Integer sessionStatus;
-	/**
-	 * 0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
-	 */
-	private Integer kotStatus;
+    private Integer kotSummaryId;
 
-	private String specialInstractions;
+    private String itemName;
 
-	private Integer version;
+    private Integer itemNum;
+    //	当前 提交pos机的菜的数量
+    private Integer finishQty;
 
-	private Long createTime;
+    private Integer sessionStatus;
+    /**
+     * 0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
+     */
+    private Integer kotStatus;
 
-	private Long updateTime;
-	//	剩余没有做的菜的数量
-	private Integer unFinishQty;
-	
-	private Integer categoryId;
-	
-	/**
-	 * 是否外带(0不外带、1外带)
-	 */
-	private int isTakeAway;
+    private String specialInstractions;
 
-	private int fireStatus;
+    private Integer version;
 
-	/**
-	 * (0未叫号、1已叫号)
-	 */
-	private  int callType;
+    private Long createTime;
 
-	public KotItemDetail() {
-	}
+    private Long updateTime;
+    //	剩余没有做的菜的数量
+    private Integer unFinishQty;
 
-	public int getCallType() {
-		return callType;
-	}
+    private Integer categoryId;
 
-	public void setCallType(int callType) {
-		this.callType = callType;
-	}
+    /**
+     * 是否外带(0不外带、1外带)
+     */
+    private int isTakeAway;
 
-	public Integer getId() {
-		return id;
-	}
+    private int fireStatus;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    /**
+     * (0未叫号、1已叫号)
+     */
+    private int callType;
 
-	public Integer getRestaurantId() {
-		return restaurantId;
-	}
+    private Integer currentKDSId;
 
-	public void setRestaurantId(Integer restaurantId) {
-		this.restaurantId = restaurantId;
-	}
+    public KotItemDetail() {
+    }
 
-	public Integer getRevenueId() {
-		return revenueId;
-	}
+    public int getCallType() {
+        return callType;
+    }
 
-	public void setRevenueId(Integer revenueId) {
-		this.revenueId = revenueId;
-	}
+    public void setCallType(int callType) {
+        this.callType = callType;
+    }
 
-	public Integer getOrderId() {
-		return orderId;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setOrderId(Integer orderId) {
-		this.orderId = orderId;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Integer getOrderDetailId() {
-		return orderDetailId;
-	}
+    public Integer getRestaurantId() {
+        return restaurantId;
+    }
 
-	public void setOrderDetailId(Integer orderDetailId) {
-		this.orderDetailId = orderDetailId;
-	}
-	
-	public Integer getPrinterGroupId() {
-		return printerGroupId;
-	}
+    public void setRestaurantId(Integer restaurantId) {
+        this.restaurantId = restaurantId;
+    }
 
-	public void setPrinterGroupId(Integer printerGroupId) {
-		if (printerGroupId == null) 
-			printerGroupId = 0;
-		this.printerGroupId = printerGroupId;
-	}
+    public Integer getRevenueId() {
+        return revenueId;
+    }
 
-	public Integer getKotSummaryId() {
-		return kotSummaryId;
-	}
+    public void setRevenueId(Integer revenueId) {
+        this.revenueId = revenueId;
+    }
 
-	public void setKotSummaryId(Integer kotSummaryId) {
-		this.kotSummaryId = kotSummaryId;
-	}
+    public Integer getOrderId() {
+        return orderId;
+    }
 
-	public String getItemName() {
-		return itemName;
-	}
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
+    public Integer getOrderDetailId() {
+        return orderDetailId;
+    }
 
-	public Integer getItemNum() {
-		return itemNum;
-	}
+    public void setOrderDetailId(Integer orderDetailId) {
+        this.orderDetailId = orderDetailId;
+    }
 
-	public void setItemNum(Integer itemNum) {
-		this.itemNum = itemNum;
-	}
+    public Integer getPrinterGroupId() {
+        return printerGroupId;
+    }
 
-	public Integer getFinishQty() {
-		return finishQty;
-	}
+    public void setPrinterGroupId(Integer printerGroupId) {
+        if (printerGroupId == null)
+            printerGroupId = 0;
+        this.printerGroupId = printerGroupId;
+    }
 
-	public void setFinishQty(Integer finishQty) {
-		this.finishQty = finishQty;
-	}
+    public Integer getKotSummaryId() {
+        return kotSummaryId;
+    }
 
-	public Integer getSessionStatus() {
-		return sessionStatus;
-	}
+    public void setKotSummaryId(Integer kotSummaryId) {
+        this.kotSummaryId = kotSummaryId;
+    }
 
-	public void setSessionStatus(Integer sessionStatus) {
-		this.sessionStatus = sessionStatus;
-	}
+    public String getItemName() {
+        return itemName;
+    }
 
-	public Integer getKotStatus() {
-		return kotStatus;
-	}
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
 
-	public void setKotStatus(Integer kotStatus) {
-		this.kotStatus = kotStatus;
-	}
+    public Integer getItemNum() {
+        return itemNum;
+    }
 
-	public String getSpecialInstractions() {
-		return specialInstractions;
-	}
+    public void setItemNum(Integer itemNum) {
+        this.itemNum = itemNum;
+    }
 
-	public void setSpecialInstractions(String specialInstractions) {
-		this.specialInstractions = specialInstractions;
-	}
+    public Integer getFinishQty() {
+        return finishQty;
+    }
 
-	public Integer getVersion() {
-		return version;
-	}
+    public void setFinishQty(Integer finishQty) {
+        this.finishQty = finishQty;
+    }
 
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+    public Integer getSessionStatus() {
+        return sessionStatus;
+    }
 
-	public Long getCreateTime() {
-		return createTime;
-	}
+    public void setSessionStatus(Integer sessionStatus) {
+        this.sessionStatus = sessionStatus;
+    }
 
-	public void setCreateTime(Long createTime) {
-		this.createTime = createTime;
-	}
+    public Integer getKotStatus() {
+        return kotStatus;
+    }
 
-	public Long getUpdateTime() {
-		return updateTime;
-	}
+    public void setKotStatus(Integer kotStatus) {
+        this.kotStatus = kotStatus;
+    }
 
-	public void setUpdateTime(Long updateTime) {
-		this.updateTime = updateTime;
-	}
+    public String getSpecialInstractions() {
+        return specialInstractions;
+    }
 
-	public Integer getUnFinishQty() {
-		return unFinishQty;
-	}
+    public void setSpecialInstractions(String specialInstractions) {
+        this.specialInstractions = specialInstractions;
+    }
 
-	public void setUnFinishQty(Integer unFinishQty) {
-		this.unFinishQty = unFinishQty;
-	}
+    public Integer getVersion() {
+        return version;
+    }
 
-	public Integer getCategoryId() {
-		return categoryId;
-	}
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
-	}
+    public Long getCreateTime() {
+        return createTime;
+    }
 
-	public int getIsTakeAway() {
-		return isTakeAway;
-	}
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
+    }
 
-	public void setIsTakeAway(int isTakeAway) {
-		this.isTakeAway = isTakeAway;
-	}
+    public Long getUpdateTime() {
+        return updateTime;
+    }
 
-	public int getFireStatus() {
-		return fireStatus;
-	}
+    public void setUpdateTime(Long updateTime) {
+        this.updateTime = updateTime;
+    }
 
-	public void setFireStatus(int fireStatus) {
-		this.fireStatus = fireStatus;
-	}
+    public Integer getUnFinishQty() {
+        return unFinishQty;
+    }
 
-	@Override
-	public String toString() {
-		return "KotItemDetail{" +
-				"id=" + id +
-				", restaurantId=" + restaurantId +
-				", revenueId=" + revenueId +
-				", orderId=" + orderId +
-				", orderDetailId=" + orderDetailId +
-				", printerGroupId=" + printerGroupId +
-				", kotSummaryId=" + kotSummaryId +
-				", itemName='" + itemName + '\'' +
-				", itemNum=" + itemNum +
-				", finishQty=" + finishQty +
-				", sessionStatus=" + sessionStatus +
-				", kotStatus=" + kotStatus +
-				", specialInstractions='" + specialInstractions + '\'' +
-				", version=" + version +
-				", createTime=" + createTime +
-				", updateTime=" + updateTime +
-				", unFinishQty=" + unFinishQty +
-				", categoryId=" + categoryId +
-				", isTakeAway=" + isTakeAway +
-				", fireStatus=" + fireStatus +
-				'}';
-	}
+    public void setUnFinishQty(Integer unFinishQty) {
+        this.unFinishQty = unFinishQty;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public int getIsTakeAway() {
+        return isTakeAway;
+    }
+
+    public void setIsTakeAway(int isTakeAway) {
+        this.isTakeAway = isTakeAway;
+    }
+
+    public int getFireStatus() {
+        return fireStatus;
+    }
+
+    public void setFireStatus(int fireStatus) {
+        this.fireStatus = fireStatus;
+    }
+
+    public Integer getCurrentKDSId() {
+        return currentKDSId;
+    }
+
+    public void setCurrentKDSId(Integer currentKDSId) {
+        this.currentKDSId = currentKDSId;
+    }
+
+    @Override
+    public String toString() {
+        return "KotItemDetail{" +
+                "id=" + id +
+                ", restaurantId=" + restaurantId +
+                ", revenueId=" + revenueId +
+                ", orderId=" + orderId +
+                ", orderDetailId=" + orderDetailId +
+                ", printerGroupId=" + printerGroupId +
+                ", kotSummaryId=" + kotSummaryId +
+                ", itemName='" + itemName + '\'' +
+                ", itemNum=" + itemNum +
+                ", finishQty=" + finishQty +
+                ", sessionStatus=" + sessionStatus +
+                ", kotStatus=" + kotStatus +
+                ", specialInstractions='" + specialInstractions + '\'' +
+                ", version=" + version +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", unFinishQty=" + unFinishQty +
+                ", categoryId=" + categoryId +
+                ", isTakeAway=" + isTakeAway +
+                ", fireStatus=" + fireStatus +
+                '}';
+    }
 }
