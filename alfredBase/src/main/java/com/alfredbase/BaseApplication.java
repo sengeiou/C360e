@@ -19,12 +19,10 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
-import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
-import com.bugsee.library.Bugsee;
 import com.floatwindow.float_lib.FloatActionController;
 import com.moonearly.utils.service.TcpUdpFactory;
 import com.moonearly.utils.service.UdpServiceCallBack;
@@ -37,7 +35,6 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
