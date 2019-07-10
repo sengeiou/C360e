@@ -491,6 +491,9 @@ public class ObjectFactory {
                 }
                 order.setSubPosBeanId(subPosBeanId);
                 OrderSQL.addOrder(order);
+            }else if (order.getPersons().intValue() != pack){
+                order.setPersons(pack);
+                OrderSQL.updateOrderPersions(pack,order.getId());
             }
         }
         return order;
