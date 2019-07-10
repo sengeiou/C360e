@@ -259,14 +259,13 @@ public class KotJob extends Job {
                             KotItemDetail kotItemDetail = KotItemDetailSQL
                                     .getMainKotItemDetailByOrderDetailId(kotsmy.getId(), orderDetailIds
                                             .get(i));
-//						kotItemDetail
-//								.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
                             orderDetails.add(orderDetail);
                             kotItemDetails.add(kotItemDetail);
                         }
                         CPOrderDetailSQL.addOrderDetailList(orderDetails);
                         KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
-                        context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
+                        if (context != null)
+                            context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
                     } else {
                         for (int i = 0; i < orderDetailIds.size(); i++) {
                             OrderDetail orderDetail = OrderDetailSQL
@@ -281,7 +280,8 @@ public class KotJob extends Job {
                         }
                         OrderDetailSQL.addOrderDetailList(orderDetails);
                         KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
-                        context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
+                        if (context != null)
+                            context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
                     }
                 }
             }

@@ -55,6 +55,10 @@ public class KotJobManager {
         this.kotJobManager = new JobManager(this.context, kotconfiguration);
     }
 
+    public void sendKOTToNextKDS() {
+
+    }
+
     public void sendKOTTmpToKDS(KotSummary kotSummary,
                                 ArrayList<KotItemDetail> kotItemDetails, ArrayList<KotItemModifier> modifiers,
                                 String method, Map<String, Object> orderMap) {
@@ -245,26 +249,27 @@ public class KotJobManager {
                     .getPrintersInGroup(prgid.intValue());
             for (Printer prnt : printers) {
                 // KDS device
-                KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
+                KDSDevice kdsDevice = App.instance.getKDSDevice(prnt.getId());
                 // physical printer
-                PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
+                PrinterDevice printerDevice = App.instance.getPrinterDeviceById(prnt
                         .getId());
-                if (kds1 == null && prntd == null) {
-                    context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
+                if (kdsDevice == null && printerDevice == null) {
+                    if (context != null)
+                        context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
                     return;
                 }
-                if (kds1 != null) {
-                    KotJob kotjob = new KotJob(kds1, kotSummary,
+                if (kdsDevice != null) {
+                    KotJob kotjob = new KotJob(kdsDevice, kotSummary,
                             kots.get(prgid), mods.get(prgid), method, orderMap);
                     kotJobManager.addJob(kotjob);
                 }
-                if (prntd != null) {
-                    prntd.setGroupId(prgid.intValue());
+                if (printerDevice != null) {
+                    printerDevice.setGroupId(prgid.intValue());
 
                     boolean printed = false;
 
-                    if ((!prntd.getIP().contains(":") && !prntd.getIP().contains(",")) || prntd.getIsLablePrinter() != 1) {
-                        printed = App.instance.remoteKotPrint(prntd,
+                    if ((!printerDevice.getIP().contains(":") && !printerDevice.getIP().contains(",")) || printerDevice.getIsLablePrinter() != 1) {
+                        printed = App.instance.remoteKotPrint(printerDevice,
                                 kotSummary, kots.get(prgid), mods.get(prgid), false);
 
                         if (printed) {

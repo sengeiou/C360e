@@ -2,14 +2,14 @@ package com.alfredbase.javabean;
 
 import java.io.Serializable;
 
-public class Printer implements Serializable{
+public class Printer implements Serializable {
 
-	/**
-	 * Printer and PrintGroup name use same DB
-	 */
-	private static final long serialVersionUID = -4652260147089403168L;
+    /**
+     * Printer and PrintGroup name use same DB
+     */
+    private static final long serialVersionUID = -4652260147089403168L;
 
-	private Integer id;
+    private Integer id;
 
     private String printerGroupName; //printer name
 
@@ -19,7 +19,7 @@ public class Printer implements Serializable{
 
     /**
      * Printer Type
-     * 0 = Assembly Line
+     * 0 = sub kds
      * 1 = Kitchen Assembly point
      */
     private String printerType;
@@ -41,6 +41,7 @@ public class Printer implements Serializable{
     public void setIsLablePrinter(Integer isLablePrinter) {
         this.isLablePrinter = isLablePrinter;
     }
+
     /* 0票据 1标签*/
     private Integer isLablePrinter;
 
@@ -97,17 +98,17 @@ public class Printer implements Serializable{
     }
 
     public Integer getIsCashdrawer() {
-    	if (isCashdrawer==null) {
-    		this.isCashdrawer = 0;
-    	}
+        if (isCashdrawer == null) {
+            this.isCashdrawer = 0;
+        }
         return isCashdrawer;
     }
 
     public void setIsCashdrawer(Integer isCashdrawer) {
-    	if(isCashdrawer == null)
-    		this.isCashdrawer = 0;
-    	else
-           this.isCashdrawer = isCashdrawer;
+        if (isCashdrawer == null)
+            this.isCashdrawer = 0;
+        else
+            this.isCashdrawer = isCashdrawer;
     }
 
     public Integer getCompanyId() {
@@ -149,15 +150,15 @@ public class Printer implements Serializable{
     public void setUpdateTime(Long updateTime) {
         this.updateTime = updateTime;
     }
-    
+
     @Override
-	public String toString() {
-		return "Printer [id=" + id + ", printerGroupName=" + printerGroupName
-				+ ", printerName=" + printerName + ", printerLocation="
-				+ printerLocation + ", printerType=" + printerType
-				+ ", qPrint=" + qPrint + ", isCashdrawer=" + isCashdrawer
-				+ ", companyId=" + companyId + ", restaurantId=" + restaurantId
-				+ ", type=" + type + ", createTime=" + createTime
-				+ ", updateTime=" + updateTime + "]";
-	}
+    public String toString() {
+        return "Printer [id=" + id + ", printerGroupName=" + printerGroupName
+                + ", printerName=" + printerName + ", printerLocation="
+                + printerLocation + ", printerType=" + printerType
+                + ", qPrint=" + qPrint + ", isCashdrawer=" + isCashdrawer
+                + ", companyId=" + companyId + ", restaurantId=" + restaurantId
+                + ", type=" + type + ", createTime=" + createTime
+                + ", updateTime=" + updateTime + "]";
+    }
 }

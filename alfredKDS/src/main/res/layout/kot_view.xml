@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="340dp"
     android:layout_height="fill_parent"
-    android:background="@color/white" >
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/ll_blank_left"
@@ -11,20 +11,19 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@color/white"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:orientation="vertical"></LinearLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_toLeftOf="@+id/ll_blank_right"
         android:layout_toRightOf="@+id/ll_blank_left"
-        android:background="@drawable/bg_kitchen_order" >
+        android:background="@drawable/bg_kitchen_order">
 
         <RelativeLayout
             android:id="@+id/ll_kot_info"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tv_kotId"
@@ -37,8 +36,8 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small"
                 android:visibility="gone" />
-            
-             <TextView
+
+            <TextView
                 android:id="@+id/tv_table"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -47,7 +46,7 @@
                 android:padding="5dp"
                 android:text="Table"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_size_small"/>
+                android:textSize="@dimen/text_size_small" />
 
             <TextView
                 android:id="@+id/tv_order_id"
@@ -59,14 +58,14 @@
                 android:text="Order ID"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_s"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/ll_table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_table"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tv_kiosk_order_id"
@@ -98,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ll_table"
 
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tv_kiosk_app_order_id"
@@ -122,6 +121,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_pos"
                 android:layout_width="match_parent"
@@ -156,8 +156,8 @@
                 android:id="@+id/ll_orderRemark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_below="@+id/ll_pos"
+                android:orientation="horizontal"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:paddingBottom="5dp">
@@ -167,18 +167,18 @@
                     android:id="@+id/tv_orderremark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Order remark:"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_s"
-                    android:scrollbars="vertical"
-                    android:singleLine="false"
-                    android:maxLines="3"
+                    android:isScrollContainer="true"
                     android:lineSpacingExtra="3dp"
+                    android:maxLines="3"
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
-                    android:isScrollContainer="true"
+                    android:scrollbarFadeDuration="3000"
                     android:scrollbarStyle="outsideOverlay"
-                    android:scrollbarFadeDuration="3000"/>
+                    android:scrollbars="vertical"
+                    android:singleLine="false"
+                    android:text="Order remark:"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_s" />
 
             </LinearLayout>
 
@@ -191,46 +191,46 @@
             android:layout_alignParentBottom="true"
             android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/ll_progress"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/color_kotview"
-            android:gravity="center" >
+            <RelativeLayout
+                android:id="@+id/ll_progress"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/color_kotview"
+                android:gravity="center">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/tv_progress"
-                android:src="@drawable/icon_clock"
-                android:layout_marginRight="8dp"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@+id/tv_progress"
+                    android:src="@drawable/icon_clock" />
 
-            <Chronometer
-                android:id="@+id/tv_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_s"
-                android:layout_centerInParent="true"/>
+                <Chronometer
+                    android:id="@+id/tv_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_s" />
 
-            <TextView
-                android:id="@+id/tv_complete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Complete"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_s"
-                android:layout_centerInParent="true"
-                android:visibility="gone" />
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_complete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="Complete"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_s"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/black"/>
+                android:background="@color/black" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -242,25 +242,36 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:text="Complete All"
                     android:gravity="center"
-                    android:textSize="16sp"/>
+                    android:text="Complete All"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/black"/>
+                    android:background="@color/black" />
 
                 <TextView
                     android:id="@+id/call_num_tv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:gravity="center"
                     android:text="Call"
-                    android:textSize="16sp"
                     android:textColor="@color/white"
-                    android:gravity="center"/>
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvNext"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Next"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -291,8 +302,7 @@
             android:layout_above="@+id/linear_progress"
             android:layout_below="@+id/ll_kot_info"
 
-            >
-        </ListView>
+            ></ListView>
 
         <View
             android:layout_width="match_parent"
@@ -311,10 +321,9 @@
         android:id="@+id/ll_blank_right"
         android:layout_width="15dp"
         android:layout_height="fill_parent"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
         android:background="@color/white"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:orientation="vertical"></LinearLayout>
 
 </RelativeLayout>
