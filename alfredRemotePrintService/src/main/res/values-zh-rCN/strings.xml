@@ -7,6 +7,8 @@
     <string name="swift_no_">订单号</string>
     <string name="bill_no_">账单号</string>
     <string name="cashier">收银员</string>
+    <string name="train">培训</string>
+    <string name="mode">模式</string>
     <string name="groupnum">分单号</string>
 
     <string name="pos">收银台</string>
@@ -14,6 +16,7 @@
     <string name="table">台号</string>
     <string name="pax">人数</string>
     <string name="item">菜名</string>
+    <string name="training">.培训</string>
     <string name="price">价格</string>
     <string name="qty">数量</string>
     <string name="total">总计</string>

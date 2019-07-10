@@ -207,7 +207,6 @@ public class OrderSQL {
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);
 		OrderHelper.setPromotion(order);
-
 		OrderHelper.setOrderInclusiveTaxPrice(order);
 		List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
 		if(orderSplits != null && orderSplits.size() > 0){

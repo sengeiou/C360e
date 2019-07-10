@@ -15,8 +15,10 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -28,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -115,6 +118,7 @@ import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.NetworkUtils;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
+import com.floatwindow.float_lib.FloatActionController;
 import com.google.gson.Gson;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.umeng.analytics.MobclickAgent;
@@ -189,7 +193,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	private int size;
 	private Observable<Integer> observable;
 	private Observable<Object> observable1;
+	private Observable<Object> observable2;
 	private VerifyDialog verifyDialog;
+	private static final int OVERLAY_PERMISSION_REQ_CODE = 0x001;
+	int train;
+	private Boolean isTrain=true;
 //	private RelativeLayout rl_view_bg1;
 //	private ImageView iv_view_icon1;
 //	private RelativeLayout rl_view_bg2;
@@ -249,6 +257,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	protected void initView() {
 		super.initView();
 		setContentView(R.layout.activity_open_restaruant);
+		 train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
 		BH.initFormart( App.instance.getLocalRestaurantConfig().getFormatType());
 		if(App.instance.isRevenueKiosk()) {
 			PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
@@ -524,9 +533,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //		if (!App.instance.getXmppThread().isAlive()) {
 //			App.instance.getXmppThread().start();
 //		}
-
-		//BH.initFormart(getL);
 	}
+
+
 
 	@Override
 	protected void onStart() {
@@ -629,10 +638,36 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		((TextView) findViewById(R.id.tv_now_min)).setText(preciseTimeUtil
 				.getMin());
 	}
-
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+//		 PopupWindowHelper popupWindowHelper;
+//		 View popView;
+//		popView = LayoutInflater.from(this).inflate(R.layout.popupview, null);
+//		popupWindowHelper = new PopupWindowHelper(popView);
+
+				//		TrainToast.getInstance().init(App.instance);
+//		TrainToast.getInstance().createToast("","");
+//	    TrainToast trainToast=new TrainToast(this);
+//	    trainToast.showToast();
+//
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//			if (!Settings.canDrawOverlays(this)) {
+//				Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//						Uri.parse("package:" + getPackageName()));
+//				startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+//			}
+//		}
+	//	hasPermission(this);
+
+
+//		boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
+//		//有对应权限或者系统版本小于7.0
+//		if (isPermission || Build.VERSION.SDK_INT < 24) {
+//		//	开启悬浮窗
+//			FloatActionController.getInstance().startMonkServer(this);
+	//	}
 		App.instance.showWelcomeToSecondScreen();
 		if (mDrawerLayout.isDrawerOpen(mSettingView)) {
 			mDrawerLayout.closeDrawer(Gravity.END);
@@ -657,37 +692,39 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		}
 		SessionStatus sessionStatus = Store.getObject(
 				context, Store.SESSION_STATUS, SessionStatus.class);
-		
+
 		if(sessionStatus == null){
 			mSettingView.initOptionsNoSessionOpen();
 		}else{
 			mSettingView.initOptionsSessionOpen();
 		}
 		doubleBackToExitPressedOnce = false;
-		
+
 		if (sessionStatus != null){
 				//check session data sync
 				long now = (new Date()).getTime();
 				int hh = TimeUtil.getHourDifference(now, sessionStatus.getTime());
 				if (Math.abs(hh)>=12) {
-				DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.warning), 
-						context.getResources().getString(R.string.session_time_out), 
-						context.getResources().getString(R.string.cancel), 
-						context.getResources().getString(R.string.ok), 
+				DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.warning),
+						context.getResources().getString(R.string.session_time_out),
+						context.getResources().getString(R.string.cancel),
+						context.getResources().getString(R.string.ok),
 						null,
 						new OnClickListener(){
-		
+
 							@Override
 							public void onClick(View arg0) {
 								//handler.sendMessage(handler.obtainMessage(OPEN_RESTAURANT, null));
 								//Close Session
-								
+
 							}
 						}
 					);
 				}
 		}
 	}
+
+
 
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -975,7 +1012,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		}).start();
 
 	}
-
+	String actual = "0.00";
 	private void closeAction(final View v) {
 		ObjectAnimator animator1 = null;
 		ObjectAnimator animator2 = null;
@@ -1040,90 +1077,121 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			public void onAnimationEnd(Animator animation) {
 				super.onAnimationEnd(animation);
 				rl_closerestbg.setVisibility(View.VISIBLE);
+				if(!ButtonClickTimer.canClick(v))
+					return;
 
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						                 
-						SessionStatus sessionStatus = Store.getObject(
-								context, Store.SESSION_STATUS, SessionStatus.class);
-						if(sessionStatus == null){
-							dismissPrinterLoadingDialog();
-							return;
-						}
-						int canClose = CAN_CLOSE;
-						if(App.instance.getCahierPrinter() == null){
-							handler.sendMessage(handler.obtainMessage(PRINTER_UNLINK, v));
-							return;
-						}
-						if (App.instance.isRevenueKiosk()) {
-							long nowTime = System.currentTimeMillis();
-							List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate(), nowTime);
-							if(!orderList.isEmpty()){
-								for (final Order order : orderList) {
-									List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
-											.getOrderDetails(order.getId());
-									if (!orderDetailsUnIncludeVoid.isEmpty()){
-										canClose = CAN_NOT_CLOSE;
-										break;
-									} else {
-//										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
-//										OrderSQL.deleteOrder(order);
-										GeneralSQL.deleteOrderAndInforByOrderId(order.getId());
-									}
+				if(!isShowingActualDialog) {
+					isShowingActualDialog = true;
+					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									actual = "0.00";
+									isShowingActualDialog = false;
+									closeSessionThread(v);
 								}
-							}
-							if(canClose == CAN_CLOSE) {
-								List<SubPosBean> subPosBeans = SubPosBeanSQL.getAllOpenSubPosBean();
-								if (subPosBeans != null && subPosBeans.size() > 0){
-									canClose = CAN_NOT_CLOSE_SUB;
+							},
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									EditText editText = (EditText) view;
+									actual = editText.getText().toString();
+									isShowingActualDialog = false;
+									closeSessionThread(v);
 								}
-							}
-						} else {
-							List<TableInfo> tables = TableInfoSQL.getAllUsedTables();
-							for (TableInfo table : tables) {
-								Order order = OrderSQL
-										.getLastOrderatTabel(table.getPosId().intValue());
-								if (order != null
-										&& order.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
-									List<OrderDetail> orderDetailsIncludeVoid = OrderDetailSQL
-											.getAllOrderDetailsByOrder(order);
-									if (orderDetailsIncludeVoid.isEmpty()) {
-										OrderSQL.deleteOrder(order);
-										OrderBillSQL
-												.deleteOrderBillByOrder(order);
-										table.setStatus(ParamConst.TABLE_STATUS_IDLE);
-//										TablesSQL.updateTables(table);
-										TableInfoSQL.updateTables(table);
-									} else {
-										List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
-												.getOrderDetails(order.getId());
-										if (orderDetailsUnIncludeVoid.isEmpty()) {
-											order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
-											OrderSQL.update(order);
-											table.setStatus(ParamConst.TABLE_STATUS_IDLE);
-//											TablesSQL.updateTables(table);
-											TableInfoSQL.updateTables(table);
-										} else {
-											canClose = CAN_NOT_CLOSE;
-										}
-									}
-								} else {
-									table.setStatus(ParamConst.TABLE_STATUS_IDLE);
-//									TablesSQL.updateTables(table);
-									TableInfoSQL.updateTables(table);
-								}
-							}
-						}
-							handler.sendMessage(handler.obtainMessage(canClose, v));
-					}
-				}).start();
+							});
+				}
 			}
 		});
 		set.playTogether(animator1, animator2);
 		set.start();
-		
+
+	}
+
+
+	private void closeSessionThread(final View v){
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				SessionStatus sessionStatus = Store.getObject(
+						context, Store.SESSION_STATUS, SessionStatus.class);
+				if(sessionStatus == null){
+					dismissPrinterLoadingDialog();
+					return;
+				}
+				int canClose = CAN_CLOSE;
+				if(App.instance.getCahierPrinter() == null){
+					handler.sendMessage(handler.obtainMessage(PRINTER_UNLINK, v));
+					return;
+				}
+				if (App.instance.isRevenueKiosk()) {
+					long nowTime = System.currentTimeMillis();
+					List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate(), nowTime);
+					if(!orderList.isEmpty()){
+						for (final Order order : orderList) {
+							List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+									.getOrderDetails(order.getId());
+							if (!orderDetailsUnIncludeVoid.isEmpty()){
+								canClose = CAN_NOT_CLOSE;
+								break;
+							} else {
+//										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
+//										OrderSQL.deleteOrder(order);
+								GeneralSQL.deleteOrderAndInforByOrderId(order.getId());
+							}
+						}
+					}
+					if(canClose == CAN_CLOSE) {
+						List<SubPosBean> subPosBeans = SubPosBeanSQL.getAllOpenSubPosBean();
+						if (subPosBeans != null && subPosBeans.size() > 0){
+							canClose = CAN_NOT_CLOSE_SUB;
+						}
+					}
+				} else {
+					List<TableInfo> tables = TableInfoSQL.getAllUsedTables();
+					for (TableInfo table : tables) {
+						Order order = OrderSQL
+								.getLastOrderatTabel(table.getPosId().intValue());
+						if (order != null
+								&& order.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
+							List<OrderDetail> orderDetailsIncludeVoid = OrderDetailSQL
+									.getAllOrderDetailsByOrder(order);
+							if (orderDetailsIncludeVoid.isEmpty()) {
+								OrderSQL.deleteOrder(order);
+								OrderBillSQL
+										.deleteOrderBillByOrder(order);
+								table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//										TablesSQL.updateTables(table);
+								TableInfoSQL.updateTables(table);
+							} else {
+								List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+										.getOrderDetails(order.getId());
+								if (orderDetailsUnIncludeVoid.isEmpty()) {
+									order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+									OrderSQL.update(order);
+									table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//											TablesSQL.updateTables(table);
+									TableInfoSQL.updateTables(table);
+								} else {
+									canClose = CAN_NOT_CLOSE;
+								}
+							}
+						} else {
+							table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+//									TablesSQL.updateTables(table);
+							TableInfoSQL.updateTables(table);
+						}
+					}
+				}
+				if(canClose == CAN_CLOSE) {
+					handler.sendMessage(handler.obtainMessage(canClose, actual));
+				}else{
+					handler.sendMessage(handler.obtainMessage(canClose, v));
+				}
+			}
+		}).start();
 	}
 
 	private void sendXPrintData(Map<String, Object> xReport,long businessDate,
@@ -1160,7 +1228,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						App.instance.getRevenueCenter().getId(),
 						"X"+reportDaySales.getReportNoStr(),
 						App.instance.getUser().getFirstName()
-								+ App.instance.getUser().getLastName(), null,bizDate);
+								+ App.instance.getUser().getLastName(), null,bizDate,App.instance.getSystemSettings().getTrainType());
 
 		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
@@ -1262,7 +1330,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 						App.instance.getRevenueCenter().getId(),
 						"Z"+reportDaySales.getReportNoStr(),
 						App.instance.getUser().getFirstName()
-								+ App.instance.getUser().getLastName(), null,bizDate);
+								+ App.instance.getUser().getLastName(), null,bizDate,App.instance.getSystemSettings().getTrainType());
 
 		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
@@ -1547,11 +1615,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			final Long businessDate = TimeUtil.getNewBusinessDate();
 			App.instance.deleteOldPrinterMsg(businessDate);
 			String bizYmd = TimeUtil.getYMD(businessDate);
-			int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
-           if(train==-2){
+			train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+           if(train==-1){
           // 0  正常模式， 1 培训模式
-			   DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
-					   "开启培训模式？",
+			   DialogFactory.commonTwoBtnDialog(context, "",
+					   "Opening Training Mode？",
 					   context.getResources().getString(R.string.cancel),
 					   context.getResources().getString(R.string.ok),
 					   new OnClickListener() {
@@ -1837,27 +1905,29 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
 			case CAN_CLOSE: {
-				if(!isShowingActualDialog) {
-					isShowingActualDialog = true;
-					final View msgView = (View) msg.obj;
-					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
-							new OnClickListener() {
-								@Override
-								public void onClick(View view) {
-									close(msgView, "0.00");
-									isShowingActualDialog = false;
-								}
-							},
-							new OnClickListener() {
-								@Override
-								public void onClick(View view) {
-									EditText editText = (EditText) view;
-									String actual = editText.getText().toString();
-									close(msgView, actual);
-									isShowingActualDialog = false;
-								}
-							});
-				}
+				String actual = (String) msg.obj;
+				close(actual);
+//				if(!isShowingActualDialog) {
+//					isShowingActualDialog = true;
+//					final View msgView = (View) msg.obj;
+//					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+//							new OnClickListener() {
+//								@Override
+//								public void onClick(View view) {
+//									close(msgView, "0.00");
+//									isShowingActualDialog = false;
+//								}
+//							},
+//							new OnClickListener() {
+//								@Override
+//								public void onClick(View view) {
+//									EditText editText = (EditText) view;
+//									String actual = editText.getText().toString();
+//									close(msgView, actual);
+//									isShowingActualDialog = false;
+//								}
+//							});
+//				}
 			}
 				break;
 			case CAN_NOT_CLOSE:{
@@ -2202,6 +2272,20 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+				case OVERLAY_PERMISSION_REQ_CODE:
+//					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//						if (!Settings.canDrawOverlays(this)) {
+//							Toast.makeText(OpenRestaruant.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+//						} else {
+//							// TODO: 18/1/7 已经授权
+//						}
+//					}
+					break;
+			}
+		}
 		BaseApplication.postHandler.postDelayed(new Runnable() {
 
 			@Override
@@ -2220,6 +2304,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	@Override
 	public void onBackPressed() {
 	    if (doubleBackToExitPressedOnce) {
+			FloatActionController.getInstance().stopMonkServer(context);
 	        super.onBackPressed();
 	        return;
 	    }

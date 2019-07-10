@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.LoginResult;
@@ -47,6 +49,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.floatwindow.float_lib.FloatActionController;
 import com.google.gson.Gson;
 import com.umeng.analytics.MobclickAgent;
 
@@ -63,8 +66,9 @@ public class Welcome extends BaseActivity {
 	private int size = 0;
 	private PackageInfo pi;
 	@Override
-	protected void initView() {
-		super.initView();
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		initviewWelcom();
 		ScreenSizeUtil.initScreenScale(context);
 		rootView = LayoutInflater.from(context).inflate(
 				R.layout.activity_welcome, null);
@@ -102,6 +106,13 @@ public class Welcome extends BaseActivity {
 		filter.addAction(Intent.ACTION_PACKAGE_ADDED);
 		registerReceiver(receiver, filter);
 		downManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+		 int trainType= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+		 if(trainType==1){
+		 	App.instance.getSystemSettings().setTraining(trainType);
+		 }else {
+			 App.instance.getSystemSettings().setTraining(0);
+		 }
+
 	}
 	
 	private boolean updateData(){
@@ -150,6 +161,7 @@ public class Welcome extends BaseActivity {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
+
 					CoreData.getInstance().init(context);
 					App.instance.setLocalRestaurantConfig(CoreData.getInstance().getRestaurantConfigs());
 					App.instance.initKdsAndPrinters();
@@ -169,6 +181,11 @@ public class Welcome extends BaseActivity {
 	
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+	}
 
 	private void startSubPosNextActivity(){
 		App.instance.bindSyncService();
@@ -300,7 +317,13 @@ public class Welcome extends BaseActivity {
 	public void handlerClickEvent(View v) {
 		super.handlerClickEvent(v);
 	}
-	
+
+	@Override
+	protected void onResume() {
+		FloatActionController.getInstance().stopMonkServer(this);
+		super.onResume();
+	}
+
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(downReceiver);

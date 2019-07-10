@@ -1,5 +1,6 @@
 package com.alfredbase;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -22,6 +23,7 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
+import com.floatwindow.float_lib.FloatActionController;
 import com.moonearly.utils.service.TcpUdpFactory;
 import com.moonearly.utils.service.UdpServiceCallBack;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -36,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 
 public class BaseApplication extends Application {
 
@@ -488,14 +491,16 @@ public class BaseApplication extends Application {
 
     public void finishAllActivity() {
         while (true) {
-            BaseActivity oldActivity = activitys.get(0);
+            BaseActivity oldActivity = getTopActivity();
             if (oldActivity == null) {
                 break;
             }
+            oldActivity.setResult(Activity.RESULT_CANCELED);
             oldActivity.finish();
             activitys.remove(oldActivity);
-            android.os.Process.killProcess(android.os.Process.myPid());
         }
+        android.os.Process.killProcess(android.os.Process.myPid());
+        FloatActionController.getInstance().stopMonkServer(this);
     }
 
     /**

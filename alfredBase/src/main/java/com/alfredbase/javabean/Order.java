@@ -1,5 +1,6 @@
 package com.alfredbase.javabean;
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.store.DataHelper;
 import com.google.gson.annotations.Expose;
 
@@ -93,17 +94,17 @@ public class Order implements Serializable {
 	 * 订单号
 	 */
 	private Integer orderNo;
-	
+
 	private String inclusiveTaxName;
-	
+
 	private String inclusiveTaxPrice;
-	
+
 	private String inclusiveTaxPercentage;
-	
+
 	private Integer appOrderId;
 
 	//默认不是takeaway
-	private Integer isTakeAway = 0; //0 堂吃, 1 打包, 2外卖
+	private Integer isTakeAway = ParamConst.NOT_TAKE_AWAY; //0 堂吃, 1 打包, 2外卖
 
 	private String tableName;
 
@@ -124,6 +125,8 @@ public class Order implements Serializable {
 	@Expose(serialize = false)
 	private int isSplitByPax;
 	private  String promotion;
+
+	private String grandTotal; // only used "split by pax"
 	private String  orderRound;
 	public Order() {
 	}
@@ -461,6 +464,14 @@ public class Order implements Serializable {
 		this.promotion = promotion;
 	}
 
+	public String getGrandTotal() {
+		return grandTotal;
+	}
+
+	public void setGrandTotal(String grandTotal) {
+		this.grandTotal = grandTotal;
+	}
+
 	public String getOrderRound() {
 		return orderRound;
 	}
@@ -508,5 +519,6 @@ public class Order implements Serializable {
 				", promotion='" + promotion + '\'' +
 				", orderRound='" + orderRound + '\'' +
 				'}';
-	}
+
+}
 }

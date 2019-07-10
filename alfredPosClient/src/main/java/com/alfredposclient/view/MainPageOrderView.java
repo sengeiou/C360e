@@ -316,7 +316,9 @@ public class MainPageOrderView extends LinearLayout {
 										orderMap);
 							}
 						} else {
-							KotSummarySQL.deleteKotSummary(kotSummary);
+//							if(placedOrderDetails == null || placedOrderDetails.size() ==0) {
+//								KotSummarySQL.deleteKotSummary(kotSummary);
+//							}
 							parent.runOnUiThread(new Runnable() {
 
 								@Override

@@ -2,6 +2,7 @@ package com.alfredposclient.activity;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +24,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
@@ -685,7 +687,11 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
 
     private void refreshView() {
         loadingDialog.show();
-        SyncCentre.getInstance().getAllAppOrder(this, new HashMap<String, Object>(), handler);
+        int type=SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
+        if(type!=1){
+            SyncCentre.getInstance().getAllAppOrder(this, new HashMap<String, Object>(), handler);
+
+        }
     }
 
 

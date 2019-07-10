@@ -127,6 +127,10 @@ public class ResultCode {
 	 */
 	public static final int USER_NO_PERMIT = -3001;
 
+	/**
+	 *	no  permission	  用户模式不同 （Train）
+	 */
+	public static final int USER_POS_TYPE = -3002;
 
     public static final int APP_ORDER_REFUND = -1007;
 

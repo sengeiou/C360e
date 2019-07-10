@@ -27,6 +27,7 @@ android {
         }
     }
     buildToolsVersion '27.0.3'
+ //   useLibrary 'org.apache.http.legacy'
 }
 
 
@@ -65,5 +66,5 @@ dependencies {
     //    )
     //    compile 'org.nanohttpd:nanohttpd-samples:2.3.1'
     api 'com.android.support:multidex:1.0.0'
-
+//    implementation project(':float_lib')
 }

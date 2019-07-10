@@ -227,7 +227,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 							App.instance.getUser().getFirstName()
 									+ App.instance.getUser().getLastName(),
 							TableInfoSQL.getTableById(order.getTableId())
-									.getName(), 2),
+									.getName(), 2,App.instance.getSystemSettings().getTrainType()),
 					order,
 					ObjectFactory.getInstance().getItemList(
 							OrderDetailSQL.getOrderDetails(order.getId())),

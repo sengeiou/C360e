@@ -250,7 +250,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 salesPrint.setCharSize(48);
             }
             salesPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.sales_analysis));
-            salesPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            salesPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             salesPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.type),
                     PrintService.instance.getResources().getString(R.string.qty_),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -303,7 +303,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 daPrint.setCharSize(48);
             }
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.detail_analysis));
-            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             if (App.instance.countryCode == ParamConst.CHINA && reportData != null) {
                 // Print Sales summary
                 daPrint.addSalesSummary(reportData);
@@ -356,7 +356,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             }
 
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.summary_analysis));
-            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             daPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.plu_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -395,7 +395,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 hsPrint.setCharSize(48);
             }
             hsPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.hourly_sales));
-            hsPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            hsPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             hsPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.hour),
                     PrintService.instance.getResources().getString(R.string.tran),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -442,7 +442,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 proPrint.setCharSize(48);
             }
             proPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.promotion_sales));
-            proPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            proPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
 
 //            if(orderPromotions!=null&&orderPromotions.size()>0){
 //
@@ -534,7 +534,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             }
 
             viPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.void_plu));
-            viPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            viPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             viPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -574,7 +574,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             }
 
             eiPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.ent_plu));
-            eiPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            eiPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             eiPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
@@ -588,7 +588,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void printKOT(String printer, String summary,
-                         String detail, String modifiers, boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire) throws RemoteException {
+                         String detail, String modifiers, boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire,int trainType) throws RemoteException {
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         KotSummary kotsummary = gson.fromJson(summary, KotSummary.class);
@@ -632,10 +632,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
                     }
                     if(kotsummary.getEatType()>0){
-                        kot.AddDelivery(kotsummary);
+                        kot.AddDelivery(kotsummary,"");
                     }
 
-                    kot.AddHeader(kotsummary);
+
+                    String trainString = "";
+                    if(trainType==1){
+                        trainString=PrintService.instance.getResources().getString(R.string.training);
+                    }
+                    kot.AddHeader(kotsummary,trainString);
                     if (isFire) {
                         kot.AddFire();
                     }
@@ -714,10 +719,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                                 }
                                 if(kotsummary.getEatType()>0){
-                                    kot.AddDelivery(kotsummary);
+                                    kot.AddDelivery(kotsummary,"");
                                 }
 
-                                kot.AddHeader(kotsummary);
+
+
+                                String trainString ="";
+                                if(trainType==1){
+                                    trainString=PrintService.instance.getResources().getString(R.string.training);
+                                }
+                                kot.AddHeader(kotsummary,trainString);
                                 if (isFire) {
                                     kot.AddFire();
                                 }
@@ -774,7 +785,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 }
                             }
                             kot.AddTitle(kotsummary.getRevenueCenterName(), kotsummary.getTableName());
-                            kot.AddHeader(kotsummary);
+                            String trainString = "";
+                            if(trainType==1){
+                                trainString=PrintService.instance.getResources().getString(R.string.training);
+                            }
+                            kot.AddHeader(kotsummary,trainString);
                             if (isFire) {
                                 kot.AddFire();
                             }
@@ -809,7 +824,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
 
-
+    @Override
     public void printBill(String printer, String title,
                           String order, String orderDetail,
                           String modifiers, String tax,
@@ -881,15 +896,21 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String tableName;
-                    if (prtTitle.getCopy() == 2) {
-                        tableName = prtTitle.getTableName() + "(Reprint Bill Copy)";
+                    String trainString ="";
+                    if (prtTitle.getCopy() == 2 && prtTitle.getTrainType() == 1) {
+                        tableName = prtTitle.getTableName() + " (Reprint Bill Copy)";
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+                    } else if (prtTitle.getCopy() != 2 && prtTitle.getTrainType() == 1) {
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+
+                        tableName = prtTitle.getTableName() + "";
                     } else {
                         tableName = prtTitle.getTableName();
                     }
 
                     billPrint.AddHeader(theOrder.getIsTakeAway(), tableName, theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(),info,theOrder.getAppOrderId() == null ? 0:theOrder.getAppOrderId());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId(),trainString);
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
                             PrintService.instance.getResources().getString(R.string.qty),
@@ -967,9 +988,22 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     ////////////// Bill Summary
+//                    String subTotal = BH.getBD(theOrder.getSubTotal()).toString();
+//                    String discount = BH.getBD(theOrder.getDiscountAmount()).toString();
+//                    String total = BH.getBD(theOrder.getTotal()).toString();
+//                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+//                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+//                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+//                    }
+//                    String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+//                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionTotal);
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
+                    String total = theOrder.getTotal().toString();
                     String grandTotal = theOrder.getTotal().toString();
+                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                        grandTotal = (theOrder.getGrandTotal().toString();
+                    }
 
 //                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
                     String promotionTotal = theOrder.getPromotion().toString();
@@ -996,7 +1030,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     //set page size
                     if (this.service.isTMU220(name)) {
                         billPrint.setCharSize(33);
-                        if (appOrders==null||appOrders.size()<=0) {
+                        if (appOrders == null || appOrders.size() <= 0) {
                             billPrint.AddRestaurantInfo(null,
                                     prtTitle.getRestaurantName(),
                                     prtTitle.getAddressDetail(), prtTitle.getOptions());
@@ -1007,58 +1041,65 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         } else {
                             billPrint.setCharSize(48);
                         }
-                        if (appOrders==null||appOrders.size()<=0) {
+                        if (appOrders == null || appOrders.size() <= 0) {
                             billPrint.AddRestaurantInfo(prtTitle.getLogo(),
                                     prtTitle.getRestaurantName(),
                                     prtTitle.getAddressDetail(), prtTitle.getOptions());
                         }
 
-                    }
-               if(appOrders==null||appOrders.size()<=0) {
-                   String tableName;
-                   if (prtTitle.getCopy() == 2) {
-                       tableName = prtTitle.getTableName() + "(Reprint Bill Copy)";
-                   } else {
-                       tableName = prtTitle.getTableName();
-                   }
 
-                   billPrint.AddHeader(theOrder.getIsTakeAway(), tableName,
-                           theOrder.getPersons(),
-                           theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                           prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
-                   billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
-                           PrintService.instance.getResources().getString(R.string.price),
-                           PrintService.instance.getResources().getString(R.string.qty),
-                           PrintService.instance.getResources().getString(R.string.total));
-                   if (printOrderItemList != null && printOrderItemList.size() > 0) {
-                       LinkedHashMap<String, PrintOrderItem> map = new LinkedHashMap<>();
-                       for (int index = 0; index < printOrderItemList.size(); index++) {
-                           boolean canMerge = true;
-                           PrintOrderItem item = printOrderItemList.get(index).clone();
-                           if (orderModifiers != null) {
-                               for (int m = 0; m < orderModifiers.size(); m++) {
-                                   PrintOrderModifier om = orderModifiers.get(m);
-                                   if (om.getOrderDetailId() == item.getOrderDetailId()) {
-                                       canMerge = false;
-                                       break;
-                                   }
-                               }
-                           } else {
-                               canMerge = true;
-                           }
-                           if (canMerge) {
-                               if (map.containsKey(item.getItemDetailId().intValue() + "")) {
-                                   PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
-                                   printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
-                                   printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
-                                   map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
-                               } else {
-                                   map.put(item.getItemDetailId().intValue() + "", item);
-                               }
-                           } else {
-                               map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
-                           }
-                       }
+                        if (appOrders == null || appOrders.size() <= 0) {
+                            String tableName;
+                            String trainString="";
+                            if (prtTitle.getCopy() == 2 && prtTitle.getTrainType() == 1) {
+                                tableName = prtTitle.getTableName() + " (Reprint Bill Copy)";
+                                trainString=  PrintService.instance.getResources().getString(R.string.training);
+
+                            } else if (prtTitle.getCopy() != 2 && prtTitle.getTrainType() == 1) {
+                                tableName = prtTitle.getTableName() + "";
+                                trainString=  PrintService.instance.getResources().getString(R.string.training);
+
+                            } else {
+                                tableName = prtTitle.getTableName();
+                            }
+
+                            billPrint.AddHeader(theOrder.getIsTakeAway(), tableName,
+                                    theOrder.getPersons(),
+                                    theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
+                                    prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId(),trainString);
+                            billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
+                                    PrintService.instance.getResources().getString(R.string.price),
+                                    PrintService.instance.getResources().getString(R.string.qty),
+                                    PrintService.instance.getResources().getString(R.string.total));
+                            if (printOrderItemList != null && printOrderItemList.size() > 0) {
+                                LinkedHashMap<String, PrintOrderItem> map = new LinkedHashMap<>();
+                                for (int index = 0; index < printOrderItemList.size(); index++) {
+                                    boolean canMerge = true;
+                                    PrintOrderItem item = printOrderItemList.get(index).clone();
+                                    if (orderModifiers != null) {
+                                        for (int m = 0; m < orderModifiers.size(); m++) {
+                                            PrintOrderModifier om = orderModifiers.get(m);
+                                            if (om.getOrderDetailId() == item.getOrderDetailId()) {
+                                                canMerge = false;
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        canMerge = true;
+                                    }
+                                    if (canMerge) {
+                                        if (map.containsKey(item.getItemDetailId().intValue() + "")) {
+                                            PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
+                                            printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
+                                            printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
+                                            map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
+                                        } else {
+                                            map.put(item.getItemDetailId().intValue() + "", item);
+                                        }
+                                    } else {
+                                        map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
+                                    }
+                                }
 
                         for (PrintOrderItem item : map.values()) {
                             billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
@@ -1099,14 +1140,18 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //								}
 //							}
 //						}
-                    }
+                   }
 
                    String subTotal = theOrder.getSubTotal();
                    String discount = theOrder.getDiscountAmount();
-                   String grandTotal = theOrder.getTotal();
-                   String promotionTotal = theOrder.getPromotion();
-                   billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
-                   List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
+                            String total = BH.getBD(theOrder.getTotal()).toString();
+                            String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                            if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                                grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                            }
+                            String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                            billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionTotal);
+                            List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
 //                   if (settlement != null) {
 //                       // String paymentType = "";
 //                       String cardNo = null;
@@ -1863,7 +1908,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void printKioskKOT(String printer, String summary, String detail,
-                              String modifiers, boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize)
+                              String modifiers, boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize,int trainType)
             throws RemoteException {
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
@@ -1897,15 +1942,19 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         kot.setCharSize(48);
                     }
 
+                    String trainString = "";
+                    if(trainType==1){
+                        trainString=PrintService.instance.getResources().getString(R.string.training);
+                    }
                     //kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
                     if(kotsummary.getEatType()>0){
-                        kot.AddDelivery(kotsummary);
+                        kot.AddDelivery(kotsummary,"");
                     }
 
                     if (!TextUtils.isEmpty(orderNo))
-                        kot.AddKioskHeader(kotsummary, orderNo);
+                        kot.AddKioskHeader(kotsummary, orderNo,trainString);
                     else
-                        kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
+                        kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString(),trainString);
 
 
                     kot.setPrinterIp(prtDevice.getIP());
@@ -1991,13 +2040,20 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 if (item.getKotStatus().intValue() == ParamConst.KOT_STATUS_VOID) {
                                     kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                                 }
+
+                                String trainString = "";
+                                if(trainType==1){
+                                    trainString=PrintService.instance.getResources().getString(R.string.training);
+                                }
+                                //kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
                                 if(kotsummary.getEatType()==3){
-                                    kot.AddDelivery(kotsummary);
+                                    kot.AddDelivery(kotsummary,"");
                                 }
                                 if (!TextUtils.isEmpty(orderNo))
-                                    kot.AddKioskHeader(kotsummary, orderNo);
+                                    kot.AddKioskHeader(kotsummary, orderNo,trainString);
                                 else
-                                    kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
+                                    kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString(),trainString);
+
                                 kot.setPrinterIp(prtDevice.getIP());
                                 kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
                                         PrintService.instance.getResources().getString(R.string.qty));
@@ -2049,12 +2105,19 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                             }
                             if(kotsummary.getEatType()==3){
-                                kot.AddDelivery(kotsummary);
+                                kot.AddDelivery(kotsummary,"");
                             }
+
+                            String trainString = "";
+                            if(trainType==1){
+                                trainString=PrintService.instance.getResources().getString(R.string.training);
+                            }
+                            //kot.AddTitle(kotsummary.getRevenueCenterName(),kotsummary.getTableName());
                             if (!TextUtils.isEmpty(orderNo))
-                                kot.AddKioskHeader(kotsummary, orderNo);
+                                kot.AddKioskHeader(kotsummary, orderNo,trainString);
                             else
-                                kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString());
+                                kot.AddKioskHeader(kotsummary, kotsummary.getOrderNoString(),trainString);
+
                             kot.setPrinterIp(prtDevice.getIP());
                             kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
                                     PrintService.instance.getResources().getString(R.string.qty));
@@ -2167,12 +2230,19 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
-                    if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                    } else {
-                        orderNo1 = prtTitle.getOrderNo();
-                    }
+                    String trainString="";
+                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                        orderNo1 = prtTitle.getOrderNo()  + " (Reprint Bill Copy)";
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
 
+                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                        orderNo1 = prtTitle.getOrderNo()  + "";
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+
+                    }
+                    else {
+                        orderNo1 = prtTitle.getOrderNo() ;
+                    }
                     if (!TextUtils.isEmpty(orderNo))
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
@@ -2260,11 +2330,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
+                    String total = theOrder.getTotal().toString();
                     String grandTotal = theOrder.getTotal().toString();
-
-//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
-                    String promotionTotal = theOrder.getPromotion().toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
+                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                        grandTotal = theOrder.getGrandTotal().toString();
+                    }
+                    String promotionTotal =theOrder.getPromotion().toString();
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
 
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
@@ -2309,10 +2381,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
                     if (appOrders==null||appOrders.size()<=0) {
                         String orderNo1;
-                        if (prtTitle.getCopy() == 2) {
-                            orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                        } else {
-                            orderNo1 = prtTitle.getOrderNo();
+                        if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                            orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
+                        }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                            orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                        }
+                        else {
+                            orderNo1 = prtTitle.getOrderNo() ;
                         }
 
                         if (!TextUtils.isEmpty(orderNo))
@@ -2402,12 +2477,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         ////////////// Bill Summary
                         String subTotal = theOrder.getSubTotal();
                         String discount =theOrder.getDiscountAmount();
-
-                        String grandTotal = theOrder.getTotal();
-
-//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
-                        String promotionTotal = theOrder.getPromotion();
-                        billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
+                        String total = BH.getBD(theOrder.getTotal()).toString();
+                        String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                        if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                            grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                        }
+                        String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                        billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
 
                         List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                         if (settlement != null) {
@@ -2654,17 +2730,20 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
-                    if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                    } else {
-                        orderNo1 = prtTitle.getOrderNo();
+                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                        orderNo1 = prtTitle.getOrderNo()  + "(Reprint Bill Copy)";
+                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                        orderNo1 = prtTitle.getOrderNo()  + "";
+                    }
+                    else {
+                        orderNo1 = prtTitle.getOrderNo() ;
                     }
 
                     if (!TextUtils.isEmpty(orderNo))
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(),prtTitle.getTrainType());
 
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
@@ -2747,9 +2826,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = theOrder.getSubTotal();
                     String discount = theOrder.getDiscountAmount();
-                    String grandTotal = theOrder.getTotal();
-                    String promotionTotal = theOrder.getPromotion();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
+                    String total = BH.getBD(theOrder.getTotal()).toString();
+                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                    }
+                    String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
 
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
@@ -2788,17 +2871,20 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
-                    if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
-                    } else {
-                        orderNo1 = prtTitle.getOrderNo();
+                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
+                        orderNo1 = prtTitle.getOrderNo()  + " (Reprint Bill Copy)";
+                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
+                        orderNo1 = prtTitle.getOrderNo()  + "";
+                    }
+                    else {
+                        orderNo1 = prtTitle.getOrderNo() ;
                     }
 
                     if (!TextUtils.isEmpty(orderNo))
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(),prtTitle.getTrainType());
 
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
@@ -2881,11 +2967,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
-                    String grandTotal = theOrder.getTotal().toString();
-
-//                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
-                    String promotionTotal = theOrder.getPromotion().toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, rounding, currencySymbol,promotionTotal);
+                    String total = BH.getBD(theOrder.getTotal()).toString();
+                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
+                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                    }
+                    String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
                         //   String paymentType = "";
@@ -3050,7 +3138,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                     }
                 }
-                kot.AddHeader(kotsummary);
+                String trainString = "";
+//                if(trainType==1){
+//                    trainString=PrintService.instance.getResources().getString(R.string.training);
+//                }
+                kot.AddHeader(kotsummary,trainString);
                 kot.setPrinterIp(prtDevice.getIP());
                 kot.AddContentListHeader2Cols(PrintService.instance.getResources().getString(R.string.item_name),
                         PrintService.instance.getResources().getString(R.string.qty));
@@ -3123,7 +3215,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 daPrint.setCharSize(48);
             }
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.modifier_analysis));
-            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             daPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.plu_name),
                     PrintService.instance.getResources().getString(R.string.price),
                     PrintService.instance.getResources().getString(R.string.qty),
@@ -3167,7 +3259,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 daPrint.setCharSize(48);
             }
             daPrint.AddReportHeader(prtTitle.getRestaurantName(), xzType, PrintService.instance.getResources().getString(R.string.modifier_analysis));
-            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate());
+            daPrint.AddHeader(prtTitle.getOp(), prtTitle.getBill_NO(), prtTitle.getDate() + " " + prtTitle.getTime(), prtTitle.getBizDate(),prtTitle.getTrainType());
             daPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.plu_name),
                     PrintService.instance.getResources().getString(R.string.price),
                     PrintService.instance.getResources().getString(R.string.qty),

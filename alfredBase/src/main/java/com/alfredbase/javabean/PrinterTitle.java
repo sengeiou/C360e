@@ -36,10 +36,11 @@ public class PrinterTitle implements Serializable{
 	private String groupNum;
 	private Integer isKiosk;
 	private Integer copy;
+
 	private int spliteByPax = 0;
 
 	private String revName;
-
+	 private int trainType; // 0 正常模式  1培训模式
 	public String getRevName() {
 		return revName;
 	}
@@ -208,6 +209,14 @@ public class PrinterTitle implements Serializable{
 
 	public void setSpliteByPax(Integer spliteByPax) {
 		this.spliteByPax = spliteByPax;
+	}
+
+	public int getTrainType() {
+		return trainType;
+	}
+
+	public void setTrainType(int trainType) {
+		this.trainType = trainType;
 	}
 
 	@Override

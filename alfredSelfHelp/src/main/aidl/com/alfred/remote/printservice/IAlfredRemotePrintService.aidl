@@ -10,14 +10,13 @@ interface IAlfredRemotePrintService {
 	void configure(int country,int lang, int dollarsign);
 	
 	void clearPrint();
-
 	void deleteOldPrinterMsg(String businessDate);
 
 	void printKOT(String printer,String summary, String detail, String modifiers,
-						boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire);
+						boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire,int trainType);
 
 	void printKioskKOT(String printer,String summary, String detail, String modifiers,
-						boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize );
+						boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize,int trainType);
 
 	void printBillSummary(String printer,String summary, String detail, String modifiers, int kotFontSize);
 
@@ -66,6 +65,5 @@ interface IAlfredRemotePrintService {
         							boolean doubleprint, boolean doubleReceipts,
         							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr,String formatType);
    void printPromotionAnalysisReport(String xzType, String printer, String title, String orderPromotion,String itemPromotion,String promotion);
-
 
 }
