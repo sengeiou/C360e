@@ -243,6 +243,9 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_SUCCESS, null));
+                            } else {
+                                handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_FAILED, null));
                             }
                         }
 
@@ -252,6 +255,7 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             error.printStackTrace();
                             super.onFailure(statusCode, headers, responseBody, error);
+                            handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_FAILED, null));
                         }
                     });
         } catch (Exception e) {

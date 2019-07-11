@@ -2065,6 +2065,11 @@ public class MainPage extends BaseActivity {
                     verifyDialog.show(HANDLER_MSG_OBJECT_CANCEL_ITEM, tag);
                 }
                 break;
+                case ACTION_KOT_NEXT_KDS:
+                    int orderId = msg.arg1;
+                    int kdsId = msg.arg2;
+                    sendKOTTmpToKDS(orderId, kdsId);
+                    break;
                 default:
                     break;
             }
@@ -2377,195 +2382,133 @@ public class MainPage extends BaseActivity {
             return;
         }
 
-        List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(currentOrder.getId());
-
-        Map<Integer, String> categorMap = new HashMap<>();
-        Map<String, Map<Integer, String>> checkMap = new HashMap<>();
-
-        for (int i = 0; i < allModifierCheck.size(); i++) {
-            ModifierCheck modifierCheck;
-            modifierCheck = allModifierCheck.get(i);
-            boolean needCheck = false;
-            if (orderDetails != null && orderDetails.size() > 0) {
-                for (OrderDetail orderDetail : orderDetails) {
-                    if (orderDetail != null &&
-                            orderDetail.getId().equals(modifierCheck.getOrderDetailId())) {
-                        needCheck = true;
-                    }
-                }
-            }
-
-            if (modifierCheck.getNum() > 0 && needCheck) {
-                if (checkMap.containsKey(modifierCheck.getItemName())) {
-                    categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + context.getResources().getString(R.string.At_least) + " " + modifierCheck.getMinNum() + " " + context.getResources().getString(R.string.items));
-                    checkMap.put(modifierCheck.getItemName(), categorMap);
-
-                } else {
-                    categorMap = new HashMap<>();
-                    categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + context.getResources().getString(R.string.At_least) + " " + modifierCheck.getMinNum() + " " + context.getResources().getString(R.string.items));
-                    checkMap.put(modifierCheck.getItemName(), categorMap);
-                }
-            }
+        Order placedOrder = OrderSQL.getOrder(currentOrder.getId());
+        if (placedOrder.getOrderNo().equals(0)) {
+            currentOrder.setOrderNo(OrderHelper.calculateOrderNo(currentOrder.getBusinessDate()));
+            OrderSQL.updateOrderNo(currentOrder);
         }
 
+        handler.sendMessage(handler
+                .obtainMessage(MainPage.VIEW_EVENT_PLACE_ORDER));
+        OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
+                placedOrder, App.instance.getRevenueCenter());
+        OrderBillSQL.add(orderBill);
 
-        if (checkMap.size() > 0) {
-            StringBuffer checkbuf = new StringBuffer();
-            Iterator iter = checkMap.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                String key = (String) entry.getKey();
-                checkbuf.append(" " + key + ":");
-                Map<Integer, String> val = (Map<Integer, String>) entry.getValue();
-                Iterator iter2 = val.entrySet().iterator();
-                while (iter2.hasNext()) {
-                    Map.Entry entry2 = (Map.Entry) iter2.next();
-                    String val2 = (String) entry2.getValue();
-                    checkbuf.append(val2 + " ");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Order placedOrder = OrderSQL.getOrder(currentOrder.getId());
+                List<OrderDetail> orderDetails
+                        = OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
+                KotSummary kotSummary = ObjectFactory.getInstance()
+                        .getKotSummaryForPlace(
+                                TableInfoSQL.getTableById(
+                                        placedOrder.getTableId()).getName(), placedOrder,
+                                App.instance.getRevenueCenter(),
+                                App.instance.getBusinessDate());
+
+                User user = App.instance.getUser();
+                if (user != null) {
+                    String empName = user.getFirstName() + user.getLastName();
+                    kotSummary.setEmpName(empName);
+                    KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId());
                 }
-            }
 
-            UIHelp.showToast(context, checkbuf.toString());
-        } else {
+                ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
+                List<Integer> orderDetailIds = new ArrayList<>();
+                ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
+                kotCommitStatus = ParamConst.JOB_NEW_KOT;
 
-            //DON'T use reference
-            Order placedOrder = OrderSQL.getOrder(currentOrder.getId());
-            if (placedOrder.getOrderNo().equals(0)) {
-                currentOrder.setOrderNo(OrderHelper.calculateOrderNo(currentOrder.getBusinessDate()));
-                OrderSQL.updateOrderNo(currentOrder);
-            }
+                for (OrderDetail orderDetail : orderDetails) {
+                    KotItemDetail kotItemDetail = ObjectFactory
+                            .getInstance()
+                            .getKotItemDetail(
+                                    placedOrder,
+                                    orderDetail,
+                                    CoreData.getInstance()
+                                            .getItemDetailById(
+                                                    orderDetail
+                                                            .getItemId()),
+                                    kotSummary,
+                                    App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
 
-            handler.sendMessage(handler
-                    .obtainMessage(MainPage.VIEW_EVENT_PLACE_ORDER));
-            OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(
-                    placedOrder, App.instance.getRevenueCenter());
-            OrderBillSQL.add(orderBill);
+                    kotItemDetail.setItemNum(orderDetail.getItemNum());
+                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_TEMPORER);
 
-            final Order finalCurrentOrder = currentOrder;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Order placedOrder = OrderSQL.getOrder(finalCurrentOrder.getId());
-                    List<OrderDetail> placedOrderDetails
-                            = OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
-                    KotSummary kotSummary = ObjectFactory.getInstance()
-                            .getKotSummaryForPlace(
-                                    TableInfoSQL.getTableById(
-                                            placedOrder.getTableId()).getName(), placedOrder,
-                                    App.instance.getRevenueCenter(),
-                                    App.instance.getBusinessDate());
-                    User user = App.instance.getUser();
-                    if (user != null) {
-                        String empName = user.getFirstName() + user.getLastName();
-                        kotSummary.setEmpName(empName);
-                        KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId().intValue());
-                    }
+                    KotItemDetailSQL.update(kotItemDetail);
+                    kotItemDetails.add(kotItemDetail);
+                    orderDetailIds.add(orderDetail.getId());
+                    ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+                            .getOrderModifiers(placedOrder, orderDetail);
 
-                    ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
-                    List<Integer> orderDetailIds = new ArrayList<>();
-                    ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
-                    kotCommitStatus = ParamConst.JOB_NEW_KOT;
-
-                    for (OrderDetail orderDetail : placedOrderDetails) {
-                        if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_PREPARED) {
-                            continue;
-                        }
-                        if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
-                            kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
-                        } else {
-                            KotItemDetail kotItemDetail = ObjectFactory
+                    for (OrderModifier orderModifier : orderModifiers) {
+                        if (orderModifier.getStatus().equals(ParamConst.ORDER_MODIFIER_STATUS_NORMAL)) {
+                            KotItemModifier kotItemModifier = ObjectFactory
                                     .getInstance()
-                                    .getKotItemDetail(
-                                            placedOrder,
-                                            orderDetail,
+                                    .getKotItemModifier(
+                                            kotItemDetail,
+                                            orderModifier,
                                             CoreData.getInstance()
-                                                    .getItemDetailById(
-                                                            orderDetail
-                                                                    .getItemId()),
-                                            kotSummary,
-                                            App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
-                            kotItemDetail.setItemNum(orderDetail
-                                    .getItemNum());
-                            if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
-                                kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
-                                kotItemDetail
-                                        .setKotStatus(ParamConst.KOT_STATUS_UPDATE);
-                            }
+                                                    .getModifier(
+                                                            orderModifier
+                                                                    .getModifierId()));
+                            KotItemModifierSQL.update(kotItemModifier);
+                            kotItemModifiers.add(kotItemModifier);
+                        }
+                    }
+                }
 
-                            KotItemDetailSQL.update(kotItemDetail);
-                            kotItemDetails.add(kotItemDetail);
-                            orderDetailIds.add(orderDetail.getId());
-                            ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
-                                    .getOrderModifiers(placedOrder, orderDetail);
+                if (!kotItemDetails.isEmpty()) {
+                    KotSummarySQL.update(kotSummary);
 
-                            for (OrderModifier orderModifier : orderModifiers) {
-                                if (orderModifier.getStatus().equals(ParamConst.ORDER_MODIFIER_STATUS_NORMAL)) {
-                                    KotItemModifier kotItemModifier = ObjectFactory
-                                            .getInstance()
-                                            .getKotItemModifier(
-                                                    kotItemDetail,
-                                                    orderModifier,
-                                                    CoreData.getInstance()
-                                                            .getModifier(
-                                                                    orderModifier
-                                                                            .getModifierId()));
-                                    KotItemModifierSQL.update(kotItemModifier);
-                                    kotItemModifiers.add(kotItemModifier);
-                                }
-                            }
+                    if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
+                        PrinterDevice printer = App.instance.getCahierPrinter();
+                        if (printer == null) {
+                            UIHelp.showToast(
+                                    context, getResources().getString(R.string.setting_printer));
+                        } else {
+                            App.instance.remoteOrderSummaryPrint(printer, kotSummary, kotItemDetails, kotItemModifiers);
                         }
                     }
 
-                    if (!kotItemDetails.isEmpty()) {
-                        KotSummarySQL.update(kotSummary);
-                        if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
-                            PrinterDevice printer = App.instance.getCahierPrinter();
-                            if (printer == null) {
-                                UIHelp.showToast(
-                                        context, getResources().getString(R.string.setting_printer));
-                            } else {
-                                App.instance.remoteOrderSummaryPrint(printer, kotSummary, kotItemDetails, kotItemModifiers);
-                            }
-                        }
-
-                        // check system has KDS or printer devices
-                        if (App.instance.getKDSDevices().size() == 0
-                                && App.instance.getPrinterDevices().size() == 0) {
-                            AlertToDeviceSetting
-                                    .noKDSorPrinter(context,
-                                            getResources().getString(R.string.no_set_kds_printer));
-                        } else {
-                            runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    printerLoadingDialog
-                                            .setTitle(getResources().getString(R.string.send_kitchen));
-                                    printerLoadingDialog.showTime();
-                                }
-                            });
-                            Map<String, Object> orderMap = new HashMap<>();
-                            orderMap.put("orderId", finalCurrentOrder.getId());
-                            orderMap.put("orderDetailIds", orderDetailIds);
-                            App.instance.getKdsJobManager().sendKOTTmpToKDS(
-                                    kotSummary, kotItemDetails,
-                                    kotItemModifiers, kotCommitStatus,
-                                    orderMap, kdsId);
-                        }
+                    // check system has KDS or printer devices
+                    if (App.instance.getKDSDevices().size() == 0
+                            && App.instance.getPrinterDevices().size() == 0) {
+                        AlertToDeviceSetting
+                                .noKDSorPrinter(context,
+                                        getResources().getString(R.string.no_set_kds_printer));
                     } else {
-                        KotSummarySQL.deleteKotSummary(kotSummary);
                         runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
-                                UIHelp.showToast(context,
-                                        getResources().getString(R.string.sent_to_kitchen));
+                                printerLoadingDialog
+                                        .setTitle(getResources().getString(R.string.send_kitchen));
+                                printerLoadingDialog.showTime();
                             }
                         });
+
+                        Map<String, Object> orderMap = new HashMap<>();
+                        orderMap.put("orderId", currentOrder.getId());
+                        orderMap.put("orderDetailIds", orderDetailIds);
+                        App.instance.getKdsJobManager().sendKOTTmpToKDS(
+                                kotSummary, kotItemDetails,
+                                kotItemModifiers, kotCommitStatus,
+                                orderMap, kdsId);
                     }
+                } else {
+                    KotSummarySQL.deleteKotSummary(kotSummary);
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            UIHelp.showToast(context,
+                                    getResources().getString(R.string.sent_to_kitchen));
+                        }
+                    });
                 }
-            }).start();
-        }
+            }
+        }).start();
     }
 
     private boolean verifyTableRepeat(TableInfo newTables) {
@@ -2703,12 +2646,12 @@ public class MainPage extends BaseActivity {
         }
     }
 
-    public void httpRequestAction(int action, Object... objs) {
+    public void httpRequestActions(int action, Object... objs) {
         switch (action) {
             case ACTION_KOT_NEXT_KDS:
                 int orderId = (int) objs[0];
                 int kdsId = (int) objs[1];
-                sendKOTTmpToKDS(orderId, kdsId);
+                handler.sendMessage(handler.obtainMessage(ACTION_KOT_NEXT_KDS, orderId, kdsId));
                 break;
             default:
                 break;

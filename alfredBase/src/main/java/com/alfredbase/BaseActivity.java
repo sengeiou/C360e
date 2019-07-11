@@ -153,7 +153,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 
     }
 
-    public void httpRequestAction(int action, Object... objs) {
+    public void httpRequestActions(int action, Object... objs) {
 
     }
 

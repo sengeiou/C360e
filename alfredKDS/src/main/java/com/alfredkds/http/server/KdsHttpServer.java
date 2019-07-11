@@ -86,7 +86,8 @@ public class KdsHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
             String method = jsonObject.optString("method");
-            final List<Integer> orderDetailIds = new ArrayList<>();
+
+            //region parameter validation
             if (TextUtils.isEmpty(method)) {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
@@ -104,12 +105,14 @@ public class KdsHttpServer extends AlfredHttpServer {
                     return resp;
                 }
             }
+            //endregion
 
             if (method.equals(ParamConst.JOB_NEW_KOT)) {
                 final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
                 }.getType());
                 final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>() {
                 }.getType());
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -133,83 +136,6 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = getJsonResponse(new Gson().toJson(result));
             }
 
-            if (method.equals(ParamConst.JOB_UPDATE_KOT)) {
-                final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
-                }.getType());
-                final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>() {
-                }.getType());
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        KotSummarySQL.update(kotSummary);
-                        if (kotItemModifiers != null) {
-                            KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
-                        }
-                        for (int i = 0; i < kotItemDetails.size(); i++) {
-                            KotItemDetail kotItemDetail = KotItemDetailSQL
-                                    .getMainKotItemDetailByOrderDetailId(kotSummary.getId(),
-                                            kotItemDetails.get(i).getOrderDetailId());
-
-                            if (kotItemDetail != null) {
-                                if (kotItemDetails.get(i).getKotStatus() < ParamConst.KOT_STATUS_DONE) {
-                                    kotItemDetails.get(i).setKotStatus(ParamConst.KOT_STATUS_UPDATE);
-                                    KotItemDetailSQL.update(kotItemDetails.get(i));
-                                    orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
-                                } else {
-                                    //TODO
-                                }
-                            } else {
-                                KotItemDetailSQL.update(kotItemDetails.get(i));
-                                orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
-                            }
-                        }
-
-
-                        App.getTopActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                App.getTopActivity().httpRequestAction(App.HANDLER_UPDATE_KOT, null);
-                            }
-                        });
-
-                    }
-                }).start();
-                result.put("resultCode", ResultCode.SUCCESS);
-                result.put("method", method);
-                result.put("kotSummary", kotSummary);
-                result.put("orderDetailIds", orderDetailIds);
-                resp = getJsonResponse(new Gson().toJson(result));
-            }
-
-            if (method.equals(ParamConst.JOB_DELETE_KOT)) {
-                final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
-                }.getType());
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        KotItemDetailSQL.deleteKotItemDetail(kotItemDetails);
-                        App.getTopActivity().httpRequestAction(App.HANDLER_DELETE_KOT, null);
-                    }
-                }).start();
-                result.put("resultCode", ResultCode.SUCCESS);
-                resp = getJsonResponse(new Gson().toJson(result));
-            }
-            if (method.equals(ParamConst.JOB_VOID_KOT)) {
-                final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
-                }.getType());
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (KotItemDetail kotItemDetail : kotItemDetails) {
-                            kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);//状态改变为void
-                            KotItemDetailSQL.update(kotItemDetail);
-                        }
-                        App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_KOT, null);
-                    }
-                }).start();
-                result.put("resultCode", ResultCode.SUCCESS);
-                resp = getJsonResponse(new Gson().toJson(result));
-            }
         } catch (JSONException e) {
             e.printStackTrace();
             resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));

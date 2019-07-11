@@ -1,7 +1,6 @@
 package com.alfredposclient.jobs;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
@@ -53,6 +52,40 @@ public class KotJobManager {
                 .consumerKeepAlive(120) // wait 2 minute
                 .build();
         this.kotJobManager = new JobManager(this.context, kotconfiguration);
+    }
+
+    private ArrayList<Printer> getPrinters(int printerGroupId, int kdsId, boolean isAssemblyMode) {
+        ArrayList<Printer> printers = new ArrayList<>();
+
+        if (isAssemblyMode) {
+            Printer printer = null;
+
+            if (kdsId > 0) {
+                boolean isPrinterFound = false;
+
+                for (Printer mPrinter : printers) {
+                    if (mPrinter.getId().equals(kdsId)) {
+                        isPrinterFound = true;
+                    } else {
+                        if (isPrinterFound) {
+                            printer = mPrinter;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                if (printers.size() > 0)
+                    printer = printers.get(0);
+            }
+
+            printers.add(printer);
+
+        } else {
+            printers = CoreData.getInstance()
+                    .getPrintersInGroup(printerGroupId);
+        }
+
+        return printers;
     }
 
     public void sendKOTTmpToKDS(KotSummary kotSummary,
@@ -117,35 +150,14 @@ public class KotJobManager {
             boolean isAssemblyLine = false;
 
             if (printerGroup != null) {
-                printerGroup.setPrinterType(1);//for assembly line testing
-                isAssemblyLine = printerGroup.getPrinterType() == 1;
+//                isAssemblyLine = printerGroup.getPrinterType() == 1;
+                isAssemblyLine = true;//testing
             }
 
-            ArrayList<Printer> printers = CoreData.getInstance()
-                    .getPrintersInGroup(prgid);
+            ArrayList<Printer> printers = getPrinters(prgid, kdsId, isAssemblyLine);
 
-            if (isAssemblyLine) {
-                Printer printer = null;
-
-                if (kdsId > 0) {
-                    boolean isPrinterFound = false;
-
-                    for (Printer mPrinter : printers) {
-                        if (mPrinter.getId().equals(kdsId)) {
-                            isPrinterFound = true;
-                        } else {
-                            if (isPrinterFound) {
-                                printer = mPrinter;
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    if (printers.size() > 0)
-                        printer = printers.get(0);
-                }
-
-                if (printer == null) return;
+            for (Printer printer : printers) {
+                if (printer == null) continue;
 
                 // KDS device
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
@@ -158,42 +170,10 @@ public class KotJobManager {
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
-                    //region assign current kds device
-                    for (KotItemDetail kotItemDetail : mapKOT.get(prgid)) {
-                        kotItemDetail.setCurrentKDSId(kdsDevice.getDevice_id());
-                        KotItemDetailSQL.update(kotItemDetail);
-                    }
-                    //endregion
                     KotJob kotjob = new KotJob(kdsDevice, kotSummary,
                             mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_TMP_KOT);
 
-                    String printerType = !TextUtils.isEmpty(printer.getPrinterType()) ? printer.getPrinterType() : "0";
-                    if ("1".equals(printerType)) {
-                        kotJobManager.addJob(kotjob);
-                    } else {
-                        //TODO: do assembly line
-                        kotJobManager.addJob(kotjob);
-                    }
-                }
-            } else {
-                for (Printer printer : printers) {
-
-                    // KDS device
-                    KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
-                    // physical printer
-                    PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer
-                            .getId());
-
-                    if (kdsDevice == null && printerDevice == null) {
-                        return;
-                    }
-
-                    if (kdsDevice != null && kotSummary != null) {
-                        KotJob kotjob = new KotJob(kdsDevice, kotSummary,
-                                mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_TMP_KOT);
-
-                        kotJobManager.addJob(kotjob);
-                    }
+                    kotJobManager.addJob(kotjob);
                 }
             }
         }
@@ -260,8 +240,17 @@ public class KotJobManager {
 //        List<Integer> doStockMap = new ArrayList<>();
         // add job to send it to KDS
         for (Integer prgid : printerGrougIds) {
-            ArrayList<Printer> printers = CoreData.getInstance()
-                    .getPrintersInGroup(prgid.intValue());
+
+            PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
+            boolean isAssemblyLine = false;
+
+            if (printerGroup != null) {
+//                isAssemblyLine = printerGroup.getPrinterType() == 1;
+                isAssemblyLine = true;//testing
+            }
+
+            ArrayList<Printer> printers = getPrinters(prgid, 0, isAssemblyLine);
+
             for (Printer prnt : printers) {
                 // KDS device
                 KDSDevice kdsDevice = App.instance.getKDSDevice(prnt.getId());
@@ -273,7 +262,7 @@ public class KotJobManager {
                         context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
                     return;
                 }
-                if (kdsDevice != null) {
+                if (kdsDevice != null && kotSummary != null) {
                     KotJob kotjob = new KotJob(kdsDevice, kotSummary,
                             kots.get(prgid), mods.get(prgid), method, orderMap);
                     kotJobManager.addJob(kotjob);

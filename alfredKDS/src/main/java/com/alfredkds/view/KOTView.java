@@ -132,11 +132,11 @@ public class KOTView extends LinearLayout implements AnimationListener,
         ll_type = (LinearLayout) kotView.findViewById(R.id.ll_type);
         call_num_tv = (TextView) kotView.findViewById(R.id.call_num_tv);
         complete_all_tv = (TextView) kotView.findViewById(R.id.complete_all_tv);
+        tvNext = (TextView) kotView.findViewById(R.id.tvNext);
 
         if ("0".equals(App.instance.getKdsDevice().getKdsType())) {
             call_num_tv.setVisibility(GONE);
             complete_all_tv.setVisibility(GONE);
-            tvNext = (TextView) kotView.findViewById(R.id.tvNext);
             tvNext.setVisibility(VISIBLE);
         }
 
@@ -194,6 +194,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
             } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
                 convertView.setBackgroundResource(R.color.possible_result_points);
                 holder.tv_text.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+            } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TEMPORER) {//temporary item
+                convertView.setBackgroundResource(R.color.gray);
             } else {
                 if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
                     convertView.setBackgroundResource(R.color.bg_update_item);

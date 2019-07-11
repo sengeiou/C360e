@@ -377,6 +377,12 @@ public class KitchenOrder extends BaseActivity {
                             });
                     //endregion
                     break;
+                case App.HANDLER_KOT_NEXT_SUCCESS:
+                    loadingDialog.dismiss();
+                    break;
+                case App.HANDLER_KOT_NEXT_FAILED:
+                    loadingDialog.dismiss();
+                    break;
                 default:
                     break;
             }

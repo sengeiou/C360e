@@ -59,8 +59,6 @@ public class KotItemDetail implements Serializable {
      */
     private int callType;
 
-    private Integer currentKDSId;
-
     public KotItemDetail() {
     }
 
@@ -232,14 +230,6 @@ public class KotItemDetail implements Serializable {
 
     public void setFireStatus(int fireStatus) {
         this.fireStatus = fireStatus;
-    }
-
-    public Integer getCurrentKDSId() {
-        return currentKDSId;
-    }
-
-    public void setCurrentKDSId(Integer currentKDSId) {
-        this.currentKDSId = currentKDSId;
     }
 
     @Override
