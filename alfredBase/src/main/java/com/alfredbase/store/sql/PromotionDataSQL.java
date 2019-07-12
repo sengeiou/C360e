@@ -145,6 +145,37 @@ public class PromotionDataSQL {
 
 
 
+
+    public static String  getPromotionDataSum(Order order)
+    {
+
+        String sql = "select sum(promotionAmount) from " + TableNames.PromotionData
+                + " where orderId=? ";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        String promotionTotal= null;
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{String.valueOf(order.getId())});
+            int count = cursor.getCount();
+//            if (count < 1) {
+//                return result;
+//            }
+
+            if (cursor.moveToFirst()) {
+                promotionTotal=cursor.getString(0);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return promotionTotal;
+    }
+
     public static String  getPromotionDataXSum(long businessDate,SessionStatus sessionStatus, long nowTime)
     {
 
@@ -211,12 +242,12 @@ public class PromotionDataSQL {
           {
         ArrayList<PromotionData> result = new ArrayList<PromotionData>();
         String sql = "select * from " + TableNames.PromotionData
-                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+                + " where businessDate=? and createTime > ? and updateTime < ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,
-                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime),String.valueOf(type)});
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime)});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -254,16 +285,16 @@ public class PromotionDataSQL {
         return result;
     }
 
-    public static ArrayList<PromotionData> getItemPromotionData(long businessDate,SessionStatus sessionStatus, long nowTime,int type)
+    public static ArrayList<PromotionData> getItemPromotionData(long businessDate,SessionStatus sessionStatus, long nowTime)
     {
         ArrayList<PromotionData> result = new ArrayList<PromotionData>();
         String sql = "select * from " + TableNames.PromotionData
-                + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
+                + " where businessDate=? and createTime > ? and updateTime < ? ";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,
-                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime),String.valueOf(type)});
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime)});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -662,10 +693,10 @@ public class PromotionDataSQL {
         }
     }
 
-    public static void deletePromotionData(PromotionData promotionData) {
-        String sql = "delete from " + TableNames.PromotionData + " where id = ?";
+    public static void deletePromotionDataOrderId(Order order) {
+        String sql = "delete from " + TableNames.PromotionData + " where orderId = ?";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] { promotionData.getId() });
+            SQLExe.getDB().execSQL(sql, new Object[] { order.getId() });
         } catch (Exception e) {
             e.printStackTrace();
         }

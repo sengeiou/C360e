@@ -48,6 +48,7 @@ import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
+import com.alfredbase.javabean.ReportPromotion;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
@@ -407,18 +408,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
     }
 
-    public void printPromotionAnalysisReport(String xzType, String printer, String title, String orderPromotion,  String itemPromotion,String promotion)
+    public void printPromotionAnalysisReport(String xzType, String printer, String title, String reportPromotion)
             throws RemoteException {
         Gson gson = new Gson();
 
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
-        ArrayList<PromotionData> orderPromotions = gson.fromJson(orderPromotion, new TypeToken<ArrayList<PromotionData>>() {
-        }.getType());
-
-        ArrayList<PromotionData> itemPromotions = gson.fromJson(itemPromotion, new TypeToken<ArrayList<PromotionData>>() {
-        }.getType());
-        ArrayList<Promotion> promotions = gson.fromJson(promotion, new TypeToken<ArrayList<Promotion>>() {
+        ArrayList<ReportPromotion> reportPromotions = gson.fromJson(reportPromotion, new TypeToken<ArrayList<ReportPromotion>>() {
         }.getType());
 
 
@@ -479,27 +475,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
             proPrint.setPrinterIp(prtDevice.getIP());
-            for (int i = 0; i <promotions.size() ; i++) {
-                int id=promotions.get(i).getId();
-                int qty = 0;
-               String   promotionName=promotions.get(i).getPromotionName();
-                BigDecimal amount = BH.getBD(ParamConst.DOUBLE_ZERO);
-                for(int j = 0;j <itemPromotions.size();j++){
-                    PromotionData promotionData=itemPromotions.get(j);
-                    int promotionId=promotionData.getPromotionId();
 
-                    if(id==promotionId)
-                    {
-                        amount=BH.add(amount,BH.getBD(promotionData.getPromotionAmount()),false);
-                        qty=qty+1;
+                if(reportPromotions!=null&&reportPromotions.size()>0){
+                    for (int i = 0; i < reportPromotions.size(); i++) {
+                        ReportPromotion reportPromotion1=reportPromotions.get(i);
+                        proPrint.print(reportPromotion1.getPromotionName(),reportPromotion1.getAmountQty(),reportPromotion1.getAmountPromotion());
+
                     }
 
                 }
-                if(qty>0){
 
-                    proPrint.print(promotionName,qty,amount.toString());
-                }
-            }
             proPrint.AddFooter(prtTitle.getDate() + " " + prtTitle.getTime());
             pqMgr.queuePrint(proPrint.getJobForQueue());
             printMgr.addJob(prtDevice.getIP(), proPrint);
@@ -830,8 +815,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                           String modifiers, String tax,
                           String payment, boolean doubleprint,
                           boolean doubleReceipts, String rounding,
-                          String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist,String formatType) throws RemoteException {
-        BH.initFormart(formatType);
+                          String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist,String promotionData,String formatType) throws RemoteException {
+        BH.initFormart(isDouble);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 
@@ -859,6 +844,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 }.getType());
         List<AppOrder> appOrders = gson.fromJson(appOrderlist,
                 new TypeToken<List<AppOrder>>() {
+                }.getType());
+        List<PromotionData> promotionDatas = gson.fromJson(promotionData,
+                new TypeToken<List<PromotionData>>() {
                 }.getType());
 
         PrintManager printMgr = this.service.getPrintMgr();
@@ -1007,7 +995,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 //                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
                     String promotionTotal = theOrder.getPromotion().toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, total,rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, total,rounding, currencySymbol, prtTitle.getSpliteByPax(),promotionDatas);
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
                     pqMgr.queuePrint(billPrint.getJobForQueue());
@@ -1150,7 +1138,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                             }
                             String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                            billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionTotal);
+                            billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionDatas);
                             List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
 //                   if (settlement != null) {
 //                       // String paymentType = "";
@@ -2336,7 +2324,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         grandTotal = theOrder.getGrandTotal().toString();
                     }
                     String promotionTotal =theOrder.getPromotion().toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,null);
 
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
@@ -2483,7 +2471,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                         }
                         String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                        billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
+                        billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,null);
 
                         List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                         if (settlement != null) {
@@ -2660,7 +2648,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     public void printKioskBill(String printer, String title, String order,
                                String orderDetail, String modifiers, String tax, String payment,
                                boolean doubleprint, boolean doubleReceipts, String rounding, String orderNo,
-                               String currencySymbol, boolean openDrawer, boolean isDouble,String formatType) throws RemoteException {
+                               String currencySymbol, boolean openDrawer, boolean isDouble,String promotionData,String formatType) throws RemoteException {
         BH.initFormart(formatType);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
@@ -2685,6 +2673,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         List<PrintReceiptInfo> settlement = gson.fromJson(payment,
                 new TypeToken<List<PrintReceiptInfo>>() {
+                }.getType());
+
+
+        List<PromotionData> promotionDatas = gson.fromJson(promotionData,
+                new TypeToken<List<PromotionData>>() {
                 }.getType());
 
         PrintManager printMgr = this.service.getPrintMgr();
@@ -2832,7 +2825,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                     }
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionDatas);
 
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
@@ -2973,7 +2966,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                     }
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionTotal);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol,promotionDatas);
                     List<LinkedHashMap<String, String>> stmtList = new ArrayList<LinkedHashMap<String, String>>();
                     if (settlement != null) {
                         //   String paymentType = "";

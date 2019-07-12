@@ -1653,6 +1653,11 @@ public class DataHelper {
             db.execSQL("ALTER TABLE " + TableNames.Tax
                     + " ADD COLUMN beforeDiscount INTEGER");
 
+            db.execSQL("CREATE TABLE "
+                    + TableNames.ReportPromotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, revenueId INTEGER, revenueName TEXT, businessDate LONG, amountQty INTEGER, amountPromotion TEXT,promotionName TEXT,promotionId INTEGER,daySalesId INTEGER)");
+
+
         }
     }
 }

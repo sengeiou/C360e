@@ -665,6 +665,45 @@ public class ObjectFactory {
         return orderDetail;
     }
 
+    public OrderDetail getOrderDetailAndPromotion(Order order, ItemDetail itemDetail,
+                                      int groupId,Promotion promotion) {
+        OrderDetail orderDetail = new OrderDetail();
+        synchronized (lock_orderDetail) {
+            long time = System.currentTimeMillis();
+            orderDetail.setCreateTime(time);
+            orderDetail.setUpdateTime(time);
+            orderDetail.setId(CommonSQL.getNextSeq(TableNames.OrderDetail));
+            orderDetail.setOrderId(order.getId());
+            orderDetail.setOrderOriginId(ParamConst.ORDER_ORIGIN_POS);
+            orderDetail.setUserId(order.getUserId());
+            orderDetail.setItemId(itemDetail.getId());
+            orderDetail.setItemName(itemDetail.getItemName());
+            orderDetail.setItemNum(promotion.getItemNum());
+            orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+            orderDetail.setOrderDetailType(ParamConst.ORDERDETAIL_TYPE_GENERAL);
+            orderDetail.setReason("");
+            orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
+            orderDetail.setItemPrice(itemDetail.getPrice());
+            orderDetail.setTaxPrice(ParamConst.DOUBLE_ZERO);
+            orderDetail.setFromOrderDetailId(0);
+            orderDetail.setIsFree(ParamConst.FREE);
+            orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
+            orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+            orderDetail.setIsItemDiscount(itemDetail.getIsDiscount());
+            orderDetail.setAppOrderDetailId(0);
+            if (itemDetail.getItemType() == 2) {
+                orderDetail.setIsOpenItem(1);
+            }
+            orderDetail.setGroupId(groupId);
+            orderDetail.setOrderSplitId(0);
+            orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+            orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
+            if (itemDetail.getItemType() == 3)
+                orderDetail.setIsSet(1);
+        }
+        return orderDetail;
+    }
+
     public OrderDetail getOrderDetailFromKiosk(Order order, OrderDetail orderDetail) {
         synchronized (lock_orderDetail) {
             long time = System.currentTimeMillis();
@@ -1212,7 +1251,7 @@ public class ObjectFactory {
                                              Promotion promotion) {
 
         OrderDetail orderDetail = null;
-        synchronized (lock_free_order_detail) {
+     //   synchronized (lock_free_order_detail) {
             orderDetail = OrderDetailSQL.getPromotionOrderDetail(order.getId(),
                     order.getId());
             if (orderDetail == null) {
@@ -1226,8 +1265,7 @@ public class ObjectFactory {
                 orderDetail.setItemNum(promotion.getFreeNum());
 //                orderDetail.setOrderDetailStatus(fromOrderDetail
 //                        .getOrderDetailStatus());
-//                orderDetail
-//                        .setOrderDetailType(fromOrderDetail.getOrderDetailType());
+               orderDetail.setOrderDetailType(0);
                 orderDetail.setReason("");
                 orderDetail.setPrintStatus(ParamConst.PRINT_STATUS_UNDONE);
                 orderDetail.setItemPrice(ParamConst.DOUBLE_ZERO);
@@ -1245,7 +1283,7 @@ public class ObjectFactory {
 
                 orderDetail.setModifierPrice(ParamConst.DOUBLE_ZERO);
                 orderDetail.setRealPrice(ParamConst.DOUBLE_ZERO);
-              //  orderDetail.setOrderSplitId(fromOrderDetail.getOrderSplitId());
+                orderDetail.setOrderSplitId(0);
                 orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                 orderDetail.setAppOrderDetailId(0);
                 orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
@@ -1253,7 +1291,7 @@ public class ObjectFactory {
                 orderDetail.setItemNum(promotion.getFreeNum());
             }
             OrderDetailSQL.updateOrderDetail(orderDetail);
-        }
+      //  }
         return orderDetail;
     }
 

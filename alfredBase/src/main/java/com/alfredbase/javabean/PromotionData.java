@@ -16,7 +16,7 @@ public class PromotionData implements Serializable {
     private Integer id;
     private Integer promotionId;
     private String promotionName;
-    private Integer promotionType;// 0 item  1 order
+    private Integer promotionType;
     private String promotionAmount;
     private String discountPercentage;
     private Integer itemId;
