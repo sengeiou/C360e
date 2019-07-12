@@ -1044,7 +1044,7 @@ public class OrderHelper {
 //						}
 					}
 
-				}
+				}}
 
 				if (itemNum >= promotion.getItemNum() ) {
 //////                    //折扣
@@ -1057,7 +1057,7 @@ public class OrderHelper {
 				} else  if (itemNum < promotion.getItemNum() ){
                 	deletePromotion(order, promotion);
 				}
-			}
+
 
 //            int itemNum = 0;
 ////            int secondItemNum = 0;
