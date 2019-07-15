@@ -31,6 +31,9 @@ public class PromotionData implements Serializable {
     private String discountPrice;
     private long businessDate;
     private Integer itemNum;
+    private Integer sessionStatus;
+    private long sysCreateTime;
+    private long sysUpdateTime;
 
     public Integer getId() {
         return id;
@@ -174,6 +177,30 @@ public class PromotionData implements Serializable {
 
     public void setItemNum(Integer itemNum) {
         this.itemNum = itemNum;
+    }
+
+    public Integer getSessionStatus() {
+        return sessionStatus;
+    }
+
+    public void setSessionStatus(Integer sessionStatus) {
+        this.sessionStatus = sessionStatus;
+    }
+
+    public long getSysCreateTime() {
+        return sysCreateTime;
+    }
+
+    public void setSysCreateTime(long sysCreateTime) {
+        this.sysCreateTime = sysCreateTime;
+    }
+
+    public long getSysUpdateTime() {
+        return sysUpdateTime;
+    }
+
+    public void setSysUpdateTime(long sysUpdateTime) {
+        this.sysUpdateTime = sysUpdateTime;
     }
 
     @Override
