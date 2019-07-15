@@ -31,6 +31,10 @@ SyamtabFileUploaderLog.txt
 __pycache__
 captures
 pusceneposcommon
+alfredCallNum/release/*
+alfredPosClient/release/*
+alfredRemotePrintService/release/*
+alfredSelfHelp/release/*
 alfredCallNum/release/
 alfredPosClient/release/
 alfredRemotePrintService/release/
