@@ -208,7 +208,8 @@ public class OrderDetailTaxSQL {
 		}
 		if(tax != null){
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("taxPriceSum", BH.mul(BH.getBDNoFormat(tax.getTaxPercentage()), BH.sub(BH.getBD(orderSplit.getSubTotal()), BH.getBD(orderSplit.getDiscountAmount()), false), true).toString());
+		//	map.put("taxPriceSum", BH.mul(BH.getBDNoFormat(tax.getTaxPercentage()), BH.sub(BH.getBD(orderSplit.getSubTotal()), BH.getBD(orderSplit.getDiscountAmount()), false), true).toString());
+			map.put("taxPriceSum", orderSplit.getInclusiveTaxPrice());
 			map.put("taxName", BaseApplication.instance.getTopActivity().getResources().getString(R.string.inclusive) + tax.getTaxName());
 			map.put("taxPercentage", tax.getTaxPercentage());
 //			taxNames.add(BaseApplication.instance.getTopActivity().getResources().getString(R.string.inclusive) + tax.getTaxName());
