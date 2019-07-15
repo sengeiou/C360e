@@ -20,7 +20,6 @@ import com.alfred.printer.KickDrawerPrint;
 import com.alfred.printer.ModifierDetailAnalysisReportPrint;
 import com.alfred.printer.MonthlySalesReportPrint;
 import com.alfred.printer.PromotionSalesReportPrint;
-import com.alfred.printer.ReportBasePrint;
 import com.alfred.printer.StoredCardPrint;
 import com.alfred.printer.SummaryAnalysisReportPrint;
 import com.alfred.printer.TableQRCodePrint;
@@ -37,10 +36,9 @@ import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.PrintBean;
 import com.alfredbase.javabean.PrinterTitle;
-import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -79,7 +77,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -452,7 +449,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //                String   promotionName=promotions.get(i).getPromotionName();
 //                BigDecimal amount =  BH.getBD(ParamConst.DOUBLE_ZERO);
 //                for(int j = 0;j <orderPromotions.size();j++){
-//                    PromotionData promotionData=orderPromotions.get(j);
+//                    OrderPromotion promotionData=orderPromotions.get(j);
 //                    int promotionId=promotionData.getPromotionId();
 //
 //                    if(id==promotionId)
@@ -845,8 +842,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         List<AppOrder> appOrders = gson.fromJson(appOrderlist,
                 new TypeToken<List<AppOrder>>() {
                 }.getType());
-        List<PromotionData> promotionDatas = gson.fromJson(promotionData,
-                new TypeToken<List<PromotionData>>() {
+        List<OrderPromotion> promotionDatas = gson.fromJson(promotionData,
+                new TypeToken<List<OrderPromotion>>() {
                 }.getType());
 
         PrintManager printMgr = this.service.getPrintMgr();
@@ -2676,8 +2673,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 }.getType());
 
 
-        List<PromotionData> promotionDatas = gson.fromJson(promotionData,
-                new TypeToken<List<PromotionData>>() {
+        List<OrderPromotion> promotionDatas = gson.fromJson(promotionData,
+                new TypeToken<List<OrderPromotion>>() {
                 }.getType());
 
         PrintManager printMgr = this.service.getPrintMgr();

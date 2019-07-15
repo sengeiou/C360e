@@ -54,13 +54,12 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterTitle;
-import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -2005,7 +2004,7 @@ public class App extends BaseApplication {
             }
 
 //            }
-          List<PromotionData>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+          List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
             roundingMap.put("Total", BH.formatMoney(total));
             roundingMap.put("Rounding", BH.formatMoney(rounding).toString());
             Gson gson = new Gson();
@@ -2141,8 +2140,9 @@ public class App extends BaseApplication {
                             BH.getBD(order.getPromotion()), true)
                             .toString();
                 }
-                List<PromotionData>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+        //        List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
+                List<OrderPromotion>  promotionData=null;
                 roundingMap.put("Total", total);
                 roundingMap.put("Rounding", rounding);
                 Gson gson = new Gson();
@@ -2264,7 +2264,7 @@ public class App extends BaseApplication {
                     rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                             .toString();
                 }
-                ArrayList<PromotionData> promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+                ArrayList<OrderPromotion> promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
                 roundingMap.put("Total", total);
                 roundingMap.put("Rounding", rounding);

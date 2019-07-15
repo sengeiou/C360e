@@ -229,6 +229,7 @@ public class OrderSQL {
         OrderHelper.setOrderTax(order, orderDetails);
         OrderHelper.setOrderTotal(order, orderDetails);
         OrderHelper.setPromotion(order,orderDetails);
+		OrderHelper.setOrderInclusiveTaxPrice(order);
     }
 	/**
 	 * 修改订单Order折扣，调用这个方法

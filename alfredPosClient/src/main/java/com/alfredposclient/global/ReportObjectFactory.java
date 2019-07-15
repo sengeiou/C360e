@@ -11,10 +11,10 @@ import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -1692,8 +1692,8 @@ public class ReportObjectFactory {
 //		return reportHourlys;
 	}
 
-	public ArrayList<PromotionData> loadReportItemPromotions(long businessDate) {
-		ArrayList<PromotionData> itemPromotions = new ArrayList<PromotionData>();
+	public ArrayList<OrderPromotion> loadReportItemPromotions(long businessDate) {
+		ArrayList<OrderPromotion> itemPromotions = new ArrayList<OrderPromotion>();
 		itemPromotions = PromotionDataSQL.getItemPromotionData(businessDate,ParamConst.ITEM_PROMOTION);
 
 		return itemPromotions;
@@ -3171,7 +3171,7 @@ public class ReportObjectFactory {
 		// Calendar nextPoint = TimeUtil.getCalendarNextPoint();
 		// Calendar zeroPoint = TimeUtil.getCalendarByZero(0);
 		long nowTime = System.currentTimeMillis();
-		ArrayList<PromotionData>	promotionDatas =	PromotionDataSQL.getOrderPromotionData(businessDate,sessionStatus,nowTime,ParamConst.ORDER_PROMOTION);
+		ArrayList<OrderPromotion>	promotionDatas =	PromotionDataSQL.getOrderPromotionData(businessDate,sessionStatus,nowTime,ParamConst.ORDER_PROMOTION);
 		ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
 		for (int i = 0; i <promotions.size() ; i++) {
 			int id=promotions.get(i).getId();
@@ -3179,7 +3179,7 @@ public class ReportObjectFactory {
 			String   promotionName=promotions.get(i).getPromotionName();
 			BigDecimal amount = BH.getBD(ParamConst.DOUBLE_ZERO);
 			for(int j = 0;j <promotionDatas.size();j++){
-				PromotionData promotionData=promotionDatas.get(j);
+				OrderPromotion promotionData=promotionDatas.get(j);
 				int promotionId=promotionData.getPromotionId();
 
 				if(id==promotionId)
@@ -3207,9 +3207,9 @@ public class ReportObjectFactory {
 		return reportPromotions;
 	}
 
-	public ArrayList<PromotionData> loadXReportItemPromotions(long businessDate,
-															   SessionStatus sessionStatus) {
-		ArrayList<PromotionData> reportPromotions = new ArrayList<PromotionData>();
+	public ArrayList<OrderPromotion> loadXReportItemPromotions(long businessDate,
+                                                               SessionStatus sessionStatus) {
+		ArrayList<OrderPromotion> reportPromotions = new ArrayList<OrderPromotion>();
 		// if (App.instance.getBusinessDate() != businessDate) {
 		// reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
 		// return reportHourlys;
@@ -3263,7 +3263,7 @@ public class ReportObjectFactory {
 		// plu hourly payment report
 		ArrayList<ReportHourly> reportHourlys = loadXReportHourlys(businessDate, sessionStatus);
 		ArrayList<ReportPromotion> reportPromotions = loadXReportPromotions(businessDate, sessionStatus);
-		//ArrayList<PromotionData> reportItemPromotions = loadXReportItemPromotions(businessDate, sessionStatus);
+		//ArrayList<OrderPromotion> reportItemPromotions = loadXReportItemPromotions(businessDate, sessionStatus);
 		map.put("reportDaySales", reportDaySales);
 		map.put("reportDayTaxs", reportDayTaxs);
 		map.put("reportDayPayments", reportDayPayments);

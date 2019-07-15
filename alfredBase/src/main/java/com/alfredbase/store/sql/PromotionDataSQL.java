@@ -2,24 +2,19 @@ package com.alfredbase.store.sql;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionData;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
-import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PromotionDataSQL {
 
-    public static void addPromotionData(PromotionData promotionData) {
+    public static void addPromotionData(OrderPromotion promotionData) {
         if (promotionData == null) {
             return;
         }
@@ -50,7 +45,7 @@ public class PromotionDataSQL {
     }
 
 
-    public static void updatePromotionData(PromotionData promotionData) {
+    public static void updatePromotionData(OrderPromotion promotionData) {
         if (promotionData == null) {
             return;
         }
@@ -238,9 +233,9 @@ public class PromotionDataSQL {
 
 
 
-    public static ArrayList<PromotionData> getOrderPromotionData(long businessDate,SessionStatus sessionStatus, long nowTime,int type)
+    public static ArrayList<OrderPromotion> getOrderPromotionData(long businessDate, SessionStatus sessionStatus, long nowTime, int type)
           {
-        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        ArrayList<OrderPromotion> result = new ArrayList<OrderPromotion>();
         String sql = "select * from " + TableNames.PromotionData
                 + " where businessDate=? and createTime > ? and updateTime < ?";
         Cursor cursor = null;
@@ -252,10 +247,10 @@ public class PromotionDataSQL {
             if (count < 1) {
                 return result;
             }
-            PromotionData promotionData = null;
+            OrderPromotion promotionData = null;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
@@ -285,9 +280,9 @@ public class PromotionDataSQL {
         return result;
     }
 
-    public static ArrayList<PromotionData> getItemPromotionData(long businessDate,SessionStatus sessionStatus, long nowTime)
+    public static ArrayList<OrderPromotion> getItemPromotionData(long businessDate, SessionStatus sessionStatus, long nowTime)
     {
-        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        ArrayList<OrderPromotion> result = new ArrayList<OrderPromotion>();
         String sql = "select * from " + TableNames.PromotionData
                 + " where businessDate=? and createTime > ? and updateTime < ? ";
         Cursor cursor = null;
@@ -299,10 +294,10 @@ public class PromotionDataSQL {
             if (count < 1) {
                 return result;
             }
-            PromotionData promotionData = null;
+            OrderPromotion promotionData = null;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
@@ -333,9 +328,9 @@ public class PromotionDataSQL {
     }
 
 
-    public static ArrayList<PromotionData> getOrderPromotionData(long businessDate,int type)
+    public static ArrayList<OrderPromotion> getOrderPromotionData(long businessDate, int type)
     {
-        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        ArrayList<OrderPromotion> result = new ArrayList<OrderPromotion>();
         String sql = "select * from " + TableNames.PromotionData
                 + " where businessDate=? and createTime > ? and updateTime < ? and  promotionType= ?";
         Cursor cursor = null;
@@ -347,10 +342,10 @@ public class PromotionDataSQL {
             if (count < 1) {
                 return result;
             }
-            PromotionData promotionData = null;
+            OrderPromotion promotionData = null;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
@@ -380,9 +375,9 @@ public class PromotionDataSQL {
         return result;
     }
 
-    public static ArrayList<PromotionData> getItemPromotionData(long businessDate, int type)
+    public static ArrayList<OrderPromotion> getItemPromotionData(long businessDate, int type)
     {
-        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        ArrayList<OrderPromotion> result = new ArrayList<OrderPromotion>();
         String sql = "select * from " + TableNames.PromotionData
                 + " where businessDate=?  and  promotionType= ?";
         Cursor cursor = null;
@@ -394,10 +389,10 @@ public class PromotionDataSQL {
             if (count < 1) {
                 return result;
             }
-            PromotionData promotionData = null;
+            OrderPromotion promotionData = null;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
@@ -426,9 +421,9 @@ public class PromotionDataSQL {
         }
         return result;
     }
-    public static ArrayList<PromotionData> getPromotionDataOrOrderid(int orderId)
+    public static ArrayList<OrderPromotion> getPromotionDataOrOrderid(int orderId)
     {
-        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+        ArrayList<OrderPromotion> result = new ArrayList<OrderPromotion>();
         String sql = "select * from " + TableNames.PromotionData
                 + " where orderId = ? ";
         Cursor cursor = null;
@@ -440,10 +435,10 @@ public class PromotionDataSQL {
             if (count < 1) {
                 return result;
             }
-            PromotionData promotionData = null;
+            OrderPromotion promotionData = null;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
@@ -473,9 +468,9 @@ public class PromotionDataSQL {
         return result;
     }
 
-    public static PromotionData getPromotionData(int orderId,int orderDetailId)
+    public static OrderPromotion getPromotionData(int orderId, int orderDetailId)
     {
-       PromotionData promotionData = null;
+       OrderPromotion promotionData = null;
         String sql = "select * from " + TableNames.PromotionData
                 + " where orderId = ? and orderDetailId= ? ";
         Cursor cursor = null;
@@ -489,7 +484,7 @@ public class PromotionDataSQL {
             }
 
             if (cursor.moveToFirst()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
@@ -520,9 +515,9 @@ public class PromotionDataSQL {
     }
 
 
-    public static PromotionData getPromotionDataOrType(int orderId,int type)
+    public static OrderPromotion getPromotionDataOrType(int orderId, int type)
     {
-        PromotionData promotionData = null;
+        OrderPromotion promotionData = null;
         String sql = "select * from " + TableNames.PromotionData
                 + " where orderId = ? and promotionType = ? ";
         Cursor cursor = null;
@@ -536,7 +531,7 @@ public class PromotionDataSQL {
             }
 
             if (cursor.moveToFirst()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
@@ -567,9 +562,9 @@ public class PromotionDataSQL {
     }
 
 
-    public static PromotionData getPromotionDataOrId(int orderId,int promotionId)
+    public static OrderPromotion getPromotionDataOrId(int orderId, int promotionId)
     {
-        PromotionData promotionData = null;
+        OrderPromotion promotionData = null;
         String sql = "select * from " + TableNames.PromotionData
                 + " where orderId = ? and promotionId = ? ";
         Cursor cursor = null;
@@ -583,7 +578,7 @@ public class PromotionDataSQL {
             }
 
             if (cursor.moveToFirst()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
                 promotionData.setId(cursor.getInt(0));
                 promotionData.setPromotionId(cursor.getInt(1));
                 promotionData.setPromotionName(cursor.getString(2));
@@ -614,8 +609,8 @@ public class PromotionDataSQL {
     }
 
 
-    public static ArrayList<PromotionData> getAllPromotionData() {
-        ArrayList<PromotionData> result = new ArrayList<PromotionData>();
+    public static ArrayList<OrderPromotion> getAllPromotionData() {
+        ArrayList<OrderPromotion> result = new ArrayList<OrderPromotion>();
         String sql = "select * from " + TableNames.PromotionItem + " order by id desc";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
@@ -625,10 +620,10 @@ public class PromotionDataSQL {
             if (count < 1) {
                 return result;
             }
-            PromotionData promotionData = null;
+            OrderPromotion promotionData = null;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
-                promotionData = new PromotionData();
+                promotionData = new OrderPromotion();
 //                id, promotionId, promotionName, promotionType, promotionAmount,discountPercentage," +
 //                "itemId,itemName,freeNum," +
 //                        "freeItemId,freeItemName,createTime,updateTime,orderId,orderDetailId,discountPrice,businessDate
@@ -666,7 +661,7 @@ public class PromotionDataSQL {
 
 
 
-    public static void deletePromotionAndFree(PromotionData promotionData) {
+    public static void deletePromotionAndFree(OrderPromotion promotionData) {
 
         String delePromotionData = "delete from " + TableNames.PromotionData + " where id = ?";
         // 删除免费菜的信息

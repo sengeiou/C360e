@@ -15,10 +15,10 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.PromotionWeek;
 import com.alfredbase.javabean.RevenueCenter;
@@ -35,7 +35,6 @@ import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.PromotionOrderSQL;
 import com.alfredbase.store.sql.PromotionSQL;
 import com.alfredbase.store.sql.PromotionWeekSQL;
-import com.nostra13.universalimageloader.utils.L;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -330,11 +329,11 @@ public class OrderHelper {
 //		if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0){
 //			long nowTime = System.currentTimeMillis();
 //
-//			PromotionData promotionData=PromotionDataSQL.getPromotionData(order.getId(),orderDetail.getId());
+//			OrderPromotion promotionData=PromotionDataSQL.getPromotionData(order.getId(),orderDetail.getId());
 //			if(promotionData==null){
 //				List<Promotion> promotionList= PromotionSQL.getAllPromotion();
 //				Promotion promotion= PromotionSQL.getPromotion(itemPromotion.getPromotionId());
-//                promotionData=new PromotionData();
+//                promotionData=new OrderPromotion();
 //				promotionData.setPromotionType(0);
 //				promotionData.setPromotionAmount(promotionPrice.toString());
 //				promotionData.setItemId(orderDetail.getItemId());
@@ -599,12 +598,12 @@ public class OrderHelper {
 //					if(promotionOrder!=null) {
 //						long nowTime = System.currentTimeMillis();
 //
-//						PromotionData promotionData = PromotionDataSQL.getPromotionDataOrType(order.getId(), 1);
+//						OrderPromotion promotionData = PromotionDataSQL.getPromotionDataOrType(order.getId(), 1);
 //
 //						if (promotionData == null) {
 //							List<Promotion> promotionList = PromotionSQL.getAllPromotion();
 //							Promotion promotion = PromotionSQL.getPromotion(promotionOrder.getPromotionId());
-//							promotionData = new PromotionData();
+//							promotionData = new OrderPromotion();
 //							promotionData.setPromotionType(1);
 //							promotionData.setPromotionAmount(promotionPrice.toString());
 //							promotionData.setOrderId(order.getId());
@@ -1220,9 +1219,9 @@ public class OrderHelper {
 
     private static void addPromotion(Order order,Promotion promotion,OrderDetail freeOrderDetail,String price) {
 	                     long nowTime = System.currentTimeMillis();
-						 PromotionData promotionData = PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId());
+						 OrderPromotion promotionData = PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId());
 						if (promotionData == null) {
-							promotionData = new PromotionData();
+							promotionData = new OrderPromotion();
 							promotionData.setPromotionType(0);
 							if(!TextUtils.isEmpty(price)){
 								promotionData.setPromotionAmount(price);
@@ -1262,7 +1261,7 @@ public class OrderHelper {
 
 	private static void deletePromotion(Order order,Promotion promotion) {
 
-		PromotionData promotionData = PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId());
+		OrderPromotion promotionData = PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId());
 		if (promotionData != null) {
 
 			PromotionDataSQL.deletePromotionAndFree(promotionData);
@@ -1312,10 +1311,10 @@ public class OrderHelper {
 
 			}
 		}}
-//	 List<PromotionData> promotionDatas=PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+//	 List<OrderPromotion> promotionDatas=PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 //
 //		if (promotionDatas.size() > 0) {
-//			for (PromotionData promotionData : promotionDatas) {
+//			for (OrderPromotion promotionData : promotionDatas) {
 //				if(promotionData.getPromotionType()!= 5){
 //					if(BH.getBD(promotionData.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))!=0) {
 //						BigDecimal discount = BH.divThirdFormat(BH.getBD(promotionData.getDiscountPercentage()),BH.getBD(100),false);

@@ -26,10 +26,10 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PrinterTitle;
-import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
@@ -667,7 +667,7 @@ public class App extends BaseApplication {
 //                total = BH.add(BH.getBD(order.getTotal()),
 //                        BH.getBD(order.getPromotion()), true);
 //            }
-            List<PromotionData>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+            List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
             roundingMap.put("Total", total.toString());
             roundingMap.put("Rounding", rounding);

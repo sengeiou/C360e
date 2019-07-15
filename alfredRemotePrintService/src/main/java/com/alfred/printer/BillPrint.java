@@ -7,7 +7,7 @@ import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
-import com.alfredbase.javabean.PromotionData;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.Params;
@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -725,12 +724,12 @@ public class BillPrint extends PrintJob {
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total, String grandTotal, String rounding, String currencySymbol,List<PromotionData> promotionDatas) {
+                               List<Map<String, String>> taxes, String total, String grandTotal, String rounding, String currencySymbol,List<OrderPromotion> promotionDatas) {
         AddBillSummary(subtotal, discount, taxes, total, grandTotal, rounding, currencySymbol, 0,promotionDatas);
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total,String grandTotal, String rounding, String currencySymbol, int splitByPax,List<PromotionData> promotionDatas) {
+                               List<Map<String, String>> taxes, String total,String grandTotal, String rounding, String currencySymbol, int splitByPax,List<OrderPromotion> promotionDatas) {
         if ("¥".equals(currencySymbol)) {
             currencySymbol = "￥";
         }
@@ -795,7 +794,7 @@ public class BillPrint extends PrintJob {
         if(promotionDatas!=null&&promotionDatas.size()>0){
 
             for (int i = 0; i <promotionDatas.size() ; i++) {
-                PromotionData promotionData=promotionDatas.get(i);
+                OrderPromotion promotionData=promotionDatas.get(i);
                 PrintData promotionPrint = new PrintData();
                 String promotionStr = StringUtil.padLeft(BH.getBD(promotionData.getPromotionAmount()).toString(),
                         this.FIXED_COL4_TOTAL);

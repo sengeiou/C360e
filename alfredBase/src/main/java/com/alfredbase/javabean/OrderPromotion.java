@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @ return :
  */
-public class PromotionData implements Serializable {
+public class OrderPromotion implements Serializable {
 
     private Integer id;
     private Integer promotionId;
@@ -205,7 +205,7 @@ public class PromotionData implements Serializable {
 
     @Override
     public String toString() {
-        return "PromotionData{" +
+        return "OrderPromotion{" +
                 "id=" + id +
                 ", promotionId=" + promotionId +
                 ", promotionName='" + promotionName + '\'' +
