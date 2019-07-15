@@ -241,6 +241,7 @@ public class ParamConst {
     public static final int KOTITEMDETAIL_CATEGORYID_SUB = 1;
 
     // Job用 标记placeOrder 发送给KDS的状态
+    public static final String JOB_TMP_KOT = "tmp_kot";
     public static final String JOB_NEW_KOT = "new_kot";
     public static final String JOB_UPDATE_KOT = "update_kot";
     public static final String JOB_DELETE_KOT = "delete_kot";

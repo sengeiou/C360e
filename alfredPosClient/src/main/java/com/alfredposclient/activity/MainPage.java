@@ -2068,7 +2068,7 @@ public class MainPage extends BaseActivity {
                 case ACTION_KOT_NEXT_KDS:
                     int orderId = msg.arg1;
                     int kdsId = msg.arg2;
-                    sendKOTTmpToKDS(orderId, kdsId);
+//                    sendKOTTmpToKDS(orderId, kdsId);
                     break;
                 default:
                     break;
@@ -2417,7 +2417,6 @@ public class MainPage extends BaseActivity {
                 ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
                 List<Integer> orderDetailIds = new ArrayList<>();
                 ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
-                kotCommitStatus = ParamConst.JOB_NEW_KOT;
 
                 for (OrderDetail orderDetail : orderDetails) {
                     KotItemDetail kotItemDetail = ObjectFactory
@@ -2493,7 +2492,7 @@ public class MainPage extends BaseActivity {
                         orderMap.put("orderDetailIds", orderDetailIds);
                         App.instance.getKdsJobManager().sendKOTTmpToKDS(
                                 kotSummary, kotItemDetails,
-                                kotItemModifiers, kotCommitStatus,
+                                kotItemModifiers, ParamConst.JOB_TMP_KOT,
                                 orderMap, kdsId);
                     }
                 } else {

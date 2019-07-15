@@ -130,6 +130,7 @@ public class APIName {
      */
     public static final String SUBMIT_NEW_KOT = "submit_new_kot";
     public static final String SUBMIT_TMP_KOT = "submit_tmp_kot";
+    public static final String SUBMIT_NEXT_KOT = "submit_next_kot";
 
     /**
      * 以waiter作为服务器

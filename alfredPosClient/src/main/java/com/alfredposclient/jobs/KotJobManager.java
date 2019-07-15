@@ -144,7 +144,7 @@ public class KotJobManager {
             KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId());
         }
 
-        // add job to send it to KDS
+        //region add job to send it to KDS
         for (Integer prgid : printerGroupIds) {
             PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
             boolean isAssemblyLine = false;
@@ -154,7 +154,7 @@ public class KotJobManager {
                 isAssemblyLine = true;//testing
             }
 
-            ArrayList<Printer> printers = getPrinters(prgid, kdsId, isAssemblyLine);
+            ArrayList<Printer> printers = getPrinters(prgid, kdsId, isAssemblyLine);//if isAssemblyLine = true, will return 1 printer
 
             for (Printer printer : printers) {
                 if (printer == null) continue;
@@ -166,7 +166,7 @@ public class KotJobManager {
                         .getId());
 
                 if (kdsDevice == null && printerDevice == null) {
-                    return;
+                    continue;
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
@@ -177,6 +177,99 @@ public class KotJobManager {
                 }
             }
         }
+        //endregion
+    }
+
+    public void sendKOTToNextKDS(KotSummary kotSummary,
+                                 ArrayList<KotItemDetail> kotItemDetails, ArrayList<KotItemModifier> modifiers,
+                                 String method, Map<String, Object> orderMap, int kdsId) {
+
+        ArrayList<Integer> printerGroupIds = new ArrayList<>();
+        Map<Integer, ArrayList<KotItemDetail>> mapKOT = new HashMap<>();
+        Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<>();
+
+        //region collect kotItem by printerGroupId
+        for (KotItemDetail items : kotItemDetails) {
+
+            Integer pgid = items.getPrinterGroupId();
+
+            if (pgid.equals(0)) continue;
+
+            int kotItemDetailId = items.getId();
+
+            // Get all Group ids that KOT belongs to
+            if (!printerGroupIds.contains(pgid))
+                printerGroupIds.add(pgid);
+
+            // kot
+            if (mapKOT.containsKey(pgid)) {
+                ArrayList<KotItemDetail> tmp = mapKOT.get(pgid);
+                tmp.add(items);
+            } else {
+                ArrayList<KotItemDetail> tmp = new ArrayList<>();
+                tmp.add(items);
+                mapKOT.put(pgid, tmp);
+            }
+
+            // modifier
+            if (mods.containsKey(pgid)) {
+                ArrayList<KotItemModifier> tmp = mods.get(pgid);
+                for (KotItemModifier mof : modifiers) {
+                    if (mof.getKotItemDetailId().equals(kotItemDetailId)) {
+                        tmp.add(mof);
+                    }
+                }
+            } else {
+                ArrayList<KotItemModifier> tmp = new ArrayList<>();
+                for (KotItemModifier mof : modifiers) {
+                    if (mof.getKotItemDetailId().equals(kotItemDetailId)) {
+                        tmp.add(mof);
+                    }
+                }
+                mods.put(items.getPrinterGroupId(), tmp);
+            }
+        }
+        //endregion
+
+        if (printerGroupIds.size() > 0 && kotSummary != null) {
+            kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
+            KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId());
+        }
+
+        //region add job to send it to KDS
+        for (Integer prgid : printerGroupIds) {
+            PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
+            boolean isAssemblyLine = false;
+
+            if (printerGroup != null) {
+//                isAssemblyLine = printerGroup.getPrinterType() == 1;
+                isAssemblyLine = true;//testing
+            }
+
+            ArrayList<Printer> printers = getPrinters(prgid, kdsId, isAssemblyLine);//if isAssemblyLine = true, will return 1 printer
+
+            for (Printer printer : printers) {
+                if (printer == null) continue;
+
+                // KDS device
+                KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
+                // physical printer
+                PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer
+                        .getId());
+
+                if (kdsDevice == null && printerDevice == null) {
+                    continue;
+                }
+
+                if (kdsDevice != null && kotSummary != null) {
+                    KotJob kotjob = new KotJob(kdsDevice, kotSummary,
+                            mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_NEXT_KOT);
+
+                    kotJobManager.addJob(kotjob);
+                }
+            }
+        }
+        //endregion
     }
 
     /* convert KOT to kot jobs */

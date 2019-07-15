@@ -62,6 +62,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,12 +128,37 @@ public class KitchenOrder extends BaseActivity {
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
+                        adapter.setIsTemporer(false);
                         madapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kotItems.size() + "");
                     } else {
                         adapter.setKots(kots);
                         adapter.setAddFirstItem(true);
+                        adapter.setIsTemporer(false);
+                        adapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kots.size() + "");
+                    }
+
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        kadapter.setKot(App.instance.getKot(kotSummary));
+                        kadapter.notifyDataSetChanged();
+                    }
+                    break;
+                case App.HANDLER_TMP_KOT:
+                    kots = App.instance.getRefreshKots();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.setAddFirstItem(true);
+                        adapter.setIsTemporer(true);
+                        madapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kotItems.size() + "");
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.setAddFirstItem(true);
+                        adapter.setIsTemporer(true);
                         adapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kots.size() + "");
@@ -347,7 +373,10 @@ public class KitchenOrder extends BaseActivity {
                 case App.HANDLER_KOT_NEXT:
                     //region next kds
                     Bundle bundle2 = msg.getData();
-                    final KotSummary kotSummary2 = (KotSummary) bundle2.getSerializable("kotSummary");
+                    String kotStr = bundle2.getString("kot");
+
+                    final Kot kot = new Gson().fromJson(kotStr, Kot.class);
+                    if (kot != null) return;
 
                     String titleNext = getResources().getString(R.string.warning);
                     String contentNext = "Are you sure get to next step?";
@@ -357,17 +386,10 @@ public class KitchenOrder extends BaseActivity {
                             leftNext, rightNext, null, new OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
-//                                    for (KotItemDetail kotItemDetail : App.instance.getKot(kotSummary2).getKotItemDetails()) {
-//                                        kotItemDetail.setFinishQty(kotItemDetail.getUnFinishQty());
-//                                        kotItemDetail.setUnFinishQty(0);
-//                                        kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-//                                        KotItemDetailSQL.update(kotItemDetail);
-//                                        itemDetails.add(kotItemDetail);
-//                                    }
                                     Map<String, Object> parameters = new HashMap<>();
-                                    parameters.put("kotSummary", kotSummary2);
-                                    parameters.put("kotItemDetails", itemDetails);
+                                    parameters.put("kotSummary", kot.getKotSummary());
+                                    parameters.put("kotItemDetails", kot.getKotItemDetails());
+                                    parameters.put("kotModifiers", kot.getKotItemModifiers());
                                     parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                                     parameters.put("type", 1);
                                     SyncCentre.getInstance().kotNextKDS(KitchenOrder.this,

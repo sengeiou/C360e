@@ -132,6 +132,7 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
+import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.moonearly.utils.service.TcpUdpFactory;
@@ -2609,88 +2610,60 @@ public class MainPosHttpServer extends AlfredHttpServer {
         Map<String, Object> result = new HashMap<>();
         Response resp = null;
         Gson gson = new Gson();
-        List<KotNotification> kotNotifications = new ArrayList<>();
 
         try {
             JSONObject jsonObject = new JSONObject(params);
 
+            final int type = jsonObject.getInt("type");
             final int kdsId = jsonObject.getInt("kdsId");
             final KotSummary kotSummary = gson.fromJson(
                     jsonObject.getString("kotSummary"), KotSummary.class);
-            ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
+            final ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
                     jsonObject.optString("kotItemDetails"),
                     new TypeToken<ArrayList<KotItemDetail>>() {
                     }.getType());
-            KotSummary localKotSummary = KotSummarySQL.getKotSummaryById(kotSummary.getId().intValue());
-            if (localKotSummary == null) {
-                result.put("resultCode", ResultCode.KOTSUMMARY_IS_UNREAL);
-                resp = this.getJsonResponse(new Gson().toJson(result));
-                return resp;
-            }
+            final ArrayList<KotItemModifier> kotModifiers = gson.fromJson(
+                    jsonObject.optString("kotModifiers"),
+                    new TypeToken<ArrayList<KotItemModifier>>() {
+                    }.getType());
 
-            // : fix bug: filter out old data that may be in KDS
-            ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
-            for (int i = 0; i < kotItemDetails.size(); i++) {
-                KotItemDetail kotItemDetail = kotItemDetails.get(i);
-                if (kotItemDetail.getOrderId().intValue() == kotSummary.getOrderId().intValue())
-                    filteredKotItemDetails.add(kotItemDetail);
-            }
-
-            List<KotItemDetail> resultKotItemDetails = new ArrayList<KotItemDetail>();
-            // end bug fix
-
-//            for (int i = 0; i < filteredKotItemDetails.size(); i++) {
-//                KotItemDetail kotItemDetail = filteredKotItemDetails.get(i);
-//                if (TextUtils.isEmpty(localKotSummary.getNumTag())) {
-//                    OrderDetailSQL.updateOrderDetailStatusById(
-//                            ParamConst.ORDERDETAIL_STATUS_PREPARED,
-//                            kotItemDetail.getOrderDetailId());
-//                } else {
-//                    CPOrderDetailSQL.updateOrderDetailStatusById(
-//                            ParamConst.ORDERDETAIL_STATUS_PREPARED,
-//                            kotItemDetail.getOrderDetailId());
-//                }
-//
-//                KotItemDetail lastSubKotItemDetail = KotItemDetailSQL.getLastKotItemDetailByOrderDetailId(localKotSummary.getId(), kotItemDetail.getOrderDetailId());
-//                if (lastSubKotItemDetail != null && lastSubKotItemDetail.getUnFinishQty() != (kotItemDetail.getUnFinishQty() + kotItemDetail.getFinishQty())) {
-//                    result.put("resultCode", ResultCode.KOT_COMPLETE_USER_FAILED);
-//                    resp = this.getJsonResponse(new Gson().toJson(result));
-//                    return resp;
-//                } else if (kotItemDetail.getUnFinishQty() == 0) {
-//                    kotItemDetail.setFinishQty(kotItemDetail.getItemNum());
-//                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-//                    kotItemDetail.setFireStatus(ParamConst.FIRE_STATUS_DEFAULT);
-//                }
-//                KotItemDetail subKotItemDetail = ObjectFactory.getInstance()
-//                        .getSubKotItemDetail(kotItemDetail);
-//                resultKotItemDetails.add(subKotItemDetail);
-//                KotNotification kotNotification = ObjectFactory.getInstance()
-//                        .getKotNotification(App.instance.getSessionStatus(),
-//                                kotSummary, subKotItemDetail);
-//
-//                kotNotifications.add(kotNotification);
-//            }
-//            if (filteredKotItemDetails.size() > 0) {
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    App.getTopActivity().httpRequestActions(
-                            MainPage.ACTION_KOT_NEXT_KDS, kotSummary.getOrderId(), kdsId);
-                }
-            }).start();
+            sendToNextKDS(kotSummary, kotItemDetails, kotModifiers, kdsId, type);
 
             result.put("resultCode", ResultCode.SUCCESS);
             resp = this.getJsonResponse(new Gson().toJson(result));
-//            } else {
-//                result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);
-//                resp = this.getJsonResponse(new Gson().toJson(result));
-//            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         return resp;
+    }
+
+    private void sendToNextKDS(final KotSummary kotSummary, final ArrayList<KotItemDetail> kotItemDetails,
+                               final ArrayList<KotItemModifier> kotItemModifiers, final int kdsId, final int type) {
+
+        final Order order = OrderSQL.getOrder(kotSummary.getOrderId());
+        if (order == null) return;
+
+        final List<Integer> orderDetailIds = new ArrayList<>();
+        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
+
+        for (OrderDetail orderDetail : orderDetails) {
+            orderDetailIds.add(orderDetail.getId());
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Map<String, Object> orderMap = new HashMap<>();
+                orderMap.put("orderId", order.getId());
+                orderMap.put("orderDetailIds", orderDetailIds);
+                App.instance.getKdsJobManager().sendKOTToNextKDS(
+                        kotSummary, kotItemDetails,
+                        kotItemModifiers, ParamConst.JOB_TMP_KOT,
+                        orderMap, kdsId);
+            }
+        }).start();
     }
 
     private Response handlerKOTItemComplete(String params) {

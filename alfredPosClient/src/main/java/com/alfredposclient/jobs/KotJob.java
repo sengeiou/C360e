@@ -284,6 +284,61 @@ public class KotJob extends Job {
                             context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
                     }
                 }
+            } else if (APIName.SUBMIT_NEXT_KOT.equals(apiName)) {
+                //region next KOT
+                /*check the latest KOT summary status*/
+                KotSummary kotsmy = (KotSummary) data.get("kotSummary");
+                KotSummary updatedkot = KotSummarySQL.getKotSummaryById(kotsmy.getId());
+
+                /*if the kotsummary removed or have been done, no need send it to KDS*/
+                if (updatedkot == null)
+                    return;
+                if (updatedkot.getStatus() == ParamConst.KOTS_STATUS_DONE)
+                    return;
+
+                SyncCentre.getInstance().syncSubmitKotToNextKDS(kds, context, data, null);
+                if (kotMap == null) {
+                    return;
+                }
+                List<Integer> orderDetailIds = (List<Integer>) kotMap.get("orderDetailIds");
+                if (orderDetailIds.size() != 0) {
+                    ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+                    ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+                    if (kotMap.containsKey("orderPosType") && (Integer) kotMap.get("orderPosType") == ParamConst.POS_TYPE_SUB) {
+                        for (int i = 0; i < orderDetailIds.size(); i++) {
+                            OrderDetail orderDetail = CPOrderDetailSQL
+                                    .getOrderDetail(orderDetailIds.get(i));
+                            orderDetail
+                                    .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+                            KotItemDetail kotItemDetail = KotItemDetailSQL
+                                    .getMainKotItemDetailByOrderDetailId(kotsmy.getId(), orderDetailIds
+                                            .get(i));
+                            orderDetails.add(orderDetail);
+                            kotItemDetails.add(kotItemDetail);
+                        }
+                        CPOrderDetailSQL.addOrderDetailList(orderDetails);
+                        KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                        if (context != null)
+                            context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
+                    } else {
+                        for (int i = 0; i < orderDetailIds.size(); i++) {
+                            OrderDetail orderDetail = OrderDetailSQL
+                                    .getOrderDetail(orderDetailIds.get(i));
+                            orderDetail
+                                    .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+                            KotItemDetail kotItemDetail = KotItemDetailSQL
+                                    .getMainKotItemDetailByOrderDetailId(kotsmy.getId(), orderDetailIds
+                                            .get(i));
+                            orderDetails.add(orderDetail);
+                            kotItemDetails.add(kotItemDetail);
+                        }
+                        OrderDetailSQL.addOrderDetailList(orderDetails);
+                        KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                        if (context != null)
+                            context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
+                    }
+                }
+                //endregion
             }
             LogUtil.d(TAG, "KOT JOB Successful");
         } catch (Throwable e) {

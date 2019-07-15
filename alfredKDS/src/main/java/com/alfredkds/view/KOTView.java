@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
@@ -25,6 +24,7 @@ import android.widget.BaseAdapter;
 import android.widget.Chronometer;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
@@ -41,6 +41,7 @@ import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
 import com.alfredkds.javabean.Kot;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +86,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
     private int hour;
     private MainPosInfo mainPosInfo;
     private TextView tvNext;
+    private boolean isTemp;
+    private RelativeLayout ll_progress;
 
     public KOTView(Context context) {
         super(context);
@@ -133,11 +136,19 @@ public class KOTView extends LinearLayout implements AnimationListener,
         call_num_tv = (TextView) kotView.findViewById(R.id.call_num_tv);
         complete_all_tv = (TextView) kotView.findViewById(R.id.complete_all_tv);
         tvNext = (TextView) kotView.findViewById(R.id.tvNext);
+        ll_progress = (RelativeLayout) kotView.findViewById(R.id.ll_progress);
 
-        if ("0".equals(App.instance.getKdsDevice().getKdsType())) {
-            call_num_tv.setVisibility(GONE);
+        if (isTemp) {
+            tvNext.setVisibility(GONE);
             complete_all_tv.setVisibility(GONE);
-            tvNext.setVisibility(VISIBLE);
+            call_num_tv.setVisibility(GONE);
+            ll_progress.setVisibility(GONE);
+        } else {
+            if ("0".equals(App.instance.getKdsDevice().getKdsType())) {
+                call_num_tv.setVisibility(GONE);
+                complete_all_tv.setVisibility(GONE);
+                tvNext.setVisibility(VISIBLE);
+            }
         }
 
         tv_orderremark.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -234,12 +245,13 @@ public class KOTView extends LinearLayout implements AnimationListener,
     }
 
 
-    public void setData(Kot originKot) {
+    public void setData(Kot originKot, boolean isHold) {
         this.kot = originKot;
         this.kotItemDetails.clear();
         this.kotItemDetails.addAll(kot.getKotItemDetails());
         this.kotItemModifiers.clear();
         this.kotItemModifiers.addAll(kot.getKotItemModifiers());
+        this.isTemp = isHold;
         kotId.setText(kot.getKotSummary().getId() + "");
         String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo();
 
@@ -408,7 +420,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
                 Message message = new Message();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("kotSummary", kot.getKotSummary());
+                bundle.putString("kot", new Gson().toJson(kot));
                 message.setData(bundle);
                 message.what = App.HANDLER_KOT_NEXT;
                 handler.sendMessage(message);

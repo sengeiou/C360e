@@ -69,9 +69,76 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = handlerSessionClose(body);
             } else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
                 resp = handlerTmpKot(body);
+            } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
+                resp = handlerNextKot(body);
             } else {
                 resp = getNotFoundResponse();
             }
+        }
+
+        return resp;
+    }
+
+    private Response handlerNextKot(String params) {
+        Response resp = null;
+        Map<String, Object> result = new HashMap<>();
+        int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final Gson gson = new Gson();
+            String method = jsonObject.optString("method");
+
+            //region parameter validation
+            if (TextUtils.isEmpty(method)) {
+                resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+                return resp;
+            }
+
+            final KotSummary kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
+            if (kotSummary == null) {
+                resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+                return resp;
+            } else {
+                if (revenueCenterId != kotSummary.getRevenueCenterId()) {
+                    App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                    result.put("resultCode", ResultCode.CONNECTION_FAILED);
+                    resp = getJsonResponse(new Gson().toJson(result));
+                    return resp;
+                }
+            }
+            //endregion
+
+            final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
+            }.getType());
+            final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>() {
+            }.getType());
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    KotSummarySQL.update(kotSummary);
+                    if (kotItemDetails != null) {
+                        KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                    }
+                    if (kotItemModifiers != null) {
+                        KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
+                    }
+
+                    App.getTopActivity().httpRequestAction(App.HANDLER_TMP_KOT, null);
+                }
+            }).start();
+
+            result.put("resultCode", ResultCode.SUCCESS);
+            result.put("method", method);
+            result.put("kotSummary", kotSummary);
+            result.put("orderId", kotSummary.getOrderId());
+            resp = getJsonResponse(new Gson().toJson(result));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
         }
 
         return resp;
@@ -107,7 +174,7 @@ public class KdsHttpServer extends AlfredHttpServer {
             }
             //endregion
 
-            if (method.equals(ParamConst.JOB_NEW_KOT)) {
+            if (method.equals(ParamConst.JOB_TMP_KOT)) {
                 final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
                 }.getType());
                 final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>() {
@@ -125,7 +192,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                             KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                         }
 
-                        App.getTopActivity().httpRequestAction(App.HANDLER_NEW_KOT, null);
+                        App.getTopActivity().httpRequestAction(App.HANDLER_TMP_KOT, null);
                     }
                 }).start();
 
