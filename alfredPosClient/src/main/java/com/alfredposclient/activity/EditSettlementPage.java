@@ -299,6 +299,7 @@ public class EditSettlementPage extends BaseActivity {
                             .getInstance().getItemModifierList(OrderSQL.getOrder(orderSplit.getOrderId()), orderSplitDetails);
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit, orderBill);
                     Order temporaryOrder = new Order();
+//                    if(orderSplit.)
                     temporaryOrder.setPersons(orderSplit.getPersons());
                     temporaryOrder.setSubTotal(orderSplit.getSubTotal());
                     temporaryOrder.setDiscountAmount(orderSplit.getDiscountAmount());
@@ -642,10 +643,23 @@ public class EditSettlementPage extends BaseActivity {
                     Order temporaryOrder = new Order();
                     temporaryOrder.setPersons(paidOrderSplit.getPersons());
                     temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
+                    temporaryOrder.setDiscountAmount(currentOrder.getDiscountAmount());
+                    temporaryOrder.setTotal(currentOrder.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
+                    /*
+                    ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                            .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
+                    Order temporaryOrder = new Order();
+                    temporaryOrder.setPersons(paidOrderSplit.getPersons());
+                    temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
+                    temporaryOrder.setDiscountAmount(currentOrder.getDiscountAmount());
+                    temporaryOrder.setTotal(currentOrder.getTotal());
+                    temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+                    temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
+                     */
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
