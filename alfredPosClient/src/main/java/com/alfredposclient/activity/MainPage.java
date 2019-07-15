@@ -2039,7 +2039,7 @@ public class MainPage extends BaseActivity {
                     Order temporaryOrder = new Order();
                     temporaryOrder.setPersons(paidOrderSplit.getPersons());
                     temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
+                    temporaryOrder.setDiscountAmount(currentOrder.getDiscountAmount());
                     temporaryOrder.setTotal(currentOrder.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
