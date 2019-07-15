@@ -154,11 +154,21 @@
                     android:visibility="visible">
 
                     <Button
+                        android:id="@+id/btn_reprint_kot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/print_kot"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_m" />
+
+                    <Button
                         android:id="@+id/btn_print_bill"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="20dp"
+                        android:layout_marginRight="10dp"
                         android:text="@string/print_bill"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_m" />

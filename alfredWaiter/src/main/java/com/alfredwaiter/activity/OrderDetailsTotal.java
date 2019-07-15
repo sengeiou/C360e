@@ -107,6 +107,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private TextView tv_place_order;
     private Button btn_get_bill;
     private Button btn_print_bill;
+    private Button btn_reprint_kot;
     private SelectGroupWindow selectGroupWindow;
     private int groupId = -1;
     private OrderDetailListAdapter adapter;
@@ -126,6 +127,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private OrderDetail selectedOrderDetail;
     private PrinterDevice selectedPrinter;
     private boolean isOpenScreen;
+    private boolean isPrintAllKOT;
 
     @Override
     protected void initView() {
@@ -137,6 +139,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         tv_place_order = (TextView) findViewById(R.id.tv_place_order);
         btn_get_bill = (Button) findViewById(R.id.btn_get_bill);
         btn_print_bill = (Button) findViewById(R.id.btn_print_bill);
+        btn_reprint_kot = (Button) findViewById(R.id.btn_reprint_kot);
         loadingDialog = new LoadingDialog(context);
         adapter = new OrderDetailListAdapter(context);
         lv_dishes.setAdapter(adapter);
@@ -160,6 +163,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         tv_place_order.setOnClickListener(this);
         btn_get_bill.setOnClickListener(this);
         btn_print_bill.setOnClickListener(this);
+        btn_reprint_kot.setOnClickListener(this);
         ll_bill_action = (LinearLayout) findViewById(R.id.ll_bill_action);
         selectGroupWindow = new SelectGroupWindow(context, tv_group, handler);
         ((TextView) findViewById(R.id.tv_tables_name)).setText(TableInfoSQL.getTableById(currentOrder.getTableId())
@@ -198,7 +202,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case GET_PRINT_KOT_DATA_SUCCESS:
-                    printKOT();
+                    printKOT(isPrintAllKOT);
                     break;
                 case GET_PRINT_KOT_DATA_FAILED:
                     //get data kot failed
@@ -516,6 +520,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 SyncCentre.getInstance().getBillPrint(context, parameters, handler);
             }
             break;
+            case R.id.btn_reprint_kot:
             case R.id.btn_print_bill: {
                 final PrinterDevice printerDevice = Store.getObject(context, Store.WAITER_PRINTER_DEVICE, PrinterDevice.class);
                 String str = "Use the default Cashier Printer ?";
@@ -524,6 +529,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 }
 
                 isOpenScreen = false;
+                isPrintAllKOT = v.getId() == R.id.btn_reprint_kot;
 
                 DialogFactory.commonTwoBtnDialog(context, "Warning", str, "Other", "OK",
                         new OnClickListener() {
@@ -536,7 +542,10 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     public void callBack(PrinterDevice printerDevice) {
                                         selectedPrinter = printerDevice;
                                         if ("V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {
-                                            getPrintBillData();
+                                            if (isPrintAllKOT)
+                                                getPrintKOTData();
+                                            else
+                                                getPrintBillData();
                                         } else {
                                             printBill();
                                         }
@@ -551,7 +560,10 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                             public void onClick(View v) {
                                 selectedPrinter = printerDevice;
                                 if (selectedPrinter != null && "V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {
-                                    getPrintBillData();
+                                    if (isPrintAllKOT)
+                                        getPrintKOTData();
+                                    else
+                                        getPrintBillData();
                                 } else {
                                     printBill();
                                 }
@@ -623,7 +635,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 
     }
 
-    private void printKOT() {
+    private void printKOT(boolean isPrintAllKOT) {
         PrinterDevice printerDevice = App.instance.getLocalPrinterDevice();
         if (currentOrder == null || printerDevice == null) return;
 
@@ -636,20 +648,24 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 
         ArrayList<KotItemDetail> printKOTItemDetails = new ArrayList<>();
 
-        if (App.instance.getNewOrderDetail() != null) {
+        if (isPrintAllKOT) {
+            printKOTItemDetails.addAll(kotItemDetails);
+        } else {
+            if (App.instance.getNewOrderDetail() != null) {
 
-            for (OrderDetail orderDetail : App.instance.getNewOrderDetail()) {
-                for (KotItemDetail kotItemDetail : kotItemDetails) {
-                    int orderDetailId = kotItemDetail.getOrderDetailId();
+                for (OrderDetail orderDetail : App.instance.getNewOrderDetail()) {
+                    for (KotItemDetail kotItemDetail : kotItemDetails) {
+                        int orderDetailId = kotItemDetail.getOrderDetailId();
 
-                    if (orderDetailId == orderDetail.getId()) {
-                        printKOTItemDetails.add(kotItemDetail);
-                        break;
+                        if (orderDetailId == orderDetail.getId()) {
+                            printKOTItemDetails.add(kotItemDetail);
+                            break;
+                        }
                     }
                 }
+            } else {
+                printKOTItemDetails.addAll(kotItemDetails);
             }
-        } else {
-            printKOTItemDetails.addAll(kotItemDetails);
         }
 
         App.instance.getNewOrderDetail().clear();
