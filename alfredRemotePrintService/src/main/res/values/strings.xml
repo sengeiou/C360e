@@ -8,6 +8,8 @@
     <string name="swift_no_">Order No.</string>
     <string name="bill_no_">Bill No.</string>
     <string name="cashier">Cashier</string>
+    <string name="train">Training</string>
+    <string name="mode">Mode</string>
     <string name="emp">Emp</string>
     <string name="groupnum">Group Num</string>
     <string name="pos">POS</string>
@@ -15,6 +17,7 @@
     <string name="table">Table</string>
     <string name="pax">PAX</string>
     <string name="item">Item</string>
+    <string name="training">.Training</string>
     <string name="price">Price</string>
     <string name="qty">QTY</string>
     <string name="total">Total</string>

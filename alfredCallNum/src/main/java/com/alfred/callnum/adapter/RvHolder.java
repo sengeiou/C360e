@@ -3,6 +3,8 @@ package com.alfred.callnum.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.alfredbase.global.BugseeHelper;
+
 
 public abstract class RvHolder<T> extends RecyclerView.ViewHolder {
     protected RvListener mListener;
@@ -13,6 +15,7 @@ public abstract class RvHolder<T> extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BugseeHelper.buttonClicked(v);
                 mListener.onItemClick(v.getId(), getAdapterPosition());
             }
         });

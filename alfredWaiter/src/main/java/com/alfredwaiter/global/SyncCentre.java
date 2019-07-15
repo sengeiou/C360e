@@ -2,9 +2,18 @@ package com.alfredwaiter.global;
 
 import android.content.Context;
 import android.os.Handler;
+import android.view.View;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.http.APIName;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
+import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
+import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 
@@ -174,5 +183,7 @@ public class SyncCentre {
 	public void setIp(String ip) {
 		this.ip = ip;
 	}
+
+
 
 }

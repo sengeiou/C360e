@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
@@ -832,6 +833,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
 
     @Override
     public void onKeyBoardClick(String key) {
+        BugseeHelper.buttonClicked(key);
          if (key.equals(mainPage.getResources().getString(com.alfredbase.R.string.delete))) {
              tv_store_card_value.setText("");
         } else{

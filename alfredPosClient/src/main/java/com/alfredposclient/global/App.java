@@ -1,6 +1,10 @@
 package com.alfredposclient.global;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -29,8 +33,10 @@ import com.alfred.remote.printservice.IAlfredRemotePrintService;
 import com.alfred.remote.printservice.RemotePrintServiceCallback;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.BuildConfig;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.CashInOut;
@@ -133,6 +139,7 @@ import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.jobs.KotJobManager;
 import com.alfredposclient.jobs.SubPosCloudSyncJobManager;
+import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
 import com.alfredposclient.view.ReloginDialog;
@@ -198,7 +205,7 @@ public class App extends BaseApplication {
     private MainPosInfo mainPosInfo;
     public String VERSION = "1.0.8";
     private static final String DATABASE_NAME = "com.alfredposclient";
-    private static final String DATABASE_NAME_TRAIN= "com.alfredposclient.train";
+    private static final String DATABASE_NAME_TRAIN = "com.alfredposclient.train";
     private String callAppIp;
 
     private int appOrderNum;
@@ -344,23 +351,28 @@ public class App extends BaseApplication {
     private IntentFilter intentFilter;
 
     private Observable<Object> observable;
+    private Observable<Object> observable1;
+    private Observable<Object> observable2;
     //    private PushServer pushServer;
     private SDKHandler sdkHandler;
     private boolean isUsbScannerLink = false;
+    private boolean isTrain=true;
+    private int train;
+    private Boolean trainDisplay ;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         instance = this;
-        int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
+        BugseeHelper.init(this, "9290f896-1a2e-4b70-b1fa-46823bb4398c");
+        train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
         if(train==1){
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
+           // setSessionStatus(null);
         }else {
             SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         }
-
-
         systemSettings = new SystemSettings(this);
 
         kdsJobManager = new KotJobManager(this);
@@ -439,6 +451,87 @@ public class App extends BaseApplication {
             }
         });
 
+
+
+        observable2 = RxBus.getInstance().register(RxBus.RX_TRAIN);
+        observable2.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object object) {
+                final BaseActivity context = App.getTopActivity();
+                train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+                if(isTrain) {
+                    isTrain=false;
+                    // 0  正常模式， 1 培训模式
+                    DialogFactory.commonTwoBtnDialog(context, "",
+                            "Disable Training Mode?",
+                            context.getResources().getString(R.string.cancel),
+                            context.getResources().getString(R.string.ok),
+                            new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
+                                    isTrain=true;
+                                }
+                            },
+                            new OnClickListener() {
+
+                                @Override
+                                public void onClick(View arg0) {
+
+                                    isTrain=true;
+
+                                    Map<String, Object> parameters = new HashMap<String, Object>();
+                                    final SessionStatus sessionStatus = Store.getObject(
+                                            context, Store.SESSION_STATUS, SessionStatus.class);
+                                    final long bizDate = App.instance.getBusinessDate().longValue();
+                                    final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+
+                                    parameters.put("session",
+                                            Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
+                                    SyncCentre.getInstance().sendSessionClose(context, parameters);
+                                    if (train != 1) {
+
+                                        SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
+                                        try {
+                                            AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+                                        SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
+
+                                    }
+
+                                    context.runOnUiThread(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            Intent intent = new Intent(App.instance, Welcome.class);
+                                            @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+                                                    App.instance
+                                                            .getApplicationContext(),
+                                                    0, intent,
+                                                    Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            // 退出程序
+                                            AlarmManager mgr = (AlarmManager) App.instance
+                                                    .getSystemService(Context.ALARM_SERVICE);
+                                            mgr.set(AlarmManager.RTC,
+                                                    System.currentTimeMillis() + 1000,
+                                                    restartIntent); // 1秒钟后重启应用
+                                            ActivityManager am = (ActivityManager) App.instance
+                                                    .getSystemService(Context.ACTIVITY_SERVICE);
+                                            am.killBackgroundProcesses(getPackageName());
+                                            App.instance.finishAllActivity();
+                                        }
+                                    });
+                                }
+                            });
+                }
+
+            }
+        });
+
 //        TcpUdpFactory.getServiceIp(5, new UdpSendCallBack() {
 //            @Override
 //            public void call(boolean isSucceed) {
@@ -498,7 +591,7 @@ public class App extends BaseApplication {
 //
 ////
 
-        if (MachineUtil.isHisense()||(MachineUtil.isSUNMIShow()&&MachineUtil.isSunmiT2())) {
+        if (MachineUtil.isHisense() || (MachineUtil.isSUNMIShow() && MachineUtil.isSunmiT2())) {
 
             DisplayManager mDisplayManager;// 屏幕管理类
             mDisplayManager = (DisplayManager) this
@@ -512,8 +605,6 @@ public class App extends BaseApplication {
                 mPresentation.show();
             }
         }
-
-
 
     }
 
@@ -1628,18 +1719,18 @@ public class App extends BaseApplication {
                 if (countryCode == ParamConst.CHINA)
                     mRemoteService.printKioskKOT(printstr, kotsumStr, kdlstr,
                             modstr, this.systemSettings.isKotPrintTogether(),
-                            this.systemSettings.isKotDoublePrint(), getPrintOrderNo(kotsummary.getOrderId().intValue()), 2);
+                            this.systemSettings.isKotDoublePrint(), getPrintOrderNo(kotsummary.getOrderId().intValue()), 2,train);
                 else
                     mRemoteService.printKioskKOT(printstr, kotsumStr, kdlstr,
                             modstr, this.systemSettings.isKotPrintTogether(),
-                            this.systemSettings.isKotDoublePrint(), null, 3);
+                            this.systemSettings.isKotDoublePrint(), null, 3,train);
             } else {
                 int size = 2;
                 if (countryCode == ParamConst.CHINA)
                     size = 2;
                 mRemoteService.printKOT(printstr, kotsumStr, kdlstr, modstr,
                         this.systemSettings.isKotPrintTogether(),
-                        this.systemSettings.isKotDoublePrint(), size, isFire);
+                        this.systemSettings.isKotDoublePrint(), size, isFire,train);
             }
             return true;
         } catch (RemoteException e) {
@@ -1901,7 +1992,7 @@ public class App extends BaseApplication {
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
-            if(order.getPromotion()!=null){
+            if (order.getPromotion() != null) {
                 total = BH.add(BH.formatMoney(total),
                         BH.getBD(order.getPromotion()), true)
                         .toString();
@@ -2019,7 +2110,7 @@ public class App extends BaseApplication {
                 printReceiptInfos.add(printReceiptInfo);
             }
         }
-        if(getSystemSettings().isPrintBill()) {
+        if (getSystemSettings().isPrintBill()) {
             if (mRemoteService == null) {
                 printerDialog();
                 return;
@@ -2035,7 +2126,7 @@ public class App extends BaseApplication {
                     rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                             .toString();
                 }
-                if(order.getPromotion()!=null){
+                if (order.getPromotion() != null) {
                     total = BH.add(BH.formatMoney(total),
                             BH.getBD(order.getPromotion()), true)
                             .toString();
@@ -2075,23 +2166,23 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders);
+                            openDrawer, BH.IsDouble(), "", apporders);
                 }
 
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        }else if(isCashSettlement){
+        } else if (isCashSettlement) {
             kickOutCashDrawer(printer);
         }
     }
 
     public void remoteBillRePrint(PrinterDevice printer, PrinterTitle title,
-                                   Order order, ArrayList<PrintOrderItem> orderItems,
-                                   ArrayList<PrintOrderModifier> orderModifiers,
-                                   List<Map<String, String>> taxes,
-                                   List<PaymentSettlement> settlement, RoundAmount roundAmount,
-                                   boolean openDrawer){
+                                  Order order, ArrayList<PrintOrderItem> orderItems,
+                                  ArrayList<PrintOrderModifier> orderModifiers,
+                                  List<Map<String, String>> taxes,
+                                  List<PaymentSettlement> settlement, RoundAmount roundAmount,
+                                  boolean openDrawer) {
 
         boolean isCashSettlement = false;
         List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
@@ -2189,18 +2280,18 @@ public class App extends BaseApplication {
                                 null, getLocalRestaurantConfig().getCurrencySymbol(),
                                 openDrawer, BH.IsDouble());
 
-                } else {
-                    mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-                            mods, tax, payment,
-                            this.systemSettings.isDoubleBillPrint(),
-                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                            getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders);
-                }
-
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            } else {
+                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                        mods, tax, payment,
+                        this.systemSettings.isDoubleBillPrint(),
+                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                        getLocalRestaurantConfig().getCurrencySymbol(),
+                        openDrawer, BH.IsDouble(), "", apporders);
             }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void kickOutCashDrawer(PrinterDevice printer) {
@@ -2371,7 +2462,7 @@ public class App extends BaseApplication {
             String itmStr = gson.toJson(items);
             String modStr = gson.toJson(modifier);
             mRemoteService.printSummaryAnalysisReport(xzType, prtStr, prtTitle,
-                    pluStr, modStr, catStr, itmStr,App.instance.systemSettings.isPluVoid());
+                    pluStr, modStr, catStr, itmStr, App.instance.systemSettings.isPluVoid());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -2400,7 +2491,7 @@ public class App extends BaseApplication {
 
 
     public void remotePrintPromotionReport(String xzType, PrinterDevice printer,
-                                        PrinterTitle title, List<PromotionData> itemPromotion, List<PromotionData> orderPromotion, List<Promotion> promotions) {
+                                           PrinterTitle title, List<PromotionData> itemPromotion, List<PromotionData> orderPromotion, List<Promotion> promotions) {
         if (mRemoteService == null) {
             // Toast.makeText(this, "Printer service is not started yet",
             // 1000).show();
@@ -2415,7 +2506,7 @@ public class App extends BaseApplication {
             String orderPromotionStr = gson.toJson(orderPromotion);
             String promotionsStr = gson.toJson(promotions);
             mRemoteService.printPromotionAnalysisReport(xzType, prtStr, prtTitle,
-                 orderPromotionStr,itemPromotionStr,promotionsStr);
+                    orderPromotionStr, itemPromotionStr, promotionsStr);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -3003,7 +3094,7 @@ public class App extends BaseApplication {
             KotSummary kotSummary = ObjectFactory.getInstance()
                     .getKotSummaryApporder(
                             TableInfoSQL.getTableById(
-                                    order.getTableId()).getName(), order,appOrder,
+                                    order.getTableId()).getName(), order, appOrder,
                             App.instance.getRevenueCenter(),
                             App.instance.getBusinessDate());
             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
@@ -3096,7 +3187,7 @@ public class App extends BaseApplication {
                                             paidOrder,
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser().getLastName(),
-                                            "", 1);
+                                            "", 1,App.instance.getSystemSettings().getTrainType());
 
                             List<OrderDetail> placedOrderDetailss
                                     = OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
@@ -3164,7 +3255,7 @@ public class App extends BaseApplication {
                     paidOrder,
                     getUser().getFirstName()
                             + getUser().getLastName(),
-                    tableInfo.getName(), 1);
+                    tableInfo.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
             ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
                     .getItemList(
@@ -3187,11 +3278,11 @@ public class App extends BaseApplication {
 
                 String userinfo, phone;
                 String name = null;
-                String appOrderId= "";
+                String appOrderId = "";
                 if (TextUtils.isEmpty(appOrder.getAddress())) {
                     userinfo = "";
                 } else {
-                        // appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
+                    // appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
 
                     if (TextUtils.isEmpty(appOrder.getContact())) {
                         name = "";
@@ -3210,9 +3301,9 @@ public class App extends BaseApplication {
                         //    String addr = appOrder.getAddress();
                         phone = "" + appOrder.getMobile() + "\n";
                     }
-                    if(TextUtils.isEmpty(appOrder.getOrderRemark())){
-                        userinfo =name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
-                    }else {
+                    if (TextUtils.isEmpty(appOrder.getOrderRemark())) {
+                        userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")";
+                    } else {
                         userinfo = name + phone + "" + appOrder.getAddress() + "  (" + TimeUtil.getCloseBillDataTime(appOrder.getDeliveryTime()) + ")" + "\n" + appOrder.getOrderRemark();
                     }
                 }

@@ -14,6 +14,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemModifier;
@@ -69,6 +70,7 @@ public class ModifierWindow {
         contentView.findViewById(R.id.pop_modifier_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BugseeHelper.buttonClicked(v);
                 popupWindow.dismiss();
                 handler.sendEmptyMessage(MainPage.VIEW_ENVENT_GET_ORDERDETAILS);
             }
@@ -76,9 +78,11 @@ public class ModifierWindow {
         btn_description.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BugseeHelper.buttonClicked(v);
                 DialogFactory.commonTwoBtnInputDialog(context,false, "Description", "Please input description", "cancel", "Save", null, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        BugseeHelper.buttonClicked(v);
                         EditText editText = (EditText) v;
                         tv_description_info.setText(editText.getText().toString());
                     }
@@ -88,6 +92,7 @@ public class ModifierWindow {
         btn_save_order_detail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BugseeHelper.buttonClicked(v);
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("itemDetail", itemDetail);
                 map.put("modifierIds", modifierIds);
@@ -231,6 +236,7 @@ public class ModifierWindow {
                 viewHold.tv_item1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        BugseeHelper.buttonClicked(v);
                         if(modifierIds.contains(v.getTag())){
                             modifierIds.remove(v.getTag());
                         }else{

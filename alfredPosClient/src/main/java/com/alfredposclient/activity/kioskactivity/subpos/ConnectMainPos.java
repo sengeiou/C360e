@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredposclient.R;
@@ -95,6 +96,7 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
 
     @Override
     public void onKeyBoardClick(String key) {
+        BugseeHelper.buttonClicked(key);
         if (TextUtils.isEmpty(key)){
 //            App.instance.setPairingIp(getInputedIP());
 //            UIHelp.startEmployeeID(context);

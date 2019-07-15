@@ -36,7 +36,9 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.KotNotification;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
@@ -114,6 +116,7 @@ public class CoreData {
 	private List<SettlementRestaurant> settlementRestaurant;
 
 	private PrinterDevice device;
+	private int trainType;
 
 	public RoundRule getRoundRule() {
 		return roundRule;
@@ -164,6 +167,28 @@ public class CoreData {
 		restaurantConfigs = RestaurantConfigSQL.getAllRestaurantConfig();
 		settlementRestaurant= SettlementRestaurantSQL.getAllSettlementRestaurant();
 		pamentMethodList= PaymentMethodSQL.getAllPaymentMethod();
+
+		trainType= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+		SessionStatus sessionStatus = Store.getObject(
+				context, Store.SESSION_STATUS, SessionStatus.class);
+
+
+//
+		//train= SharedPreferencesHelper.pu(this,SharedPreferencesHelper.TRAINING_MODE);
+		if(trainType==1){
+
+
+			int first= Store.getInt(context,Store.TRAIN_FIRST,0);
+			if(first==0){
+
+				GeneralSQL.deleteAllDataInSubPos();
+				Store.remove(context, Store.SESSION_STATUS);
+                Store.putInt(context,Store.TRAIN_FIRST,1);
+			}
+
+        }else {
+
+		}
 
 	}
 

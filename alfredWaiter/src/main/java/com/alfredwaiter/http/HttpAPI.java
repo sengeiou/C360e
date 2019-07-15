@@ -16,6 +16,9 @@ import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.RxBus;
@@ -39,6 +42,7 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +66,10 @@ public class HttpAPI {
                             if (resultCode == ResultCode.SUCCESS) {
                                 HttpAnalysis.employeeId(statusCode, headers,
                                         responseBody, handler);
-                            } else if (resultCode == ResultCode.USER_NO_PERMIT) {
+                            } else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else if (resultCode == ResultCode.USER_NO_PERMIT) {
                                 handler.sendEmptyMessage(ResultCode.USER_NO_PERMIT);
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
@@ -88,8 +95,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -164,8 +170,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -199,8 +204,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -230,8 +234,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -268,8 +271,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -303,8 +305,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -334,8 +335,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -371,8 +371,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -408,8 +407,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -448,8 +446,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -487,8 +484,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         Handler mHandler = mmHandler;
 
@@ -557,8 +553,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -571,7 +566,11 @@ public class HttpAPI {
                                 handler.sendMessage(handler.obtainMessage(
                                         TablesPage.VIEW_EVENT_SELECT_TABLES,
                                         order));
-                            } else {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }
@@ -599,8 +598,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(final int statusCode,
@@ -610,7 +608,11 @@ public class HttpAPI {
                             if (resultCode == ResultCode.SUCCESS) {
                                 SyncCentre.getInstance().getStock(context);
                                 HttpAnalysis.commitOrderAndOrderDetails(statusCode, headers, responseBody, handler);
-                            } else if (resultCode == ResultCode.ORDER_FINISHED) {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else if (resultCode == ResultCode.ORDER_FINISHED) {
                                 handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
                             } else if (resultCode == ResultCode.NONEXISTENT_ORDER) {
                                 handler.sendEmptyMessage(ResultCode.NONEXISTENT_ORDER);
@@ -665,8 +667,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -675,7 +676,11 @@ public class HttpAPI {
                             if (resultCode == ResultCode.SUCCESS) {
                                 HttpAnalysis.pairingComplete(statusCode,
                                         headers, responseBody, handler);
-                            } else {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }
@@ -703,8 +708,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters),
-                            "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    waiterBaseInfo(parameters), HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -712,7 +716,11 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendMessage(handler.obtainMessage(Setting.HANDLER_LOGOUT_SUCCESS));
-                            } else {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }
@@ -739,7 +747,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    waiterBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -758,7 +766,11 @@ public class HttpAPI {
                                     }
                                 }).start();
 
-                            } else {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }
@@ -786,7 +798,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    waiterBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -796,7 +808,11 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendEmptyMessage(KOTNotification.VIEW_EVENT_COLLECT_KOTITEM);
-                            } else {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }
@@ -824,7 +840,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    waiterBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -834,7 +850,11 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 HttpAnalysis.handlerGetOrderDetails(statusCode, headers, responseBody, handler);
-                            } else {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }
@@ -863,7 +883,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    waiterBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -873,7 +893,11 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendEmptyMessage(Setting.TEMPORARY_DISH_ADD_POS_SUCCESS);
-                            } else {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else {
                                 handler.sendEmptyMessage(Setting.TEMPORARY_DISH_ADD_POS_FAILED);
                             }
                         }
@@ -901,7 +925,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    waiterBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -911,7 +935,11 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_GET_BILL);
-                            } else {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }
@@ -939,7 +967,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    waiterBaseInfo(parameters),
                     HttpAssembling.CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -949,7 +977,11 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_BILL);
-                            } else if (resultCode == ResultCode.ORDER_FINISHED) {
+                            }
+                            else if(resultCode==ResultCode.USER_POS_TYPE){
+                                diaLogTrain();
+                            }
+                            else if (resultCode == ResultCode.ORDER_FINISHED) {
                                 handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
@@ -1015,5 +1047,43 @@ public class HttpAPI {
 
             }
         });
+    }
+
+    public static StringEntity waiterBaseInfo(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+
+        int type=Store.getInt(App.instance, Store.TRAIN_TYPE);
+        map.put("trainType", type);
+
+        StringEntity entity = new StringEntity(gson.toJson(map) ,
+                "UTF-8");
+        return entity;
+    }
+
+
+    private static void diaLogTrain() {
+        App.getTopActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                App.getTopActivity().showOneButtonCompelDialog("Mode Change",
+                        "Please relogin",
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                OrderSQL.deleteAllOrder();
+                                OrderDetailSQL.deleteAllOrderDetail();
+                                OrderModifierSQL.deleteAllOrderModifier();
+                                OrderDetailTaxSQL.deleteAllOrderDetailTax();
+                                UIHelp.startEmployeeID(App.getTopActivity());
+                                App.instance.popAllActivityExceptOne(EmployeeID.class);
+                            }
+                        });
+
+            }
+        });
+
     }
 }

@@ -198,7 +198,7 @@ public class EditSettlementPage extends BaseActivity {
                                     currentOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    table.getName(), 1);
+                                    table.getName(), 1,App.instance.getSystemSettings().getTrainType());
                     ArrayList<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder
                             .getId());
                     ArrayList<PrintOrderItem> printOrderItems = ObjectFactory.getInstance().getItemList(orderDetails);

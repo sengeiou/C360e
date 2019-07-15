@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
@@ -155,6 +156,7 @@ public class DevicesAdapter extends CustomAdapter {
 			holder.ll_manually_add.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					BugseeHelper.buttonClicked(v);
 					handler.sendEmptyMessage(DevicesActivity.MANUALLY_ADD_PRINTER);
 				}
 			});
@@ -211,10 +213,12 @@ public class DevicesAdapter extends CustomAdapter {
 		
 		@Override
 		public void onClick(final View view) {
+			BugseeHelper.buttonClicked(view);
 			DialogFactory.commonTwoBtnDialog(App.getTopActivity(), con.getResources().getString(R.string.warning), "Unassign will disconnect Printer!", con.getResources().getString(R.string.cancel), con.getResources().getString(R.string.ok), null, new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
+					BugseeHelper.buttonClicked(v);
 					PrinterDevice device = (PrinterDevice) view.getTag();
 					handler.sendMessage(handler.obtainMessage(DevicesActivity.UNASSIGN_PRINTER_DEVICE, device));
 				}
@@ -227,6 +231,7 @@ public class DevicesAdapter extends CustomAdapter {
 		@Override
 		public void onClick(View view) {
 			if(ButtonClickTimer.canClick(view)) {
+				BugseeHelper.buttonClicked(view);
 				PrinterDevice device = (PrinterDevice) view.getTag();
 				handler.sendMessage(handler.obtainMessage(DevicesActivity.ASSIGN_PRINTER_DEVICE, device));
 			}

@@ -63,7 +63,7 @@ public class ReportBasePrint extends PrintJob{
 		addHortionalLine(this.charSize);
 	}
 	
-	public void AddHeader(String op, String reportNo, String dateTime, String bizDate) {
+	public void AddHeader(String op, String reportNo, String dateTime, String bizDate,int trainType) {
 		
 		PrintData cashierPrint = new PrintData();
 		String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.op),
@@ -73,16 +73,28 @@ public class ReportBasePrint extends PrintJob{
 		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		cashierPrint.setText(cashierStr);
 		this.data.add(cashierPrint);
-		
+		String trainString = "";
+		if(trainType==1){
+			trainString=PrintService.instance.getResources().getString(R.string.training);
+		}
 		//report NO
 		PrintData billNoPrint = new PrintData();
 		String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.report_no_), this.FIXED_COL3_TOTAL);
-		String padBillNo = billNoStr+":"+reportNo+reNext;
+		String padBillNo = billNoStr+":"+reportNo+trainString+reNext;
 		billNoPrint.setDataFormat(PrintData.FORMAT_TXT);
 		billNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
 		billNoPrint.setText(padBillNo);
 		this.data.add(billNoPrint);
-		
+
+//		if(trainType==1){
+//			PrintData trainPrint = new PrintData();
+//			String trainLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.mode), this.FIXED_COL3_TOTAL);
+//			String trainStr = trainLabel + ":" + PrintService.instance.getResources().getString(R.string.train) + reNext;
+//			trainPrint.setDataFormat(PrintData.FORMAT_TXT);
+//			trainPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//			trainPrint.setText(trainStr);
+//			this.data.add(trainPrint);
+//		}
 		//Business Date
 		PrintData bizDatePrint = new PrintData();
 		String bdateLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.business_date), this.FIXED_COL3_TOTAL);

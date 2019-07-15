@@ -7,11 +7,18 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
-    <!--声明使用usb-->
-    <uses-feature android:name="android.hardware.usb.host"></uses-feature>
+    <!-- 声明使用usb -->
+    <uses-feature android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <application >
+    <!--<uses-permission android:name=" android.permission.SYSTEM_ALERT_WINDOW" />-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!--<uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />-->
+
+    <application>
+        <receiver android:name=".global.SchedulerService" />
     </application>
 
 </manifest>

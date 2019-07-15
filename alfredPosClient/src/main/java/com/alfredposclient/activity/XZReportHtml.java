@@ -465,7 +465,7 @@ public class XZReportHtml extends BaseActivity {
 										0),
 						App.instance.getUser().getFirstName()
 								+ App.instance.getUser().getLastName(), null,
-						bizDate);
+						bizDate,App.instance.getSystemSettings().getTrainType());
 
 		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 		List<ReportUserOpenDrawer> reportUserOpenDrawers = new ArrayList<ReportUserOpenDrawer>();

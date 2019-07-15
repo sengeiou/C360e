@@ -4,32 +4,37 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.alfredbase.global.BugseeHelper;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.RxBus;
+import com.floatwindow.float_lib.FloatActionController;
+import com.floatwindow.float_lib.OnTrainListener;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.umeng.analytics.MobclickAgent;
 
-public class BaseActivity extends FragmentActivity implements OnClickListener {
+public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected BaseActivity context;
     protected Dialog compelDialog;
     protected Dialog oneButtonCompelDialog;
     public LoadingDialog loadingDialog;
     protected NotificationManager mNotificationManager;
+    int displayTrain=ParamConst.ENABLE_POS_TRAINING;
    // DifferentDislay  mPresentation;
     protected static DisplayImageOptions display = new DisplayImageOptions.Builder() // 圆角边处理的头像
             .cacheInMemory(true) // 缓存到内存，设置true则缓存到内存
@@ -61,6 +66,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         MobclickAgent.updateOnlineConfig(this);
         initView();
+        initView(savedInstanceState);
 
 
 //        DisplayManager mDisplayManager;// 屏幕管理类
@@ -85,23 +91,117 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 //							| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
+    protected void initviewWelcom() {
+        displayTrain=ParamConst.DISABLE_POS_TRAINING;
+
+    }
 
 
+    protected void initView(Bundle savedInstanceState) {
+        displayTrain=ParamConst.DISABLE_POS_TRAINING;
+    }
 
     protected void initView() {
 
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+      //  FloatViewHelper.showFloatView(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         BaseApplication.activitys.remove(this);
-    }
+     //   FloatActionController.getInstance().stopMonkServer(this);
+
+
+   }
 
     @Override
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+
+        int train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
+        if(train==ParamConst.ENABLE_POS_TRAINING&&displayTrain!=ParamConst.DISABLE_POS_TRAINING)
+        {
+            //   FloatActionController.getInstance().startMonkServer(this);
+
+//            if (Build.VERSION.SDK_INT >= 23) {
+////                if(!Settings.canDrawOverlays(getApplicationContext())) {
+////                    //启动Activity让用户授权
+////                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+////                    startActivity(intent);
+////                    return;
+////                } else {
+////                    FloatActionController.getInstance().startMonkServer(this);
+////                    //执行6.0以上绘制代码
+////                }
+//        } else {
+                FloatActionController.getInstance().startMonkServer(this);
+                //执行6.0以下绘制代码
+//            }
+
+            // FloatActionController.getInstance().registerOnTrainListener(this);
+            FloatActionController.getInstance().registerOnTrainListener(new OnTrainListener() {
+                @Override
+                public void onTrainClick() {
+                    RxBus.getInstance().post(RxBus.RX_TRAIN, "");
+
+                    //Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+//           boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
+////        //有对应权限或者系统版本小于7.0
+//        if (isPermission || Build.VERSION.SDK_INT < 24) {
+//            //开启悬浮窗
+//            FloatActionController.getInstance().startMonkServer(this);
+//        }
+//
+//            if (Build.VERSION.SDK_INT >= 23) {
+//                if(!Settings.canDrawOverlays(getApplicationContext())) {
+//                    //启动Activity让用户授权
+//                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+//                    startActivity(intent);
+//                    return;
+//                } else {
+//                    FloatActionController.getInstance().startMonkServer(this);
+//                    //执行6.0以上绘制代码
+//                }
+//            } else {
+//                FloatActionController.getInstance().startMonkServer(this);
+//                //执行6.0以下绘制代码
+//            }
+
+
+//          FloatActionController.getInstance().startMonkServer(this);
+//            FloatActionController.getInstance().registerOnTrainListener(new OnTrainListener() {
+//                @Override
+//                public void onTrainClick() {
+//                    RxBus.getInstance().post(RxBus.RX_TRAIN, "");
+//
+//                 //   Toast.makeText(context, "传值了", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+            //  FloatActionController.getInstance().registerOnTrainListener(this);
+//
+        }else {
+
+            FloatActionController.getInstance().stopMonkServer(this);
+
+        }
+           displayTrain=ParamConst.ENABLE_POS_TRAINING;
+
+//        boolean isPermission = FloatPermissionManager.getInstance().applyFloatWindow(this);
+//        //有对应权限或者系统版本小于7.0
+//        if (isPermission || Build.VERSION.SDK_INT < 24) {
+//            //开启悬浮窗
+//            FloatActionController.getInstance().startMonkServer(this);
+//        }
         String wifiStr = Store.getString(context, Store.WIFI_STR);
         if (!TextUtils.isEmpty(wifiStr)) {
             RxBus.getInstance().post(RxBus.RX_WIFI_STORE, wifiStr);
@@ -133,7 +233,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
     }
 
     protected void handlerClickEvent(View v) {
-
+        BugseeHelper.buttonClicked(v);
     }
 
     public void selectTable(TableInfo tableInfo) {

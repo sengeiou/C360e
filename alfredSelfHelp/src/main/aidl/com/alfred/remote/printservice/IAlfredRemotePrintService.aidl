@@ -10,13 +10,14 @@ interface IAlfredRemotePrintService {
 	void configure(int country,int lang, int dollarsign);
 	
 	void clearPrint();
+
 	void deleteOldPrinterMsg(String businessDate);
+	
+	void printKOT(String printer,String summary, String detail, String modifiers, 
+						boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire,int trainType);
 
-	void printKOT(String printer,String summary, String detail, String modifiers,
-						boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire);
-
-	void printKioskKOT(String printer,String summary, String detail, String modifiers,
-						boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize );
+	void printKioskKOT(String printer,String summary, String detail, String modifiers, 
+						boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize,int trainType);
 
 	void printBillSummary(String printer,String summary, String detail, String modifiers, int kotFontSize);
 

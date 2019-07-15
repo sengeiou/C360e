@@ -470,4 +470,9 @@ public class ParamConst {
 	public static final int ITEM_PROMOTION = 0;
 	public static final int ORDER_PROMOTION = 1;
 
+	public static final int ENABLE_POS_TRAINING  = 1;
+	public static final int DISABLE_POS_TRAINING = 0;
+
+
+
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -78,6 +79,7 @@ import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
@@ -319,7 +321,7 @@ public class MainPage extends BaseActivity {
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
         System.out.println("========MMMMMM");
         setContentView(R.layout.activity_main_page);
         super.initView();
@@ -405,9 +407,19 @@ public class MainPage extends BaseActivity {
         });
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
         XMPP.getInstance().setCanCheckAppOrder(true);
+        if(savedInstanceState != null){
+            currentOrder = (Order) savedInstanceState.getSerializable("currentOrder");
+            currentTable = (TableInfo) savedInstanceState.getSerializable("currentTable");
+            setData();
+        }
     }
 
- 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("currentOrder",currentOrder);
+        outState.putSerializable("currentTable",currentTable);
+    }
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {
@@ -797,13 +809,14 @@ public class MainPage extends BaseActivity {
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser()
                                                     .getLastName(),
-                                            currentTable.getName(), 1);
+                                            currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
+
                             currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
                             OrderSQL.update(currentOrder);
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
                                             .getId()));
-                            App.instance.remoteBillPrint(printer, title, currentOrder,
+                            App.instance. remoteBillPrint(printer, title, currentOrder,
                                     orderItems, orderModifiers, taxMap, null, null);
 //						handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                         }
@@ -860,7 +873,7 @@ public class MainPage extends BaseActivity {
                                     paidOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    currentTable.getName(), 1);
+                                    currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
 
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
@@ -1779,7 +1792,8 @@ public class MainPage extends BaseActivity {
                                 printerLoadingDialog.dismiss();
                             }
                             if (!isShowTables) {
-                                showTables();
+//                                showTables();
+                                handler.sendEmptyMessage(VIEW_EVENT_SHOW_TABLES);
                             }
                         }
                     }
@@ -2018,17 +2032,18 @@ public class MainPage extends BaseActivity {
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
                             .getInstance().getItemList(orderSplitDetails);
                     List<Map<String, String>> taxMap = OrderDetailTaxSQL
-                            .getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
+                            .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
 
                     ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                             .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
                     Order temporaryOrder = new Order();
                     temporaryOrder.setPersons(paidOrderSplit.getPersons());
                     temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
+                    temporaryOrder.setDiscountAmount(currentOrder.getDiscountAmount());
+                    temporaryOrder.setTotal(currentOrder.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
@@ -2108,6 +2123,7 @@ public class MainPage extends BaseActivity {
 //			closeOrderSplitWindow.onBack();
 //			return;
 //		}
+        ButtonClickTimer.canClick();
         if (selectOrderSplitDialog != null && selectOrderSplitDialog.isShowing()) {
             selectOrderSplitDialog.dismiss();
         }
@@ -2320,11 +2336,11 @@ public class MainPage extends BaseActivity {
 //	}
 
     private void setData() {
+        initOrder(currentTable);
         if(currentOrder == null){
             showTables();
             return;
         }
-        initOrder(currentTable);
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 //        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
 //
@@ -2649,7 +2665,11 @@ public class MainPage extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_CANCELED){
+            return;
+        }
         setData();
+
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NetWorkOrderActivity.CHECK_REQUEST_CODE && resultCode == NetWorkOrderActivity.CHECK_REQUEST_CODE) {
             activityRequestCode = requestCode;

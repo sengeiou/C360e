@@ -77,7 +77,7 @@ public class SwipeMenuRecyclerView extends RecyclerView {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             SwipeItemLayout swipeItemLayout = findSwipeItemLayout(getChildAt(i));
-            if (swipeItemLayout != null && swipeItemLayout.isOpen()) {
+            if (swipeItemLayout != null && swipeItemLayout. isOpen()) {
                 return getChildAt(i);
             }
         }

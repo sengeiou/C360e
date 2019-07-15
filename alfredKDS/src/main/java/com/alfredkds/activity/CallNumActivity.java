@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredkds.R;
@@ -37,6 +38,9 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
 
     @Override
     public void onKeyBoardClick(String key) {
+
+        BugseeHelper.buttonClicked(key);
+
         if ("X".equals(key)) {
             tv_quantity.setText("");
             finish();

@@ -12,6 +12,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.PlaceInfo;
@@ -250,6 +251,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if (keyBuf.length() >= KEY_LENGTH)
 			return;
 		if (key.equals("X")) {

@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.javabean.User;
@@ -104,6 +105,8 @@ public class Welcome extends BaseActivity {
         str.append(String.format(identifier, 75));
         msg = str.append(trace).toString();
         Log.e("TAG", "msg:" + msg);
+
+        BugseeHelper.trace("APP", getString(R.string.app_name));
 
         try {
             byte[] msgB = msg.getBytes();
