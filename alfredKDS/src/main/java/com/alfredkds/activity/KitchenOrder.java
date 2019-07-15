@@ -146,6 +146,29 @@ public class KitchenOrder extends BaseActivity {
                         kadapter.notifyDataSetChanged();
                     }
                     break;
+                case App.HANDLER_NEXT_KOT:
+                    kots = App.instance.getRefreshKots();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.setAddFirstItem(true);
+                        adapter.setIsTemporer(false);
+                        madapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kotItems.size() + "");
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.setAddFirstItem(true);
+                        adapter.setIsTemporer(false);
+                        adapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kots.size() + "");
+                    }
+
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        kadapter.setKot(App.instance.getKot(kotSummary));
+                        kadapter.notifyDataSetChanged();
+                    }
+                    break;
                 case App.HANDLER_TMP_KOT:
                     kots = App.instance.getRefreshKots();
                     if (App.instance.getSystemSettings().isKdsLan()) {

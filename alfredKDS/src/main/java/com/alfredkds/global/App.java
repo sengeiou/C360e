@@ -60,6 +60,7 @@ public class App extends BaseApplication {
     public static final int HANDLER_KOT_NEXT_SUCCESS = 105;
     public static final int HANDLER_KOT_NEXT_FAILED = 106;
 
+    public static final int HANDLER_NEXT_KOT = 22;
     public static final int HANDLER_TMP_KOT = 21;
     public static final int HANDLER_NEW_KOT = 20;
     public static final int HANDLER_UPDATE_KOT = 8;
