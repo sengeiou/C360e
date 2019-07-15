@@ -15,13 +15,10 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,7 +28,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -43,7 +39,6 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.EventLog;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.LoginResult;
@@ -51,7 +46,6 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MultiReportRelation;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.PromotionData;
@@ -73,7 +67,6 @@ import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.EventLogSQL;
 import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
@@ -85,7 +78,6 @@ import com.alfredbase.store.sql.MultiReportRelationSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PromotionSQL;
 import com.alfredbase.store.sql.ReportDayPaymentSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
@@ -266,22 +258,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		super.initView();
 		setContentView(R.layout.activity_open_restaruant);
 		 train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
-		if(App.instance.isRevenueKiosk()) {
-			PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
-			if (placeInfo == null) {
-				placeInfo = ObjectFactory.getInstance().addNewPlace(App.instance.getRevenueCenter().getRestaurantId().intValue(),
-						App.instance.getRevenueCenter().getId().intValue(), "kiosk");
-				placeInfo.setIsKiosk(1);
-				PlaceInfoSQL.addPlaceInfo(placeInfo);
-			}
-			TableInfo tableInfo = TableInfoSQL.getKioskTable();
-			if(tableInfo == null){
-				tableInfo = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480,800);
-				tableInfo.setIsKiosk(1);
-				TableInfoSQL.updateTables(tableInfo);
-			}
-		}
-		ButtonClickTimer.canClick();	
+		ButtonClickTimer.canClick();
 		initDrawerLayout();
 		verifyDialog = new VerifyDialog(context, handler);
 		zPrinterLoadingDialog = new PrinterLoadingDialog(context);
