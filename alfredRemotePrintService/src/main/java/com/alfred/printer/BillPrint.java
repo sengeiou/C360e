@@ -725,8 +725,8 @@ public class BillPrint extends PrintJob {
     }
 
     public void AddBillSummary(String subtotal, String discount,
-                               List<Map<String, String>> taxes, String total, String rounding, String currencySymbol,List<PromotionData> promotionDatas) {
-        AddBillSummary(subtotal, discount, taxes, total,grandTotal, rounding, currencySymbol, 0,promotionDatas);
+                               List<Map<String, String>> taxes, String total, String grandTotal, String rounding, String currencySymbol,List<PromotionData> promotionDatas) {
+        AddBillSummary(subtotal, discount, taxes, total, grandTotal, rounding, currencySymbol, 0,promotionDatas);
     }
 
     public void AddBillSummary(String subtotal, String discount,

@@ -684,7 +684,7 @@ public class App extends BaseApplication {
             mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                     details, mods, tax, payment, false, false, roundStr,
                     null, getLocalRestaurantConfig().getCurrencySymbol(),
-                    openDrawer, BH.IsDouble(),proStr);
+                    openDrawer, BH.IsDouble(),proStr,App.instance.getLocalRestaurantConfig().getFormatType());
 
         } catch (RemoteException e) {
             e.printStackTrace();

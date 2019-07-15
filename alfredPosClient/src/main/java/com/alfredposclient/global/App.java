@@ -2006,7 +2006,7 @@ public class App extends BaseApplication {
 
 //            }
           List<PromotionData>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
-            roundingMap.put("Total", BH.formatMoney(total).toEngineeringString());
+            roundingMap.put("Total", BH.formatMoney(total));
             roundingMap.put("Rounding", BH.formatMoney(rounding).toString());
             Gson gson = new Gson();
             String prtStr = gson.toJson(printer);
@@ -2030,14 +2030,14 @@ public class App extends BaseApplication {
                             false,
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-                            true, BH.IsDouble(), info, apporders,getLocalRestaurantConfig().getFormatType());
+                            true, BH.IsDouble(), info, apporders);
                 else
                     mRemoteService.printAppOrderBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,
                             false,
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             null, getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(), info, apporders,getLocalRestaurantConfig().getFormatType());
+                            openDrawer, BH.IsDouble(), info, apporders);
 
             } else {
                 mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
@@ -2141,6 +2141,8 @@ public class App extends BaseApplication {
                             BH.getBD(order.getPromotion()), true)
                             .toString();
                 }
+                List<PromotionData>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+
                 roundingMap.put("Total", total);
                 roundingMap.put("Rounding", rounding);
                 Gson gson = new Gson();
@@ -2520,7 +2522,7 @@ public class App extends BaseApplication {
             String reportPromotionStr = gson.toJson(reportPromotion);
 
             mRemoteService.printPromotionAnalysisReport(xzType, prtStr, prtTitle,
-                    reportPromotionStr);
+                    reportPromotionStr,getLocalRestaurantConfig().getFormatType());
         } catch (RemoteException e) {
             e.printStackTrace();
         }

@@ -816,7 +816,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                           String payment, boolean doubleprint,
                           boolean doubleReceipts, String rounding,
                           String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist,String promotionData,String formatType) throws RemoteException {
-        BH.initFormart(isDouble);
+        //BH.initFormart(isDouble);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
 
