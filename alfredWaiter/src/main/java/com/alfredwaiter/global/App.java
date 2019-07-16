@@ -606,31 +606,6 @@ public class App extends BaseApplication {
             String payment = gson.toJson(printReceiptInfos);
             String roundStr = gson.toJson(roundingMap);
             String apporders = "";
-            // gson.toJson(roundingMap);
-//            if (isRevenueKiosk()) {
-//                if (countryCode == ParamConst.CHINA)
-//                    mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
-//                            details, mods, tax, payment,
-//                            this.systemSettings.isDoubleBillPrint(),
-//                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-//                            getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-//                            true, BH.IsDouble());
-//                else
-//                    mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
-//                            details, mods, tax, payment,
-//                            this.systemSettings.isDoubleBillPrint(),
-//                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-//                            null, getLocalRestaurantConfig().getCurrencySymbol(),
-//                            openDrawer, BH.IsDouble());
-//
-//            } else {
-//                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-//                        mods, tax, payment,
-//                        this.systemSettings.isDoubleBillPrint(),
-//                        this.systemSettings.isDoubleReceiptPrint(),
-//                        roundStr,
-//                        getLocalRestaurantConfig().getCurrencySymbol(),
-//                        openDrawer, BH.IsDouble(), "", apporders);
 
             mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
                     mods, tax, payment,

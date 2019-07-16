@@ -947,6 +947,7 @@ public class HttpAPI {
                                               final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.saveOrderBill(statusCode, headers, responseBody);
                                 handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_BILL);
                             } else if (resultCode == ResultCode.ORDER_FINISHED) {
                                 handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
@@ -961,6 +962,44 @@ public class HttpAPI {
                             error.printStackTrace();
                             handler.handleMessage(handler.obtainMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_BILL_FAILED));
 //							Toast.makeText(context,"Cannot get bill print at this moment: Network errors", 1000).show();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void rePrintKOT(final Context context,
+                                  Map<String, Object> parameters, String url,
+                                  AsyncHttpClient httpClient, final Handler handler) {
+        if (parameters != null) {
+            parameters.put("userKey", CoreData.getInstance().getUserKey());
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_KOT_SUCCESS);
+                            } else if (resultCode == ResultCode.ORDER_FINISHED) {
+                                handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
+                            } else {
+                                elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            handler.handleMessage(handler.obtainMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_KOT_FAILED));
                         }
                     });
         } catch (Exception e) {

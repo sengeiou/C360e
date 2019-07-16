@@ -126,6 +126,12 @@ public class SyncCentre {
                 getAbsoluteUrl(APIName.PRINT_BILL), httpClient, handler);
     }
 
+    public void rePrintKOT(Context context, Map<String, Object> parameters,
+                           Handler handler) {
+        HttpAPI.rePrintKOT(context, parameters,
+                getAbsoluteUrl(APIName.RE_PRINT_KOT), httpClient, handler);
+    }
+
     public void getPrintKOTData(Context context, Map<String, Object> parameters,
                                 Handler handler) {
         HttpAPI.getPrintKOTData(context, parameters,

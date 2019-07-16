@@ -3,6 +3,7 @@ package com.alfredwaiter.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -96,6 +97,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     public static final int VIEW_EVENT_GET_PRINT_LIST_FAILED = 7;
     public static final int GET_PRINT_KOT_DATA_SUCCESS = 8;
     public static final int GET_PRINT_KOT_DATA_FAILED = 9;
+    public static final int VIEW_EVENT_PRINT_KOT_SUCCESS = 10;
+    public static final int VIEW_EVENT_PRINT_KOT_FAILED = 11;
 
     private static final int DURATION_1 = 300;
     private ListView lv_dishes;
@@ -127,7 +130,8 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private OrderDetail selectedOrderDetail;
     private PrinterDevice selectedPrinter;
     private boolean isOpenScreen;
-    private boolean isPrintAllKOT;
+    private boolean isRePrintKOT;
+    private boolean isPrintLocal;
 
     @Override
     protected void initView() {
@@ -197,12 +201,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         });
     }
 
-
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case GET_PRINT_KOT_DATA_SUCCESS:
-                    printKOT(isPrintAllKOT);
+                    printKOT(isRePrintKOT, isPrintLocal);
                     break;
                 case GET_PRINT_KOT_DATA_FAILED:
                     //get data kot failed
@@ -307,6 +310,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     break;
                 case VIEW_EVENT_PRINT_BILL_FAILED:
                     UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_failed));
+                    break;
+                case VIEW_EVENT_PRINT_KOT_SUCCESS:
+                    UIHelp.showToast(context, context.getResources().getString(R.string.print_kot_succ));
+                    break;
+                case VIEW_EVENT_PRINT_KOT_FAILED:
+                    UIHelp.showToast(context, context.getResources().getString(R.string.print_kot_failed));
                     break;
                 case MainPage.VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER:
                     if (selectedOrderDetail == null)
@@ -449,6 +458,15 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 // VibrationUtil.init(context);
                 // VibrationUtil.playVibratorTwice();
 
+                isRePrintKOT = false;
+
+                String deviceName = Build.MODEL;
+                if ("V1s-G".equalsIgnoreCase(deviceName)) {
+                    isPrintLocal = true;
+                } else {
+                    isPrintLocal = false;
+                }
+
                 List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(currentOrder.getId());
 
                 Map<Integer, String> categorMap = new HashMap<Integer, String>();
@@ -529,7 +547,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 }
 
                 isOpenScreen = false;
-                isPrintAllKOT = v.getId() == R.id.btn_reprint_kot;
+                isRePrintKOT = v.getId() == R.id.btn_reprint_kot;
 
                 DialogFactory.commonTwoBtnDialog(context, "Warning", str, "Other", "OK",
                         new OnClickListener() {
@@ -541,13 +559,18 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     @Override
                                     public void callBack(PrinterDevice printerDevice) {
                                         selectedPrinter = printerDevice;
-                                        if ("V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {
-                                            if (isPrintAllKOT)
+                                        if ("V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {//print local
+                                            isPrintLocal = true;
+                                            if (isRePrintKOT)
                                                 getPrintKOTData();
                                             else
                                                 getPrintBillData();
-                                        } else {
-                                            printBill();
+                                        } else {//print remote
+                                            isPrintLocal = false;
+                                            if (isRePrintKOT)
+                                                printKOT(isRePrintKOT, isPrintLocal);
+                                            else
+                                                printBill();
                                         }
 
                                         Store.saveObject(context, Store.WAITER_PRINTER_DEVICE, printerDevice);
@@ -559,13 +582,19 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                             @Override
                             public void onClick(View v) {
                                 selectedPrinter = printerDevice;
-                                if (selectedPrinter != null && "V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {
-                                    if (isPrintAllKOT)
+                                if (selectedPrinter != null &&
+                                        "V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {//print local
+                                    isPrintLocal = true;
+                                    if (isRePrintKOT)
                                         getPrintKOTData();
                                     else
                                         getPrintBillData();
-                                } else {
-                                    printBill();
+                                } else {//print remote
+                                    isPrintLocal = false;
+                                    if (isRePrintKOT)
+                                        printKOT(isRePrintKOT, isPrintLocal);
+                                    else
+                                        printBill();
                                 }
                             }
                         }, true);
@@ -635,41 +664,46 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 
     }
 
-    private void printKOT(boolean isPrintAllKOT) {
-        PrinterDevice printerDevice = App.instance.getLocalPrinterDevice();
-        if (currentOrder == null || printerDevice == null) return;
+    private void printKOT(boolean isRePrintKOT, boolean isPrintLocal) {
+        if (currentOrder == null) return;
 
-        KotSummary kotsummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
+        if (isPrintLocal) {
+            KotSummary kotsummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
 
-        if (kotsummary == null) return;
+            if (kotsummary == null) return;
 
-        ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotsummary.getOrderId());
-        ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
+            PrinterDevice printerDevice = App.instance.getLocalPrinterDevice();
+            ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotsummary.getOrderId());
+            ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
+            ArrayList<KotItemDetail> printKOTItemDetails = new ArrayList<>();
 
-        ArrayList<KotItemDetail> printKOTItemDetails = new ArrayList<>();
+            if (isRePrintKOT) {
+                printKOTItemDetails.addAll(kotItemDetails);
+            } else {
+                if (App.instance.getNewOrderDetail() != null) {
 
-        if (isPrintAllKOT) {
-            printKOTItemDetails.addAll(kotItemDetails);
-        } else {
-            if (App.instance.getNewOrderDetail() != null) {
+                    for (OrderDetail orderDetail : App.instance.getNewOrderDetail()) {
+                        for (KotItemDetail kotItemDetail : kotItemDetails) {
+                            int orderDetailId = kotItemDetail.getOrderDetailId();
 
-                for (OrderDetail orderDetail : App.instance.getNewOrderDetail()) {
-                    for (KotItemDetail kotItemDetail : kotItemDetails) {
-                        int orderDetailId = kotItemDetail.getOrderDetailId();
-
-                        if (orderDetailId == orderDetail.getId()) {
-                            printKOTItemDetails.add(kotItemDetail);
-                            break;
+                            if (orderDetailId == orderDetail.getId()) {
+                                printKOTItemDetails.add(kotItemDetail);
+                                break;
+                            }
                         }
                     }
+                } else {
+                    printKOTItemDetails.addAll(kotItemDetails);
                 }
-            } else {
-                printKOTItemDetails.addAll(kotItemDetails);
             }
-        }
 
-        App.instance.getNewOrderDetail().clear();
-        App.instance.printKOT(printerDevice, kotsummary, printKOTItemDetails, kotItemModifiers);
+            App.instance.getNewOrderDetail().clear();
+            App.instance.printKOT(printerDevice, kotsummary, printKOTItemDetails, kotItemModifiers);
+        } else {//print remote
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("orderId", currentOrder.getId().intValue());
+            SyncCentre.getInstance().rePrintKOT(context, parameters, handler);
+        }
     }
 
     private void getPrintKOTData() {

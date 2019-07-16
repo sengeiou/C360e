@@ -1356,6 +1356,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return handlerGetBill(body);
             } else if (apiName.equals(APIName.PRINT_BILL)) {
                 return handlerPrintBill(body);
+            } else if (apiName.equals(APIName.RE_PRINT_KOT)) {
+                return handlerRePrintKOT(body);
             } else if (apiName.equals(APIName.CALL_SPECIFY_THE_NUMBER)) {
                 return handlerCallSpecifyNumber(body);
             } else if (apiName.equals(APIName.UNSEAT_TABLE)) {
@@ -2950,6 +2952,121 @@ public class MainPosHttpServer extends AlfredHttpServer {
         return resp;
     }
 
+    public Response handlerRePrintKOT(String params) {
+        Map<String, Object> result = new HashMap<>();
+
+        int orderId = 0;
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            orderId = jsonObject.getInt("orderId");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<Integer> printerGroupIds = new ArrayList<>();
+        Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<>();
+        Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<>();
+        BaseActivity context = App.getTopActivity();
+
+        Order order = OrderSQL.getOrder(orderId);
+        KotSummary kotSummary = KotSummarySQL.getKotSummary(orderId, order.getNumTag());
+
+        if (kotSummary == null) {
+            result.put("resultCode", ResultCode.CONNECTION_FAILED);
+            return this.getJsonResponse(new Gson().toJson(result));
+        }
+
+        ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotSummary.getOrderId());
+        ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
+
+        for (KotItemDetail items : kotItemDetails) {
+            Integer pgid = items.getPrinterGroupId();
+            if (pgid.intValue() == 0) {
+                result.put("resultCode", ResultCode.CONNECTION_FAILED);
+                return this.getJsonResponse(new Gson().toJson(result));
+            }
+
+            int kotItemDetailId = items.getId().intValue();
+
+            // Get all Group ids that KOT blongs to
+            if (!printerGroupIds.contains(pgid))
+                printerGroupIds.add(pgid);
+
+            // kot
+            if (kots.containsKey(pgid)) {
+                ArrayList<KotItemDetail> tmp = kots.get(pgid);
+                tmp.add(items);
+            } else {
+                ArrayList<KotItemDetail> tmp = new ArrayList<>();
+                tmp.add(items);
+                kots.put(pgid, tmp);
+            }
+
+            // modifier
+            if (mods.containsKey(pgid)) {
+                ArrayList<KotItemModifier> tmp = mods.get(pgid);
+                for (KotItemModifier mof : kotItemModifiers) {
+                    if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+                        tmp.add(mof);
+                    }
+                }
+            } else {
+                ArrayList<KotItemModifier> tmp = new ArrayList<>();
+                for (KotItemModifier mof : kotItemModifiers) {
+                    if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
+                        tmp.add(mof);
+                    }
+                }
+                mods.put(items.getPrinterGroupId(), tmp);
+            }
+        }
+
+        // add job to send it to KDS
+        for (Integer prgid : printerGroupIds) {
+            ArrayList<Printer> printers = CoreData.getInstance()
+                    .getPrintersInGroup(prgid.intValue());
+
+            for (Printer printer : printers) {
+                // physical printer
+                PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer
+                        .getId());
+
+                if (printerDevice != null) {
+                    printerDevice.setGroupId(prgid.intValue());
+
+                    boolean printed = false;
+
+                    if ((!printerDevice.getIP().contains(":") && !printerDevice.getIP().contains(",")) || printerDevice.getIsLablePrinter() != 1) {
+                        printed = App.instance.remoteKotPrint(printerDevice,
+                                kotSummary, kots.get(prgid), mods.get(prgid), false);
+
+                        if (printed) {
+                            ArrayList<OrderDetail> orderDetails = new ArrayList<>();
+                            synchronized (orderDetails) {
+                                for (int i = 0; i < kotItemDetails.size(); i++) {
+                                    OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(kotItemDetails.get(i).getOrderDetailId());
+                                    if (orderDetail == null) continue;
+                                    orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
+                                    orderDetails.add(orderDetail);
+
+                                }
+                            }
+
+                            OrderDetailSQL.addOrderDetailList(orderDetails);
+                            result.put("resultCode", ResultCode.SUCCESS);
+                        } else {
+                            result.put("resultCode", ResultCode.CONNECTION_FAILED);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return this.getJsonResponse(new Gson().toJson(result));
+    }
+
     private Response handlerPrintBill(String params) {
         Map<String, Object> result = new HashMap<String, Object>();
         Response resp;
@@ -2965,6 +3082,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         try {
             JSONObject jsonObject = new JSONObject(params);
             int orderId = jsonObject.getInt("orderId");
+//            int type = jsonObject.getInt("type");
             Order loadOrder = OrderSQL.getUnfinishedOrder(orderId);
             if (loadOrder == null) {
                 result.put("resultCode", ResultCode.ORDER_FINISHED);
@@ -3039,8 +3157,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         temporaryOrder.setTotal(orderSplit.getTotal());
                         temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
                         temporaryOrder.setOrderNo(order.getOrderNo());
+
+//                        if (type == 1) {//return data to local
+//                            result.put("orderDetailTaxs", orderDetailTaxs);
+//                            result.put("orderBill", orderBill);
+//                        } else {
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
                                 orderItems, orderModifiers, taxMap, null, null);
+//                        }
                     }
                 } else {
                     OrderBill orderBill = OrderBillSQL
@@ -3071,12 +3195,23 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     if (deviceId != 0) {
                         printer = App.instance.getPrinterDeviceById(deviceId);
                     }
+
+//                    if (type == 1) {//return data to local
+//                        result.put("taxMap", taxMap);
+//                        result.put("orderBill", orderBill);
+//                    } else {
                     App.instance.remoteBillPrint(printer, title, order,
                             orderItems, orderModifiers, taxMap, null, null);
+//                    }
+
                     OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
                 }
+
+                result.put("resultCode", ResultCode.SUCCESS);
+            } else {
+                result.put("resultCode", ResultCode.ORDER_NO_PLACE);
             }
-            result.put("resultCode", ResultCode.SUCCESS);
+
             resp = this.getJsonResponse(new Gson().toJson(result));
 
         } catch (Exception e) {

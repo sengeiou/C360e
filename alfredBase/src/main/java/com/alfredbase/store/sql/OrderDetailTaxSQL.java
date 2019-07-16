@@ -594,7 +594,7 @@ public class OrderDetailTaxSQL {
 	
 	public static void deleteOrderDetailTax(Order order) {
 		String sql = "delete from " + TableNames.OrderDetailTax
-				+ " where orderDetailId = ?";
+				+ " where orderId = ?";
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] { order.getId() });
 		} catch (Exception e) {

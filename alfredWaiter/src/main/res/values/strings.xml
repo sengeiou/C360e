@@ -42,7 +42,9 @@
     <string name="place_succ">Place order successfully</string>
     <string name="place_failed">Failed to place order</string>
     <string name="print_bill_succ">Print bill successfully</string>
+    <string name="print_kot_succ">Print KOT successfully</string>
     <string name="print_bill_failed">Failed to print bill</string>
+    <string name="print_kot_failed">Failed to print KOT</string>
     <string name="network_errors">Cannot get bill print at this moment: Network errors</string>
     <string name="order_closed">Order is closed, please select table and replace order again.</string>
     <string name="order_not_edited">Order cannot be edited when under process. Please contact cashier to try again.</string>

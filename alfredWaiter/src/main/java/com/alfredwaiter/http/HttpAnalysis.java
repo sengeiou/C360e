@@ -215,6 +215,7 @@ public class HttpAnalysis {
                 OrderBillSQL.deleteAllOrderBill();
                 OrderBillSQL.add(orderBill);
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -566,7 +567,7 @@ public class HttpAnalysis {
                     new TypeToken<List<OrderModifier>>() {
                     }.getType());
             List<OrderDetailTax> orderDetailTaxs = gson.fromJson(
-                    jsonObject.optString("orderModifiers"),
+                    jsonObject.optString("orderDetailTaxs"),
                     new TypeToken<List<OrderDetailTax>>() {
                     }.getType());
             App.instance.setNewOrderDetail(newOrderDetails);
