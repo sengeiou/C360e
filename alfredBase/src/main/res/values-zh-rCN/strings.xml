@@ -9,6 +9,7 @@
     <string name="name_pwd_error">用户帐号或密码是错误的</string>
     <string name="permission_insuff">权限不足</string>
     <string name="manager_id">管理员帐户</string>
+    <string name="manager_pwd">管理员密码</string>
     <string name="password_">密码</string>
     <string name="authorization">授权</string>
     <string name="changepwd">修改用户密码</string>

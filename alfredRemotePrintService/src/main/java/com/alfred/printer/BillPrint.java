@@ -105,7 +105,7 @@ public class BillPrint extends PrintJob {
 
 
     public void AddHeader(int isTakeAway, String table, int pax, String billNo,
-                          String posNo, String cashier, String dateTime, String orderNo, String info,int appOrderId,String trainString) {
+                          String posNo, String cashier, String dateTime, String orderNo, String info,int appOrderId,String trainString,String waiterName) {
 
 
 
@@ -156,10 +156,197 @@ public class BillPrint extends PrintJob {
         this.data.add(orderNoPrint);
 
 
-        //cashier
-        PrintData cashierPrint = new PrintData();
-        String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.cashier), this.FIXED_COL4_TOTAL - 1);
-        String cashierStr = cashierLabel + ":" + cashier + "\t\t";
+        //waiterName
+        String cashierStr="";
+        if (!TextUtils.isEmpty(waiterName)) {
+            PrintData cashierPrint = new PrintData();
+            String cashierLabel = StringUtil.padRight("waiter", this.FIXED_COL4_TOTAL - 1);
+            cashierStr = cashierLabel + ":" + waiterName + "\t\t";
+        }else {
+
+            //cashier
+            PrintData cashierPrint = new PrintData();
+            String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.cashier), this.FIXED_COL4_TOTAL - 1);
+            cashierStr = cashierLabel + ":" + cashier + "\t\t";
+        }
+//		cashierPrint.setDataFormat(PrintData.FORMAT_TXT);
+//		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//		cashierPrint.setText(cashierStr);
+//		this.data.add(cashierPrint);
+
+        //POS
+        PrintData posPrint = new PrintData();
+        String posLabel = StringUtil.padLeft(PrintService.instance.getResources().getString(R.string.pos), this.FIXED_COL4_TOTAL - 1);
+        String posStr = posLabel + ":" + posNo + reNext;
+        posPrint.setDataFormat(PrintData.FORMAT_TXT);
+        posPrint.setTextAlign(PrintData.ALIGN_LEFT);
+        posPrint.setText(cashierStr + posStr);
+        this.data.add(posPrint);
+
+        //Date
+        PrintData datePrint = new PrintData();
+        String dateLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.date), this.FIXED_COL4_TOTAL - 1);
+        String dateStr = dateLabel + ":" + dateTime + " ";
+
+        //Bill NO
+        PrintData billNoPrint = new PrintData();
+        String billNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.bill_no_), this.FIXED_COL4_TOTAL - 1);
+        String padBillNo = billNoStr + ":" + billNo + reNext;
+        billNoPrint.setDataFormat(PrintData.FORMAT_TXT);
+        billNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
+        billNoPrint.setText(dateStr + padBillNo);
+        this.data.add(billNoPrint);
+
+
+        //Table & PAX
+
+        PrintData tabPrint = new PrintData();
+        String tabLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.table), this.FIXED_COL4_TOTAL / 2);
+        String tabStr = tabLabel + ":" + table;
+        tabPrint.setDataFormat(PrintData.FORMAT_TXT);
+        tabPrint.setTextAlign(PrintData.ALIGN_LEFT);
+        tabPrint.setFontsize(2);
+        tabPrint.setText(tabStr);
+        this.data.add(tabPrint);
+
+        PrintData paxPrint = new PrintData();
+
+        try {
+            int padlen = this.charSize - tabStr.getBytes("GBK").length * 2;
+            String paxLabel = StringUtil.padRight(PrintService.instance
+                            .getResources().getString(R.string.pax),
+                    this.FIXED_COL4_TOTAL / 2);
+            String paxStr = paxLabel + ":" + pax;
+            paxStr = StringUtil.padLeft(paxStr, padlen) + reNext;
+            paxPrint.setDataFormat(PrintData.FORMAT_TXT);
+            paxPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            paxPrint.setTextBold(1);
+            paxPrint.setText(paxStr);
+            this.data.add(paxPrint);
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+//        if (isTakeAway == 1) {
+//            PrintData takeAwayPrint = new PrintData();
+//            String str = PrintService.instance.getResources().getString(R.string.takeaway_print) + reNext;
+//            takeAwayPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            takeAwayPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            takeAwayPrint.setFontsize(2);
+//            takeAwayPrint.setText(str);
+//            this.data.add(takeAwayPrint);
+//        }
+
+        if (isTakeAway == 2) {
+            PrintData takeAwayPrint = new PrintData();
+            String str = PrintService.instance.getResources().getString(R.string.takeaway_print) + reNext;
+            takeAwayPrint.setDataFormat(PrintData.FORMAT_TXT);
+            takeAwayPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            takeAwayPrint.setFontsize(2);
+            takeAwayPrint.setText(str);
+            this.data.add(takeAwayPrint);
+            //PrintData appOrderPrint = new PrintData();
+//            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+//            String appOrderStr = appStr+appOrderId+ reNext;
+//            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            appOrderPrint.setFontsize(2);
+//            appOrderPrint.setText(appOrderStr);
+//            this.data.add(appOrderPrint);
+        }
+        else if(isTakeAway == 3){
+            PrintData deliveryPrint = new PrintData();
+            String str = PrintService.instance.getResources().getString(R.string.delivery_print) + reNext;
+            deliveryPrint.setDataFormat(PrintData.FORMAT_TXT);
+            deliveryPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            deliveryPrint.setFontsize(2);
+            deliveryPrint.setText(str);
+            this.data.add(deliveryPrint);
+        }else if(isTakeAway == 1){
+//            PrintData appOrderPrint = new PrintData();
+//            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+//            String appOrderStr = appStr+appOrderId+ reNext;
+//            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+//            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//            appOrderPrint.setFontsize(2);
+//            appOrderPrint.setText(appOrderStr);
+//            this.data.add(appOrderPrint);
+        }
+        //addHortionalLine();
+        addHortionaDoublelLine(this.charSize);
+    }
+
+
+    public void AddHeaderWaiter(int isTakeAway, String table, int pax, String billNo,
+                          String posNo, String cashier, String dateTime, String orderNo, String info,int appOrderId,String waiterName) {
+
+
+
+        if (!TextUtils.isEmpty(info)) {
+            PrintData appOrderPrint = new PrintData();
+            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+            String appOrderStr = appStr+appOrderId+ reNext;
+            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            appOrderPrint.setFontsize(2);
+            appOrderPrint.setText(appOrderStr);
+            this.data.add(appOrderPrint);
+
+            PrintData addressPrint = new PrintData();
+            //   String deliveryStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.app_delivery), this.FIXED_COL4_TOTAL - 1);
+            String infoStr = info + reNext;
+//            String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL - 1);
+//            String padorderNo = orderNoStr + orderNo + reNext;
+            addressPrint.setDataFormat(PrintData.FORMAT_TXT);
+            addressPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            addressPrint.setText(infoStr);
+            this.data.add(addressPrint);
+            addHortionalLine(this.charSize);
+        }else {if(appOrderId>0){
+
+            PrintData appOrderPrint = new PrintData();
+            String appStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_app_no_), this.FIXED_COL4_TOTAL - 1);
+            String appOrderStr = appStr+appOrderId+ reNext;
+            appOrderPrint.setDataFormat(PrintData.FORMAT_TXT);
+            appOrderPrint.setTextAlign(PrintData.ALIGN_LEFT);
+            appOrderPrint.setFontsize(2);
+            appOrderPrint.setText(appOrderStr);
+            this.data.add(appOrderPrint);
+            addHortionalLine(this.charSize);
+        }
+
+        }
+
+
+        //流水号 NO
+        PrintData orderNoPrint = new PrintData();
+        String orderNoStr = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.order_no_), this.FIXED_COL4_TOTAL - 1);
+        String padorderNo = orderNoStr + orderNo + reNext;
+        orderNoPrint.setDataFormat(PrintData.FORMAT_TXT);
+        orderNoPrint.setTextAlign(PrintData.ALIGN_LEFT);
+//		orderNoPrint.setFontsize(2);
+        orderNoPrint.setText(padorderNo);
+        this.data.add(orderNoPrint);
+
+        if(!TextUtils.isEmpty(waiterName)) {
+            PrintData waiterNamePrint = new PrintData();
+            String waiterNameStr = StringUtil.padRight("waiter:", this.FIXED_COL4_TOTAL - 1);
+            String padWaiterName = waiterNameStr + waiterName + reNext;
+            waiterNamePrint.setDataFormat(PrintData.FORMAT_TXT);
+            waiterNamePrint.setTextAlign(PrintData.ALIGN_LEFT);
+//		orderNoPrint.setFontsize(2);
+            waiterNamePrint.setText(padWaiterName);
+            this.data.add(waiterNamePrint);
+        }
+
+
+            //cashier
+
+        String cashierStr="";
+            PrintData cashierPrint = new PrintData();
+            String cashierLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.cashier), this.FIXED_COL4_TOTAL - 1);
+            cashierStr = cashierLabel + ":" + cashier + "\t\t";
+
 //		cashierPrint.setDataFormat(PrintData.FORMAT_TXT);
 //		cashierPrint.setTextAlign(PrintData.ALIGN_LEFT);
 //		cashierPrint.setText(cashierStr);

@@ -512,7 +512,7 @@ public class MainPage extends BaseActivity {
                 App.instance.getIndexOfRevenueCenter(),
                 ParamConst.ORDER_STATUS_OPEN_IN_POS,
                 App.instance.getLocalRestaurantConfig()
-                        .getIncludedTax().getTax());
+                        .getIncludedTax().getTax(),"");
     }
 
     private void getTableStatusInfo() {
@@ -2454,7 +2454,7 @@ public class MainPage extends BaseActivity {
                         App.instance.getIndexOfRevenueCenter(),
                         ParamConst.ORDER_STATUS_OPEN_IN_POS,
                         App.instance.getLocalRestaurantConfig()
-                                .getIncludedTax().getTax(), appOrderId);
+                                .getIncludedTax().getTax(), appOrderId,"");
                 List<TempOrderDetail> tempOrderDetails = TempOrderDetailSQL.getTempOrderDetailByAppOrderId(appOrderId);
                 for (TempOrderDetail tempOrderDetail : tempOrderDetails) {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId());

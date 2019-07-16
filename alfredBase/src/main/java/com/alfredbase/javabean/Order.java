@@ -122,6 +122,9 @@ public class Order implements Serializable {
 	private String numTag = "";
 
 	private int subPosBeanId = 0;// IF it is main Pos， subPosBeanId is  zero
+
+    private String waiterInformation;
+    private int isWaiterPrint; //0 未打印， 1 已打印
 	@Expose(serialize = false)
 	private int isSplitByPax;
 	private  String promotion;
@@ -480,6 +483,22 @@ public class Order implements Serializable {
 		this.orderRound = orderRound;
 	}
 
+    public String getWaiterInformation() {
+        return waiterInformation;
+    }
+
+    public void setWaiterInformation(String waiterInformation) {
+        this.waiterInformation = waiterInformation;
+    }
+
+	public int getIsWaiterPrint() {
+		return isWaiterPrint;
+	}
+
+	public void setIsWaiterPrint(int isWaiterPrint) {
+		this.isWaiterPrint = isWaiterPrint;
+	}
+
 	@Override
 	public String toString() {
 		return "Order{" +
@@ -518,6 +537,9 @@ public class Order implements Serializable {
 				", isSplitByPax=" + isSplitByPax +
 				", promotion='" + promotion + '\'' +
 				", orderRound='" + orderRound + '\'' +
+				", waiterInformation='" + waiterInformation + '\'' +
+				", isWaiterPrint=" + isWaiterPrint +
+				", isSplitByPax=" + isSplitByPax +
 				'}';
 
 }

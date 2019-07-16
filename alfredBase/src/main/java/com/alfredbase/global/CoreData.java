@@ -649,6 +649,20 @@ public class CoreData {
 		return null;
 	}
 
+	public User getUserByPassword(int pwd) {
+		if (users == null || users.size() == 0)
+			users = UserSQL.getAllUser();
+		if(users == null){
+			return null;
+		}
+		for (User user : users) {
+			if (user.getPassword().equals(String.valueOf(pwd))) {
+				return user;
+			}
+		}
+		return null;
+	}
+
 	public User getUserById(int uId) {
 		if (uId < 1)
 			return null;

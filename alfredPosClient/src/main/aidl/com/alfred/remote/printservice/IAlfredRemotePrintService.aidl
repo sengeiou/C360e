@@ -26,7 +26,7 @@ interface IAlfredRemotePrintService {
     							String order, String orderDetail,
     							String modifiers,String tax, String payment,
     							boolean doubleprint, boolean doubleReceipts,
-    							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble, String info, String orderNoStr, String promotiomData, String formatType);
+    							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble, String info, String orderNoStr, String promotiomData, String formatType,boolean isInstructions);
 
     	void printKioskBill(String printer, String title,
     							String order, String orderDetail,

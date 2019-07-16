@@ -1582,10 +1582,6 @@ public class DataHelper {
                     + " ADD COLUMN deliveryTime INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN appOrderId INTEGER default 0");
-
-//
-//
-
         }
 
         private void onUpgradeForOldVersion29(SQLiteDatabase db) {
@@ -1660,7 +1656,10 @@ public class DataHelper {
                     "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG," +
                     "itemNum INTEGER,sessionStatus INTEGER,sysCreateTime LONG,sysUpdateTime LONG)");
 
-
+            db.execSQL("ALTER TABLE " + TableNames.Order
+                    + " ADD COLUMN waiterInformation TEXT ");
+            db.execSQL("ALTER TABLE " + TableNames.Order
+                    + " ADD COLUMN isWaiterPrint INTEGER default 0 ");
 
         }
     }

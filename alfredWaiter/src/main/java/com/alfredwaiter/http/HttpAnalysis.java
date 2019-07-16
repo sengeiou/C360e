@@ -1,6 +1,7 @@
 package com.alfredwaiter.http;
 
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
@@ -51,6 +52,7 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserSQL;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.activity.KOTNotification;
 import com.alfredwaiter.activity.MainPage;
@@ -65,6 +67,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -228,6 +231,15 @@ public class HttpAnalysis {
 			Gson gson = new Gson();
 			order = gson.fromJson(object.getJSONObject("order").toString(),
 					Order.class);
+			Map<String, String> waiterMap = new LinkedHashMap<String, String>(16, 0.75f, true);
+			if(!TextUtils.isEmpty(order.getWaiterInformation())){
+				waiterMap=CommonUtil.getStringToMap(order.getWaiterInformation());
+				waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+			}else {
+				waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+			}
+			String waitterName = CommonUtil.getMapToString(waiterMap);
+			order.setWaiterInformation(waitterName);
 			List<ItemDetail> itemDetails = gson.fromJson(object.getString("tempItems"),
 					new TypeToken<ArrayList<ItemDetail>>() {
 					}.getType());

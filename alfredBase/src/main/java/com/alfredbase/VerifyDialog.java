@@ -27,7 +27,7 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 	 * 当前键盘输入对应的状态，0表示输入的员工ID，1表示输入的密码
 	 */
 	private int state = STATE_IN_ENTER_ID;
-	
+
 	private TextView tv_id_1;
 	private TextView tv_id_2;
 	private TextView tv_id_3;
@@ -42,17 +42,17 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 	private String msgObject;
 	private Object obj;
 	private Context context;
-//	private String old_employee_ID;
+	//	private String old_employee_ID;
 //	private boolean hasLogined = false;
 	private TextTypeFace textTypeFace;
-	
+
 	public VerifyDialog(Context context,Handler handler) {
 		super(context, R.style.Dialog_verify);
 		this.handler = handler;
 		this.context = context;
 		init();
 	}
-	
+
 	private void init() {
 		View contentView = View.inflate(getContext(),
 				R.layout.dialog_input_manager_account, null);
@@ -158,7 +158,7 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 				Map<String, Object> resultObject = new HashMap<String, Object>();
 				resultObject.put("MsgObject", msgObject);
 				resultObject.put("Object", obj);
-				
+
 				if (user == null) {
 					ToastUtils.showToast((BaseActivity)context, context.getResources().getString(R.string.name_pwd_error));
 					((TextView) (findViewById(R.id.tv_title)))
@@ -175,7 +175,7 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 						password = null;
 					} else {
 						((TextView) (findViewById(R.id.tv_title)))
-						.setText(context.getResources().getString(R.string.manager_id));
+								.setText(context.getResources().getString(R.string.manager_id));
 						state = STATE_IN_ENTER_ID;
 						employee_ID = null;
 						password = null;
@@ -189,17 +189,17 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 			}
 		}
 	}
-	
+
 	public void show(String msgObject,Object obj) {
 		this.msgObject = msgObject;
 		this.obj = obj;
 		super.show();
 	}
-	
+
 	@Override
 	public void dismiss() {
 		((TextView) (findViewById(R.id.tv_title)))
-		.setText(context.getResources().getString(R.string.manager_id));
+				.setText(context.getResources().getString(R.string.manager_id));
 		state = STATE_IN_ENTER_ID;
 		employee_ID = null;
 		password = null;
@@ -209,56 +209,56 @@ public class VerifyDialog extends Dialog implements KeyBoardClickListener {
 	}
 	private void setPassword(int key_len) {
 		switch (key_len) {
-		case 0: {
-			tv_id_1.setText("");
-			tv_id_2.setText("");
-			tv_id_3.setText("");
-			tv_id_4.setText("");
-			tv_id_5.setText("");
-			break;
-		}
-		case 1: {
-			tv_id_1.setText("*");
-			tv_id_2.setText("");
-			tv_id_3.setText("");
-			tv_id_4.setText("");
-			tv_id_5.setText("");
-			break;
-		}
-		case 2: {
-			tv_id_1.setText("*");
-			tv_id_2.setText("*");
-			tv_id_3.setText("");
-			tv_id_4.setText("");
-			tv_id_5.setText("");
-			break;
-		}
-		case 3: {
-			tv_id_1.setText("*");
-			tv_id_2.setText("*");
-			tv_id_3.setText("*");
-			tv_id_4.setText("");
-			tv_id_5.setText("");
-			break;
-		}
-		case 4: {
-			tv_id_1.setText("*");
-			tv_id_2.setText("*");
-			tv_id_3.setText("*");
-			tv_id_4.setText("*");
-			tv_id_5.setText("");
-			break;
-		}
-		case 5: {
-			tv_id_1.setText("*");
-			tv_id_2.setText("*");
-			tv_id_3.setText("*");
-			tv_id_4.setText("*");
-			tv_id_5.setText("*");
-			break;
-		}
-		default:
-			break;
+			case 0: {
+				tv_id_1.setText("");
+				tv_id_2.setText("");
+				tv_id_3.setText("");
+				tv_id_4.setText("");
+				tv_id_5.setText("");
+				break;
+			}
+			case 1: {
+				tv_id_1.setText("*");
+				tv_id_2.setText("");
+				tv_id_3.setText("");
+				tv_id_4.setText("");
+				tv_id_5.setText("");
+				break;
+			}
+			case 2: {
+				tv_id_1.setText("*");
+				tv_id_2.setText("*");
+				tv_id_3.setText("");
+				tv_id_4.setText("");
+				tv_id_5.setText("");
+				break;
+			}
+			case 3: {
+				tv_id_1.setText("*");
+				tv_id_2.setText("*");
+				tv_id_3.setText("*");
+				tv_id_4.setText("");
+				tv_id_5.setText("");
+				break;
+			}
+			case 4: {
+				tv_id_1.setText("*");
+				tv_id_2.setText("*");
+				tv_id_3.setText("*");
+				tv_id_4.setText("*");
+				tv_id_5.setText("");
+				break;
+			}
+			case 5: {
+				tv_id_1.setText("*");
+				tv_id_2.setText("*");
+				tv_id_3.setText("*");
+				tv_id_4.setText("*");
+				tv_id_5.setText("*");
+				break;
+			}
+			default:
+				break;
 		}
 	}
 

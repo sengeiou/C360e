@@ -60,6 +60,7 @@ import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.sql.PrintQueueMsgSQL;
 import com.alfredbase.store.sql.SettingDataSQL;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
@@ -77,9 +78,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -812,7 +815,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                           String modifiers, String tax,
                           String payment, boolean doubleprint,
                           boolean doubleReceipts, String rounding,
-                          String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist,String promotionData,String formatType) throws RemoteException {
+                          String currencySymbol, boolean openDrawer, boolean isDouble, String info, String appOrderlist,String promotionData,String formatType,boolean isInstructions) throws RemoteException {
         //BH.initFormart(isDouble);
         Gson gson = new Gson();
         boolean isCashSettlement = false;
@@ -893,9 +896,38 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         tableName = prtTitle.getTableName();
                     }
 
+                    Map<String, String> waiterMap = new LinkedHashMap<String, String>();
+                    waiterMap=CommonUtil.getStringToMap(theOrder.getWaiterInformation());
+                    String waiterName="";
+                    if(waiterMap!=null&&waiterMap.size()>0){
+//                        Map<Integer, Integer> map = new LinkedHashMap<>();
+//                        Field tail = null;
+//                        Map.Entry<String, String> entry = null;
+//                        try {
+//                            tail = map.getClass().getDeclaredField("tail");
+//
+//                        } catch (NoSuchFieldException e) {
+//                            e.printStackTrace();
+//                        }
+//                        tail.setAccessible(true);
+//                        try {
+//                            entry=(Map.Entry<String, String>) tail.get(map);
+//                        } catch (IllegalAccessException e) {
+//                            e.printStackTrace();
+//                        }
+//                        String key = entry.getKey();
+//                        String value = entry.getValue();
+
+                        for(Iterator it = waiterMap.entrySet().iterator(); it.hasNext();){
+                            Map.Entry<String, String> entry = (Map.Entry<String, String>)it.next();
+                            if(!"".equals(entry.getValue())){
+                             waiterName=entry.getValue();
+                            }
+                        }
+                    }
                     billPrint.AddHeader(theOrder.getIsTakeAway(), tableName, theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId(),trainString);
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId(),trainString,waiterName);
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
                             PrintService.instance.getResources().getString(R.string.qty),
@@ -944,7 +976,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
                                         } else {
-                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            if(!isInstructions&&om.getIsBill()==1) {
+//                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            }else {
+                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            }
                                         }
                                     }
                                 }
@@ -1048,10 +1084,24 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 tableName = prtTitle.getTableName();
                             }
 
-                            billPrint.AddHeader(theOrder.getIsTakeAway(), tableName,
+
+                            Map<String, String> waiterMap = new LinkedHashMap<String, String>();
+                            waiterMap=CommonUtil.getStringToMap(theOrder.getWaiterInformation());
+                            String waiterName="";
+                            if(waiterMap!=null&&waiterMap.size()>0){
+
+                                for(Iterator it = waiterMap.entrySet().iterator(); it.hasNext();){
+                                    Map.Entry<String, String> entry = (Map.Entry<String, String>)it.next();
+                                    if(!"".equals(entry.getValue())){
+                                        waiterName=entry.getValue();
+                                    }
+                                }
+                            }
+                            billPrint.AddHeaderWaiter(theOrder.getIsTakeAway(), tableName,
                                     theOrder.getPersons(),
                                     theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                                    prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId(),trainString);
+                                    prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + theOrder.getOrderNo().toString(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId(),waiterName,trainString);
+
                             billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                                     PrintService.instance.getResources().getString(R.string.price),
                                     PrintService.instance.getResources().getString(R.string.qty),
@@ -1099,8 +1149,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                         if (om.getQty() > 1) {
                                             billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
                                         } else {
-                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
-                                        }
+                                            if(!isInstructions&&om.getIsBill()==1) {
+//                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            }else {
+                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            }                                        }
                                     }
                                 }
                             }

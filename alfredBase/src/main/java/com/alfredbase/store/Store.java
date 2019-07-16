@@ -133,6 +133,8 @@ public class Store {
 	public static final String CREDIT_CARD_ROUNDING = "CREDIT_CARD_ROUNDING";
 	public static final String INCLUDE_PLU_VOID = "INCLUDE_PLU_VOID";
 
+	public static final String PRINT_INSTRUCTIONS = "PRINT_INSTRUCTIONS";
+	public static final String PRINT_WAITER_ONCE = "PRINT_WAITER_ONCE";
 	public static final String PRINT_BILL = "PRINT_BILL";
 	public static final String OF_PAX = "OF_PAX";
 	public static final String TRAINING = "training";

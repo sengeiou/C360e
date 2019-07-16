@@ -239,6 +239,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                             context.getResources().getString(R.string.warn),
                             context.getResources().getString(R.string.order_closed), null);
                     break;
+
+                case ResultCode.ORDER_PRINT:
+                    loadingDialog.dismiss();
+                    DialogFactory.showOneButtonCompelDialog(context,
+                            context.getResources().getString(R.string.warn), "Bill Printed, please contact Cashier", null);
+                    break;
                 case ResultCode.NONEXISTENT_ORDER:
                     loadingDialog.dismiss();
                     DialogFactory.showOneButtonCompelDialog(context,
@@ -274,6 +280,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     break;
                 case VIEW_EVENT_PRINT_BILL:
                     UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_succ));
+
+
+                    break;
+                case ResultCode.SUCCESS_WAITER_ONCE:
+                    UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_succ));
+                    OrderSQL.updateWaiterPrint(1,currentOrder.getId());
                     break;
                 case VIEW_EVENT_PRINT_BILL_FAILED:
                     UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_failed));

@@ -37,8 +37,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
 					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getOrderOriginId(), order.getUserId(),
@@ -56,7 +56,9 @@ public class OrderSQL {
 					        order.getTableName(), order.getOrderRemark(),
 							order.getDiscountCategoryId(), order.getNumTag(),
 							order.getSubPosBeanId(),order.getPromotion(),
-							order.getOrderRound()
+							order.getOrderRound(),
+						    order.getWaiterInformation(),
+							order.getIsWaiterPrint()
 						});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,8 +105,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,promotion,orderRound)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,promotion,orderRound,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -122,8 +124,8 @@ public class OrderSQL {
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
 							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion(),
-					         order.getOrderRound()
-					});
+					         order.getOrderRound(),
+				             order.getWaiterInformation(),order.getIsWaiterPrint()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -137,8 +139,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			db.execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -156,8 +158,9 @@ public class OrderSQL {
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
 							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion(),
-					        order.getOrderRound()
-					});
+					        order.getOrderRound(),
+                            order.getWaiterInformation(),
+                            order.getIsWaiterPrint()});
 	}
 
 	public static void updateUnFinishedOrderFromWaiter(Order order) {
@@ -174,6 +177,19 @@ public class OrderSQL {
 		}
 	}
 
+	public static void updateFromWaiterName(Order order) {
+		if (order == null) {
+			return;
+		}
+		try {
+			String sql = "update " + TableNames.Order + " set waiterInformation = ?  where id = ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
+			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] {order.getWaiterInformation(),  order.getId()});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void updateOrderIsTakeAway(Order order, int isTakeAway) {
 		try {
 			String sql = "update " + TableNames.Order + " set isTakeAway = ?  where id = ? ";
@@ -398,8 +414,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Order order : orderList) {
@@ -467,6 +483,10 @@ public class OrderSQL {
 							order.getPromotion());
 					SQLiteStatementHelper.bindString(sqLiteStatement, 32,
 							order.getOrderRound());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 33,
+							order.getWaiterInformation());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 34,
+							order.getIsWaiterPrint());
 					sqLiteStatement.executeInsert();
 				}
 			db.setTransactionSuccessful();
@@ -525,6 +545,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -596,6 +618,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -662,6 +686,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -725,6 +751,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34);
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -788,6 +816,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -907,6 +937,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -967,6 +999,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1034,7 +1068,9 @@ public class OrderSQL {
 					order.setSubPosBeanId(cursor.getInt(30));
                     order.setPromotion(cursor.getString(31));
                     order.setOrderRound(cursor.getString(32));
-                    return order;
+					order.setWaiterInformation(cursor.getString(33));
+					order.setIsWaiterPrint(cursor.getInt(34));
+					return order;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1095,7 +1131,9 @@ public class OrderSQL {
 					order.setSubPosBeanId(cursor.getInt(30));
                     order.setPromotion(cursor.getString(31));
                     order.setOrderRound(cursor.getString(32));
-                    return order;
+					order.setWaiterInformation(cursor.getString(33));
+					order.setIsWaiterPrint(cursor.getInt(34));
+					return order;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1158,6 +1196,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1220,6 +1260,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1275,6 +1317,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1338,6 +1382,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1405,6 +1451,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1468,6 +1516,8 @@ public class OrderSQL {
 				order.setSubPosBeanId(cursor.getInt(30));
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1670,6 +1720,17 @@ public class OrderSQL {
 		String sql = "update " + TableNames.Order + " set orderStatus = ? where id = ?" ;
 		try {
 			SQLExe.getDB().execSQL(sql, new Object[] {orderStatus, id});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void updateWaiterPrint( int isWaiterPrint, int id){
+
+		String sql = "update " + TableNames.Order + " set isWaiterPrint = ? where id = ?" ;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {isWaiterPrint, id});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

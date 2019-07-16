@@ -203,6 +203,8 @@
 
     <string name="print_direction">Print Label Direction</string>
     <string name="credit_card_rounding">Credit Card Rounding</string>
+    <string name="print_preparation_instructions">Print Preparation Instructions</string>
+    <string name="waiter_print_bill_once">Waiter Print Bill Once</string>
     <string name="include_plu_void">Include Plu Void</string>
     <string name="password_update_successfully">Password update successfully.</string>
     <string name="employee_no_exist">The employee does not exist at backoffice.</string>

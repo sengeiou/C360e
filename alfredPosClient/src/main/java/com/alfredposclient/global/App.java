@@ -1997,11 +1997,11 @@ public class App extends BaseApplication {
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
-            if(order.getPromotion()!=null){
-                total = BH.add(BH.getReplace(BH.formatMoney(total)),
-                        BH.getBD(order.getPromotion()), true)
-                        .toString();
-            }
+//            if(order.getPromotion()!=null){
+//                total = BH.add(BH.getReplace(BH.formatMoney(total)),
+//                        BH.getBD(order.getPromotion()), true)
+//                        .toString();
+//            }
 
 //            }
           List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
@@ -2044,7 +2044,7 @@ public class App extends BaseApplication {
                         this.systemSettings.isDoubleBillPrint(),
                         this.systemSettings.isDoubleReceiptPrint(), roundStr,
                         getLocalRestaurantConfig().getCurrencySymbol(),
-                        openDrawer, BH.IsDouble(), info, apporders,proStr,getLocalRestaurantConfig().getFormatType());
+                        openDrawer, BH.IsDouble(), info, apporders,proStr,getLocalRestaurantConfig().getFormatType(),App.instance.systemSettings.isPrintInstructions());
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -2179,7 +2179,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders,proStr,App.instance.getLocalRestaurantConfig().getFormatType());
+                            openDrawer, BH.IsDouble(),"",apporders,proStr,App.instance.getLocalRestaurantConfig().getFormatType(),App.instance.systemSettings.isPrintInstructions());
                 }
 
             } catch (RemoteException e) {
@@ -2302,7 +2302,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(),"",apporders,proStr,App.instance.getLocalRestaurantConfig().getFormatType());
+                            openDrawer, BH.IsDouble(),"",apporders,proStr,App.instance.getLocalRestaurantConfig().getFormatType(),App.instance.systemSettings.isPrintInstructions());
                 }
 
             } catch (RemoteException e) {

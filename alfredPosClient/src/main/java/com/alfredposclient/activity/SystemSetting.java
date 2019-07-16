@@ -96,7 +96,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 	private View v_print_lable;
 	private int maxOrderNo;
 	MyToggleButton mt_print_lable;
-	MyToggleButton mt_print_bill,mt_credit_card_rounding,mt_include_plu_void;
+	MyToggleButton mt_print_bill,mt_credit_card_rounding,mt_include_plu_void,mt_print_instructions,mt_print_waiter_once;
 	private int textsize,textcolor;
 	private TextView tv_lable_upOrdown,tv_callnum_style,tv_callnum_header,tv_callnum_footer,tv_pos_mode_type,tv_pos_mode;
 	int	trainType,trainDisplay;
@@ -161,6 +161,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		mt_of_pax=(MyToggleButton)findViewById(R.id.mt_of_pax);
 		mt_credit_card_rounding=(MyToggleButton)findViewById(R.id.mt_credit_card_rounding) ;
 		mt_include_plu_void=(MyToggleButton)findViewById(R.id.mt_include_plu_void) ;
+		mt_print_instructions=(MyToggleButton)findViewById(R.id.mt_print_instructions) ;
+		mt_print_waiter_once=(MyToggleButton)findViewById(R.id.mt_print_waiter_once) ;
 		tv_lable_upOrdown=(TextView)findViewById(R.id.tv_lable_upOrdown);
 		tv_callnum_style=(TextView)findViewById(R.id.tv_callnum_style);
 		tv_pos_mode_type=(TextView)findViewById(R.id.tv_pos_mode_type);
@@ -196,6 +198,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 		ll_callnum_footer.setOnClickListener(this);
 		mt_credit_card_rounding.setOnStateChangeListeren(this);
 		mt_include_plu_void.setOnStateChangeListeren(this);
+		mt_print_instructions.setOnStateChangeListeren(this);
+		mt_print_waiter_once.setOnStateChangeListeren(this);
 		mt_print_lable_direction.setOnStateChangeListeren(this);
 		mt_print_lable.setOnStateChangeListeren(this);
 		findViewById(R.id.iv_back).setOnClickListener(this);
@@ -404,6 +408,23 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 			mt_include_plu_void.setChecked(false);
 		}
 
+
+		//print_waiter_once
+		if(settings.isPrintInstructions()){
+
+			mt_print_instructions.setChecked(true);
+		}else{
+
+			mt_print_instructions.setChecked(false);
+		}
+
+		if(settings.isPrintWaiterOnce()){
+
+			mt_print_waiter_once.setChecked(true);
+		}else{
+
+			mt_print_waiter_once.setChecked(false);
+		}
 
 		if(settings.isPrintBill()){
 			mt_print_bill.setChecked(true);
@@ -810,6 +831,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 	//	textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
 		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_credit_card_rounding));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_instructions));
+		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_waiter_once));
 
 
 	}
@@ -1039,6 +1062,30 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 				}
 				break;
 
+			case R.id.mt_print_instructions:
+
+				if(checkState){
+
+					mt_print_instructions.setChecked(true);
+					settings.setPrintInstructions(ParamConst.DEFAULT_TRUE);
+				}else{
+
+					mt_print_instructions.setChecked(false);
+					settings.setPrintInstructions(ParamConst.DEFAULT_FALSE);
+				}
+				break;
+
+			case R.id.mt_print_waiter_once:
+				if(checkState){
+
+					mt_print_waiter_once.setChecked(true);
+					settings.setWaiterOnce(ParamConst.DEFAULT_TRUE);
+				}else{
+
+					mt_print_waiter_once.setChecked(false);
+					settings.setWaiterOnce(ParamConst.DEFAULT_FALSE);
+				}
+				break;
 			case R.id.mt_print_bill:
 
 				if(checkState){
