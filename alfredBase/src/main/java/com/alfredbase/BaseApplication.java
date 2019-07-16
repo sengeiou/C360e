@@ -524,7 +524,7 @@ public class BaseApplication extends Application {
     }
 
     public void setTime(int time) {
-        if (time >= 30 * 1000  ) {
+        if (time >= 30 * 1000) {
             this.time = time;
         }
     }

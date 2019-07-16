@@ -24,7 +24,41 @@ public class RoundUtil {
 					false);
 			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
 					BH.getBDNoFormat("1.0"), true);
-		} else if (roundType.equalsIgnoreCase(
+		}
+		else if (roundType.equalsIgnoreCase(
+				ParamConst.ROUND_50DOLLAR)) {
+			DecimalFormat doubleFormat = new DecimalFormat("0");
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("50"),
+					false);
+			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
+					BH.getBDNoFormat("50"), true);
+		}
+		else if (roundType.equalsIgnoreCase(
+				ParamConst.ROUND_100DOLLAR)) {
+			DecimalFormat doubleFormat = new DecimalFormat("0");
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("100"),
+					false);
+			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
+					BH.getBDNoFormat("100"), true);
+		}
+		else if (roundType.equalsIgnoreCase(
+				ParamConst.ROUND_500DOLLAR)) {
+			DecimalFormat doubleFormat = new DecimalFormat("0");
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("500"),
+					false);
+			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
+					BH.getBDNoFormat("500"), true);
+		}
+
+		else if (roundType.equalsIgnoreCase(
+				ParamConst.ROUND_1000DOLLAR)) {
+			DecimalFormat doubleFormat = new DecimalFormat("0");
+			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("1000"),
+					false);
+			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
+					BH.getBDNoFormat("1000"), true);
+		}
+		else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_5CENTS)) {
 			DecimalFormat doubleFormat = new DecimalFormat("0");
 			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormatz("0.05"),
