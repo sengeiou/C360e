@@ -61,13 +61,13 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.ReportDayPayment;
+import com.alfredbase.javabean.ReportDayPromotion;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
-import com.alfredbase.javabean.ReportPromotion;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RevenueCenter;
@@ -2135,14 +2135,14 @@ public class App extends BaseApplication {
                     rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                             .toString();
                 }
-                if(order.getPromotion()!=null){
-                    total = BH.add(BH.getReplace(BH.formatMoney(total)),
-                            BH.getBD(order.getPromotion()), true)
-                            .toString();
-                }
-        //        List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+//                if(order.getPromotion()!=null){
+//                    total = BH.add(BH.getReplace(BH.formatMoney(total)),
+//                            BH.getBD(order.getPromotion()), true)
+//                            .toString();
+//                }
+                List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
-                List<OrderPromotion>  promotionData=null;
+              //  List<OrderPromotion>  promotionData=null;
                 roundingMap.put("Total", total);
                 roundingMap.put("Rounding", rounding);
                 Gson gson = new Gson();
@@ -2507,7 +2507,7 @@ public class App extends BaseApplication {
 
 
     public void remotePrintPromotionReport(String xzType, PrinterDevice printer,
-                                           PrinterTitle title, List<ReportPromotion> reportPromotion) {
+                                           PrinterTitle title, List<ReportDayPromotion> reportDayPromotion) {
         if (mRemoteService == null) {
             // Toast.makeText(this, "Printer service is not started yet",
             // 1000).show();
@@ -2519,7 +2519,7 @@ public class App extends BaseApplication {
             String prtStr = gson.toJson(printer);
             String prtTitle = gson.toJson(title);
             String itemPromotionStr = "";
-            String reportPromotionStr = gson.toJson(reportPromotion);
+            String reportPromotionStr = gson.toJson(reportDayPromotion);
 
             mRemoteService.printPromotionAnalysisReport(xzType, prtStr, prtTitle,
                     reportPromotionStr,getLocalRestaurantConfig().getFormatType());

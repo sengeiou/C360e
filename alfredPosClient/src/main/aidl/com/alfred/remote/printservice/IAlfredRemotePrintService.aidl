@@ -65,7 +65,7 @@ interface IAlfredRemotePrintService {
         							String modifiers,String tax, String payment,
         							boolean doubleprint, boolean doubleReceipts,
         							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr);
-   void printPromotionAnalysisReport(String xzType, String printer, String title, String reportPromotion,String formatType);
+   void printPromotionAnalysisReport(String xzType, String printer, String title, String reportDayPromotion,String formatType);
 
 
 }

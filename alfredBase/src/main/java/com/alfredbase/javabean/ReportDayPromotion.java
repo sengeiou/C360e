@@ -2,7 +2,7 @@ package com.alfredbase.javabean;
 
 import java.io.Serializable;
 
-public class ReportPromotion implements Serializable{
+public class ReportDayPromotion implements Serializable{
 	
 	/**
 	 * 
@@ -138,17 +138,21 @@ public class ReportPromotion implements Serializable{
 
 	@Override
 	public String toString() {
-		return "ReportPromotion{" +
+		return "ReportDayPromotion{" +
 				"id=" + id +
 				", restaurantId=" + restaurantId +
 				", revenueId=" + revenueId +
 				", revenueName='" + revenueName + '\'' +
 				", businessDate=" + businessDate +
 				", amountQty=" + amountQty +
-				", amountPrice='" + amountPromotion + '\'' +
+				", amountPromotion='" + amountPromotion + '\'' +
 				", promotionName='" + promotionName + '\'' +
 				", promotionId=" + promotionId +
 				", daySalesId=" + daySalesId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", sysCreateTime=" + sysCreateTime +
+				", sysUpdateTime=" + sysUpdateTime +
 				'}';
 	}
 }

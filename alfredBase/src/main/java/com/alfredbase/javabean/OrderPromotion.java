@@ -224,6 +224,9 @@ public class OrderPromotion implements Serializable {
                 ", discountPrice='" + discountPrice + '\'' +
                 ", businessDate=" + businessDate +
                 ", itemNum=" + itemNum +
+                ", sessionStatus=" + sessionStatus +
+                ", sysCreateTime=" + sysCreateTime +
+                ", sysUpdateTime=" + sysUpdateTime +
                 '}';
     }
 }

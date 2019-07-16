@@ -1595,12 +1595,6 @@ public class DataHelper {
                     + " ADD COLUMN payHalalQty INTEGER default 0");
 
 
-            db.execSQL("CREATE TABLE "
-                    + TableNames.OrderPromotion
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
-                    "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
-                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG,basePrice TEXT)");
-
 
             db.execSQL("CREATE TABLE "
                     + TableNames.Promotion
@@ -1659,14 +1653,14 @@ public class DataHelper {
                     " amountPromotion TEXT,promotionName TEXT," +
                     "promotionId INTEGER,daySalesId INTEGER,createTime LONG ,updateTime LONG,sysCreateTime LONG,sysUpdateTime LONG)");
 
+            db.execSQL("CREATE TABLE "
+                    + TableNames.OrderPromotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
+                    "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
+                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG," +
+                    "itemNum INTEGER,sessionStatus INTEGER,sysCreateTime LONG,sysUpdateTime LONG)");
 
-            db.execSQL("ALTER TABLE " + TableNames.OrderPromotion
-                    + " ADD COLUMN sessionStatus INTEGER default 0");
 
-            db.execSQL("ALTER TABLE " + TableNames.OrderPromotion
-                    + " ADD COLUMN sysCreateTime LONG ");
-            db.execSQL("ALTER TABLE " + TableNames.OrderPromotion
-                    + " ADD COLUMN sysUpdateTime LONG ");
 
         }
     }

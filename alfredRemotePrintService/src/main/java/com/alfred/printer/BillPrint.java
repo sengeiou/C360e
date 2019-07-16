@@ -796,7 +796,7 @@ public class BillPrint extends PrintJob {
             for (int i = 0; i <promotionDatas.size() ; i++) {
                 OrderPromotion promotionData=promotionDatas.get(i);
                 PrintData promotionPrint = new PrintData();
-                String promotionStr = StringUtil.padLeft(BH.getBD(promotionData.getPromotionAmount()).toString(),
+                String promotionStr = StringUtil.padLeft(BH.formatMoney(promotionData.getPromotionAmount()).toString(),
                         this.FIXED_COL4_TOTAL);
                 String promotiontTotal = promotionData.getPromotionName()+" :" + currencySymbol + promotionStr + reNext;
                 promotionPrint.setDataFormat(PrintData.FORMAT_TXT);

@@ -16,13 +16,13 @@ import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.ReportDayPayment;
+import com.alfredbase.javabean.ReportDayPromotion;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
-import com.alfredbase.javabean.ReportPromotion;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.Tax;
@@ -1700,11 +1700,11 @@ public class ReportObjectFactory {
 
 	}
 
-	public ArrayList<ReportPromotion> loadReportPromotions(long businessDate) {
-		ArrayList<ReportPromotion> reportPromotions = new ArrayList<ReportPromotion>();
-		reportPromotions = ReportPromotionSQL.getReportHourlysByTime(businessDate);
+	public ArrayList<ReportDayPromotion> loadReportPromotions(long businessDate) {
+		ArrayList<ReportDayPromotion> reportDayPromotions = new ArrayList<ReportDayPromotion>();
+		reportDayPromotions = ReportPromotionSQL.getReportHourlysByTime(businessDate);
 
-		return reportPromotions;
+		return reportDayPromotions;
 
 	}
 
@@ -3160,9 +3160,9 @@ public class ReportObjectFactory {
 		return reportHourlys;
 	}
 
-	public ArrayList<ReportPromotion> loadXReportPromotions(long businessDate,
-													  SessionStatus sessionStatus) {
-		ArrayList<ReportPromotion> reportPromotions = new ArrayList<ReportPromotion>();
+	public ArrayList<ReportDayPromotion> loadXReportPromotions(long businessDate,
+															   SessionStatus sessionStatus) {
+		ArrayList<ReportDayPromotion> reportDayPromotions = new ArrayList<ReportDayPromotion>();
 		// if (App.instance.getBusinessDate() != businessDate) {
 		// reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
 		// return reportHourlys;
@@ -3190,21 +3190,21 @@ public class ReportObjectFactory {
 
 			}
 			if(qty>0){
-				ReportPromotion reportPromotion = new ReportPromotion();
-				reportPromotion.setRestaurantId(restaurant.getId());
-				reportPromotion.setRevenueId(revenueCenter.getId());
-				reportPromotion.setRevenueName(revenueCenter.getRevName());
-				reportPromotion.setBusinessDate(businessDate);
-				reportPromotion.setAmountPromotion(amount.toString());
-				reportPromotion.setPromotionName(promotionName);
-				reportPromotion.setAmountQty(qty);
-				reportPromotion.setPromotionId(id);
-				reportPromotions.add(reportPromotion);
+				ReportDayPromotion reportDayPromotion = new ReportDayPromotion();
+				reportDayPromotion.setRestaurantId(restaurant.getId());
+				reportDayPromotion.setRevenueId(revenueCenter.getId());
+				reportDayPromotion.setRevenueName(revenueCenter.getRevName());
+				reportDayPromotion.setBusinessDate(businessDate);
+				reportDayPromotion.setAmountPromotion(amount.toString());
+				reportDayPromotion.setPromotionName(promotionName);
+				reportDayPromotion.setAmountQty(qty);
+				reportDayPromotion.setPromotionId(id);
+				reportDayPromotions.add(reportDayPromotion);
 
 			}
 		}
-		ReportPromotionSQL.addReportPromotion(reportPromotions);
-		return reportPromotions;
+		ReportPromotionSQL.addReportPromotion(reportDayPromotions);
+		return reportDayPromotions;
 	}
 
 	public ArrayList<OrderPromotion> loadXReportItemPromotions(long businessDate,
@@ -3262,7 +3262,7 @@ public class ReportObjectFactory {
 		ArrayList<ReportPluDayComboModifier>reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) modifierInfoMap.get("reportPluDayComboModifiers");
 		// plu hourly payment report
 		ArrayList<ReportHourly> reportHourlys = loadXReportHourlys(businessDate, sessionStatus);
-		ArrayList<ReportPromotion> reportPromotions = loadXReportPromotions(businessDate, sessionStatus);
+		ArrayList<ReportDayPromotion> reportDayPromotions = loadXReportPromotions(businessDate, sessionStatus);
 		//ArrayList<OrderPromotion> reportItemPromotions = loadXReportItemPromotions(businessDate, sessionStatus);
 		map.put("reportDaySales", reportDaySales);
 		map.put("reportDayTaxs", reportDayTaxs);
@@ -3273,7 +3273,7 @@ public class ReportObjectFactory {
 		map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
 		map.put("sessionStatus", sessionStatus);
 		map.put("userOpenDrawerRecords", userOpenDrawerRecords);
-		map.put("reportPromotions", reportPromotions);
+		map.put("reportDayPromotions", reportDayPromotions);
 
 		return map;
 	}

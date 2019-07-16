@@ -40,13 +40,13 @@ import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.PrintBean;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.ReportDayPayment;
+import com.alfredbase.javabean.ReportDayPromotion;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
-import com.alfredbase.javabean.ReportPromotion;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
@@ -411,7 +411,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
-        ArrayList<ReportPromotion> reportPromotions = gson.fromJson(reportPromotion, new TypeToken<ArrayList<ReportPromotion>>() {
+        ArrayList<ReportDayPromotion> reportDayPromotions = gson.fromJson(reportPromotion, new TypeToken<ArrayList<ReportDayPromotion>>() {
         }.getType());
 
 
@@ -468,15 +468,15 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //                proPrint.AddHortionaDoublelLine();
 //            }
 //            addHortionaDoublelLine(this.charSize);
-            proPrint.AddContentListHeader( PrintService.instance.getResources().getString(R.string.promotion_name),
+            proPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.promotion_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
             proPrint.setPrinterIp(prtDevice.getIP());
 
-                if(reportPromotions!=null&&reportPromotions.size()>0){
-                    for (int i = 0; i < reportPromotions.size(); i++) {
-                        ReportPromotion reportPromotion1=reportPromotions.get(i);
-                        proPrint.print(reportPromotion1.getPromotionName(),reportPromotion1.getAmountQty(),reportPromotion1.getAmountPromotion());
+                if(reportDayPromotions !=null&& reportDayPromotions.size()>0){
+                    for (int i = 0; i < reportDayPromotions.size(); i++) {
+                        ReportDayPromotion reportDayPromotion1 = reportDayPromotions.get(i);
+                        proPrint.print(reportDayPromotion1.getPromotionName(), reportDayPromotion1.getAmountQty(), reportDayPromotion1.getAmountPromotion());
 
                     }
 
@@ -1129,8 +1129,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                    String subTotal = theOrder.getSubTotal();
                    String discount = theOrder.getDiscountAmount();
-                            String total = BH.getBD(theOrder.getTotal()).toString();
-                            String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                            String total = theOrder.getTotal();
+                            String grandTotal = theOrder.getTotal().toString();
                             if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
                                 grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                             }
@@ -2462,8 +2462,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         ////////////// Bill Summary
                         String subTotal = theOrder.getSubTotal();
                         String discount =theOrder.getDiscountAmount();
-                        String total = BH.getBD(theOrder.getTotal()).toString();
-                        String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                        String total = theOrder.getTotal().toString();
+                        String grandTotal = theOrder.getTotal().toString();
                         if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
                             grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                         }
@@ -2482,7 +2482,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     case ParamConst.SETTLEMENT_TYPE_CASH:
                                         if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
                                             stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.formatMoney(BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString()).toString());
-                                            stmt.put(PrintService.instance.getResources().getString(R.string.changes), printReceiptInfo.getCashChange().toString());
+                                            stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.formatMoney(printReceiptInfo.getCashChange()));
                                             isCashSettlement = true;
                                         }
                                         if (isCashSettlement && i == 0) {
@@ -2816,8 +2816,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = theOrder.getSubTotal();
                     String discount = theOrder.getDiscountAmount();
-                    String total = BH.getBD(theOrder.getTotal()).toString();
-                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    String total = theOrder.getTotal().toString();
+                    String grandTotal = theOrder.getTotal().toString();
                     if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
                         grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                     }
@@ -2957,8 +2957,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     ////////////// Bill Summary
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
-                    String total = BH.getBD(theOrder.getTotal()).toString();
-                    String grandTotal = BH.getBD(theOrder.getTotal()).toString();
+                    String total = theOrder.getTotal().toString();
+                    String grandTotal = theOrder.getTotal().toString();
                     if(!TextUtils.isEmpty(theOrder.getGrandTotal())){
                         grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                     }
@@ -2977,7 +2977,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 case ParamConst.SETTLEMENT_TYPE_CASH:
                                     if (!TextUtils.isEmpty(printReceiptInfo.getPaidAmount()) && BH.getBD(printReceiptInfo.getPaidAmount()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
                                         stmt.put(PrintService.instance.getResources().getString(R.string.cash), BH.formatMoney(BH.add(BH.getBD(printReceiptInfo.getPaidAmount()), BH.getBD(printReceiptInfo.getCashChange()), true).toString()).toString());
-                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), printReceiptInfo.getCashChange().toString());
+                                        stmt.put(PrintService.instance.getResources().getString(R.string.changes), BH.formatMoney(printReceiptInfo.getCashChange()));
                                         isCashSettlement = true;
                                     }
                                     if (isCashSettlement && i == 0) {
