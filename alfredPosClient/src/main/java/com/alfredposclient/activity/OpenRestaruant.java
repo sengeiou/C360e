@@ -1594,8 +1594,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			final Long businessDate = TimeUtil.getNewBusinessDate();
 			App.instance.deleteOldPrinterMsg(businessDate);
 			String bizYmd = TimeUtil.getYMD(businessDate);
-
-
                     DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
                             context.getResources().getString(R.string.operation_on) + bizYmd +
                                     context.getResources().getString(R.string.is_going_to_start),
