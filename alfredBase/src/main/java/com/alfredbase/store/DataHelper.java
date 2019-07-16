@@ -1596,8 +1596,10 @@ public class DataHelper {
                     + " ADD COLUMN payHalal TEXT default '0.00'");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN payHalalQty INTEGER default 0");
+        }
 
 
+        private void onUpgradeForOldVersion30(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE "
                     + TableNames.PromotionData
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
@@ -1634,13 +1636,6 @@ public class DataHelper {
                     + " ADD COLUMN  promotion TEXT default ''");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN promotionTotal TEXT");
-
-
-        }
-
-
-        private void onUpgradeForOldVersion30(SQLiteDatabase db) {
-
         }
     }
 }
