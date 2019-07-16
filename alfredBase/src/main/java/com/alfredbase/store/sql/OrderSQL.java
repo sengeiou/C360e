@@ -752,7 +752,7 @@ public class OrderSQL {
 				order.setPromotion(cursor.getString(31));
 				order.setOrderRound(cursor.getString(32));
 				order.setWaiterInformation(cursor.getString(33));
-				order.setIsWaiterPrint(cursor.getInt(34);
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {

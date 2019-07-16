@@ -1626,7 +1626,12 @@ public class DataHelper {
         }
 
 
+
         private void onUpgradeForOldVersion30(SQLiteDatabase db){
+
+
+        }
+        private void onUpgradeForOldVersion31(SQLiteDatabase db){
             db.execSQL("ALTER TABLE "
                     + TableNames.Order
                     + " ADD COLUMN  orderRound TEXT");
