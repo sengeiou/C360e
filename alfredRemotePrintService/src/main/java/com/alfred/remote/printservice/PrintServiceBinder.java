@@ -885,16 +885,18 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     String tableName;
                     String trainString ="";
-                    if (prtTitle.getCopy() == 2 && prtTitle.getTrainType() == 1) {
-                        tableName = prtTitle.getTableName() + " (Reprint Bill Copy)";
-                        trainString=  PrintService.instance.getResources().getString(R.string.training);
-                    } else if (prtTitle.getCopy() != 2 && prtTitle.getTrainType() == 1) {
-                        trainString=  PrintService.instance.getResources().getString(R.string.training);
-
-                        tableName = prtTitle.getTableName() + "";
+                    if (prtTitle.getCopy() == 2) {
+                        tableName = prtTitle.getTableName() + "(Reprint Bill Copy)";
                     } else {
                         tableName = prtTitle.getTableName();
                     }
+
+                    if(prtTitle.getTrainType() == 1){
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+                    }else {
+                        trainString="";
+                    }
+
 
                     Map<String, String> waiterMap = new LinkedHashMap<String, String>();
                     waiterMap=CommonUtil.getStringToMap(theOrder.getWaiterInformation());
@@ -1072,16 +1074,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         if (appOrders == null || appOrders.size() <= 0) {
                             String tableName;
                             String trainString="";
-                            if (prtTitle.getCopy() == 2 && prtTitle.getTrainType() == 1) {
-                                tableName = prtTitle.getTableName() + " (Reprint Bill Copy)";
-                                trainString=  PrintService.instance.getResources().getString(R.string.training);
-
-                            } else if (prtTitle.getCopy() != 2 && prtTitle.getTrainType() == 1) {
-                                tableName = prtTitle.getTableName() + "";
-                                trainString=  PrintService.instance.getResources().getString(R.string.training);
-
+                            if (prtTitle.getCopy() == 2) {
+                                tableName = prtTitle.getTableName() + "(Reprint Bill Copy)";
                             } else {
                                 tableName = prtTitle.getTableName();
+                            }
+
+                            if(prtTitle.getTrainType() == 1){
+                                trainString=  PrintService.instance.getResources().getString(R.string.training);
+                            }else {
+                                trainString="";
                             }
 
 
@@ -2269,17 +2271,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     String orderNo1;
                     String trainString="";
-                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
-                        orderNo1 = prtTitle.getOrderNo()  + " (Reprint Bill Copy)";
-                        trainString=  PrintService.instance.getResources().getString(R.string.training);
-
-                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
-                        orderNo1 = prtTitle.getOrderNo()  + "";
-                        trainString=  PrintService.instance.getResources().getString(R.string.training);
-
+                    if (prtTitle.getCopy() == 2) {
+                        orderNo1 = prtTitle.getTableName() + "(Reprint Bill Copy)";
+                    } else {
+                        orderNo1 = prtTitle.getTableName();
                     }
-                    else {
-                        orderNo1 = prtTitle.getOrderNo() ;
+
+                    if(prtTitle.getTrainType() == 1){
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+                    }else {
+                        trainString="";
                     }
                     if (!TextUtils.isEmpty(orderNo))
                         billPrint.AddOrderNo(orderNo);
@@ -2419,13 +2420,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
                     if (appOrders==null||appOrders.size()<=0) {
                         String orderNo1;
-                        if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
-                            orderNo1 = prtTitle.getOrderNo()  + ".Training (Reprint Bill Copy)";
-                        }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
-                            orderNo1 = prtTitle.getOrderNo()  + ".Training";
+                        String trainString="";
+                        if (prtTitle.getCopy() == 2) {
+                            orderNo1 = prtTitle.getTableName() + "(Reprint Bill Copy)";
+                        } else {
+                            orderNo1 = prtTitle.getTableName();
                         }
-                        else {
-                            orderNo1 = prtTitle.getOrderNo() ;
+
+                        if(prtTitle.getTrainType() == 1){
+                            trainString=  PrintService.instance.getResources().getString(R.string.training);
+                        }else {
+                            trainString="";
                         }
 
                         if (!TextUtils.isEmpty(orderNo))
@@ -2773,15 +2778,18 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
-                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
-                        orderNo1 = prtTitle.getOrderNo()  + "(Reprint Bill Copy)";
-                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
-                        orderNo1 = prtTitle.getOrderNo()  + "";
-                    }
-                    else {
-                        orderNo1 = prtTitle.getOrderNo() ;
+                    String trainString="";
+                    if (prtTitle.getCopy() == 2) {
+                        orderNo1 = prtTitle.getTableName() + "(Reprint Bill Copy)";
+                    } else {
+                        orderNo1 = prtTitle.getTableName();
                     }
 
+                    if(prtTitle.getTrainType() == 1){
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+                    }else {
+                        trainString="";
+                    }
                     if (!TextUtils.isEmpty(orderNo))
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeader(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
@@ -2914,13 +2922,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
 
                     String orderNo1;
-                    if (prtTitle.getCopy() == 2&&prtTitle.getTrainType()==1) {
-                        orderNo1 = prtTitle.getOrderNo()  + " (Reprint Bill Copy)";
-                    }else if(prtTitle.getCopy() != 2&&prtTitle.getTrainType()==1){
-                        orderNo1 = prtTitle.getOrderNo()  + "";
+                    String trainString="";
+                    if (prtTitle.getCopy() == 2) {
+                        orderNo1 = prtTitle.getTableName() + "(Reprint Bill Copy)";
+                    } else {
+                        orderNo1 = prtTitle.getTableName();
                     }
-                    else {
-                        orderNo1 = prtTitle.getOrderNo() ;
+
+                    if(prtTitle.getTrainType() == 1){
+                        trainString=  PrintService.instance.getResources().getString(R.string.training);
+                    }else {
+                        trainString="";
                     }
 
                     if (!TextUtils.isEmpty(orderNo))

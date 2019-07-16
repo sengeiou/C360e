@@ -1435,11 +1435,20 @@ public class OrderHelper {
 	
 	public static void setOrderSplitInclusiveTaxPrice(OrderSplit orderSplit){
 		if(orderSplit.getInclusiveTaxPercentage() != null){
+//			orderSplit.setInclusiveTaxPrice(BH
+//					.mul(BH.getBD(orderSplit.getInclusiveTaxPercentage()),
+//							BH.sub(BH.getBD(orderSplit.getSubTotal()),
+//									BH.getBD(orderSplit.getDiscountAmount()), false)
+//									, true).toString());
+
 			orderSplit.setInclusiveTaxPrice(BH
 					.mul(BH.getBD(orderSplit.getInclusiveTaxPercentage()),
-							BH.sub(BH.getBD(orderSplit.getSubTotal()),
-									BH.getBD(orderSplit.getDiscountAmount()), false)
-									, true).toString());
+							BH.div(BH.sub(BH.getBD(orderSplit.getSubTotal()),
+									BH.getBD(orderSplit.getDiscountAmount()), false),
+									BH.add(BH.getBD(1), BH.getBD(orderSplit
+													.getInclusiveTaxPercentage()),
+											false), false), true).toString());
+
 		}
 	}
 	

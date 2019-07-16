@@ -7,6 +7,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredkds.R;
 
@@ -104,6 +105,7 @@ public class CallNumboard extends LinearLayout implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		Button button = (Button) v;
+		BugseeHelper.buttonClicked((String) button.getText());
 		switch (v.getId()) {
 		default:
 			if (keyBoardClickListener != null)

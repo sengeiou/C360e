@@ -1412,6 +1412,14 @@ public class OrderDetailSQL {
                 + " where orderId = ? and orderStatus > "
                 + ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
                 + ") order by groupId desc";
+//        String sql = "select * from " + TableNames.OrderDetail
+//                + " where orderId = ? and orderDetailType <> " +
+//                +ParamConst.ORDERDETAIL_TYPE_VOID
+//                + " and groupId not in (select groupId from "
+//                + TableNames.OrderSplit
+//                + " where orderId = ? and orderStatus > "
+//                + ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
+//                + ") order by groupId desc";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {

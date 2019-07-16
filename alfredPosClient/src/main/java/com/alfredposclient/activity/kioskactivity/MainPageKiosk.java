@@ -350,7 +350,22 @@ public class MainPageKiosk extends BaseActivity {
                 findViewById(R.id.lv_order), handler);
         setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
                 handler);
+        PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
+        if (placeInfo == null) {
+            placeInfo = ObjectFactory.getInstance().addNewPlace(App.instance.getRevenueCenter().getRestaurantId().intValue(),
+                    App.instance.getRevenueCenter().getId().intValue(), "kiosk");
+            placeInfo.setIsKiosk(1);
+            PlaceInfoSQL.addPlaceInfo(placeInfo);
+        }
         currentTable = TableInfoSQL.getKioskTable();
+        if(currentTable == null){
+            currentTable = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480,800);
+            currentTable.setIsKiosk(1);
+            TableInfoSQL.updateTables(currentTable);
+        }
+        if(currentTable == null){
+//            currentOrder = ObjectFactory.getInstance().getTa
+        }
         view_top = findViewById(R.id.view_top);
         setData();
         observable = RxBus.getInstance().register(RxBus.RX_MSG_1);

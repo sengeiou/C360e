@@ -100,4 +100,6 @@ public class TableNames {
 	public static final String PromotionWeek = "PromotionWeek_";
 	public static final String PromotionItem = "PromotionItem_";
 	public static final String PromotionOrder= "PromotionOrder_";
+
+	public static final String EventLog= "EventLog_";
 }

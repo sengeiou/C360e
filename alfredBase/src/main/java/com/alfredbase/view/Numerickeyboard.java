@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.R;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.TextTypeFace;
 
 public class Numerickeyboard extends LinearLayout {
@@ -45,6 +46,7 @@ public class Numerickeyboard extends LinearLayout {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
+                BugseeHelper.buttonClicked(NUMERIC[arg2]);
                 if (keyBoardClickListener != null) {
                     keyBoardClickListener.onKeyBoardClick(NUMERIC[arg2]);
                 }
@@ -89,6 +91,7 @@ public class Numerickeyboard extends LinearLayout {
         }
 
     }
+
 
     public interface KeyBoardClickListener {
         void onKeyBoardClick(String key);

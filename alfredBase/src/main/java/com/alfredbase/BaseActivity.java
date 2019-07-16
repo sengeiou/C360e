@@ -4,18 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
@@ -64,8 +65,8 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         context = this;
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         MobclickAgent.updateOnlineConfig(this);
-
         initView();
+        initView(savedInstanceState);
 
 
 //        DisplayManager mDisplayManager;// 屏幕管理类
@@ -95,6 +96,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
 
     }
 
+
+    protected void initView(Bundle savedInstanceState) {
+        displayTrain=ParamConst.DISABLE_POS_TRAINING;
+    }
 
     protected void initView() {
 
@@ -207,10 +212,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
-
     }
-
-
 
     public void dismissLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
@@ -231,7 +233,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     }
 
     protected void handlerClickEvent(View v) {
-
+        BugseeHelper.buttonClicked(v);
     }
 
     public void selectTable(TableInfo tableInfo) {
@@ -347,8 +349,6 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
         if (compelDialog != null && compelDialog.isShowing()) {
             return;
         }
-
-
         super.onBackPressed();
     }
 

@@ -1018,6 +1018,11 @@ public class DataHelper {
             db.execSQL("ALTER TABLE "
                     + TableNames.OrderDetail
                     + " ADD COLUMN isSet INTEGER default 0");
+
+            //log table, not used just for testing purpose
+//            db.execSQL("CREATE TABLE "
+//                    + TableNames.EventLog
+//                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, custId INTEGER, createdDate LONG, event TEXT)");
         }
 
         private void onUpgradeForOldVersion1(SQLiteDatabase db) {
@@ -1537,7 +1542,7 @@ public class DataHelper {
 //
 //        }
 
-        private void onUpgradeForOldVersion27(SQLiteDatabase db){
+        private void onUpgradeForOldVersion27(SQLiteDatabase db) {
             try {
                 db.execSQL("ALTER TABLE " + TableNames.AppOrder
                         + " ADD COLUMN address TEXT");
@@ -1557,11 +1562,9 @@ public class DataHelper {
                         + " ADD COLUMN reportNo INTEGER");
 
 
-
-
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 db.execSQL("CREATE TABLE "
                         + TableNames.RemainingStock
                         + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, itemId INTEGER, qty INTEGER, defultQty INTEGER, "
@@ -1569,7 +1572,7 @@ public class DataHelper {
             }
         }
 
-        private void onUpgradeForOldVersion28(SQLiteDatabase db){
+        private void onUpgradeForOldVersion28(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN eatType INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
@@ -1589,6 +1592,7 @@ public class DataHelper {
                     + " ADD COLUMN payHalal TEXT default '0.00'");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN payHalalQty INTEGER default 0");
+        }
 
 
 
@@ -1628,6 +1632,42 @@ public class DataHelper {
 
 
         private void onUpgradeForOldVersion30(SQLiteDatabase db){
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionData
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
+                    "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
+                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG,basePrice TEXT)");
+
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.Promotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,type INTEGER, promotionName TEXT, restaurantId INTEGER, isActive INTEGER,promotionWeight INTEGER," +
+                    "discountPrice TEXT,discountPercentage TEXT,freeNum INTGER,freeItemId INTGER,freeItemName TEXT,itemMainCategoryId INTGER,itemCategoryId INTGER," +
+                    "itemId INTGER ,itemNum INTGER,itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT,secondItemMainCategoryId INTGER,secondItemCategoryId INTGER," +
+                    "secondItemId INTGER ,secondItemNum INTGER,secondItemMainCategoryName TEXT,secondItemCategoryName TEXT,secondItemName TEXT,createTime LONG,updateTime LONG," +
+                    "basePrice TEXT,guestNum INTGER,promotionDateInfoId INTGER)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionWeek
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, week INTEGER, startTime TEXT,endTime TEXT,isActive INTEGER,createTime LONG,updateTime LONG,promotionDateInfoId INTEGER)");
+
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionItem
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER, " +
+                    "itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER," +
+                    "itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT, freeItemName TEXT,createTime LONG,updateTime LONG)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionOrder
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, promotionId INTEGER, itemMainCategoryId INTEGER,itemCategoryId INTEGER,itemId INTEGER,type INTEGER,discountPrice TEXT,discountPercentage TEXT,freeNum INTEGER,freeItemId INTEGER," +
+                    "itemMainCategoryName TEXT,itemCategoryName TEXT,itemName TEXT, freeItemName TEXT,createTime LONG,updateTime LONG,basePrice TEXT)");
+
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Order
+                    + " ADD COLUMN  promotion TEXT default ''");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN promotionTotal TEXT");
 
 
         }

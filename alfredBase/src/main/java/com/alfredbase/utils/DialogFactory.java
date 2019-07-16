@@ -28,6 +28,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 
 import com.alfredbase.R;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
@@ -93,6 +94,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -103,6 +105,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(rightText);
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
                             }
@@ -128,9 +131,9 @@ public class DialogFactory {
      * @param rghtListener
      */
     public static void commonTwoBtnTimeDialog(final BaseActivity activity,
-                                          final String title,final String time, final String content, final String leftText, final String rightText,
-                                          final OnClickListener leftListener,
-                                          final OnClickListener rghtListener, final boolean canBack) {
+                                              final String title, final String time, final String content, final String leftText, final String rightText,
+                                              final OnClickListener leftListener,
+                                              final OnClickListener rghtListener, final boolean canBack) {
         activity.runOnUiThread(new Runnable() {
 
             @Override
@@ -152,6 +155,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -162,6 +166,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(rightText);
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
                             }
@@ -185,9 +190,9 @@ public class DialogFactory {
      * @param rghtListener
      */
     public static void commonTwoBtnQRDialog(final BaseActivity activity,
-                                          final String url, final String leftText, final String rightText,
-                                          final OnClickListener leftListener,
-                                          final OnClickListener rghtListener) {
+                                            final String url, final String leftText, final String rightText,
+                                            final OnClickListener leftListener,
+                                            final OnClickListener rghtListener) {
         activity.runOnUiThread(new Runnable() {
 
             @Override
@@ -229,6 +234,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -238,8 +244,9 @@ public class DialogFactory {
 
                             @Override
                             public void onClick(View v) {
+                                BugseeHelper.buttonClicked(rightText);
                                 String num = editText.getText().toString();
-                                if(TextUtils.isEmpty(num)){
+                                if (TextUtils.isEmpty(num)) {
                                     Toast toast = new Toast(activity);
                                     LayoutInflater inflater = activity.getLayoutInflater();
                                     View view = inflater.inflate(R.layout.toast_view, null);
@@ -252,7 +259,7 @@ public class DialogFactory {
                                     toast.setView(view);
                                     toast.show();
                                     return;
-                                }else{
+                                } else {
                                     v.setTag(num);
                                 }
                                 dialog.dismiss();
@@ -303,6 +310,7 @@ public class DialogFactory {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        BugseeHelper.buttonClicked("back");
                         if (backListener != null)
                             backListener.onClick(v);
                     }
@@ -314,8 +322,6 @@ public class DialogFactory {
 //		});
         return dialog;
     }
-
-
 
 
 //    public static Dialog kpmFDialog(final BaseActivity activity,
@@ -407,7 +413,6 @@ public class DialogFactory {
     }
 
 
-
     public static Dialog kpmCompleteDialog(final BaseActivity activity,
                                            final String title, final String content, String contentbottom, int drawableId,
 
@@ -465,6 +470,7 @@ public class DialogFactory {
 
                             @Override
                             public void onClick(View v) {
+                                BugseeHelper.buttonClicked("Ok");
                                 oneButtonCompelDialog.dismiss();
                                 if (buttonListener != null)
                                     buttonListener.onClick(v);
@@ -514,6 +520,7 @@ public class DialogFactory {
 
                             @Override
                             public void onClick(View v) {
+                                BugseeHelper.buttonClicked(leftText);
                                 dialog.dismiss();
                                 if (leftListener != null)
                                     leftListener.onClick(v);
@@ -524,6 +531,7 @@ public class DialogFactory {
 
                             @Override
                             public void onClick(View v) {
+                                BugseeHelper.buttonClicked(rightText);
                                 dialog.dismiss();
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
@@ -539,7 +547,6 @@ public class DialogFactory {
     }
 
 
-
     /**
      * 输入框的dialog(整数)
      *
@@ -552,9 +559,9 @@ public class DialogFactory {
      * @param rghtListener
      */
     public static void commonTwoBtnInputIntDialog(final BaseActivity activity, final Boolean balance,
-                                               final String title, final String content, final String leftText, final String rightText,
-                                               final OnClickListener leftListener,
-                                               final OnClickListener rghtListener) {
+                                                  final String title, final String content, final String leftText, final String rightText,
+                                                  final OnClickListener leftListener,
+                                                  final OnClickListener rghtListener) {
         activity.runOnUiThread(new Runnable() {
 
             @Override
@@ -576,8 +583,9 @@ public class DialogFactory {
                             @Override
                             public void onClick(final View v) {
                                 dialog.dismiss();
-                              //  CommonUtil.hideSoftkeyBoard(activity);
-                             //   hintKeyBoard(activity);
+                                BugseeHelper.buttonClicked(leftText);
+                                //  CommonUtil.hideSoftkeyBoard(activity);
+                                //   hintKeyBoard(activity);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -594,6 +602,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
 
+                                BugseeHelper.buttonClicked(rightText);
                                 String num = editText.getText().toString();
 
                                 if (balance) {
@@ -610,7 +619,7 @@ public class DialogFactory {
                                 }
                                 dialog.dismiss();
                                 CommonUtil.hideSoftkeyBoard(activity);
-                             //   hintKeyBoard(activity);
+                                //   hintKeyBoard(activity);
 
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
@@ -629,6 +638,7 @@ public class DialogFactory {
         });
 
     }
+
     /**
      * 输入框的dialog
      *
@@ -671,6 +681,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(final View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(leftText);
                                 CommonUtil.hideSoftkeyBoard(activity);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
@@ -687,7 +698,9 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
 
+                                BugseeHelper.buttonClicked(rightText);
                                 String num = editText.getText().toString();
+                                BugseeHelper.event("num : " + num);
 
                                 if (balance) {
                                     if (TextUtils.isEmpty(num)) {
@@ -728,7 +741,7 @@ public class DialogFactory {
     public static void showQrCodeDialog(final BaseActivity activity, String qrCodeText, final String tableName, boolean isEnCoding, final OnClickListener printOnClickListener) {
         try {
             String content = qrCodeText;
-            if(isEnCoding) {
+            if (isEnCoding) {
                 content = URLEncoder.encode(qrCodeText, "UTF-8");
             }
             QRCodeWriter writer = new QRCodeWriter();
@@ -747,6 +760,7 @@ public class DialogFactory {
             view.findViewById(R.id.btn_qrcode_print).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    BugseeHelper.buttonClicked(v);
                     printOnClickListener.onClick(v);
                     dialog.dismiss();
                 }
@@ -754,12 +768,14 @@ public class DialogFactory {
             view.findViewById(R.id.btn_qrcode_back).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    BugseeHelper.buttonClicked(v);
                     dialog.dismiss();
                 }
             });
             view.findViewById(R.id.btn_qrcode_save).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    BugseeHelper.buttonClicked(v);
                     String name = tableName;
                     if (TextUtils.isEmpty(tableName)) {
                         name = "Kiosk";
@@ -800,6 +816,7 @@ public class DialogFactory {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
+                    BugseeHelper.buttonClicked(v);
                     if (nextListener != null) {
                         nextListener.onClick(v);
                     }
@@ -847,6 +864,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(v);
                                 if (listener != null)
                                     listener.onClick(v);
                             }
@@ -918,6 +936,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(v);
                                 if (exitListener != null)
                                     exitListener.onClick(v);
                             }
@@ -968,6 +987,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(v);
                                 if (leftListener != null)
                                     leftListener.onClick(v);
                             }
@@ -978,6 +998,7 @@ public class DialogFactory {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                BugseeHelper.buttonClicked(v);
                                 if (rghtListener != null)
                                     rghtListener.onClick(v);
                             }
@@ -1017,6 +1038,7 @@ public class DialogFactory {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (ButtonClickTimer.canClick()) {
+                        BugseeHelper.buttonClicked(view);
                         PrinterDevice printerDevice = list.get(position);
                         dialogCallBack.callBack(printerDevice);
                         dialog.dismiss();
@@ -1028,7 +1050,6 @@ public class DialogFactory {
             e.printStackTrace();
         }
     }
-
 
 
     public interface DialogCallBack {
@@ -1083,11 +1104,10 @@ public class DialogFactory {
 
     public static void hintKeyBoard(BaseActivity parent) {
         //拿到 InputMethodManager
-        InputMethodManager imm = (InputMethodManager)parent.getSystemService(Context.INPUT_METHOD_SERVICE); //如果window上view获取焦点 && view不为空
-        if(imm.isActive()&&parent.getCurrentFocus()!=null){
+        InputMethodManager imm = (InputMethodManager) parent.getSystemService(Context.INPUT_METHOD_SERVICE); //如果window上view获取焦点 && view不为空
+        if (imm.isActive() && parent.getCurrentFocus() != null) {
             //拿到view的token 不为空
-            if (parent.getCurrentFocus().getWindowToken()!=null)
-            { //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
+            if (parent.getCurrentFocus().getWindowToken() != null) { //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
                 imm.hideSoftInputFromWindow(parent.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }

@@ -19,6 +19,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.AppVersion;
@@ -64,6 +65,9 @@ public class Welcome extends BaseActivity {
 		downFilter = new IntentFilter();
 		downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
 		registerReceiver(downReceiver, downFilter);
+
+
+		BugseeHelper.trace("APP", getString(R.string.app_name));
 	}
 	
 	

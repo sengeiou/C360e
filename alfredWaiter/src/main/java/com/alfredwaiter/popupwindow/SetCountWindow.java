@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredwaiter.R;
 import com.alfredwaiter.view.MoneyKeyboard;
 import com.alfredwaiter.view.MoneyKeyboard.KeyBoardClickListener;
@@ -70,6 +71,7 @@ public class SetCountWindow implements KeyBoardClickListener {
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if ("Cancel".equals(key)) {
 			dismiss();
 			dismissCall.call(key, originCount);

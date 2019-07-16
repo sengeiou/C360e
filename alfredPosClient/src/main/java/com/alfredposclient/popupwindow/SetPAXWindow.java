@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderSQL;
@@ -193,6 +194,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
 
 	@Override
 	public void onKeyBoardClick(String key) {
+		BugseeHelper.buttonClicked(key);
 		if ("X".equals(key)) {
 			dismiss();
 		} else if ("Enter".equals(key)) {

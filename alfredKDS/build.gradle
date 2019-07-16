@@ -1,4 +1,20 @@
+import com.android.build.gradle.api.BaseVariant
+
 apply plugin: 'com.android.application'
+apply plugin: 'bugsee'
+
+bugsee {
+//    appToken '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+//    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
+    appToken { BaseVariant variant ->
+        switch (variant.buildType.name) {
+            case 'release': '856f76df-ba87-4e0a-9049-cfcd31a33a42'
+                break
+            case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+                break
+        }
+    }
+}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion

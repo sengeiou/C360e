@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
@@ -1995,6 +1996,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     @Override
     public void onKeyBoardClick(String key) {
         LogUtil.d(TAG, "show" + show.toString());
+        BugseeHelper.log("show : " + show.toString());
+        BugseeHelper.buttonClicked(key);
         if ("X".equals(key)) {
             closeMoneyKeyboard();
         } else if ("Enter".equals(key)) {
