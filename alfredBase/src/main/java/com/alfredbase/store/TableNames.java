@@ -62,7 +62,7 @@ public class TableNames {
 	public static final String RoundAmount = "RoundAmount_";
 	public static final String CPRoundAmount = "CPRoundAmount_";
 	public static final String ReportHourly = "ReportHourly_";
-	public static final String ReportPromotion = "ReportPromotion_";
+	public static final String ReportDayPromotion = "ReportDayPromotion_";
 	public static final String KotItemModifier = "KotItemModifier_";
 	public static final String KotItemDetail = "KotItemDetail_";
 	public static final String EmpWorkLog = "EmpWorkLog_";

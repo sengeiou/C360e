@@ -1654,16 +1654,19 @@ public class DataHelper {
                     + " ADD COLUMN beforeDiscount INTEGER");
 
             db.execSQL("CREATE TABLE "
-                    + TableNames.ReportPromotion
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, revenueId INTEGER, revenueName TEXT, businessDate LONG, amountQty INTEGER, amountPromotion TEXT,promotionName TEXT,promotionId INTEGER,daySalesId INTEGER)");
+                    + TableNames.ReportDayPromotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, revenueId INTEGER, revenueName TEXT, businessDate LONG, amountQty INTEGER," +
+                    " amountPromotion TEXT,promotionName TEXT," +
+                    "promotionId INTEGER,daySalesId INTEGER,createTime LONG ,updateTime LONG,sysCreateTime LONG,sysUpdateTime LONG)");
+
 
             db.execSQL("ALTER TABLE " + TableNames.OrderPromotion
                     + " ADD COLUMN sessionStatus INTEGER default 0");
 
             db.execSQL("ALTER TABLE " + TableNames.OrderPromotion
-                    + " ADD COLUMN sysCreateTime LONG default 0");
+                    + " ADD COLUMN sysCreateTime LONG ");
             db.execSQL("ALTER TABLE " + TableNames.OrderPromotion
-                    + " ADD COLUMN sysUpdateTime LONG default 0");
+                    + " ADD COLUMN sysUpdateTime LONG ");
 
         }
     }

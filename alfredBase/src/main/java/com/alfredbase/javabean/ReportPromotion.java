@@ -19,6 +19,10 @@ public class ReportPromotion implements Serializable{
 	private String promotionName;
 	private Integer promotionId;
 	private int daySalesId;
+	private long createTime;
+	private long updateTime;
+	private long sysCreateTime;
+	private long sysUpdateTime;
 
 	public Integer getId() {
 		return id;
@@ -98,6 +102,38 @@ public class ReportPromotion implements Serializable{
 
 	public void setDaySalesId(int daySalesId) {
 		this.daySalesId = daySalesId;
+	}
+
+	public long getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(long createTime) {
+		this.createTime = createTime;
+	}
+
+	public long getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(long updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public long getSysCreateTime() {
+		return sysCreateTime;
+	}
+
+	public void setSysCreateTime(long sysCreateTime) {
+		this.sysCreateTime = sysCreateTime;
+	}
+
+	public long getSysUpdateTime() {
+		return sysUpdateTime;
+	}
+
+	public void setSysUpdateTime(long sysUpdateTime) {
+		this.sysUpdateTime = sysUpdateTime;
 	}
 
 	@Override
