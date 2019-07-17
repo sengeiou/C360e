@@ -2258,9 +2258,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         String orderNo1;
                         String trainString="";
                         if (prtTitle.getCopy() == 2) {
-                            orderNo1 = prtTitle.getTableName() + "(Reprint Bill Copy)";
+                            orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
                         } else {
-                            orderNo1 = prtTitle.getTableName();
+                            orderNo1 = prtTitle.getOrderNo();
                         }
 
                         if(prtTitle.getTrainType() == 1){
@@ -2610,9 +2610,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String orderNo1;
                     String trainString="";
                     if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getTableName() + "(Reprint Bill Copy)";
+                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
                     } else {
-                        orderNo1 = prtTitle.getTableName();
+                        orderNo1 = prtTitle.getOrderNo();
                     }
 
                     if(prtTitle.getTrainType() == 1){
@@ -2751,9 +2751,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String orderNo1;
                     String trainString="";
                     if (prtTitle.getCopy() == 2) {
-                        orderNo1 = prtTitle.getTableName() + "(Reprint Bill Copy)";
+                        orderNo1 = prtTitle.getOrderNo() + "(Reprint Bill Copy)";
                     } else {
-                        orderNo1 = prtTitle.getTableName();
+                        orderNo1 = prtTitle.getOrderNo();
                     }
 
                     if(prtTitle.getTrainType() == 1){
