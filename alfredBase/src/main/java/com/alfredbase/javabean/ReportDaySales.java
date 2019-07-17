@@ -185,6 +185,7 @@ public class ReportDaySales implements Serializable{
 	private String payHalal;
 
 	private Integer payHalalQty;
+	private  Integer promotionQty;
 
 //	private String cashGstDiscount;
 //	private String netsGstDiscount;
@@ -1008,6 +1009,14 @@ public class ReportDaySales implements Serializable{
 
 	public void setDaySalesRound(String daySalesRound) {
 		this.daySalesRound = daySalesRound;
+	}
+
+	public Integer getPromotionQty() {
+		return promotionQty;
+	}
+
+	public void setPromotionQty(Integer promotionQty) {
+		this.promotionQty = promotionQty;
 	}
 
 	@Override

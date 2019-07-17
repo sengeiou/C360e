@@ -27,9 +27,9 @@ public class ReportDaySalesSQL {
 					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty,"
 					+ " refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, takeawayQty, createTime,"
 					+ " updateTime, deliveroo, deliverooQty, ubereats, ubereatsQty, foodpanda, foodpandaQty, voucher, voucherQty, totalHour, reportNoStr,"
-					+ " payHalal, payHalalQty,promotionTotal,daySalesRound)"
+					+ " payHalal, payHalalQty,promotionTotal,daySalesRound,promotionQty)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportDaySales.getId(),
@@ -127,7 +127,8 @@ public class ReportDaySalesSQL {
 							reportDaySales.getPayHalal() == null ? "0.00":reportDaySales.getPayHalal(),
 							reportDaySales.getPayHalalQty() == null ? 0 : reportDaySales.getPayHalalQty(),
 							reportDaySales.getPromotionTotal() == null ? "0.00" : reportDaySales.getPromotionTotal(),
-							reportDaySales.getDaySalesRound()
+							reportDaySales.getDaySalesRound(),
+							reportDaySales.getPromotionQty() == null ? "0.00" : reportDaySales.getPromotionQty()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -147,9 +148,9 @@ public class ReportDaySalesSQL {
 					+ " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty,"
 					+ " refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, takeawayQty, createTime,"
 					+ " updateTime, deliveroo, deliverooQty, ubereats, ubereatsQty, foodpanda, foodpandaQty, voucher, voucherQty, totalHour, reportNoStr,"
-					+ " payHalal,payHalalQty,promotionTotal,daySalesRound)"
+					+ " payHalal,payHalalQty,promotionTotal,daySalesRound,promotionQty)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			db.execSQL(
 					sql,
 					new Object[] { reportDaySales.getId(),
@@ -247,8 +248,9 @@ public class ReportDaySalesSQL {
 							reportDaySales.getPayHalal() == null ? "0.00":reportDaySales.getPayHalal(),
 							reportDaySales.getPayHalalQty() == null ? 0 : reportDaySales.getPayHalalQty(),
 							reportDaySales.getPromotionTotal() == null ? "0.00" : reportDaySales.getPromotionTotal(),
-							reportDaySales.getDaySalesRound()
-							});
+							reportDaySales.getDaySalesRound(),
+							reportDaySales.getPromotionQty() == null ? "0.00" : reportDaySales.getPromotionQty()
+					});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -280,9 +282,9 @@ public class ReportDaySalesSQL {
 					+ " alipay, alipayQty, thirdParty, thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty,"
 					+ " billRefund, billRefundQty, refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, "
 					+ " takeawayQty, createTime, updateTime, deliveroo, deliverooQty, ubereats, ubereatsQty, foodpanda, foodpandaQty, voucher, voucherQty,totalHour, reportNoStr,"
-					+ " payHalal,payHalalQty,promotionTotal,daySalesRound)"
+					+ " payHalal,payHalalQty,promotionTotal,daySalesRound,promotionQty)"
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] {reportDaySales.getRestaurantId(),
@@ -379,7 +381,9 @@ public class ReportDaySalesSQL {
 							reportDaySales.getPayHalal() == null ? "0.00":reportDaySales.getPayHalal(),
 							reportDaySales.getPayHalalQty() == null ? 0 : reportDaySales.getPayHalalQty(),
 							reportDaySales.getPromotionTotal() == null ? "0.00" : reportDaySales.getPromotionTotal(),
-							reportDaySales.getDaySalesRound()
+							reportDaySales.getDaySalesRound(),
+							reportDaySales.getPromotionQty() == null ? "0.00" : reportDaySales.getPromotionQty()
+
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -491,6 +495,7 @@ public class ReportDaySalesSQL {
 				reportDaySales.setPayHalalQty(cursor.getInt(93));
                 reportDaySales.setPromotionTotal(cursor.getString(94));
 				reportDaySales.setDaySalesRound(cursor.getString(95));
+				reportDaySales.setPromotionQty(cursor.getInt(96));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -610,6 +615,7 @@ public class ReportDaySalesSQL {
 				reportDaySales.setPayHalalQty(cursor.getInt(93));
                 reportDaySales.setPromotionTotal(cursor.getString(94));
                 reportDaySales.setDaySalesRound(cursor.getString(95));
+				reportDaySales.setPromotionQty(cursor.getInt(96));
 				return reportDaySales;
 			}
 		} catch (Exception e) {
@@ -764,6 +770,7 @@ public class ReportDaySalesSQL {
 				reportDaySales.setPayHalalQty(cursor.getInt(93));
                 reportDaySales.setPromotionTotal(cursor.getString(94));
 				reportDaySales.setDaySalesRound(cursor.getString(95));
+				reportDaySales.setPromotionQty(cursor.getInt(96));
 				result.add(reportDaySales);
 			}
 		} catch (Exception e) {
@@ -890,6 +897,7 @@ public class ReportDaySalesSQL {
 				reportDaySales.setPayHalalQty(cursor.getInt(93));
                 reportDaySales.setPromotionTotal(cursor.getString(94));
 				reportDaySales.setDaySalesRound(cursor.getString(95));
+				reportDaySales.setPromotionQty(cursor.getInt(96));
 				result.add(reportDaySales);
 			}
 		} catch (Exception e) {
@@ -916,7 +924,7 @@ public class ReportDaySalesSQL {
 				+ " sum(thirdPartyQty), sum(weixinpay), sum(weixinpayQty), sum(paypalpay), sum(paypalpayQty), sum(storedCard), sum(storedCardQty), sum(topUps), sum(topUpsQty),"
 				+ " sum(billRefund), sum(billRefundQty), sum(refundTax), sum(startDrawerAmount), sum(expectedAmount), sum(waiterAmount), sum(difference), sum(cashTopUp), "
 				+ " sum(takeawaySales), sum(takeawayTax), sum(takeawayQty), createTime, updateTime, sum(deliveroo), sum(deliverooQty), sum(ubereats), sum(ubereatsQty), "
-				+ " sum(foodpanda), sum(foodpandaQty), sum(voucher), sum(voucherQty), sum(totalHour), reportNoStr, sum(payHalal), sum(payHalalQty),sum(promotionTotal),sum(daySalesRound) from "
+				+ " sum(foodpanda), sum(foodpandaQty), sum(voucher), sum(voucherQty), sum(totalHour), reportNoStr, sum(payHalal), sum(payHalalQty),sum(promotionTotal),sum(daySalesRound),sum(promotionQty) from "
 				+ TableNames.ReportDaySales
 				+ " where businessDate = ? ";
 		Cursor cursor = null;
@@ -1024,6 +1032,7 @@ public class ReportDaySalesSQL {
 				reportDaySales.setPayHalalQty(cursor.getInt(92));
                 reportDaySales.setPromotionTotal(cursor.getString(93));
 				reportDaySales.setDaySalesRound(cursor.getString(94));
+				reportDaySales.setPromotionQty(cursor.getInt(96));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
