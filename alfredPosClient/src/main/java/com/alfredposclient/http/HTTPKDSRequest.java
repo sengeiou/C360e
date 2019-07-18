@@ -5,7 +5,10 @@ import android.os.Handler;
 
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
@@ -49,10 +52,13 @@ public class HTTPKDSRequest {
                 });
     }
 
-    public static void syncSubmitKot(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
+    public static void syncSubmitKot(Context context, final Map<String, Object> parameters, String url, final KDSDevice kds,
                                      SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
 
         parameters.put("mainpos", App.instance.getMainPosInfo());
+
+        final KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
+
         syncHttpClient.post(context, url,
                 new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
                         "UTF-8"), HttpAssembling.CONTENT_TYPE,
@@ -61,7 +67,11 @@ public class HTTPKDSRequest {
                     public void onSuccess(final int statusCode, final Header[] headers,
                                           final byte[] responseBody) {
                         super.onSuccess(statusCode, headers, responseBody);
-                        if (resultCode == ResultCode.INVALID_DEVICE) {
+                        if (resultCode == ResultCode.SUCCESS) {
+                            if (kotSummary != null) {
+                                kotSummary.setKotSummaryLog(KDSLogUtil.setKds(kotSummary.getKotSummaryLog(), kds));
+                            }
+                        } else if (resultCode == ResultCode.INVALID_DEVICE) {
                             // if kds device is invadate, POS need remove it.
 //									App.instance.removeKDSDevice(kds.getDevice_id());
                         }

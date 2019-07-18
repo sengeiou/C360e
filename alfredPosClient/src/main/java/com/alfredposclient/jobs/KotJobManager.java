@@ -91,6 +91,20 @@ public class KotJobManager {
         return printerResult;
     }
 
+    private ArrayList<Printer> getPrinterEx(int printerGroupId) {
+        ArrayList<Printer> printerResult = new ArrayList<>();
+        ArrayList<Printer> printersData = CoreData.getInstance()
+                .getPrintersInGroup(printerGroupId);
+
+        for (Printer mPrinter : printersData) {
+            if ("1".equals(mPrinter.getPrinterType())) {
+                printerResult.add(mPrinter);
+            }
+        }
+
+        return printerResult;
+    }
+
     public void sendKOTTmpToKDS(KotSummary kotSummary,
                                 ArrayList<KotItemDetail> kotItemDetails, ArrayList<KotItemModifier> modifiers,
                                 String method, Map<String, Object> orderMap) {
@@ -335,13 +349,15 @@ public class KotJobManager {
                 isAssemblyLine = true;//testing
             }
 
-            ArrayList<Printer> printers = getPrinters(prgid, 0, isAssemblyLine);
+            ArrayList<Printer> printers = new ArrayList<>();
+            printers.addAll(getPrinters(prgid, 0, isAssemblyLine));
+            printers.addAll(getPrinterEx(prgid));
 
-            for (Printer prnt : printers) {
+            for (Printer printer : printers) {
                 // KDS device
-                KDSDevice kdsDevice = App.instance.getKDSDevice(prnt.getId());
+                KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
                 // physical printer
-                PrinterDevice printerDevice = App.instance.getPrinterDeviceById(prnt
+                PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer
                         .getId());
                 if (kdsDevice == null && printerDevice == null) {
                     if (context != null)
