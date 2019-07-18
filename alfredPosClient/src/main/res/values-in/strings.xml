@@ -304,8 +304,6 @@
     <string name="revenue_center">Pusat Pendapatan</string>
     <string name="ipaddr_tips">Penyandingan Perangkat \nSiapkan Alamat IP POS</string>
     <string name="connect">Menghubungkan</string>
-    <string name="language">Bahasa</string>
-    <string name="choose_language">Pilih bahasa</string>
 
     <string name="january">Januari</string>
     <string name="february">Februari</string>

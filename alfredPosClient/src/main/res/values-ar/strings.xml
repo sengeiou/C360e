@@ -304,8 +304,6 @@
     <string name="revenue_center">مركز الإيرادات</string>
     <string name="ipaddr_tips">إقران الجهاز \nقم بإعداد عنوان IP لنقاط البيع</string>
     <string name="connect">الاتصال</string>
-    <string name="language">لغة</string>
-    <string name="choose_language">اختر اللغة</string>
 
     <string name="january">كانون الثاني</string>
     <string name="february">شهر فبراير</string>
@@ -322,5 +320,6 @@
 
     <string name="welcome_to">مرحبا بك في</string>
     <string name="please_clock_in">يرجى الساعة في</string>
+
 
 </resources>

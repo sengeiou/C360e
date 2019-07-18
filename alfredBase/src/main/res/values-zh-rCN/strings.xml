@@ -411,5 +411,9 @@
     <string name="item_price">商品价格</string>
     <string name="revert">还原</string>
     <string name="item_name">项目名称</string>
+    <string name="language">语言</string>
+    <string name="choose_language">选择语言</string>
+    <string name="change_to_all_device">更改为所有连接的设备</string>
+    <string name="pos_only">仅限POS</string>
 
 </resources>

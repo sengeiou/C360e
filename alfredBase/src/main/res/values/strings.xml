@@ -417,4 +417,9 @@
     <string name="revert">Revert</string>
     <string name="item_name">Item Name</string>
 
+    <string name="language">Language</string>
+    <string name="choose_language">Choose Language</string>
+
+    <string name="change_to_all_device">change to all connected devices</string>
+    <string name="pos_only">POS only</string>
 </resources>

@@ -413,4 +413,8 @@
     <string name="revert">العودة</string>
     <string name="item_name">اسم العنصر</string>
 
+    <string name="language">لغة</string>
+    <string name="choose_language">اختر اللغة</string>
+    <string name="change_to_all_device">التغيير إلى جميع الأجهزة المتصلة</string>
+    <string name="pos_only">نقاط البيع فقط</string>
 </resources>

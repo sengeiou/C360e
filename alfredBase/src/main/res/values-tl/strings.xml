@@ -412,4 +412,9 @@
     <string name="revert">Ibalik</string>
     <string name="item_name">Pangalan ng Item</string>
 
+    <string name="language">Wika</string>
+    <string name="choose_language">Piliin ang Wika</string>
+    <string name="change_to_all_device">baguhin sa lahat ng mga nakakonektang device</string>
+    <string name="pos_only">POS lamang</string>
+
 </resources>

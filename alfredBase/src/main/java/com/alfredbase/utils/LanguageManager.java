@@ -1,6 +1,8 @@
 package com.alfredbase.utils;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -9,6 +11,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.alfredbase.R;
 
@@ -152,4 +158,52 @@ public class LanguageManager {
         return config.locale;
 
     }
+
+    public static AlertDialog alertLanguage(Context context, LanguageDialogListener languageDialogListener) {
+        AlertDialog.Builder dialogLanguage = new AlertDialog.Builder(context);
+        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_select_language, null);
+        dialogLanguage.setView(dialogView);
+        dialogLanguage.setCancelable(true);
+        final AlertDialog alertLanguage = dialogLanguage.show();
+
+        ImageView ivClose = (ImageView) dialogView.findViewById(R.id.iv_close);
+        LinearLayout llEng = (LinearLayout) dialogView.findViewById(R.id.ll_language_english);
+        LinearLayout llCh = (LinearLayout) dialogView.findViewById(R.id.ll_language_china);
+        LinearLayout llIna = (LinearLayout) dialogView.findViewById(R.id.ll_language_ina);
+        LinearLayout llPh = (LinearLayout) dialogView.findViewById(R.id.ll_language_ph);
+        LinearLayout llAr = (LinearLayout) dialogView.findViewById(R.id.ll_language_ar);
+        LinearLayout llTh = (LinearLayout) dialogView.findViewById(R.id.ll_language_th);
+        LinearLayout llVi = (LinearLayout) dialogView.findViewById(R.id.ll_language_vi);
+
+        setLanguage(llEng, LanguageManager.LANGUAGE_KEY_ENGLISH, languageDialogListener);
+        setLanguage(llCh, LanguageManager.LANGUAGE_KEY_CHINESE, languageDialogListener);
+        setLanguage(llIna, LanguageManager.LANGUAGE_KEY_INDONESIA, languageDialogListener);
+        setLanguage(llPh, LanguageManager.LANGUAGE_KEY_TAGALOG, languageDialogListener);
+        setLanguage(llAr, LanguageManager.LANGUAGE_KEY_ARABIC, languageDialogListener);
+        setLanguage(llTh, LanguageManager.LANGUAGE_KEY_THAILAND, languageDialogListener);
+        setLanguage(llVi, LanguageManager.LANGUAGE_KEY_VIETNAM, languageDialogListener);
+
+        ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertLanguage.dismiss();
+            }
+        });
+        return alertLanguage;
+    }
+
+    public interface LanguageDialogListener {
+        void setLanguage(final String language);
+    }
+
+    public static void setLanguage(final View view, final String language, final LanguageDialogListener languageDialogListener) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                languageDialogListener.setLanguage(language);
+            }
+        });
+    }
+
 }

@@ -304,8 +304,6 @@
     <string name="revenue_center">收入中心</string>
     <string name="ipaddr_tips">设备配对\n设置POS IP地址</string>
     <string name="connect">连</string>
-    <string name="language">语言</string>
-    <string name="choose_language">选择语言</string>
 
     <string name="january">一月</string>
     <string name="february">二月</string>

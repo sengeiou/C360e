@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -53,7 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SystemSetting extends BaseActivity implements OnClickListener, MyToggleButton.OnToggleStateChangeListeren {
+public class SystemSetting extends BaseActivity implements OnClickListener, MyToggleButton.OnToggleStateChangeListeren, LanguageManager.LanguageDialogListener {
 
     private ImageView iv_sync_data;
     private TextView tv_syncdata_warn;
@@ -99,11 +98,13 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
     MyToggleButton mt_print_lable;
     MyToggleButton mt_print_bill, mt_credit_card_rounding, mt_include_plu_void;
     private int textsize, textcolor;
-    private ImageView iv_language;
-    private TextView tv_lable_upOrdown, tv_callnum_style, tv_callnum_header, tv_callnum_footer, tv_pos_mode_type, tv_pos_mode, tv_language;
-    private LinearLayout ll_language_setting;
-    AlertDialog alertLanguage;
+    private TextView tv_lable_upOrdown, tv_callnum_style, tv_callnum_header, tv_callnum_footer, tv_pos_mode_type, tv_pos_mode;
     int trainType;
+
+    private TextView tv_language;
+    private ImageView iv_language;
+    private LinearLayout ll_language_setting;
+    private AlertDialog alertLanguage;
 
     @Override
     protected void initView() {
@@ -646,7 +647,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                 break;
             case R.id.ll_language_setting:
             case R.id.tv_language:
-                alertLanguage();
+                alertLanguage = LanguageManager.alertLanguage(this, this);
                 break;
             default:
                 break;
@@ -1131,7 +1132,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                     public void onClick(DialogInterface dialog, int which) {
 
                         settings.setCallStyle(Integer.valueOf(items[which]).intValue());
-                        tv_callnum_style.setText(settings.getCallStyle() + " "+getString(R.string.style));
+                        tv_callnum_style.setText(settings.getCallStyle() + " " + getString(R.string.style));
                         dialog.dismiss();
 
 //						Toast.makeText(SystemSetting.this, items[which],
@@ -1158,43 +1159,23 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
         builder.create().show();
     }
 
-    private void alertLanguage() {
-        AlertDialog.Builder dialogLanguage = new AlertDialog.Builder(context);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.alert_select_language, null);
-        dialogLanguage.setView(dialogView);
-        dialogLanguage.setCancelable(true);
-        alertLanguage = dialogLanguage.show();
 
-        ImageView ivClose = (ImageView) dialogView.findViewById(R.id.iv_close);
-        LinearLayout llEng = (LinearLayout) dialogView.findViewById(R.id.ll_language_english);
-        LinearLayout llCh = (LinearLayout) dialogView.findViewById(R.id.ll_language_china);
-        LinearLayout llIna = (LinearLayout) dialogView.findViewById(R.id.ll_language_ina);
-        LinearLayout llPh = (LinearLayout) dialogView.findViewById(R.id.ll_language_ph);
-        LinearLayout llAr = (LinearLayout) dialogView.findViewById(R.id.ll_language_ar);
-        LinearLayout llTh = (LinearLayout) dialogView.findViewById(R.id.ll_language_th);
-        LinearLayout llVi = (LinearLayout) dialogView.findViewById(R.id.ll_language_vi);
-
-        setLanguage(llEng, LanguageManager.LANGUAGE_KEY_ENGLISH);
-        setLanguage(llCh, LanguageManager.LANGUAGE_KEY_CHINESE);
-        setLanguage(llIna, LanguageManager.LANGUAGE_KEY_INDONESIA);
-        setLanguage(llPh, LanguageManager.LANGUAGE_KEY_TAGALOG);
-        setLanguage(llAr, LanguageManager.LANGUAGE_KEY_ARABIC);
-        setLanguage(llTh, LanguageManager.LANGUAGE_KEY_THAILAND);
-        setLanguage(llVi, LanguageManager.LANGUAGE_KEY_VIETNAM);
-
-        ivClose.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void setLanguage(final String language) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.change_to_all_device));
+        builder.setNegativeButton(getString(R.string.pos_only), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                alertLanguage.dismiss();
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (alertLanguage != null) {
+                    alertLanguage.dismiss();
+                }
+                App.getTopActivity().changeLanguage(language);
             }
         });
-    }
-
-    private void setLanguage(final View view, final String language) {
-        view.setOnClickListener(new View.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(DialogInterface dialogInterface, int i) {
                 Message message = new Message();
                 message.obj = language;
                 message.arg2 = -1;
@@ -1202,9 +1183,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                 handler.sendMessage(message);
             }
         });
+        builder.show();
 
 
     }
-
-
 }

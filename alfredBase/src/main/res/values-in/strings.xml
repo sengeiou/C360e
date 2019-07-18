@@ -413,5 +413,8 @@
     <string name="item_price">Harga barang</string>
     <string name="revert">Kembali</string>
     <string name="item_name">Nama barang</string>
-
+    <string name="language">Bahasa</string>
+    <string name="choose_language">Pilih bahasa</string>
+    <string name="change_to_all_device">ubah ke semua perangkat yang terhubung</string>
+    <string name="pos_only">Hanya POS</string>
 </resources>

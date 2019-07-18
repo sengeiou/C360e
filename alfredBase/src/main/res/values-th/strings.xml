@@ -411,5 +411,9 @@
     <string name="item_price">ราคาสินค้า</string>
     <string name="revert">คืนกลับ</string>
     <string name="item_name">ชื่อรายการ</string>
+    <string name="language">ภาษา</string>
+    <string name="choose_language">เลือกภาษา</string>
+    <string name="change_to_all_device">เปลี่ยนเป็นอุปกรณ์ที่เชื่อมต่อทั้งหมด</string>
+    <string name="pos_only">POS เท่านั้น</string>
 
 </resources>

@@ -412,4 +412,9 @@
     <string name="revert">Hoàn nguyên</string>
     <string name="item_name">Tên mục</string>
 
+    <string name="language">Ngôn ngữ</string>
+    <string name="choose_language">Chọn ngôn ngữ</string>
+    <string name="change_to_all_device">thay đổi tất cả các thiết bị được kết nối</string>
+    <string name="pos_only">Chỉ POS</string>
+
 </resources>

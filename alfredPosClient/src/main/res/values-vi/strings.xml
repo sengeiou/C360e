@@ -304,8 +304,6 @@
     <string name="revenue_center">Trung tâm doanh thu</string>
     <string name="ipaddr_tips">Ghép nối thiết bị \nThiết lập địa chỉ IP POS</string>
     <string name="connect">Kết nối</string>
-    <string name="language">Ngôn ngữ</string>
-    <string name="choose_language">Chọn ngôn ngữ</string>
 
     <string name="january">tháng Giêng</string>
     <string name="february">Tháng hai</string>
