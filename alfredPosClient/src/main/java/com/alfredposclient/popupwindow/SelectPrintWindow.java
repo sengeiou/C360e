@@ -18,6 +18,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
@@ -232,6 +233,8 @@ public class SelectPrintWindow implements KeyBoardClickListener, OnFocusChangeLi
 		if (TextUtils.isEmpty(key)){
 			return;
 		}
+
+		BugseeHelper.buttonClicked(key);
 		EditText tempEditText = getFocusView();
 		if (tempEditText == null)
 			return;

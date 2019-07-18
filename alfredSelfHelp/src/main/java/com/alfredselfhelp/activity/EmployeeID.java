@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
@@ -143,6 +144,8 @@ public class EmployeeID extends BaseActivity implements Numerickeyboard.KeyBoard
         tv_error.setVisibility(View.INVISIBLE);
         if (keyBuf.length() >= KEY_LENGTH)
             return;
+
+        BugseeHelper.buttonClicked(key);
         if (key.equals("X")) {
             if (keyBuf.length() > 0) {
                 keyBuf.deleteCharAt(keyBuf.length() - 1);

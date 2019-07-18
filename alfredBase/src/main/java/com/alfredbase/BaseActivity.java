@@ -10,14 +10,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.alfredbase.http.ResultCode;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -88,6 +87,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
 //							| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LanguageManager.setLocale(base));
@@ -139,7 +139,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
     }
 
     protected void handlerClickEvent(View v) {
-
+        BugseeHelper.buttonClicked(v);
     }
 
     public void selectTable(TableInfo tableInfo) {

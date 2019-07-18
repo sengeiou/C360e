@@ -16,6 +16,7 @@ import com.alfred.callnum.http.SyncCentre;
 import com.alfred.callnum.utils.UIHelp;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
@@ -162,6 +163,7 @@ public class SelectRevenue extends BaseActivity {
             arg1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    BugseeHelper.buttonClicked(v);
                     App.instance.setPosIp(udpMsg.getIp());
                     loadingDialog.setTitle(context.getString(R.string.loading));
                     loadingDialog.show();

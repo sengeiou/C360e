@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredselfhelp.R;
@@ -52,6 +53,7 @@ public class SelfHelpDialog extends DialogFactory {
                             public void onClick(final View v) {
                                 dialog.dismiss();
 //                                CommonUtil.hideSoftkeyBoard(activity);
+                                BugseeHelper.buttonClicked(v);
                                 BaseApplication.postHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -66,7 +68,7 @@ public class SelfHelpDialog extends DialogFactory {
 
                             @Override
                             public void onClick(View v) {
-
+                                BugseeHelper.buttonClicked(v);
                                 String num = editText.getText().toString();
                                 if (TextUtils.isEmpty(num)) {
                                     Store.remove(activity, Store.KPM_CC_IP);
