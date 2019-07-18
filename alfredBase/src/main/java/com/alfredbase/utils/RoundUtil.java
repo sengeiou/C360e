@@ -4,6 +4,8 @@ import com.alfredbase.ParamConst;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class RoundUtil {
 	public static BigDecimal getPriceAfterRound(String roundType,
@@ -12,21 +14,21 @@ public class RoundUtil {
 			return priceBeforeRound;
 		}
 		if (roundType.equalsIgnoreCase(ParamConst.ROUND_10CENTS)) {
-			DecimalFormat doubleFormat = new DecimalFormat("0");
+			DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
 			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.1"),
 					false);
 			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
 					BH.getBDNoFormat("0.1"), true);
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_1DOLLAR)) {
-			DecimalFormat doubleFormat = new DecimalFormat("0");
+			DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
 			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("1.0"),
 					false);
 			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),
 					BH.getBDNoFormat("1.0"), true);
 		} else if (roundType.equalsIgnoreCase(
 				ParamConst.ROUND_5CENTS)) {
-			DecimalFormat doubleFormat = new DecimalFormat("0");
+			DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
 			BigDecimal bigDecimal = BH.div(priceBeforeRound, BH.getBDNoFormat("0.05"),
 					false);
 			return BH.mul(BH.getBDNoFormat(doubleFormat.format(bigDecimal)),

@@ -1,11 +1,16 @@
 package com.alfredbase.utils;
 
+import android.util.Log;
+
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.store.Store;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * BigDecimal 辅助类
@@ -17,10 +22,10 @@ public class BH {
     public static final int FORMAT_AFTER = 1;//小数点后两位四舍五入
     public static final int FORMAT_FRONT = 2;//小数点前两位四舍五入
 
-    private static final DecimalFormat doubleFormat = new DecimalFormat("0.00");
-    private static final DecimalFormat threeFormat = new DecimalFormat("0.000");
-    private static final DecimalFormat fourFormat = new DecimalFormat("0.0000");// 运算工程中使用。
-    public static final DecimalFormat intFormat = new DecimalFormat("0");
+    private static final DecimalFormat doubleFormat = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+    private static final DecimalFormat threeFormat = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
+    private static final DecimalFormat fourFormat = new DecimalFormat("0.0000", new DecimalFormatSymbols(Locale.US));// 运算工程中使用。
+    public static final DecimalFormat intFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
     private static DecimalFormat format = doubleFormat;
     private static boolean isDouble = true;
 

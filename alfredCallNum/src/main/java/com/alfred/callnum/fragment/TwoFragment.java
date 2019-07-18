@@ -35,6 +35,7 @@ import com.alfred.callnum.utils.FileDialog;
 import com.alfred.callnum.utils.TvPref;
 import com.alfred.callnum.utils.VideoResManager;
 import com.alfred.callnum.widget.PictureSwitch;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.utils.LanguageManager;
 
 import java.util.ArrayList;
@@ -416,6 +417,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
     @Override
     public void onClick(View v) {
+        BugseeHelper.buttonClicked(v);
         Intent intent = new Intent(getActivity(), FileDialog.class);
         switch (v.getId()) {
             case R.id.btn_picture:
