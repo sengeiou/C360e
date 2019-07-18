@@ -1,5 +1,6 @@
 package com.alfredselfhelp.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.KpmDialogFactory;
@@ -42,7 +44,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements LanguageManager.LanguageDialogListener {
 
 
     Handler mPeriodEventHdr = new Handler();
@@ -86,6 +88,10 @@ public class MainActivity extends BaseActivity {
     private String imgUrl;
     private boolean doubleBackToExitPressedOnce = false;
 
+    private ImageView iv_language;
+    private LinearLayout ll_language_setting;
+    private AlertDialog alertLanguage;
+
     protected void initView() {
 
         super.initView();
@@ -104,6 +110,12 @@ public class MainActivity extends BaseActivity {
 
         re_main_select = (RelativeLayout) findViewById(R.id.re_main_select);
         btn_start.setOnClickListener(this);
+
+        ll_language_setting = (LinearLayout) findViewById(R.id.ll_language_setting);
+        ll_language_setting.setOnClickListener(this);
+
+        iv_language = (ImageView) findViewById(R.id.iv_language);
+        iv_language.setImageDrawable(LanguageManager.getLanguageFlag(this));
 
         videoView = (VideoView) findViewById(R.id.videoView);
         picSwitch = (PictureSwitch) findViewById(R.id.slImages);
@@ -353,6 +365,9 @@ public class MainActivity extends BaseActivity {
             case R.id.btn_print_setting:
                 UIHelp.startDevices(context);
                 break;
+            case R.id.ll_language_setting:
+                alertLanguage = LanguageManager.alertLanguage(this, this);
+            break;
 
         }
     }
@@ -867,4 +882,13 @@ public class MainActivity extends BaseActivity {
             }
         }, 2000);
     }
+
+    @Override
+    public void setLanguage(final String language) {
+        if (alertLanguage != null) {
+            alertLanguage.dismiss();
+        }
+        App.getTopActivity().changeLanguage(language);
+    }
+
 }
