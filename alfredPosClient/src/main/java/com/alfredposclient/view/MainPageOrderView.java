@@ -283,10 +283,8 @@ public class MainPageOrderView extends LinearLayout {
                                     }
                                 }
                             }
+
                             if (!kotItemDetails.isEmpty()) {
-                                //region Add expected time product to KotSummary
-                                kotSummary.setKotSummaryLog(KDSLogUtil.setExpectedTime(kotSummary.getKotSummaryLog(), 5 * 60 * 1000));
-                                //endregion
                                 KotSummarySQL.update(kotSummary);
                                 if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
                                     PrinterDevice printer = App.instance.getCahierPrinter();
